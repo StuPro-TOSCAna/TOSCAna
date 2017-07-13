@@ -31,11 +31,10 @@
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['sphinx.ext.mathjax',
-    'sphinx.ext.githubpages']
+extensions = []
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+templates_path = ['.templates']
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
@@ -49,7 +48,7 @@ master_doc = 'index'
 # General information about the project.
 project = 'TOSCAna'
 copyright = '2017, Nick Fode, Bien Nguyen, Heiko Nickerl, Christian Mueller, Jens Mueller, Manuel Kloppenburg, Marvin Baron, Oliver Ferch'
-author = 'Nick Fode\\, Bien Nguyen, Heiko Nickerl, Christian Mueller, Jens Mueller, Manuel Kloppenburg, Marvin Baron, Oliver Ferch'
+author = 'Nick Fode, Bien Nguyen, Heiko Nickerl, Christian Mueller, Jens Mueller, Manuel Kloppenburg, Marvin Baron, Oliver Ferch'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -130,13 +129,13 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
-first_page_authors = """ \hfill Nick Fode\\\ 
-                        \hfill Bien Nguyen\\\
-                        \hfill Heiko Nickerl\\\
-                        \hfill Christian Mueller\\\
-                        \hfill Jens Mueller\\\
-                        \hfill Manuel Kloppenburg\\\
-                        \hfill Marvin Baron\\\
+first_page_authors = """ \hfill Nick Fode\\\\
+                        \hfill Bien Nguyen\\\\
+                        \hfill Heiko Nickerl\\\\
+                        \hfill Christian Mueller\\\\
+                        \hfill Jens Mueller\\\\
+                        \hfill Manuel Kloppenburg\\\\
+                        \hfill Marvin Baron\\\\
                         \hfill Oliver Ferch """
 latex_documents = [
     (master_doc, 'TOSCAna.tex', 'TOSCAna Documentation',
