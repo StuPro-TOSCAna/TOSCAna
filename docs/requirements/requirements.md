@@ -20,7 +20,7 @@ In this document the terms *'Must have'*, *'Should have'*, *'Could have'* and *'
 |Look and Feel  | The UI must look awesome. No further requirements. | Must Have | |
 |Type|Web Application|Must have| |
 |Supported browsers|Firefox, Chrome| Must have| |
-|Communcation|REST-calls|Must have| |
+|Communication|REST-calls|Must have| |
 |Technology|Angular|Should have| |
 
 ### Command Line Interface (CLI)
@@ -34,13 +34,13 @@ In this document the terms *'Must have'*, *'Should have'*, *'Could have'* and *'
 |Target Host OS| Linux | Must have | |
 | Validation of input (CSAR) | syntax | Must Have | | 
 | Validation of input (CSAR) | semantics | Must Have | Not before execution; but if an error is found while executing the transformation, an error must be reported | 
-|TOSCA --> Cloud Foundry| CSAR -> Cloud Foundry Artifacts & Orchestration, if needed|Should have| it is acceptable to optimize the topology |
 |Support at least 3 target platforms | | Should have |  Transformation to every supported target platform must function properly |
+|TOSCA --> Cloud Foundry| CSAR -> Cloud Foundry Artifacts (& Orchestration, if needed)|Should have| it is acceptable to optimize the topology |
+|TOSCA --> Kubernetes |  CSAR -> Kubernetes Artifacts (& Orchestration, if needed)|Should have| it is acceptable to optimize the topology|
+|TOSCA --> AWS Cloud Formation| CSAR -> Cloud Formation Template (& Orchestration, if needed)|Should have| Preferable as first transformation; it is acceptable to optimize the topology |
 | TOSCA Spec version | Latest YAML specification | Should have | if YAML seems not to be working out, switching to the older XML specification is acceptable |
-|TOSCA --> AWS Cloud Formation| CSAR -> Cloud Formation Template & Orchestration, if needed|Should have| Preferable as first transformation; it is acceptable to optimize the topology |
-|TOSCA --> Kubernetes |  CSAR -> Kubernetes Artifacts & Orchestration, if needed|Should have| it is acceptable to optimize the topology|
 | Topology Optimization Mode | Implement normal and topology optimizing transformation mode | Could have| 'Tuning option' |
-| Adapt to target platform updates | If target platforms change, change transformator accordingly | Won't have | Beyound the scope of project; and most probably not relevant due to backward compatibilty | 
+| Adapt to target platform updates | If target platforms change, change transformator accordingly | Won't have | Beyond the scope of project; and most probably not relevant due to backward compatibility | 
 
 ### TOSCA Support 
 | What | How | Importance |Comment|
@@ -48,8 +48,8 @@ In this document the terms *'Must have'*, *'Should have'*, *'Could have'* and *'
 | Specification support | most important elements | Must Have | Not included: Policies. Leave out the bells and whistles ('fancy stuff'). However, build architecture in an extendable way, so the full TOSCA spec can be supported in the future |
 | Node Support | Must be deployable  via Lifecycle Interface | Must have | |
 | NodeType, RelationshipType Support | Support from YAML-Profile | Must have | A basic LAMP-Stack must be deployable with the transformator; the level of mininum node type and relationship type support can be derived from this requirement |
-| NodeType Support | Support custom Node Types of Institute | Could Have | |
-| BPMN Support | Translator support BPMN part of TOSCA specification | Won't have | would be awesome; too hard; for our project, only declarative (no imperative) node description must be supported | 
+| NodeType Support | Support custom NodeTypes of Institute | Could Have | |
+| BPMN Support | Translator supports BPMN part of TOSCA specification | Won't have | would be awesome; too hard; for our project, only declarative (no imperative) node description must be supported | 
 
 ### Transformation Center
 | What | How | Importance |Comment|
@@ -63,7 +63,7 @@ In this document the terms *'Must have'*, *'Should have'*, *'Could have'* and *'
 |Status information | during deployment, show current status of deployment | Could Have | Client would appreciate that very much | 
 | App Monitoring | Provice health monitoring of deployed app | Could have | very nice to have but very unrealistic|
 | Adapt deployment at runtime | If CSAR changes, the changes must be reflected in the deployment | Won't have | too complex | 
-| Manage multiple CSARs at once | | Won't have | This would force us building a whole cloud deployment center, which is considered to be beyound the scope of our project | 
+| Manage multiple CSARs at once | | Won't have | This would force us to build a whole cloud deployment center, which is considered to be beyond the scope of our project | 
 
 ### Misc
 | What | How | Importance |Comment|
