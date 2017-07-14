@@ -1,0 +1,6 @@
+#!/bin/bash
+
+python convert_md_files.py $1
+cp conf.py source
+make latexpdf
+rm -r source

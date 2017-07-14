@@ -137,6 +137,7 @@ first_page_authors = """ \hfill Nick Fode\\\\
                         \hfill Manuel Kloppenburg\\\\
                         \hfill Marvin Baron\\\\
                         \hfill Oliver Ferch """
+
 latex_documents = [
     (master_doc, 'TOSCAna.tex', 'TOSCAna Documentation',
      first_page_authors,'manual'),
