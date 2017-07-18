@@ -5,12 +5,10 @@ These criteria must be met before a feature or artifact can be considered "done"
 - Code coverage: >75%
 - Codacy grade A
 - Travis Build runs without errors (green)
-- Meaningful javadoc comments for:
-  - All classes
-  - All non-private methods and fields
-  - Private methods with non-obvious implementation
+- Meaningful javadoc comments for all classes, methods and fields
+  - Can be omitted for trivial methods, such as get() and set()
 
 ## General
 - Documentation was updated to reflect the current release candidate
 - Documentation contains no spelling mistakes or grammatical errors
-- Pull request was reviewed by atleast two independent reviewers
+- Pull request was reviewed by at least two independent reviewers
