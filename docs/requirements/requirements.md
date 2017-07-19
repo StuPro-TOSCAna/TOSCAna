@@ -21,7 +21,7 @@ In this document the terms *'Must have'*, *'Should have'*, *'Could have'* and *'
 |Type|Web Application|Must have| |
 |Supported browsers|Firefox, Chrome| Must have| |
 |Communication|REST-calls|Must have| |
-|Technology|Angular|Should have| |
+|Technology|Angular 4|Should have| |
 
 ### Command Line Interface (CLI)
 | What | How | Importance |Comment|
