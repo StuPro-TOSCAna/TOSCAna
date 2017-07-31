@@ -14,7 +14,7 @@ The core package contains all core components of the transformator.
 
 #### Controller
 
-The controller represents the main component in the core package. 
+The controller represents the main component in the core package.  
 
 #### API-Server
 
@@ -26,9 +26,19 @@ The API-Server hosts a REST-based API. The CLI and Web Frontend will connect to 
 
 #### Data-Storage
 
-The persistent 
+In case of a application crash the current state of the transformation has to be saved persiestently. The Data-Storage component has to handle this exercise.
+
+#### Open Questions and Ideas
+
+- How will the state data be stored persistently (Not the CSAR)?
+    - Maybe use a integrated DBMS like H2 or Apache Derby, However this point has to be discussed in the group and maybe even with the customer. If the persistent storing of the state is not necessary this component is pretty much useless.
+    
+Its important to note, that the Data-Storage component does not store the CSAR Uploaded using the API this has to be stored somewhere in the Filesystem.
+   
 
 #### Plugin Manager
+
+The Plugin Manager is responsible for loading the plugins and also provides a Interface that has to be Implemented by every plugin in order to transform to the given target platform.
 
 ### CLI
 
