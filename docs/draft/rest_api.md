@@ -68,7 +68,7 @@ HTTP Response Code: 200
   "message": "Tranformation was sucessful."
 }
 ```
-- *status*: returns the current status. Possible values are `inqueue`, `started`, `stopped`, `failed` or `done`
+- *status*: returns the current status. Possible values are `user-input`, `inqueue`, `started`, `stopped`, `failed` or `done`
 - *progress*: returns the progress as percentage from 0-100% (Unsigned Integer, range 0  to 100)
 - *message*: String message to quickly inform the user about whats happening.
 
@@ -96,9 +96,45 @@ HTTP Response Code: 200
 ```
 *log:* return the log output as raw string
 
+### Retrieving user-input questions
+
+If the transformation status changes to `user-input` the transformator needs additonal data from the user in order to perform the transformation.
+The Questions the user has to answer for a specific transformation can be retieved by calling
+```
+GET /transformation/{id}/questions
+```
+
+if the transformation is in the `user-input` state the following will be returned.
+
+```json
+{
+  "questions": [
+    {
+      "id": 1,
+      "question": "Please enter the API token for AWS:",
+      "input_type": "string"
+    },
+    {
+      "id": 2,
+      "question": "Please enter the password for the MySQL root account:",
+      "input_type": "password"
+    }
+  ]
+}
+```
+- **questions**: the questions array contains all the questions the user has to answer.
+    - **id**: represents a unique identifier within the question request (Unsigned integer)
+    - **question**: English text of the question (String)
+    - **input_type**: The type of input requested. (Supported values ``password``, `string`, `uinteger`, `integer` and `float`)
+
+if the transformation is not in the ``user-input`` state a Error 404 will be returned
+
+### Submitting user-input questions
+
 ### Submitting a Cloud Service Archive for transformation
+
 A single call containing a CSAR - archive and the target platform
-(for some platforms some credentials are also necessary)
+(for some platforms some credentials are also necessary, these will probably be supplied by user Input)
 ```
 POST transformation/{platform}
 ```
