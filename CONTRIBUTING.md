@@ -15,14 +15,21 @@
 <!-- /TOC -->
 ## Versioning
 
-Our project uses [SemVer](http://semver.org/) for versioning. If you do not know what _SemVer_ is, please read the docs on their page.
+This project uses [Semantic Versioning](http://semver.org/) or _SemVer_ for short. If you do not know what SemVer is, a detailed explanation is available on their website.
+Any new releases must adhere to this versioning scheme.
 
 ## Pull Requests
+Any major changes to existing or the addition of new features or artifacts should be done through pull requests or PRs.
 
-### [WIP] - Tag
-The [WIP]-tag in a pull request shows that this feature is still in progress and not ready to merge. This has the advance that you can create a PR to use the CI-tools or the PR-review feature but is clearly visible that this PR is not ready to be merged.
+### Working on a pull request
+PRs with unfinished features should have a [WIP] tag at the beginning of their title. This shows that this feature is still in progress and not ready to be merged.
 
-**tl;dr** If a pull request got the [WIP]-tag in the title it is not allowed to merge it.
+### Reviewing a pull request
+When a feature is considered finished it should be **reviewed** before merging the corresponding PR. During this stage the [WIP] label in the title should be removed.
+
+### Merging a Pull Request
+Before a pull request can be merged, it must fullfill the criteria specified in the [Definition of Done](/docs/dev/dod.md).
+Merging should be done through the **squash and merge** option in GitHub. This allows all to be combined into one commit on the master branch in order to not clutter up the commit history.
 
 ## Zenhub Issue Board
 ### Pipelines
