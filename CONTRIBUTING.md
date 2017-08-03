@@ -4,6 +4,7 @@
 <!-- TOC depthFrom:2 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
 
 - [Versioning](#versioning)
+- [Branches](#branches)
 - [Pull Requests](#pull-requests)
 	- [Working on a Pull Request](#working-on-a-pull-request)
 	- [Reviewing a Pull Request](#reviewing-a-pull-request)
@@ -19,6 +20,14 @@
 
 This project uses [Semantic Versioning](http://semver.org/) or _SemVer_ for short. If you do not know what SemVer is, a detailed explanation is available on their website.
 Any new releases must adhere to this versioning scheme.
+
+## Branches
+Our project currently consists of a _master_ and several _feature_ branches. 
+The master branch always contains a stable version of the project. Only commits with small, insignificant changes should be done directly on the master branch. 
+
+Any other changes should first be implemented and tested on a feature branch. The name of this feature branch should closely describe the added changes.
+
+If you want to add your changes to the main branch you can do so by proposing a [pull request](#pull-requests).
 
 ## Pull Requests
 Any major changes to existing or the addition of new features or artifacts should be done through pull requests or PRs.
