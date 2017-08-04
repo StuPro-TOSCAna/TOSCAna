@@ -6,7 +6,7 @@ Currently, it aims to support multiple cloud ecosystems, with Amazon Web Service
 ## Project Structure
 - [`docs/user`](docs/user) - Documentation aimed at users
 - [`docs/dev`](docs/dev) - Documentation aimed at developers
-## How to contribute
+## Contributing
 See our [contribution guidelines](CONTRIBUTING.md) for detailed information on how to contribute to TOSCAna.
 ## Tools
 Tools that are used in this project.
