@@ -6,6 +6,8 @@ Currently, it aims to support multiple cloud ecosystems, with Amazon Web Service
 ## Project Structure
 - [`docs/user`](docs/user) - Documentation aimed at users
 - [`docs/dev`](docs/dev) - Documentation aimed at developers
+## How to contribute
+See our [contribution guidelines](CONTRIBUTING.md) for detailed information on how to contribute to TOSCAna.
 ## Tools
 Tools that are used in this project.
 
@@ -15,4 +17,4 @@ Tools that are used in this project.
 - Code analysis: [Codacy](https://www.codacy.com/app/nfode/stupro_toscana_vorprojekt/dashboard)
 - Code coverage: [Codecov](https://codecov.io/gh/nfode/stupro_toscana_vorprojekt), [Get browser extension](https://github.com/codecov/browser-extension)
 ## License
-TOSCAna is under the Apache License 2.0 license. See [LICENSE](LICENSE.md).
+TOSCAna is under the [Apache License 2.0](LICENSE).
