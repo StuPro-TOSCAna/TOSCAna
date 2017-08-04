@@ -12,6 +12,7 @@ See our [contribution guidelines](CONTRIBUTING.md) for detailed information on h
 Tools that are used in this project.
 
 - IDE: [IntelliJ](https://www.jetbrains.com/idea/)
+- UML Modelling: [Lucidchart](https://www.lucidchart.com/)
 - Project management: [ZenHub](https://www.zenhub.com/)
 - CI: [TravisCI](https://travis-ci.org/nfode/stupro_toscana_vorprojekt)
 - Code analysis: [Codacy](https://www.codacy.com/app/nfode/stupro_toscana_vorprojekt/dashboard)
