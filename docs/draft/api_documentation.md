@@ -22,3 +22,24 @@ Once the transformation has finished succesfully the user will be able to downlo
 ## Design prinicpals
 
 ### Used frameworks (Backend)
+
+### Required Operations
+
+In order to execute the "Workflow" described above the REST-API has to support the following operations.
+
+#### General Operations
+
+- Get the status of the transformator.
+    - This is required to inform the frontend, wheter or not the transformator is ready to accept Cloud Service Archives (CSARs) for transformation
+- Get the supported platforms (loaded plugins)
+    - This is needed to inform the user about all the platforms he can select to perform a transformation to
+
+#### Operations regarding a transformation
+
+- Upload a CSAR
+- Select target platforms for a CSAR
+- Start the transfromation
+- Stop the transformation
+- Get the progress of the transformation
+- Get the logs from the transformation
+- Retrieve the result of a transformation
