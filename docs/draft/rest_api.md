@@ -1,201 +1,293 @@
-# First Draft for the REST API
+# Alternative draft for the REST api
 All calls and requests return data as JSON.
-## General Calls
-### Get current status of the transformer
-```
-GET status/
-```
-**returns:**
-  
-HTTP Response Code: 200 (always)
-  
+### Current status
+##### GET /status
+Get the current status of the transformer.
+*returns:* HTTP Response Code: 200 (always)
+
 ```json
 {
-  "state": "idle",
-  "current_transformations": [1,2,3],
-  "available_storage": 1000,
-  "total_storage": 10000,
-  "capabilities": ["aws", "kubernetes", "openstack"]
+    "status": "idle",
+    "available_storage": 1000,
+    "total_storage": 10000,
 }
 ```
-- *state*: current status of the transformer, values can either be `idle`, `transforming` or `error`
-- *current_transformations:* ids of the active or queued transformations (Array of unsigned integers)
-- *available_storage*: represents the free hard disk space in megabytes (Unsigned integer)
-- *total_storage*: represents the total storage of the hard disk (Unsigned integer)
-- *capabilities*: represents a list of the plugins loaded, i.e. the platforms which are supported by this instance of the transformer
+- *status*: current status of the transformer, values can either be `idle`, `transforming` or `error`
+- *available_storage*: free hard disk storage in MB (integer)
+- *total_storage*: total storage of the hard disk (integer, in MB)
 
-## Transformation specific calls
+### Manage target platforms
 
-***Error Note***: Every Call that requires an ID will return a Error 404 if the ID cannot be found.
+##### GET /platforms
+Returns all target platforms which are available for transforming the CSAR.
 
-### Retrieve the result of the transformation
-
-```
-GET transformation/{id}
-```
-  
-*Parameters*:
-- **id**: The id of the transformation for which the result should be retrieved.
-  
-**on success returns:**
-  
-HTTP Response Code: 200
+*returns:*
 ```json
-{
-  "id": 1,
-  "result": "/results/transform_1.zip"
-}
+[ 
+    "aws": {
+        "href"="/platforms/aws"
+    },
+    "cloudformation": {
+        "href"="/platforms/cloudformation"
+    }
+]
 ```
-- *id*: The id of the transformation (unsigned Integer)
-- *result*: the URL path (on the HTTP server) to download the result archive. If the transformation is still in progress or has errored this value will be null
+NOTE: Later it is possible to add platform specific preferences here
 
-### Getting the status of a transformation
-```
-GET transformation/{id}/status
-```
+### Manipulating TOSCA Models
 
-*Parameters*:
-- **id**: The id of the transformation for which the result should be retrieved.
+##### GET /toscamodels
+Get a list of all toscamodels.  
 
-**on success returns:**
-  
-HTTP Response Code: 200
+*returns*:
 ```json
-{
-  "id": 1,
-  "status": "done",
-  "progress":  "100",
-  "message": "Tranformation was sucessful."
-}
-```
-- *status*: returns the current status. Possible values are `user-input`, `queued`, `started`, `stopped`, `failed` or `done`
-- *progress*: returns the progress as percentage from 0-100% (Unsigned Integer, range 0  to 100)
-- *message*: String message to quickly inform the user about whats happening.
-
-### Retrieve Logs for a transformation
-```
-GET transformation/{id}/log/{linecount}
-```
- 
-*Parameters*:
-- *id*: The id of the transformation for which the logs should be retrieved
-- *linecount*: (Optional, 50 by default) The Maximum linecount to return. if this parameter is ``all`` all lines of the log will be sent
-
-**on success returns:**
-
-This call returns the `'linecount'` last lines of the log. 
-
-HTTP Response Code: 200
-  
-```json
-{
-  "id": 1,
-  "linecount": 50,
-  "log": ["Line 1","Line 2","Line 3"]
-}
-```
-*log:* return the log output as raw string
-
-### Retrieving user-input questions
-
-If the transformation status changes to `user-input` the transformator needs additonal data from the user in order to perform the transformation.
-The questions the user has to answer for a specific transformation can be retrieved by calling
-```
-GET /transformation/{id}/questions
-```
-
-if the transformation is in the `user-input` state the following will be returned.
-
-```json
-{
-  "questions": [
+[
     {
-      "id": 1,
-      "question": "Please enter the API token for AWS:",
-      "input_type": "string"
+        "href":"/toscamodels/1",
+        "id":1,
+        "name":"Hello World"
     },
     {
-      "id": 2,
-      "question": "Please enter the password for the MySQL root account:",
-      "input_type": "password"
+        "href":/toscamodels/2",
+        "id":2,
+        "name":"Billing App"
+]
+```
+##### POST /toscamodels
+Create a new TOSCA model. Returns a link to the new resource.
+*Request body:*  
+{
+    "name"={appName}
+}
+- name: name (String) of the application used for representation. must be unique
+
+*returns*: 
+```json
+{
+    "href":/toscamodels/1
+    "id":1
+    "name"={appName}
+}
+```
+
+*ERRORS*:  
+422 - "name" value already in use by other toscamodel
+
+##### DELETE /toscamodels
+Delete all TOSCA models
+
+##### GET /toscamodels/{id}
+Get the TOSCA model which ID matches {id}.
+
+*returns*:
+```json
+{
+    "href":/toscamodels/1
+    "id": 1,
+    "name"="AppName"
+}
+```
+*ERRORS*:  
+404 - TOSCA model with given {id} does not exist
+
+##### PUT /toscamodels/{id}
+Update the TOSCA model which ID matches given {id}.
+
+*returns:* Nothing
+*ERRORS*:  
+404 - TOSCA model with given {id} does not exist
+422 - "name" value already in use by other toscamodel
+
+##### DELETE /toscamodels/{id}
+Delete the TOSCA model which ID matches given {id}
+
+*returns:* Nothing
+
+*ERRORS:*  
+404 - TOSCA model with given {id} does not exist
+
+## Manipulating CSARs
+##### PUT /toscamodels/{id}/csar
+Uploads a CSAR.
+*Required request body*:
+Raw csar file content
+
+*returns:* 203
+
+*ERRORS:*  
+400 - Uploaded file is not a valid CSAR, rejected  
+404 - TOSCA model with given {id} does not exist  
+507 - Insufficient storage  
+
+##### DELETE /toscamodels/{id}/csar
+Deletes the csar of the toscamodel which matches given {id}.
+
+*returns:* Nothing
+
+### Managing transformations
+
+##### GET /toscamodels/{id}/transformations
+Returns a list of all ongoing or finished transformations of given TOSCA model.
+
+*returns:*
+```json
+[
+    "{platform}": {
+        "href": "/toscamodels/{id}/transformations/{platform}",
+        "status": ...
+        ...
+
+    },
+..
+]
+```
+See below for details of the format of a transformation.
+
+##### GET /toscamodels/{id}/transformations/{platform}
+Returns the transformation of the specifified TOSCA model which name matches given {platform}.
+
+*returns:*
+```json
+{
+    "href":"/toscamodels/{id}/transformations/{platform}"
+    "platform": {
+        "href": "/platforms/{platform}"
+    },
+    "artifact": {
+        "href": "/toscamodels/{id}/transformations/{platform}/artifact"
+    },
+    "status":"user-input",
+    "progress":0
+}
+```
+- href: link to self
+- platform: link to target platform
+- artifact: link to target platform artifact
+- status: ["user-input","ready","queued","transforming","done","stopped","failed"]
+    - user-input: before transformation can start, user has to specify some values
+    - ready: ready for transformation
+    - queued: server is currently busy, transformation is queued and will eventually start
+    - transforming: transformation is currently ongoing
+    - done: transformation is successfully finished
+    - canceled: transformation got canceled by a client
+    - failed: transformation failed due to an error
+- progress: int, [0-100], progresss of transformation in percentage. Can only change in status "transforming"
+
+##### PUT /toscamodels/{id}/transformations/{platform}
+Request the transformation of the specified TOSCA model to the specified platform.
+If already started a transformation to the particular platform, server will abort and restart transformation.
+
+*returns:* 201 Created (immediately - note this does not mean
+that the transformation is finished)
+*ERRORS*:  
+423 - Locked: transformation not ready but in state "user-input"
+
+##### DELETE /toscamodels/{id}/transformations/{platform}
+Halts the specified transformation.
+
+*Postcondition:* Status of specified transformation is "canceled"
+
+*ERRORS:*  
+404 - transformation doesn't exit (TOSCA model oder platform does not exist)
+
+### Reading transformation logs
+##### GET /toscamodels/{id}/transformations/{platform}/logs/
+Receive the logs for specified transformation. All logs starting with the {start}nth to the most recent log are transfered.
+
+*Request body:*
+```json
+{
+    "start":0
+}
+```
+- start - index of first log to receive
+
+*returns:*
+```json
+{
+    "end":53,
+    "logs":["line1","line2",...]
+}
+```
+- end: the index of the last log line
+- logs: array of log lines (order: oldest first)
+
+*ERRORS:*  
+400 - start index out of bounds
+404 - no logs available
+
+*EXAMPLE*:
+1. Client calls GET .../logs?start=0
+2. Server answers with
+```json
+{
+    "end":3,
+    "logs:["line1","line2","line3","line4"]
+}
+```
+3. Client calls GET .../logs?start=4
+4. etc
+### Downloading platform artifacts
+##### GET /toscamodels/{id}/transformations/{platform}/artifact
+Downloads the deployment artifact for specified platform and TOSCA model.
+
+*ERRORS:*  
+404 - The artifact does not exist
+
+### Specifying additional user-input
+
+If the transformation status changes to `user-input` the transformator needs additonal data from the client in order to perform the transformation.
+
+To get information about required data, call:
+```
+GET /toscamodel/{id}/transformations/{platform}/user-input
+```
+*returns:*  
+```json
+[
+    "Database Password": {
+        "type":"string",
+        "value":null,
+        "valid":false
+    },
+    "timeout": {
+        "type":"integer",
+        "value":null,
+        "valid":false
     }
-  ]
-}
+]
 ```
-- **questions**: the questions array contains all the questions the user has to answer.
-    - **id**: represents a unique identifier within the question request (Unsigned integer)
-    - **question**: English text of the question (String)
-    - **input_type**: The type of input requested. (Supported values ``password``, `string`, `uinteger`, `integer` and `float`)
+- Object Names: Key which requires a value
+- type: the value needs to be of this type (must be one of [string,uinteger,integer,float]
+- value: In the response, this field needs to be set with a value of wanted type
+- valid: if false, server rejects value. All key value pairs must be valid in order for the transformation to happen.
 
-if the transformation is not in the ``user-input`` state a Error 404 will be returned
+*ERRORS:*  
+404 - if the transformation is not found (hence TOSCA model id or plaform is invalid)
 
-### Submitting user-input questions
+##### PUT /toscamodel/{id}/transformations/{platform}/user-input
+Call this in order to specify the values for required keys. Calling this will automatically trigger an GET call to the same resource as response (in order to validate input).
 
-### Submitting a Cloud Service Archive for transformation
-
-A single call containing a CSAR and the target platform
-(for some platforms credentials might be necessary, these will probably be supplied by user input)
-```
-POST transformation/{platform}
-```
-
-**parameters**:
--  **platform**: the platform on which the application should be transformed. (Supported platforms can be retrieved using a status request (capabilities))
-
-**sends:**
-blob of the CSAR,
-
-**on success returns:**
-  
-HTTP Response Code: 200
-  
+*Request body*:
 ```json
-{
-  "id": 1
-}
+[
+    "Database Password":"securePassword",
+    "timeout":5
+]
 ```
-**on error returns:**
-  
-HTTP Error Code: 500
-  
+*returns:*
 ```json
-{
-  "message": "Something went wrong.",
-  "error_code": 121341,
-  "log": "log"
-}
+[
+    "Database Password": {
+        "type":"string",
+        "value":"securePassword",
+        "valid":true
+    },
+    "timeout": {
+        "type":"integer",
+        "value":5,
+        "valid":true
+    }
+]
 ```
-- *message:* short message including what did not work
-- *error_code*: code to easily identify problem
-- *log*: log for that action
 
-### Aborting a transformation
-```
-DELETE transformation/{id}
-```
-**on success returns :** nothing if abortion was successful (HTTP Response Code 200)
-
-**on error returns:**
-
-HTTP Response Code: 500
-
-```json
-{
-  "message": "Aborting transformation did not work.",
-  "error_code": 121341,
-  "log": "log"
-}
-```
-- *message:* short message including what did not work
-- *error_code*: code to easily identify problem
-- *log*: log for that action
-
-# Notes
-
-## How to process a lot of incoming calls at once?
-- 1. Option: Create a queue, they then get transformed one by one
-- 2. Option: Create a queue, the transformer does multiple transformations at once
- Problem: It is necessary to find out or define how many transformation the server can do at once, with "big" transformations at the same time the process might be really.
-
-The problems with both options is if a lot of big files are incoming the storage might be to small
-=> only accept calls until a limit is reached. That limit might be the number of calls in the queue or a storage limit.
