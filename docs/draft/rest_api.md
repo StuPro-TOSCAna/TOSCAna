@@ -26,7 +26,7 @@ HTTP Response Code: 200 (always)
 
 ## Transformation specific calls
 
-***Error Note***: Every Call that requires a id will return a Error 404 if the id cannot be found.
+***Error Note***: Every Call that requires an ID will return a Error 404 if the ID cannot be found.
 
 ### Retrieve the result of the transformation
 
@@ -68,7 +68,7 @@ HTTP Response Code: 200
   "message": "Tranformation was sucessful."
 }
 ```
-- *status*: returns the current status. Possible values are `user-input`, `inqueue`, `started`, `stopped`, `failed` or `done`
+- *status*: returns the current status. Possible values are `user-input`, `queued`, `started`, `stopped`, `failed` or `done`
 - *progress*: returns the progress as percentage from 0-100% (Unsigned Integer, range 0  to 100)
 - *message*: String message to quickly inform the user about whats happening.
 
@@ -83,7 +83,7 @@ GET transformation/{id}/log/{linecount}
 
 **on success returns:**
 
-This call returns the `linecount` last lines of the log. 
+This call returns the `'linecount'` last lines of the log. 
 
 HTTP Response Code: 200
   
@@ -99,7 +99,7 @@ HTTP Response Code: 200
 ### Retrieving user-input questions
 
 If the transformation status changes to `user-input` the transformator needs additonal data from the user in order to perform the transformation.
-The Questions the user has to answer for a specific transformation can be retieved by calling
+The questions the user has to answer for a specific transformation can be retrieved by calling
 ```
 GET /transformation/{id}/questions
 ```
@@ -133,8 +133,8 @@ if the transformation is not in the ``user-input`` state a Error 404 will be ret
 
 ### Submitting a Cloud Service Archive for transformation
 
-A single call containing a CSAR - archive and the target platform
-(for some platforms some credentials are also necessary, these will probably be supplied by user Input)
+A single call containing a CSAR and the target platform
+(for some platforms credentials might be necessary, these will probably be supplied by user input)
 ```
 POST transformation/{platform}
 ```
@@ -143,7 +143,7 @@ POST transformation/{platform}
 -  **platform**: the platform on which the application should be transformed. (Supported platforms can be retrieved using a status request (capabilities))
 
 **sends:**
-Binary Blob of the Cloud Service Archive,
+blob of the CSAR,
 
 **on success returns:**
   

@@ -19,7 +19,7 @@ While the transformation is running the user can request log outputs from the Tr
 
 Once the transformation has finished succesfully the user will be able to download the artifacts created by the transformation.
 
-## Design prinicpals
+## Design principles
 
 ### Used frameworks (Backend)
 
