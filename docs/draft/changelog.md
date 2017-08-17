@@ -20,7 +20,5 @@
     - if transformation is not in state "user-input", do not send error 404. The resource is there. There are simply no key value pairs to fill out. Send an empty array.
 #### TODO
 - Add missing status responses, especially for errors
-- add a graphical representation (tree) of the api
 - read requirements again and find mismatches / missing features
 - check for inconsistencies in json response/request style or enhance style
-

@@ -1,5 +1,6 @@
 # Alternative draft for the REST api
-All calls and requests return data as JSON.
+
+![rest api as a tree](rest-api.png)
 ### Current status
 ##### GET /status
 Get the current status of the transformer.
@@ -25,10 +26,10 @@ Returns all target platforms which are available for transforming the CSAR.
 ```json
 [ 
     "aws": {
-        "href"="/platforms/aws"
+        "href":"/platforms/aws"
     },
     "cloudformation": {
-        "href"="/platforms/cloudformation"
+        "href":"/platforms/cloudformation"
     }
 ]
 ```
@@ -48,30 +49,33 @@ Get a list of all toscamodels.
         "name":"Hello World"
     },
     {
-        "href":/toscamodels/2",
+        "href":"/toscamodels/2",
         "id":2,
         "name":"Billing App"
 ]
 ```
 ##### POST /toscamodels
 Create a new TOSCA model. Returns a link to the new resource.
+
 *Request body:*  
+```json
 {
-    "name"={appName}
+    "name":"{appName}"
 }
-- name: name (String) of the application used for representation. must be unique
+```
+- name: name (String) of the application used for representation. must be unique.
 
 *returns*: 
 ```json
 {
-    "href":/toscamodels/1
-    "id":1
-    "name"={appName}
+    "href":"/toscamodels/1",
+    "id":1,.
+    "name":"{appName}"
 }
 ```
 
 *ERRORS*:  
-422 - "name" value already in use by other toscamodel
+422 - `name` value already in use by other toscamodel
 
 ##### DELETE /toscamodels
 Delete all TOSCA models
@@ -82,9 +86,9 @@ Get the TOSCA model which ID matches {id}.
 *returns*:
 ```json
 {
-    "href":/toscamodels/1
+    "href":"/toscamodels/1",
     "id": 1,
-    "name"="AppName"
+    "name":"AppName"
 }
 ```
 *ERRORS*:  
@@ -96,7 +100,7 @@ Update the TOSCA model which ID matches given {id}.
 *returns:* Nothing
 *ERRORS*:  
 404 - TOSCA model with given {id} does not exist
-422 - "name" value already in use by other toscamodel
+422 - `name` value already in use by other toscamodel
 
 ##### DELETE /toscamodels/{id}
 Delete the TOSCA model which ID matches given {id}
