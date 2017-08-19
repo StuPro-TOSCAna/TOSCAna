@@ -271,7 +271,7 @@ If the transformation status changes to `user-input` the transformator needs add
 
 To get information about required data, call:
 ```
-GET /toscamodel/{appName}/transformations/{platform}/user-input
+GET /toscamodel/{appName}/transformations/{platform}/properties
 ```
 *returns:*  
 ```json
@@ -296,7 +296,7 @@ GET /toscamodel/{appName}/transformations/{platform}/user-input
 *ERRORS:*  
 `404` - if the transformation is not found (hence TOSCA model name or plaform is invalid)
 
-##### PUT /toscamodel/{appName}/transformations/{platform}/user-input
+##### PUT /toscamodel/{appName}/transformations/{platform}/properties
 Call this in order to specify the values for required keys. Calling this will automatically trigger an GET call to the same resource as response (in order to validate input).
 
 *Request body*:
