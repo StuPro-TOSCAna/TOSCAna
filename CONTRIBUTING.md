@@ -22,8 +22,8 @@ This project uses [Semantic Versioning](http://semver.org/) or _SemVer_ for shor
 Any new releases must adhere to this versioning scheme.
 
 ## Branches
-Our project currently consists of a _master_ and several _feature_ branches. 
-The master branch always contains a stable version of the project. Only commits with small, insignificant changes should be done directly on the master branch. 
+Our project currently consists of a _master_ and several _feature_ branches.
+The master branch always contains a stable version of the project. Only commits with small, insignificant changes should be done directly on the master branch.
 
 Any other changes should first be implemented and tested on a feature branch. The name of this feature branch should closely describe the added changes.
 
@@ -53,7 +53,6 @@ Zenhub allows the usage of pipelines. These are the pipelines used in this proje
 | Backlog | All issues selected for the upcoming sprint. |
 | In Progress | Issues someone is currently working on. |
 | Review/QA | Issues/Pull Requests that are ready to be reviewed. |
-| Done | Issues finished in this sprint. |
 | Closed | Issues that are done and approved in the sprint review. |
 
 ## Reporting a Bug
