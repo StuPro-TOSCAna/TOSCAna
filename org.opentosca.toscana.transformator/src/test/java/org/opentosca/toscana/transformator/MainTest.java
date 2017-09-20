@@ -17,7 +17,6 @@ public class MainTest {
     @Test
     public void testOne(){
         assertEquals("Hello!",main.sayHello());
-
     }
 
 }
