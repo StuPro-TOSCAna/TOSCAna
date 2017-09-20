@@ -9,6 +9,6 @@
 	<modules>
 		<module>org.opentosca.toscana.cli</module>
 		<module>org.opentosca.toscana.core</module>
-		<module>org.opentosca.toscana.transformator</module>
+		<module>org.opentosca.toscana.transform</module>
 	</modules>
 </project>
