@@ -1,8 +1,7 @@
 # TOSCAna
 
 [![Build Status](https://travis-ci.org/StuPro-TOSCAna/TOSCAna.svg?branch=ci)](https://travis-ci.org/StuPro-TOSCAna/TOSCAna)
-
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/f4f585462d3545b885824a81686170fd)](https://www.codacy.com/app/mmunozba/TOSCAna?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=nfode/TOSCAna&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/f4f585462d3545b885824a81686170fd)](https://www.codacy.com/app/mmunozba/TOSCAna?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=nfode/TOSCAna&amp;utm_campaign=Badge_Grade) [![codecov](https://codecov.io/gh/StuPro-TOSCAna/TOSCAna/branch/master/graph/badge.svg)](https://codecov.io/gh/StuPro-TOSCAna/TOSCAna)
 ## Introduction
 The TOSCAna framework allows the transformation of TOSCA models into other cloud formats.
 Currently, it aims to support multiple cloud ecosystems, with Amazon Web Services and their AWS Cloud Formation being the first.
@@ -22,4 +21,3 @@ Tools that are used in this project.
 - Code coverage: [Codecov](https://codecov.io/gh/nfode/stupro_toscana_vorprojekt), [Get browser extension](https://github.com/codecov/browser-extension)
 ## License
 TOSCAna is under the [Apache License 2.0](LICENSE).
-
