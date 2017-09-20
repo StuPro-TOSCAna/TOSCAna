@@ -1,4 +1,4 @@
-package org.opentosca.toscana.cli;
+package org.opentosca.toscana.core;
 
 public class Main {
 
