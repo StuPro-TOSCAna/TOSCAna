@@ -1,4 +1,4 @@
-package org.opentosca.toscana.transformator;
+package org.opentosca.toscana.transform;
 
 import org.junit.Before;
 import org.junit.Test;
