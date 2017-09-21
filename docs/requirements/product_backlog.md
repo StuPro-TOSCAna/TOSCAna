@@ -2,7 +2,7 @@
 
 ## Epic *Core* (must have)
 
-> Description
+> As a developer I want that the application is controlled by the core.
 
 ### Feature *REST API* (must have)
 
@@ -18,11 +18,6 @@
 > As a user, I want to get feedback whether my CSAR file is correct in terms of syntax.
 
 - Cost estimate: 13
-
-#### Implementable Story *Semantic Validation* (could have)
-> As a user, I want to get feedback whether my CSAR file is correct in terms of semantics. 
-
-- Cost estimate: 20
 
 ### Feature *Monitoring*
 > As a user, I want to get informed about the current status of my deployment.
