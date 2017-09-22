@@ -2,7 +2,7 @@
 
 ```java
 Note:
-Terms in curly braces like {appName} are meant to be substituted with a proper value. 
+Terms in curly braces like {appName} are meant to be substituted with a proper value.
 They must not be used literally.
 ```
 ![rest api as a tree](rest-api.png)
@@ -15,7 +15,7 @@ Get the current status of the transformer.
 {
     "status": "idle",
     "available_storage": 1000,
-    "total_storage": 10000,
+    "total_storage": 10000
 }
 ```
 - *status*: current status of the transformer, values can either be `idle`, `transforming` or `error`
@@ -29,12 +29,16 @@ Returns all target platforms which are available for transforming the CSAR.
 
 *returns:*
 ```json
-[ 
+[
     "aws": {
-        "href":"/platforms/aws"
+        "_links": {
+            "self": { "href": "/platforms/aws" }
+        }  
     },
     "cloudformation": {
-        "href":"/platforms/cloudformation"
+        "_links": {
+            "self": { "href": "/platforms/cloudformation" }
+        }
     }
 ]
 ```
@@ -49,24 +53,20 @@ Get a list of all toscamodels.
 ```json
 [
     {
-        "href":"/toscamodels/hello-world",
-        "name":"hello-world",
-        "csar": {
-            "href":"/toscamodels/hello-world/csar"
+        "_links":{
+            "self": { "href": "/toscamodels/hello-world" },        
+            "csar": { "href": "/toscamodels/hello-world/csar" },
+            "transformations": { "href": "/toscamodels/hello-world/transformations" }
         },
-        "transformations": {
-            "href":"/toscamodels/hello-world/transformations"
-        }
+        "name": "hello-world"
     },
     {
-        "href":"/toscamodels/billing-app",
-        "name":"billing-app",
-        "csar": {
-            "href":"/toscamodels/billing-app/csar"
+        "_links": {
+            "self": { "href": "/toscamodels/billing-app" },
+            "csar": { "href":"/toscamodels/billing-app/csar" },
+            "transformations": { "href": "/toscamodels/billing-app/transformations" }
         },
-        "transformations": {
-            "href":"/toscamodels/billing-app/transformations"
-        }
+        "name": "billing-app"
     }
 ]
 ```
@@ -76,22 +76,20 @@ Create a new TOSCA model. Returns a link to the new resource.
 *Request body:*  
 ```json
 {
-    "name":"{appName}"
+    "name": "{appName}"
 }
 ```
 - name: name (String) of the application used for representation. Must be unique. Allowed characters: [a-z0-9_-]. Upper case letters are automatically converted to lower case.
 
 *returns*: `201 - created`
-```
+```json
 {
-    "href":"/toscamodels/billing-app",
-    "name":"billing-app",
-    "csar": {
-        "href":"/toscamodels/billing-app/csar"
+    "_links": {
+        "self": { "href": "/toscamodels/{appName}" },
+        "csar": { "href": "/toscamodels/{appName}/csar" },
+        "transformations": { "href": "/toscamodels/{appName}/transformations" }
     },
-    "transformations": {
-        "href":"/toscamodels/billing-app/transformations"
-    }
+    "name": "{appName}"
 }
 ```
 
@@ -107,14 +105,12 @@ Get the TOSCA model which name matches {appName}.
 *returns*:
 ```json
 {
-    "href":"/toscamodels/{appName}",
-    "name":"AppName"
-    "csar": {
-        "href":"/toscamodels/{appName}/csar"
+    "_links": {
+        "self": { "href": "/toscamodels/{appName}" },
+        "csar": { "href": "/toscamodels/{appName}/csar" },
+        "transformations": { "href": "/toscamodels/{appName}/transformations" }
     },
-    "transformations": {
-        "href":"/toscamodels/{appName}/transformations"
-    }
+    "name": "{appName}"
 }
 ```
 *ERRORS*:  
@@ -164,10 +160,12 @@ Returns a list of all ongoing or finished transformations of given TOSCA model.
 ```json
 [
     "{platform}": {
-        "href": "/toscamodels/{appName}/transformations/{platform}",
+        "_links": {
+            "self": { "href": "/toscamodels/{appName}/transformations/{platform}" },
+            ...
+        },
         "status": ...
         ...
-
     },
 ..
 ]
@@ -180,20 +178,19 @@ Returns the transformation of the specifified TOSCA model which name matches giv
 *returns:*
 ```json
 {
-    "href":"/toscamodels/{appName}/transformations/{platform}"
-    "platform": {
-        "href": "/platforms/{platform}"
+    "_links": {
+        "self": { "href": "/toscamodels/{appName}/transformations/{platform}" },
+        "platform": { "href": "/platforms/{platform}" },
+        "artifact": { "href": "/toscamodels/{appName}/transformations/{platform}/artifact" }
     },
-    "artifact": {
-        "href": "/toscamodels/{appName}/transformations/{platform}/artifact"
-    },
-    "status":"user-input",
-    "progress":0
+    "status": "user-input",
+    "progress": 0
 }
 ```
-- href: link to self
-- platform: link to target platform
-- artifact: link to target platform artifact
+- `_links`:
+    - self: link to self
+    - platform: link to target platform
+    - artifact: link to target platform artifact
 - status: ["user-input","ready","queued","transforming","done","stopped","failed"]
     - user-input: before transformation can start, user has to specify some values
     - ready: ready for transformation
@@ -258,6 +255,7 @@ Receive the logs for specified transformation. All logs starting with the {start
 ```
 3. Client calls GET .../logs?start=4
 4. etc
+
 ### Downloading platform artifacts
 ##### GET /toscamodels/{appName}/transformations/{platform}/artifact
 Downloads the deployment artifact for specified platform and TOSCA model.
@@ -321,4 +319,3 @@ Call this in order to specify the values for required keys. Calling this will au
     }
 ]
 ```
-
