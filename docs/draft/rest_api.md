@@ -1,5 +1,5 @@
 # Alternative draft for the REST api
-**Note:** Terms in curly braces like {appName} are meant to be substituted with a proper value.
+**Note:** Terms in curly braces like {appName} and {platformName} are meant to be substituted with a proper value.
 They must not be used literally.
 
 ![rest api as a tree](rest-api.png)
@@ -167,9 +167,9 @@ Returns a list of all ongoing or finished transformations of given TOSCA model.
 *Returns:*
 ```json
 [
-    "{platform}": {
+    "{platformName}": {
         "_links": {
-            "self": { "href": "/toscamodels/{appName}/transformations/{platform}" },
+            "self": { "href": "/toscamodels/{appName}/transformations/{platformName}" },
             ...
         },
         "status": ...
@@ -180,18 +180,18 @@ Returns a list of all ongoing or finished transformations of given TOSCA model.
 ```
 See below for details of the format of a transformation.
 
-##### GET /toscamodels/{appName}/transformations/{platform}
-Returns the transformation of the specifified TOSCA model which name matches given {platform}.
+##### GET /toscamodels/{appName}/transformations/{platformName}
+Returns the transformation of the specifified TOSCA model which name matches given {platformName}.
 
 *Returns:*
 ```json
 {
     "_links": {
-        "self": { "href": "/toscamodels/{appName}/transformations/{platform}" },
-        "platform": { "href": "/platforms/{platform}" },
-        "artifact": { "href": "/toscamodels/{appName}/transformations/{platform}/artifact" },
-        "logs": { "href": "/toscamodels/{appName}/transformations/{platform}/logs" },
-        "properties": { "href": "/toscamodels/{appName}/transformations/{platform}/properties" }
+        "self": { "href": "/toscamodels/{appName}/transformations/{platformName}" },
+        "platform": { "href": "/platforms/{platformName}" },
+        "artifact": { "href": "/toscamodels/{appName}/transformations/{platformName}/artifact" },
+        "logs": { "href": "/toscamodels/{appName}/transformations/{platformName}/logs" },
+        "properties": { "href": "/toscamodels/{appName}/transformations/{platformName}/properties" }
     },
     "status": "user-input",
     "progress": 0
@@ -211,7 +211,7 @@ Returns the transformation of the specifified TOSCA model which name matches giv
     - `failed`: transformation failed due to an error
 - `progress`: progress of the  transformation in percentage (integer, [0-100]). Can only change in the status `transforming`.
 
-##### PUT /toscamodels/{appName}/transformations/{platform}
+##### PUT /toscamodels/{appName}/transformations/{platformName}
 Request the transformation of the specified TOSCA model to the specified platform.
 If a transformation has already started for the particular platform, the server will abort and restart the transformation.
 
@@ -221,7 +221,7 @@ If a transformation has already started for the particular platform, the server 
 *Errors:*  
 `423` - Locked: transformation not ready but in state "user-input"
 
-##### DELETE /toscamodels/{appName}/transformations/{platform}
+##### DELETE /toscamodels/{appName}/transformations/{platformName}
 Halts the specified transformation.
 
 *Postcondition:* Status of specified transformation is "canceled"
@@ -230,7 +230,7 @@ Halts the specified transformation.
 `404` - transformation doesn't exit (TOSCA model oder platform does not exist)
 
 ### Reading transformation logs
-##### GET /toscamodels/{appName}/transformations/{platform}/logs/
+##### GET /toscamodels/{appName}/transformations/{platformName}/logs/
 Receive the logs for specified transformation. All logs starting with the {start}nth to the most recent log are transfered.
 
 *Request body:*
@@ -268,7 +268,7 @@ Receive the logs for specified transformation. All logs starting with the {start
 4. etc
 
 ### Downloading platform artifacts
-##### GET /toscamodels/{appName}/transformations/{platform}/artifact
+##### GET /toscamodels/{appName}/transformations/{platformName}/artifact
 Downloads the deployment artifact for specified platform and TOSCA model.
 
 *Errors:*  
@@ -280,7 +280,7 @@ If the transformation status changes to `user-input` the transformator needs add
 
 To get information about required data, call:
 ```
-GET /toscamodel/{appName}/transformations/{platform}/properties
+GET /toscamodel/{appName}/transformations/{platformName}/properties
 ```
 *returns:*  
 ```json
@@ -305,7 +305,7 @@ GET /toscamodel/{appName}/transformations/{platform}/properties
 *Errors:*  
 `404` - if the transformation is not found (hence TOSCA model name or plaform is invalid)
 
-##### PUT /toscamodel/{appName}/transformations/{platform}/properties
+##### PUT /toscamodel/{appName}/transformations/{platformName}/properties
 Call this in order to specify the values for required keys. Calling this will automatically trigger a GET call to the same resource as the response (in order to validate the input).
 
 *Request body*:
