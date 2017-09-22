@@ -1,15 +1,14 @@
 # Alternative draft for the REST api
-
-```java
-Note:
-Terms in curly braces like {appName} are meant to be substituted with a proper value.
+**Note:** Terms in curly braces like {appName} are meant to be substituted with a proper value.
 They must not be used literally.
-```
+
 ![rest api as a tree](rest-api.png)
+
 ### Current status
 ##### GET /status
 Get the current status of the transformer.
-*returns:* HTTP Response Code: 200 (always)
+
+*Returns:* HTTP Response Code: 200 (always)
 
 ```json
 {
@@ -18,16 +17,16 @@ Get the current status of the transformer.
     "total_storage": 10000
 }
 ```
-- *status*: current status of the transformer, values can either be `idle`, `transforming` or `error`
-- *available_storage*: free hard disk storage in MB (integer)
-- *total_storage*: total storage of the hard disk (integer, in MB)
+- `status`: current status of the transformer, values can be [`idle`, `transforming`, `error`]
+- `available_storage`: free hard disk storage (integer, in MB)
+- `total_storage`: total hard disk storage (integer, in MB)
 
 ### Manage target platforms
 
 ##### GET /platforms
-Returns all target platforms which are available for transforming the CSAR.
+Return all target platforms which are available for transforming the CSAR.
 
-*returns:*
+*Returns:*
 ```json
 [
     "aws": {
@@ -42,18 +41,21 @@ Returns all target platforms which are available for transforming the CSAR.
     }
 ]
 ```
-NOTE: Later it is possible to add platform specific preferences here
+- `_links`: contains links to resources
+    - `self`: link to self
+
+**Note:** It is possible to add platform specific preferences here later.
 
 ### Manipulating TOSCA Models
 
 ##### GET /toscamodels
-Get a list of all toscamodels.  
+Get a list of all TOSCA models.  
 
-*returns*:
+*Returns*:
 ```json
 [
     {
-        "_links":{
+        "_links": {
             "self": { "href": "/toscamodels/hello-world" },        
             "csar": { "href": "/toscamodels/hello-world/csar" },
             "transformations": { "href": "/toscamodels/hello-world/transformations" }
@@ -70,6 +72,12 @@ Get a list of all toscamodels.
     }
 ]
 ```
+- `_links`: contains links to resources
+    - `self`: link to self
+    - `csar`: link to CSAR of the TOSCA model
+    - `transformations`: link to transformations of the TOSCA model
+- `name`: name (String) of the application used for representation. Must be unique. Allowed characters: [a-z0-9_-]. Upper case letters are automatically converted to lower case.
+
 ##### POST /toscamodels
 Create a new TOSCA model. Returns a link to the new resource.
 
@@ -79,9 +87,8 @@ Create a new TOSCA model. Returns a link to the new resource.
     "name": "{appName}"
 }
 ```
-- name: name (String) of the application used for representation. Must be unique. Allowed characters: [a-z0-9_-]. Upper case letters are automatically converted to lower case.
 
-*returns*: `201 - created`
+*Returns*: `201 - created`
 ```json
 {
     "_links": {
@@ -93,7 +100,7 @@ Create a new TOSCA model. Returns a link to the new resource.
 }
 ```
 
-*ERRORS*:  
+*Errors*:  
 `422` - `name` value already in use by other toscamodel
 
 ##### DELETE /toscamodels
@@ -102,7 +109,7 @@ Delete all TOSCA models
 ##### GET /toscamodels/{appName}
 Get the TOSCA model which name matches {appName}.
 
-*returns*:
+*Returns*:
 ```json
 {
     "_links": {
@@ -113,35 +120,36 @@ Get the TOSCA model which name matches {appName}.
     "name": "{appName}"
 }
 ```
-*ERRORS*:  
-404 - TOSCA model with given {appName} does not exist
+*Errors*:  
+`404` - TOSCA model with given {appName} does not exist
 
 ##### PUT /toscamodels/{appName}
 Update the TOSCA model which name matches given {appName}.
 
-*returns:* Nothing
+*Returns:* Nothing
 
-*ERRORS*:  
+*Errors*:  
 `404` - TOSCA model with given {appName} does not exist  
-`422` - `name` value already in use by other toscamodel
+`422` - `name` value already in use by other TOSCA model
 
 ##### DELETE /toscamodels/{appName}
 Delete the TOSCA model which name matches given {appName}
 
-*returns:* Nothing
+*Returns:* Nothing
 
-*ERRORS:*  
+*Errors:*  
 `404` - TOSCA model with given {appName} does not exist
 
 ## Manipulating CSARs
 ##### PUT /toscamodels/{appName}/csar
 Uploads a CSAR.
-*Required request body*:
-Raw csar file content
 
-*returns:* `203`
+*Request body*:
+Raw CSAR file content
 
-*ERRORS:*  
+*Returns:* `203`
+
+*Errors:*  
 `400` - Uploaded file is not a valid CSAR, rejected  
 `404` - TOSCA model with given {appName} does not exist  
 `507` - Insufficient storage  
@@ -149,14 +157,14 @@ Raw csar file content
 ##### DELETE /toscamodels/{appName}/csar
 Deletes the csar of the toscamodel which matches given {appName}.
 
-*returns:* Nothing
+*Returns:* Nothing
 
 ### Managing transformations
 
 ##### GET /toscamodels/{appName}/transformations
 Returns a list of all ongoing or finished transformations of given TOSCA model.
 
-*returns:*
+*Returns:*
 ```json
 [
     "{platform}": {
@@ -175,39 +183,42 @@ See below for details of the format of a transformation.
 ##### GET /toscamodels/{appName}/transformations/{platform}
 Returns the transformation of the specifified TOSCA model which name matches given {platform}.
 
-*returns:*
+*Returns:*
 ```json
 {
     "_links": {
         "self": { "href": "/toscamodels/{appName}/transformations/{platform}" },
         "platform": { "href": "/platforms/{platform}" },
-        "artifact": { "href": "/toscamodels/{appName}/transformations/{platform}/artifact" }
+        "artifact": { "href": "/toscamodels/{appName}/transformations/{platform}/artifact" },
+        "logs": { "href": "/toscamodels/{appName}/transformations/{platform}/logs" },
+        "properties": { "href": "/toscamodels/{appName}/transformations/{platform}/properties" }
     },
     "status": "user-input",
     "progress": 0
 }
 ```
-- `_links`:
-    - self: link to self
-    - platform: link to target platform
-    - artifact: link to target platform artifact
-- status: ["user-input","ready","queued","transforming","done","stopped","failed"]
-    - user-input: before transformation can start, user has to specify some values
-    - ready: ready for transformation
-    - queued: server is currently busy, transformation is queued and will eventually start
-    - transforming: transformation is currently ongoing
-    - done: transformation is successfully finished
-    - canceled: transformation got canceled by a client
-    - failed: transformation failed due to an error
-- progress: int, [0-100], progresss of transformation in percentage. Can only change in status "transforming"
+- `_links`: contains links to resources
+    - `self`: link to self
+    - `platform`: link to target platform
+    - `artifact`: link to target platform artifact
+- `status`: status of the transformation, values can be [`user-input`, `ready`, `queued`, `transforming`, `done`, ` stopped`, `failed`]
+    - `user-input`: before the transformation can start, the user has to specify some values
+    - `ready`: ready for transformation
+    - `queued`: server is currently busy, the transformation is queued and will eventually start
+    - `transforming`: transformation is currently ongoing
+    - `done`: transformation is successfully finished
+    - `canceled`: transformation got canceled by a client
+    - `failed`: transformation failed due to an error
+- `progress`: progress of the  transformation in percentage (integer, [0-100]). Can only change in the status `transforming`.
 
 ##### PUT /toscamodels/{appName}/transformations/{platform}
 Request the transformation of the specified TOSCA model to the specified platform.
-If already started a transformation to the particular platform, server will abort and restart transformation.
+If a transformation has already started for the particular platform, the server will abort and restart the transformation.
 
-*returns:* `201` Created (immediately - note this does not mean
-that the transformation is finished)
-*ERRORS*:  
+*Returns:* `201` Created
+(immediately - **Note:** This does not mean that the transformation is finished.)
+
+*Errors:*  
 `423` - Locked: transformation not ready but in state "user-input"
 
 ##### DELETE /toscamodels/{appName}/transformations/{platform}
@@ -233,8 +244,8 @@ Receive the logs for specified transformation. All logs starting with the {start
 *returns:*
 ```json
 {
-    "end":53,
-    "logs":["line1","line2",...]
+    "end": 53,
+    "logs": ["line1","line2",...]
 }
 ```
 - end: the index of the last log line
@@ -249,8 +260,8 @@ Receive the logs for specified transformation. All logs starting with the {start
 2. Server answers with
 ```json
 {
-    "end":3,
-    "logs:["line1","line2","line3","line4"]
+    "end": 3,
+    "logs": ["line1","line2","line3","line4"]
 }
 ```
 3. Client calls GET .../logs?start=4
@@ -260,7 +271,7 @@ Receive the logs for specified transformation. All logs starting with the {start
 ##### GET /toscamodels/{appName}/transformations/{platform}/artifact
 Downloads the deployment artifact for specified platform and TOSCA model.
 
-*ERRORS:*  
+*Errors:*  
 `404` - The artifact does not exist
 
 ### Specifying additional user-input
@@ -275,36 +286,36 @@ GET /toscamodel/{appName}/transformations/{platform}/properties
 ```json
 [
     "Database Password": {
-        "type":"string",
-        "value":null,
-        "valid":false
+        "type": "string",
+        "value": null,
+        "valid": false
     },
     "timeout": {
-        "type":"integer",
-        "value":null,
-        "valid":false
+        "type": "integer",
+        "value": null,
+        "valid": false
     }
 ]
 ```
-- Object Names: Key which requires a value
-- type: the value needs to be of this type (must be one of [string,uinteger,integer,float]
-- value: In the response, this field needs to be set with a value of wanted type
-- valid: if false, server rejects value. All key value pairs must be valid in order for the transformation to happen.
+- `Object Names`: Key which requires a value
+- `type`: the value needs to be of this type (must be one of [string, uinteger, integer, float]
+- `value`: In the response, this field needs to be set with a value of wanted type
+- `valid`: if false, server rejects value. All key value pairs must be valid in order for the transformation to happen.
 
-*ERRORS:*  
+*Errors:*  
 `404` - if the transformation is not found (hence TOSCA model name or plaform is invalid)
 
 ##### PUT /toscamodel/{appName}/transformations/{platform}/properties
-Call this in order to specify the values for required keys. Calling this will automatically trigger an GET call to the same resource as response (in order to validate input).
+Call this in order to specify the values for required keys. Calling this will automatically trigger a GET call to the same resource as the response (in order to validate the input).
 
 *Request body*:
 ```json
 [
-    "Database Password":"securePassword",
-    "timeout":5
+    "Database Password": "securePassword",
+    "timeout": 5
 ]
 ```
-*returns:*
+*Returns:*
 ```json
 [
     "Database Password": {
