@@ -298,7 +298,7 @@ GET /toscamodel/{appName}/transformations/{platformName}/properties
 ]
 ```
 - `Object Names`: Key which requires a value
-- `type`: the value needs to be of this type (must be one of [string, uinteger, integer, float]
+- `type`: the value needs to be of this type (must be one of [string, integer, float]
 - `value`: In the response, this field needs to be set with a value of wanted type
 - `valid`: if false, server rejects value. All key value pairs must be valid in order for the transformation to happen.
 
