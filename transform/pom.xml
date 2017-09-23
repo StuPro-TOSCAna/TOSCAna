@@ -6,9 +6,11 @@
 		<artifactId>toscana</artifactId>
 		<version>1.0-SNAPSHOT</version>
 	</parent>
-	<artifactId>org.opentosca.toscana.core</artifactId>	<packaging>jar</packaging>
+	<artifactId>transform</artifactId>
+	<packaging>jar</packaging>
 
 	<dependencies>
+
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
