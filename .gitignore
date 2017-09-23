@@ -22,7 +22,3 @@
 hs_err_pid*
 
 \.idea/
-
-*.iml
-
-core/target/classes/
