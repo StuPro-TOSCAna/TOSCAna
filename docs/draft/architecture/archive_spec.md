@@ -1,4 +1,4 @@
-#Storage Specification
+# Storage Specification
 This document describes the functionality of the Storage component (fomerly known as archive).
 
 The main task of the storage component is to persistently manage all CSAR (Cloud Service Archive) archives stored on the server and the transformations executed on them.
