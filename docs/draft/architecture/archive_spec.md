@@ -63,6 +63,12 @@ The methods shown in the above class diagram have the following functionality:
 
 ### Archive
 
+The archive class is a Wrapper class for the CSAR associated with the application. 
+
+The methods shown in the above class diagram have the following functionality:
+* `unzipInWorkingDir(t: Transformation)` - Unzips the archive into the working directory of the given transformation. The task is executed Syncronously in the same thread as it was invoked.
+* `delete()` - Deletes the archive from disk and from the application.
+
 ### Transformation
 
 ## Open Questions
