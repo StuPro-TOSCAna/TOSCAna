@@ -23,9 +23,11 @@ The API-Server hosts a REST-based API. The CLI and Web Frontend will connect to 
 
 ### Archive
 
-The archive represents the interface between the core and the persistent storage.
-The base folder is the `csar`-folder which contains all apps. There will be an individual folder for each app, named by the the apps name. So for a app named "lamp-stack" the folder path will be `csars/lamp-stack/`.
-Each app folder contains the `platform` folder. In the `platform` folder you can find subfolders for every platform the app was transformed to. The names for the subfolders will be the short form of the platforms name. "Amazon Web Services" as platform will result into the following folder structure: `csars/lamp-stack/platforms/aws/`.
+The Archive component abstracts file access. It can store all kind of artifacts (CSARs and TargetArtifacts) and other relevant data to disc and offers access to these in a simple manner. 
+Its public interface contains means to store, receive and delete data in a context sensual way (e.g. storeCSAR(..) etc).  
+The Archive uses the structure of the REST-api for storing data.   
+Example: The resulting target artifact of the transformation from app 'simpleapp' to the platform 'aws' would reside in file `'$ARCHIVE\_ROOT/apps/simpleapp/transformations/aws/artifact`.  
+This makes the file database explorable even with a normal file explorer.
 
 ##### Open Questions
 
@@ -33,11 +35,6 @@ Each app folder contains the `platform` folder. In the `platform` folder you can
 
 #### Open Questions and Ideas
 
-- How will the state data be stored persistently (Not the CSAR)?
-    - Maybe use a integrated DBMS like H2 or Apache Derby, However this point has to be discussed in the group and maybe even with the customer. If the persistent storing of the state is not necessary this component is pretty much useless.
-
-Its important to note, that the Data-Storage component does not store the CSAR Uploaded using the API this has to be stored somewhere in the Filesystem.
-   
 ### CLI
 
 ### WebUI
