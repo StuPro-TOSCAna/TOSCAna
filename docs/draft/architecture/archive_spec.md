@@ -71,6 +71,33 @@ The methods shown in the above class diagram have the following functionality:
 
 ### Transformation
 
+A transformation Object represents the data that needs to be persisted in order to perform a transformation. In one Application instance only one transformation can exist for each platform. In order to dreate a new one, the old one has to be deleted first.
+
+The Directory Structure of a Transformation Object looks like this:
+```
+/applications/{applicationName}/transformations/{platformIdentifier}/
+    - workspace/
+    - artifacts/
+    - results.zip
+    - properties.json
+```
+
+* `workspace/` - Working directory for the transformation. (always exists)
+* `artifacts/` - Artifact directory for the transformation. (always exists) This directory will be used to store the result files of the transformation
+* `results.zip` - Once the transformation is done, the contents of the artifacts folder will be compressed into this zip archive. (only exists if the transformation succeeded)
+* `properties.json` - Stores the properties of the transformation (always exists)
+* `transformation.log` - this file stores the logs for the transformation.
+
+The methods shown in the above class diagram have the following functionality:
+* `clearWorkingDir()` -  Deletes the contents of the working directory
+* `clearArtifactDir()` - Deletes the contents ot the artifact directory
+* `compressArtifactDir()` - Compresses the `artifacts/` directory into the `results.zip` file described above
+* `delete()` - deletes the Transformation and all its files.
+
+## TODO
+
+* Add function to read/write logs for a specific transformation.
+
 ## Open Questions
 
 * How will Properties get stored? JSON serialisation, Java Properties or maybe something completely different
