@@ -6,9 +6,12 @@
 	<version>1.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>TOSCAna</name>
+	<properties>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+	</properties>
 	<modules>
-		<module>org.opentosca.toscana.cli</module>
-		<module>org.opentosca.toscana.core</module>
-		<module>org.opentosca.toscana.transform</module>
+		<module>cli</module>
+		<module>core</module>
 	</modules>
 </project>
