@@ -1,0 +1,98 @@
+package org.opentosca.toscana.core.data;
+
+import java.util.Set;
+
+public class Transformation {
+
+    private Application app;
+    private TransformationState state;
+    private Platform targetPlatform;
+    private Set<Property> properties;
+    private Log log;
+    private Set<TransformationListener> listeners;
+
+    /**
+     * Creates a new transformation for given app to given targetPlatform.
+     * Also triggers the start of the transformation.
+     * The transformation process itself happens asynchronously.
+     * That means construction will end before the actual transformation is finished.
+     * @param app the subject of transformation
+     * @param targetPlatform the target platform
+     * @param properties the user-supplied properties for this transformation
+     * @throws MissingPropertyException if given properties are not sufficient for given platform
+     */
+    public Transformation(Application app, Platform targetPlatform, Set<Property> properties) throws MissingPropertyException {
+        this.app = app;
+        this.targetPlatform = targetPlatform;
+        this.properties = properties;
+        this.log = new Log();
+    }
+
+    /**
+     * @return the state the transformation is currently in
+     */
+    public TransformationState getState(){
+        // TODO
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * If this instance is in state <code>QUEUED</code> or <code>TRANSFORMING</code>, transformation will abort.
+     * If this instance is in any other state, nothing happens
+     * After calling, this instance's state will be <code>FAILED</code>.
+     */
+     public void abort(){
+        // TODO
+         throw new UnsupportedOperationException();
+     }
+
+    /**
+     * Registers given listener for updates regarding this transformations state change.
+     * On a state change, the listeners' hooks will be called in <b>arbitrary order</b>.
+     * If the listener is already registered, nothing happens.
+     * @param listener
+     */
+    public void setOnStateChange(TransformationListener listener){
+        // TODO
+        // hint: use IdentityHashMap for Listeners
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Removes given listener from the list of registered listener for this transformation.
+     * If the listener is not registered, nothing happens.
+     * @param listener listener to be removed from the set of listeners
+     */
+    public void removeOnStateChange(TransformationListener listener){
+        // TODO
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Returns the logs of this transformation
+     */
+    public Log getLog(){
+        // TODO
+        throw new UnsupportedOperationException();
+    }
+
+
+    /**
+     * @return if this transformation object's state is <code>DONE</code>, returns the target artifact of the transformation.
+     * Else returns null.
+     */
+    public TargetArtifact getTargetArtifact(){
+        // TODO
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Returns the target platform of this instance
+     */
+    public Platform getPlatform(){
+        // TODO
+        throw new UnsupportedOperationException();
+    }
+
+    // TODO add means to delete the transformation (maybe?)
+}
