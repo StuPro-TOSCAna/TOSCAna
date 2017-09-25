@@ -279,7 +279,7 @@ Receive the logs for the specified transformation.
     }
     "start": 1,
     "end": 10,
-    "logs": [ "line1", "line2", ..., "line20" ]
+    "logs": [ "line1", "line2", ..., "line10" ]
 }
 ```
 - `_links`: contains links to resources
