@@ -299,12 +299,13 @@ Receive the logs for specified transformation. All logs starting with the {start
 4. etc
 
 **Note**: If no new log lines are available, then an empty array is returned and end stays at the same point (end=start):
+
 *Example*:
 1. Client calls GET .../logs?start=4
 2. Server answers with
 ```json
 {
-    "end": 4,
+    "end": 3,
     "logs": []
 }
 ```
