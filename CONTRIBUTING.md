@@ -4,6 +4,8 @@
 <!-- TOC depthFrom:2 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
 
 - [Versioning](#versioning)
+- [Checkstyle](#checkstyle)
+	- [Set up](#set-up)
 - [Branches](#branches)
 - [Pull Requests](#pull-requests)
 	- [Working on a Pull Request](#working-on-a-pull-request)
@@ -11,9 +13,9 @@
 	- [Merging a Pull Request](#merging-a-pull-request)
 - [Zenhub Issue Board](#zenhub-issue-board)
 	- [Pipelines](#pipelines)
-- [Reporting A Bug](#reporting-a-bug)
-	- [Before Submitting A Bug Report](#before-submitting-a-bug-report)
-	- [How Do I Submit A Bug Report?](#how-do-i-submit-a-bug-report)
+- [Reporting a Bug](#reporting-a-bug)
+	- [Before submitting a Bug Report](#before-submitting-a-bug-report)
+	- [How do I submit a Bug Report?](#how-do-i-submit-a-bug-report)
 
 <!-- /TOC -->
 ## Versioning
@@ -21,6 +23,13 @@
 This project uses [Semantic Versioning](http://semver.org/) or _SemVer_ for short. If you do not know what SemVer is, a detailed explanation is available on their website.
 Any new releases must adhere to this versioning scheme.
 
+## Checkstyle
+
+Our project uses checkstyle to ensure coding standards. If you want to read more about checkstyle visit [http://checkstyle.sourceforge.net](http://checkstyle.sourceforge.net).
+
+### Set up
+- for **Eclipse** visist: [Eclipse configuration from the eclipse/winery repo](https://github.com/eclipse/winery/tree/master/docs/dev/config/Eclipse)
+- for **InteliJ** visist: [InteliJ configuration from the eclipse/winery repo](https://github.com/eclipse/winery/tree/master/docs/dev/config/IntelliJ%20IDEA)
 ## Branches
 Our project currently consists of a _master_ and several _feature_ branches.
 The master branch always contains a stable version of the project. Only commits with small, insignificant changes should be done directly on the master branch.
