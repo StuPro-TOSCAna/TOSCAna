@@ -263,55 +263,53 @@ Halts the specified transformation.
 *Errors:*
 `404` - transformation doesn't exit (application oder platform does not exist)
 
+
 ### Reading transformation logs
 ##### GET /apps/{appName}/transformations/{platformName}/logs/
-Receive the logs for the specified transformation.
+Receive the logs for specified transformation. All logs starting with the {start}nth to the most recent log are transfered.
+
+*Request body:*
+```json
+{
+    "start":0
+}
+```
+- start - index of first log to receive
 
 *returns:*
 ```json
 {
-    "_links": {
-        "self": { "href": "/apps/{appName}/transformations/{platformName}/logs"},
-        "next": { "href": "/apps/{appName}/transformations/{platformName}/logs?page=2"},
-        "findLog": {
-            "href": "/apps/{appName}/transformations/{platformName}/logs{?line},
-            "templated": true
-    }
-    "start": 1,
-    "end": 10,
-    "logs": [ "line1", "line2", ..., "line10" ]
+    "end": 53,
+    "logs": ["line1","line2",...]
 }
 ```
-- `_links`: contains links to resources
-    - `self`: link to self
-    - `next`: link to the next page of logs
-    - `findLog`: template containing the variable "line", which can be used with a specific line number to get directly to the log with that line
-- start: the index of the first log line
 - end: the index of the last log line
 - logs: array of log lines (order: oldest first)
 
-*Errors:*
-`404` - no logs available
-
 *Example*:
-1. Client calls GET .../logs?page=2
+1. Client calls GET .../logs?start=0
 2. Server answers with
 ```json
 {
-    "_links": {
-        "self": { "href": "/apps/{appName}/transformations/{platformName}/logs?page=2" },
-        "next": { "href": "/apps/{appName}/transformations/{platformName}/logs?page=3" },
-        "findLog": {
-            "href": "/apps/{appName}/transformations/{platformName}/logs{?id}",
-            "templated": true
-    }
-    "start": 11,
-    "end": 20,
-    "logs": [ "line11", "line12", ..., "line20" ]
+    "end": 3,
+    "logs": ["line1","line2","line3","line4"]
 }
 ```
-3. Client calls GET .../logs?page=3
-4. etc.
+3. Client calls GET .../logs?start=4
+4. etc
+
+**Note**: If no new log lines are available, then an empty array is returned and end stays at the same point (end=start):
+*Example*:
+1. Client calls GET .../logs?start=4
+2. Server answers with
+```json
+{
+    "end": 4,
+    "logs": []
+}
+```
+3. Client calls GET .../logs?start=4
+4. etc
 
 ### Downloading platform artifacts
 ##### GET /apps/{appName}/transformations/{platformName}/artifact
