@@ -12,11 +12,16 @@ Get the current status of the transformer.
 
 ```json
 {
+    "_links": {
+        "self": { "href": "/status" }
+    },
     "status": "idle",
     "available_storage": 1000,
     "total_storage": 10000
 }
 ```
+- `_links`: contains links to resources
+    - `self`: link to self
 - `status`: current status of the transformer, values can be [`idle`, `transforming`, `error`]
 - `available_storage`: free hard disk storage (integer, in MB)
 - `total_storage`: total hard disk storage (integer, in MB)
@@ -28,21 +33,26 @@ Return all target platforms which are available for transforming the CSAR.
 
 *Returns:*
 ```json
-[{
-    "aws": {
-        "_links": {
-            "self": { "href": "/platforms/aws" }
-        }
+{
+    "_links": {
+        "self": { "href": "/platforms" },
     },
-    "cloudformation": {
-        "_links": {
-            "self": { "href": "/platforms/cloudformation" }
-        }
-    }
-}]
+    "_embedded": {
+        "platform": [{
+            "_links": {
+                "self": { "href": "/platforms/aws" }
+            }
+         }, {
+            "_links": {
+                "self": { "href": "/platforms/cloudformation" }
+            }
+        }]
+     }
+}
 ```
 - `_links`: contains links to resources
     - `self`: link to self
+- `_embedded`: resources contained within
 
 **Note:** It is possible to add platform specific preferences here later.
 
@@ -53,30 +63,40 @@ Get a list of all applications.
 
 *Returns*:
 ```json
-[
-    {
-        "_links": {
-            "self": { "href": "/apps/hello-world" },
-            "archive": { "href": "/apps/hello-world/archive" },
-            "transformations": { "href": "/apps/hello-world/transformations" }
-        },
-        "name": "hello-world"
+{
+    "_links": {
+        "self": { "href": "/apps" },
+        "next": { "href": "/apps?page=2"}
+        "findApp": {
+            "href": "/apps/{appName}",
+            "templated": true
+        }
     },
-    {
-        "_links": {
-            "self": { "href": "/apps/billing-app" },
-            "archive": { "href":"/apps/billing-app/archive" },
-            "transformations": { "href": "/apps/billing-app/transformations" }
-        },
-        "name": "billing-app"
-    }
-]
+    "_embedded": {
+       "app": [{
+            "_links": {
+                "self": { "href": "/apps/hello-world" },
+                "archive": { "href": "/apps/hello-world/archive" },
+                "transformations": { "href": "/apps/hello-world/transformations" }
+            },
+            "name": "hello-world"
+        }, {
+            "_links": {
+                "self": { "href": "/apps/billing-app" },
+                "archive": { "href":"/apps/billing-app/archive" },
+                "transformations": { "href": "/apps/billing-app/transformations" }
+            },
+            "name": "billing-app"
+        }]
+     }
+}
 ```
 - `_links`: contains links to resources
     - `self`: link to self
-    - `archive`: link to CSAR of the application
-    - `transformations`: link to transformations of the application
-- `name`: name (String) of the application used for representation. Must be unique. Allowed characters: [a-z0-9_-]. Upper case letters are automatically converted to lower case.
+    - `next`: link to the next page of apps
+    - `findApp`: template containing the variable "appName", which can be used with the specific app name to get directly to that app
+- `_embedded`: resources contained within
+
 
 ##### POST /apps
 Create a new application. Returns a link to the new resource.
@@ -99,6 +119,11 @@ Create a new application. Returns a link to the new resource.
     "name": "{appName}"
 }
 ```
+- `_links`: contains links to resources
+    - `self`: link to self
+    - `archive`: link to CSAR of the application
+    - `transformations`: link to transformations of the application
+- `name`: name (String) of the application used for representation. Must be unique. Allowed characters: [a-z0-9_-]. Upper case letters are automatically converted to lower case.
 
 *Errors*:
 `422` - `name` value already in use by other application
@@ -166,18 +191,27 @@ Returns a list of all ongoing or finished transformations of given application.
 
 *Returns:*
 ```json
-[{
-    "{platformName}": {
-        "_links": {
-            "self": { "href": "/apps/{appName}/transformations/{platformName}" },
-            ...
-        },
-        "status": ...,
-        ...
+{
+    "_links": {
+        "self": { "href": "/apps/{appName}/transformations/" },
     },
-..
-}]
+    "_embedded": {
+        "transformation": [{
+            "_links": {
+                "self": { "href": "/apps/{appName}/transformations/{platformName}" },
+            ...
+            },
+            "status": ...
+            ...
+        }]
+    },
+    ..
+}
 ```
+- `_links`: contains links to resources
+    - `self`: link to self
+- `_embedded`: resources contained within
+
 See below for details of the format of a transformation.
 
 ##### GET /apps/{appName}/transformations/{platformName}
@@ -226,46 +260,58 @@ Halts the specified transformation.
 
 *Postcondition:* Status of specified transformation is "canceled"
 
-*ERRORS:*
+*Errors:*
 `404` - transformation doesn't exit (application oder platform does not exist)
 
 ### Reading transformation logs
 ##### GET /apps/{appName}/transformations/{platformName}/logs/
-Receive the logs for specified transformation. All logs starting with the {start}nth to the most recent log are transfered.
-
-*Request body:*
-```json
-{
-    "start":0
-}
-```
-- start - index of first log to receive
+Receive the logs for the specified transformation.
 
 *returns:*
 ```json
 {
-    "end": 53,
-    "logs": ["line1","line2",...]
+    "_links": {
+        "self": { "href": "/apps/{appName}/transformations/{platformName}/logs"},
+        "next": { "href": "/apps/{appName}/transformations/{platformName}/logs?page=2"},
+        "findLog": {
+            "href": "/apps/{appName}/transformations/{platformName}/logs{?line},
+            "templated": true
+    }
+    "start": 1,
+    "end": 10,
+    "logs": [ "line1", "line2", ..., "line20" ]
 }
 ```
+- `_links`: contains links to resources
+    - `self`: link to self
+    - `next`: link to the next page of logs
+    - `findLog`: template containing the variable "line", which can be used with a specific line number to get directly to the log with that line
+- start: the index of the first log line
 - end: the index of the last log line
 - logs: array of log lines (order: oldest first)
 
-*ERRORS:*
-`400` - start index out of bounds
+*Errors:*
 `404` - no logs available
 
-*EXAMPLE*:
-1. Client calls GET .../logs?start=0
+*Example*:
+1. Client calls GET .../logs?page=2
 2. Server answers with
 ```json
 {
-    "end": 3,
-    "logs": ["line1","line2","line3","line4"]
+    "_links": {
+        "self": { "href": "/apps/{appName}/transformations/{platformName}/logs?page=2" },
+        "next": { "href": "/apps/{appName}/transformations/{platformName}/logs?page=3" },
+        "findLog": {
+            "href": "/apps/{appName}/transformations/{platformName}/logs{?id}",
+            "templated": true
+    }
+    "start": 11,
+    "end": 20,
+    "logs": [ "line11", "line12", ..., "line20" ]
 }
 ```
-3. Client calls GET .../logs?start=4
-4. etc
+3. Client calls GET .../logs?page=3
+4. etc.
 
 ### Downloading platform artifacts
 ##### GET /apps/{appName}/transformations/{platformName}/artifact
