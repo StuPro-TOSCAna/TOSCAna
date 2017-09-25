@@ -1,6 +1,7 @@
 package org.opentosca.toscana.core.data;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
@@ -37,11 +38,12 @@ public class Platform {
 
 
     /**
-     * @return <code>true</code> if given properties are valid for this platform, <code>false</code> otherwise.
+     * @return a list of properties which are necessary for a transformation to this platform.
      */
-    boolean validate(Set<Properties> properties){
+    public List<Property> getRequiredProperties(){
         // TODO
+        // Remember to return a deep copy of the properties..!
         throw new UnsupportedOperationException();
-    }
 
+    }
 }

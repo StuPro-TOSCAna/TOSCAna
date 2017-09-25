@@ -13,19 +13,43 @@ public class Transformation {
 
     /**
      * Creates a new transformation for given app to given targetPlatform.
-     * Also triggers the start of the transformation.
-     * The transformation process itself happens asynchronously.
-     * That means construction will end before the actual transformation is finished.
      * @param app the subject of transformation
      * @param targetPlatform the target platform
      * @param properties the user-supplied properties for this transformation
-     * @throws MissingPropertyException if given properties are not sufficient for given platform
      */
     public Transformation(Application app, Platform targetPlatform, Set<Property> properties) throws MissingPropertyException {
         this.app = app;
         this.targetPlatform = targetPlatform;
         this.properties = properties;
         this.log = new Log();
+        // TODO
+    }
+
+    /**
+     * Triggers the start of the transformation.
+     * The transformation process itself happens asynchronously.
+     * That means: method will return before the actual transformation is finished.
+     * @return true if transformation got queued or started; false otherwise (e.g., if it was in state <code>INPUT_REQUIRED</code>)
+     * @throws MissingPropertyException if given properties are not sufficient for given platform
+     */
+    public boolean transform() throws MissingPropertyException {
+        // TODO
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * If this instance is in state <code>QUEUED</code> or <code>TRANSFORMING</code>, transformation will abort.
+     * If this instance is in any other state, nothing happens
+     * After calling, this instance's state will be <code>FAILED</code>.
+     */
+    public void abort(){
+        // TODO
+        throw new UnsupportedOperationException();
+    }
+
+    public void setProperties(Set<Property> properties){
+        // TODO maybe this needs to become setProperty(Property property)
+        this.properties = properties;
     }
 
     /**
@@ -36,15 +60,6 @@ public class Transformation {
         throw new UnsupportedOperationException();
     }
 
-    /**
-     * If this instance is in state <code>QUEUED</code> or <code>TRANSFORMING</code>, transformation will abort.
-     * If this instance is in any other state, nothing happens
-     * After calling, this instance's state will be <code>FAILED</code>.
-     */
-     public void abort(){
-        // TODO
-         throw new UnsupportedOperationException();
-     }
 
     /**
      * Registers given listener for updates regarding this transformations state change.
