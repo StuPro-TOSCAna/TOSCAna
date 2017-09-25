@@ -28,18 +28,18 @@ Return all target platforms which are available for transforming the CSAR.
 
 *Returns:*
 ```json
-[
+[{
     "aws": {
         "_links": {
             "self": { "href": "/platforms/aws" }
-        }  
+        }
     },
     "cloudformation": {
         "_links": {
             "self": { "href": "/platforms/cloudformation" }
         }
     }
-]
+}]
 ```
 - `_links`: contains links to resources
     - `self`: link to self
@@ -49,14 +49,14 @@ Return all target platforms which are available for transforming the CSAR.
 ### Manipulating apps
 
 ##### GET /apps
-Get a list of all applications.  
+Get a list of all applications.
 
 *Returns*:
 ```json
 [
     {
         "_links": {
-            "self": { "href": "/apps/hello-world" },        
+            "self": { "href": "/apps/hello-world" },
             "archive": { "href": "/apps/hello-world/archive" },
             "transformations": { "href": "/apps/hello-world/transformations" }
         },
@@ -81,7 +81,7 @@ Get a list of all applications.
 ##### POST /apps
 Create a new application. Returns a link to the new resource.
 
-*Request body:*  
+*Request body:*
 ```json
 {
     "name": "{appName}"
@@ -100,7 +100,7 @@ Create a new application. Returns a link to the new resource.
 }
 ```
 
-*Errors*:  
+*Errors*:
 `422` - `name` value already in use by other application
 
 ##### DELETE /apps
@@ -120,7 +120,7 @@ Get the application which name matches {appName}.
     "name": "{appName}"
 }
 ```
-*Errors*:  
+*Errors*:
 `404` - application with given {appName} does not exist
 
 ##### PUT /apps/{appName}
@@ -128,8 +128,8 @@ Update the application which name matches given {appName}.
 
 *Returns:* Nothing
 
-*Errors*:  
-`404` - application with given {appName} does not exist  
+*Errors*:
+`404` - application with given {appName} does not exist
 `422` - `name` value already in use by other application
 
 ##### DELETE /apps/{appName}
@@ -137,7 +137,7 @@ Delete the application which name matches given {appName}
 
 *Returns:* Nothing
 
-*Errors:*  
+*Errors:*
 `404` - application with given {appName} does not exist
 
 ## Manipulating CSARs
@@ -149,10 +149,10 @@ Raw CSAR file content
 
 *Returns:* `203`
 
-*Errors:*  
-`400` - Uploaded file is not a valid CSAR, rejected  
-`404` - application with given {appName} does not exist  
-`507` - Insufficient storage  
+*Errors:*
+`400` - Uploaded file is not a valid CSAR, rejected
+`404` - application with given {appName} does not exist
+`507` - Insufficient storage
 
 ##### DELETE /apps/{appName}/archive
 Deletes the CSAR of the application which matches given {appName}.
@@ -166,17 +166,17 @@ Returns a list of all ongoing or finished transformations of given application.
 
 *Returns:*
 ```json
-[
+[{
     "{platformName}": {
         "_links": {
             "self": { "href": "/apps/{appName}/transformations/{platformName}" },
             ...
         },
-        "status": ...
+        "status": ...,
         ...
     },
 ..
-]
+}]
 ```
 See below for details of the format of a transformation.
 
@@ -218,7 +218,7 @@ If a transformation has already started for the particular platform, the server 
 *Returns:* `201` Created
 (immediately - **Note:** This does not mean that the transformation is finished.)
 
-*Errors:*  
+*Errors:*
 `423` - Locked: transformation not ready but in state "input-required"
 
 ##### DELETE /apps/{appName}/transformations/{platformName}
@@ -226,7 +226,7 @@ Halts the specified transformation.
 
 *Postcondition:* Status of specified transformation is "canceled"
 
-*ERRORS:*  
+*ERRORS:*
 `404` - transformation doesn't exit (application oder platform does not exist)
 
 ### Reading transformation logs
@@ -251,7 +251,7 @@ Receive the logs for specified transformation. All logs starting with the {start
 - end: the index of the last log line
 - logs: array of log lines (order: oldest first)
 
-*ERRORS:*  
+*ERRORS:*
 `400` - start index out of bounds
 `404` - no logs available
 
@@ -271,7 +271,7 @@ Receive the logs for specified transformation. All logs starting with the {start
 ##### GET /apps/{appName}/transformations/{platformName}/artifact
 Downloads the deployment artifact for specified platform and application.
 
-*Errors:*  
+*Errors:*
 `404` - The artifact does not exist
 
 ### Specifying additional user input
@@ -282,9 +282,9 @@ To get information about required data, call:
 ```
 GET /apps/{appName}/transformations/{platformName}/properties
 ```
-*returns:*  
+*returns:*
 ```json
-[
+[{
     "Database Password": {
         "type": "string",
         "value": null,
@@ -295,14 +295,14 @@ GET /apps/{appName}/transformations/{platformName}/properties
         "value": null,
         "valid": false
     }
-]
+}]
 ```
 - `Object Names`: Key which requires a value
 - `type`: the value needs to be of this type (must be one of [string, integer, float]
 - `value`: In the response, this field needs to be set with a value of wanted type
 - `valid`: if false, server rejects value. All key value pairs must be valid in order for the transformation to happen.
 
-*Errors:*  
+*Errors:*
 `404` - if the transformation is not found (hence application name or plaform is invalid)
 
 ##### PUT /apps/{appName}/transformations/{platformName}/properties
@@ -310,14 +310,14 @@ Call this in order to specify the values for required keys. Calling this will au
 
 *Request body*:
 ```json
-[
+[{
     "Database Password": "securePassword",
     "timeout": 5
-]
+}]
 ```
 *Returns:*
 ```json
-[
+[{
     "Database Password": {
         "type":"string",
         "value":"securePassword",
@@ -328,5 +328,5 @@ Call this in order to specify the values for required keys. Calling this will au
         "value":5,
         "valid":true
     }
-]
+}]
 ```
