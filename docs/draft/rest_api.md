@@ -298,7 +298,7 @@ Receive the logs for specified transformation. All logs starting with the {start
 3. Client calls GET .../logs?start=4
 4. etc
 
-**Note**: If no new log lines are available, then an empty array is returned and end stays at the same point (end=start):
+**Note**: If no new log lines are available, then an empty array is returned and end stays at the same point:
 
 *Example*:
 1. Client calls GET .../logs?start=4
