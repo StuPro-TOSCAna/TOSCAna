@@ -2,7 +2,7 @@
 **Note:** Terms in curly braces like {appName} and {platformName} are meant to be substituted with a proper value.
 They must not be used literally.
 
-![rest api as a tree](rest-api.png)
+![rest api as a tree](img/rest-api.png)
 
 ### Current status
 ##### GET /status
