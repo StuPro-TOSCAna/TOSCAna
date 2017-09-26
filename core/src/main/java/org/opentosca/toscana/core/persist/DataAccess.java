@@ -1,4 +1,4 @@
-package org.opentosca.toscana.core.data.persist;
+package org.opentosca.toscana.core.persist;
 
 import org.opentosca.toscana.core.data.Application;
 
