@@ -4,6 +4,11 @@
 
 > As a developer I want that the application is controlled by the core.
 
+### Feature *Logging* (must have)
+
+- [ ] add logging framework to project
+- [ ] make transformation-specific logs available for http client
+
 ### Feature *REST API* (must have)
 
 > As a developer, I want to control the application via a REST API, in order to create a unified access for our application. 
@@ -46,6 +51,8 @@
 > As a user, I want the application to ask me about any data (e.g. credentials) which are required for deployment, but not specified in the TOSCA model.
 
 - Cost estimate: 5
+
+- [ ] add application-specific properties to transformation in data model
 
 ## Epic *Web Application* (must have)
 > As a user, I want to control the application via web-UI.
