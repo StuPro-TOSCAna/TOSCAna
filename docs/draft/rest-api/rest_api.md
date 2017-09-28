@@ -1,5 +1,5 @@
-# Alternative draft for the REST api
-**Note:** Terms in curly braces like {appName} and {platformName} are meant to be substituted with a proper value.
+# Specification of the REST-api
+**Note:** Terms in curly braces like {csarName} and {platformName} are meant to be substituted with a proper value.
 They must not be used literally.
 
 ![rest api as a tree](img/rest-api.png)
@@ -56,35 +56,35 @@ Return all target platforms which are available for transforming the CSAR.
 
 **Note:** It is possible to add platform specific preferences here later.
 
-### Manipulating apps
+### Manipulating csars
 
-##### GET /apps
+##### GET /csars
 Get a list of all applications.
 
 *Returns*:
 ```json
 {
     "_links": {
-        "self": { "href": "/apps" },
-        "next": { "href": "/apps?page=2"}
+        "self": { "href": "/csars" },
+        "next": { "href": "/csars?page=2"}
         "findApp": {
-            "href": "/apps/{appName}",
+            "href": "/csars/{csarName}",
             "templated": true
         }
     },
     "_embedded": {
        "app": [{
             "_links": {
-                "self": { "href": "/apps/hello-world" },
-                "archive": { "href": "/apps/hello-world/archive" },
-                "transformations": { "href": "/apps/hello-world/transformations" }
+                "self": { "href": "/csars/hello-world" },
+                "archive": { "href": "/csars/hello-world/archive" },
+                "transformations": { "href": "/csars/hello-world/transformations" }
             },
             "name": "hello-world"
         }, {
             "_links": {
-                "self": { "href": "/apps/billing-app" },
-                "archive": { "href":"/apps/billing-app/archive" },
-                "transformations": { "href": "/apps/billing-app/transformations" }
+                "self": { "href": "/csars/billing-app" },
+                "archive": { "href":"/csars/billing-app/archive" },
+                "transformations": { "href": "/csars/billing-app/transformations" }
             },
             "name": "billing-app"
         }]
@@ -93,18 +93,18 @@ Get a list of all applications.
 ```
 - `_links`: contains links to resources
     - `self`: link to self
-    - `next`: link to the next page of apps
-    - `findApp`: template containing the variable "appName", which can be used with the specific app name to get directly to that app
+    - `next`: link to the next page of csars
+    - `findApp`: template containing the variable "csarName", which can be used with the specific app name to get directly to that app
 - `_embedded`: resources contained within
 
 
-##### POST /apps
+##### POST /csars
 Create a new application. Returns a link to the new resource.
 
 *Request body:*
 ```json
 {
-    "name": "{appName}"
+    "name": "{csarName}"
 }
 ```
 
@@ -112,11 +112,11 @@ Create a new application. Returns a link to the new resource.
 ```json
 {
     "_links": {
-        "self": { "href": "/apps/{appName}" },
-        "archive": { "href": "/apps/{appName}/archive" },
-        "transformations": { "href": "/apps/{appName}/transformations" }
+        "self": { "href": "/csars/{csarName}" },
+        "archive": { "href": "/csars/{csarName}/archive" },
+        "transformations": { "href": "/csars/{csarName}/transformations" }
     },
-    "name": "{appName}"
+    "name": "{csarName}"
 }
 ```
 - `_links`: contains links to resources
@@ -128,45 +128,45 @@ Create a new application. Returns a link to the new resource.
 *Errors*:
 `422` - `name` value already in use by other application
 
-##### DELETE /apps
+##### DELETE /csars
 Delete all applications
 
-##### GET /apps/{appName}
-Get the application which name matches {appName}.
+##### GET /csars/{csarName}
+Get the application which name matches {csarName}.
 
 *Returns*:
 ```json
 {
     "_links": {
-        "self": { "href": "/apps/{appName}" },
-        "archive": { "href": "/apps/{appName}/archive" },
-        "transformations": { "href": "/apps/{appName}/transformations" }
+        "self": { "href": "/csars/{csarName}" },
+        "archive": { "href": "/csars/{csarName}/archive" },
+        "transformations": { "href": "/csars/{csarName}/transformations" }
     },
-    "name": "{appName}"
+    "name": "{csarName}"
 }
 ```
 *Errors*:
-`404` - application with given {appName} does not exist
+`404` - application with given {csarName} does not exist
 
-##### PUT /apps/{appName}
-Update the application which name matches given {appName}.
+##### PUT /csars/{csarName}
+Update the application which name matches given {csarName}.
 
 *Returns:* Nothing
 
 *Errors*:
-`404` - application with given {appName} does not exist
+`404` - application with given {csarName} does not exist
 `422` - `name` value already in use by other application
 
-##### DELETE /apps/{appName}
-Delete the application which name matches given {appName}
+##### DELETE /csars/{csarName}
+Delete the application which name matches given {csarName}
 
 *Returns:* Nothing
 
 *Errors:*
-`404` - application with given {appName} does not exist
+`404` - application with given {csarName} does not exist
 
 ## Manipulating CSARs
-##### PUT /apps/{appName}/archive
+##### PUT /csars/{csarName}/archive
 Uploads a CSAR.
 
 *Request body*:
@@ -176,29 +176,29 @@ Raw CSAR file content
 
 *Errors:*
 `400` - Uploaded file is not a valid CSAR, rejected
-`404` - application with given {appName} does not exist
+`404` - application with given {csarName} does not exist
 `507` - Insufficient storage
 
-##### DELETE /apps/{appName}/archive
-Deletes the CSAR of the application which matches given {appName}.
+##### DELETE /csars/{csarName}/archive
+Deletes the CSAR of the application which matches given {csarName}.
 
 *Returns:* Nothing
 
 ### Managing transformations
 
-##### GET /apps/{appName}/transformations
+##### GET /csars/{csarName}/transformations
 Returns a list of all ongoing or finished transformations of given application.
 
 *Returns:*
 ```json
 {
     "_links": {
-        "self": { "href": "/apps/{appName}/transformations/" },
+        "self": { "href": "/csars/{csarName}/transformations/" },
     },
     "_embedded": {
         "transformation": [{
             "_links": {
-                "self": { "href": "/apps/{appName}/transformations/{platformName}" },
+                "self": { "href": "/csars/{csarName}/transformations/{platformName}" },
             ...
             },
             "status": ...
@@ -214,18 +214,18 @@ Returns a list of all ongoing or finished transformations of given application.
 
 See below for details of the format of a transformation.
 
-##### GET /apps/{appName}/transformations/{platformName}
+##### GET /csars/{csarName}/transformations/{platformName}
 Returns the transformation of the specifified application which name matches given {platformName}.
 
 *Returns:*
 ```json
 {
     "_links": {
-        "self": { "href": "/apps/{appName}/transformations/{platformName}" },
+        "self": { "href": "/csars/{csarName}/transformations/{platformName}" },
         "platform": { "href": "/platforms/{platformName}" },
-        "artifact": { "href": "/apps/{appName}/transformations/{platformName}/artifact" },
-        "logs": { "href": "/apps/{appName}/transformations/{platformName}/logs" },
-        "properties": { "href": "/apps/{appName}/transformations/{platformName}/properties" }
+        "artifact": { "href": "/csars/{csarName}/transformations/{platformName}/artifact" },
+        "logs": { "href": "/csars/{csarName}/transformations/{platformName}/logs" },
+        "properties": { "href": "/csars/{csarName}/transformations/{platformName}/properties" }
     },
     "status": "input-required",
     "progress": 0
@@ -245,7 +245,7 @@ Returns the transformation of the specifified application which name matches giv
     - `failed`: transformation failed due to an error
 - `progress`: progress of the  transformation in percentage (integer, [0-100]). Can only change in the status `transforming`.
 
-##### PUT /apps/{appName}/transformations/{platformName}
+##### PUT /csars/{csarName}/transformations/{platformName}
 Request the transformation of the specified application to the specified platform.
 If a transformation has already started for the particular platform, the server will abort and restart the transformation.
 
@@ -255,7 +255,7 @@ If a transformation has already started for the particular platform, the server 
 *Errors:*
 `423` - Locked: transformation not ready but in state "input-required"
 
-##### DELETE /apps/{appName}/transformations/{platformName}
+##### DELETE /csars/{csarName}/transformations/{platformName}
 Halts the specified transformation.
 
 *Postcondition:* Status of specified transformation is "canceled"
@@ -265,7 +265,7 @@ Halts the specified transformation.
 
 
 ### Reading transformation logs
-##### GET /apps/{appName}/transformations/{platformName}/logs/
+##### GET /csars/{csarName}/transformations/{platformName}/logs/
 Receive the logs for specified transformation. All logs starting with the {start}nth to the most recent log are transfered.
 
 *Request body:*
@@ -313,7 +313,7 @@ Receive the logs for specified transformation. All logs starting with the {start
 4. etc
 
 ### Downloading platform artifacts
-##### GET /apps/{appName}/transformations/{platformName}/artifact
+##### GET /csars/{csarName}/transformations/{platformName}/artifact
 Downloads the deployment artifact for specified platform and application.
 
 *Errors:*
@@ -325,7 +325,7 @@ If the transformation status changes to `input-required` the transformator needs
 
 To get information about required data, call:
 ```
-GET /apps/{appName}/transformations/{platformName}/properties
+GET /csars/{csarName}/transformations/{platformName}/properties
 ```
 *returns:*
 ```json
@@ -350,7 +350,7 @@ GET /apps/{appName}/transformations/{platformName}/properties
 *Errors:*
 `404` - if the transformation is not found (hence application name or plaform is invalid)
 
-##### PUT /apps/{appName}/transformations/{platformName}/properties
+##### PUT /csars/{csarName}/transformations/{platformName}/properties
 Call this in order to specify the values for required keys. Calling this will automatically trigger a GET call to the same resource as the response (in order to validate the input).
 
 *Request body*:
