@@ -1,4 +1,4 @@
-package org.opentosca.toscana.core.data;
+package org.opentosca.toscana.core.model;
 
 public class LogEntry {
 

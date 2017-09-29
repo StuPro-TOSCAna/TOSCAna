@@ -1,4 +1,4 @@
-package org.opentosca.toscana.core.data;
+package org.opentosca.toscana.core.model;
 
 import java.util.Arrays;
 import java.util.HashSet;

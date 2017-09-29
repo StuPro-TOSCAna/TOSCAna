@@ -1,4 +1,4 @@
-package org.opentosca.toscana.core.data;
+package org.opentosca.toscana.core.model;
 
 /**
  * Indicates that supplied properties for a transformation did not match the

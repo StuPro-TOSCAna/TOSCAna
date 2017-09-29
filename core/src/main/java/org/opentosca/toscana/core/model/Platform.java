@@ -1,8 +1,7 @@
-package org.opentosca.toscana.core.data;
+package org.opentosca.toscana.core.model;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Properties;
 import java.util.Set;
 
 public class Platform {

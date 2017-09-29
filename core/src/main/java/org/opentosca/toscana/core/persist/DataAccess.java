@@ -1,6 +1,6 @@
 package org.opentosca.toscana.core.persist;
 
-import org.opentosca.toscana.core.data.Csar;
+import org.opentosca.toscana.core.model.Csar;
 
 import java.util.List;
 
@@ -16,7 +16,7 @@ public class DataAccess {
     }
 
     /**
-     * Returns the (by the application data) used storage space in MB.
+     * Returns the (by the application model) used storage space in MB.
      */
     public long getUsedSpace(){
        // TODO

@@ -1,4 +1,4 @@
-package org.opentosca.toscana.core.data;
+package org.opentosca.toscana.core.model;
 
 import java.util.Set;
 
@@ -10,6 +10,7 @@ public class Transformation {
     private Set<Property> properties;
     private Log log;
     private Set<TransformationListener> listeners;
+    private TargetArtifact targetArtifact;
 
     /**
      * Creates a new transformation for given app to given targetPlatform.
