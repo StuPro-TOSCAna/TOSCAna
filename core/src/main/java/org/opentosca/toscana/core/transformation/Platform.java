@@ -1,4 +1,4 @@
-package org.opentosca.toscana.core.model;
+package org.opentosca.toscana.core.transformation;
 
 import java.util.HashSet;
 import java.util.List;

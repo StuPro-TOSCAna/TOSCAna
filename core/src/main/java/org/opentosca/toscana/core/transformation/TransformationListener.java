@@ -1,4 +1,4 @@
-package org.opentosca.toscana.core.model;
+package org.opentosca.toscana.core.transformation;
 
 /**
  * Is used in order to listen for state changes of a particular transformation.

@@ -1,4 +1,4 @@
-package org.opentosca.toscana.core.model;
+package org.opentosca.toscana.core.logging;
 
 import java.util.List;
 

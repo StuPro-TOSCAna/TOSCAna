@@ -1,4 +1,7 @@
-package org.opentosca.toscana.core.model;
+package org.opentosca.toscana.core.transformation;
+
+import org.opentosca.toscana.core.csar.CsarImpl;
+import org.opentosca.toscana.core.logging.Log;
 
 import java.util.Set;
 

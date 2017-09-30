@@ -1,4 +1,6 @@
-package org.opentosca.toscana.core.model;
+package org.opentosca.toscana.core.csar;
+
+import org.opentosca.toscana.core.transformation.Platform;
 
 public class CsarServiceImpl implements CsarService {
 

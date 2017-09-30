@@ -1,4 +1,7 @@
-package org.opentosca.toscana.core.model;
+package org.opentosca.toscana.core.csar;
+
+import org.opentosca.toscana.core.transformation.Platform;
+import org.opentosca.toscana.core.transformation.Transformation;
 
 import java.util.HashMap;
 import java.util.Map;
