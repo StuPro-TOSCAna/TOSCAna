@@ -2,22 +2,17 @@ package org.opentosca.toscana.core.model;
 
 import java.util.Map;
 
-public class Csar {
+public interface Csar {
 
     /**
-     * Stores all scheduled, ongoing or finished transformations of this application.
-     * Key is the platform identifier.
+     * Returns a map of all transformation objects of this csar.
+     * This includes scheduled, ongoing and finished transformations.
+     * Key of each map entry is the platform identifier of its particular transformation.
      */
-    private Map<String, Transformation> transformations;
-    private String artifactPath;
+    public Map<String,Transformation> getTransformations();
 
-    public Csar(String csarArtifactPath) {
-        this.artifactPath = csarArtifactPath;
-    }
-
-    public void transform(Platform targetPlatform) {
-        // TODO
-        throw new UnsupportedOperationException();
-    }
+    /**
+     * Returns the identifier of the CSAR (which serves as identifier)
+     */
+    public String getIdentifier();
 }
-

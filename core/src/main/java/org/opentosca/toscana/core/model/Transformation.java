@@ -4,7 +4,7 @@ import java.util.Set;
 
 public class Transformation {
 
-    private Csar app;
+    private CsarImpl app;
     private TransformationState state;
     private Platform targetPlatform;
     private Set<Property> properties;
@@ -18,7 +18,7 @@ public class Transformation {
      * @param targetPlatform the target platform
      * @param properties the user-supplied properties for this transformation
      */
-    public Transformation(Csar app, Platform targetPlatform, Set<Property> properties) throws MissingPropertyException {
+    public Transformation(CsarImpl app, Platform targetPlatform, Set<Property> properties) throws MissingPropertyException {
         this.app = app;
         this.targetPlatform = targetPlatform;
         this.properties = properties;

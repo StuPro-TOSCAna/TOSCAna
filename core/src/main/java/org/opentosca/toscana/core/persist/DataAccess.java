@@ -1,6 +1,6 @@
 package org.opentosca.toscana.core.persist;
 
-import org.opentosca.toscana.core.model.Csar;
+import org.opentosca.toscana.core.model.CsarImpl;
 
 import java.util.List;
 
@@ -10,7 +10,7 @@ public class DataAccess {
      * Returns the list of all currently stored applications.
      * If no application is stored, returns an empty list.
      */
-    public List<Csar> getApplications(){
+    public List<CsarImpl> getApplications(){
         // TODO
         throw new UnsupportedOperationException();
     }
