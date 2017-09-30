@@ -1,13 +1,27 @@
 package org.opentosca.toscana.core.csar;
 
-import org.opentosca.toscana.core.transformation.Platform;
+import java.io.InputStream;
+import java.util.Collection;
 
 public interface CsarService {
 
+
     /**
-     * Creates a new transformation instance for given platform.
-     * Does not start the transformation process.
-     * @param targetPlatform target platform of the new transformation
+     * Creates a new Csar instance
+     * @param csarStream the actual cloud service archive as InputStream
+     * @return the newly created Csar instance
      */
-    public void createTransformation(Platform targetPlatform);
+    Csar uploadCsar(InputStream csarStream);
+
+    /**
+     * Deletes given Csar and all associated transformations from in-memory and persistence layer.
+     * @return true if successful, false otherwise
+     */
+    boolean deleteCsar(Csar csar);
+
+    /**
+     * Returns all Csars currently managed by the application
+     * @return
+     */
+    Collection<Csar> getCsars();
 }

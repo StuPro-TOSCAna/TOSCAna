@@ -2,7 +2,7 @@ package org.opentosca.toscana.core.csar;
 
 import java.util.List;
 
-public class CsarFilesystemDao implements CsarDao {
+class CsarFilesystemDao implements CsarDao {
     @Override
     public void update(Csar csar) {
 

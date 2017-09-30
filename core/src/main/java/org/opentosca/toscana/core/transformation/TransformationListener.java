@@ -12,5 +12,5 @@ public interface TransformationListener {
      * @param oldState the state the transformation was in before the change
      * @param newState the new state, after the change happened
      */
-    void onStateChange(Transformation subject, TransformationState oldState, TransformationState newState);
+    void onStateChange(TransformationImpl subject, TransformationState oldState, TransformationState newState);
 }

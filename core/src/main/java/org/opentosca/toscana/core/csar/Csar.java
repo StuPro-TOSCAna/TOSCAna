@@ -1,6 +1,6 @@
 package org.opentosca.toscana.core.csar;
 
-import org.opentosca.toscana.core.transformation.Transformation;
+import org.opentosca.toscana.core.transformation.TransformationImpl;
 
 import java.util.Map;
 
@@ -11,7 +11,7 @@ public interface Csar {
      * This includes scheduled, ongoing and finished transformations.
      * Key of each map entry is the platform identifier of its particular transformation.
      */
-    public Map<String,Transformation> getTransformations();
+    public Map<String,TransformationImpl> getTransformations();
 
     /**
      * Returns the identifier of the CSAR (which serves as identifier)

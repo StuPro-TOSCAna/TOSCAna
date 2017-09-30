@@ -2,7 +2,7 @@ package org.opentosca.toscana.core.csar;
 
 import java.util.List;
 
-public interface CsarDao {
+interface CsarDao {
 
     /**
      * Persists given CSAR.

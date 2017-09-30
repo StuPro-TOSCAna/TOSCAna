@@ -1,18 +1,18 @@
 package org.opentosca.toscana.core.csar;
 
 import org.opentosca.toscana.core.transformation.Platform;
-import org.opentosca.toscana.core.transformation.Transformation;
+import org.opentosca.toscana.core.transformation.TransformationImpl;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class CsarImpl implements Csar{
+class CsarImpl implements Csar{
 
     /**
      * Stores all scheduled, ongoing or finished transformations of this CSAR.
      * Key is the platform identifier.
      */
-    private Map<String, Transformation> transformations = new HashMap<>();
+    private Map<String, TransformationImpl> transformations = new HashMap<>();
     private String identifier;
 
     public CsarImpl(String identifier) {
@@ -25,7 +25,7 @@ public class CsarImpl implements Csar{
     }
 
     @Override
-    public Map<String, Transformation> getTransformations() {
+    public Map<String, TransformationImpl> getTransformations() {
         return transformations;
     }
 
