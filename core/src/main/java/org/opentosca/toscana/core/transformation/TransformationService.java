@@ -32,5 +32,5 @@ public interface TransformationService {
      * Deletes given transformation instance from in-memory and any persistency layer.
      * @return true if successful, false otherwise
      */
-    boolean deleteTansformation(Transformation transformation);
+    boolean deleteTransformation(Transformation transformation);
 }

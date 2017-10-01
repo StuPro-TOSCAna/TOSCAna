@@ -8,10 +8,11 @@ public interface CsarService {
 
     /**
      * Creates a new Csar instance
+     * @param name identifying name of csar, must match [a-z0-9_-]+
      * @param csarStream the actual cloud service archive as InputStream
      * @return the newly created Csar instance
      */
-    Csar uploadCsar(InputStream csarStream);
+    Csar uploadCsar(String name, InputStream csarStream);
 
     /**
      * Deletes given Csar and all associated transformations from in-memory and persistence layer.

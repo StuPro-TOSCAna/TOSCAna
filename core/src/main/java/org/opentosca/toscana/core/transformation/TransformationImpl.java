@@ -29,56 +29,31 @@ class TransformationImpl implements Transformation {
         // TODO
     }
 
-
-    /**
-     * If this instance is in state <code>QUEUED</code> or <code>TRANSFORMING</code>, transformation will abort.
-     * If this instance is in any other state, nothing happens
-     * After calling, this instance's state will be <code>FAILED</code>.
-     */
-    public void abort(){
-        // TODO
-        throw new UnsupportedOperationException();
-    }
-
     public void setProperties(Set<Property> properties){
         // TODO maybe this needs to become setProperty(Property property)
         this.properties = properties;
     }
 
-    /**
-     * @return the state the transformation is currently in
-     */
+    @Override
     public TransformationState getState(){
-        // TODO
-        throw new UnsupportedOperationException();
+        return state;
     }
 
 
-    /**
-     * Registers given listener for updates regarding this transformations state change.
-     * On a state change, the listeners' hooks will be called in <b>arbitrary order</b>.
-     * If the listener is already registered, nothing happens.
-     * @param listener
-     */
+    @Override
     public void setOnStateChange(TransformationListener listener){
         // TODO
         // hint: use IdentityHashMap for Listeners
         throw new UnsupportedOperationException();
     }
 
-    /**
-     * Removes given listener from the list of registered listener for this transformation.
-     * If the listener is not registered, nothing happens.
-     * @param listener listener to be removed from the set of listeners
-     */
+    @Override
     public void removeOnStateChange(TransformationListener listener){
         // TODO
         throw new UnsupportedOperationException();
     }
 
-    /**
-     * Returns the logs of this transformation
-     */
+    @Override
     public Log getLog(){
         // TODO
         throw new UnsupportedOperationException();
@@ -94,9 +69,7 @@ class TransformationImpl implements Transformation {
         throw new UnsupportedOperationException();
     }
 
-    /**
-     * Returns the target platform of this instance
-     */
+    @Override
     public Platform getPlatform(){
         // TODO
         throw new UnsupportedOperationException();

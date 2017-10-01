@@ -6,13 +6,6 @@ import java.util.Set;
 
 public class Property<T> {
 
-    private class IllegalTypeException extends Exception {
-        IllegalTypeException(Class type) {
-            super("Type " + type.getName() + " not supported");
-        }
-
-    }
-
     public static final Set<Class> SUPPORTED_TYPES = new HashSet<>(Arrays.asList(String.class, Integer.class, Float.class));
 
     public final Class<T> type;
@@ -20,7 +13,7 @@ public class Property<T> {
     private T value;
     private boolean valid = false;
 
-    Property(Class<T> type, String key) throws IllegalTypeException {
+    Property(Class<T> type, String key) {
         if (!SUPPORTED_TYPES.contains(type)) {
             throw new IllegalArgumentException();
         }
