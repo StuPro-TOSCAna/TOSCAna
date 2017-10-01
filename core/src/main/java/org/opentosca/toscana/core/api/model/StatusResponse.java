@@ -1,0 +1,49 @@
+package org.opentosca.toscana.core.api.model;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.hateoas.ResourceSupport;
+
+public class StatusResponse extends ResourceSupport {
+	private String status;
+	private Long availableStorage;
+	private Long totalStorage;
+
+	@JsonCreator
+	public StatusResponse(
+		@JsonProperty("status") String status,
+		@JsonProperty("available_storage") Long availableStorage,
+		@JsonProperty("total_storage") Long totalStorage
+	) {
+		this.status = status;
+		this.availableStorage = availableStorage;
+		this.totalStorage = totalStorage;
+	}
+
+	@JsonProperty("status")
+	public String getStatus() {
+		return status;
+	}
+	
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	@JsonProperty("available_storage")
+	public Long getAvailableStorage() {
+		return availableStorage;
+	}
+
+	public void setAvailableStorage(Long availableStorage) {
+		this.availableStorage = availableStorage;
+	}
+
+	@JsonProperty("total_storage")
+	public Long getTotalStorage() {
+		return totalStorage;
+	}
+
+	public void setTotalStorage(Long totalStorage) {
+		this.totalStorage = totalStorage;
+	}
+}
