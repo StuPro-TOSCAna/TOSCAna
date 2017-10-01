@@ -18,6 +18,10 @@ import java.util.ArrayList;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
+/**
+ * This REST Controller handles every request
+ * to list the supported Platforms and to retrieve information about a specific platform.
+ */
 @RestController
 @RequestMapping("/platforms")
 public class PlatformController {
@@ -25,6 +29,11 @@ public class PlatformController {
 	@Autowired
 	public PlatformProvider platformProvider;
 
+	/**
+	 * Lists all Supported Platforms (HTTP Response Method)
+	 * 
+	 * It handles the <code>/platforms</code> Request
+	 */
 	@GetMapping
 	public ResponseEntity<ResourceSupport> getPlatforms() {
 		Link selfLink = linkTo(methodOn(PlatformController.class).getPlatforms()).withSelfRel();
@@ -38,12 +47,12 @@ public class PlatformController {
 		return ResponseEntity.ok(resources);
 	}
 
-	private PlatformResponse getPlatformResource(Platform platform) {
-		PlatformResponse res = new PlatformResponse(platform);
-		res.add(linkTo(methodOn(PlatformController.class).getPlatform(res.getIdentifier())).withSelfRel());
-		return res;
-	}
-
+	/**
+	 * Returns the information for a specific platform.
+	 * 
+	 * This method handles the <code>/platforms/{id}</code> request
+	 * @param id the <code>id</code> (identifier) of the platform (HTTP Path Parameter)
+	 */
 	@RequestMapping("/{id}")
 	@GetMapping
 	public ResponseEntity<PlatformResponse> getPlatform(
@@ -54,5 +63,11 @@ public class PlatformController {
 			return ResponseEntity.notFound().build();
 		}
 		return ResponseEntity.ok(getPlatformResource(p));
+	}
+
+	private PlatformResponse getPlatformResource(Platform platform) {
+		PlatformResponse res = new PlatformResponse(platform);
+		res.add(linkTo(methodOn(PlatformController.class).getPlatform(res.getIdentifier())).withSelfRel());
+		return res;
 	}
 }

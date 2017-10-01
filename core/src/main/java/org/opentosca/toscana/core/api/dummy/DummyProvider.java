@@ -6,6 +6,8 @@ import org.opentosca.toscana.core.util.StatusProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+//TODO Replace dummies with true implementations
+
 /**
  * Provider Class to supply springs dependency Injection with dummy instances
  */

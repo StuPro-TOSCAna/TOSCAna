@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.hateoas.ResourceSupport;
 
+/**
+ * Represents the status response as a Java Object that gets converted to json using Jackson
+ */
 public class StatusResponse extends ResourceSupport {
 	private String status;
 	private Long availableStorage;

@@ -12,6 +12,11 @@ import org.springframework.web.bind.annotation.RestController;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
+
+/**
+ * This REST Controller handles the requests which do not relate to Platforms or Csars
+ * Currently the only request handled by this controller is the <code>/status</code> request
+ */
 @RestController
 @RequestMapping("/")
 public class CommonController {
