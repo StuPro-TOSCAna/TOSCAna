@@ -3,13 +3,49 @@ package org.opentosca.toscana.core.api.dummy;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarService;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
-public class DummyCsarService implements CsarService{
+public class DummyCsarService implements CsarService {
+
+	private String[] names = {"k8s-cluster", "apache-test", "mongo-db"};
+	Set<Csar> dummies = new HashSet<>();
+
+	public DummyCsarService() {
+		for (String name : names) {
+			dummies.add(new DummyCsar(name));
+		}
+	}
+
 	@Override
 	public Csar uploadCsar(String name, InputStream csarStream) {
-		return null;
+		Csar dummy = new DummyCsar(name);
+		if (dummies.contains(dummy)) {
+			return null;
+		}
+		dummies.add(dummy);
+		try {
+			File dummyPath = new File(name + ".csar");
+			FileOutputStream fout = new FileOutputStream(dummyPath);
+			byte[] data = new byte[512];
+			int bytesRead = 0;
+			while (bytesRead != -1) {
+				bytesRead = csarStream.read(data);
+				if (bytesRead != -1) {
+					fout.write(data, 0, bytesRead);
+				}
+			}
+			csarStream.close();
+			fout.close();
+		} catch (IOException e) {
+			return null;
+		}
+		return dummy;
 	}
 
 	@Override
@@ -19,6 +55,7 @@ public class DummyCsarService implements CsarService{
 
 	@Override
 	public Collection<Csar> getCsars() {
-		return null;
+
+		return dummies;
 	}
 }
