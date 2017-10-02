@@ -27,9 +27,9 @@ public class CsarController {
 	
 	@Autowired
 	public PlatformProvider platformProvider;
-	
-	@RequestMapping("/{name}/archive")
+
 	@PutMapping
+	@RequestMapping("/{name}/archive")
 	public ResponseEntity<String> uploadCSAR(
 		@PathVariable(name = "name") String name,
 		HttpServletRequest request

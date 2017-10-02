@@ -27,8 +27,8 @@ public class CommonController {
 	@Autowired
 	public FileSystem fileSystem;
 	
-	@RequestMapping("/status")
 	@GetMapping
+	@RequestMapping("/status")
 	public ResponseEntity<StatusResponse> getStatus() {
 		StatusResponse response = new StatusResponse(
 			statusProvider.getSystemStatus().getDisplayName(),
