@@ -7,8 +7,9 @@ import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
 import org.opentosca.toscana.core.api.model.CsarResponse;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarService;
-import org.opentosca.toscana.core.transformation.TransformationService;
 import org.opentosca.toscana.core.util.PlatformProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Resources;
 import org.springframework.http.HttpStatus;
@@ -36,19 +37,18 @@ public class CsarController {
 	public CsarService csarService;
 
 	@Autowired
-	public TransformationService transformationService;
-
-	@Autowired
 	public PlatformProvider platformProvider;
 
+	public Logger log = LoggerFactory.getLogger(getClass());
+
 	@GetMapping
-	public ResponseEntity<Resources<CsarResponse>> listCsars() {
+	public ResponseEntity<Resources<CsarResponse>> listCSARs() {
 		List<CsarResponse> responses = new ArrayList<>();
 		for (Csar csar : csarService.getCsars()) {
 			responses.add(new CsarResponse(csar.getIdentifier()));
 		}
 		Resources<CsarResponse> csarResources = new Resources<>(responses);
-		csarResources.add(linkTo(methodOn(CsarController.class).listCsars()).withSelfRel());
+		csarResources.add(linkTo(methodOn(CsarController.class).listCSARs()).withSelfRel());
 		return ResponseEntity.ok().body(csarResources);
 	}
 
@@ -79,11 +79,12 @@ public class CsarController {
 		try {
 			Csar result = csarService.uploadCsar(name, getInputStream(request));
 			if (result == null) {
-				//Return Already Reported if a csar with this name already exists
-				return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).build();
+				//Return Bad Request if a csar with this name already exists
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 			}
 			return ResponseEntity.ok().build();
 		} catch (Exception e) {
+			log.error("Reading of uploaded CSAR Failed", e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
@@ -98,14 +99,5 @@ public class CsarController {
 			}
 		}
 		return null;
-	}
-
-	@GetMapping
-	@RequestMapping("/{name}/transformations")
-	public ResponseEntity<String> getCSARTransformations(
-		@PathVariable(name = "name") String name
-	) {
-
-		return ResponseEntity.ok().build();
 	}
 }

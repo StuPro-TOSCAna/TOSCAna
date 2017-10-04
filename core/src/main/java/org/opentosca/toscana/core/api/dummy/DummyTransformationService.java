@@ -8,7 +8,7 @@ import org.opentosca.toscana.core.transformation.TransformationService;
 public class DummyTransformationService implements TransformationService {
 	@Override
 	public void createTransformation(Csar csar, Platform targetPlatform) {
-		
+		csar.getTransformations().put(targetPlatform.id, new DummyTransformation(targetPlatform));
 	}
 
 	@Override
