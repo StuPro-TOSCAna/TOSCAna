@@ -1,23 +1,38 @@
 package org.opentosca.toscana.core.csar;
 
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import java.io.InputStream;
 import java.util.Collection;
 
-class CsarServiceImpl implements CsarService {
+@Service
+public class CsarServiceImpl implements CsarService {
+
+    private CsarDao csarDao;
 
     @Override
     public Csar uploadCsar(String name, InputStream csarStream) {
-        return null;
+
+        // TODO
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public boolean deleteCsar(Csar csar) {
-        return false;
+        // TODO
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Collection<Csar> getCsars() {
-        return null;
+        // TODO
+        throw new UnsupportedOperationException();
+    }
+
+    @Autowired
+    public void setCsarDao(CsarDao csarDao){
+        this.csarDao = csarDao;
     }
 }

@@ -1,19 +1,23 @@
 package org.opentosca.toscana.core.csar;
 
+import java.io.InputStream;
 import java.util.List;
 
-interface CsarDao {
+public interface CsarDao {
 
     /**
      * Persists given CSAR.
-     * If a CSAR with the same name already exists, updates the CSAR.
+     * If a CSAR with the same name already exists, overwrites the old CSAR and all of its related transformations
+     * @param identifier a unique idenfifier for the new csar
+     * @param inputStream an InputStream of a CSAR
      */
-    void update(Csar csar);
+    Csar create(String identifier, InputStream inputStream);
 
     /**
      * Deletes given CSAR.
+     * @returns true if successful, false otherwise
      */
-    void delete(Csar csar);
+    boolean delete(Csar csar);
 
     /**
      * Returns a CSAR which matches given csarName, or null if no match was found.
