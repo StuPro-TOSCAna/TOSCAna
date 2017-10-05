@@ -36,7 +36,7 @@ public class PreferencesImpl implements Preferences {
         if (value == null || value.isEmpty()) {
             logger.info("no value supplied for option '{}'", key);
             value = defaults.get(key);
-            if (value != null){
+            if (value == null){
                 logger.warn("fallback value for option '{}' not defined", key);
             }
         }
