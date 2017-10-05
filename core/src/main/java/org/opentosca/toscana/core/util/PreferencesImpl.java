@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class PreferencesImpl implements Preferences {
 
-    private static final Logger logger = LoggerFactory.getLogger(Preferences.class);
+    private static final Logger logger = LoggerFactory.getLogger(Preferences.class.getName());
 
 
     private final Map<Key, String> defaults;
@@ -34,13 +34,17 @@ public class PreferencesImpl implements Preferences {
     public String get(Key key) {
         String value = System.getenv(key.name());
         if (value == null || value.isEmpty()) {
+            value = defaults.get(key);
+            if (value == null){
+                logger.warn("No fallback value defined for key '{}'", key);
+            }
         }
         return value;
     }
 
     @Override
     public File getDataDir() {
-        String dataDirPath = System.getenv(Key.TOSCANA_DATADIR.name());
+        String dataDirPath = get(Key.TOSCANA_DATADIR);
         File dataDir = new File(dataDirPath);
         return dataDir;
     }
