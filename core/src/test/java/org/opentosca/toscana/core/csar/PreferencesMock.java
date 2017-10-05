@@ -23,7 +23,7 @@ public class PreferencesMock implements Preferences {
      */
     @Override
     public File getDataDir() {
-        if (dataDir == null){
+        if (dataDir == null) {
             try {
                 dataDir = File.createTempFile("toscana_test_", "");
                 dataDir.delete();
@@ -32,6 +32,7 @@ public class PreferencesMock implements Preferences {
             }
             //dataDir.deleteOnExit();
         }
+        dataDir.mkdirs();
         return dataDir;
     }
 }

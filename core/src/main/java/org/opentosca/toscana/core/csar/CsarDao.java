@@ -14,15 +14,14 @@ public interface CsarDao {
     Csar create(String identifier, InputStream inputStream);
 
     /**
-     * Deletes given CSAR.
-     * @returns true if successful, false otherwise
+     * Deletes CSAR which matches given identifier.
      */
-    boolean delete(Csar csar);
+    void delete(String identifier);
 
     /**
      * Returns a CSAR which matches given csarName, or null if no match was found.
      */
-    Csar find(String csarName);
+    Csar find(String identifier);
 
     /**
      * Returns a list of all CSARS.

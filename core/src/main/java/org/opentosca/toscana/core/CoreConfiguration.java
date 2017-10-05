@@ -21,8 +21,7 @@ public class CoreConfiguration {
 
     @Bean
     public CsarDao csarDao(){
-        CsarFilesystemDao bean = new CsarFilesystemDao();
-        bean.setPreferences(preferences());
+        CsarFilesystemDao bean = new CsarFilesystemDao(preferences());
         return bean;
     }
 

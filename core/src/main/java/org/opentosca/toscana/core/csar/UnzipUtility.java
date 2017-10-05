@@ -8,10 +8,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 
-
 class UnzipUtility {
 
-    private final static Logger logger=LoggerFactory.getLogger(UnzipUtility.class.getName());
+    private final static Logger logger = LoggerFactory.getLogger(UnzipUtility.class.getName());
     /**
      * Size of the buffer to read/write data
      */

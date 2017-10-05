@@ -34,9 +34,10 @@ public class PreferencesImpl implements Preferences {
     public String get(Key key) {
         String value = System.getenv(key.name());
         if (value == null || value.isEmpty()) {
+            logger.info("no value supplied for option '{}'", key);
             value = defaults.get(key);
-            if (value == null){
-                logger.warn("No fallback value defined for key '{}'", key);
+            if (value != null){
+                logger.warn("fallback value for option '{}' not defined", key);
             }
         }
         return value;
@@ -46,6 +47,7 @@ public class PreferencesImpl implements Preferences {
     public File getDataDir() {
         String dataDirPath = get(Key.TOSCANA_DATADIR);
         File dataDir = new File(dataDirPath);
+        dataDir.mkdirs();
         return dataDir;
     }
 }
