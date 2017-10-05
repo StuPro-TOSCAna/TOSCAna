@@ -4,6 +4,7 @@ import org.opentosca.toscana.core.csar.CsarService;
 import org.opentosca.toscana.core.transformation.TransformationService;
 import org.opentosca.toscana.core.util.FileSystem;
 import org.opentosca.toscana.core.util.PlatformProvider;
+import org.opentosca.toscana.core.util.Preferences;
 import org.opentosca.toscana.core.util.StatusProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +16,10 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class DummyProvider {
+	@Bean
+	public Preferences getPreferences() {
+		return null;
+	}
 	@Bean
 	public TransformationService getTransformationService() {
 		return new DummyTransformationService();

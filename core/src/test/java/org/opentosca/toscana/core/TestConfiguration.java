@@ -19,7 +19,7 @@ public class TestConfiguration {
         CsarFilesystemDao bean = new CsarFilesystemDao(preferences());
         return bean;
     }
-
+	
     @Bean
     public Preferences preferences(){
         return new PreferencesMock();

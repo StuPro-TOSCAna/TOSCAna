@@ -11,13 +11,13 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class CoreConfiguration {
-
-    @Bean
-    public CsarService csarService(){
-        CsarServiceImpl bean = new CsarServiceImpl();
-        bean.setCsarDao(csarDao());
-        return bean;
-    }
+//TODO this might be redundant, the @Service annotation seems to provide a bean for this
+//    @Bean
+//    public CsarService csarService(){
+//        CsarServiceImpl bean = new CsarServiceImpl();
+//        bean.setCsarDao(csarDao());
+//        return bean;
+//    }
 
     @Bean
     public CsarDao csarDao(){

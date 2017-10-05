@@ -18,7 +18,6 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
  * Currently the only request handled by this controller is the <code>/status</code> request
  */
 @RestController
-@RequestMapping("/")
 public class CommonController {
 	
 	@Autowired
@@ -38,4 +37,5 @@ public class CommonController {
 		response.add(linkTo(methodOn(CommonController.class).getStatus()).withSelfRel());
 		return ResponseEntity.ok(response);
 	}
+
 }
