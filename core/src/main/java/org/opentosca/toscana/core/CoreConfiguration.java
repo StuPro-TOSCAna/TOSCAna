@@ -8,7 +8,6 @@ import org.opentosca.toscana.core.util.Preferences;
 import org.opentosca.toscana.core.util.PreferencesImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 
 @Configuration
 public class CoreConfiguration {

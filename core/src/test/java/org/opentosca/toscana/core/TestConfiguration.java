@@ -23,6 +23,6 @@ public class TestConfiguration {
 
     @Bean
     public Preferences preferences(){
-        return new TestPreferencesImpl();
+        return new PreferencesMock();
     }
 }

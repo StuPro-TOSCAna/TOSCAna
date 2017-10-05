@@ -1,5 +1,6 @@
 package org.opentosca.toscana.core.csar;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.opentosca.toscana.core.util.Preferences;
 import org.slf4j.Logger;
@@ -15,6 +16,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.ZipInputStream;
 
 @Repository
 public class CsarFilesystemDao implements CsarDao {
@@ -30,20 +32,28 @@ public class CsarFilesystemDao implements CsarDao {
 
     @Override
     public Csar create(String identifier, InputStream inputStream) {
-        String suffix = ".csar";
-        File csarArtifact = new File(dataRoot.getPath());
+        File appDir = setupDir(identifier);
+        File csarDir = new File(appDir, "csar");
         try {
-            Files.copy(
-                    inputStream,
-                    csarArtifact.toPath(),
-                    StandardCopyOption.REPLACE_EXISTING);
+            UnzipUtility.unzip(new ZipInputStream(inputStream), csarDir.getPath());
         } catch (IOException e) {
-            logger.error("error while receiving csar input stream", e);
+            logger.error("failed to unzip csar with identifier '{}'", identifier, e);
         }
-
-        IOUtils.closeQuietly(inputStream);
+        // TODO populate csar with files etc..
         Csar csar = new CsarImpl(identifier);
         return csar;
+    }
+
+    private File setupDir(String identifier) {
+        // delete any old entry with same name
+        File appFolder = new File(dataRoot, identifier);
+        try {
+            FileUtils.deleteDirectory(appFolder);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        appFolder.mkdir();
+        return appFolder;
     }
 
     @Override

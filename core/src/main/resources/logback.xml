@@ -8,6 +8,7 @@
         </encoder>
     </appender>
 
+    <!--set individual log levels for individual namespaces here -->
     <logger name="org.springframework" level="WARN"/>
     <logger name="org.hibernate" level="WARN"/>
     <logger name="org.apache.catalina.core" level="WARN"/>
