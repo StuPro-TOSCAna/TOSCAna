@@ -19,7 +19,7 @@ import java.util.Map;
 @Repository
 public class CsarFilesystemDao implements CsarDao {
 
-    private final static Logger logger = LoggerFactory.getLogger(CsarFilesystemDao.class);
+    private final static Logger logger = LoggerFactory.getLogger(CsarFilesystemDao.class.getSimpleName());
 
     private Preferences preferences;
     // is automagically set by autowiring preferences setter
