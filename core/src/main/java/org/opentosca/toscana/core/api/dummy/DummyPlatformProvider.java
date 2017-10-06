@@ -8,18 +8,31 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Mock Platform provider to be used in order to test Csar Controller and Transformation Controller
+ * Once integration with the rest of the core is done this will be moved in the test package
+ */
 public class DummyPlatformProvider implements PlatformProvider {
 
 	private final char[] chars = "abcdefghijklmnopqrstuvwxyz".toCharArray();
 
-	@Override
-	public List<Platform> getSupportedPlatforms() {
+	private List<Platform> platforms = new ArrayList<>();
+
+	public DummyPlatformProvider() {
 		ArrayList<Platform> platforms = new ArrayList<>();
 
 		for (int i = 0; i < 5; i++) {
 			platforms.add(new Platform("p-" + chars[i], "platform-" + (i + 1), new HashSet<>()));
 		}
+		this.platforms = platforms;
+	}
 
+	public DummyPlatformProvider(List<Platform> platforms) {
+		this.platforms = platforms;
+	}
+
+	@Override
+	public List<Platform> getSupportedPlatforms() {
 		return platforms;
 	}
 

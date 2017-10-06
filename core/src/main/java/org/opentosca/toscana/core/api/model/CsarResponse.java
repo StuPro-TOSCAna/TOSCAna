@@ -3,6 +3,7 @@ package org.opentosca.toscana.core.api.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.opentosca.toscana.core.api.CsarController;
 import org.opentosca.toscana.core.api.CsarTransformationController;
+import org.springframework.hateoas.Link;
 import org.springframework.hateoas.ResourceSupport;
 import org.springframework.hateoas.core.Relation;
 
@@ -19,10 +20,10 @@ public class CsarResponse extends ResourceSupport {
 		this.name = name;
 		add(linkTo(methodOn(CsarController.class)
 			.getCSARInfo(name)).withSelfRel());
+		add(linkTo(methodOn(CsarTransformationController.class)
+			.getCSARTransformations(name)).withRel("transformations").expand(name));
 		add(linkTo(methodOn(CsarController.class)
 			.uploadCSAR(name, null)).withRel("archive"));
-		add(linkTo(methodOn(CsarTransformationController.class)
-			.getCSARTransformations(name)).withRel("transformations"));
 	}
 
 	@JsonProperty("name")

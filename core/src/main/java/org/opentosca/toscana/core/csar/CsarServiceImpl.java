@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import java.io.InputStream;
 import java.util.Collection;
 
-@Service
+//@Service
 public class CsarServiceImpl implements CsarService {
 
     private CsarDao csarDao;

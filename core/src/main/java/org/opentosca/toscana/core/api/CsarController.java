@@ -11,6 +11,7 @@ import org.opentosca.toscana.core.util.PlatformProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resources;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,12 +44,12 @@ public class CsarController {
 
 	@GetMapping
 	public ResponseEntity<Resources<CsarResponse>> listCSARs() {
+		Link selfLink = linkTo(methodOn(CsarController.class).listCSARs()).withSelfRel();
 		List<CsarResponse> responses = new ArrayList<>();
 		for (Csar csar : csarService.getCsars()) {
 			responses.add(new CsarResponse(csar.getIdentifier()));
 		}
-		Resources<CsarResponse> csarResources = new Resources<>(responses);
-		csarResources.add(linkTo(methodOn(CsarController.class).listCSARs()).withSelfRel());
+		Resources<CsarResponse> csarResources = new Resources<>(responses, selfLink);
 		return ResponseEntity.ok().body(csarResources);
 	}
 

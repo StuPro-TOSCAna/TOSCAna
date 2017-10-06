@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.*;
 
@@ -24,6 +25,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(value = CommonController.class, secure = false)
+@DirtiesContext(
+	classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD
+)
 public class CommonControllerTest {
 
 	private static final Logger log = LoggerFactory.getLogger(CommonControllerTest.class);
@@ -46,7 +50,7 @@ public class CommonControllerTest {
 
 	@Test
 	public void retrieveStatusUpdate() throws Exception {
-		MvcResult result = mvc.perform(
+		mvc.perform(
 			get("/status" ).accept(MediaType.APPLICATION_JSON)
 		).andDo(print())
 			.andExpect(status().is2xxSuccessful())

@@ -9,6 +9,8 @@ import java.util.Map;
 public class DummyCsar implements Csar{
 	
 	private String name;
+	private byte[] data;
+	
 
 	public DummyCsar(String name) {
 		this.name = name;
@@ -22,5 +24,13 @@ public class DummyCsar implements Csar{
 	@Override
 	public String getIdentifier() {
 		return name;
+	}
+	
+	public byte[] getData() {
+		return data;
+	}
+
+	public void setData(byte[] data) {
+		this.data = data;
 	}
 }
