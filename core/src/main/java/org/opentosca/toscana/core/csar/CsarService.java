@@ -25,4 +25,10 @@ public interface CsarService {
      * @return
      */
     Collection<Csar> getCsars();
+
+	/**
+	 * Returns csar which identifier field matches given identifier.
+	 * Returns null if no match is found
+	 */
+	Csar getCsar(String identifier);
 }

@@ -31,7 +31,13 @@ public class CsarServiceImpl implements CsarService {
         throw new UnsupportedOperationException();
     }
 
-    @Autowired
+	@Override
+	public Csar getCsar(String identifier) {
+    	// TODO
+		throw new UnsupportedOperationException();
+	}
+
+	@Autowired
     public void setCsarDao(CsarDao csarDao){
         this.csarDao = csarDao;
     }
