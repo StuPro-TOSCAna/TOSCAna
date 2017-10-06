@@ -1,10 +1,12 @@
 package org.opentosca.toscana.core.csar;
 
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.opentosca.toscana.core.transformation.Platform;
 import org.opentosca.toscana.core.transformation.Transformation;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 class CsarImpl implements Csar{
 
@@ -34,5 +36,17 @@ class CsarImpl implements Csar{
         return identifier;
     }
 
+
+	@Override
+	public boolean equals(Object obj) {
+    	return (obj instanceof Csar) && (((Csar) obj).getIdentifier().equals(identifier));
+	}
+
+	@Override
+	public int hashCode() {
+            return new HashCodeBuilder(17,31)
+				.append(identifier)
+				.toHashCode();
+	}
 }
 

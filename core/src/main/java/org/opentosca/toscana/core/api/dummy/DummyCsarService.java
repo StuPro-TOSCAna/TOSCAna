@@ -4,14 +4,13 @@ import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarService;
 
 import java.io.*;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.LinkedList;
+import java.util.List;
 
 public class DummyCsarService implements CsarService {
 
 	private String[] names = {"k8s-cluster", "apache-test", "mongo-db"};
-	Set<Csar> dummies = new HashSet<>();
+	List<Csar> dummies = new LinkedList<>();
 
 	public DummyCsarService() {
 		for (String name : names) {
@@ -20,7 +19,7 @@ public class DummyCsarService implements CsarService {
 	}
 
 	@Override
-	public Csar uploadCsar(String name, InputStream csarStream) {
+	public Csar submitCsar(String name, InputStream csarStream) {
 		Csar dummy = new DummyCsar(name);
 		if (dummies.contains(dummy)) {
 			return null;
@@ -50,13 +49,17 @@ public class DummyCsarService implements CsarService {
 	}
 
 	@Override
-	public boolean deleteCsar(Csar csar) {
-		return false;
+	public void deleteCsar(Csar csar) {
 	}
 
 	@Override
-	public Collection<Csar> getCsars() {
-
+	public List<Csar> getCsars() {
 		return dummies;
+	}
+
+	@Override
+	public Csar getCsar(String identifier) {
+		// TODO
+		return null;
 	}
 }

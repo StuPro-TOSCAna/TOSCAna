@@ -78,7 +78,7 @@ public class CsarController {
 		HttpServletRequest request
 	) {
 		try {
-			Csar result = csarService.uploadCsar(name, getInputStream(request));
+			Csar result = csarService.submitCsar(name, getInputStream(request));
 			if (result == null) {
 				//Return Bad Request if a csar with this name already exists
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();

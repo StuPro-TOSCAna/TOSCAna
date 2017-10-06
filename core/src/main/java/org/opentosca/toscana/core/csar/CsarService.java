@@ -1,30 +1,30 @@
 package org.opentosca.toscana.core.csar;
 
 import java.io.InputStream;
-import java.util.Collection;
+import java.util.List;
 
 public interface CsarService {
 
 
     /**
      * Creates a new Csar instance
-     * @param name identifying name of csar, must match [a-z0-9_-]+
+     * @param identifier identifying name of csar, must match [a-z0-9_-]+
      * @param csarStream the actual cloud service archive as InputStream
      * @return the newly created Csar instance
      */
-    Csar uploadCsar(String name, InputStream csarStream);
+    Csar submitCsar(String identifier, InputStream csarStream);
 
     /**
      * Deletes given Csar and all associated transformations from in-memory and persistence layer.
      * @return true if successful, false otherwise
      */
-    boolean deleteCsar(Csar csar);
+    void deleteCsar(Csar csar);
 
     /**
      * Returns all Csars currently managed by the application
      * @return
      */
-    Collection<Csar> getCsars();
+    List<Csar> getCsars();
 
 	/**
 	 * Returns csar which identifier field matches given identifier.

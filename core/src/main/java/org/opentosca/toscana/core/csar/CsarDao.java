@@ -10,6 +10,7 @@ public interface CsarDao {
      * If a CSAR with the same name already exists, overwrites the old CSAR and all of its related transformations
      * @param identifier a unique idenfifier for the new csar
      * @param inputStream an InputStream of a CSAR
+	 * @return created csar
      */
     Csar create(String identifier, InputStream inputStream);
 

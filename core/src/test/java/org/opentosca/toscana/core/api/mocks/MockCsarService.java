@@ -9,7 +9,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class MockCsarService implements CsarService {
@@ -25,7 +24,7 @@ public class MockCsarService implements CsarService {
 	}
 
 	@Override
-	public Csar uploadCsar(String name, InputStream csarStream) {
+	public Csar submitCsar(String name, InputStream csarStream) {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		try {
 			StreamUtils.writeTo(csarStream, out);
@@ -39,12 +38,16 @@ public class MockCsarService implements CsarService {
 	}
 
 	@Override
-	public boolean deleteCsar(Csar csar) {
-		return false;
+	public void deleteCsar(Csar csar) {
 	}
 
 	@Override
-	public Collection<Csar> getCsars() {
+	public List<Csar> getCsars() {
 		return csars;
+	}
+
+	@Override
+	public Csar getCsar(String identifier) {
+		return null;
 	}
 }

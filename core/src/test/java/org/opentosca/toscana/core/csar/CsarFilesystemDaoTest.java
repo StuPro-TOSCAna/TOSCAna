@@ -5,6 +5,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.opentosca.toscana.core.BaseSpringTest;
 import org.opentosca.toscana.core.TestConfiguration;
 import org.opentosca.toscana.core.util.Preferences;
 import org.slf4j.Logger;
@@ -21,27 +22,13 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = TestConfiguration.class)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class CsarFilesystemDaoTest {
+public class CsarFilesystemDaoTest extends BaseSpringTest {
 
     private final static Logger logger = LoggerFactory.getLogger(CsarFilesystemDaoTest.class.getName());
 
     @Autowired
-    private Preferences preferences;
-    @Autowired
     private CsarDao csarDao;
 
-    @Before
-    public void setUp() throws Exception {
-
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        FileUtils.deleteDirectory(preferences.getDataDir());
-    }
 
     @Test
     public void create() throws Exception {

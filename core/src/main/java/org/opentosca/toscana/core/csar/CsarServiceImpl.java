@@ -6,35 +6,33 @@ import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
 import java.util.Collection;
+import java.util.List;
 
-//@Service
 public class CsarServiceImpl implements CsarService {
 
     private CsarDao csarDao;
 
     @Override
-    public Csar uploadCsar(String name, InputStream csarStream) {
-
-        // TODO
-        throw new UnsupportedOperationException();
+    public Csar submitCsar(String identifier, InputStream csarStream) {
+    	Csar csar = csarDao.create(identifier, csarStream);	
+    	// TODO parse
+    	return csar;
     }
 
     @Override
-    public boolean deleteCsar(Csar csar) {
-        // TODO
-        throw new UnsupportedOperationException();
+    public void deleteCsar(Csar csar) {
+    	csarDao.delete(csar.getIdentifier());
     }
 
     @Override
-    public Collection<Csar> getCsars() {
-        // TODO
-        throw new UnsupportedOperationException();
+    public List<Csar> getCsars() {
+    	return csarDao.findAll();
     }
 
 	@Override
 	public Csar getCsar(String identifier) {
-    	// TODO
-		throw new UnsupportedOperationException();
+    	Csar csar = csarDao.find(identifier);
+    	return csar;
 	}
 
 	@Autowired
