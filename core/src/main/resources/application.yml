@@ -1,3 +1,12 @@
 spring:
   main:
     banner-mode: "off"
+    
+
+# no fallback value supplied here. value is computed at runtime, as it is platform dependent
+# use this at runtime
+datadir: 
+# if datadir was not supplied, datadir falls back to these values (depending on runtime environment)
+datadir_win: "${user.home}/AppData/toscana"
+datadir_nix: "${user.home}/.toscana"
+

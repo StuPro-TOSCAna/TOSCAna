@@ -30,16 +30,14 @@ public class CsarFilesystemDao implements CsarDao {
      */
     public final static String CONTENT_DIR = "content";
 
-    private final Preferences preferences;
-    private final File dataRoot;
+    private final File dataDir;
 
     // a map containing all csars. it should be kept in sync with the status of the file system
     private final Map<String, Csar> csarMap = new HashMap<>();
 
     @Autowired
     public CsarFilesystemDao(Preferences preferences) {
-        this.preferences = preferences;
-        dataRoot = preferences.getDataDir();
+    	this.dataDir = preferences.getDataDir();
         readFromDisk();
     }
 
@@ -65,7 +63,7 @@ public class CsarFilesystemDao implements CsarDao {
 
     private File setupDir(String identifier) {
         // delete any old entry with same name
-        File appFolder = new File(dataRoot, identifier);
+        File appFolder = new File(dataDir, identifier);
         try {
             FileUtils.deleteDirectory(appFolder);
         } catch (IOException e) {
@@ -77,7 +75,7 @@ public class CsarFilesystemDao implements CsarDao {
 
     @Override
     public void delete(String identifier) {
-        File csarDir = new File(dataRoot, identifier);
+        File csarDir = new File(dataDir, identifier);
         try {
             FileUtils.deleteDirectory(csarDir);
             logger.info("deleted csar directory '{}'", csarDir);
@@ -110,7 +108,7 @@ public class CsarFilesystemDao implements CsarDao {
      */
     private void readFromDisk() {
         csarMap.clear();
-        File[] files = dataRoot.listFiles();
+        File[] files = dataDir.listFiles();
         for (int i = 0; i < files.length; i++) {
             File file = files[i];
             if (isCsarDir(file)) {
