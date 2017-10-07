@@ -1,17 +1,14 @@
-FROM linode/lamp
+FROM janes/alpine-lamp
 MAINTAINER hnicke
-COPY index.php /var/www/example.com/public_html/
-COPY mysql-credentials.php /var/www/example.com/public_html/
+COPY index.php /www
+COPY mysql-credentials.php /www
 COPY createdb.sql /
 EXPOSE 80
+EXPOSE 3306
 
-RUN service mysql start && \
-    rm /var/www/example.com/public_html/index.html && \
-    mysql -u root --password="Admin2015" < /createdb.sql && \
-    service mysql stop && \
-    apt-get update 
-ENTRYPOINT service apache2 restart && \
-    service mysql restart && \
-    /bin/bash
-
+RUN nohup mysqld --skip-grant-tables --bind-address 0.0.0.0 --user mysql > /dev/null 2>&1 & \
+    sleep 3 && mysql -u root < /createdb.sql
+ENTRYPOINT httpd && \
+           nohup mysqld --skip-grant-tables --bind-address 0.0.0.0 --user mysql > /dev/null 2>&1 & \
+           /bin/sh
 
