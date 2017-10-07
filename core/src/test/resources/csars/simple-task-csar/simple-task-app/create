@@ -1,0 +1,4 @@
+#!/bin/bash  
+docker build -t simple-task-app .
+docker create -p 80:80 --name="simple-task-app-1" -i simple-task-app &&
+echo "created simple-task-app"
