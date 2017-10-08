@@ -1,0 +1,44 @@
+tosca_definitions_version: tosca_simple_yaml_1_1
+description: Template for deploying the simple-task-app via docker
+metadata:
+  template_name: simple-task-docker-template
+  template_author: stupro-toscana
+  template_version: 1.0
+repositories:
+  opentosca:
+    description: contains custom NodeTypes and RelationshipTypes of IaaS (Uni Stuttgart)
+    url: http://opentosca.org
+
+topology_template:
+
+  node_templates:
+    docker_engine:
+      type: opentosca.DockerEngine
+    simple_task_app:
+      type: opentosca.DockerContainer
+      interfaces:
+        Standard:
+          create:
+            description: build docker image from dockerfile and create docker container from image
+            implementation: 
+              primary: simple-task-app/create.sh
+              # dependencies will get copied by orchestrator to the same location
+              # as create.sh, before create.sh is executed
+              dependencies: 
+                - simple-task-app/createdb.sql
+                - simple-task-app/index.php
+                - simple-task-app/mysql-credentials.php
+          start: simple-task-app/start.sh
+          stop: simple-task-app/stop.sh
+          delete: simple-task-app/delete.sh
+      attributes:
+        endpoint: { get_operation_output: [ SELF, Standard, create, generated_endpoint ] }
+      requirements:
+        - host:
+          node: opentosca.DockerEngine
+
+  outputs:
+    endpoint:
+      description: the endpoint of the simple-task-app
+      value: { get_attribute: [ simple_task_app, endpoint ] }
+
