@@ -1,9 +1,11 @@
 package org.opentosca.toscana.core.csar;
 
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.eclipse.winery.model.tosca.yaml.TServiceTemplate;
 import org.opentosca.toscana.core.transformation.Platform;
 import org.opentosca.toscana.core.transformation.Transformation;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -16,14 +18,18 @@ class CsarImpl implements Csar{
      */
     private Map<String, Transformation> transformations = new HashMap<>();
     private String identifier;
+	/**
+	 * null if not yet parsed
+	 */
+	private TServiceTemplate template;
+	/**
+	 * The root directory of the unzipped CSAR
+	 */
+	private final File root;
 
-    public CsarImpl(String identifier) {
+    public CsarImpl(String identifier, File root) {
         this.identifier = identifier;
-    }
-
-    public void transform(Platform targetPlatform) {
-        // TODO
-        throw new UnsupportedOperationException();
+        this.root = root;
     }
 
     @Override
@@ -35,6 +41,22 @@ class CsarImpl implements Csar{
     public String getIdentifier() {
         return identifier;
     }
+
+	@Override
+	public TServiceTemplate getTemplate() {
+    	return template;
+	}
+
+	@Override
+	public void setTemplate(TServiceTemplate template) {
+    	this.template = template;
+
+	}
+
+	@Override
+	public File getRoot() {
+    	return root;
+	}
 
 
 	@Override

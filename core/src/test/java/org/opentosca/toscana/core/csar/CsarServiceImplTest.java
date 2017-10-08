@@ -41,9 +41,10 @@ public class CsarServiceImplTest extends BaseSpringTest {
 
 	@Test
 	public void deleteCsar() throws Exception {
-		Csar csar = new CsarImpl(identifier);
-		
 		File csarDir = new File(dataDir, identifier);
+		File contentDir = new File(csarDir, CsarFilesystemDao.CONTENT_DIR);
+		Csar csar = new CsarImpl(identifier, contentDir);
+		
 		csarDir.mkdir();
 		assertTrue(csarDir.isDirectory());
 		

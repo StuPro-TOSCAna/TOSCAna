@@ -56,7 +56,7 @@ public class CsarFilesystemDao implements CsarDao {
         }
         // TODO populate csar with files etc..
         // TODO add csar to list of csars
-        Csar csar = new CsarImpl(identifier);
+        Csar csar = new CsarImpl(identifier, contentDir);
         csarMap.put(identifier, csar);
         return csar;
     }
@@ -112,8 +112,8 @@ public class CsarFilesystemDao implements CsarDao {
         for (int i = 0; i < files.length; i++) {
             File file = files[i];
             if (isCsarDir(file)) {
-                Csar csar = new CsarImpl(file.getName());
-                // TODO populate csar with more fields..
+            	File contentDir = new File(file, CONTENT_DIR);
+                Csar csar = new CsarImpl(file.getName(), contentDir);
                 csarMap.put(csar.getIdentifier(), csar);
             }
         }

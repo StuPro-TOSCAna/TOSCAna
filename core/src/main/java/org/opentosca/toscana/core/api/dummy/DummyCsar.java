@@ -1,8 +1,10 @@
 package org.opentosca.toscana.core.api.dummy;
 
+import org.eclipse.winery.model.tosca.yaml.TServiceTemplate;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.transformation.Transformation;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,7 +27,20 @@ public class DummyCsar implements Csar{
 	public String getIdentifier() {
 		return name;
 	}
-	
+
+	@Override
+	public TServiceTemplate getTemplate() {
+		return null;
+	}
+
+	@Override
+	public void setTemplate(TServiceTemplate template) { }
+
+	@Override
+	public File getRoot() {
+		return null;
+	}
+
 	public byte[] getData() {
 		return data;
 	}
