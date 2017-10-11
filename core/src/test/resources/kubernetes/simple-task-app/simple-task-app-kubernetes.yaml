@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: simple-task-app-deployment
+spec:
+  selector:
+      app: simple-task-app
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: simple-task-app
+    spec:
+      containers:
+      - name: simple-task-app
+        # TODO add the right repo
+        image: nfode/simpletaskapp:v1
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: simple-task-app-service
+  labels:
+    app: simple-task-app
+spec:
+  # comment or delete the following line if you want to use a LoadBalancer
+  type: NodePort
+  # if your cluster supports it, uncomment the following to automatically create
+  # an external load-balanced IP for the frontend service.
+  # type: LoadBalancer
+  ports:
+  - port: 80
+  selector:
+    app: simple-task-app
