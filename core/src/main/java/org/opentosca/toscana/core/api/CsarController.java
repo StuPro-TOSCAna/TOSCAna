@@ -42,7 +42,10 @@ public class CsarController {
 
 	public Logger log = LoggerFactory.getLogger(getClass());
 
-	@GetMapping
+	@RequestMapping(
+		path = "",
+		method = RequestMethod.GET
+	)
 	public ResponseEntity<Resources<CsarResponse>> listCSARs() {
 		Link selfLink = linkTo(methodOn(CsarController.class).listCSARs()).withSelfRel();
 		List<CsarResponse> responses = new ArrayList<>();
@@ -53,8 +56,10 @@ public class CsarController {
 		return ResponseEntity.ok().body(csarResources);
 	}
 
-	@GetMapping
-	@RequestMapping("/{name}")
+	@RequestMapping(
+		path = "/{name}",
+		method = RequestMethod.GET
+	)
 	public ResponseEntity<CsarResponse> getCSARInfo(
 		@PathVariable(name = "name") String name
 	) {
@@ -71,8 +76,10 @@ public class CsarController {
 		return ResponseEntity.ok().body(new CsarResponse(archive.getIdentifier()));
 	}
 
-	@PutMapping
-	@RequestMapping("/{name}/archive")
+	@RequestMapping(
+		path = "/{name}",
+		method = {RequestMethod.PUT, RequestMethod.POST}
+		)
 	public ResponseEntity<String> uploadCSAR(
 		@PathVariable(name = "name") String name,
 		HttpServletRequest request

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
@@ -26,8 +27,10 @@ public class CommonController {
 	@Autowired
 	public FileSystem fileSystem;
 	
-	@GetMapping
-	@RequestMapping("/status")
+	@RequestMapping(
+		path = "/status",
+		method = RequestMethod.GET
+	)
 	public ResponseEntity<StatusResponse> getStatus() {
 		StatusResponse response = new StatusResponse(
 			statusProvider.getSystemStatus().getDisplayName(),

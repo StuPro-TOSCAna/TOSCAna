@@ -2,11 +2,13 @@ package org.opentosca.toscana.core.api.dummy;
 
 import org.opentosca.toscana.core.logging.Log;
 import org.opentosca.toscana.core.transformation.*;
+import org.opentosca.toscana.core.transformation.artifacts.TargetArtifact;
 
 public class DummyTransformation implements Transformation {
 	
 	private TransformationState state = TransformationState.QUEUED;
 	private Platform platform;
+	private Log log = new DummyLog();
 
 	public DummyTransformation(Platform platform) {
 		this.platform = platform;
@@ -24,7 +26,12 @@ public class DummyTransformation implements Transformation {
 
 	@Override
 	public Log getLog() {
-		return null;
+		return log;
+	}
+
+	@Override
+	public TargetArtifact getTargetArtifact() {
+		return new TargetArtifact();
 	}
 
 	@Override

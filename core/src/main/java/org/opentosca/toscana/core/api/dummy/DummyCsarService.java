@@ -2,11 +2,13 @@ package org.opentosca.toscana.core.api.dummy;
 
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarService;
+import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.util.LinkedList;
 import java.util.List;
 
+@Service //TODO If Transformation Service has been implemented
 public class DummyCsarService implements CsarService {
 
 	private String[] names = {"k8s-cluster", "apache-test", "mongo-db"};

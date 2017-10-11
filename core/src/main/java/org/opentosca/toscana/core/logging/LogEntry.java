@@ -6,7 +6,11 @@ public class LogEntry {
     public final String message;
     public final LogLevel logLevel;
 
-    LogEntry(long timestamp, String message, LogLevel level) {
+	public LogEntry(String message, LogLevel logLevel) {
+		this(System.currentTimeMillis(), message, logLevel);
+	}
+
+	LogEntry(long timestamp, String message, LogLevel level) {
         this.timestamp = timestamp;
         this.message = message;
         this.logLevel = level;

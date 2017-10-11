@@ -22,8 +22,6 @@ public class CsarResponse extends ResourceSupport {
 			.getCSARInfo(name)).withSelfRel());
 		add(linkTo(methodOn(CsarTransformationController.class)
 			.getCSARTransformations(name)).withRel("transformations").expand(name));
-		add(linkTo(methodOn(CsarController.class)
-			.uploadCSAR(name, null)).withRel("archive"));
 	}
 
 	@JsonProperty("name")

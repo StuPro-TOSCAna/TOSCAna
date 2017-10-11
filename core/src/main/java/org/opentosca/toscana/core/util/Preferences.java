@@ -41,6 +41,7 @@ public class Preferences {
 		logger.info("datadir is '{}'", dataPath);
 		dataDir = new File(dataPath);
 		dataDir.mkdirs();
+		System.out.println(dataDir.getAbsolutePath());
 		if (!dataDir.exists()){
 			logger.error("Failed to create data directory");
 		}

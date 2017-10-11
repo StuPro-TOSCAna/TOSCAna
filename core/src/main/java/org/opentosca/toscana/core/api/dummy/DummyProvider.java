@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
 /**
  * Provider Class to supply springs dependency Injection with dummy instances
  */
-@Configuration
+//@Configuration
 public class DummyProvider {
 	@Bean
 	public Preferences getPreferences() {

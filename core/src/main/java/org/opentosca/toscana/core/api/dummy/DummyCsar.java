@@ -12,7 +12,8 @@ public class DummyCsar implements Csar{
 	
 	private String name;
 	private byte[] data;
-	
+
+	private Map<String, Transformation> transformations = new HashMap<>();
 
 	public DummyCsar(String name) {
 		this.name = name;
@@ -20,7 +21,7 @@ public class DummyCsar implements Csar{
 
 	@Override
 	public Map<String, Transformation> getTransformations() {
-		return new HashMap<>();
+		return transformations;
 	}
 
 	@Override

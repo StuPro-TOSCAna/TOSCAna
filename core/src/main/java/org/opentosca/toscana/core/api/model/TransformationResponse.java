@@ -4,10 +4,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.opentosca.toscana.core.api.PlatformController;
 import org.opentosca.toscana.core.api.CsarTransformationController;
 import org.springframework.hateoas.ResourceSupport;
+import org.springframework.hateoas.core.Relation;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
+@Relation(collectionRelation = "transformation")
 public class TransformationResponse extends ResourceSupport {
 	private int progress;
 	private String status;
@@ -25,17 +27,22 @@ public class TransformationResponse extends ResourceSupport {
 		this.csarName = csarName;
 		this.platform = platform;
 		this.add(linkTo(methodOn(CsarTransformationController.class)
-			.getCSARTransformation(csarName,platform)).withSelfRel());
+			.getCSARTransformation(csarName,platform))
+			.withSelfRel().expand(csarName));
 		this.add(linkTo(methodOn(CsarTransformationController.class)
-			.getTransformationLogs(csarName,platform, 0L)).withRel("logs"));
+			.getTransformationLogs(csarName,platform, 0L))
+			.withRel("logs").expand(csarName));
 		this.add(linkTo(methodOn(PlatformController.class)
 			.getPlatform(platform)).withRel("platform"));
 		this.add(linkTo(methodOn(CsarTransformationController.class)
-			.getTransformationArtifact(csarName, platform)).withRel("artifact"));
+			.getTransformationArtifact(csarName, platform))
+			.withRel("artifact").expand(csarName));
 		this.add(linkTo(methodOn(CsarTransformationController.class)
-			.getTransformationProperties(csarName, platform)).withRel("properties"));
+			.getTransformationProperties(csarName, platform))
+			.withRel("properties").expand(csarName));
 		this.add(linkTo(methodOn(CsarTransformationController.class)
-			.deleteTransformation(csarName,platform)).withRel("delete"));
+			.deleteTransformation(csarName,platform))
+			.withRel("delete").expand(csarName));
 	}
 
 	@JsonProperty("progress")

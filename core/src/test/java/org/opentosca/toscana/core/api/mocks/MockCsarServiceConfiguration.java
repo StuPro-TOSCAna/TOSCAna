@@ -6,8 +6,8 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class MockCsarServiceConfiguration {
-	@Bean
-	public CsarService dummy() {
-		return new MockCsarService();
-	}
+//	@Bean
+//	public CsarService dummy() {
+//		return new MockCsarService();
+//	}
 }

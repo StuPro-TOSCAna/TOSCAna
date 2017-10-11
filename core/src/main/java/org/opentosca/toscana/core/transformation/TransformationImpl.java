@@ -2,6 +2,7 @@ package org.opentosca.toscana.core.transformation;
 
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.logging.Log;
+import org.opentosca.toscana.core.transformation.artifacts.TargetArtifact;
 
 import java.util.Set;
 

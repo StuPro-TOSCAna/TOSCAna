@@ -59,8 +59,7 @@ public class CsarControllerTest {
 	static {
 		relations = new HashMap<>();
 		relations.put("self", "http://localhost/csars/%s");
-		relations.put("transformations", "http://localhost/csars/%s/transformations");
-		relations.put("archive", "http://localhost/csars/%s/archive");
+		relations.put("transformations", "http://localhost/csars/%s/transformations/");
 	}
 
 	private PlatformProvider provider;
@@ -85,7 +84,7 @@ public class CsarControllerTest {
 			get("/csars").accept("application/hal+json")
 		).andDo(print()).andExpect(status().is2xxSuccessful());
 		resultActions.andExpect(jsonPath("$.links[0].rel").value("self"));
-		resultActions.andExpect(jsonPath("$.links[0].href").value("http://localhost/csars"));
+		resultActions.andExpect(jsonPath("$.links[0].href").value("http://localhost/csars/"));
 		resultActions.andExpect(jsonPath("$.content").exists());
 		resultActions.andExpect(jsonPath("$.content").isArray());
 		resultActions.andExpect(jsonPath("$.content[2]").doesNotExist());

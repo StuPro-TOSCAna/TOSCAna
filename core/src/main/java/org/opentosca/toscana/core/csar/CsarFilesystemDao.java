@@ -38,6 +38,14 @@ public class CsarFilesystemDao implements CsarDao {
     @Autowired
     public CsarFilesystemDao(Preferences preferences) {
     	this.dataDir = preferences.getDataDir();
+    	
+    	if(!dataDir.exists()) {
+			System.out.println(dataDir.getAbsolutePath());
+			if(!dataDir.mkdirs()){
+    			throw new RuntimeException("Something went wrong when creating the Data Directory!");
+			}
+		}
+    	
         readFromDisk();
     }
 
