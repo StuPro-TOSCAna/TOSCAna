@@ -2,7 +2,7 @@ package org.opentosca.toscana.core.api.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.opentosca.toscana.core.api.PlatformController;
-import org.opentosca.toscana.core.api.CsarTransformationController;
+import org.opentosca.toscana.core.api.TransformationController;
 import org.springframework.hateoas.ResourceSupport;
 import org.springframework.hateoas.core.Relation;
 
@@ -26,21 +26,21 @@ public class TransformationResponse extends ResourceSupport {
 		this.status = status;
 		this.csarName = csarName;
 		this.platform = platform;
-		this.add(linkTo(methodOn(CsarTransformationController.class)
+		this.add(linkTo(methodOn(TransformationController.class)
 			.getCSARTransformation(csarName,platform))
 			.withSelfRel().expand(csarName));
-		this.add(linkTo(methodOn(CsarTransformationController.class)
+		this.add(linkTo(methodOn(TransformationController.class)
 			.getTransformationLogs(csarName,platform, 0L))
 			.withRel("logs").expand(csarName));
 		this.add(linkTo(methodOn(PlatformController.class)
 			.getPlatform(platform)).withRel("platform"));
-		this.add(linkTo(methodOn(CsarTransformationController.class)
+		this.add(linkTo(methodOn(TransformationController.class)
 			.getTransformationArtifact(csarName, platform))
 			.withRel("artifact").expand(csarName));
-		this.add(linkTo(methodOn(CsarTransformationController.class)
+		this.add(linkTo(methodOn(TransformationController.class)
 			.getTransformationProperties(csarName, platform))
 			.withRel("properties").expand(csarName));
-		this.add(linkTo(methodOn(CsarTransformationController.class)
+		this.add(linkTo(methodOn(TransformationController.class)
 			.deleteTransformation(csarName,platform))
 			.withRel("delete").expand(csarName));
 	}

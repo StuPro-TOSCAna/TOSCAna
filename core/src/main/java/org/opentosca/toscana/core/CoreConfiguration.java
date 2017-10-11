@@ -3,6 +3,10 @@ package org.opentosca.toscana.core;
 import org.opentosca.toscana.core.api.dummy.DummyPlatformProvider;
 import org.opentosca.toscana.core.api.dummy.DummySystemStatusProvicer;
 import org.opentosca.toscana.core.api.dummy.FileSystemDummy;
+import org.opentosca.toscana.core.csar.CsarDao;
+import org.opentosca.toscana.core.csar.CsarFilesystemDao;
+import org.opentosca.toscana.core.csar.CsarService;
+import org.opentosca.toscana.core.csar.CsarServiceImpl;
 import org.opentosca.toscana.core.parse.CsarParser;
 import org.opentosca.toscana.core.parse.CsarParserImpl;
 import org.opentosca.toscana.core.util.FileSystem;
@@ -19,16 +23,16 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 public class CoreConfiguration {
 
 
-//    @Bean
-//    public CsarService csarService(){
-//        CsarServiceImpl bean = new CsarServiceImpl(csarDao(), csarParser());
-//        return bean;
-//    }
-//    @Bean
-//    public CsarDao csarDao(){
-//        CsarFilesystemDao bean = new CsarFilesystemDao(preferences());
-//        return bean;
-//    }
+    @Bean
+    public CsarService csarService(){
+        CsarServiceImpl bean = new CsarServiceImpl(csarDao(), csarParser());
+        return bean;
+    }
+    @Bean
+    public CsarDao csarDao(){
+        CsarFilesystemDao bean = new CsarFilesystemDao(preferences());
+        return bean;
+    }
 
 	@Bean
 	public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {

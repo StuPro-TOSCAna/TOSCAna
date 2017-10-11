@@ -1,6 +1,5 @@
 package org.opentosca.toscana.core.api;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,32 +10,21 @@ import org.opentosca.toscana.core.csar.CsarService;
 import org.opentosca.toscana.core.transformation.Platform;
 import org.opentosca.toscana.core.util.PlatformProvider;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.security.MessageDigest;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Random;
 
-import static org.junit.Assert.assertTrue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.fileUpload;
+import static org.opentosca.toscana.core.api.util.HALRelationUtils.validateRelations;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -134,19 +122,7 @@ public class CsarControllerTest {
 			//Validate String result
 			MvcResult result = resultActions.andReturn();
 			JSONObject object = new JSONObject(result.getResponse().getContentAsString());
-			JSONArray linkArray = object.getJSONArray("links");
-			assertTrue(linkArray.length() == relations.size());
-			for (Map.Entry<String, String> entry : relations.entrySet()) {
-				boolean found = false;
-				for (int i = 0; i < relations.size(); i++) {
-					JSONObject obj = linkArray.getJSONObject(i);
-					found = obj.getString("rel").equals(entry.getKey());
-					found = found && obj.getString("href").equals(String.format(entry.getValue(), name));
-					if (found)
-						break;
-				}
-				assertTrue("Could not find link in Relations of the json response: " + entry.getKey(), found);
-			}
+			validateRelations(object.getJSONArray("links"), relations, name);
 		}
 	}
 

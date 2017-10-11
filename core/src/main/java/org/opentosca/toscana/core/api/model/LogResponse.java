@@ -1,7 +1,7 @@
 package org.opentosca.toscana.core.api.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.opentosca.toscana.core.api.CsarTransformationController;
+import org.opentosca.toscana.core.api.TransformationController;
 import org.opentosca.toscana.core.logging.LogEntry;
 import org.springframework.hateoas.ResourceSupport;
 import org.springframework.hateoas.core.Relation;
@@ -28,11 +28,11 @@ public class LogResponse extends ResourceSupport {
 		this.end = end;
 		this.logEntries = logEntries;
 		//Add Self Link
-		this.add(linkTo(methodOn(CsarTransformationController.class)
+		this.add(linkTo(methodOn(TransformationController.class)
 			.getTransformationLogs(csarName, platform, start))
 			.withSelfRel().expand(csarName));
 		//Add link to retrieve only new log messages (next link)
-		this.add(linkTo(methodOn(CsarTransformationController.class)
+		this.add(linkTo(methodOn(TransformationController.class)
 			.getTransformationLogs(csarName, platform, end))
 			.withRel("next").expand(csarName));
 	}

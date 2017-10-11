@@ -1,7 +1,7 @@
 package org.opentosca.toscana.core.api.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.opentosca.toscana.core.api.CsarTransformationController;
+import org.opentosca.toscana.core.api.TransformationController;
 import org.springframework.hateoas.ResourceSupport;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
@@ -16,7 +16,7 @@ public class ArtifactResponse extends ResourceSupport {
 		String csarName
 	) {
 		this.accessURL = accessURL;
-		add(linkTo(methodOn(CsarTransformationController.class)
+		add(linkTo(methodOn(TransformationController.class)
 			.getTransformationArtifact(csarName, platform)).withSelfRel().expand(csarName));
 	}
 

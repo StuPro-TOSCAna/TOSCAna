@@ -5,6 +5,7 @@ import org.opentosca.toscana.core.csar.CsarService;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -61,7 +62,14 @@ public class DummyCsarService implements CsarService {
 
 	@Override
 	public Csar getCsar(String identifier) {
-		// TODO
-		return null;
+		Csar csar = null;
+		Collection<Csar> csars = getCsars();
+		for (Csar c : csars) {
+			if (c.getIdentifier().equals(identifier)) {
+				csar = c;
+				break;
+			}
+		}
+		return csar;
 	}
 }

@@ -29,7 +29,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/csars/{csarName}/transformations")
-public class CsarTransformationController {
+public class TransformationController {
 
 	@Autowired
 	public CsarService csarService;
@@ -50,7 +50,7 @@ public class CsarTransformationController {
 			return ResponseEntity.notFound().build();
 		}
 		Link selfLink =
-			linkTo(methodOn(CsarTransformationController.class)
+			linkTo(methodOn(TransformationController.class)
 				.getCSARTransformations(name))
 				.withSelfRel()
 				.expand(name);
