@@ -1,6 +1,12 @@
 spring:
   main:
     banner-mode: "off"
+#  http:
+#  	multipart:
+#     enabled: true
+#     max-file-size: 10000MB
+#     max-request-size: 100000MB
+     
     
 
 # no fallback value supplied here. value is computed at runtime, as it is platform dependent

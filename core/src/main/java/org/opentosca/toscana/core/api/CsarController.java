@@ -16,6 +16,7 @@ import org.springframework.hateoas.Resources;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -79,13 +80,13 @@ public class CsarController {
 	@RequestMapping(
 		path = "/{name}",
 		method = {RequestMethod.PUT, RequestMethod.POST}
-		)
+	)
 	public ResponseEntity<String> uploadCSAR(
 		@PathVariable(name = "name") String name,
-		HttpServletRequest request
+		@RequestParam(name = "file", required = true) MultipartFile file
 	) {
 		try {
-			Csar result = csarService.submitCsar(name, getInputStream(request));
+			Csar result = csarService.submitCsar(name, file.getInputStream());
 			if (result == null) {
 				//Return Bad Request if a csar with this name already exists
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();

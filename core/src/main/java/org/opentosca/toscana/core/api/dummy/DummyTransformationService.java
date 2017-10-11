@@ -8,10 +8,15 @@ import org.springframework.stereotype.Service;
 
 @Service //TODO If Transformation Service has been implemented
 public class DummyTransformationService implements TransformationService {
+	private boolean returnValue = true;
 	@Override
 	public void createTransformation(Csar csar, Platform targetPlatform) {
 		System.out.println("Creating Transformation for " + csar.getIdentifier() + " on " + targetPlatform.id);
 		csar.getTransformations().put(targetPlatform.id, new DummyTransformation(targetPlatform));
+	}
+
+	public void setReturnValue(boolean returnValue) {
+		this.returnValue = returnValue;
 	}
 
 	@Override
@@ -27,6 +32,6 @@ public class DummyTransformationService implements TransformationService {
 	@Override
 	public boolean deleteTransformation(Transformation transformation) {
 		
-		return false;
+		return returnValue;
 	}
 }

@@ -1,9 +1,12 @@
 package org.opentosca.toscana.core.logging;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class LogEntry {
 
     public final long timestamp;
     public final String message;
+    @JsonProperty("level") //Used for serialisation by the REST Api!
     public final LogLevel logLevel;
 
 	public LogEntry(String message, LogLevel logLevel) {

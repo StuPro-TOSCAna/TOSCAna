@@ -25,6 +25,9 @@ public class MockCsarService implements CsarService {
 
 	@Override
 	public Csar submitCsar(String name, InputStream csarStream) {
+		if(getCsar(name) != null)  {
+			return null;
+		}
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		try {
 			StreamUtils.writeTo(csarStream, out);
@@ -34,6 +37,7 @@ public class MockCsarService implements CsarService {
 		}
 		DummyCsar c = new DummyCsar(name);
 		c.setData(out.toByteArray());
+		csars.add(c);
 		return c;
 	}
 
@@ -48,6 +52,11 @@ public class MockCsarService implements CsarService {
 
 	@Override
 	public Csar getCsar(String identifier) {
+		for (Csar csar : csars) {
+			if(csar.getIdentifier().equals(identifier)) {
+				return csar;
+			}
+		}
 		return null;
 	}
 }

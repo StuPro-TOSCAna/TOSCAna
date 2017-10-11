@@ -19,7 +19,7 @@ public class TransformationResponse extends ResourceSupport {
 	public TransformationResponse(
 		@JsonProperty("progress") int progress,
 		@JsonProperty("status") String status,
-		String platform,
+		@JsonProperty("platform") String platform,
 		String csarName
 	) {
 		this.progress = progress;
@@ -57,6 +57,11 @@ public class TransformationResponse extends ResourceSupport {
 	@JsonProperty("status")
 	public String getStatus() {
 		return status;
+	}
+
+	@JsonProperty("platform")
+	public String getPlatform() {
+		return platform;
 	}
 
 	public void setStatus(String status) {

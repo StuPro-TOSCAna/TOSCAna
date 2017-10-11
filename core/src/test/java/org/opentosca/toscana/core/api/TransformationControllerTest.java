@@ -1,26 +1,33 @@
 package org.opentosca.toscana.core.api;
 
+import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opentosca.toscana.core.api.dummy.DummyCsarService;
 import org.opentosca.toscana.core.api.dummy.DummyPlatformProvider;
+import org.opentosca.toscana.core.api.dummy.DummyTransformation;
 import org.opentosca.toscana.core.api.dummy.DummyTransformationService;
+import org.opentosca.toscana.core.api.utils.HALRelationUtils;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarService;
 import org.opentosca.toscana.core.transformation.TransformationService;
 import org.opentosca.toscana.core.util.PlatformProvider;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -48,15 +55,156 @@ public class TransformationControllerTest {
 		mvc = MockMvcBuilders.standaloneSetup(controller).build();
 	}
 
+	//<editor-fold desc="Test Artifact Retrieval">
 	@Test
-	public void listTransformations() throws Exception {
+	public void retrieveArtifact() throws Exception {
 		preInitNonCreationTests();
-		mvc.perform(get("/csars/k8s-cluster/transformations/"))
-			.andDo(print())
-//			.andExpect(status().is(200))
+		((DummyTransformation)csarService.getCsar("k8s-cluster").getTransformations().get("p-a"))
+			.setReturnTargetArtifact(true);
+		mvc.perform(
+			get("/csars/k8s-cluster/transformations/p-a/artifact")
+		).andDo(print())
+			.andExpect(status().is(200))
+			.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+			.andExpect(jsonPath("$.access_url").isString())
+			.andExpect(jsonPath("$.links").isArray())
+			.andExpect(jsonPath("$.links[0].rel").value("self"))
+			.andExpect(jsonPath("$.links[0].href")
+				.value("http://localhost/csars/k8s-cluster/transformations/p-a/artifact"))
 			.andReturn();
 	}
 
+	@Test
+	public void retrieveArtifactNotFinished() throws Exception {
+		preInitNonCreationTests();
+		((DummyTransformation)csarService.getCsar("k8s-cluster").getTransformations().get("p-a"))
+			.setReturnTargetArtifact(false);
+		mvc.perform(
+			get("/csars/k8s-cluster/transformations/p-a/artifact")
+		).andDo(print())
+			.andExpect(status().is(404))
+			.andReturn();
+	}
+	//</editor-fold>
+	//<editor-fold desc="Test Transformation Logs">
+	@Test
+	public void retrieveTransformationLogs() throws Exception {
+		preInitNonCreationTests();
+		mvc.perform(
+			get("/csars/k8s-cluster/transformations/p-a/logs?start=0")
+		).andDo(print())
+			.andExpect(status().is(200))
+			.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+			.andExpect(jsonPath("$.start").value(0))
+			.andExpect(jsonPath("$.end").isNumber())
+			.andExpect(jsonPath("$.logs").isArray())
+			.andExpect(jsonPath("$.logs[0]").exists())
+			.andExpect(jsonPath("$.logs[0].timestamp").isNumber())
+			.andExpect(jsonPath("$.logs[0].level").isString())
+			.andExpect(jsonPath("$.logs[0].message").isString())
+			.andReturn();
+	}
+	//</editor-fold>
+	//<editor-fold desc="Delete Transformation Tests">
+	@Test
+	public void deleteTransformation() throws Exception {
+		preInitNonCreationTests();
+		//Set the return value of the delete method
+		((DummyTransformationService) transformationService).setReturnValue(true);
+		//Execute Request
+		mvc.perform(
+			delete("/csars/k8s-cluster/transformations/p-a/delete")
+		).andDo(print())
+			.andExpect(status().is(200))
+			.andReturn();
+	}
+	@Test
+	public void deleteTransformationServerError() throws Exception {
+		preInitNonCreationTests();
+		//Set the return value of the delete method
+		((DummyTransformationService) transformationService).setReturnValue(false);
+		//Execute Request
+		mvc.perform(
+			delete("/csars/k8s-cluster/transformations/p-a/delete")
+		).andDo(print())
+			.andExpect(status().is(500))
+			.andReturn();
+	}
+	//</editor-fold>
+	//<editor-fold desc="Transformation Details Test">
+	@Test
+	public void transformationDetails() throws Exception {
+		preInitNonCreationTests();
+		MvcResult result = mvc.perform(
+			get("/csars/k8s-cluster/transformations/p-a").accept(MediaType.APPLICATION_JSON)
+		)
+			.andDo(print())
+			.andExpect(status().is(200))
+			.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+			.andExpect(jsonPath("$.progress").value(0))
+			.andExpect(jsonPath("$.platform").value("p-a"))
+			.andExpect(jsonPath("$.status").value("QUEUED"))
+			.andReturn();
+		JSONObject object = new JSONObject(result.getResponse().getContentAsString());
+		HALRelationUtils.validateRelations(
+			object.getJSONArray("links"),
+			getLinkRelationsForTransformationDetails(),
+			"k8s-cluster",
+			"p-a"
+		);
+	}
+
+	private Map<String, String> getLinkRelationsForTransformationDetails() {
+		HashMap<String, String> map = new HashMap<>();
+		map.put("self", "http://localhost/csars/%s/transformations/%s");
+		map.put("logs", "http://localhost/csars/%s/transformations/%s/logs?start=0");
+		map.put("platform", "http://localhost/platforms/p-a");
+		map.put("artifact", "http://localhost/csars/%s/transformations/%s/artifact");
+		map.put("properties", "http://localhost/csars/%s/transformations/%s/properties");
+		map.put("delete", "http://localhost/csars/%s/transformations/%s/delete");
+		return map;
+	}
+
+	//</editor-fold>
+	//<editor-fold desc="List Transformation Tests">
+	@Test
+	public void listTransformations() throws Exception {
+		preInitNonCreationTests();
+		mvc.perform(
+			get("/csars/k8s-cluster/transformations/").accept(MediaType.APPLICATION_JSON)
+		)
+			.andDo(print())
+			.andExpect(status().is(200))
+			.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+			.andExpect(jsonPath("$.content").isArray())
+			.andExpect(jsonPath("$.content[0]").exists())
+			.andExpect(jsonPath("$.content[1]").exists())
+			.andExpect(jsonPath("$.content[2]").doesNotExist())
+			.andExpect(jsonPath("$.links[0].href")
+				.value("http://localhost/csars/k8s-cluster/transformations/"))
+			.andExpect(jsonPath("$.links[0].rel").value("self"))
+			.andExpect(jsonPath("$.links[1]").doesNotExist())
+			.andReturn();
+	}
+
+	@Test
+	public void listEmptyTransformations() throws Exception {
+		mvc.perform(
+			get("/csars/k8s-cluster/transformations/").accept(MediaType.APPLICATION_JSON)
+		)
+			.andDo(print())
+			.andExpect(status().is(200))
+			.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+			.andExpect(jsonPath("$.content").isArray())
+			.andExpect(jsonPath("$.content[0]").doesNotExist())
+			.andExpect(jsonPath("$.links[0].href")
+				.value("http://localhost/csars/k8s-cluster/transformations/"))
+			.andExpect(jsonPath("$.links[0].rel").value("self"))
+			.andExpect(jsonPath("$.links[1]").doesNotExist())
+			.andReturn();
+	}
+
+	//</editor-fold>
 	//<editor-fold desc="Create Transformation Tests">
 	@Test
 	public void createTransformation() throws Exception {
@@ -88,6 +236,7 @@ public class TransformationControllerTest {
 			.andExpect(content().bytes(new byte[0]))
 			.andReturn();
 	}
+
 	//</editor-fold>
 	//<editor-fold desc="Platform Not found Tests">
 	@Test
@@ -131,6 +280,7 @@ public class TransformationControllerTest {
 		mvc.perform(delete("/csars/k8s-cluster/transformations/p-z/delete"))
 			.andDo(print()).andExpect(status().isNotFound()).andReturn();
 	}
+
 	//</editor-fold>
 	//<editor-fold desc="CSAR Not found Tests">
 	@Test
@@ -180,11 +330,14 @@ public class TransformationControllerTest {
 		mvc.perform(delete("/csars/keinechtescsar/transformations/p-a/delete"))
 			.andDo(print()).andExpect(status().isNotFound()).andReturn();
 	}
+
 	//</editor-fold>
+	//<editor-fold desc="Util Methods">
 	public void preInitNonCreationTests() {
 		//add a transformation
 		Csar csar = csarService.getCsar("k8s-cluster");
 		transformationService.createTransformation(csar, platformProvider.findById("p-a"));
 		transformationService.createTransformation(csar, platformProvider.findById("p-b"));
 	}
+	//</editor-fold>
 }
