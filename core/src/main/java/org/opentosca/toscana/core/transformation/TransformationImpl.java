@@ -3,7 +3,9 @@ package org.opentosca.toscana.core.transformation;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.logging.Log;
 import org.opentosca.toscana.core.transformation.artifacts.TargetArtifact;
+import org.opentosca.toscana.core.transformation.properties.Property;
 
+import java.util.Map;
 import java.util.Set;
 
 class TransformationImpl implements Transformation {
@@ -75,4 +77,14 @@ class TransformationImpl implements Transformation {
         // TODO
         throw new UnsupportedOperationException();
     }
+
+	@Override
+	public void setProperty(String key, String value) {
+		
+	}
+
+	@Override
+	public Map<String, String> getProperties() {
+		return null;
+	}
 }

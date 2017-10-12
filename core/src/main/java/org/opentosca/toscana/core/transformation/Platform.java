@@ -1,28 +1,29 @@
 package org.opentosca.toscana.core.transformation;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import org.opentosca.toscana.core.transformation.properties.Property;
+import org.opentosca.toscana.core.transformation.properties.RequirementType;
+
+import java.util.*;
 
 public class Platform {
 
     public final String id;
     public final String name;
-    public final Set<Property> requiredProperties;
+    public final Set<Property> properties;
 
     /**
      * Creates a new platform.
      *
      * @param id                 short identifier of platform. must match regex [a-z_-]+
      * @param name               displayable name of platform. must not be an empty string
-     * @param requiredProperties the properties the platform requires.
+     * @param properties the properties the platform requires.
      */
-    public Platform(String id, String name, Set<Property> requiredProperties) {
+    public Platform(String id, String name, Set<Property> properties) {
         this.id = id;
         this.name = name;
-        this.requiredProperties = requiredProperties;
+        this.properties = properties;
         if (id == null || !id.matches("[a-z_-]+") || name == null || name.isEmpty() ||
-                requiredProperties == null) {
+                properties == null) {
             throw new IllegalArgumentException(String.format("Platform '%s' is invalid", this));
         }
     }
@@ -35,21 +36,26 @@ public class Platform {
      * @see #Platform(String, String, Set<Property>)
      */
     Platform(String id, String name) {
-        this(id, name, new HashSet<Property>());
+        this(id, name, new HashSet<>());
     }
 
 
     /**
      * @return a list of properties which are necessary for a transformation to this platform.
      */
-    public List<Property> getRequiredProperties() {
-        // TODO
-        // Remember to return a deep copy of the properties..!
-        throw new UnsupportedOperationException();
-
+    public Set<Property> getProperties() {
+        return Collections.unmodifiableSet(properties);
     }
+    
+    public Set<Property> getPropertiesForRequirementType(RequirementType type) {
+    	HashSet<Property> filteredProperties = new HashSet<>();
+    	properties.stream()
+			.filter((e) -> e.getRequirementType() == type)
+			.forEach(filteredProperties::add);
+    	return Collections.unmodifiableSet(filteredProperties);
+	}
 
     public String toString() {
-        return String.format("Platform [id='%s', name='%s', requiredProperties='%s']", id, name, requiredProperties);
+        return String.format("Platform [id='%s', name='%s', properties='%s']", id, name, properties);
     }
 }

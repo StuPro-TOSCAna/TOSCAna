@@ -7,9 +7,11 @@ import org.opentosca.toscana.core.transformation.TransformationListener;
 import org.opentosca.toscana.core.transformation.TransformationState;
 import org.opentosca.toscana.core.transformation.artifacts.TargetArtifact;
 
+import java.util.Map;
+
 public class DummyTransformation implements Transformation {
 
-	private TransformationState state = TransformationState.QUEUED;
+	private TransformationState state = TransformationState.INPUT_REQUIRED;
 	private Platform platform;
 	private Log log = new DummyLog();
 	private boolean returnTargetArtifact = true;
@@ -26,6 +28,16 @@ public class DummyTransformation implements Transformation {
 	@Override
 	public Platform getPlatform() {
 		return platform;
+	}
+
+	@Override
+	public void setProperty(String key, String value) {
+		
+	}
+
+	@Override
+	public Map<String, String> getProperties() {
+		return null;
 	}
 
 	@Override

@@ -192,7 +192,25 @@ public class TransformationController {
 		}
 		return ResponseEntity.ok().body(new ArtifactResponse(artifact.getArtifactDownloadURL(), platform, name));
 	}
-
+	@RequestMapping(
+		path = "/{platform}/properties",
+		method = RequestMethod.GET
+	)
+	public ResponseEntity<String> getTransformationProperties(
+		@PathVariable(name = "csarName") String name,
+		@PathVariable(name = "platform") String platform
+	) {
+		Csar csar = findCsarByName(name);
+		if (csar == null) {
+			return ResponseEntity.notFound().build();
+		}
+		Transformation transformation = csar.getTransformations().get(platform);
+		if (transformation == null) {
+			return ResponseEntity.notFound().build();
+		}
+		
+		return ResponseEntity.ok().build();
+	}
 	@RequestMapping(
 		path = "/{platform}/properties",
 		method = {RequestMethod.POST, RequestMethod.PUT}
@@ -213,24 +231,7 @@ public class TransformationController {
 	}
 
 
-	@RequestMapping(
-		path = "/{platform}/properties",
-		method = RequestMethod.GET
-	)
-	public ResponseEntity<String> getTransformationProperties(
-		@PathVariable(name = "csarName") String name,
-		@PathVariable(name = "platform") String platform
-	) {
-		Csar csar = findCsarByName(name);
-		if (csar == null) {
-			return ResponseEntity.notFound().build();
-		}
-		Transformation transformation = csar.getTransformations().get(platform);
-		if (transformation == null) {
-			return ResponseEntity.notFound().build();
-		}
-		return ResponseEntity.ok().build();
-	}
+	
 
 	private Csar findCsarByName(String name) {
 		Csar csar = null;

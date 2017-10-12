@@ -1,6 +1,9 @@
 package org.opentosca.toscana.core.api.dummy;
 
 import org.opentosca.toscana.core.transformation.Platform;
+import org.opentosca.toscana.core.transformation.properties.Property;
+import org.opentosca.toscana.core.transformation.properties.PropertyType;
+import org.opentosca.toscana.core.transformation.properties.RequirementType;
 import org.opentosca.toscana.core.util.PlatformProvider;
 
 import java.util.ArrayList;
@@ -22,6 +25,12 @@ public class DummyPlatformProvider implements PlatformProvider {
 		ArrayList<Platform> platforms = new ArrayList<>();
 
 		for (int i = 0; i < 5; i++) {
+			HashSet<Property> properties = new HashSet<>();
+			if(i == 0) {
+				for (PropertyType type : PropertyType.values()) {
+					properties.add(new Property(type.getTypeName()+"_property",type, RequirementType.NEVER));
+				}
+			}
 			platforms.add(new Platform("p-" + chars[i], "platform-" + (i + 1), new HashSet<>()));
 		}
 		this.platforms = platforms;
