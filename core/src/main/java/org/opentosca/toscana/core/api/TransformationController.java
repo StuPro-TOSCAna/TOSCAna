@@ -27,7 +27,6 @@ import java.util.Map;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
-@CrossOrigin
 @RestController
 @RequestMapping("/csars/{csarName}/transformations")
 public class TransformationController {

@@ -36,19 +36,19 @@ public class CoreConfiguration {
 
 	@Bean
 	public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
-		return null;
+		return new PropertySourcesPlaceholderConfigurer();
 	}
 
 	//TODO Replace with implementation of the Status Provider
 	@Bean
 	public StatusProvider statusProvider() {
-		return null;
+		return new DummySystemStatusProvicer();
 	}
 
 	//TODO Replace with filesystem implementation
 	@Bean
 	public FileSystem fileSystem() {
-		return null;
+		return new FileSystemDummy();
 	}
 
 	@Bean

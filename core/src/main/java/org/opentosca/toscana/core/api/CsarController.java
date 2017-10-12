@@ -31,7 +31,6 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 /**
  * This contoller implements all Csar and Transformation specific operations
  */
-@CrossOrigin
 @RestController
 @RequestMapping("/csars")
 public class CsarController {
