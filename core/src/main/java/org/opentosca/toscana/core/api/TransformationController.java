@@ -1,10 +1,7 @@
 package org.opentosca.toscana.core.api;
 
-import org.opentosca.toscana.core.api.model.ArtifactResponse;
-import org.opentosca.toscana.core.api.model.LogResponse;
-import org.opentosca.toscana.core.api.model.GetPropertiesResponse;
+import org.opentosca.toscana.core.api.model.*;
 import org.opentosca.toscana.core.api.model.GetPropertiesResponse.PropertyWrap;
-import org.opentosca.toscana.core.api.model.TransformationResponse;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarService;
 import org.opentosca.toscana.core.logging.Log;
@@ -12,6 +9,7 @@ import org.opentosca.toscana.core.logging.LogEntry;
 import org.opentosca.toscana.core.transformation.Platform;
 import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.TransformationService;
+import org.opentosca.toscana.core.transformation.TransformationState;
 import org.opentosca.toscana.core.transformation.artifacts.TargetArtifact;
 import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.core.util.PlatformProvider;
@@ -22,10 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
@@ -211,8 +206,11 @@ public class TransformationController {
 		Transformation transformation = csar.getTransformations().get(platform);
 		if (transformation == null) {
 			return ResponseEntity.notFound().build();
+		} else if (transformation.getState() != TransformationState.INPUT_REQUIRED) {
+			return ResponseEntity.badRequest().build();
 		}
 		List<PropertyWrap> propertyWrapList = new ArrayList<>();
+		//TODO add filtering depending on the transformation state (i.e. Transforming, Deploying...)
 		for (Property property : transformation.getPlatform().getProperties()) {
 			propertyWrapList.add(new PropertyWrap(property.getKey(), property.getType().getTypeName()));
 		}
@@ -223,9 +221,10 @@ public class TransformationController {
 		path = "/{platform}/properties",
 		method = {RequestMethod.POST, RequestMethod.PUT}
 	)
-	public ResponseEntity<String> setTransformationProperties(
+	public ResponseEntity<SetPropertiesResponse> setTransformationProperties(
 		@PathVariable(name = "csarName") String name,
-		@PathVariable(name = "platform") String platform
+		@PathVariable(name = "platform") String platform,
+		@RequestBody SetPropertiesRequest setPropertiesRequest
 	) {
 		Csar csar = findCsarByName(name);
 		if (csar == null) {
@@ -234,8 +233,27 @@ public class TransformationController {
 		Transformation transformation = csar.getTransformations().get(platform);
 		if (transformation == null) {
 			return ResponseEntity.notFound().build();
+		} else if (transformation.getState() != TransformationState.INPUT_REQUIRED) {
+			return ResponseEntity.badRequest().build();
 		}
-		return ResponseEntity.ok().build();
+		Map<String, Boolean> sucesses = new HashMap<>();
+		boolean somethingFailed = false;
+		//Set The Properties and check their validity
+		for (Map.Entry<String, String> entry : setPropertiesRequest.getProperties().entrySet()) {
+			try {
+				transformation.setProperty(entry.getKey(), entry.getValue());
+				sucesses.put(entry.getKey(), true);
+			} catch (Exception e) {
+				somethingFailed = true;
+				sucesses.put(entry.getKey(), false);
+			}
+		}
+		//Return the result (with code 200 if all inputs were valid and 400 if at least 1 was invalid)
+		if (!somethingFailed) {
+			return ResponseEntity.ok(new SetPropertiesResponse(sucesses));
+		} else {
+			return ResponseEntity.badRequest().body(new SetPropertiesResponse(sucesses));
+		}
 	}
 
 
