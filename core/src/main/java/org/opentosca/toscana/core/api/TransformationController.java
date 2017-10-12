@@ -2,6 +2,8 @@ package org.opentosca.toscana.core.api;
 
 import org.opentosca.toscana.core.api.model.ArtifactResponse;
 import org.opentosca.toscana.core.api.model.LogResponse;
+import org.opentosca.toscana.core.api.model.GetPropertiesResponse;
+import org.opentosca.toscana.core.api.model.GetPropertiesResponse.PropertyWrap;
 import org.opentosca.toscana.core.api.model.TransformationResponse;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarService;
@@ -11,6 +13,7 @@ import org.opentosca.toscana.core.transformation.Platform;
 import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.TransformationService;
 import org.opentosca.toscana.core.transformation.artifacts.TargetArtifact;
+import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.core.util.PlatformProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
@@ -192,11 +195,12 @@ public class TransformationController {
 		}
 		return ResponseEntity.ok().body(new ArtifactResponse(artifact.getArtifactDownloadURL(), platform, name));
 	}
+
 	@RequestMapping(
 		path = "/{platform}/properties",
 		method = RequestMethod.GET
 	)
-	public ResponseEntity<String> getTransformationProperties(
+	public ResponseEntity<GetPropertiesResponse> getTransformationProperties(
 		@PathVariable(name = "csarName") String name,
 		@PathVariable(name = "platform") String platform
 	) {
@@ -208,9 +212,13 @@ public class TransformationController {
 		if (transformation == null) {
 			return ResponseEntity.notFound().build();
 		}
-		
-		return ResponseEntity.ok().build();
+		List<PropertyWrap> propertyWrapList = new ArrayList<>();
+		for (Property property : transformation.getPlatform().getProperties()) {
+			propertyWrapList.add(new PropertyWrap(property.getKey(), property.getType().getTypeName()));
+		}
+		return ResponseEntity.ok(new GetPropertiesResponse(name, platform, propertyWrapList));
 	}
+
 	@RequestMapping(
 		path = "/{platform}/properties",
 		method = {RequestMethod.POST, RequestMethod.PUT}
@@ -230,8 +238,6 @@ public class TransformationController {
 		return ResponseEntity.ok().build();
 	}
 
-
-	
 
 	private Csar findCsarByName(String name) {
 		Csar csar = null;
