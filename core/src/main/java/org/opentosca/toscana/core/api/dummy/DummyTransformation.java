@@ -52,6 +52,10 @@ public class DummyTransformation implements Transformation {
 		}
 	}
 
+	public void setState(TransformationState state) {
+		this.state = state;
+	}
+
 	@Override
 	public Map<String, String> getProperties() {
 		return properties;

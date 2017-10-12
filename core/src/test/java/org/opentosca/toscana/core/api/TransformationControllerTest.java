@@ -12,6 +12,7 @@ import org.opentosca.toscana.core.api.utils.HALRelationUtils;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarService;
 import org.opentosca.toscana.core.transformation.TransformationService;
+import org.opentosca.toscana.core.transformation.TransformationState;
 import org.opentosca.toscana.core.util.PlatformProvider;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -35,6 +36,24 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 	classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD
 )
 public class TransformationControllerTest {
+	
+	private static final String VALID_PROPERTY_INPUT = "{\n" +
+		"\t\"properties\": {\n" +
+		"\t\t\"text_property\":\"Hallo Welt\",\n" +
+		"\t\t\"name_property\": \"hallo\",\n" +
+		"\t\t\"secret_property\": \"I bims 1 geheimnis\",\n" +
+		"\t\t\"unsigned_integer_property\": \"1337\"\n" +
+		"\t}\n" +
+		"}";
+	private static final String INVALID_PROPERTY_INPUT = "{\n" +
+		"\t\"properties\": {\n" +
+		"\t\t\"text_property\":\"Meddl Loide\",\n" +
+		"\t\t\"name_property\": \"meddl\",\n" +
+		"\t\t\"secret_property\": \"I bims 1 geheimnis\",\n" +
+		"\t\t\"unsigned_integer_property\": \"-1337\"\n" +
+		"\t}\n" +
+		"}";
+	
 	private TransformationController controller;
 	private CsarService csarService;
 	private TransformationService transformationService;
@@ -55,11 +74,75 @@ public class TransformationControllerTest {
 		mvc = MockMvcBuilders.standaloneSetup(controller).build();
 	}
 
+	//<editor-fold desc="Property tests">
+	@Test
+	public void setTransformationProperties() throws Exception {
+		preInitNonCreationTests();
+		mvc.perform(
+			put("/csars/k8s-cluster/transformations/p-a/properties")
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(VALID_PROPERTY_INPUT)
+		).andDo(print())
+			.andExpect(status().is(200))
+			.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+			.andExpect(jsonPath("$.valid_inputs.name_property").value(true))
+			.andExpect(jsonPath("$.valid_inputs.text_property").value(true))
+			.andExpect(jsonPath("$.valid_inputs.secret_property").value(true))
+			.andExpect(jsonPath("$.valid_inputs.unsigned_integer_property").value(true))
+			.andReturn();
+	}
+	@Test
+	public void setTransformationPropertiesInvalidInput() throws Exception {
+		preInitNonCreationTests();
+		mvc.perform(
+			put("/csars/k8s-cluster/transformations/p-a/properties")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(INVALID_PROPERTY_INPUT)
+		).andDo(print())
+			.andExpect(status().is(400))
+			.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+			.andExpect(jsonPath("$.valid_inputs.name_property").value(true))
+			.andExpect(jsonPath("$.valid_inputs.text_property").value(true))
+			.andExpect(jsonPath("$.valid_inputs.secret_property").value(true))
+			.andExpect(jsonPath("$.valid_inputs.unsigned_integer_property").value(false))
+			.andReturn();
+	}
+
+	@Test
+	public void getTransformationProperties() throws Exception {
+		preInitNonCreationTests();
+		mvc.perform(
+			get("/csars/k8s-cluster/transformations/p-a/properties")
+		).andDo(print())
+			.andExpect(status().is(200))
+			.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+			.andExpect(jsonPath("$.properties").isArray())
+			.andExpect(jsonPath("$.properties").isNotEmpty())
+			.andExpect(jsonPath("$.properties[0].key").isString())
+			.andExpect(jsonPath("$.properties[0].type").isString())
+			.andExpect(jsonPath("$.links[0].rel").value("self"))
+			.andExpect(jsonPath("$.links[0].href")
+				.value("http://localhost/csars/k8s-cluster/transformations/p-a/properties"))
+			.andReturn();
+	}
+
+	@Test
+	public void getTransformationPropertiesInvalidState() throws Exception {
+		preInitNonCreationTests();
+		((DummyTransformation) csarService.getCsar("k8s-cluster").getTransformations().get("p-a"))
+			.setState(TransformationState.QUEUED);
+		mvc.perform(
+			get("/csars/k8s-cluster/transformations/p-a/properties")
+		).andDo(print())
+			.andExpect(status().is(400))
+			.andReturn();
+	}
+	//</editor-fold>
 	//<editor-fold desc="Test Artifact Retrieval">
 	@Test
 	public void retrieveArtifact() throws Exception {
 		preInitNonCreationTests();
-		((DummyTransformation)csarService.getCsar("k8s-cluster").getTransformations().get("p-a"))
+		((DummyTransformation) csarService.getCsar("k8s-cluster").getTransformations().get("p-a"))
 			.setReturnTargetArtifact(true);
 		mvc.perform(
 			get("/csars/k8s-cluster/transformations/p-a/artifact")
@@ -77,7 +160,7 @@ public class TransformationControllerTest {
 	@Test
 	public void retrieveArtifactNotFinished() throws Exception {
 		preInitNonCreationTests();
-		((DummyTransformation)csarService.getCsar("k8s-cluster").getTransformations().get("p-a"))
+		((DummyTransformation) csarService.getCsar("k8s-cluster").getTransformations().get("p-a"))
 			.setReturnTargetArtifact(false);
 		mvc.perform(
 			get("/csars/k8s-cluster/transformations/p-a/artifact")
@@ -85,6 +168,7 @@ public class TransformationControllerTest {
 			.andExpect(status().is(404))
 			.andReturn();
 	}
+
 	//</editor-fold>
 	//<editor-fold desc="Test Transformation Logs">
 	@Test
@@ -104,6 +188,7 @@ public class TransformationControllerTest {
 			.andExpect(jsonPath("$.logs[0].message").isString())
 			.andReturn();
 	}
+
 	//</editor-fold>
 	//<editor-fold desc="Delete Transformation Tests">
 	@Test
@@ -118,6 +203,7 @@ public class TransformationControllerTest {
 			.andExpect(status().is(200))
 			.andReturn();
 	}
+
 	@Test
 	public void deleteTransformationServerError() throws Exception {
 		preInitNonCreationTests();
@@ -130,6 +216,7 @@ public class TransformationControllerTest {
 			.andExpect(status().is(500))
 			.andReturn();
 	}
+
 	//</editor-fold>
 	//<editor-fold desc="Transformation Details Test">
 	@Test
@@ -143,7 +230,7 @@ public class TransformationControllerTest {
 			.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
 			.andExpect(jsonPath("$.progress").value(0))
 			.andExpect(jsonPath("$.platform").value("p-a"))
-			.andExpect(jsonPath("$.status").value("QUEUED"))
+			.andExpect(jsonPath("$.status").value("INPUT_REQUIRED"))
 			.andReturn();
 		JSONObject object = new JSONObject(result.getResponse().getContentAsString());
 		HALRelationUtils.validateRelations(
@@ -271,8 +358,11 @@ public class TransformationControllerTest {
 
 	@Test
 	public void transformationPropertiesPutPlatformNotFound() throws Exception {
-		mvc.perform(put("/csars/k8s-cluster/transformations/p-z/properties"))
-			.andDo(print()).andExpect(status().isNotFound()).andReturn();
+		mvc.perform(
+			put("/csars/k8s-cluster/transformations/p-z/properties")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("{\"properties\": {}}")
+		).andDo(print()).andExpect(status().isNotFound()).andReturn();
 	}
 
 	@Test
@@ -321,8 +411,11 @@ public class TransformationControllerTest {
 
 	@Test
 	public void transformationPropertiesPutCsarNotFound() throws Exception {
-		mvc.perform(put("/csars/keinechtescsar/transformations/p-a/properties"))
-			.andDo(print()).andExpect(status().isNotFound()).andReturn();
+		mvc.perform(
+			put("/csars/keinechtescsar/transformations/p-a/properties")
+				.content("{\"properties\": {}}")
+				.contentType(MediaType.APPLICATION_JSON)
+		).andDo(print()).andExpect(status().isNotFound()).andReturn();
 	}
 
 	@Test
