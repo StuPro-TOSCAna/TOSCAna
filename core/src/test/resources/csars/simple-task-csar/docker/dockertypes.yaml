@@ -9,7 +9,16 @@ node_types:
     requirements:
       - os:
         type: linux
+        distribution: ubuntu
         architecture: x86_64
+    interfaces:
+      Standard:
+        create:
+          dockerengine_create.sh
+        start:
+          dockerengine_start.sh
+        stop:
+          dockerengine_stop.sh
   DockerApp:
     derived_from: tosca.nodes.Root
     requirements:
@@ -33,13 +42,13 @@ node_types:
           tag: { get_attribute: [ SELF, tag ] }
           identifier: { get_attribute: [ SELF, identifier ] }
         create:
-          create.sh
+          dockerapp_create.sh
         start:
-          create.sh
+          dockerapp_create.sh
         stop:
-          stop.sh
+          dockerapp_stop.sh
         delete:
-          delete.sh
+          dockerapp_delete.sh
 
 capability_types:
   DockerHost:
