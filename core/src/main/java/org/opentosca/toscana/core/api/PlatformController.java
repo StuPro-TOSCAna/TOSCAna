@@ -18,6 +18,8 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 /**
  * This REST Controller handles every request
  * to list the supported Platforms and to retrieve information about a specific platform.
+ * <p>
+ * For sample Responses of the Requests, please have al look at docs/api/api_samples.md
  */
 @CrossOrigin
 @RestController
@@ -31,6 +33,8 @@ public class PlatformController {
 	 * Lists all Supported Platforms (HTTP Response Method)
 	 * <p>
 	 * It handles the <code>/platforms</code> Request
+	 * <p>
+	 * Always responds with HTTP-Code 200
 	 */
 	@RequestMapping(
 		path = "",
@@ -52,6 +56,9 @@ public class PlatformController {
 	 * Returns the information for a specific platform.
 	 * <p>
 	 * This method handles the <code>/platforms/{id}</code> request
+	 * <p>
+	 * Responds with Http code 200 normaly and
+	 * with code 404 if the plaform with the given name (case sensitive) does not exist.
 	 *
 	 * @param id the <code>id</code> (identifier) of the platform (HTTP Path Parameter)
 	 */
@@ -69,6 +76,9 @@ public class PlatformController {
 		return ResponseEntity.ok(getPlatformResource(p));
 	}
 
+	/**
+	 * Generates a Platform Response and adds a self link to it.
+	 */
 	private PlatformResponse getPlatformResource(Platform platform) {
 		PlatformResponse res = new PlatformResponse(platform);
 		res.add(linkTo(methodOn(PlatformController.class).getPlatform(res.getIdentifier())).withSelfRel());

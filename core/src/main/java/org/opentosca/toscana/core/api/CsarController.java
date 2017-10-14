@@ -1,9 +1,5 @@
 package org.opentosca.toscana.core.api;
 
-import org.apache.tomcat.util.http.fileupload.FileItemIterator;
-import org.apache.tomcat.util.http.fileupload.FileItemStream;
-import org.apache.tomcat.util.http.fileupload.FileUploadException;
-import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
 import org.opentosca.toscana.core.api.model.CsarResponse;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarService;
@@ -18,18 +14,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 /**
  * This contoller implements all Csar and Transformation specific operations
+ * <p>
+ * For sample Responses of the Requests, please have al look at docs/api/api_samples.md
  */
 @CrossOrigin
 @RestController
@@ -44,6 +38,11 @@ public class CsarController {
 
 	public Logger log = LoggerFactory.getLogger(getClass());
 
+	/**
+	 * Responds with a list of csars stored on the transformator.
+	 * <p>
+	 * This always responds with HTTP-Code 200
+	 */
 	@RequestMapping(
 		path = "",
 		method = RequestMethod.GET
@@ -58,6 +57,12 @@ public class CsarController {
 		return ResponseEntity.ok().body(csarResources);
 	}
 
+	/**
+	 * Responds with the data for a specific CSAR
+	 * <p>
+	 * This Operation Response returns 200 if a archive with the given name exists
+	 * if not Http 404 with no content is returned
+	 */
 	@RequestMapping(
 		path = "/{name}",
 		method = RequestMethod.GET
@@ -78,6 +83,14 @@ public class CsarController {
 		return ResponseEntity.ok().body(new CsarResponse(archive.getIdentifier()));
 	}
 
+	/**
+	 * This Request (Supporting Post and Put mehtods) uploads a csar to the transformator.
+	 * <p>
+	 * If the upload succeeded HTTP code 200 (no Content) is returned
+	 * and HTTP code 400 (no Content) if a csar with the given name already exists.
+	 * <p>
+	 * If something goes wrong while processing the upload HTTP Code 500 gets returned (no Content)
+	 */
 	@RequestMapping(
 		path = "/{name}",
 		method = {RequestMethod.PUT, RequestMethod.POST}
@@ -99,15 +112,16 @@ public class CsarController {
 		}
 	}
 
-	private InputStream getInputStream(HttpServletRequest request) throws IOException, FileUploadException {
-		ServletFileUpload upload = new ServletFileUpload();
-		FileItemIterator iterator = upload.getItemIterator(request);
-		while (iterator.hasNext()) {
-			FileItemStream stream = iterator.next();
-			if (Objects.equals(stream.getFieldName(), "file")) {
-				return stream.openStream();
-			}
-		}
-		return null;
-	}
+	//NOTE: This operation might be used again, depending on how spring behaves when uploading large files
+//	private InputStream getInputStream(HttpServletRequest request) throws IOException, FileUploadException {
+//		ServletFileUpload upload = new ServletFileUpload();
+//		FileItemIterator iterator = upload.getItemIterator(request);
+//		while (iterator.hasNext()) {
+//			FileItemStream stream = iterator.next();
+//			if (Objects.equals(stream.getFieldName(), "file")) {
+//				return stream.openStream();
+//			}
+//		}
+//		return null;
+//	}
 }

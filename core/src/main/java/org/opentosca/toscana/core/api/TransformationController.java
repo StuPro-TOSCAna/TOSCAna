@@ -255,17 +255,8 @@ public class TransformationController {
 			return ResponseEntity.badRequest().body(new SetPropertiesResponse(sucesses));
 		}
 	}
-
-
+	
 	private Csar findCsarByName(String name) {
-		Csar csar = null;
-		Collection<Csar> csars = csarService.getCsars();
-		for (Csar c : csars) {
-			if (c.getIdentifier().equals(name)) {
-				csar = c;
-				break;
-			}
-		}
-		return csar;
+		return csarService.getCsar(name);
 	}
 }

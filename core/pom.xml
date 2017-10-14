@@ -32,7 +32,7 @@
 	<dependencies>
 		<!-- Winery -->
 		<dependency>
-			<groupId>com.github.eclipse.winery</groupId>
+			<groupId>com.github.c-mueller.winery</groupId>
 			<artifactId>org.eclipse.winery.yaml.common</artifactId>
 			<version>master-SNAPSHOT</version>
 		</dependency>
@@ -49,6 +49,11 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-configuration-processor</artifactId>
+			<optional>true</optional>
 		</dependency>
 
 		<!-- Swagger Dependencies (Springfox) -->
