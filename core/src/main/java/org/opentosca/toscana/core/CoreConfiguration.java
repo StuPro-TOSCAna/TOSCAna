@@ -23,16 +23,17 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 public class CoreConfiguration {
 
 
-//    @Bean
-    public CsarService csarService(){
-        CsarServiceImpl bean = new CsarServiceImpl(csarDao(), csarParser());
-        return bean;
-    }
-//    @Bean
-    public CsarDao csarDao(){
-        CsarFilesystemDao bean = new CsarFilesystemDao(preferences());
-        return bean;
-    }
+	@Bean
+	public CsarService csarService() {
+		CsarServiceImpl bean = new CsarServiceImpl(csarDao(), csarParser());
+		return bean;
+	}
+
+	@Bean
+	public CsarDao csarDao() {
+		CsarFilesystemDao bean = new CsarFilesystemDao(preferences());
+		return bean;
+	}
 
 	@Bean
 	public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
