@@ -99,7 +99,7 @@ public class TransformationControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(INVALID_PROPERTY_INPUT)
 		).andDo(print())
-			.andExpect(status().is(400))
+			.andExpect(status().is(406))
 			.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
 			.andExpect(jsonPath("$.valid_inputs.name_property").value(true))
 			.andExpect(jsonPath("$.valid_inputs.text_property").value(true))

@@ -23,7 +23,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 /**
  * This contoller implements all Csar and Transformation specific operations
  * <p>
- * For sample Responses of the Requests, please have al look at docs/api/api_samples.md
+ * For sample Responses of the Requests, please have a look at docs/api/api_samples.md
  */
 @CrossOrigin
 @RestController
@@ -41,7 +41,7 @@ public class CsarController {
 	/**
 	 * Responds with a list of csars stored on the transformator.
 	 * <p>
-	 * This always responds with HTTP-Code 200
+	 * This always responds with HTTP-Code 200 (application/hal+json)
 	 */
 	@RequestMapping(
 		path = "",
@@ -60,8 +60,8 @@ public class CsarController {
 	/**
 	 * Responds with the data for a specific CSAR
 	 * <p>
-	 * This Operation Response returns 200 if a archive with the given name exists
-	 * if not Http 404 with no content is returned
+	 * This Operation Response returns 200 (application/hal+json) if a archive with the given name exists
+	 * if not Http 404 (no content) with no content is returned
 	 */
 	@RequestMapping(
 		path = "/{name}",

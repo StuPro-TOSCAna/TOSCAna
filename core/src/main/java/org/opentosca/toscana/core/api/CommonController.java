@@ -18,7 +18,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
  * This REST Controller handles the requests which do not relate to Platforms or Csars
  * Currently the only request handled by this controller is the <code>/status</code> request
  * <p>
- * For sample Responses of the Requests, please have al look at docs/api/api_samples.md
+ * For sample Responses of the Requests, please have a look at docs/api/api_samples.md
  */
 @CrossOrigin
 @RestController

@@ -20,11 +20,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
+/**
+ * This controller implements API operations regarding Transformations
+ * 
+ * For sample Responses of the Requests, please have a look at docs/api/api_samples.md
+ */
 @CrossOrigin
 @RestController
 @RequestMapping("/csars/{csarName}/transformations")
@@ -37,6 +45,17 @@ public class TransformationController {
 	@Autowired
 	public PlatformProvider platformProvider;
 
+	/**
+	 * This Request Returns a list of all transformations belonging to a csar
+	 * <p>
+	 * Response Codes:
+	 * 200 - Operation was Performed Sucessfuly
+	 * 404 - Csar not found
+	 * <p>
+	 * Response Content Types for Code:
+	 * 200 - (application/hal+json)
+	 * 404 - Can be ignored, empty body
+	 */
 	@RequestMapping(
 		path = "",
 		method = RequestMethod.GET
@@ -66,6 +85,17 @@ public class TransformationController {
 		return ResponseEntity.ok(resources);
 	}
 
+	/**
+	 * Returns informations about a single transformation
+	 * <p>
+	 * Response Codes:
+	 * 200 - Operation was Performed Sucessfuly
+	 * 404 - Csar not found, the platform does not exist or no transformation for the specific platform was found for this csar
+	 * <p>
+	 * Response Content Types for Code:
+	 * 200 - (application/hal+json)
+	 * 404 - Can be ignored, empty body
+	 */
 	@RequestMapping(
 		path = "/{platform}",
 		method = RequestMethod.GET
@@ -89,6 +119,19 @@ public class TransformationController {
 		));
 	}
 
+	/**
+	 * Creates a new transformation for the given platform and csar
+	 * <p>
+	 * Response Codes:
+	 * 200 - Creation was sucessfull
+	 * 400 - This csar already has a transformation for this platform
+	 * 404 - Csar not found or the platform does not exist
+	 * <p>
+	 * Response Content Types for Code:
+	 * 200 - (application/hal+json)
+	 * 400 - Can be ignored, empty body
+	 * 404 - Can be ignored, empty body
+	 */
 	@RequestMapping(
 		path = "/{platform}/create",
 		method = {RequestMethod.POST, RequestMethod.PUT}
@@ -114,6 +157,17 @@ public class TransformationController {
 		return ResponseEntity.ok().build();
 	}
 
+	/**
+	 * Deletes a transformation. If it is still running, the job will be canceled!
+	 * <p>
+	 * Response Codes:
+	 * 200 - Operation was Performed Sucessfuly
+	 * 404 - Csar not found, the platform does not exist or no transformation for the specific platform was found for this csar
+	 * <p>
+	 * Response Content Types for Code:
+	 * 200 - Can be ignored, empty body
+	 * 404 - Can be ignored, empty body
+	 */
 	@RequestMapping(
 		path = "/{platform}/delete",
 		method = RequestMethod.DELETE
@@ -139,6 +193,18 @@ public class TransformationController {
 		}
 	}
 
+	/**
+	 * Returns the logs from a given start index to the current end of the log file.
+	 * If the start index is higher then the current end index, a empty list is returned!
+	 * <p>
+	 * Response Codes:
+	 * 200 - Operation was Performed Sucessfuly
+	 * 404 - Csar not found, the platform does not exist or no transformation for the specific platform was found for this csar
+	 * <p>
+	 * Response Content Types for Code:
+	 * 200 - application/hal+json
+	 * 404 - Can be ignored, empty body
+	 */
 	@RequestMapping(
 		path = "/{platform}/logs",
 		method = RequestMethod.GET
@@ -167,6 +233,19 @@ public class TransformationController {
 		));
 	}
 
+	/**
+	 * Returns the URL to download the target Artifact
+	 * <p>
+	 * Response Codes:
+	 * 200 - Operation was Performed Sucessfuly
+	 * 404 - Csar not found,
+	 * the platform does not exist, the transformation has not finished yet
+	 * or no transformation for the specific platform was found for this csar
+	 * <p>
+	 * Response Content Types for Code:
+	 * 200 - application/hal+json
+	 * 404 - Can be ignored, empty body
+	 */
 	@RequestMapping(
 		path = "/{platform}/artifact",
 		method = RequestMethod.GET
@@ -191,6 +270,22 @@ public class TransformationController {
 		return ResponseEntity.ok().body(new ArtifactResponse(artifact.getArtifactDownloadURL(), platform, name));
 	}
 
+	/**
+	 * Returns a list of properties that have to be entered in order for the transformator to proceed with the transformation
+	 * This only happens, if the transfomation is in the "INPUT_REUQIRED" state otherwise this will return with error code 400
+	 * <p>
+	 * Response Codes:
+	 * 200 - Operation was Performed Sucessfuly
+	 * 400 - The Transformation is not in the INPUT_REQUIRED State
+	 * 404 - Csar not found,
+	 * the platform does not exist,
+	 * or no transformation for the specific platform was found for this csar
+	 * <p>
+	 * Response Content Types for Code:
+	 * 200 - application/hal+json
+	 * 400 - Can be ignored, empty body
+	 * 404 - Can be ignored, empty body
+	 */
 	@RequestMapping(
 		path = "/{platform}/properties",
 		method = RequestMethod.GET
@@ -217,6 +312,26 @@ public class TransformationController {
 		return ResponseEntity.ok(new GetPropertiesResponse(name, platform, propertyWrapList));
 	}
 
+
+	/**
+	 * This operation is used to "enter" the required inputs for this a json body, containing the values defined by the user,
+	 * gets POSTed or PUTed. Once received, the server checks the inputs if they are valid they get set. At the end a json Map is retuned.
+	 * This map shows which values have been set an which ones have failed
+	 * <p>
+	 * Response Codes:
+	 * 200 - Operation was Performed Sucessfuly (All properties that should have been set by this call have been set successfully)
+	 * 406 - At least one property value was not set, because the key does not exist or the given value was invalid
+	 * 400 - The Transformation is not in the INPUT_REQUIRED State
+	 * 404 - Csar not found,
+	 * the platform does not exist,
+	 * or no transformation for the specific platform was found for this csar
+	 * <p>
+	 * Response Content Types for Code:
+	 * 200 - application/json
+	 * 400 - Can be ignored, empty body
+	 * 404 - Can be ignored, empty body
+	 * 406 - application/json
+	 */
 	@RequestMapping(
 		path = "/{platform}/properties",
 		method = {RequestMethod.POST, RequestMethod.PUT}
@@ -252,10 +367,10 @@ public class TransformationController {
 		if (!somethingFailed) {
 			return ResponseEntity.ok(new SetPropertiesResponse(sucesses));
 		} else {
-			return ResponseEntity.badRequest().body(new SetPropertiesResponse(sucesses));
+			return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(new SetPropertiesResponse(sucesses));
 		}
 	}
-	
+
 	private Csar findCsarByName(String name) {
 		return csarService.getCsar(name);
 	}
