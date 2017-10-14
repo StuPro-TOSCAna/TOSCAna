@@ -1,6 +1,6 @@
 swagger: '2.0'
 info:
-  description: This is the documentation for the REST-API of the TOSCAna transformator
+  description: This is the documentation for the REST-API of the TOSCAna transformator. IMPORTANT: This is a Incomplete version and needs some corrections!
   version: 1.0.0-SNAPSHOT
   title: TOSCAna
   contact:
