@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipInputStream;
 
-@Repository
+//@Repository
 public class CsarFilesystemDao implements CsarDao {
 
     private final static Logger logger = LoggerFactory.getLogger(CsarFilesystemDao.class.getSimpleName());

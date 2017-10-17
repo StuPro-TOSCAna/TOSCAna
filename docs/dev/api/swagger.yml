@@ -1,0 +1,703 @@
+swagger: '2.0'
+info:
+  description: This is the documentation for the REST-API of the TOSCAna transformator. IMPORTANT: This is a Incomplete version and needs some corrections!
+  version: 1.0.0-SNAPSHOT
+  title: TOSCAna
+  contact:
+    url: 'https://github.com/StuPro-TOSCAna/TOSCAna'
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0'
+host: 'localhost:8080'
+basePath: /
+tags:
+  - name: transformations
+    description: Transformation Controller
+  - name: common
+    description: Common Controller
+  - name: platforms
+    description: Platform Controller
+  - name: csars
+    description: Csar Controller
+paths:
+  /csars:
+    get:
+      tags:
+        - csars
+      summary: listCSARs
+      operationId: listCSARsUsingGET
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Resources«CsarResponse»'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  '/csars/{csarName}/transformations':
+    get:
+      tags:
+        - transformations
+      summary: getCSARTransformations
+      operationId: getCSARTransformationsUsingGET
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - name: csarName
+          in: path
+          description: csarName
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Resources«TransformationResponse»'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  '/csars/{csarName}/transformations/{platform}':
+    get:
+      tags:
+        - transformations
+      summary: getCSARTransformation
+      operationId: getCSARTransformationUsingGET
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - name: csarName
+          in: path
+          description: csarName
+          required: true
+          type: string
+        - name: platform
+          in: path
+          description: platform
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/TransformationResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  '/csars/{csarName}/transformations/{platform}/artifact':
+    get:
+      tags:
+        - transformations
+      summary: getTransformationArtifact
+      operationId: getTransformationArtifactUsingGET
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - name: csarName
+          in: path
+          description: csarName
+          required: true
+          type: string
+        - name: platform
+          in: path
+          description: platform
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ArtifactResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  '/csars/{csarName}/transformations/{platform}/create':
+    post:
+      tags:
+        - transformations
+      summary: addTransformation
+      operationId: addTransformationUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - name: csarName
+          in: path
+          description: csarName
+          required: true
+          type: string
+        - name: platform
+          in: path
+          description: platform
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/TransformationResponse'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+    put:
+      tags:
+        - transformations
+      summary: addTransformation
+      operationId: addTransformationUsingPUT
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - name: csarName
+          in: path
+          description: csarName
+          required: true
+          type: string
+        - name: platform
+          in: path
+          description: platform
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/TransformationResponse'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  '/csars/{csarName}/transformations/{platform}/delete':
+    delete:
+      tags:
+        - transformations
+      summary: deleteTransformation
+      operationId: deleteTransformationUsingDELETE
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - name: csarName
+          in: path
+          description: csarName
+          required: true
+          type: string
+        - name: platform
+          in: path
+          description: platform
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/TransformationResponse'
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+  '/csars/{csarName}/transformations/{platform}/logs':
+    get:
+      tags:
+        - transformations
+      summary: getTransformationLogs
+      operationId: getTransformationLogsUsingGET
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - name: csarName
+          in: path
+          description: csarName
+          required: true
+          type: string
+        - name: platform
+          in: path
+          description: platform
+          required: true
+          type: string
+        - name: start
+          in: query
+          description: start
+          required: false
+          type: integer
+          default: 0
+          format: int64
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/LogResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  '/csars/{csarName}/transformations/{platform}/properties':
+    get:
+      tags:
+        - transformations
+      summary: getTransformationProperties
+      operationId: getTransformationPropertiesUsingGET
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - name: csarName
+          in: path
+          description: csarName
+          required: true
+          type: string
+        - name: platform
+          in: path
+          description: platform
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/GetPropertiesResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+    post:
+      tags:
+        - transformations
+      summary: setTransformationProperties
+      operationId: setTransformationPropertiesUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: csarName
+          in: path
+          description: csarName
+          required: true
+          type: string
+        - name: platform
+          in: path
+          description: platform
+          required: true
+          type: string
+        - in: body
+          name: setPropertiesRequest
+          description: setPropertiesRequest
+          required: true
+          schema:
+            $ref: '#/definitions/SetPropertiesRequest'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/SetPropertiesResponse'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+    put:
+      tags:
+        - transformations
+      summary: setTransformationProperties
+      operationId: setTransformationPropertiesUsingPUT
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - name: csarName
+          in: path
+          description: csarName
+          required: true
+          type: string
+        - name: platform
+          in: path
+          description: platform
+          required: true
+          type: string
+        - in: body
+          name: setPropertiesRequest
+          description: setPropertiesRequest
+          required: true
+          schema:
+            $ref: '#/definitions/SetPropertiesRequest'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/SetPropertiesResponse'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  '/csars/{name}':
+    get:
+      tags:
+        - csars
+      summary: getCSARInfo
+      operationId: getCSARInfoUsingGET
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - name: name
+          in: path
+          description: name
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/CsarResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+    post:
+      tags:
+        - csars
+      summary: uploadCSAR
+      operationId: uploadCSARUsingPOST
+      consumes:
+        - multipart/form-data
+      produces:
+        - '*/*'
+      parameters:
+        - name: name
+          in: path
+          description: name
+          required: true
+          type: string
+        - name: file
+          in: formData
+          description: file
+          required: true
+          type: file
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: string
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+    put:
+      tags:
+        - csars
+      summary: uploadCSAR
+      operationId: uploadCSARUsingPUT
+      consumes:
+        - multipart/form-data
+      produces:
+        - '*/*'
+      parameters:
+        - name: name
+          in: path
+          description: name
+          required: true
+          type: string
+        - name: file
+          in: formData
+          description: file
+          required: true
+          type: file
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: string
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  /platforms:
+    get:
+      tags:
+        - platforms
+      summary: getPlatforms
+      operationId: getPlatformsUsingGET
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ResourceSupport'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  '/platforms/{id}':
+    get:
+      tags:
+        - platforms
+      summary: getPlatform
+      operationId: getPlatformUsingGET
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/PlatformResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  /status:
+    get:
+      tags:
+        - common
+      summary: getStatus
+      operationId: getStatusUsingGET
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/StatusResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+definitions:
+  ArtifactResponse:
+    type: object
+    properties:
+      access_url:
+        type: string
+      _links:
+        type: object
+        additionalProperties:
+          $ref: '#/definitions/Link'
+  CsarResponse:
+    type: object
+    properties:
+      _links:
+        type: object
+        additionalProperties:
+          $ref: '#/definitions/Link'
+      name:
+        type: string
+  GetPropertiesResponse:
+    type: object
+    properties:
+      _links:
+        type: object
+        additionalProperties:
+          $ref: '#/definitions/Link'
+      properties:
+        type: array
+        items:
+          $ref: '#/definitions/PropertyWrap'
+  Link:
+    type: object
+    properties:
+      href:
+        type: string
+  LogEntry:
+    type: object
+    properties:
+      level:
+        type: string
+        enum:
+          - TRACE
+          - DEBUG
+          - INFO
+          - WARNING
+          - ERROR
+      message:
+        type: string
+      timestamp:
+        type: integer
+        format: int64
+  LogResponse:
+    type: object
+    properties:
+      end:
+        type: integer
+        format: int64
+      _links:
+        type: object
+        additionalProperties:
+          $ref: '#/definitions/Link'
+      logs:
+        type: array
+        items:
+          $ref: '#/definitions/LogEntry'
+      start:
+        type: integer
+        format: int64
+  PlatformResponse:
+    type: object
+    properties:
+      id:
+        type: string
+      _links:
+        type: object
+        additionalProperties:
+          $ref: '#/definitions/Link'
+      name:
+        type: string
+  PropertyWrap:
+    type: object
+    properties:
+      key:
+        type: string
+      type:
+        type: string
+  ResourceSupport:
+    type: object
+    properties:
+      _links:
+        type: object
+        additionalProperties:
+          $ref: '#/definitions/Link'
+  Resources«CsarResponse»:
+    type: object
+    properties:
+      content:
+        type: array
+        items:
+          $ref: '#/definitions/CsarResponse'
+      _links:
+        type: object
+        additionalProperties:
+          $ref: '#/definitions/Link'
+  Resources«TransformationResponse»:
+    type: object
+    properties:
+      content:
+        type: array
+        items:
+          $ref: '#/definitions/TransformationResponse'
+      _links:
+        type: object
+        additionalProperties:
+          $ref: '#/definitions/Link'
+  SetPropertiesRequest:
+    type: object
+    properties:
+      properties:
+        type: object
+        additionalProperties:
+          type: string
+  SetPropertiesResponse:
+    type: object
+    properties:
+      valid_inputs:
+        type: object
+        additionalProperties:
+          type: boolean
+  StatusResponse:
+    type: object
+    properties:
+      available_storage:
+        type: integer
+        format: int64
+      _links:
+        type: object
+        additionalProperties:
+          type: object
+          $ref: '#/definitions/Link'
+      status:
+        type: string
+      total_storage:
+        type: integer
+        format: int64
+  TransformationResponse:
+    type: object
+    properties:
+      _links:
+        type: object
+        additionalProperties:
+          $ref: '#/definitions/Link'
+      platform:
+        type: string
+      progress:
+        type: integer
+        format: int32
+      status:
+        type: string

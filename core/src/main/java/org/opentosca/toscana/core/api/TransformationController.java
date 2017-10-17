@@ -1,8 +1,7 @@
 package org.opentosca.toscana.core.api;
 
-import org.opentosca.toscana.core.api.model.ArtifactResponse;
-import org.opentosca.toscana.core.api.model.LogResponse;
-import org.opentosca.toscana.core.api.model.TransformationResponse;
+import org.opentosca.toscana.core.api.model.*;
+import org.opentosca.toscana.core.api.model.GetPropertiesResponse.PropertyWrap;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarService;
 import org.opentosca.toscana.core.logging.Log;
@@ -10,7 +9,9 @@ import org.opentosca.toscana.core.logging.LogEntry;
 import org.opentosca.toscana.core.transformation.Platform;
 import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.TransformationService;
+import org.opentosca.toscana.core.transformation.TransformationState;
 import org.opentosca.toscana.core.transformation.artifacts.TargetArtifact;
+import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.core.util.PlatformProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
@@ -20,13 +21,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
+/**
+ * This controller implements API operations regarding Transformations
+ * 
+ * For sample Responses of the Requests, please have a look at docs/api/api_samples.md
+ */
 @CrossOrigin
 @RestController
 @RequestMapping("/csars/{csarName}/transformations")
@@ -39,6 +45,17 @@ public class TransformationController {
 	@Autowired
 	public PlatformProvider platformProvider;
 
+	/**
+	 * This Request Returns a list of all transformations belonging to a csar
+	 * <p>
+	 * Response Codes:
+	 * 200 - Operation was Performed Sucessfuly
+	 * 404 - Csar not found
+	 * <p>
+	 * Response Content Types for Code:
+	 * 200 - (application/hal+json)
+	 * 404 - Can be ignored, empty body
+	 */
 	@RequestMapping(
 		path = "",
 		method = RequestMethod.GET
@@ -68,6 +85,17 @@ public class TransformationController {
 		return ResponseEntity.ok(resources);
 	}
 
+	/**
+	 * Returns informations about a single transformation
+	 * <p>
+	 * Response Codes:
+	 * 200 - Operation was Performed Sucessfuly
+	 * 404 - Csar not found, the platform does not exist or no transformation for the specific platform was found for this csar
+	 * <p>
+	 * Response Content Types for Code:
+	 * 200 - (application/hal+json)
+	 * 404 - Can be ignored, empty body
+	 */
 	@RequestMapping(
 		path = "/{platform}",
 		method = RequestMethod.GET
@@ -91,6 +119,19 @@ public class TransformationController {
 		));
 	}
 
+	/**
+	 * Creates a new transformation for the given platform and csar
+	 * <p>
+	 * Response Codes:
+	 * 200 - Creation was sucessfull
+	 * 400 - This csar already has a transformation for this platform
+	 * 404 - Csar not found or the platform does not exist
+	 * <p>
+	 * Response Content Types for Code:
+	 * 200 - (application/hal+json)
+	 * 400 - Can be ignored, empty body
+	 * 404 - Can be ignored, empty body
+	 */
 	@RequestMapping(
 		path = "/{platform}/create",
 		method = {RequestMethod.POST, RequestMethod.PUT}
@@ -116,6 +157,17 @@ public class TransformationController {
 		return ResponseEntity.ok().build();
 	}
 
+	/**
+	 * Deletes a transformation. If it is still running, the job will be canceled!
+	 * <p>
+	 * Response Codes:
+	 * 200 - Operation was Performed Sucessfuly
+	 * 404 - Csar not found, the platform does not exist or no transformation for the specific platform was found for this csar
+	 * <p>
+	 * Response Content Types for Code:
+	 * 200 - Can be ignored, empty body
+	 * 404 - Can be ignored, empty body
+	 */
 	@RequestMapping(
 		path = "/{platform}/delete",
 		method = RequestMethod.DELETE
@@ -141,6 +193,18 @@ public class TransformationController {
 		}
 	}
 
+	/**
+	 * Returns the logs from a given start index to the current end of the log file.
+	 * If the start index is higher then the current end index, a empty list is returned!
+	 * <p>
+	 * Response Codes:
+	 * 200 - Operation was Performed Sucessfuly
+	 * 404 - Csar not found, the platform does not exist or no transformation for the specific platform was found for this csar
+	 * <p>
+	 * Response Content Types for Code:
+	 * 200 - application/hal+json
+	 * 404 - Can be ignored, empty body
+	 */
 	@RequestMapping(
 		path = "/{platform}/logs",
 		method = RequestMethod.GET
@@ -169,6 +233,19 @@ public class TransformationController {
 		));
 	}
 
+	/**
+	 * Returns the URL to download the target Artifact
+	 * <p>
+	 * Response Codes:
+	 * 200 - Operation was Performed Sucessfuly
+	 * 404 - Csar not found,
+	 * the platform does not exist, the transformation has not finished yet
+	 * or no transformation for the specific platform was found for this csar
+	 * <p>
+	 * Response Content Types for Code:
+	 * 200 - application/hal+json
+	 * 404 - Can be ignored, empty body
+	 */
 	@RequestMapping(
 		path = "/{platform}/artifact",
 		method = RequestMethod.GET
@@ -193,31 +270,27 @@ public class TransformationController {
 		return ResponseEntity.ok().body(new ArtifactResponse(artifact.getArtifactDownloadURL(), platform, name));
 	}
 
-	@RequestMapping(
-		path = "/{platform}/properties",
-		method = {RequestMethod.POST, RequestMethod.PUT}
-	)
-	public ResponseEntity<String> setTransformationProperties(
-		@PathVariable(name = "csarName") String name,
-		@PathVariable(name = "platform") String platform
-	) {
-		Csar csar = findCsarByName(name);
-		if (csar == null) {
-			return ResponseEntity.notFound().build();
-		}
-		Transformation transformation = csar.getTransformations().get(platform);
-		if (transformation == null) {
-			return ResponseEntity.notFound().build();
-		}
-		return ResponseEntity.ok().build();
-	}
-
-
+	/**
+	 * Returns a list of properties that have to be entered in order for the transformator to proceed with the transformation
+	 * This only happens, if the transfomation is in the "INPUT_REUQIRED" state otherwise this will return with error code 400
+	 * <p>
+	 * Response Codes:
+	 * 200 - Operation was Performed Sucessfuly
+	 * 400 - The Transformation is not in the INPUT_REQUIRED State
+	 * 404 - Csar not found,
+	 * the platform does not exist,
+	 * or no transformation for the specific platform was found for this csar
+	 * <p>
+	 * Response Content Types for Code:
+	 * 200 - application/hal+json
+	 * 400 - Can be ignored, empty body
+	 * 404 - Can be ignored, empty body
+	 */
 	@RequestMapping(
 		path = "/{platform}/properties",
 		method = RequestMethod.GET
 	)
-	public ResponseEntity<String> getTransformationProperties(
+	public ResponseEntity<GetPropertiesResponse> getTransformationProperties(
 		@PathVariable(name = "csarName") String name,
 		@PathVariable(name = "platform") String platform
 	) {
@@ -228,19 +301,77 @@ public class TransformationController {
 		Transformation transformation = csar.getTransformations().get(platform);
 		if (transformation == null) {
 			return ResponseEntity.notFound().build();
+		} else if (transformation.getState() != TransformationState.INPUT_REQUIRED) {
+			return ResponseEntity.badRequest().build();
 		}
-		return ResponseEntity.ok().build();
+		List<PropertyWrap> propertyWrapList = new ArrayList<>();
+		//TODO add filtering depending on the transformation state (i.e. Transforming, Deploying...)
+		for (Property property : transformation.getPlatform().getProperties()) {
+			propertyWrapList.add(new PropertyWrap(property.getKey(), property.getType().getTypeName()));
+		}
+		return ResponseEntity.ok(new GetPropertiesResponse(name, platform, propertyWrapList));
+	}
+
+
+	/**
+	 * This operation is used to "enter" the required inputs for this a json body, containing the values defined by the user,
+	 * gets POSTed or PUTed. Once received, the server checks the inputs if they are valid they get set. At the end a json Map is retuned.
+	 * This map shows which values have been set an which ones have failed
+	 * <p>
+	 * Response Codes:
+	 * 200 - Operation was Performed Sucessfuly (All properties that should have been set by this call have been set successfully)
+	 * 406 - At least one property value was not set, because the key does not exist or the given value was invalid
+	 * 400 - The Transformation is not in the INPUT_REQUIRED State
+	 * 404 - Csar not found,
+	 * the platform does not exist,
+	 * or no transformation for the specific platform was found for this csar
+	 * <p>
+	 * Response Content Types for Code:
+	 * 200 - application/json
+	 * 400 - Can be ignored, empty body
+	 * 404 - Can be ignored, empty body
+	 * 406 - application/json
+	 */
+	@RequestMapping(
+		path = "/{platform}/properties",
+		method = {RequestMethod.POST, RequestMethod.PUT}
+	)
+	public ResponseEntity<SetPropertiesResponse> setTransformationProperties(
+		@PathVariable(name = "csarName") String name,
+		@PathVariable(name = "platform") String platform,
+		@RequestBody SetPropertiesRequest setPropertiesRequest
+	) {
+		Csar csar = findCsarByName(name);
+		if (csar == null) {
+			return ResponseEntity.notFound().build();
+		}
+		Transformation transformation = csar.getTransformations().get(platform);
+		if (transformation == null) {
+			return ResponseEntity.notFound().build();
+		} else if (transformation.getState() != TransformationState.INPUT_REQUIRED) {
+			return ResponseEntity.badRequest().build();
+		}
+		Map<String, Boolean> sucesses = new HashMap<>();
+		boolean somethingFailed = false;
+		//Set The Properties and check their validity
+		for (Map.Entry<String, String> entry : setPropertiesRequest.getProperties().entrySet()) {
+			try {
+				transformation.setProperty(entry.getKey(), entry.getValue());
+				sucesses.put(entry.getKey(), true);
+			} catch (Exception e) {
+				somethingFailed = true;
+				sucesses.put(entry.getKey(), false);
+			}
+		}
+		//Return the result (with code 200 if all inputs were valid and 400 if at least 1 was invalid)
+		if (!somethingFailed) {
+			return ResponseEntity.ok(new SetPropertiesResponse(sucesses));
+		} else {
+			return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(new SetPropertiesResponse(sucesses));
+		}
 	}
 
 	private Csar findCsarByName(String name) {
-		Csar csar = null;
-		Collection<Csar> csars = csarService.getCsars();
-		for (Csar c : csars) {
-			if (c.getIdentifier().equals(name)) {
-				csar = c;
-				break;
-			}
-		}
-		return csar;
+		return csarService.getCsar(name);
 	}
 }
