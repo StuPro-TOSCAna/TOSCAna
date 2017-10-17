@@ -1,6 +1,7 @@
 package org.opentosca.toscana.core.transformation;
 
 import org.opentosca.toscana.core.csar.Csar;
+import org.opentosca.toscana.core.transformation.platform.Platform;
 
 public class TransformationServiceImpl implements TransformationService {
 

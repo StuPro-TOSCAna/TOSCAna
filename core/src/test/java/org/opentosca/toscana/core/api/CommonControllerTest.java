@@ -4,7 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opentosca.toscana.core.util.FileSystem;
-import org.opentosca.toscana.core.util.StatusProvider;
+import org.opentosca.toscana.core.util.StatusService;
 import org.opentosca.toscana.core.util.SystemStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +38,7 @@ public class CommonControllerTest {
 	private FileSystem fileSystem;
 	
 	@MockBean
-	private StatusProvider status;
+	private StatusService status;
 
 	@Before
 	public void setUp() throws Exception {

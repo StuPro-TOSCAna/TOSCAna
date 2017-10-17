@@ -2,13 +2,11 @@ package org.opentosca.toscana.core.csar;
 
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.eclipse.winery.model.tosca.yaml.TServiceTemplate;
-import org.opentosca.toscana.core.transformation.Platform;
 import org.opentosca.toscana.core.transformation.Transformation;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 class CsarImpl implements Csar{
 

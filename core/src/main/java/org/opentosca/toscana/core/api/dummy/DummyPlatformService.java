@@ -1,10 +1,10 @@
 package org.opentosca.toscana.core.api.dummy;
 
-import org.opentosca.toscana.core.transformation.Platform;
+import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.core.transformation.properties.PropertyType;
 import org.opentosca.toscana.core.transformation.properties.RequirementType;
-import org.opentosca.toscana.core.util.PlatformProvider;
+import org.opentosca.toscana.core.transformation.platform.PlatformService;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -14,13 +14,13 @@ import java.util.List;
  * Mock Platform provider to be used in order to test Csar Controller and Transformation Controller
  * Once integration with the rest of the core is done this will be moved in the test package
  */
-public class DummyPlatformProvider implements PlatformProvider {
+public class DummyPlatformService implements PlatformService {
 
 	private final char[] chars = "abcdefghijklmnopqrstuvwxyz".toCharArray();
 
 	private List<Platform> platforms = new ArrayList<>();
 
-	public DummyPlatformProvider() {
+	public DummyPlatformService() {
 		ArrayList<Platform> platforms = new ArrayList<>();
 
 		for (int i = 0; i < 5; i++) {
@@ -33,7 +33,7 @@ public class DummyPlatformProvider implements PlatformProvider {
 		this.platforms = platforms;
 	}
 
-	public DummyPlatformProvider(List<Platform> platforms) {
+	public DummyPlatformService(List<Platform> platforms) {
 		this.platforms = platforms;
 	}
 

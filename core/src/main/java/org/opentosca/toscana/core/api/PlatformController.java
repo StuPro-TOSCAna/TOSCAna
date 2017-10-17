@@ -1,8 +1,8 @@
 package org.opentosca.toscana.core.api;
 
 import org.opentosca.toscana.core.api.model.PlatformResponse;
-import org.opentosca.toscana.core.transformation.Platform;
-import org.opentosca.toscana.core.util.PlatformProvider;
+import org.opentosca.toscana.core.transformation.platform.Platform;
+import org.opentosca.toscana.core.transformation.platform.PlatformService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.ResourceSupport;
@@ -27,7 +27,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 public class PlatformController {
 
 	@Autowired
-	public PlatformProvider platformProvider;
+	public PlatformService platformService;
 
 	/**
 	 * Lists all Supported Platforms (HTTP Response Method)
@@ -43,7 +43,7 @@ public class PlatformController {
 	public ResponseEntity<ResourceSupport> getPlatforms() {
 		Link selfLink = linkTo(methodOn(PlatformController.class).getPlatforms()).withSelfRel();
 		ArrayList<PlatformResponse> responses = new ArrayList<>();
-		for (Platform platform : platformProvider.getSupportedPlatforms()) {
+		for (Platform platform : platformService.getSupportedPlatforms()) {
 			PlatformResponse res = getPlatformResource(platform);
 			responses.add(res);
 		}
@@ -69,7 +69,7 @@ public class PlatformController {
 	public ResponseEntity<PlatformResponse> getPlatform(
 		@PathVariable(name = "id") String id
 	) {
-		Platform p = platformProvider.findById(id);
+		Platform p = platformService.findById(id);
 		if (p == null) {
 			return ResponseEntity.notFound().build();
 		}

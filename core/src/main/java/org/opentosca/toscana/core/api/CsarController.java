@@ -3,7 +3,7 @@ package org.opentosca.toscana.core.api;
 import org.opentosca.toscana.core.api.model.CsarResponse;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarService;
-import org.opentosca.toscana.core.util.PlatformProvider;
+import org.opentosca.toscana.core.transformation.platform.PlatformService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +34,7 @@ public class CsarController {
 	public CsarService csarService;
 
 	@Autowired
-	public PlatformProvider platformProvider;
+	public PlatformService platformService;
 
 	public Logger log = LoggerFactory.getLogger(getClass());
 

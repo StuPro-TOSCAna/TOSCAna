@@ -1,8 +1,9 @@
 package org.opentosca.toscana.core.transformation;
 
 import org.opentosca.toscana.core.csar.Csar;
-import org.opentosca.toscana.core.logging.Log;
+import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.artifacts.TargetArtifact;
+import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.Property;
 
 import java.util.Map;

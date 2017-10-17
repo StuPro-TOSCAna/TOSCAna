@@ -1,7 +1,7 @@
 package org.opentosca.toscana.core.api.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.opentosca.toscana.core.transformation.Platform;
+import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.springframework.hateoas.ResourceSupport;
 import org.springframework.hateoas.core.Relation;
 

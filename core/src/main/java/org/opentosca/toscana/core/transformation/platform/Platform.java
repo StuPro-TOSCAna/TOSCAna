@@ -1,4 +1,4 @@
-package org.opentosca.toscana.core.transformation;
+package org.opentosca.toscana.core.transformation.platform;
 
 import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.core.transformation.properties.RequirementType;

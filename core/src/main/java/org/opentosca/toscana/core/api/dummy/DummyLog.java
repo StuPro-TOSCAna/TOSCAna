@@ -1,8 +1,8 @@
 package org.opentosca.toscana.core.api.dummy;
 
-import org.opentosca.toscana.core.logging.Log;
-import org.opentosca.toscana.core.logging.LogEntry;
-import org.opentosca.toscana.core.logging.LogLevel;
+import org.opentosca.toscana.core.transformation.logging.Log;
+import org.opentosca.toscana.core.transformation.logging.LogEntry;
+import org.opentosca.toscana.core.transformation.logging.LogLevel;
 
 import java.util.ArrayList;
 import java.util.Collections;

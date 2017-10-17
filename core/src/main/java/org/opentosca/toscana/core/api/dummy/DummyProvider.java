@@ -3,11 +3,10 @@ package org.opentosca.toscana.core.api.dummy;
 import org.opentosca.toscana.core.csar.CsarService;
 import org.opentosca.toscana.core.transformation.TransformationService;
 import org.opentosca.toscana.core.util.FileSystem;
-import org.opentosca.toscana.core.util.PlatformProvider;
+import org.opentosca.toscana.core.transformation.platform.PlatformService;
 import org.opentosca.toscana.core.util.Preferences;
-import org.opentosca.toscana.core.util.StatusProvider;
+import org.opentosca.toscana.core.util.StatusService;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 //TODO Replace dummies with true implementations
 
@@ -31,13 +30,13 @@ public class DummyProvider {
 	}
 
 	@Bean
-	public StatusProvider getSystemStatusProvider() {
+	public StatusService getSystemStatusProvider() {
 		return new DummySystemStatusProvicer();
 	}
 
 	@Bean
-	public PlatformProvider getPlatformProvider() {
-		return new DummyPlatformProvider();
+	public PlatformService getPlatformProvider() {
+		return new DummyPlatformService();
 	}
 
 	@Bean

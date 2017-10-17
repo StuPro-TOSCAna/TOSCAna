@@ -1,7 +1,7 @@
 package org.opentosca.toscana.core.api.dummy;
 
-import org.opentosca.toscana.core.logging.Log;
-import org.opentosca.toscana.core.transformation.Platform;
+import org.opentosca.toscana.core.transformation.logging.Log;
+import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.TransformationListener;
 import org.opentosca.toscana.core.transformation.TransformationState;

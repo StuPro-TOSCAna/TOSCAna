@@ -3,8 +3,8 @@ package org.opentosca.toscana.core.api;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.opentosca.toscana.core.transformation.Platform;
-import org.opentosca.toscana.core.util.PlatformProvider;
+import org.opentosca.toscana.core.transformation.platform.Platform;
+import org.opentosca.toscana.core.transformation.platform.PlatformService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -38,7 +38,7 @@ public class PlatformControllerTest {
 	private static List<String> ids = Arrays.asList("kubernetes", "open-stack", "cloud-foundry");
 
 	@MockBean
-	private PlatformProvider provider;
+	private PlatformService provider;
 
 	@Autowired
 	private MockMvc mvc;

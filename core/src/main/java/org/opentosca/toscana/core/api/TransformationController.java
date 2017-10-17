@@ -4,15 +4,15 @@ import org.opentosca.toscana.core.api.model.*;
 import org.opentosca.toscana.core.api.model.GetPropertiesResponse.PropertyWrap;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarService;
-import org.opentosca.toscana.core.logging.Log;
-import org.opentosca.toscana.core.logging.LogEntry;
-import org.opentosca.toscana.core.transformation.Platform;
+import org.opentosca.toscana.core.transformation.logging.Log;
+import org.opentosca.toscana.core.transformation.logging.LogEntry;
+import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.TransformationService;
 import org.opentosca.toscana.core.transformation.TransformationState;
 import org.opentosca.toscana.core.transformation.artifacts.TargetArtifact;
 import org.opentosca.toscana.core.transformation.properties.Property;
-import org.opentosca.toscana.core.util.PlatformProvider;
+import org.opentosca.toscana.core.transformation.platform.PlatformService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resources;
@@ -43,7 +43,7 @@ public class TransformationController {
 	@Autowired
 	public TransformationService transformationService;
 	@Autowired
-	public PlatformProvider platformProvider;
+	public PlatformService platformService;
 
 	/**
 	 * This Request Returns a list of all transformations belonging to a csar
@@ -149,7 +149,7 @@ public class TransformationController {
 			return ResponseEntity.badRequest().build();
 		}
 		//Return 404 if the platform does not exist
-		Platform p = platformProvider.findById(platform);
+		Platform p = platformService.findById(platform);
 		if (p == null) {
 			return ResponseEntity.notFound().build();
 		}

@@ -1,7 +1,7 @@
 package org.opentosca.toscana.core.api.dummy;
 
 import org.opentosca.toscana.core.csar.Csar;
-import org.opentosca.toscana.core.transformation.Platform;
+import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.TransformationService;
 import org.springframework.stereotype.Service;

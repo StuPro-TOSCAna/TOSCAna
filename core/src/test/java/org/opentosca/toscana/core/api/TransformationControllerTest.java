@@ -5,7 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opentosca.toscana.core.api.dummy.DummyCsarService;
-import org.opentosca.toscana.core.api.dummy.DummyPlatformProvider;
+import org.opentosca.toscana.core.api.dummy.DummyPlatformService;
 import org.opentosca.toscana.core.api.dummy.DummyTransformation;
 import org.opentosca.toscana.core.api.dummy.DummyTransformationService;
 import org.opentosca.toscana.core.api.utils.HALRelationUtils;
@@ -13,7 +13,7 @@ import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarService;
 import org.opentosca.toscana.core.transformation.TransformationService;
 import org.opentosca.toscana.core.transformation.TransformationState;
-import org.opentosca.toscana.core.util.PlatformProvider;
+import org.opentosca.toscana.core.transformation.platform.PlatformService;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
@@ -57,7 +57,7 @@ public class TransformationControllerTest {
 	private TransformationController controller;
 	private CsarService csarService;
 	private TransformationService transformationService;
-	private PlatformProvider platformProvider;
+	private PlatformService platformService;
 	private MockMvc mvc;
 
 	@Before
@@ -65,12 +65,12 @@ public class TransformationControllerTest {
 		//Create Objects
 		csarService = new DummyCsarService();
 		transformationService = new DummyTransformationService();
-		platformProvider = new DummyPlatformProvider();
+		platformService = new DummyPlatformService();
 		controller = new TransformationController();
 		//Inject Dependencies
 		controller.csarService = csarService;
 		controller.transformationService = transformationService;
-		controller.platformProvider = platformProvider;
+		controller.platformService = platformService;
 		mvc = MockMvcBuilders.standaloneSetup(controller).build();
 	}
 
@@ -429,8 +429,8 @@ public class TransformationControllerTest {
 	public void preInitNonCreationTests() {
 		//add a transformation
 		Csar csar = csarService.getCsar("k8s-cluster");
-		transformationService.createTransformation(csar, platformProvider.findById("p-a"));
-		transformationService.createTransformation(csar, platformProvider.findById("p-b"));
+		transformationService.createTransformation(csar, platformService.findById("p-a"));
+		transformationService.createTransformation(csar, platformService.findById("p-b"));
 	}
 	//</editor-fold>
 }

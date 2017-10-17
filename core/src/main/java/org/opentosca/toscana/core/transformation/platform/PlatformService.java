@@ -1,13 +1,13 @@
-package org.opentosca.toscana.core.util;
+package org.opentosca.toscana.core.transformation.platform;
 
-import org.opentosca.toscana.core.transformation.Platform;
+import org.opentosca.toscana.core.transformation.platform.Platform;
 
 import java.util.List;
 
 /**
  * This interface is used by the Platform Controller (REST API) to get a list of supported platforms
  */
-public interface PlatformProvider {
+public interface PlatformService {
 	/**
 	 * @return Returns a list of all supported Platforms
 	 */

@@ -2,7 +2,7 @@ package org.opentosca.toscana.core.api;
 
 import org.opentosca.toscana.core.api.model.StatusResponse;
 import org.opentosca.toscana.core.util.FileSystem;
-import org.opentosca.toscana.core.util.StatusProvider;
+import org.opentosca.toscana.core.util.StatusService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -25,7 +25,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 public class CommonController {
 
 	@Autowired
-	public StatusProvider statusProvider;
+	public StatusService statusService;
 
 	@Autowired
 	public FileSystem fileSystem;
@@ -41,7 +41,7 @@ public class CommonController {
 	)
 	public ResponseEntity<StatusResponse> getStatus() {
 		StatusResponse response = new StatusResponse(
-			statusProvider.getSystemStatus().getDisplayName(),
+			statusService.getSystemStatus().getDisplayName(),
 			fileSystem.getAvailableSpace(),
 			fileSystem.getUsedSpace() + fileSystem.getAvailableSpace()
 		);

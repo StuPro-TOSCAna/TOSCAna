@@ -5,11 +5,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opentosca.toscana.core.api.dummy.DummyCsar;
-import org.opentosca.toscana.core.api.dummy.DummyPlatformProvider;
+import org.opentosca.toscana.core.api.dummy.DummyPlatformService;
 import org.opentosca.toscana.core.api.mocks.MockCsarService;
 import org.opentosca.toscana.core.csar.CsarService;
-import org.opentosca.toscana.core.transformation.Platform;
-import org.opentosca.toscana.core.util.PlatformProvider;
+import org.opentosca.toscana.core.transformation.platform.Platform;
+import org.opentosca.toscana.core.transformation.platform.PlatformService;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
@@ -54,7 +54,7 @@ public class CsarControllerTest {
 		relations.put("transformations", "http://localhost/csars/%s/transformations/");
 	}
 
-	private PlatformProvider provider;
+	private PlatformService provider;
 
 	private CsarService service;
 
@@ -63,9 +63,9 @@ public class CsarControllerTest {
 	@Before
 	public void setUp() throws Exception {
 		service = new MockCsarService();
-		provider = new DummyPlatformProvider(Arrays.asList(platforms));
+		provider = new DummyPlatformService(Arrays.asList(platforms));
 		CsarController controller = new CsarController();
-		controller.platformProvider = provider;
+		controller.platformService = provider;
 		controller.csarService = service;
 		mvc = MockMvcBuilders.standaloneSetup(controller).build();
 	}

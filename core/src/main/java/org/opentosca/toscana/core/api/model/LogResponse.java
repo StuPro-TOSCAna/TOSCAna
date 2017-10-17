@@ -2,7 +2,7 @@ package org.opentosca.toscana.core.api.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.opentosca.toscana.core.api.TransformationController;
-import org.opentosca.toscana.core.logging.LogEntry;
+import org.opentosca.toscana.core.transformation.logging.LogEntry;
 import org.springframework.hateoas.ResourceSupport;
 import org.springframework.hateoas.core.Relation;
 
