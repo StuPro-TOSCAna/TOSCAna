@@ -1,5 +1,6 @@
 package org.opentosca.toscana.core.transformation;
 
+import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.artifacts.TargetArtifact;
 import org.opentosca.toscana.core.transformation.platform.Platform;
@@ -57,5 +58,7 @@ public interface Transformation {
 	 * @param listener listener to be removed from the collection of listeners
 	 */
 	void removeOnStateChange(TransformationListener listener);
+	
+	Csar getCsar();
 
 }

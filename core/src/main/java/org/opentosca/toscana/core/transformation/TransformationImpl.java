@@ -5,6 +5,7 @@ import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.artifacts.TargetArtifact;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.Property;
+import org.springframework.stereotype.Service;
 
 import java.util.Map;
 import java.util.Set;
@@ -57,7 +58,12 @@ class TransformationImpl implements Transformation {
         throw new UnsupportedOperationException();
     }
 
-    @Override
+	@Override
+	public Csar getCsar() {
+		return app;
+	}
+
+	@Override
     public Log getLog(){
         // TODO
         throw new UnsupportedOperationException();
