@@ -11,8 +11,7 @@ public class FileSystem {
      * Returns the (by the CSARS and targetArtifacts) used storage space in MB.
      */
     public long getUsedSpace(){
-       // TODO
-       throw new UnsupportedOperationException();
+       return -1;
     }
 
     /**
