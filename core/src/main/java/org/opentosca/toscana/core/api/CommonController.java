@@ -24,11 +24,16 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 @RestController
 public class CommonController {
 
-	@Autowired
-	public StatusService statusService;
+	private final StatusService statusService;
+
+	private final FileSystem fileSystem;
 
 	@Autowired
-	public FileSystem fileSystem;
+	public CommonController(StatusService statusService, FileSystem fileSystem) {
+		this.statusService = statusService;
+		this.fileSystem = fileSystem;
+	}
+
 
 	/**
 	 * Responds with the status of the Transformator, including Available Disk space and the current status

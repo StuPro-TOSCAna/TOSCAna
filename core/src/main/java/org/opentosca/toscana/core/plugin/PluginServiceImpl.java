@@ -1,6 +1,8 @@
 package org.opentosca.toscana.core.plugin;
 
 import org.opentosca.toscana.core.transformation.platform.Platform;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,9 +12,14 @@ import java.util.List;
 @Service
 public class PluginServiceImpl implements PluginService {
 	
+	private final Logger log = LoggerFactory.getLogger(getClass());
+	private final List<TransformationPlugin> plugins;
+
 	@Autowired
-	public List<TransformationPlugin> plugins; 
-	
+	public PluginServiceImpl(List<TransformationPlugin> plugins) {
+		this.plugins = plugins;
+	}
+
 	@Override
 	public List<Platform> getSupportedPlatforms() {
 		ArrayList<Platform> platforms = new ArrayList<>();

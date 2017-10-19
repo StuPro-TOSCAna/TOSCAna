@@ -64,9 +64,7 @@ public class CsarControllerTest {
 	public void setUp() throws Exception {
 		service = new MockCsarService();
 		provider = new DummyPlatformService(Arrays.asList(platforms));
-		CsarController controller = new CsarController();
-		controller.platformService = provider;
-		controller.csarService = service;
+		CsarController controller = new CsarController(service,provider);
 		mvc = MockMvcBuilders.standaloneSetup(controller).build();
 	}
 
@@ -83,71 +81,71 @@ public class CsarControllerTest {
 		resultActions.andReturn();
 	}
 
-	//@Test
-	public void uploadTest() throws Exception {
-		//Generate 10 MiB of "Random" (seeded) data
-		byte[] data = new byte[(int) (Math.pow(2, 20) * 10)];
-		Random rnd = new Random(12345678);
-		rnd.nextBytes(data);
-		// Get the sha hash of the data
-		byte[] hash = MessageDigest.getInstance("SHA-256").digest(data);
-
-		MockMultipartFile mockMultipartFile = new MockMultipartFile(
-			"file",
-			"null",
-			MediaType.APPLICATION_OCTET_STREAM_VALUE,
-			data
-		);
-
-		MockMultipartHttpServletRequestBuilder builder = fileUpload("/csars/rnd");
-		builder.with(request -> {
-			request.setMethod("PUT");
-			return request;
-		});
-		builder = (MockMultipartHttpServletRequestBuilder) builder.file(mockMultipartFile)
-			.contentType(MediaType.MULTIPART_FORM_DATA);
-
-		ResultActions resultActions = mvc.perform(
-			builder
-		).andDo(print()).andExpect(status().is2xxSuccessful());
-		resultActions.andReturn();
-
-		byte[] hashUpload = MessageDigest
-			.getInstance("SHA-256")
-			.digest(((DummyCsar) service.getCsar("rnd")).getData());
-		assertTrue(hashUpload.length == hash.length);
-		for (int i = 0; i < hash.length; i++) {
-			assertTrue(hash[i] == hashUpload[i]);
-		}
-	}
-
-	//@Test
-	public void uploadTestArchiveAlreadyExists() throws Exception {
-		//Generate 10 KiB of "Random" (seeded) data
-		byte[] data = new byte[(int) (Math.pow(2, 10) * 10)];
-		Random rnd = new Random(12345678);
-		rnd.nextBytes(data);
-
-		MockMultipartFile mockMultipartFile = new MockMultipartFile(
-			"file",
-			"null",
-			MediaType.APPLICATION_OCTET_STREAM_VALUE,
-			data
-		);
-
-		MockMultipartHttpServletRequestBuilder builder = fileUpload("/csars/apache");
-		builder.with(request -> {
-			request.setMethod("PUT");
-			return request;
-		});
-		builder = (MockMultipartHttpServletRequestBuilder) builder.file(mockMultipartFile)
-			.contentType(MediaType.MULTIPART_FORM_DATA);
-
-		ResultActions resultActions = mvc.perform(
-			builder
-		).andDo(print()).andExpect(status().is(400));
-		resultActions.andReturn();
-	}
+//	//@Test
+//	public void uploadTest() throws Exception {
+//		//Generate 10 MiB of "Random" (seeded) data
+//		byte[] data = new byte[(int) (Math.pow(2, 20) * 10)];
+//		Random rnd = new Random(12345678);
+//		rnd.nextBytes(data);
+//		// Get the sha hash of the data
+//		byte[] hash = MessageDigest.getInstance("SHA-256").digest(data);
+//
+//		MockMultipartFile mockMultipartFile = new MockMultipartFile(
+//			"file",
+//			"null",
+//			MediaType.APPLICATION_OCTET_STREAM_VALUE,
+//			data
+//		);
+//
+//		MockMultipartHttpServletRequestBuilder builder = fileUpload("/csars/rnd");
+//		builder.with(request -> {
+//			request.setMethod("PUT");
+//			return request;
+//		});
+//		builder = (MockMultipartHttpServletRequestBuilder) builder.file(mockMultipartFile)
+//			.contentType(MediaType.MULTIPART_FORM_DATA);
+//
+//		ResultActions resultActions = mvc.perform(
+//			builder
+//		).andDo(print()).andExpect(status().is2xxSuccessful());
+//		resultActions.andReturn();
+//
+//		byte[] hashUpload = MessageDigest
+//			.getInstance("SHA-256")
+//			.digest(((DummyCsar) service.getCsar("rnd")).getData());
+//		assertTrue(hashUpload.length == hash.length);
+//		for (int i = 0; i < hash.length; i++) {
+//			assertTrue(hash[i] == hashUpload[i]);
+//		}
+//	}
+//
+//	//@Test
+//	public void uploadTestArchiveAlreadyExists() throws Exception {
+//		//Generate 10 KiB of "Random" (seeded) data
+//		byte[] data = new byte[(int) (Math.pow(2, 10) * 10)];
+//		Random rnd = new Random(12345678);
+//		rnd.nextBytes(data);
+//
+//		MockMultipartFile mockMultipartFile = new MockMultipartFile(
+//			"file",
+//			"null",
+//			MediaType.APPLICATION_OCTET_STREAM_VALUE,
+//			data
+//		);
+//
+//		MockMultipartHttpServletRequestBuilder builder = fileUpload("/csars/apache");
+//		builder.with(request -> {
+//			request.setMethod("PUT");
+//			return request;
+//		});
+//		builder = (MockMultipartHttpServletRequestBuilder) builder.file(mockMultipartFile)
+//			.contentType(MediaType.MULTIPART_FORM_DATA);
+//
+//		ResultActions resultActions = mvc.perform(
+//			builder
+//		).andDo(print()).andExpect(status().is(400));
+//		resultActions.andReturn();
+//	}
 
 	@Test
 	public void csarDetails() throws Exception {

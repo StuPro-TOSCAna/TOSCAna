@@ -38,13 +38,16 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 @RequestMapping("/csars")
 public class CsarController {
 
-	@Autowired
-	public CsarService csarService;
-
-	@Autowired
-	public PlatformService platformService;
+	private final CsarService csarService;
+	private final PlatformService platformService;
 
 	public Logger log = LoggerFactory.getLogger(getClass());
+
+	@Autowired
+	public CsarController(CsarService csarService, PlatformService platformService) {
+		this.csarService = csarService;
+		this.platformService = platformService;
+	}
 
 	/**
 	 * Responds with a list of csars stored on the transformator.

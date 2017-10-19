@@ -22,14 +22,17 @@ public class TransformationServiceImpl
 
 	public Logger log = LoggerFactory.getLogger(getClass());
 
-	@Autowired
-	public CsarDao csarDao;
-
-	@Autowired
-	public PluginService pluginService;
+	private final CsarDao csarDao;
+	private final PluginService pluginService;
 	
 	private Map<Transformation, Future<?>> tasks = new HashMap<>();
 	private ExecutorService executor = Executors.newSingleThreadExecutor();
+
+	@Autowired
+	public TransformationServiceImpl(CsarDao csarDao, PluginService pluginService) {
+		this.csarDao = csarDao;
+		this.pluginService = pluginService;
+	}
 
 	@Override
 	public void createTransformation(Csar csar, Platform targetPlatform) {
