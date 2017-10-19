@@ -6,6 +6,8 @@ import org.opentosca.toscana.core.transformation.artifacts.TargetArtifact;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.core.transformation.properties.RequirementType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
@@ -42,6 +44,10 @@ public interface Transformation {
 			}
 		}
 		return true;
+	}
+	
+	default Logger getTransformationLogger(Class<?> clazz) {
+		return LoggerFactory.getLogger(clazz);
 	}
 
 	/**

@@ -32,4 +32,9 @@ public class PluginServiceImpl implements PluginService {
 		}
 		return p;
 	}
+
+	@Override
+	public List<TransformationPlugin> getPlugins() {
+		return plugins;
+	}
 }
