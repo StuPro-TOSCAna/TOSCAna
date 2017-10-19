@@ -3,6 +3,8 @@ package org.opentosca.toscana.core.api;
 import org.opentosca.toscana.core.api.model.PlatformResponse;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.platform.PlatformService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.ResourceSupport;
@@ -26,6 +28,8 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 @RequestMapping("/platforms")
 public class PlatformController {
 
+	public Logger log = LoggerFactory.getLogger(getClass());
+
 	@Autowired
 	public PlatformService platformService;
 
@@ -38,12 +42,14 @@ public class PlatformController {
 	 */
 	@RequestMapping(
 		path = "",
-		method = RequestMethod.GET
+		method = RequestMethod.GET,
+		produces = "application/hal+json"
 	)
 	public ResponseEntity<ResourceSupport> getPlatforms() {
 		Link selfLink = linkTo(methodOn(PlatformController.class).getPlatforms()).withSelfRel();
 		ArrayList<PlatformResponse> responses = new ArrayList<>();
 		for (Platform platform : platformService.getSupportedPlatforms()) {
+			log.info("Adding Platform {} to response ", platform.id);
 			PlatformResponse res = getPlatformResource(platform);
 			responses.add(res);
 		}
@@ -64,7 +70,8 @@ public class PlatformController {
 	 */
 	@RequestMapping(
 		path = "/{id}",
-		method = RequestMethod.GET
+		method = RequestMethod.GET,
+		produces = "application/hal+json"
 	)
 	public ResponseEntity<PlatformResponse> getPlatform(
 		@PathVariable(name = "id") String id

@@ -9,7 +9,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-@Service //TODO If Transformation Service has been implemented
+//@Service //TODO If Transformation Service has been implemented
 public class DummyCsarService implements CsarService {
 
 	private String[] names = {"k8s-cluster", "apache-test", "mongo-db"};

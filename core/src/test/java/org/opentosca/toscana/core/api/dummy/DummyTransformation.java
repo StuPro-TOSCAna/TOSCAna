@@ -1,5 +1,6 @@
 package org.opentosca.toscana.core.api.dummy;
 
+import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.Transformation;
@@ -70,15 +71,11 @@ public class DummyTransformation implements Transformation {
 	public TargetArtifact getTargetArtifact() {
 		return returnTargetArtifact ? new TargetArtifact() : null;
 	}
+	
 
 	@Override
-	public void setOnStateChange(TransformationListener listener) {
-
-	}
-
-	@Override
-	public void removeOnStateChange(TransformationListener listener) {
-
+	public Csar getCsar() {
+		return null;
 	}
 
 	public void setReturnTargetArtifact(boolean returnTargetArtifact) {

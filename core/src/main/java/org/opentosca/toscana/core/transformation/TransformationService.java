@@ -2,10 +2,10 @@ package org.opentosca.toscana.core.transformation;
 
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.transformation.platform.Platform;
+import org.opentosca.toscana.core.util.StatusService;
 
-public interface TransformationService {
-
-
+public interface TransformationService extends StatusService{
+	
     /**
      * Creates a new transformation instance of given csar for given platform.
      * Does not start the transformation process.

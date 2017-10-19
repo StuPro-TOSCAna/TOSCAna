@@ -37,7 +37,8 @@ public class CommonController {
 	 */
 	@RequestMapping(
 		path = "/status",
-		method = RequestMethod.GET
+		method = RequestMethod.GET,
+		produces = "application/hal+json"
 	)
 	public ResponseEntity<StatusResponse> getStatus() {
 		StatusResponse response = new StatusResponse(

@@ -58,7 +58,8 @@ public class TransformationController {
 	 */
 	@RequestMapping(
 		path = "",
-		method = RequestMethod.GET
+		method = RequestMethod.GET,
+		produces = "application/hal+json"
 	)
 	public ResponseEntity<Resources<TransformationResponse>> getCSARTransformations(
 		@PathVariable(name = "csarName") String name
@@ -98,7 +99,8 @@ public class TransformationController {
 	 */
 	@RequestMapping(
 		path = "/{platform}",
-		method = RequestMethod.GET
+		method = RequestMethod.GET,
+		produces = "application/hal+json"
 	)
 	public ResponseEntity<TransformationResponse> getCSARTransformation(
 		@PathVariable(name = "csarName") String name,
@@ -134,7 +136,8 @@ public class TransformationController {
 	 */
 	@RequestMapping(
 		path = "/{platform}/create",
-		method = {RequestMethod.POST, RequestMethod.PUT}
+		method = {RequestMethod.POST, RequestMethod.PUT},
+		produces = "application/hal+json"
 	)
 	public ResponseEntity<TransformationResponse> addTransformation(
 		@PathVariable(name = "csarName") String name,
@@ -170,7 +173,8 @@ public class TransformationController {
 	 */
 	@RequestMapping(
 		path = "/{platform}/delete",
-		method = RequestMethod.DELETE
+		method = RequestMethod.DELETE,
+		produces = "application/hal+json"
 	)
 	public ResponseEntity<TransformationResponse> deleteTransformation(
 		@PathVariable(name = "csarName") String name,
@@ -207,7 +211,8 @@ public class TransformationController {
 	 */
 	@RequestMapping(
 		path = "/{platform}/logs",
-		method = RequestMethod.GET
+		method = RequestMethod.GET,
+		produces = "application/hal+json"
 	)
 	public ResponseEntity<LogResponse> getTransformationLogs(
 		@PathVariable(name = "csarName") String name,
@@ -248,7 +253,8 @@ public class TransformationController {
 	 */
 	@RequestMapping(
 		path = "/{platform}/artifact",
-		method = RequestMethod.GET
+		method = RequestMethod.GET,
+		produces = "application/hal+json"
 	)
 	public ResponseEntity<ArtifactResponse> getTransformationArtifact(
 		@PathVariable(name = "csarName") String name,
@@ -288,7 +294,8 @@ public class TransformationController {
 	 */
 	@RequestMapping(
 		path = "/{platform}/properties",
-		method = RequestMethod.GET
+		method = RequestMethod.GET,
+		produces = "application/hal+json"
 	)
 	public ResponseEntity<GetPropertiesResponse> getTransformationProperties(
 		@PathVariable(name = "csarName") String name,
@@ -334,7 +341,8 @@ public class TransformationController {
 	 */
 	@RequestMapping(
 		path = "/{platform}/properties",
-		method = {RequestMethod.POST, RequestMethod.PUT}
+		method = {RequestMethod.POST, RequestMethod.PUT},
+		produces = "application/json"
 	)
 	public ResponseEntity<SetPropertiesResponse> setTransformationProperties(
 		@PathVariable(name = "csarName") String name,
