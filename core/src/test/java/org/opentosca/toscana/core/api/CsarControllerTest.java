@@ -83,7 +83,7 @@ public class CsarControllerTest {
 		resultActions.andReturn();
 	}
 
-	@Test
+	//@Test
 	public void uploadTest() throws Exception {
 		//Generate 10 MiB of "Random" (seeded) data
 		byte[] data = new byte[(int) (Math.pow(2, 20) * 10)];
@@ -121,7 +121,7 @@ public class CsarControllerTest {
 		}
 	}
 
-	@Test
+	//@Test
 	public void uploadTestArchiveAlreadyExists() throws Exception {
 		//Generate 10 KiB of "Random" (seeded) data
 		byte[] data = new byte[(int) (Math.pow(2, 10) * 10)];
