@@ -4,6 +4,7 @@ import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.TransformationService;
+import org.opentosca.toscana.core.util.SystemStatus;
 import org.springframework.stereotype.Service;
 
 //@Service //TODO If Transformation Service has been implemented
@@ -33,5 +34,10 @@ public class DummyTransformationService implements TransformationService {
 	public boolean deleteTransformation(Transformation transformation) {
 		
 		return returnValue;
+	}
+
+	@Override
+	public SystemStatus getSystemStatus() {
+		return SystemStatus.IDLE;
 	}
 }
