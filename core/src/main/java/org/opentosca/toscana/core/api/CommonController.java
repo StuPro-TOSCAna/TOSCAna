@@ -2,7 +2,7 @@ package org.opentosca.toscana.core.api;
 
 import org.opentosca.toscana.core.api.model.StatusResponse;
 import org.opentosca.toscana.core.util.FileSystem;
-import org.opentosca.toscana.core.util.StatusService;
+import org.opentosca.toscana.core.util.status.StatusService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;

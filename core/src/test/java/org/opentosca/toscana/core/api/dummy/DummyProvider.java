@@ -5,7 +5,7 @@ import org.opentosca.toscana.core.transformation.TransformationService;
 import org.opentosca.toscana.core.util.FileSystem;
 import org.opentosca.toscana.core.transformation.platform.PlatformService;
 import org.opentosca.toscana.core.util.Preferences;
-import org.opentosca.toscana.core.util.StatusService;
+import org.opentosca.toscana.core.util.status.StatusService;
 import org.springframework.context.annotation.Bean;
 
 //TODO Replace dummies with true implementations
