@@ -5,7 +5,7 @@ import org.opentosca.toscana.core.plugin.TransformationPlugin;
 import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.TransformationService;
 import org.opentosca.toscana.core.transformation.TransformationState;
-import org.opentosca.toscana.core.util.SystemStatus;
+import org.opentosca.toscana.core.util.status.SystemStatus;
 import org.slf4j.Logger;
 
 public class ExecutionTask implements Runnable {
@@ -32,7 +32,6 @@ public class ExecutionTask implements Runnable {
 		log.info("Starting Transformation executor for {}/{}",
 			transformation.getCsar().getIdentifier(),
 			transformation.getPlatform().id);
-		transformationService.setSystemStatus(SystemStatus.TRANSFORMING);
 		try {
 			plugin.transform(transformation);
 		} catch (Exception e) {
@@ -42,6 +41,5 @@ public class ExecutionTask implements Runnable {
 			log.error("Error message: ", e);
 			transformation.setState(TransformationState.ERROR);
 		}
-		transformationService.setSystemStatus(SystemStatus.IDLE);
 	}
 }

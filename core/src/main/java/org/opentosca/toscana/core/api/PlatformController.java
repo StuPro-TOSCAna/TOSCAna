@@ -28,10 +28,14 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 @RequestMapping("/platforms")
 public class PlatformController {
 
-	public Logger log = LoggerFactory.getLogger(getClass());
+	private Logger log = LoggerFactory.getLogger(getClass());
+
+	private final PlatformService platformService;
 
 	@Autowired
-	public PlatformService platformService;
+	public PlatformController(PlatformService platformService) {
+		this.platformService = platformService;
+	}
 
 	/**
 	 * Lists all Supported Platforms (HTTP Response Method)

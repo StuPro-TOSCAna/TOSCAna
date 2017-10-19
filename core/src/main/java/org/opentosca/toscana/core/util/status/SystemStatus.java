@@ -1,4 +1,4 @@
-package org.opentosca.toscana.core.util;
+package org.opentosca.toscana.core.util.status;
 
 public enum SystemStatus {
 	IDLE("idle"),

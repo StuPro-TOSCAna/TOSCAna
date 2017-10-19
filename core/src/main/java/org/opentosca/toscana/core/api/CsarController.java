@@ -1,5 +1,9 @@
 package org.opentosca.toscana.core.api;
 
+import org.apache.tomcat.util.http.fileupload.FileItemIterator;
+import org.apache.tomcat.util.http.fileupload.FileItemStream;
+import org.apache.tomcat.util.http.fileupload.FileUploadException;
+import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
 import org.opentosca.toscana.core.api.model.CsarResponse;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarService;
@@ -14,8 +18,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
@@ -30,13 +38,16 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 @RequestMapping("/csars")
 public class CsarController {
 
-	@Autowired
-	public CsarService csarService;
-
-	@Autowired
-	public PlatformService platformService;
+	private final CsarService csarService;
+	private final PlatformService platformService;
 
 	public Logger log = LoggerFactory.getLogger(getClass());
+
+	@Autowired
+	public CsarController(CsarService csarService, PlatformService platformService) {
+		this.csarService = csarService;
+		this.platformService = platformService;
+	}
 
 	/**
 	 * Responds with a list of csars stored on the transformator.
@@ -100,10 +111,12 @@ public class CsarController {
 	)
 	public ResponseEntity<String> uploadCSAR(
 		@PathVariable(name = "name") String name,
-		@RequestParam(name = "file", required = true) MultipartFile file
+//		@RequestParam(name = "file", required = true) MultipartFile file
+		HttpServletRequest request
 	) {
 		try {
-			Csar result = csarService.submitCsar(name, file.getInputStream());
+//			Csar result = csarService.submitCsar(name, file.getInputStream());
+			Csar result = csarService.submitCsar(name, getInputStream(request));
 			if (result == null) {
 				//Return Bad Request if a csar with this name already exists
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
@@ -116,15 +129,15 @@ public class CsarController {
 	}
 
 	//NOTE: This operation might be used again, depending on how spring behaves when uploading large files
-//	private InputStream getInputStream(HttpServletRequest request) throws IOException, FileUploadException {
-//		ServletFileUpload upload = new ServletFileUpload();
-//		FileItemIterator iterator = upload.getItemIterator(request);
-//		while (iterator.hasNext()) {
-//			FileItemStream stream = iterator.next();
-//			if (Objects.equals(stream.getFieldName(), "file")) {
-//				return stream.openStream();
-//			}
-//		}
-//		return null;
-//	}
+	private InputStream getInputStream(HttpServletRequest request) throws IOException, FileUploadException {
+		ServletFileUpload upload = new ServletFileUpload();
+		FileItemIterator iterator = upload.getItemIterator(request);
+		while (iterator.hasNext()) {
+			FileItemStream stream = iterator.next();
+			if (Objects.equals(stream.getFieldName(), "file")) {
+				return stream.openStream();
+			}
+		}
+		return null;
+	}
 }

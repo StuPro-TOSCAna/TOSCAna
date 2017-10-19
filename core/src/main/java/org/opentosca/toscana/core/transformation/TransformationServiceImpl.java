@@ -5,7 +5,6 @@ import org.opentosca.toscana.core.csar.CsarDao;
 import org.opentosca.toscana.core.plugin.PluginService;
 import org.opentosca.toscana.core.transformation.execution.ExecutionTask;
 import org.opentosca.toscana.core.transformation.platform.Platform;
-import org.opentosca.toscana.core.util.SystemStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,19 +20,19 @@ import java.util.concurrent.Future;
 public class TransformationServiceImpl
 	implements TransformationService {
 
-	@Autowired
-	public CsarDao csarDao;
-
-	@Autowired
-	public PluginService pluginService;
-
 	public Logger log = LoggerFactory.getLogger(getClass());
 
-	private SystemStatus systemStatus = SystemStatus.IDLE;
-
+	private final CsarDao csarDao;
+	private final PluginService pluginService;
+	
 	private Map<Transformation, Future<?>> tasks = new HashMap<>();
-
 	private ExecutorService executor = Executors.newSingleThreadExecutor();
+
+	@Autowired
+	public TransformationServiceImpl(CsarDao csarDao, PluginService pluginService) {
+		this.csarDao = csarDao;
+		this.pluginService = pluginService;
+	}
 
 	@Override
 	public void createTransformation(Csar csar, Platform targetPlatform) {
@@ -66,13 +65,4 @@ public class TransformationServiceImpl
 		return false;
 	}
 
-	@Override
-	public SystemStatus getSystemStatus() {
-		return systemStatus;
-	}
-
-	@Override
-	public synchronized void setSystemStatus(SystemStatus status) {
-		this.systemStatus = status;
-	}
 }

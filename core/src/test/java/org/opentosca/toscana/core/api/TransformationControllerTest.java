@@ -36,7 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 	classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD
 )
 public class TransformationControllerTest {
-	
+
 	private static final String VALID_PROPERTY_INPUT = "{\n" +
 		"\t\"properties\": {\n" +
 		"\t\t\"text_property\":\"Hallo Welt\",\n" +
@@ -53,7 +53,7 @@ public class TransformationControllerTest {
 		"\t\t\"unsigned_integer_property\": \"-1337\"\n" +
 		"\t}\n" +
 		"}";
-	
+
 	private TransformationController controller;
 	private CsarService csarService;
 	private TransformationService transformationService;
@@ -66,11 +66,8 @@ public class TransformationControllerTest {
 		csarService = new DummyCsarService();
 		transformationService = new DummyTransformationService();
 		platformService = new DummyPlatformService();
-		controller = new TransformationController();
-		//Inject Dependencies
-		controller.csarService = csarService;
-		controller.transformationService = transformationService;
-		controller.platformService = platformService;
+		controller = new TransformationController(csarService, transformationService, platformService);
+
 		mvc = MockMvcBuilders.standaloneSetup(controller).build();
 	}
 
@@ -80,8 +77,8 @@ public class TransformationControllerTest {
 		preInitNonCreationTests();
 		mvc.perform(
 			put("/csars/k8s-cluster/transformations/p-a/properties")
-			.contentType(MediaType.APPLICATION_JSON)
-			.content(VALID_PROPERTY_INPUT)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(VALID_PROPERTY_INPUT)
 		).andDo(print())
 			.andExpect(status().is(200))
 			.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
@@ -91,6 +88,7 @@ public class TransformationControllerTest {
 			.andExpect(jsonPath("$.valid_inputs.unsigned_integer_property").value(true))
 			.andReturn();
 	}
+
 	@Test
 	public void setTransformationPropertiesInvalidInput() throws Exception {
 		preInitNonCreationTests();
@@ -137,6 +135,7 @@ public class TransformationControllerTest {
 			.andExpect(status().is(400))
 			.andReturn();
 	}
+
 	//</editor-fold>
 	//<editor-fold desc="Test Artifact Retrieval">
 	@Test

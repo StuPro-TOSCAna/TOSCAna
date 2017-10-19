@@ -2,7 +2,7 @@ package org.opentosca.toscana.core.api;
 
 import org.opentosca.toscana.core.api.model.StatusResponse;
 import org.opentosca.toscana.core.util.FileSystem;
-import org.opentosca.toscana.core.util.StatusService;
+import org.opentosca.toscana.core.util.status.StatusService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -24,11 +24,16 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 @RestController
 public class CommonController {
 
-	@Autowired
-	public StatusService statusService;
+	private final StatusService statusService;
+
+	private final FileSystem fileSystem;
 
 	@Autowired
-	public FileSystem fileSystem;
+	public CommonController(StatusService statusService, FileSystem fileSystem) {
+		this.statusService = statusService;
+		this.fileSystem = fileSystem;
+	}
+
 
 	/**
 	 * Responds with the status of the Transformator, including Available Disk space and the current status

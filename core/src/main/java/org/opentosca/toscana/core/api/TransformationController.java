@@ -38,12 +38,18 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 @RequestMapping("/csars/{csarName}/transformations")
 public class TransformationController {
 
+	private final CsarService csarService;
+	private final TransformationService transformationService;
+	private final PlatformService platformService;
+
 	@Autowired
-	public CsarService csarService;
-	@Autowired
-	public TransformationService transformationService;
-	@Autowired
-	public PlatformService platformService;
+	public TransformationController(CsarService csarService,
+									TransformationService transformationService,
+									PlatformService platformService) {
+		this.csarService = csarService;
+		this.transformationService = transformationService;
+		this.platformService = platformService;
+	}
 
 	/**
 	 * This Request Returns a list of all transformations belonging to a csar

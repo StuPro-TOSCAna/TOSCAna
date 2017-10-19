@@ -1,21 +1,12 @@
 package org.opentosca.toscana.core.plugin;
 
-import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.platform.Platform;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 
-import java.util.HashSet;
-
-@Component
-public class SamplePlugin implements TransformationPlugin {
-	
+@Controller
+public class SamplePlugin extends AbstractPlugin{
 	@Override
 	public Platform getPlatformDetails() {
-		return new Platform("sample", "Sample Platform", new HashSet<>());
-	}
-
-	@Override
-	public void transform(Transformation transformation) throws Exception {
-
+		return null;
 	}
 }
