@@ -71,16 +71,7 @@ public class DummyTransformation implements Transformation {
 	public TargetArtifact getTargetArtifact() {
 		return returnTargetArtifact ? new TargetArtifact() : null;
 	}
-
-	@Override
-	public void setOnStateChange(TransformationListener listener) {
-
-	}
-
-	@Override
-	public void removeOnStateChange(TransformationListener listener) {
-
-	}
+	
 
 	@Override
 	public Csar getCsar() {

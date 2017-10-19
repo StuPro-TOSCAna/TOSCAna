@@ -130,7 +130,7 @@ public class TransformationControllerTest {
 	public void getTransformationPropertiesInvalidState() throws Exception {
 		preInitNonCreationTests();
 		((DummyTransformation) csarService.getCsar("k8s-cluster").getTransformations().get("p-a"))
-			.setState(TransformationState.QUEUED);
+			.setState(TransformationState.READY);
 		mvc.perform(
 			get("/csars/k8s-cluster/transformations/p-a/properties")
 		).andDo(print())

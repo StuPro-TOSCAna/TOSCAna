@@ -16,7 +16,7 @@ public enum TransformationState {
 	 * 
 	 * If the Task performed is a transformation 
 	 */
-	QUEUED,
+	READY,
 	TRANSFORMING,
 	DONE,
 	ERROR,

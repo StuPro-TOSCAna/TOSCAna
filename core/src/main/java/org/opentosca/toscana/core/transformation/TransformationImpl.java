@@ -54,19 +54,7 @@ class TransformationImpl implements Transformation {
 	public void setState(TransformationState state) {
 		this.state = state;
 	}
-
-	@Override
-	public void setOnStateChange(TransformationListener listener) {
-		// TODO
-		// hint: use IdentityHashMap for Listeners
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public void removeOnStateChange(TransformationListener listener) {
-		// TODO
-		throw new UnsupportedOperationException();
-	}
+	
 
 	@Override
 	public Csar getCsar() {

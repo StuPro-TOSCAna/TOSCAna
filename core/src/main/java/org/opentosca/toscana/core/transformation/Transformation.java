@@ -62,24 +62,7 @@ public interface Transformation {
 	 * object pointing to the generated target artifact otherwise it returns null!
 	 */
 	TargetArtifact getTargetArtifact();
-
-	/**
-	 * Registers given listener for updates regarding this transformations state change.
-	 * On a state change, the listeners' hooks will be called in <b>arbitrary order</b>.
-	 * If the listener is already registered, nothing happens.
-	 *
-	 * @param listener
-	 */
-	void setOnStateChange(TransformationListener listener);
-
-	/**
-	 * Removes given listener from the collection of registered listener for this transformation.
-	 * If the listener is not registered, nothing happens.
-	 *
-	 * @param listener listener to be removed from the collection of listeners
-	 */
-	void removeOnStateChange(TransformationListener listener);
-	
+		
 	Csar getCsar();
 
 }

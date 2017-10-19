@@ -12,6 +12,7 @@ public enum PropertyType {
 	INTEGER("integer", Integer.class, new IntegerValidator(false)),
 	UNSIGNED_INTEGER("unsigned_integer", Integer.class, new IntegerValidator(true)),
 	FLOAT("float", Double.class, new FloatValidator());
+	
 	private ValueValidator valueValidator;
 	private String typeName;
 	private Class<?> outputClass;
