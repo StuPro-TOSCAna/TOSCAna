@@ -40,4 +40,9 @@ public class DummyTransformationService implements TransformationService {
 	public SystemStatus getSystemStatus() {
 		return SystemStatus.IDLE;
 	}
+
+	@Override
+	public void setSystemStatus(SystemStatus status) {
+		
+	}
 }

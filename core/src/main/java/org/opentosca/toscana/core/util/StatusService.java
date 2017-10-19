@@ -8,4 +8,6 @@ public interface StatusService {
 	 * @return the current status of the transformer (never Null!)
 	 */
 	SystemStatus getSystemStatus();
+	
+	void setSystemStatus(SystemStatus status);
 }

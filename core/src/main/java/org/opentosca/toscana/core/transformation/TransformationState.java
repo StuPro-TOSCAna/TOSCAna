@@ -19,7 +19,7 @@ public enum TransformationState {
 	QUEUED,
 	TRANSFORMING,
 	DONE,
-	FAILED,
+	ERROR,
 	INTERUPTED,
 	INPUT_REQUIRED
 }

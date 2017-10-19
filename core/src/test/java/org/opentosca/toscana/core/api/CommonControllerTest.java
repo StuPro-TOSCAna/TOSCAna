@@ -50,7 +50,7 @@ public class CommonControllerTest {
 	@Test
 	public void retrieveStatusUpdate() throws Exception {
 		mvc.perform(
-			get("/status" ).accept(MediaType.APPLICATION_JSON)
+			get("/status" ).accept("application/hal+json")
 		).andDo(print())
 			.andExpect(status().is2xxSuccessful())
 			.andExpect(jsonPath("$.status").value("idle"))

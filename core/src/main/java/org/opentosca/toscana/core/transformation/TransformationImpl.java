@@ -18,7 +18,7 @@ class TransformationImpl implements Transformation {
 	private Logger logger = LoggerFactory.getLogger(getClass());
 
 	private Csar app;
-	private TransformationState state;
+	private TransformationState state = TransformationState.CREATED;
 	private Platform targetPlatform;
 	private Set<Property> properties;
 	private Map<String, String> propertyInstance = new HashMap<>();
@@ -48,6 +48,11 @@ class TransformationImpl implements Transformation {
 	@Override
 	public TransformationState getState() {
 		return state;
+	}
+
+	@Override
+	public void setState(TransformationState state) {
+		this.state = state;
 	}
 
 	@Override

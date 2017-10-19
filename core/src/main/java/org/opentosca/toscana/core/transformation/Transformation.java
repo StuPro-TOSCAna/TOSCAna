@@ -17,6 +17,8 @@ public interface Transformation {
 	 * @return the state the transformation is currently in
 	 */
 	TransformationState getState();
+	
+	void setState(TransformationState state);
 
 	/**
 	 * Returns the target platform of this instance
