@@ -115,7 +115,7 @@ public class TransformationControllerTest {
 			get("/csars/k8s-cluster/transformations/p-a/properties")
 		).andDo(print())
 			.andExpect(status().is(200))
-			.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+			.andExpect(content().contentType("application/hal+json;charset=UTF-8"))
 			.andExpect(jsonPath("$.properties").isArray())
 			.andExpect(jsonPath("$.properties").isNotEmpty())
 			.andExpect(jsonPath("$.properties[0].key").isString())
@@ -148,7 +148,7 @@ public class TransformationControllerTest {
 			get("/csars/k8s-cluster/transformations/p-a/artifact")
 		).andDo(print())
 			.andExpect(status().is(200))
-			.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+			.andExpect(content().contentType("application/hal+json;charset=UTF-8"))
 			.andExpect(jsonPath("$.access_url").isString())
 			.andExpect(jsonPath("$.links").isArray())
 			.andExpect(jsonPath("$.links[0].rel").value("self"))
@@ -178,7 +178,7 @@ public class TransformationControllerTest {
 			get("/csars/k8s-cluster/transformations/p-a/logs?start=0")
 		).andDo(print())
 			.andExpect(status().is(200))
-			.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+			.andExpect(content().contentType("application/hal+json;charset=UTF-8"))
 			.andExpect(jsonPath("$.start").value(0))
 			.andExpect(jsonPath("$.end").isNumber())
 			.andExpect(jsonPath("$.logs").isArray())
@@ -223,11 +223,11 @@ public class TransformationControllerTest {
 	public void transformationDetails() throws Exception {
 		preInitNonCreationTests();
 		MvcResult result = mvc.perform(
-			get("/csars/k8s-cluster/transformations/p-a").accept(MediaType.APPLICATION_JSON)
+			get("/csars/k8s-cluster/transformations/p-a").accept("application/hal+json")
 		)
 			.andDo(print())
 			.andExpect(status().is(200))
-			.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+			.andExpect(content().contentType("application/hal+json;charset=UTF-8"))
 			.andExpect(jsonPath("$.progress").value(0))
 			.andExpect(jsonPath("$.platform").value("p-a"))
 			.andExpect(jsonPath("$.status").value("INPUT_REQUIRED"))
@@ -258,11 +258,11 @@ public class TransformationControllerTest {
 	public void listTransformations() throws Exception {
 		preInitNonCreationTests();
 		mvc.perform(
-			get("/csars/k8s-cluster/transformations/").accept(MediaType.APPLICATION_JSON)
+			get("/csars/k8s-cluster/transformations/").accept("application/hal+json")
 		)
 			.andDo(print())
 			.andExpect(status().is(200))
-			.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+			.andExpect(content().contentType("application/hal+json;charset=UTF-8"))
 			.andExpect(jsonPath("$.content").isArray())
 			.andExpect(jsonPath("$.content[0]").exists())
 			.andExpect(jsonPath("$.content[1]").exists())
@@ -277,11 +277,11 @@ public class TransformationControllerTest {
 	@Test
 	public void listEmptyTransformations() throws Exception {
 		mvc.perform(
-			get("/csars/k8s-cluster/transformations/").accept(MediaType.APPLICATION_JSON)
+			get("/csars/k8s-cluster/transformations/").accept("application/hal+json;charset=UTF-8")
 		)
 			.andDo(print())
 			.andExpect(status().is(200))
-			.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+			.andExpect(content().contentType("application/hal+json;charset=UTF-8"))
 			.andExpect(jsonPath("$.content").isArray())
 			.andExpect(jsonPath("$.content[0]").doesNotExist())
 			.andExpect(jsonPath("$.links[0].href")

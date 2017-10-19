@@ -43,7 +43,7 @@ public class PlatformController {
 	@RequestMapping(
 		path = "",
 		method = RequestMethod.GET,
-		produces = "application/json"
+		produces = "application/hal+json"
 	)
 	public ResponseEntity<ResourceSupport> getPlatforms() {
 		Link selfLink = linkTo(methodOn(PlatformController.class).getPlatforms()).withSelfRel();
@@ -71,7 +71,7 @@ public class PlatformController {
 	@RequestMapping(
 		path = "/{id}",
 		method = RequestMethod.GET,
-		produces = "application/json"
+		produces = "application/hal+json"
 	)
 	public ResponseEntity<PlatformResponse> getPlatform(
 		@PathVariable(name = "id") String id

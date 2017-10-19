@@ -46,7 +46,7 @@ public class CsarController {
 	@RequestMapping(
 		path = "",
 		method = RequestMethod.GET,
-		produces = "application/json"
+		produces = "application/hal+json"
 	)
 	public ResponseEntity<Resources<CsarResponse>> listCSARs() {
 		Link selfLink = linkTo(methodOn(CsarController.class).listCSARs()).withSelfRel();
@@ -67,7 +67,7 @@ public class CsarController {
 	@RequestMapping(
 		path = "/{name}",
 		method = RequestMethod.GET,
-		produces = "application/json"
+		produces = "application/hal+json"
 	)
 	public ResponseEntity<CsarResponse> getCSARInfo(
 		@PathVariable(name = "name") String name
@@ -96,7 +96,7 @@ public class CsarController {
 	@RequestMapping(
 		path = "/{name}",
 		method = {RequestMethod.PUT, RequestMethod.POST},
-		produces = "application/json"
+		produces = "application/hal+json"
 	)
 	public ResponseEntity<String> uploadCSAR(
 		@PathVariable(name = "name") String name,
