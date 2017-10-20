@@ -17,6 +17,11 @@ public class Log {
 		this.logEntries = Collections.synchronizedList(new LinkedList<>());
 	}
 
+	/**
+	 * Adds a new Log entry to the end of the log. This method is protected,
+	 * because it should only be accessed by in classes within the same package/subclasses
+	 * @param e the logenty to add
+	 */
 	protected void addLogEntry(LogEntry e) {
 		logEntries.add(e);
 	}
