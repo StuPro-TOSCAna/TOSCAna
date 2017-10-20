@@ -1,5 +1,7 @@
 package org.opentosca.toscana.core.transformation.logging;
 
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -9,7 +11,12 @@ public class Log {
 
     private List<LogEntry> logEntries;
 
-    /**
+	public Log() {
+		//Create Synchronized linked list. to prevent any issues regarding concurrency
+		this.logEntries = Collections.synchronizedList(new LinkedList<>());
+	}
+
+	/**
      * Returns the log entries of this transaction in specified range.
      * They are ordered from old to new.
      *

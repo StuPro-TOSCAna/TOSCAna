@@ -3,19 +3,19 @@ package org.opentosca.toscana.core.transformation;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.transformation.artifacts.TargetArtifact;
 import org.opentosca.toscana.core.transformation.logging.Log;
+import org.opentosca.toscana.core.transformation.logging.TransformationAppender;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import ch.qos.logback.classic.Logger;
 import java.util.*;
 
 class TransformationImpl implements Transformation {
 
-	private Logger logger = LoggerFactory.getLogger(getClass());
+	private Logger logger = (Logger) LoggerFactory.getLogger(getClass());
 
-	private Csar app;
+	private Csar csar;
 	private TransformationState state = TransformationState.CREATED;
 	private Platform targetPlatform;
 	private PropertyInstance properties;
@@ -23,13 +23,13 @@ class TransformationImpl implements Transformation {
 	private TargetArtifact targetArtifact;
 
 	/**
-	 * Creates a new transformation for given app to given targetPlatform.
+	 * Creates a new transformation for given csar to given targetPlatform.
 	 *
 	 * @param csar           the subject of transformation
 	 * @param targetPlatform the target platform
 	 */
 	public TransformationImpl(Csar csar, Platform targetPlatform) {
-		this.app = csar;
+		this.csar = csar;
 		this.targetPlatform = targetPlatform;
 		
 		//Collect Possible Properties From the Platform and the Model
@@ -42,9 +42,19 @@ class TransformationImpl implements Transformation {
 		
 		//intialize internal log object
 		this.log = new Log();
-		// TODO
 	}
-	
+
+	@Override
+	public Logger getTransformationLogger(Class<?> clazz) {
+		Logger tLog = (Logger) LoggerFactory.getLogger(clazz);
+
+		TransformationAppender appender = new TransformationAppender(log);
+		appender.setContext(tLog.getLoggerContext());
+		tLog.addAppender(appender);
+		
+		return tLog;
+	}
+
 	@Override
 	public TransformationState getState() {
 		return state;
@@ -57,7 +67,7 @@ class TransformationImpl implements Transformation {
 	
 	@Override
 	public Csar getCsar() {
-		return app;
+		return csar;
 	}
 
 	@Override
