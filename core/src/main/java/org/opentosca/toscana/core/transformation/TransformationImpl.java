@@ -50,7 +50,10 @@ class TransformationImpl implements Transformation {
 
 		TransformationAppender appender = new TransformationAppender(log);
 		appender.setContext(tLog.getLoggerContext());
+		appender.start();
 		tLog.addAppender(appender);
+		
+		//TODO Add File Appender once mechanism for getting the filepath has been implemented.
 		
 		return tLog;
 	}
