@@ -8,7 +8,8 @@ public class LogEntry {
 	private final long timestamp;
 	private final String message;
 	private final Level level;
-
+	private long index = -1;	
+	
 	public LogEntry(String message, Level level) {
 		this(System.currentTimeMillis(), message, level);
 	}
@@ -21,6 +22,15 @@ public class LogEntry {
 		if (message == null || level == null) {
 			throw new IllegalArgumentException(String.format("LogEntry '%s' is invalid", this));
 		}
+	}
+
+	void setIndex(long index) {
+		this.index = index;
+	}
+
+	@JsonProperty("index")
+	public long getIndex() {
+		return index;
 	}
 
 	@JsonProperty("timestamp")

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * The logs of a specific transformation.
@@ -11,10 +12,12 @@ import java.util.List;
 public class Log {
 
 	private List<LogEntry> logEntries;
+	private AtomicLong index;
 
 	public Log() {
 		//Create Synchronized linked list. to prevent any issues regarding concurrency
 		this.logEntries = Collections.synchronizedList(new LinkedList<>());
+		index = new AtomicLong(0);
 	}
 
 	/**
@@ -22,7 +25,8 @@ public class Log {
 	 * because it should only be accessed by in classes within the same package/subclasses
 	 * @param e the logenty to add
 	 */
-	protected void addLogEntry(LogEntry e) {
+	void addLogEntry(LogEntry e) {
+		e.setIndex(index.getAndIncrement());
 		logEntries.add(e);
 	}
 
