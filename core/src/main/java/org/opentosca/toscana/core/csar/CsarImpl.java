@@ -3,10 +3,13 @@ package org.opentosca.toscana.core.csar;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.eclipse.winery.model.tosca.yaml.TServiceTemplate;
 import org.opentosca.toscana.core.transformation.Transformation;
+import org.opentosca.toscana.core.transformation.properties.Property;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 class CsarImpl implements Csar{
 
@@ -43,6 +46,11 @@ class CsarImpl implements Csar{
 	@Override
 	public TServiceTemplate getTemplate() {
     	return template;
+	}
+
+	@Override
+	public Set<Property> getModelSpecificProperties() {
+		return new HashSet<>();
 	}
 
 	@Override

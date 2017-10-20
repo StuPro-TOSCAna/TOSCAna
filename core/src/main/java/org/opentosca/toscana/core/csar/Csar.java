@@ -2,9 +2,11 @@ package org.opentosca.toscana.core.csar;
 
 import org.eclipse.winery.model.tosca.yaml.TServiceTemplate;
 import org.opentosca.toscana.core.transformation.Transformation;
+import org.opentosca.toscana.core.transformation.properties.Property;
 
 import java.io.File;
 import java.util.Map;
+import java.util.Set;
 
 public interface Csar {
 
@@ -21,6 +23,12 @@ public interface Csar {
     public String getIdentifier();
     
     public TServiceTemplate getTemplate();
+
+	/**
+	 * Returns model specific properties as a set. If there are none a empty set has to be returned.
+	 * this must not return null to prevent problematic behaviour of the PropertyInstance class
+	 */
+	Set<Property> getModelSpecificProperties();
 	
     public void setTemplate(TServiceTemplate template);
 

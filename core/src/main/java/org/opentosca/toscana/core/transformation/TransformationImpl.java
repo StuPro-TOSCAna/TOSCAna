@@ -5,13 +5,11 @@ import org.opentosca.toscana.core.transformation.artifacts.TargetArtifact;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.Property;
+import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 class TransformationImpl implements Transformation {
 
@@ -20,10 +18,8 @@ class TransformationImpl implements Transformation {
 	private Csar app;
 	private TransformationState state = TransformationState.CREATED;
 	private Platform targetPlatform;
-	private Set<Property> properties;
-	private Map<String, String> propertyInstance = new HashMap<>();
+	private PropertyInstance properties;
 	private Log log;
-	private Set<TransformationListener> listeners;
 	private TargetArtifact targetArtifact;
 
 	/**
@@ -35,16 +31,20 @@ class TransformationImpl implements Transformation {
 	public TransformationImpl(Csar csar, Platform targetPlatform) {
 		this.app = csar;
 		this.targetPlatform = targetPlatform;
-		this.properties = targetPlatform.properties;
+		
+		//Collect Possible Properties From the Platform and the Model
+		Set<Property> properties = new HashSet<>();
+		properties.addAll(csar.getModelSpecificProperties());
+		properties.addAll(targetPlatform.getProperties());
+		
+		//Create property instance
+		this.properties = new PropertyInstance(properties);
+		
+		//intialize internal log object
 		this.log = new Log();
 		// TODO
 	}
-
-//    public void setProperties(Set<Property> properties){
-//        // TODO maybe this needs to become setProperty(Property property)
-//        this.properties = properties;
-//    }
-
+	
 	@Override
 	public TransformationState getState() {
 		return state;
@@ -55,7 +55,6 @@ class TransformationImpl implements Transformation {
 		this.state = state;
 	}
 	
-
 	@Override
 	public Csar getCsar() {
 		return app;
@@ -80,24 +79,8 @@ class TransformationImpl implements Transformation {
 	}
 
 	@Override
-	public void setProperty(String key, String value) {
-		logger.debug("Transformation '{}' for CSAR '{}': Trying to set Property '{}' to value: '{}'",
-			targetPlatform.id, getCsar().getIdentifier(), key, value);
-		for (Property p : targetPlatform.getProperties()) {
-			if (p.getKey().equals(key)) {
-				if (p.getType().validate(value)) {
-					this.propertyInstance.put(key, value);
-					return;
-				} else {
-					throw new IllegalArgumentException("The Property value is invalid!");
-				}
-			}
-		}
-		throw new IllegalArgumentException("A property with the given key does not exist! Key: " + key);
+	public PropertyInstance getProperties() {
+		return properties;
 	}
 
-	@Override
-	public Map<String, String> getProperties() {
-		return Collections.unmodifiableMap(propertyInstance);
-	}
 }

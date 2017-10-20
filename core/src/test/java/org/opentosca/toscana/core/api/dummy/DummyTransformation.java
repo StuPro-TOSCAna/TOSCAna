@@ -8,6 +8,7 @@ import org.opentosca.toscana.core.transformation.TransformationListener;
 import org.opentosca.toscana.core.transformation.TransformationState;
 import org.opentosca.toscana.core.transformation.artifacts.TargetArtifact;
 import org.opentosca.toscana.core.transformation.properties.Property;
+import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,10 +20,11 @@ public class DummyTransformation implements Transformation {
 	private Log log = new DummyLog();
 	private boolean returnTargetArtifact = true;
 
-	private Map<String, String> properties = new HashMap<>();
+	private PropertyInstance properties;
 
 	public DummyTransformation(Platform platform) {
 		this.platform = platform;
+		this.properties = new PropertyInstance(platform.properties);
 	}
 
 	@Override
@@ -37,20 +39,7 @@ public class DummyTransformation implements Transformation {
 
 	@Override
 	public void setProperty(String key, String value) {
-		Property p = null;
-		for (Property property : platform.properties) {
-			if (key.equals(property.getKey())) {
-				p = property;
-			}
-		}
-		if (p == null) {
-			throw new IllegalArgumentException();
-		}
-		if (p.getType().validate(value)) {
-			properties.put(key, value);
-		} else {
-			throw new IllegalArgumentException();
-		}
+		properties.setPropertyValue(key, value);
 	}
 
 	public void setState(TransformationState state) {
@@ -58,7 +47,7 @@ public class DummyTransformation implements Transformation {
 	}
 
 	@Override
-	public Map<String, String> getProperties() {
+	public PropertyInstance getProperties() {
 		return properties;
 	}
 

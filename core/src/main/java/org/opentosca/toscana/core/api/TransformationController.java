@@ -319,7 +319,7 @@ public class TransformationController {
 		}
 		List<PropertyWrap> propertyWrapList = new ArrayList<>();
 		//TODO add filtering depending on the transformation state (i.e. Transforming, Deploying...)
-		for (Property property : transformation.getPlatform().getProperties()) {
+		for (Property property : transformation.getProperties().getPropertySchema()) {
 			propertyWrapList.add(new PropertyWrap(property.getKey(), property.getType().getTypeName()));
 		}
 		return ResponseEntity.ok(new GetPropertiesResponse(name, platform, propertyWrapList));

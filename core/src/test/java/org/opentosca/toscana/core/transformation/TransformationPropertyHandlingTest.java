@@ -41,7 +41,7 @@ public class TransformationPropertyHandlingTest {
 		for (int i = 0; i < 10; i++) {
 			transformation.setProperty("prop-" + i, "1");
 		}
-		Map<String, String> property = transformation.getProperties();
+		Map<String, String> property = transformation.getProperties().getPropertyValues();
 		for (int i = 0; i < 10; i++) {
 			assertTrue(property.get("prop-" + i).equals("1"));
 		}

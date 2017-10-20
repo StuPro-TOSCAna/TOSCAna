@@ -1,10 +1,11 @@
 package org.opentosca.toscana.core.transformation;
 
 import org.opentosca.toscana.core.csar.Csar;
-import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.artifacts.TargetArtifact;
+import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.Property;
+import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
 import org.opentosca.toscana.core.transformation.properties.RequirementType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +18,11 @@ public interface Transformation {
 	 * @return the state the transformation is currently in
 	 */
 	TransformationState getState();
-	
+
+	/**
+	 * Sets the state of the transformation, this is only temporary and will be removed later.
+	 * @param state
+	 */
 	void setState(TransformationState state);
 
 	/**
@@ -30,24 +35,28 @@ public interface Transformation {
 	 * Throws a IllegalArgumentException if a property with the given key cannot be found
 	 * or if the entered value is invalid
 	 */
-	void setProperty(String key, String value);
+	default void setProperty(String key, String value) {
+		getProperties().setPropertyValue(key, value);
+	}
 
 	/**
 	 * @return Key(Property Name)-Value map of all properties that have been set explicitly!
 	 */
-	Map<String, String> getProperties();
-	
+	PropertyInstance getProperties();
+
+	/**
+	 * Checks if all Properties for the given Requirement type.
+	 * @return true if all properties have been set and are valid, false otherwise
+	 */
 	default boolean isAllPropertiesSet(RequirementType type) {
-		Platform p = getPlatform();
-		Map<String, String> propInstance = getProperties();
-		for (Property property : p.getProperties()) {
-			if(propInstance.get(property.getKey()) == null && property.getRequirementType() == type) {
-				return false;
-			}
-		}
-		return true;
+		return getProperties().allPropertiesSetForType(type);
 	}
-	
+
+	/**
+	 * This operation builds a Transformation specific logger that will log its output into the Logging systen used to acces the logs by the rest api
+	 * @param clazz
+	 * @return
+	 */
 	default Logger getTransformationLogger(Class<?> clazz) {
 		return LoggerFactory.getLogger(clazz);
 	}
@@ -62,7 +71,10 @@ public interface Transformation {
 	 * object pointing to the generated target artifact otherwise it returns null!
 	 */
 	TargetArtifact getTargetArtifact();
-		
+
+	/**
+	 * @return Returns the underlying Csar of the transformation
+	 */
 	Csar getCsar();
 
 }
