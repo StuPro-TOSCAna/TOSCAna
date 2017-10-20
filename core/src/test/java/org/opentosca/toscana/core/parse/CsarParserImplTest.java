@@ -1,5 +1,6 @@
 package org.opentosca.toscana.core.parse;
 
+import org.eclipse.winery.model.tosca.yaml.TServiceTemplate;
 import org.junit.Test;
 import org.opentosca.toscana.core.BaseSpringTest;
 import org.opentosca.toscana.core.TestData;
@@ -18,11 +19,8 @@ public class CsarParserImplTest extends BaseSpringTest {
 	@Test
 	public void parse() throws Exception {
 		Csar csar = testData.getCsar(TestData.CSAR_YAML_VALID_SIMPLETASK);
-		// csarParser.parse(csar);
-		//assertTrue(false);
-		// TODO write test
-		
-		
+		TServiceTemplate serviceTemplate = csarParser.parse(csar);
+		assertNotNull(serviceTemplate);
 	}
 
 }
