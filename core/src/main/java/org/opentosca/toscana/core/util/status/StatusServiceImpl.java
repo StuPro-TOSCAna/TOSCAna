@@ -10,22 +10,27 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 
 @Service
-public class StatusServiceImpl implements StatusService{
-	
-	@Autowired
-	public CsarDao repository;
-	
-	@Override
-	public SystemStatus getSystemStatus() {
-		for (Csar csar : repository.findAll()) {
-			for (Map.Entry<String, Transformation> entry : csar.getTransformations().entrySet()) {
-				if(entry.getValue().getState() == TransformationState.TRANSFORMING) {
-					return SystemStatus.TRANSFORMING;
-				} else if(entry.getValue().getState() == TransformationState.ERROR) {
-					return SystemStatus.ERROR;
-				}
-			}
-		}
-		return SystemStatus.IDLE;
-	}
+public class StatusServiceImpl implements StatusService {
+
+    private final CsarDao repository;
+
+    @Autowired
+    public StatusServiceImpl(CsarDao repository) {
+        this.repository = repository;
+    }
+
+    @Override
+    public SystemStatus getSystemStatus() {
+        SystemStatus status = SystemStatus.IDLE;
+        for (Csar csar : repository.findAll()) {
+            for (Map.Entry<String, Transformation> entry : csar.getTransformations().entrySet()) {
+                if (entry.getValue().getState() == TransformationState.TRANSFORMING) {
+                    status = SystemStatus.TRANSFORMING;
+                } else if (entry.getValue().getState() == TransformationState.ERROR) {
+                    return SystemStatus.ERROR;
+                }
+            }
+        }
+        return status;
+    }
 }

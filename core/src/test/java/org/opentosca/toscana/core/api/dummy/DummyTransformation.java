@@ -26,6 +26,11 @@ public class DummyTransformation implements Transformation {
 		this.platform = platform;
 		this.properties = new PropertyInstance(platform.properties);
 	}
+	
+	public DummyTransformation(Platform platform, TransformationState s) {
+	    this(platform);
+	    this.state = s;
+    }
 
 	@Override
 	public TransformationState getState() {

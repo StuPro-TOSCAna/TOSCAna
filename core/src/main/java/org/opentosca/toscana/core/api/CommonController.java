@@ -33,8 +33,7 @@ public class CommonController {
 		this.statusService = statusService;
 		this.fileSystem = fileSystem;
 	}
-
-
+    
 	/**
 	 * Responds with the status of the Transformator, including Available Disk space and the current status
 	 * <p>
