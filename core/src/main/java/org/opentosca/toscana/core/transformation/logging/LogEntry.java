@@ -1,29 +1,44 @@
 package org.opentosca.toscana.core.transformation.logging;
 
+import ch.qos.logback.classic.Level;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class LogEntry {
 
-    public final long timestamp;
-    public final String message;
-    @JsonProperty("level") //Used for serialisation by the REST Api!
-    public final LogLevel logLevel;
+	private final long timestamp;
+	private final String message;
+	private final Level level;
 
-	public LogEntry(String message, LogLevel logLevel) {
-		this(System.currentTimeMillis(), message, logLevel);
+	public LogEntry(String message, Level level) {
+		this(System.currentTimeMillis(), message, level);
 	}
 
-	LogEntry(long timestamp, String message, LogLevel level) {
-        this.timestamp = timestamp;
-        this.message = message;
-        this.logLevel = level;
+	LogEntry(long timestamp, String message, Level level) {
+		this.timestamp = timestamp;
+		this.message = message;
+		this.level = level;
 
-        if (message == null || level == null) {
-            throw new IllegalArgumentException(String.format("LogEntry '%s' is invalid", this));
-        }
-    }
+		if (message == null || level == null) {
+			throw new IllegalArgumentException(String.format("LogEntry '%s' is invalid", this));
+		}
+	}
 
-    public String toString() {
-        return String.format("LogEntry [timestamp='%d', message='%s', logLevel='%s']");
-    }
+	@JsonProperty("timestamp")
+	public long getTimestamp() {
+		return timestamp;
+	}
+
+	@JsonProperty("message")
+	public String getMessage() {
+		return message;
+	}
+
+	@JsonProperty("level")
+	public String getLevel() {
+		return level.levelStr;
+	}
+
+	public String toString() {
+		return String.format("LogEntry [timestamp='%d', message='%s', level='%s']");
+	}
 }

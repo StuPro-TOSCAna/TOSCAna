@@ -13,6 +13,6 @@ public class TransformationAppender extends AppenderBase<ILoggingEvent> {
 
 	@Override
 	protected void append(ILoggingEvent iLoggingEvent) {
-
+		
 	}
 }
