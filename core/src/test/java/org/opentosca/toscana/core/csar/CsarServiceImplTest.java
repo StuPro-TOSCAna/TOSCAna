@@ -3,6 +3,7 @@ package org.opentosca.toscana.core.csar;
 import org.junit.Before;
 import org.junit.Test;
 import org.opentosca.toscana.core.BaseSpringTest;
+import org.opentosca.toscana.core.TestData;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
@@ -27,7 +28,7 @@ public class CsarServiceImplTest extends BaseSpringTest {
 	
 	@Test
 	public void submitCsar() throws Exception {
-		File file = new File("src/test/resources/Moodle.csar");
+		File file = TestData.CSAR_XML_VALID_MOODLE;
 		InputStream stream = new FileInputStream(file);
 		csarService.submitCsar(identifier, stream);
 		

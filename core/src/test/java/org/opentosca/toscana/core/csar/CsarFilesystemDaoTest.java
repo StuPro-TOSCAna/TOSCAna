@@ -2,6 +2,7 @@ package org.opentosca.toscana.core.csar;
 
 import org.junit.Test;
 import org.opentosca.toscana.core.BaseSpringTest;
+import org.opentosca.toscana.core.TestData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +25,8 @@ public class CsarFilesystemDaoTest extends BaseSpringTest {
     @Test
     public void create() throws Exception {
         String identifier = "my-csar-name";
-        File csarFile = new File("src/test/resources/Moodle.csar");
-        InputStream csarStream = new FileInputStream(csarFile);
+        File csarFile = TestData.CSAR_XML_VALID_MOODLE;
+		InputStream csarStream = new FileInputStream(csarFile);
         csarDao.create(identifier, csarStream);
         File csarFolder = new File(preferences.getDataDir(), identifier);
         File contentFolder = new File(csarFolder, CsarFilesystemDao.CONTENT_DIR);
