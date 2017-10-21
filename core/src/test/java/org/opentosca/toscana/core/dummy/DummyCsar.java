@@ -16,6 +16,8 @@ public class DummyCsar implements Csar {
     private String name;
     private byte[] data;
 
+    public Set<Property> modelSpecificProperties = new HashSet<>();
+    
     private Map<String, Transformation> transformations = new HashMap<>();
 
     public DummyCsar(String name) {
@@ -39,7 +41,7 @@ public class DummyCsar implements Csar {
 
     @Override
     public Set<Property> getModelSpecificProperties() {
-        return new HashSet<>();
+        return modelSpecificProperties;
     }
 
     @Override

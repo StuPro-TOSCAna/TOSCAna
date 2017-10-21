@@ -5,6 +5,7 @@ import org.opentosca.toscana.core.csar.CsarDao;
 import org.opentosca.toscana.core.plugin.PluginService;
 import org.opentosca.toscana.core.transformation.execution.ExecutionTask;
 import org.opentosca.toscana.core.transformation.platform.Platform;
+import org.opentosca.toscana.core.transformation.properties.RequirementType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,8 +43,11 @@ public class TransformationServiceImpl
 
     @Override
     public boolean startTransformation(Transformation transformation) {
+        //Only start the transformation if the input has been validated or the 
+        //transformation does not need any addidtional properties
         if (transformation.getState() == TransformationState.CREATED
-            || transformation.getState() == TransformationState.INPUT_REQUIRED) {
+            || (transformation.getState() == TransformationState.INPUT_REQUIRED
+            && transformation.isAllPropertiesSet(RequirementType.TRANSFORMATION))) {
             Future<?> taskFuture = executor.submit(
                 new ExecutionTask(transformation, this, pluginService));
             tasks.put(transformation, taskFuture);
@@ -55,6 +59,10 @@ public class TransformationServiceImpl
     @Override
     public boolean abortTransformation(Transformation transformation) {
         Future<?> task = tasks.get(transformation);
+        //Return false 
+        if(task == null) {
+            return false;
+        }
         //Return false because the transformation has already finished
         if (task.isDone()) {
             return false;
@@ -64,7 +72,14 @@ public class TransformationServiceImpl
 
     @Override
     public boolean deleteTransformation(Transformation transformation) {
-        return false;
+        if(transformation.getState() == TransformationState.TRANSFORMING) {
+            return  false;
+        }
+        //TODO Add mechanism to tell the csar dao to delete the working directories and artifacts.
+        Csar csar = transformation.getCsar();
+        csar.getTransformations().remove(transformation.getPlatform().id);
+        tasks.remove(transformation);
+        return true;
     }
 
 }

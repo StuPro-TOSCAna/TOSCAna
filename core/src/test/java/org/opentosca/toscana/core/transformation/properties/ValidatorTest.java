@@ -3,10 +3,7 @@ package org.opentosca.toscana.core.transformation.properties;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.opentosca.toscana.core.transformation.properties.validators.FloatValidator;
-import org.opentosca.toscana.core.transformation.properties.validators.IntegerValidator;
-import org.opentosca.toscana.core.transformation.properties.validators.StringValidator;
-import org.opentosca.toscana.core.transformation.properties.validators.ValueValidator;
+import org.opentosca.toscana.core.transformation.properties.validators.*;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -37,7 +34,10 @@ public class ValidatorTest {
             {new IntegerValidator(true), true, "100"},
             {new FloatValidator(), false, "Keine Zahl"},
             {new FloatValidator(), true, "10"},
-            {new FloatValidator(), true, "10.1"}
+            {new FloatValidator(), true, "10.1"},
+            {new BooleanValidator(), true, "true"},
+            {new BooleanValidator(), true, "TRUE"},
+            {new BooleanValidator(), false, "23"}
         });
     }
 

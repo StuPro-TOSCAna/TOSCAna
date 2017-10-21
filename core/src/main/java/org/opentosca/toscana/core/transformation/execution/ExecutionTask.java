@@ -31,6 +31,7 @@ public class ExecutionTask implements Runnable {
         log.info("Starting Transformation executor for {}/{}",
             transformation.getCsar().getIdentifier(),
             transformation.getPlatform().id);
+        transformation.setState(TransformationState.TRANSFORMING);
         try {
             plugin.transform(transformation);
         } catch (Exception e) {
@@ -39,6 +40,9 @@ public class ExecutionTask implements Runnable {
                 transformation.getPlatform().id);
             log.error("Error message: ", e);
             transformation.setState(TransformationState.ERROR);
+            return;
         }
+        transformation.setState(TransformationState.DONE);
+        
     }
 }
