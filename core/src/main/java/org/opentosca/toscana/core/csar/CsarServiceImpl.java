@@ -1,6 +1,7 @@
 package org.opentosca.toscana.core.csar;
 
 
+import org.eclipse.winery.model.tosca.yaml.TServiceTemplate;
 import org.opentosca.toscana.core.parse.CsarParser;
 import org.opentosca.toscana.core.parse.InvalidCsarException;
 import org.slf4j.Logger;
@@ -10,8 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.io.InputStream;
 import java.util.List;
 
-//TODO Comment out once implementation is finished
-//@Service
 public class CsarServiceImpl implements CsarService {
 
     private final static Logger logger = LoggerFactory.getLogger(CsarService.class.getName());
@@ -39,11 +38,10 @@ public class CsarServiceImpl implements CsarService {
     }
 
     private void populateWithTemplate(Csar csar) throws InvalidCsarException {
-//		if (csar.getTemplate() == null) {
-//			TServiceTemplate template = null;
-//			template = csarParser.parse(csar);
-//			csar.setTemplate(template);
-//		}
+        if (csar.getTemplate() == null) {
+            TServiceTemplate template = csarParser.parse(csar);
+            csar.setTemplate(template);
+        }
     }
 
     @Override

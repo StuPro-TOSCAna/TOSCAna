@@ -20,11 +20,11 @@ node_types:
     interfaces:
       Standard:
         create:
-          implementation: dockerengine_create.sh
+          implementation: docker/dockerengine_create.sh
         start:
-          implementation: dockerengine_start.sh
+          implementation: docker/dockerengine_start.sh
         stop:
-          implementation: dockerengine_stop.sh
+          implementation: docker/dockerengine_stop.sh
   DockerApp:
     derived_from: tosca.nodes.Root
     requirements:
@@ -44,13 +44,13 @@ node_types:
     interfaces:
       Standard:
         create:
-          implementation: dockerapp_create.sh
+          implementation: docker/dockerapp_create.sh
         start:
-          implementation: dockerapp_create.sh
+          implementation: docker/dockerapp_create.sh
         stop:
-          implementation: dockerapp_stop.sh
+          implementation: docker/dockerapp_stop.sh
         delete:
-          implementation: dockerapp_delete.sh 
+          implementation: docker/dockerapp_delete.sh 
 capability_types:
   DockerHost:
     derived_from: tosca.capabilities.Root
