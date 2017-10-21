@@ -4,6 +4,7 @@ import org.apache.tomcat.util.http.fileupload.FileItemIterator;
 import org.apache.tomcat.util.http.fileupload.FileItemStream;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
+import org.opentosca.toscana.core.api.exceptions.CsarNotFoundException;
 import org.opentosca.toscana.core.api.model.CsarResponse;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarService;
@@ -90,7 +91,7 @@ public class CsarController {
             }
         }
         if (archive == null) {
-            return ResponseEntity.notFound().build();
+            throw new CsarNotFoundException();
         }
         return ResponseEntity.ok().body(new CsarResponse(archive.getIdentifier()));
     }
@@ -126,8 +127,7 @@ public class CsarController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-
-    //NOTE: This operation might be used again, depending on how spring behaves when uploading large files
+    
     private InputStream getInputStream(HttpServletRequest request) throws IOException, FileUploadException {
         ServletFileUpload upload = new ServletFileUpload();
         FileItemIterator iterator = upload.getItemIterator(request);

@@ -164,7 +164,7 @@ public class TransformationControllerTest {
         mvc.perform(
             get("/csars/k8s-cluster/transformations/p-a/artifact")
         ).andDo(print())
-            .andExpect(status().is(404))
+            .andExpect(status().is(400))
             .andReturn();
     }
 

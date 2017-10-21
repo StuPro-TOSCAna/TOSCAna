@@ -1,5 +1,6 @@
 package org.opentosca.toscana.core.api;
 
+import org.opentosca.toscana.core.api.exceptions.*;
 import org.opentosca.toscana.core.api.model.*;
 import org.opentosca.toscana.core.api.model.GetPropertiesResponse.PropertyWrap;
 import org.opentosca.toscana.core.csar.Csar;
@@ -76,7 +77,7 @@ public class TransformationController {
     ) {
         Csar csar = findCsarByName(name);
         if (csar == null) {
-            return ResponseEntity.notFound().build();
+            throw new CsarNotFoundException();
         }
         Link selfLink =
             linkTo(methodOn(TransformationController.class)
@@ -118,11 +119,11 @@ public class TransformationController {
     ) {
         Csar csar = findCsarByName(name);
         if (csar == null) {
-            return ResponseEntity.notFound().build();
+            throw new CsarNotFoundException();
         }
         Transformation transformation = csar.getTransformations().get(platform);
         if (transformation == null) {
-            return ResponseEntity.notFound().build();
+            throw new TransformationNotFoundException();
         }
         return ResponseEntity.ok().body(new TransformationResponse(
             0,
@@ -156,16 +157,16 @@ public class TransformationController {
         log.info("Creating transformation for csar '{}' on '{}'", name, platform);
         Csar csar = findCsarByName(name);
         if (csar == null) {
-            return ResponseEntity.notFound().build();
+            throw new CsarNotFoundException();
         }
         //Return bad Request if a transformation for this platform is already present
         if (csar.getTransformations().get(platform) != null) {
-            return ResponseEntity.badRequest().build();
+            throw new TransformationAlreadyPresentException();
         }
         //Return 404 if the platform does not exist
         Platform p = platformService.findById(platform);
         if (p == null) {
-            return ResponseEntity.notFound().build();
+            throw new PlatformNotFoundException();
         }
         transformationService.createTransformation(csar, p);
         if (csar.getTransformations().get(platform).getState() == TransformationState.CREATED) {
@@ -197,11 +198,11 @@ public class TransformationController {
     ) {
         Csar csar = findCsarByName(name);
         if (csar == null) {
-            return ResponseEntity.notFound().build();
+            throw new CsarNotFoundException();
         }
         Transformation transformation = csar.getTransformations().get(platform);
         if (transformation == null) {
-            return ResponseEntity.notFound().build();
+            throw new TransformationNotFoundException();
         }
         if (transformationService.deleteTransformation(transformation)) {
             // return 200 if the deletion was sucessful
@@ -236,11 +237,11 @@ public class TransformationController {
     ) {
         Csar csar = findCsarByName(name);
         if (csar == null) {
-            return ResponseEntity.notFound().build();
+            throw new CsarNotFoundException();
         }
         Transformation transformation = csar.getTransformations().get(platform);
         if (transformation == null) {
-            return ResponseEntity.notFound().build();
+            throw new TransformationNotFoundException();
         }
         Log log = transformation.getLog();
         List<LogEntry> entries = log.getLogEntries(Math.toIntExact(start));
@@ -259,7 +260,8 @@ public class TransformationController {
      * Response Codes:
      * 200 - Operation was Performed Sucessfuly
      * 404 - Csar not found,
-     * the platform does not exist, the transformation has not finished yet
+     * 400 - Transformation has not finished yet
+     * the platform does not exist
      * or no transformation for the specific platform was found for this csar
      * <p>
      * Response Content Types for Code:
@@ -277,16 +279,15 @@ public class TransformationController {
     ) {
         Csar csar = findCsarByName(name);
         if (csar == null) {
-            return ResponseEntity.notFound().build();
+            throw new CsarNotFoundException();
         }
         Transformation transformation = csar.getTransformations().get(platform);
         if (transformation == null) {
-            return ResponseEntity.notFound().build();
+            throw new TransformationNotFoundException();
         }
         TargetArtifact artifact = transformation.getTargetArtifact();
         if (artifact == null) {
-            //The Target Artifact is not existing, that means the transformation has not finished!
-            return ResponseEntity.notFound().build();
+            throw new IllegalTransformationStateException("The transformation has not finished yet!");
         }
         return ResponseEntity.ok().body(new ArtifactResponse(artifact.getArtifactDownloadURL(), platform, name));
     }
@@ -318,14 +319,10 @@ public class TransformationController {
     ) {
         Csar csar = findCsarByName(name);
         if (csar == null) {
-            return ResponseEntity.notFound().build();
+            throw new CsarNotFoundException();
         }
         Transformation transformation = csar.getTransformations().get(platform);
-        if (transformation == null) {
-            return ResponseEntity.notFound().build();
-        } else if (transformation.getState() != TransformationState.INPUT_REQUIRED) {
-            return ResponseEntity.badRequest().build();
-        }
+        checkTransformationsForProperties(transformation);
         List<PropertyWrap> propertyWrapList = new ArrayList<>();
         //TODO add filtering depending on the transformation state (i.e. Transforming, Deploying...)
         for (Property property : transformation.getProperties().getPropertySchema()) {
@@ -366,14 +363,10 @@ public class TransformationController {
     ) {
         Csar csar = findCsarByName(name);
         if (csar == null) {
-            return ResponseEntity.notFound().build();
+            throw new CsarNotFoundException();
         }
         Transformation transformation = csar.getTransformations().get(platform);
-        if (transformation == null) {
-            return ResponseEntity.notFound().build();
-        } else if (transformation.getState() != TransformationState.INPUT_REQUIRED) {
-            return ResponseEntity.badRequest().build();
-        }
+        checkTransformationsForProperties(transformation);
         Map<String, Boolean> sucesses = new HashMap<>();
         boolean somethingFailed = false;
         //Set The Properties and check their validity
@@ -391,6 +384,20 @@ public class TransformationController {
             return ResponseEntity.ok(new SetPropertiesResponse(sucesses));
         } else {
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(new SetPropertiesResponse(sucesses));
+        }
+    }
+
+    /**
+     * Checks if the given transformation exists and is in the required state otherwise
+     * a TransformationNotFoundException or IllegalTransformationsStateException is thrown
+     *
+     * @param transformation
+     */
+    private void checkTransformationsForProperties(Transformation transformation) {
+        if (transformation == null) {
+            throw new TransformationNotFoundException();
+        } else if (transformation.getState() != TransformationState.INPUT_REQUIRED) {
+            throw new IllegalTransformationStateException("The transformation is not in the INPUT_REQUIRED state");
         }
     }
 
