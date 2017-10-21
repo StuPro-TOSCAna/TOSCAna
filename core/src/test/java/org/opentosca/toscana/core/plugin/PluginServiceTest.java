@@ -10,18 +10,36 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 public class PluginServiceTest {
-    
+
     private Logger log = LoggerFactory.getLogger(getClass());
-    
+
     private PluginService service;
-    
+
     @Before
     public void setUp() throws Exception {
         log.info("Creating dummy plugins");
         ArrayList<TransformationPlugin> plugins = new ArrayList<>();
+        addDummiesToList(plugins);
+        log.info("Creating service");
+        service = new PluginServiceImpl(plugins);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testExistingPluginIdentifier() throws Exception {
+        log.info("Discarding old data");
+        log.info("Creating dummy plugins");
+        ArrayList<TransformationPlugin> plugins = new ArrayList<>();
+        for (int i = 0; i < 2; i++) {
+            addDummiesToList(plugins);
+        }
+        log.info("Creating service");
+        service = new PluginServiceImpl(plugins);
+    }
+
+    private void addDummiesToList(ArrayList<TransformationPlugin> plugins) {
         for (int i = 0; i < 10; i++) {
             StringBuilder name = new StringBuilder("platform-a");
             for (int j = 0; j < i; j++) {
@@ -29,8 +47,6 @@ public class PluginServiceTest {
             }
             plugins.add(new DummyPlugin(new Platform(name.toString(), name.toString(), new HashSet<>())));
         }
-        log.info("Creating service");
-        service = new PluginServiceImpl(plugins);
     }
 
     @Test

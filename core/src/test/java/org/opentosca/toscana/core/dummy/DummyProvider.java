@@ -1,6 +1,7 @@
 package org.opentosca.toscana.core.dummy;
 
 import org.opentosca.toscana.core.csar.CsarService;
+import org.opentosca.toscana.core.plugin.PluginService;
 import org.opentosca.toscana.core.transformation.TransformationService;
 import org.opentosca.toscana.core.util.FileSystem;
 import org.opentosca.toscana.core.transformation.platform.PlatformService;
@@ -35,7 +36,7 @@ public class DummyProvider {
 	}
 
 	@Bean
-	public PlatformService getPlatformProvider() {
+	public PluginService getPlatformProvider() {
 		return new DummyPlatformService();
 	}
 
