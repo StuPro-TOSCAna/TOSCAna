@@ -32,6 +32,8 @@ public class TestData {
 
     // yaml csars
     public final static File CSAR_YAML_VALID_SIMPLETASK = new File(YAML_DIR, "valid/simple-task.csar");
+    public static final File CSAR_YAML_INVALID_ENTRYPOINT_MISSING = new File(YAML_DIR, "invalid/entrypoint_missing.csar");
+    public static final File CSAR_YAML_INVALID_ENTRYPOINT_AMBIGUOUS = new File(YAML_DIR, "invalid/entrypoint_ambiguous.csar");
 
     // xml csars
     public final static File CSAR_XML_VALID_MOODLE = new File(XML_DIR, "valid/Moodle.csar");
