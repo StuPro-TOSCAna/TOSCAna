@@ -1,5 +1,6 @@
 tosca_definitions_version: tosca_simple_yaml_1_0
-description: Template for deploying the simple-task-app via docker metadata:
+description: Template for deploying the simple-task-app via docker 
+metadata:
   template_name: simple-task-docker-template
   template_author: stupro-toscana
   template_version: 1.0
