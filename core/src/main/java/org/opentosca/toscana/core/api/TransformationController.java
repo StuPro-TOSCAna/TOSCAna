@@ -65,7 +65,7 @@ public class TransformationController {
      * <p>
      * Response Content Types for Code:
      * 200 - (application/hal+json)
-     * 404 - Can be ignored, empty body
+     * 404 - (application/hal+json), standard error response
      */
     @RequestMapping(
         path = "",
@@ -106,7 +106,7 @@ public class TransformationController {
      * <p>
      * Response Content Types for Code:
      * 200 - (application/hal+json)
-     * 404 - Can be ignored, empty body
+     * 404 - (application/hal+json), standard error response
      */
     @RequestMapping(
         path = "/{platform}",
@@ -142,8 +142,8 @@ public class TransformationController {
      * <p>
      * Response Content Types for Code:
      * 200 - (application/hal+json)
-     * 400 - Can be ignored, empty body
-     * 404 - Can be ignored, empty body
+     * 400 - (application/hal+json), standard error response
+     * 404 - (application/hal+json), standard error response
      */
     @RequestMapping(
         path = "/{platform}/create",
@@ -182,10 +182,12 @@ public class TransformationController {
      * Response Codes:
      * 200 - Operation was Performed Sucessfuly
      * 404 - Csar not found, the platform does not exist or no transformation for the specific platform was found for this csar
+     * 500 - Deletion has failed
      * <p>
      * Response Content Types for Code:
-     * 200 - Can be ignored, empty body
-     * 404 - Can be ignored, empty body
+     * 200 - Empty body
+     * 404 - (application/hal+json), standard error response
+     * 500 - Empty body
      */
     @RequestMapping(
         path = "/{platform}/delete",
@@ -223,7 +225,7 @@ public class TransformationController {
      * <p>
      * Response Content Types for Code:
      * 200 - application/hal+json
-     * 404 - Can be ignored, empty body
+     * 404 - (application/hal+json), standard error response
      */
     @RequestMapping(
         path = "/{platform}/logs",
@@ -266,7 +268,8 @@ public class TransformationController {
      * <p>
      * Response Content Types for Code:
      * 200 - application/hal+json
-     * 404 - Can be ignored, empty body
+     * 404 - (application/hal+json), standard error response
+     * 400 - (application/hal+json), standard error response
      */
     @RequestMapping(
         path = "/{platform}/artifact",
@@ -305,8 +308,8 @@ public class TransformationController {
      * <p>
      * Response Content Types for Code:
      * 200 - application/hal+json
-     * 400 - Can be ignored, empty body
-     * 404 - Can be ignored, empty body
+     * 400 - (application/hal+json), standard error response
+     * 404 - (application/hal+json), standard error response
      */
     @RequestMapping(
         path = "/{platform}/properties",
@@ -347,8 +350,8 @@ public class TransformationController {
      * <p>
      * Response Content Types for Code:
      * 200 - application/json
-     * 400 - Can be ignored, empty body
-     * 404 - Can be ignored, empty body
+     * 400 - (application/json), standard error response
+     * 404 - (application/json), standard error response
      * 406 - application/json
      */
     @RequestMapping(

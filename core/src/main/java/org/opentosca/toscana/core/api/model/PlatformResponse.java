@@ -30,16 +30,8 @@ public class PlatformResponse extends ResourceSupport {
         return identifier;
     }
 
-    public void setIdentifier(String identifier) {
-        this.identifier = identifier;
-    }
-
     @JsonProperty("name")
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 }

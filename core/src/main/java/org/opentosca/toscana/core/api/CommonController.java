@@ -38,6 +38,8 @@ public class CommonController {
      * Responds with the status of the Transformator, including Available Disk space and the current status
      * <p>
      * This Operation always Reponds with HTTP-Code 200
+     * <p>
+     * Content Type is <code>application/hal+json</code>
      */
     @RequestMapping(
         path = "/status",

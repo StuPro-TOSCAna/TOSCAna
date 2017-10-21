@@ -28,25 +28,13 @@ public class StatusResponse extends ResourceSupport {
         return status;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
     @JsonProperty("available_storage")
     public Long getAvailableStorage() {
         return availableStorage;
     }
 
-    public void setAvailableStorage(Long availableStorage) {
-        this.availableStorage = availableStorage;
-    }
-
     @JsonProperty("total_storage")
     public Long getTotalStorage() {
         return totalStorage;
-    }
-
-    public void setTotalStorage(Long totalStorage) {
-        this.totalStorage = totalStorage;
     }
 }

@@ -69,7 +69,7 @@ public class PlatformController {
      * This method handles the <code>/platforms/{id}</code> request
      * <p>
      * Responds with Http code 200 normaly (application/hal+json) and
-     * with code 404 (no contents) if the plaform with the given name (case sensitive) does not exist.
+     * with code 404 (application/hal+json, standart error message) if the plaform with the given name (case sensitive) does not exist.
      *
      * @param id the <code>id</code> (identifier) of the platform (HTTP Path Parameter)
      */

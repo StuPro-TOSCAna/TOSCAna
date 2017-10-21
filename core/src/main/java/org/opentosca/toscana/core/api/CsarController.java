@@ -4,10 +4,13 @@ import org.apache.tomcat.util.http.fileupload.FileItemIterator;
 import org.apache.tomcat.util.http.fileupload.FileItemStream;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
+import org.opentosca.toscana.core.api.exceptions.CsarNameAlreadyUsedException;
 import org.opentosca.toscana.core.api.exceptions.CsarNotFoundException;
 import org.opentosca.toscana.core.api.model.CsarResponse;
+import org.opentosca.toscana.core.api.model.CsarUploadErrorResponse;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarService;
+import org.opentosca.toscana.core.parse.InvalidCsarException;
 import org.opentosca.toscana.core.transformation.platform.PlatformService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,7 +76,7 @@ public class CsarController {
      * Responds with the data for a specific CSAR
      * <p>
      * This Operation Response returns 200 (application/hal+json) if a archive with the given name exists
-     * if not Http 404 (no content) with no content is returned
+     * if not Http 404 (application/hal+json) with a standart error message is returned (see samples.md for a example)
      */
     @RequestMapping(
         path = "/{name}",
@@ -100,7 +103,9 @@ public class CsarController {
      * This Request (Supporting Post and Put mehtods) uploads a csar to the transformator.
      * <p>
      * If the upload succeeded HTTP code 200 (no Content) is returned
-     * and HTTP code 400 (no Content) if a csar with the given name already exists.
+     * and HTTP code 400 (application/hal+json, with standart error message) if a csar with the given name already exists.
+     * <p>
+     * Http Code 400 (application/hal+json) with a special repsonse also containing the log output is returned if the parsing of the csar has failed
      * <p>
      * If something goes wrong while processing the upload HTTP Code 500 gets returned (no Content)
      */
@@ -113,21 +118,38 @@ public class CsarController {
         @PathVariable(name = "name") String name,
 //		@RequestParam(name = "file", required = true) MultipartFile file
         HttpServletRequest request
-    ) {
+    ) throws InvalidCsarException {
         try {
 //			Csar result = csarService.submitCsar(name, file.getInputStream());
             Csar result = csarService.submitCsar(name, getInputStream(request));
             if (result == null) {
-                //Return Bad Request if a csar with this name already exists
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+                throw new CsarNameAlreadyUsedException();
             }
             return ResponseEntity.ok().build();
+        } catch (InvalidCsarException e) {
+            throw e;
         } catch (Exception e) {
             log.error("Reading of uploaded CSAR Failed", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
+
+    /**
+     * This exception handler creates the response for a failed upload (parsing failiure)
+     * The response also contains the log messages produced during parsing!
+     */
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(InvalidCsarException.class)
+    public CsarUploadErrorResponse onUploadError(
+        HttpServletRequest request,
+        InvalidCsarException e
+    ) {
+        return new CsarUploadErrorResponse(e, request.getContextPath(), 400);
+    }
+
+    /**
+     * Internal helper method to allow the upload of files!
+     */
     private InputStream getInputStream(HttpServletRequest request) throws IOException, FileUploadException {
         ServletFileUpload upload = new ServletFileUpload();
         FileItemIterator iterator = upload.getItemIterator(request);

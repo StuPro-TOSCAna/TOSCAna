@@ -1,5 +1,7 @@
 package org.opentosca.toscana.core.csar;
 
+import org.opentosca.toscana.core.parse.InvalidCsarException;
+
 import java.io.InputStream;
 import java.util.List;
 
@@ -13,7 +15,7 @@ public interface CsarService {
      * @param csarStream the actual cloud service archive as InputStream
      * @return the newly created Csar instance
      */
-    Csar submitCsar(String identifier, InputStream csarStream);
+    Csar submitCsar(String identifier, InputStream csarStream) throws InvalidCsarException;
 
     /**
      * Deletes given Csar and all associated transformations from in-memory and persistence layer.
