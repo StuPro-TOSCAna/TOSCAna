@@ -1,4 +1,4 @@
-package org.opentosca.toscana.core.api.dummy;
+package org.opentosca.toscana.core.dummy;
 
 import ch.qos.logback.classic.Level;
 import org.opentosca.toscana.core.transformation.logging.Log;

@@ -1,6 +1,6 @@
 package org.opentosca.toscana.core.api.mocks;
 
-import org.opentosca.toscana.core.api.dummy.DummyCsar;
+import org.opentosca.toscana.core.dummy.DummyCsar;
 import org.opentosca.toscana.core.api.utils.StreamUtils;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarService;

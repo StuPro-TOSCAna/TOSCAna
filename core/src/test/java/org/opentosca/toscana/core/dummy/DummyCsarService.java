@@ -1,8 +1,7 @@
-package org.opentosca.toscana.core.api.dummy;
+package org.opentosca.toscana.core.dummy;
 
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarService;
-import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.util.Collection;

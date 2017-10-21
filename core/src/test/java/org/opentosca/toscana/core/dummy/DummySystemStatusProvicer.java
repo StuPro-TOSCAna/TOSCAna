@@ -1,4 +1,4 @@
-package org.opentosca.toscana.core.api.dummy;
+package org.opentosca.toscana.core.dummy;
 
 import org.opentosca.toscana.core.util.status.StatusService;
 import org.opentosca.toscana.core.util.status.SystemStatus;

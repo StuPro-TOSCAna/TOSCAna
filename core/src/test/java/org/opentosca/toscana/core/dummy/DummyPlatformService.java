@@ -1,11 +1,10 @@
-package org.opentosca.toscana.core.api.dummy;
+package org.opentosca.toscana.core.dummy;
 
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.core.transformation.properties.PropertyType;
 import org.opentosca.toscana.core.transformation.properties.RequirementType;
 import org.opentosca.toscana.core.transformation.platform.PlatformService;
-import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.HashSet;

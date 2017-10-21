@@ -1,17 +1,12 @@
-package org.opentosca.toscana.core.api.dummy;
+package org.opentosca.toscana.core.dummy;
 
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.Transformation;
-import org.opentosca.toscana.core.transformation.TransformationListener;
 import org.opentosca.toscana.core.transformation.TransformationState;
 import org.opentosca.toscana.core.transformation.artifacts.TargetArtifact;
-import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class DummyTransformation implements Transformation {
 

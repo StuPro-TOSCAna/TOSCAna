@@ -4,25 +4,20 @@ import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.opentosca.toscana.core.api.dummy.DummyCsar;
-import org.opentosca.toscana.core.api.dummy.DummyPlatformService;
+import org.opentosca.toscana.core.dummy.DummyPlatformService;
 import org.opentosca.toscana.core.api.mocks.MockCsarService;
 import org.opentosca.toscana.core.csar.CsarService;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.platform.PlatformService;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.security.MessageDigest;
 import java.util.*;
 
 import static org.junit.Assert.assertTrue;

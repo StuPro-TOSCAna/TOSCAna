@@ -8,5 +8,4 @@ import org.springframework.stereotype.Component;
 public interface TransformationPlugin {
 	Platform getPlatformDetails();
 	void transform(Transformation transformation) throws Exception;
-	
 }

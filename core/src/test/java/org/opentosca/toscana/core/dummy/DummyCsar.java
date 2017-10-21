@@ -1,4 +1,4 @@
-package org.opentosca.toscana.core.api.dummy;
+package org.opentosca.toscana.core.dummy;
 
 import org.eclipse.winery.model.tosca.yaml.TServiceTemplate;
 import org.opentosca.toscana.core.csar.Csar;
