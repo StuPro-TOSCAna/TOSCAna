@@ -1,5 +1,8 @@
 package org.opentosca.toscana.core.transformation.logging;
 
+import ch.qos.logback.classic.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -67,5 +70,31 @@ public class Log {
      */
     public List<LogEntry> getLogEntries(int firstIndex) {
         return getLogEntries(firstIndex, logEntries.size() - 1, false);
+    }
+
+    /**
+     * Creates a logger which appends to this log
+     * @param context the context of the logger
+     * @return 
+     */
+    public Logger getLogger(String context) {
+        Logger tLog = (Logger) LoggerFactory.getLogger(context);
+
+        TransformationAppender appender = new TransformationAppender(this);
+        appender.setContext(tLog.getLoggerContext());
+        appender.start();
+        tLog.addAppender(appender);
+
+        //TODO Add File Appender once mechanism for getting the filepath has been implemented.
+
+        return tLog;
+    }
+
+
+    /**
+     * @see Log#getLogger(String)
+     */
+    public Logger getLogger(Class context){
+        return getLogger(context.getName());
     }
 }

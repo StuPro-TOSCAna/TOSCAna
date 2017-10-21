@@ -11,10 +11,10 @@ import java.io.FileNotFoundException;
 
 import static org.junit.Assert.assertNotNull;
 
-public class CsarParserImplTest extends BaseSpringTest {
+public class CsarParseServiceImplTest extends BaseSpringTest {
 
     @Autowired
-    CsarParser csarParser;
+    CsarParseService csarParser;
     @Autowired
     TestData testData;
 
