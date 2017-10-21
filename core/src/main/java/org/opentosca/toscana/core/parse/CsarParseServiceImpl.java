@@ -1,30 +1,28 @@
 package org.opentosca.toscana.core.parse;
 
 import org.eclipse.winery.model.tosca.yaml.TServiceTemplate;
-import org.eclipse.winery.yaml.common.exception.MultiException;
 import org.eclipse.winery.yaml.common.reader.yaml.Reader;
 import org.opentosca.toscana.core.csar.Csar;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
-public class CsarParserImpl implements CsarParser {
+public class CsarParseServiceImpl implements CsarParseService {
 
-    private final static Logger logger = LoggerFactory.getLogger(CsarParser.class);
+    private Logger logger;
 
     @Override
     public TServiceTemplate parse(Csar csar) throws InvalidCsarException {
+        logger = csar.getLog().getLogger(getClass());
         Reader reader = new Reader();
         File entrypoint = findEntrypoint(csar);
         TServiceTemplate serviceTemplate = null;
         try {
             serviceTemplate = reader.parse(entrypoint.getParent(), entrypoint.getName());
 
-        } catch (MultiException e) {
-            logger.error("An error occured while parsing the csar '{}'", csar, e);
+        } catch (Exception e) {
+            // the winery parser is like TNT; we have to catch all exceptions (even better: we run)
+            logger.info("An error occured while parsing the csar '{}'", csar, e);
+            throw new InvalidCsarException(csar.getLog());
         }
         return serviceTemplate;
     }
@@ -38,16 +36,19 @@ public class CsarParserImpl implements CsarParser {
      * @throws InvalidCsarException if no or more than one top level yaml file was found in given csar
      */
     private File findEntrypoint(Csar csar) throws InvalidCsarException {
+        logger = csar.getLog().getLogger(getClass());
         File content = csar.getRoot();
         File[] entrypoints = content.listFiles((file, s) -> s.matches(".*\\.ya?ml$"));
         if (entrypoints.length == 1) {
             File entrypoint = entrypoints[0].getAbsoluteFile();
-            logger.debug("detected entrypoint of csar '{}' is '{}'", csar.getIdentifier(), entrypoint.getAbsolutePath());
+            logger.info("detected entrypoint of csar '{}' is '{}'", csar.getIdentifier(), entrypoint.getAbsolutePath());
             return entrypoint;
         } else if (entrypoints.length > 1) {
-            throw new InvalidCsarException("more than one top level yaml file encountered in given csar");
+            logger.info("parsing failed: more than one top level yaml file encountered in given csar");
+            throw new InvalidCsarException(csar.getLog());
         } else {
-            throw new InvalidCsarException("no top level yaml file encountered in given csar");
+            logger.info("parsing failed: no top level yaml file encountered in given csar");
+            throw new InvalidCsarException(csar.getLog());
         }
     }
 }

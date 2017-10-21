@@ -53,16 +53,6 @@ public interface Transformation {
     }
 
     /**
-     * This operation builds a Transformation specific logger that will log its output into the Logging systen used to acces the logs by the rest api
-     *
-     * @param clazz
-     * @return
-     */
-    default Logger getTransformationLogger(Class<?> clazz) {
-        return LoggerFactory.getLogger(clazz);
-    }
-
-    /**
      * Creates a new Transfomation Context for the given transformation
      *
      * @return

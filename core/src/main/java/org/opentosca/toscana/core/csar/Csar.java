@@ -2,6 +2,7 @@ package org.opentosca.toscana.core.csar;
 
 import org.eclipse.winery.model.tosca.yaml.TServiceTemplate;
 import org.opentosca.toscana.core.transformation.Transformation;
+import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.properties.Property;
 
 import java.io.File;
@@ -36,5 +37,10 @@ public interface Csar {
      * @return the root directory of the unzipped CSAR artifact which belongs to this csar
      */
     public File getRoot();
+
+    /**
+     * @return the log of this csar, which e.g. contains information about parsing
+     */
+    public Log getLog();
 
 }

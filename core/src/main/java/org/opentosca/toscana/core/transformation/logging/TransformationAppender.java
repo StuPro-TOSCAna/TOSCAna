@@ -8,11 +8,11 @@ import ch.qos.logback.core.AppenderBase;
 /**
  * This class implements the object (instance) specific logging functionality for transformations and deployments
  */
-public class TransformationAppender extends AppenderBase<ILoggingEvent> {
+class TransformationAppender extends AppenderBase<ILoggingEvent> {
 
     private Log log;
 
-    public TransformationAppender(Log log) {
+    TransformationAppender(Log log) {
         this.log = log;
     }
 

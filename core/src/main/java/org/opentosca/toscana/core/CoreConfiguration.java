@@ -4,8 +4,8 @@ import org.opentosca.toscana.core.csar.CsarDao;
 import org.opentosca.toscana.core.csar.CsarFilesystemDao;
 import org.opentosca.toscana.core.csar.CsarService;
 import org.opentosca.toscana.core.csar.CsarServiceImpl;
-import org.opentosca.toscana.core.parse.CsarParser;
-import org.opentosca.toscana.core.parse.CsarParserImpl;
+import org.opentosca.toscana.core.parse.CsarParseService;
+import org.opentosca.toscana.core.parse.CsarParseServiceImpl;
 import org.opentosca.toscana.core.util.FileSystem;
 import org.opentosca.toscana.core.util.Preferences;
 import org.springframework.context.annotation.Bean;
@@ -48,8 +48,8 @@ public class CoreConfiguration {
     }
 
     @Bean
-    public CsarParser csarParser() {
-        CsarParserImpl bean = new CsarParserImpl();
+    public CsarParseService csarParser() {
+        CsarParseServiceImpl bean = new CsarParseServiceImpl();
         return bean;
     }
 }

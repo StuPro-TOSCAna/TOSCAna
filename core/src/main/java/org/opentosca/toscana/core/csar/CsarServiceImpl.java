@@ -2,7 +2,7 @@ package org.opentosca.toscana.core.csar;
 
 
 import org.eclipse.winery.model.tosca.yaml.TServiceTemplate;
-import org.opentosca.toscana.core.parse.CsarParser;
+import org.opentosca.toscana.core.parse.CsarParseService;
 import org.opentosca.toscana.core.parse.InvalidCsarException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,25 +16,26 @@ public class CsarServiceImpl implements CsarService {
     private final static Logger logger = LoggerFactory.getLogger(CsarService.class.getName());
 
     private final CsarDao csarDao;
-    private final CsarParser csarParser;
+    private final CsarParseService csarParser;
 
     @Autowired
-    public CsarServiceImpl(CsarDao dao, CsarParser parser) {
+    public CsarServiceImpl(CsarDao dao, CsarParseService parser) {
         this.csarDao = dao;
         this.csarParser = parser;
     }
 
     @Override
-    public Csar submitCsar(String identifier, InputStream csarStream) {
+    public Csar submitCsar(String identifier, InputStream csarStream) throws InvalidCsarException {
         Csar csar = csarDao.create(identifier, csarStream);
         try {
             populateWithTemplate(csar);
+            return csar;
         } catch (InvalidCsarException e) {
             logger.warn("Failed to submit csar", e);
-            // TODO wait for 'csar state' discussion outcome. maybe cleanup disk and return null
-            // TODO add test case
+            // cleanup
+            csarDao.delete(csar.getIdentifier());
+            throw e;
         }
-        return csar;
     }
 
     private void populateWithTemplate(Csar csar) throws InvalidCsarException {

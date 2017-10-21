@@ -3,6 +3,7 @@ package org.opentosca.toscana.core.csar;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.eclipse.winery.model.tosca.yaml.TServiceTemplate;
 import org.opentosca.toscana.core.transformation.Transformation;
+import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.properties.Property;
 
 import java.io.File;
@@ -27,10 +28,12 @@ class CsarImpl implements Csar {
      * The root directory of the unzipped CSAR
      */
     private final File root;
+    private final Log log;
 
     public CsarImpl(String identifier, File root) {
         this.identifier = identifier;
         this.root = root;
+        log = new Log();
     }
 
     @Override
@@ -62,6 +65,11 @@ class CsarImpl implements Csar {
     @Override
     public File getRoot() {
         return root;
+    }
+
+    @Override
+    public Log getLog() {
+        return log;
     }
 
 

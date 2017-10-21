@@ -22,7 +22,11 @@ public final class TransformationContext {
         return transformation.getCsar().getTemplate();
     }
 
-    public Logger getLogger(Class<?> clazz) {
-        return transformation.getTransformationLogger(clazz);
+    public Logger getLogger(String context) {
+        return transformation.getLog().getLogger(context);
+    }
+    
+    public Logger getLogger(Class clazz){
+        return transformation.getLog().getLogger(clazz);
     }
 }
