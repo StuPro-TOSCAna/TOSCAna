@@ -1,5 +1,7 @@
 package org.opentosca.toscana.core.csar;
 
+import org.opentosca.toscana.core.transformation.Transformation;
+
 import java.io.InputStream;
 import java.util.List;
 
@@ -8,9 +10,10 @@ public interface CsarDao {
     /**
      * Persists given CSAR.
      * If a CSAR with the same name already exists, overwrites the old CSAR and all of its related transformations
-     * @param identifier a unique idenfifier for the new csar
+     *
+     * @param identifier  a unique idenfifier for the new csar
      * @param inputStream an InputStream of a CSAR
-	 * @return created csar
+     * @return created csar
      */
     Csar create(String identifier, InputStream inputStream);
 
@@ -26,7 +29,9 @@ public interface CsarDao {
 
     /**
      * Returns a list of all CSARS.
+     *
      * @return
      */
     List<Csar> findAll();
+    
 }

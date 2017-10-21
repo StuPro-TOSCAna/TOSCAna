@@ -40,6 +40,11 @@ class TransformationImpl implements Transformation {
 		//Create property instance
 		this.properties = new PropertyInstance(properties);
 		
+		//Check if the property list is empty
+        if(!properties.isEmpty()) {
+            state = TransformationState.INPUT_REQUIRED;
+        }
+        
 		//intialize internal log object
 		this.log = new Log();
 	}

@@ -1,6 +1,7 @@
 package org.opentosca.toscana.core.csar;
 
 import org.apache.commons.io.FileUtils;
+import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.util.Preferences;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,14 +95,14 @@ public class CsarFilesystemDao implements CsarDao {
 
     @Override
     public Csar find(String identifier) {
-        readFromDisk(); // TODO: change this to some smart behaviour. e.g. file watcher
+        //readFromDisk(); // TODO: change this to some smart behaviour. e.g. file watcher
         return csarMap.get(identifier);
 
     }
 
     @Override
     public List<Csar> findAll() {
-        readFromDisk(); // TODO: change this to some smart behaviour. e.g. file watcher
+        //readFromDisk(); // TODO: change this to some smart behaviour. e.g. file watcher
         // (refresh on change, not on every access)
         List<Csar> csarList = new ArrayList<>();
         for (Csar csar : csarMap.values()) {
@@ -109,7 +110,7 @@ public class CsarFilesystemDao implements CsarDao {
         }
         return csarList;
     }
-
+    
     /**
      * Reads csars from disks
      * post: csarMap reflects contents of DATA_DIR on disk
@@ -125,7 +126,7 @@ public class CsarFilesystemDao implements CsarDao {
                 csarMap.put(csar.getIdentifier(), csar);
             }
         }
-        logger.debug("in-memory csars in synced with file system");
+        logger.debug("in-memory csars in synced with file system",new RuntimeException());
 
     }
 

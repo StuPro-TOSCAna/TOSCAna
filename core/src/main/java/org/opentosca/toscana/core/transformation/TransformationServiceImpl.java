@@ -18,51 +18,53 @@ import java.util.concurrent.Future;
 
 @Service
 public class TransformationServiceImpl
-	implements TransformationService {
+    implements TransformationService {
 
-	public Logger log = LoggerFactory.getLogger(getClass());
+    public Logger log = LoggerFactory.getLogger(getClass());
 
-	private final CsarDao csarDao;
-	private final PluginService pluginService;
-	
-	private Map<Transformation, Future<?>> tasks = new HashMap<>();
-	private ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final CsarDao csarDao;
+    private final PluginService pluginService;
 
-	@Autowired
-	public TransformationServiceImpl(CsarDao csarDao, PluginService pluginService) {
-		this.csarDao = csarDao;
-		this.pluginService = pluginService;
-	}
+    private Map<Transformation, Future<?>> tasks = new HashMap<>();
+    private ExecutorService executor = Executors.newSingleThreadExecutor();
 
-	@Override
-	public void createTransformation(Csar csar, Platform targetPlatform) {
-		Transformation transformation = new TransformationImpl(csar, targetPlatform);
+    @Autowired
+    public TransformationServiceImpl(CsarDao csarDao, PluginService pluginService) {
+        this.csarDao = csarDao;
+        this.pluginService = pluginService;
+    }
 
-		//TODO Implement check to find out if inputs are needed
+    @Override
+    public void createTransformation(Csar csar, Platform targetPlatform) {
+        Transformation transformation = new TransformationImpl(csar, targetPlatform);
+        csar.getTransformations().put(targetPlatform.id, transformation);
+    }
 
-		csar.getTransformations().put(targetPlatform.id, transformation);
-	}
+    @Override
+    public boolean startTransformation(Transformation transformation) {
+        if (transformation.getState() == TransformationState.CREATED
+            || transformation.getState() == TransformationState.INPUT_REQUIRED) {
+            Future<?> taskFuture = executor.submit(
+                new ExecutionTask(transformation, this, pluginService));
+            tasks.put(transformation, taskFuture);
+            return true;
+        }
+        return false;
+    }
 
-	@Override
-	public boolean startTransformation(Transformation transformation) {
-		if (transformation.getState() == TransformationState.CREATED
-			&& transformation.getState() == TransformationState.INPUT_REQUIRED) {
-			Future<?> taskFuture =executor.submit(
-				new ExecutionTask(transformation, this, pluginService));
-			tasks.put(transformation, taskFuture);
-			return true;
-		}
-		return false;
-	}
+    @Override
+    public boolean abortTransformation(Transformation transformation) {
+        Future<?> task = tasks.get(transformation);
+        //Return false because the transformation has already finished
+        if (task.isDone()) {
+            return false;
+        }
+        return task.cancel(true);
+    }
 
-	@Override
-	public boolean abortTransformation(Transformation transformation) {
-		return false;
-	}
-
-	@Override
-	public boolean deleteTransformation(Transformation transformation) {
-		return false;
-	}
+    @Override
+    public boolean deleteTransformation(Transformation transformation) {
+        return false;
+    }
 
 }

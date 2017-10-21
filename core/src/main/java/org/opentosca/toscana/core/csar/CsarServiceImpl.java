@@ -40,11 +40,11 @@ public class CsarServiceImpl implements CsarService {
 	}
 
 	private void populateWithTemplate(Csar csar) throws InvalidCsarException {
-		if (csar.getTemplate() == null) {
-			TServiceTemplate template = null;
-			template = csarParser.parse(csar);
-			csar.setTemplate(template);
-		}
+//		if (csar.getTemplate() == null) {
+//			TServiceTemplate template = null;
+//			template = csarParser.parse(csar);
+//			csar.setTemplate(template);
+//		}
 	}
 
 	@Override
