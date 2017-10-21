@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipInputStream;
 
-//@Repository
 public class CsarFilesystemDao implements CsarDao {
 
     private final static Logger logger = LoggerFactory.getLogger(CsarFilesystemDao.class.getSimpleName());
@@ -41,7 +40,7 @@ public class CsarFilesystemDao implements CsarDao {
         if (!dataDir.exists()) {
             System.out.println(dataDir.getAbsolutePath());
             if (!dataDir.mkdirs()) {
-                throw new RuntimeException("Something went wrong when creating the Data Directory!");
+                throw new RuntimeException("Failed to create data dir '{}'".format(dataDir.getAbsolutePath()));
             }
         }
 
@@ -61,8 +60,6 @@ public class CsarFilesystemDao implements CsarDao {
         } catch (IOException e) {
             logger.error("failed to unzip csar with identifier '{}'", identifier, e);
         }
-        // TODO populate csar with files etc..
-        // TODO add csar to list of csars
         Csar csar = new CsarImpl(identifier, contentDir);
         csarMap.put(identifier, csar);
         return csar;
@@ -93,14 +90,14 @@ public class CsarFilesystemDao implements CsarDao {
 
     @Override
     public Csar find(String identifier) {
-        //readFromDisk(); // TODO: change this to some smart behaviour. e.g. file watcher
+        readFromDisk(); // TODO: change this to some smart behaviour. e.g. file watcher
         return csarMap.get(identifier);
 
     }
 
     @Override
     public List<Csar> findAll() {
-        //readFromDisk(); // TODO: change this to some smart behaviour. e.g. file watcher
+        readFromDisk(); // TODO: change this to some smart behaviour. e.g. file watcher
         // (refresh on change, not on every access)
         List<Csar> csarList = new ArrayList<>();
         for (Csar csar : csarMap.values()) {
@@ -124,7 +121,7 @@ public class CsarFilesystemDao implements CsarDao {
                 csarMap.put(csar.getIdentifier(), csar);
             }
         }
-        logger.debug("in-memory csars in synced with file system", new RuntimeException());
+        logger.debug("in-memory csars in synced with file system");
 
     }
 
