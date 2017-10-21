@@ -10,46 +10,46 @@ import ch.qos.logback.core.AppenderBase;
  */
 public class TransformationAppender extends AppenderBase<ILoggingEvent> {
 
-	private Log log;
+    private Log log;
 
-	public TransformationAppender(Log log) {
-		this.log = log;
-	}
+    public TransformationAppender(Log log) {
+        this.log = log;
+    }
 
-	@Override
-	protected void append(ILoggingEvent loggingEvent) {
-		appendToLog(loggingEvent, loggingEvent.getFormattedMessage());
-		if (loggingEvent.getThrowableProxy() != null) {
-			appendThrowable(loggingEvent.getThrowableProxy(), loggingEvent);
-		}
-	}
+    @Override
+    protected void append(ILoggingEvent loggingEvent) {
+        appendToLog(loggingEvent, loggingEvent.getFormattedMessage());
+        if (loggingEvent.getThrowableProxy() != null) {
+            appendThrowable(loggingEvent.getThrowableProxy(), loggingEvent);
+        }
+    }
 
-	private void appendThrowable(IThrowableProxy proxy, ILoggingEvent loggingEvent) {
-		//Append Exception Message
-		appendToLog(loggingEvent, String.format("%s: %s", proxy.getClassName(), proxy.getMessage()));
-		//Append Exception Stack Trace
-		for (StackTraceElementProxy element : loggingEvent.getThrowableProxy().getStackTraceElementProxyArray()) {
-			appendToLog(loggingEvent, element.getSTEAsString());
-		}
-		if (proxy.getSuppressed().length > 0) {
-			appendToLog(loggingEvent, "Suppressed Exceptions:");
-			for (IThrowableProxy p : proxy.getSuppressed()) {
-				appendThrowable(p, loggingEvent);
-			}
-		}
-		if (proxy.getCause() != null) {
-			appendToLog(loggingEvent, "Cause:");
-			appendThrowable(proxy.getCause(), loggingEvent);
-		}
-	}
+    private void appendThrowable(IThrowableProxy proxy, ILoggingEvent loggingEvent) {
+        //Append Exception Message
+        appendToLog(loggingEvent, String.format("%s: %s", proxy.getClassName(), proxy.getMessage()));
+        //Append Exception Stack Trace
+        for (StackTraceElementProxy element : loggingEvent.getThrowableProxy().getStackTraceElementProxyArray()) {
+            appendToLog(loggingEvent, element.getSTEAsString());
+        }
+        if (proxy.getSuppressed().length > 0) {
+            appendToLog(loggingEvent, "Suppressed Exceptions:");
+            for (IThrowableProxy p : proxy.getSuppressed()) {
+                appendThrowable(p, loggingEvent);
+            }
+        }
+        if (proxy.getCause() != null) {
+            appendToLog(loggingEvent, "Cause:");
+            appendThrowable(proxy.getCause(), loggingEvent);
+        }
+    }
 
-	private void appendToLog(ILoggingEvent loggingEvent, String message) {
-		log.addLogEntry(
-			new LogEntry(
-				loggingEvent.getTimeStamp(),
-				message,
-				loggingEvent.getLevel()
-			)
-		);
-	}
+    private void appendToLog(ILoggingEvent loggingEvent, String message) {
+        log.addLogEntry(
+            new LogEntry(
+                loggingEvent.getTimeStamp(),
+                message,
+                loggingEvent.getLevel()
+            )
+        );
+    }
 }

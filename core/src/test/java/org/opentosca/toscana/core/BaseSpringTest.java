@@ -24,14 +24,14 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @Component
 public abstract class BaseSpringTest {
 
-	private final static Logger logger = LoggerFactory.getLogger(BaseSpringTest.class);
+    private final static Logger logger = LoggerFactory.getLogger(BaseSpringTest.class);
 
-	@Autowired
-	protected Preferences preferences;
+    @Autowired
+    protected Preferences preferences;
 
-	@After
-	public void tearDown() throws Exception {
-		FileUtils.deleteDirectory(preferences.getDataDir());
-		logger.info("cleaned up disk");
-	}
+    @After
+    public void tearDown() throws Exception {
+        FileUtils.deleteDirectory(preferences.getDataDir());
+        logger.info("cleaned up disk");
+    }
 }

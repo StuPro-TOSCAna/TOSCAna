@@ -20,36 +20,36 @@ import java.util.Objects;
 @EnableSwagger2
 public class SwaggerConfig {
 
-	@Autowired
-	public ApiContents apiContents;
+    @Autowired
+    public ApiContents apiContents;
 
-	@Bean
-	public Docket api() {
-		return new Docket(DocumentationType.SWAGGER_2)
-			.apiInfo(apiInfo())
-			.select()
-			.apis(RequestHandlerSelectors.any())
-			.paths(getPaths())
-			.build();
-	}
+    @Bean
+    public Docket api() {
+        return new Docket(DocumentationType.SWAGGER_2)
+            .apiInfo(apiInfo())
+            .select()
+            .apis(RequestHandlerSelectors.any())
+            .paths(getPaths())
+            .build();
+    }
 
-	@Bean
-	public ApiInfo apiInfo() {
-		return new ApiInfoBuilder()
-			.title(apiContents.title)
-			.license(apiContents.license)
-			.licenseUrl(apiContents.licence_url)
-			.version(apiContents.version)
-			.description(apiContents.description)
-			.contact(new Contact("", apiContents.source_url, ""))
-			.build();
-	}
+    @Bean
+    public ApiInfo apiInfo() {
+        return new ApiInfoBuilder()
+            .title(apiContents.title)
+            .license(apiContents.license)
+            .licenseUrl(apiContents.licence_url)
+            .version(apiContents.version)
+            .description(apiContents.description)
+            .contact(new Contact("", apiContents.source_url, ""))
+            .build();
+    }
 
-	private Predicate<String> getPaths() {
-		return Predicates.or(
-			s -> Objects.equals(s, "/status"),
-			PathSelectors.ant("/platforms/**"),
-			PathSelectors.ant("/csars/**")
-		);
-	}
+    private Predicate<String> getPaths() {
+        return Predicates.or(
+            s -> Objects.equals(s, "/status"),
+            PathSelectors.ant("/platforms/**"),
+            PathSelectors.ant("/csars/**")
+        );
+    }
 }

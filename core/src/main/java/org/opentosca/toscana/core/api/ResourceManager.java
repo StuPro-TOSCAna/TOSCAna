@@ -6,11 +6,11 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ResourceManager
-	implements ArtifactManagementService {
+    implements ArtifactManagementService {
 
-	@Override
-	public String saveToArtifactDirectory(Transformation transformation) {
+    @Override
+    public String saveToArtifactDirectory(Transformation transformation) {
 
-		return null;
-	}
+        return null;
+    }
 }

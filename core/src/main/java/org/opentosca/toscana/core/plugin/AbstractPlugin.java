@@ -18,12 +18,12 @@ public abstract class AbstractPlugin implements TransformationPlugin {
     }
 
     /**
-     * @return the name of the plugins (All chars allowed) 
+     * @return the name of the plugins (All chars allowed)
      */
     public abstract String getName();
 
     /**
-     * @return the identifier for the plugin. 
+     * @return the identifier for the plugin.
      */
     public abstract String getIdentifier();
 
@@ -32,7 +32,7 @@ public abstract class AbstractPlugin implements TransformationPlugin {
     public void init() {
         //Empty method, allows plugin to run code on initialisation
     }
-    
+
     @Override
     public Platform getPlatformDetails() {
         return new Platform(getIdentifier(), getName(), getPluginSpecificProperties());

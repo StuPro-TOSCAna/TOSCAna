@@ -11,24 +11,24 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 @Relation(collectionRelation = "csar")
 public class CsarResponse extends ResourceSupport {
-	private String name;
+    private String name;
 
-	public CsarResponse(
-		@JsonProperty("name") String name
-	) {
-		this.name = name;
-		add(linkTo(methodOn(CsarController.class)
-			.getCSARInfo(name)).withSelfRel());
-		add(linkTo(methodOn(TransformationController.class)
-			.getCSARTransformations(name)).withRel("transformations").expand(name));
-	}
+    public CsarResponse(
+        @JsonProperty("name") String name
+    ) {
+        this.name = name;
+        add(linkTo(methodOn(CsarController.class)
+            .getCSARInfo(name)).withSelfRel());
+        add(linkTo(methodOn(TransformationController.class)
+            .getCSARTransformations(name)).withRel("transformations").expand(name));
+    }
 
-	@JsonProperty("name")
-	public String getName() {
-		return name;
-	}
+    @JsonProperty("name")
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 }

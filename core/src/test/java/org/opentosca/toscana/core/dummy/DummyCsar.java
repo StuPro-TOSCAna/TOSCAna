@@ -11,50 +11,51 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class DummyCsar implements Csar{
-	
-	private String name;
-	private byte[] data;
+public class DummyCsar implements Csar {
 
-	private Map<String, Transformation> transformations = new HashMap<>();
+    private String name;
+    private byte[] data;
 
-	public DummyCsar(String name) {
-		this.name = name;
-	}
+    private Map<String, Transformation> transformations = new HashMap<>();
 
-	@Override
-	public Map<String, Transformation> getTransformations() {
-		return transformations;
-	}
+    public DummyCsar(String name) {
+        this.name = name;
+    }
 
-	@Override
-	public String getIdentifier() {
-		return name;
-	}
+    @Override
+    public Map<String, Transformation> getTransformations() {
+        return transformations;
+    }
 
-	@Override
-	public TServiceTemplate getTemplate() {
-		return null;
-	}
+    @Override
+    public String getIdentifier() {
+        return name;
+    }
 
-	@Override
-	public Set<Property> getModelSpecificProperties() {
-		return new HashSet<>();
-	}
+    @Override
+    public TServiceTemplate getTemplate() {
+        return null;
+    }
 
-	@Override
-	public void setTemplate(TServiceTemplate template) { }
+    @Override
+    public Set<Property> getModelSpecificProperties() {
+        return new HashSet<>();
+    }
 
-	@Override
-	public File getRoot() {
-		return null;
-	}
+    @Override
+    public void setTemplate(TServiceTemplate template) {
+    }
 
-	public byte[] getData() {
-		return data;
-	}
+    @Override
+    public File getRoot() {
+        return null;
+    }
 
-	public void setData(byte[] data) {
-		this.data = data;
-	}
+    public byte[] getData() {
+        return data;
+    }
+
+    public void setData(byte[] data) {
+        this.data = data;
+    }
 }

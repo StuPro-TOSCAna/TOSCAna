@@ -14,43 +14,43 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class CsarServiceImplTest extends BaseSpringTest {
-	
-	@Autowired
-	CsarService csarService;
-	private File dataDir;
-	
-	@Before
-	public void setUp(){
-		dataDir = preferences.getDataDir();
-	}
-	
-	private String identifier = "my-awesome-csar";
-	
-	@Test
-	public void submitCsar() throws Exception {
-		File file = TestData.CSAR_XML_VALID_MOODLE;
-		InputStream stream = new FileInputStream(file);
-		csarService.submitCsar(identifier, stream);
-		
-		File csarDir = new File(dataDir, identifier);
-		File contentDir = new File(csarDir, CsarFilesystemDao.CONTENT_DIR);
-		
-		assertTrue(csarDir.isDirectory());
-		assertTrue(contentDir.isDirectory());
-		assertTrue(contentDir.list().length > 3); // lazy..
-	}
 
-	@Test
-	public void deleteCsar() throws Exception {
-		File csarDir = new File(dataDir, identifier);
-		File contentDir = new File(csarDir, CsarFilesystemDao.CONTENT_DIR);
-		Csar csar = new CsarImpl(identifier, contentDir);
-		
-		csarDir.mkdir();
-		assertTrue(csarDir.isDirectory());
-		
-		csarService.deleteCsar(csar);
-		
-		assertFalse(csarDir.isDirectory());
-	}
+    @Autowired
+    CsarService csarService;
+    private File dataDir;
+
+    @Before
+    public void setUp() {
+        dataDir = preferences.getDataDir();
+    }
+
+    private String identifier = "my-awesome-csar";
+
+    @Test
+    public void submitCsar() throws Exception {
+        File file = TestData.CSAR_XML_VALID_MOODLE;
+        InputStream stream = new FileInputStream(file);
+        csarService.submitCsar(identifier, stream);
+
+        File csarDir = new File(dataDir, identifier);
+        File contentDir = new File(csarDir, CsarFilesystemDao.CONTENT_DIR);
+
+        assertTrue(csarDir.isDirectory());
+        assertTrue(contentDir.isDirectory());
+        assertTrue(contentDir.list().length > 3); // lazy..
+    }
+
+    @Test
+    public void deleteCsar() throws Exception {
+        File csarDir = new File(dataDir, identifier);
+        File contentDir = new File(csarDir, CsarFilesystemDao.CONTENT_DIR);
+        Csar csar = new CsarImpl(identifier, contentDir);
+
+        csarDir.mkdir();
+        assertTrue(csarDir.isDirectory());
+
+        csarService.deleteCsar(csar);
+
+        assertFalse(csarDir.isDirectory());
+    }
 }

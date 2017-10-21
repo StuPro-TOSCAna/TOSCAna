@@ -15,26 +15,26 @@ public interface Csar {
      * This includes scheduled, ongoing and finished transformations.
      * Key of each map entry is the platform identifier of its particular transformation.
      */
-    public Map<String,Transformation> getTransformations();
+    public Map<String, Transformation> getTransformations();
 
     /**
      * @return the identifier of the CSAR
      */
     public String getIdentifier();
-    
+
     public TServiceTemplate getTemplate();
 
-	/**
-	 * Returns model specific properties as a set. If there are none a empty set has to be returned.
-	 * this must not return null to prevent problematic behaviour of the PropertyInstance class
-	 */
-	Set<Property> getModelSpecificProperties();
-	
+    /**
+     * Returns model specific properties as a set. If there are none a empty set has to be returned.
+     * this must not return null to prevent problematic behaviour of the PropertyInstance class
+     */
+    Set<Property> getModelSpecificProperties();
+
     public void setTemplate(TServiceTemplate template);
 
-	/**
-	 * @return the root directory of the unzipped CSAR artifact which belongs to this csar
-	 */
-	public File getRoot();
-    
+    /**
+     * @return the root directory of the unzipped CSAR artifact which belongs to this csar
+     */
+    public File getRoot();
+
 }

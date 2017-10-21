@@ -16,7 +16,6 @@ import org.springframework.hateoas.Resources;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -38,106 +37,106 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 @RequestMapping("/csars")
 public class CsarController {
 
-	private final CsarService csarService;
-	private final PlatformService platformService;
+    private final CsarService csarService;
+    private final PlatformService platformService;
 
-	public Logger log = LoggerFactory.getLogger(getClass());
+    public Logger log = LoggerFactory.getLogger(getClass());
 
-	@Autowired
-	public CsarController(CsarService csarService, PlatformService platformService) {
-		this.csarService = csarService;
-		this.platformService = platformService;
-	}
+    @Autowired
+    public CsarController(CsarService csarService, PlatformService platformService) {
+        this.csarService = csarService;
+        this.platformService = platformService;
+    }
 
-	/**
-	 * Responds with a list of csars stored on the transformator.
-	 * <p>
-	 * This always responds with HTTP-Code 200 (application/hal+json)
-	 */
-	@RequestMapping(
-		path = "",
-		method = RequestMethod.GET,
-		produces = "application/hal+json"
-	)
-	public ResponseEntity<Resources<CsarResponse>> listCSARs() {
-		Link selfLink = linkTo(methodOn(CsarController.class).listCSARs()).withSelfRel();
-		List<CsarResponse> responses = new ArrayList<>();
-		for (Csar csar : csarService.getCsars()) {
-			responses.add(new CsarResponse(csar.getIdentifier()));
-		}
-		Resources<CsarResponse> csarResources = new Resources<>(responses, selfLink);
-		return ResponseEntity.ok().body(csarResources);
-	}
+    /**
+     * Responds with a list of csars stored on the transformator.
+     * <p>
+     * This always responds with HTTP-Code 200 (application/hal+json)
+     */
+    @RequestMapping(
+        path = "",
+        method = RequestMethod.GET,
+        produces = "application/hal+json"
+    )
+    public ResponseEntity<Resources<CsarResponse>> listCSARs() {
+        Link selfLink = linkTo(methodOn(CsarController.class).listCSARs()).withSelfRel();
+        List<CsarResponse> responses = new ArrayList<>();
+        for (Csar csar : csarService.getCsars()) {
+            responses.add(new CsarResponse(csar.getIdentifier()));
+        }
+        Resources<CsarResponse> csarResources = new Resources<>(responses, selfLink);
+        return ResponseEntity.ok().body(csarResources);
+    }
 
-	/**
-	 * Responds with the data for a specific CSAR
-	 * <p>
-	 * This Operation Response returns 200 (application/hal+json) if a archive with the given name exists
-	 * if not Http 404 (no content) with no content is returned
-	 */
-	@RequestMapping(
-		path = "/{name}",
-		method = RequestMethod.GET,
-		produces = "application/hal+json"
-	)
-	public ResponseEntity<CsarResponse> getCSARInfo(
-		@PathVariable(name = "name") String name
-	) {
-		Csar archive = null;
-		for (Csar csar : csarService.getCsars()) {
-			if (name.equals(csar.getIdentifier())) {
-				archive = csar;
-				break;
-			}
-		}
-		if (archive == null) {
-			return ResponseEntity.notFound().build();
-		}
-		return ResponseEntity.ok().body(new CsarResponse(archive.getIdentifier()));
-	}
+    /**
+     * Responds with the data for a specific CSAR
+     * <p>
+     * This Operation Response returns 200 (application/hal+json) if a archive with the given name exists
+     * if not Http 404 (no content) with no content is returned
+     */
+    @RequestMapping(
+        path = "/{name}",
+        method = RequestMethod.GET,
+        produces = "application/hal+json"
+    )
+    public ResponseEntity<CsarResponse> getCSARInfo(
+        @PathVariable(name = "name") String name
+    ) {
+        Csar archive = null;
+        for (Csar csar : csarService.getCsars()) {
+            if (name.equals(csar.getIdentifier())) {
+                archive = csar;
+                break;
+            }
+        }
+        if (archive == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok().body(new CsarResponse(archive.getIdentifier()));
+    }
 
-	/**
-	 * This Request (Supporting Post and Put mehtods) uploads a csar to the transformator.
-	 * <p>
-	 * If the upload succeeded HTTP code 200 (no Content) is returned
-	 * and HTTP code 400 (no Content) if a csar with the given name already exists.
-	 * <p>
-	 * If something goes wrong while processing the upload HTTP Code 500 gets returned (no Content)
-	 */
-	@RequestMapping(
-		path = "/{name}",
-		method = {RequestMethod.PUT, RequestMethod.POST},
-		produces = "application/hal+json"
-	)
-	public ResponseEntity<String> uploadCSAR(
-		@PathVariable(name = "name") String name,
+    /**
+     * This Request (Supporting Post and Put mehtods) uploads a csar to the transformator.
+     * <p>
+     * If the upload succeeded HTTP code 200 (no Content) is returned
+     * and HTTP code 400 (no Content) if a csar with the given name already exists.
+     * <p>
+     * If something goes wrong while processing the upload HTTP Code 500 gets returned (no Content)
+     */
+    @RequestMapping(
+        path = "/{name}",
+        method = {RequestMethod.PUT, RequestMethod.POST},
+        produces = "application/hal+json"
+    )
+    public ResponseEntity<String> uploadCSAR(
+        @PathVariable(name = "name") String name,
 //		@RequestParam(name = "file", required = true) MultipartFile file
-		HttpServletRequest request
-	) {
-		try {
+        HttpServletRequest request
+    ) {
+        try {
 //			Csar result = csarService.submitCsar(name, file.getInputStream());
-			Csar result = csarService.submitCsar(name, getInputStream(request));
-			if (result == null) {
-				//Return Bad Request if a csar with this name already exists
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-			}
-			return ResponseEntity.ok().build();
-		} catch (Exception e) {
-			log.error("Reading of uploaded CSAR Failed", e);
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-		}
-	}
+            Csar result = csarService.submitCsar(name, getInputStream(request));
+            if (result == null) {
+                //Return Bad Request if a csar with this name already exists
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            log.error("Reading of uploaded CSAR Failed", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 
-	//NOTE: This operation might be used again, depending on how spring behaves when uploading large files
-	private InputStream getInputStream(HttpServletRequest request) throws IOException, FileUploadException {
-		ServletFileUpload upload = new ServletFileUpload();
-		FileItemIterator iterator = upload.getItemIterator(request);
-		while (iterator.hasNext()) {
-			FileItemStream stream = iterator.next();
-			if (Objects.equals(stream.getFieldName(), "file")) {
-				return stream.openStream();
-			}
-		}
-		return null;
-	}
+    //NOTE: This operation might be used again, depending on how spring behaves when uploading large files
+    private InputStream getInputStream(HttpServletRequest request) throws IOException, FileUploadException {
+        ServletFileUpload upload = new ServletFileUpload();
+        FileItemIterator iterator = upload.getItemIterator(request);
+        while (iterator.hasNext()) {
+            FileItemStream stream = iterator.next();
+            if (Objects.equals(stream.getFieldName(), "file")) {
+                return stream.openStream();
+            }
+        }
+        return null;
+    }
 }

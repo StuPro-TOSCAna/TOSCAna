@@ -5,50 +5,50 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class LogEntry {
 
-	private final long timestamp;
-	private final String message;
-	private final Level level;
-	private long index = -1;	
-	
-	public LogEntry(String message, Level level) {
-		this(System.currentTimeMillis(), message, level);
-	}
+    private final long timestamp;
+    private final String message;
+    private final Level level;
+    private long index = -1;
 
-	LogEntry(long timestamp, String message, Level level) {
-		this.timestamp = timestamp;
-		this.message = message;
-		this.level = level;
+    public LogEntry(String message, Level level) {
+        this(System.currentTimeMillis(), message, level);
+    }
 
-		if (message == null || level == null) {
-			throw new IllegalArgumentException(String.format("LogEntry '%s' is invalid", this));
-		}
-	}
+    LogEntry(long timestamp, String message, Level level) {
+        this.timestamp = timestamp;
+        this.message = message;
+        this.level = level;
 
-	void setIndex(long index) {
-		this.index = index;
-	}
+        if (message == null || level == null) {
+            throw new IllegalArgumentException(String.format("LogEntry '%s' is invalid", this));
+        }
+    }
 
-	@JsonProperty("index")
-	public long getIndex() {
-		return index;
-	}
+    void setIndex(long index) {
+        this.index = index;
+    }
 
-	@JsonProperty("timestamp")
-	public long getTimestamp() {
-		return timestamp;
-	}
+    @JsonProperty("index")
+    public long getIndex() {
+        return index;
+    }
 
-	@JsonProperty("message")
-	public String getMessage() {
-		return message;
-	}
+    @JsonProperty("timestamp")
+    public long getTimestamp() {
+        return timestamp;
+    }
 
-	@JsonProperty("level")
-	public String getLevel() {
-		return level.levelStr;
-	}
+    @JsonProperty("message")
+    public String getMessage() {
+        return message;
+    }
 
-	public String toString() {
-		return String.format("LogEntry [timestamp='%d', message='%s', level='%s']");
-	}
+    @JsonProperty("level")
+    public String getLevel() {
+        return level.levelStr;
+    }
+
+    public String toString() {
+        return String.format("LogEntry [timestamp='%d', message='%s', level='%s']");
+    }
 }

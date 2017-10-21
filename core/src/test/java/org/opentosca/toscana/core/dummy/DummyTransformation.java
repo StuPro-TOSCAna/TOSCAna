@@ -1,73 +1,73 @@
 package org.opentosca.toscana.core.dummy;
 
 import org.opentosca.toscana.core.csar.Csar;
-import org.opentosca.toscana.core.transformation.logging.Log;
-import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.TransformationState;
 import org.opentosca.toscana.core.transformation.artifacts.TargetArtifact;
+import org.opentosca.toscana.core.transformation.logging.Log;
+import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
 
 public class DummyTransformation implements Transformation {
 
-	private TransformationState state = TransformationState.INPUT_REQUIRED;
-	private Platform platform;
-	private Log log = new DummyLog();
-	private boolean returnTargetArtifact = true;
+    private TransformationState state = TransformationState.INPUT_REQUIRED;
+    private Platform platform;
+    private Log log = new DummyLog();
+    private boolean returnTargetArtifact = true;
 
-	private PropertyInstance properties;
+    private PropertyInstance properties;
 
-	public DummyTransformation(Platform platform) {
-		this.platform = platform;
-		this.properties = new PropertyInstance(platform.properties);
-	}
-	
-	public DummyTransformation(Platform platform, TransformationState s) {
-	    this(platform);
-	    this.state = s;
+    public DummyTransformation(Platform platform) {
+        this.platform = platform;
+        this.properties = new PropertyInstance(platform.properties);
     }
 
-	@Override
-	public TransformationState getState() {
-		return state;
-	}
+    public DummyTransformation(Platform platform, TransformationState s) {
+        this(platform);
+        this.state = s;
+    }
 
-	@Override
-	public Platform getPlatform() {
-		return platform;
-	}
+    @Override
+    public TransformationState getState() {
+        return state;
+    }
 
-	@Override
-	public void setProperty(String key, String value) {
-		properties.setPropertyValue(key, value);
-	}
+    @Override
+    public Platform getPlatform() {
+        return platform;
+    }
 
-	public void setState(TransformationState state) {
-		this.state = state;
-	}
+    @Override
+    public void setProperty(String key, String value) {
+        properties.setPropertyValue(key, value);
+    }
 
-	@Override
-	public PropertyInstance getProperties() {
-		return properties;
-	}
+    public void setState(TransformationState state) {
+        this.state = state;
+    }
 
-	@Override
-	public Log getLog() {
-		return log;
-	}
+    @Override
+    public PropertyInstance getProperties() {
+        return properties;
+    }
 
-	@Override
-	public TargetArtifact getTargetArtifact() {
-		return returnTargetArtifact ? new TargetArtifact() : null;
-	}
-	
+    @Override
+    public Log getLog() {
+        return log;
+    }
 
-	@Override
-	public Csar getCsar() {
-		return null;
-	}
+    @Override
+    public TargetArtifact getTargetArtifact() {
+        return returnTargetArtifact ? new TargetArtifact() : null;
+    }
 
-	public void setReturnTargetArtifact(boolean returnTargetArtifact) {
-		this.returnTargetArtifact = returnTargetArtifact;
-	}
+
+    @Override
+    public Csar getCsar() {
+        return null;
+    }
+
+    public void setReturnTargetArtifact(boolean returnTargetArtifact) {
+        this.returnTargetArtifact = returnTargetArtifact;
+    }
 }

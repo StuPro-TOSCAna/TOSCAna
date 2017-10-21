@@ -1,7 +1,5 @@
 package org.opentosca.toscana.core.csar;
 
-import org.opentosca.toscana.core.transformation.Transformation;
-
 import java.io.InputStream;
 import java.util.List;
 

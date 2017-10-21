@@ -18,7 +18,7 @@ public class OsUtils {
         return getOsName().contains("Linux");
     }
 
-    public static boolean isMac(){
+    public static boolean isMac() {
         return getOsName().contains("Mac");
     }
 }

@@ -17,39 +17,39 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 @PropertySource("classpath:application.yml")
 public class CoreConfiguration {
 
-	@Bean
-	public CsarService csarService() {
-		CsarServiceImpl bean = new CsarServiceImpl(csarDao(), csarParser());
-		return bean;
-	}
+    @Bean
+    public CsarService csarService() {
+        CsarServiceImpl bean = new CsarServiceImpl(csarDao(), csarParser());
+        return bean;
+    }
 
-	@Bean
-	public CsarDao csarDao() {
-		CsarFilesystemDao bean = new CsarFilesystemDao(preferences());
-		return bean;
-	}
+    @Bean
+    public CsarDao csarDao() {
+        CsarFilesystemDao bean = new CsarFilesystemDao(preferences());
+        return bean;
+    }
 
-	@Bean
-	public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
-		return new PropertySourcesPlaceholderConfigurer();
-	}
+    @Bean
+    public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
+        return new PropertySourcesPlaceholderConfigurer();
+    }
 
 
-	//TODO Replace with filesystem implementation
-	@Bean
-	public FileSystem fileSystem() {
-		return new FileSystem();
-	}
+    //TODO Replace with filesystem implementation
+    @Bean
+    public FileSystem fileSystem() {
+        return new FileSystem();
+    }
 
-	@Bean
-	public Preferences preferences() {
-		Preferences bean = new Preferences();
-		return bean;
-	}
+    @Bean
+    public Preferences preferences() {
+        Preferences bean = new Preferences();
+        return bean;
+    }
 
-	@Bean
-	public CsarParser csarParser() {
-		CsarParserImpl bean = new CsarParserImpl();
-		return bean;
-	}
+    @Bean
+    public CsarParser csarParser() {
+        CsarParserImpl bean = new CsarParserImpl();
+        return bean;
+    }
 }

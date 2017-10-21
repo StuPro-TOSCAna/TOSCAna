@@ -1,6 +1,5 @@
 package org.opentosca.toscana.plugins.kubernetes;
 
-import org.omg.SendingContext.RunTime;
 import org.opentosca.toscana.core.plugin.AbstractPlugin;
 import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.properties.Property;
@@ -29,11 +28,11 @@ public class KubernetesPlugin extends AbstractPlugin {
     @Override
     public void transform(Transformation transformation) throws Exception {
         Logger logger = transformation.getTransformationLogger(getClass());
-        for (int i = 0; i < 1000; i++) {
-            logger.info("Execution Round {}, Delay {}",i,i*10);
-            Thread.sleep(10*i);
-            if(i == 100) {
-                logger.info("Test error", new RuntimeException(i+""));
+        for (int i = 0; i < 150; i++) {
+            logger.info("Execution Round {}, Delay {}", i, i * 10);
+            Thread.sleep(10 * i);
+            if (i == 100) {
+                logger.info("Test error", new RuntimeException(i + ""));
             }
         }
     }

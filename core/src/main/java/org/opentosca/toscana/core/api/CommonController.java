@@ -24,34 +24,34 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 @RestController
 public class CommonController {
 
-	private final StatusService statusService;
+    private final StatusService statusService;
 
-	private final FileSystem fileSystem;
+    private final FileSystem fileSystem;
 
-	@Autowired
-	public CommonController(StatusService statusService, FileSystem fileSystem) {
-		this.statusService = statusService;
-		this.fileSystem = fileSystem;
-	}
-    
-	/**
-	 * Responds with the status of the Transformator, including Available Disk space and the current status
-	 * <p>
-	 * This Operation always Reponds with HTTP-Code 200
-	 */
-	@RequestMapping(
-		path = "/status",
-		method = RequestMethod.GET,
-		produces = "application/hal+json"
-	)
-	public ResponseEntity<StatusResponse> getStatus() {
-		StatusResponse response = new StatusResponse(
-			statusService.getSystemStatus().getDisplayName(),
-			fileSystem.getAvailableSpace(),
-			fileSystem.getUsedSpace() + fileSystem.getAvailableSpace()
-		);
-		response.add(linkTo(methodOn(CommonController.class).getStatus()).withSelfRel());
-		return ResponseEntity.ok(response);
-	}
+    @Autowired
+    public CommonController(StatusService statusService, FileSystem fileSystem) {
+        this.statusService = statusService;
+        this.fileSystem = fileSystem;
+    }
+
+    /**
+     * Responds with the status of the Transformator, including Available Disk space and the current status
+     * <p>
+     * This Operation always Reponds with HTTP-Code 200
+     */
+    @RequestMapping(
+        path = "/status",
+        method = RequestMethod.GET,
+        produces = "application/hal+json"
+    )
+    public ResponseEntity<StatusResponse> getStatus() {
+        StatusResponse response = new StatusResponse(
+            statusService.getSystemStatus().getDisplayName(),
+            fileSystem.getAvailableSpace(),
+            fileSystem.getUsedSpace() + fileSystem.getAvailableSpace()
+        );
+        response.add(linkTo(methodOn(CommonController.class).getStatus()).withSelfRel());
+        return ResponseEntity.ok(response);
+    }
 
 }

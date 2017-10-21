@@ -8,20 +8,20 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 public class ArtifactResponse extends ResourceSupport {
-	private String accessURL;
-	
-	public ArtifactResponse(
-		@JsonProperty("access_url") String accessURL,
-		String platform,
-		String csarName
-	) {
-		this.accessURL = accessURL;
-		add(linkTo(methodOn(TransformationController.class)
-			.getTransformationArtifact(csarName, platform)).withSelfRel().expand(csarName));
-	}
+    private String accessURL;
 
-	@JsonProperty("access_url")
-	public String getAccessURL() {
-		return accessURL;
-	}
+    public ArtifactResponse(
+        @JsonProperty("access_url") String accessURL,
+        String platform,
+        String csarName
+    ) {
+        this.accessURL = accessURL;
+        add(linkTo(methodOn(TransformationController.class)
+            .getTransformationArtifact(csarName, platform)).withSelfRel().expand(csarName));
+    }
+
+    @JsonProperty("access_url")
+    public String getAccessURL() {
+        return accessURL;
+    }
 }

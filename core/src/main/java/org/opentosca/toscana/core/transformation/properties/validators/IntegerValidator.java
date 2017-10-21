@@ -2,19 +2,19 @@ package org.opentosca.toscana.core.transformation.properties.validators;
 
 public class IntegerValidator implements ValueValidator {
 
-	private boolean onlyPositive;
+    private boolean onlyPositive;
 
-	public IntegerValidator(boolean onlyPositive) {
-		this.onlyPositive = onlyPositive;
-	}
+    public IntegerValidator(boolean onlyPositive) {
+        this.onlyPositive = onlyPositive;
+    }
 
-	@Override
-	public boolean isValid(String input) {
-		try {
-			int i = Integer.parseInt(input);
-			return !onlyPositive || i >= 0;
-		}catch (Exception e) {
-			return false;
-		}
-	}
+    @Override
+    public boolean isValid(String input) {
+        try {
+            int i = Integer.parseInt(input);
+            return !onlyPositive || i >= 0;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }

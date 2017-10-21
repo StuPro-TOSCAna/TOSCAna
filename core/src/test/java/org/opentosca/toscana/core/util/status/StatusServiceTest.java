@@ -3,9 +3,9 @@ package org.opentosca.toscana.core.util.status;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.opentosca.toscana.core.csar.CsarDao;
 import org.opentosca.toscana.core.dummy.DummyCsar;
 import org.opentosca.toscana.core.dummy.DummyTransformation;
-import org.opentosca.toscana.core.csar.CsarDao;
 import org.opentosca.toscana.core.transformation.TransformationState;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -62,7 +62,7 @@ public class StatusServiceTest {
         testCsar.getTransformations().get("p-2").setState(TransformationState.ERROR);
         assertTrue(statusService.getSystemStatus() == SystemStatus.ERROR);
     }
-    
+
     @Test
     public void testTransformingState() throws Exception {
         testCsar.getTransformations().get("p-1").setState(TransformationState.TRANSFORMING);

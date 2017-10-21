@@ -7,21 +7,19 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.stereotype.Component;
 
 @ComponentScan("org.opentosca.toscana")
 @SpringBootApplication
 public class Main {
 
-	public final static ApplicationContext appContext;
-	private final static Logger logger = LoggerFactory.getLogger(Main.class);
+    public final static ApplicationContext appContext;
+    private final static Logger logger = LoggerFactory.getLogger(Main.class);
 
-	static {
-		appContext = new AnnotationConfigApplicationContext(CoreConfiguration.class);
-	}
+    static {
+        appContext = new AnnotationConfigApplicationContext(CoreConfiguration.class);
+    }
 
-	public static void main(String[] args) {
-		SpringApplication.run(Main.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(Main.class, args);
+    }
 }

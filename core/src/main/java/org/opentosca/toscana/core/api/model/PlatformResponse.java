@@ -10,36 +10,36 @@ import org.springframework.hateoas.core.Relation;
  */
 @Relation(collectionRelation = "platform")
 public class PlatformResponse extends ResourceSupport {
-	private String identifier;
-	private String name;
+    private String identifier;
+    private String name;
 
-	public PlatformResponse(
-		@JsonProperty("id") String identifier,
-		@JsonProperty("name") String name
-	) {
-		this.identifier = identifier;
-		this.name = name;
-	}
-	
-	public PlatformResponse(Platform p) {
-		this(p.id, p.name);
-	}
+    public PlatformResponse(
+        @JsonProperty("id") String identifier,
+        @JsonProperty("name") String name
+    ) {
+        this.identifier = identifier;
+        this.name = name;
+    }
 
-	@JsonProperty("id")
-	public String getIdentifier() {
-		return identifier;
-	}
+    public PlatformResponse(Platform p) {
+        this(p.id, p.name);
+    }
 
-	public void setIdentifier(String identifier) {
-		this.identifier = identifier;
-	}
+    @JsonProperty("id")
+    public String getIdentifier() {
+        return identifier;
+    }
 
-	@JsonProperty("name")
-	public String getName() {
-		return name;
-	}
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    @JsonProperty("name")
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }

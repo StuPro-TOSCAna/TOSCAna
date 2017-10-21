@@ -16,39 +16,38 @@ import java.io.FileNotFoundException;
  */
 public class TestData {
 
-	public CsarDao csarDao;
-	
-	@Autowired
-	public TestData(CsarDao csarDao){
-		this.csarDao = csarDao;
-	}
+    public CsarDao csarDao;
 
-	private final static Logger logger = LoggerFactory.getLogger(TestData.class.getName());
+    @Autowired
+    public TestData(CsarDao csarDao) {
+        this.csarDao = csarDao;
+    }
 
-	private final static File CSAR_DIR = new File("src/test/resources/csars");
-	private final static File XML_DIR = new File(CSAR_DIR,"xml");
-	private final static File YAML_DIR = new File(CSAR_DIR,"yaml");
+    private final static Logger logger = LoggerFactory.getLogger(TestData.class.getName());
+
+    private final static File CSAR_DIR = new File("src/test/resources/csars");
+    private final static File XML_DIR = new File(CSAR_DIR, "xml");
+    private final static File YAML_DIR = new File(CSAR_DIR, "yaml");
 
 
-	// yaml csars
-	public final static File CSAR_YAML_VALID_SIMPLETASK = new File(YAML_DIR,"valid/simple-task.csar");
-	
-	// xml csars
-	public final static File CSAR_XML_VALID_MOODLE = new File(XML_DIR, "valid/Moodle.csar");
-	
+    // yaml csars
+    public final static File CSAR_YAML_VALID_SIMPLETASK = new File(YAML_DIR, "valid/simple-task.csar");
 
-	/**
-	 * @param file a csar
-	 * @return instance of csar
-	 * @throws FileNotFoundException
-	 */
-	public Csar getCsar(File file) throws FileNotFoundException {
-		String identifier = file.getName().toLowerCase().replaceAll("[^a-z0-1_-]","");
-		Csar csar = csarDao.create(identifier, new FileInputStream(file));
-		return csar;
+    // xml csars
+    public final static File CSAR_XML_VALID_MOODLE = new File(XML_DIR, "valid/Moodle.csar");
 
-	}
-	
+
+    /**
+     * @param file a csar
+     * @return instance of csar
+     * @throws FileNotFoundException
+     */
+    public Csar getCsar(File file) throws FileNotFoundException {
+        String identifier = file.getName().toLowerCase().replaceAll("[^a-z0-1_-]", "");
+        Csar csar = csarDao.create(identifier, new FileInputStream(file));
+        return csar;
+
+    }
 
 
 }

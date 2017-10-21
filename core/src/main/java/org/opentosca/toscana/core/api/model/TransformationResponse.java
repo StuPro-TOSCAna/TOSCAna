@@ -11,60 +11,60 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 @Relation(collectionRelation = "transformation")
 public class TransformationResponse extends ResourceSupport {
-	private int progress;
-	private String status;
-	private String platform;
-	private String csarName;
+    private int progress;
+    private String status;
+    private String platform;
+    private String csarName;
 
-	public TransformationResponse(
-		@JsonProperty("progress") int progress,
-		@JsonProperty("status") String status,
-		@JsonProperty("platform") String platform,
-		String csarName
-	) {
-		this.progress = progress;
-		this.status = status;
-		this.csarName = csarName;
-		this.platform = platform;
-		this.add(linkTo(methodOn(TransformationController.class)
-			.getCSARTransformation(csarName,platform))
-			.withSelfRel().expand(csarName));
-		this.add(linkTo(methodOn(TransformationController.class)
-			.getTransformationLogs(csarName,platform, 0L))
-			.withRel("logs").expand(csarName));
-		this.add(linkTo(methodOn(PlatformController.class)
-			.getPlatform(platform)).withRel("platform"));
-		this.add(linkTo(methodOn(TransformationController.class)
-			.getTransformationArtifact(csarName, platform))
-			.withRel("artifact").expand(csarName));
-		this.add(linkTo(methodOn(TransformationController.class)
-			.getTransformationProperties(csarName, platform))
-			.withRel("properties").expand(csarName));
-		this.add(linkTo(methodOn(TransformationController.class)
-			.deleteTransformation(csarName,platform))
-			.withRel("delete").expand(csarName));
-	}
+    public TransformationResponse(
+        @JsonProperty("progress") int progress,
+        @JsonProperty("status") String status,
+        @JsonProperty("platform") String platform,
+        String csarName
+    ) {
+        this.progress = progress;
+        this.status = status;
+        this.csarName = csarName;
+        this.platform = platform;
+        this.add(linkTo(methodOn(TransformationController.class)
+            .getCSARTransformation(csarName, platform))
+            .withSelfRel().expand(csarName));
+        this.add(linkTo(methodOn(TransformationController.class)
+            .getTransformationLogs(csarName, platform, 0L))
+            .withRel("logs").expand(csarName));
+        this.add(linkTo(methodOn(PlatformController.class)
+            .getPlatform(platform)).withRel("platform"));
+        this.add(linkTo(methodOn(TransformationController.class)
+            .getTransformationArtifact(csarName, platform))
+            .withRel("artifact").expand(csarName));
+        this.add(linkTo(methodOn(TransformationController.class)
+            .getTransformationProperties(csarName, platform))
+            .withRel("properties").expand(csarName));
+        this.add(linkTo(methodOn(TransformationController.class)
+            .deleteTransformation(csarName, platform))
+            .withRel("delete").expand(csarName));
+    }
 
-	@JsonProperty("progress")
-	public int getProgress() {
-		return progress;
-	}
+    @JsonProperty("progress")
+    public int getProgress() {
+        return progress;
+    }
 
-	public void setProgress(int progress) {
-		this.progress = progress;
-	}
+    public void setProgress(int progress) {
+        this.progress = progress;
+    }
 
-	@JsonProperty("status")
-	public String getStatus() {
-		return status;
-	}
+    @JsonProperty("status")
+    public String getStatus() {
+        return status;
+    }
 
-	@JsonProperty("platform")
-	public String getPlatform() {
-		return platform;
-	}
+    @JsonProperty("platform")
+    public String getPlatform() {
+        return platform;
+    }
 
-	public void setStatus(String status) {
-		this.status = status;
-	}
+    public void setStatus(String status) {
+        this.status = status;
+    }
 }

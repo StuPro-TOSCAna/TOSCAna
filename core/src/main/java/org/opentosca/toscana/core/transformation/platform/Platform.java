@@ -3,7 +3,9 @@ package org.opentosca.toscana.core.transformation.platform;
 import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.core.transformation.properties.RequirementType;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Platform {
 
@@ -14,8 +16,8 @@ public class Platform {
     /**
      * Creates a new platform.
      *
-     * @param id                 short identifier of platform. must match regex [a-z_-]+
-     * @param name               displayable name of platform. must not be an empty string
+     * @param id         short identifier of platform. must match regex [a-z_-]+
+     * @param name       displayable name of platform. must not be an empty string
      * @param properties the properties the platform requires.
      */
     public Platform(String id, String name, Set<Property> properties) {
@@ -23,7 +25,7 @@ public class Platform {
         this.name = name;
         this.properties = properties;
         if (id == null || !id.matches("[a-z_-]+") || name == null || name.isEmpty() ||
-                properties == null) {
+            properties == null) {
             throw new IllegalArgumentException(String.format("Platform '%s' is invalid", this));
         }
     }
@@ -46,14 +48,14 @@ public class Platform {
     public Set<Property> getProperties() {
         return Collections.unmodifiableSet(properties);
     }
-    
+
     public Set<Property> getPropertiesForRequirementType(RequirementType type) {
-    	HashSet<Property> filteredProperties = new HashSet<>();
-    	properties.stream()
-			.filter((e) -> e.getRequirementType() == type)
-			.forEach(filteredProperties::add);
-    	return Collections.unmodifiableSet(filteredProperties);
-	}
+        HashSet<Property> filteredProperties = new HashSet<>();
+        properties.stream()
+            .filter((e) -> e.getRequirementType() == type)
+            .forEach(filteredProperties::add);
+        return Collections.unmodifiableSet(filteredProperties);
+    }
 
     public String toString() {
         return String.format("Platform [id='%s', name='%s', properties='%s']", id, name, properties);

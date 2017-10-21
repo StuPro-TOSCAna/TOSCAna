@@ -8,45 +8,45 @@ import org.springframework.hateoas.ResourceSupport;
  * Represents the status response as a Java Object that gets converted to json using Jackson
  */
 public class StatusResponse extends ResourceSupport {
-	private String status;
-	private Long availableStorage;
-	private Long totalStorage;
+    private String status;
+    private Long availableStorage;
+    private Long totalStorage;
 
-	@JsonCreator
-	public StatusResponse(
-		@JsonProperty("status") String status,
-		@JsonProperty("available_storage") Long availableStorage,
-		@JsonProperty("total_storage") Long totalStorage
-	) {
-		this.status = status;
-		this.availableStorage = availableStorage;
-		this.totalStorage = totalStorage;
-	}
+    @JsonCreator
+    public StatusResponse(
+        @JsonProperty("status") String status,
+        @JsonProperty("available_storage") Long availableStorage,
+        @JsonProperty("total_storage") Long totalStorage
+    ) {
+        this.status = status;
+        this.availableStorage = availableStorage;
+        this.totalStorage = totalStorage;
+    }
 
-	@JsonProperty("status")
-	public String getStatus() {
-		return status;
-	}
-	
-	public void setStatus(String status) {
-		this.status = status;
-	}
+    @JsonProperty("status")
+    public String getStatus() {
+        return status;
+    }
 
-	@JsonProperty("available_storage")
-	public Long getAvailableStorage() {
-		return availableStorage;
-	}
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
-	public void setAvailableStorage(Long availableStorage) {
-		this.availableStorage = availableStorage;
-	}
+    @JsonProperty("available_storage")
+    public Long getAvailableStorage() {
+        return availableStorage;
+    }
 
-	@JsonProperty("total_storage")
-	public Long getTotalStorage() {
-		return totalStorage;
-	}
+    public void setAvailableStorage(Long availableStorage) {
+        this.availableStorage = availableStorage;
+    }
 
-	public void setTotalStorage(Long totalStorage) {
-		this.totalStorage = totalStorage;
-	}
+    @JsonProperty("total_storage")
+    public Long getTotalStorage() {
+        return totalStorage;
+    }
+
+    public void setTotalStorage(Long totalStorage) {
+        this.totalStorage = totalStorage;
+    }
 }

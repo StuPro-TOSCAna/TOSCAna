@@ -26,7 +26,7 @@ public class CsarFilesystemDaoTest extends BaseSpringTest {
     public void create() throws Exception {
         String identifier = "my-csar-name";
         File csarFile = TestData.CSAR_XML_VALID_MOODLE;
-		InputStream csarStream = new FileInputStream(csarFile);
+        InputStream csarStream = new FileInputStream(csarFile);
         csarDao.create(identifier, csarStream);
         File csarFolder = new File(preferences.getDataDir(), identifier);
         File contentFolder = new File(csarFolder, CsarFilesystemDao.CONTENT_DIR);

@@ -1,12 +1,10 @@
 package org.opentosca.toscana.core.csar;
 
 import org.apache.commons.io.FileUtils;
-import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.util.Preferences;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,15 +36,15 @@ public class CsarFilesystemDao implements CsarDao {
 
     @Autowired
     public CsarFilesystemDao(Preferences preferences) {
-    	this.dataDir = preferences.getDataDir();
-    	
-    	if(!dataDir.exists()) {
-			System.out.println(dataDir.getAbsolutePath());
-			if(!dataDir.mkdirs()){
-    			throw new RuntimeException("Something went wrong when creating the Data Directory!");
-			}
-		}
-    	
+        this.dataDir = preferences.getDataDir();
+
+        if (!dataDir.exists()) {
+            System.out.println(dataDir.getAbsolutePath());
+            if (!dataDir.mkdirs()) {
+                throw new RuntimeException("Something went wrong when creating the Data Directory!");
+            }
+        }
+
         readFromDisk();
     }
 
@@ -121,12 +119,12 @@ public class CsarFilesystemDao implements CsarDao {
         for (int i = 0; i < files.length; i++) {
             File file = files[i];
             if (isCsarDir(file)) {
-            	File contentDir = new File(file, CONTENT_DIR);
+                File contentDir = new File(file, CONTENT_DIR);
                 Csar csar = new CsarImpl(file.getName(), contentDir);
                 csarMap.put(csar.getIdentifier(), csar);
             }
         }
-        logger.debug("in-memory csars in synced with file system",new RuntimeException());
+        logger.debug("in-memory csars in synced with file system", new RuntimeException());
 
     }
 

@@ -11,7 +11,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-class CsarImpl implements Csar{
+class CsarImpl implements Csar {
 
     /**
      * Stores all scheduled, ongoing or finished transformations of this CSAR.
@@ -19,14 +19,14 @@ class CsarImpl implements Csar{
      */
     private Map<String, Transformation> transformations = new HashMap<>();
     private String identifier;
-	/**
-	 * null if not yet parsed
-	 */
-	private TServiceTemplate template;
-	/**
-	 * The root directory of the unzipped CSAR
-	 */
-	private final File root;
+    /**
+     * null if not yet parsed
+     */
+    private TServiceTemplate template;
+    /**
+     * The root directory of the unzipped CSAR
+     */
+    private final File root;
 
     public CsarImpl(String identifier, File root) {
         this.identifier = identifier;
@@ -43,38 +43,38 @@ class CsarImpl implements Csar{
         return identifier;
     }
 
-	@Override
-	public TServiceTemplate getTemplate() {
-    	return template;
-	}
+    @Override
+    public TServiceTemplate getTemplate() {
+        return template;
+    }
 
-	@Override
-	public Set<Property> getModelSpecificProperties() {
-		return new HashSet<>();
-	}
+    @Override
+    public Set<Property> getModelSpecificProperties() {
+        return new HashSet<>();
+    }
 
-	@Override
-	public void setTemplate(TServiceTemplate template) {
-    	this.template = template;
+    @Override
+    public void setTemplate(TServiceTemplate template) {
+        this.template = template;
 
-	}
+    }
 
-	@Override
-	public File getRoot() {
-    	return root;
-	}
+    @Override
+    public File getRoot() {
+        return root;
+    }
 
 
-	@Override
-	public boolean equals(Object obj) {
-    	return (obj instanceof Csar) && (((Csar) obj).getIdentifier().equals(identifier));
-	}
+    @Override
+    public boolean equals(Object obj) {
+        return (obj instanceof Csar) && (((Csar) obj).getIdentifier().equals(identifier));
+    }
 
-	@Override
-	public int hashCode() {
-            return new HashCodeBuilder(17,31)
-				.append(identifier)
-				.toHashCode();
-	}
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 31)
+            .append(identifier)
+            .toHashCode();
+    }
 }
 
