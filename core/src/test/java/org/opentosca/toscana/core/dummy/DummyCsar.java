@@ -3,6 +3,7 @@ package org.opentosca.toscana.core.dummy;
 import org.eclipse.winery.model.tosca.yaml.TServiceTemplate;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.transformation.Transformation;
+import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.properties.Property;
 
 import java.io.File;
@@ -50,6 +51,11 @@ public class DummyCsar implements Csar {
 
     @Override
     public File getRoot() {
+        return null;
+    }
+
+    @Override
+    public Log getLog() {
         return null;
     }
 

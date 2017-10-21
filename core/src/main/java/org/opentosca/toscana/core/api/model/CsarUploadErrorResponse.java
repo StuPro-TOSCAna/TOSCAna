@@ -31,7 +31,7 @@ public class CsarUploadErrorResponse {
 
     @JsonProperty("logs")
     public List<LogEntry> getErrorLogs() {
-        return new ArrayList<>();
+        return exception.getLog().getLogEntries(0);
     }
 
     @JsonProperty("timestamp")

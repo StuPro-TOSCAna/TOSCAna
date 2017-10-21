@@ -47,7 +47,7 @@ public class UploadTest {
         waitForServerToStart(HttpClients.createMinimal());
         System.err.println("Server started!");
         InputStream in =
-            getClass().getClassLoader().getResourceAsStream("csars/yaml/valid/entrypoint_is_yml.csar");
+            getClass().getClassLoader().getResourceAsStream("csars/yaml/valid/simple-task.csar");
         assertTrue(in != null);
         HttpPost post = new HttpPost("http://localhost:8080/csars/simple-task");
         MultipartEntityBuilder builder = MultipartEntityBuilder.create();

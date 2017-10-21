@@ -4,7 +4,6 @@ import ch.qos.logback.classic.Logger;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.transformation.artifacts.TargetArtifact;
 import org.opentosca.toscana.core.transformation.logging.Log;
-import org.opentosca.toscana.core.transformation.logging.TransformationAppender;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
@@ -30,7 +29,7 @@ class TransformationImpl implements Transformation {
      * @param csar           the subject of transformation
      * @param targetPlatform the target platform
      */
-    public TransformationImpl(Csar csar, Platform targetPlatform) {
+    TransformationImpl(Csar csar, Platform targetPlatform) {
         this.csar = csar;
         this.targetPlatform = targetPlatform;
 
@@ -51,19 +50,19 @@ class TransformationImpl implements Transformation {
         this.log = new Log();
     }
 
-    @Override
-    public Logger getTransformationLogger(Class<?> clazz) {
-        Logger tLog = (Logger) LoggerFactory.getLogger(clazz);
-
-        TransformationAppender appender = new TransformationAppender(log);
-        appender.setContext(tLog.getLoggerContext());
-        appender.start();
-        tLog.addAppender(appender);
-
-        //TODO Add File Appender once mechanism for getting the filepath has been implemented.
-
-        return tLog;
-    }
+//    @Override
+//    public Logger getTransformationLogger(Class<?> clazz) {
+////        Logger tLog = (Logger) LoggerFactory.getLogger(clazz);
+////
+////        TransformationAppender appender = new TransformationAppender(log);
+////        appender.setContext(tLog.getLoggerContext());
+////        appender.start();
+////        tLog.addAppender(appender);
+////
+////        //TODO Add File Appender once mechanism for getting the filepath has been implemented.
+////
+////        return tLog;
+//    }
 
     @Override
     public TransformationState getState() {

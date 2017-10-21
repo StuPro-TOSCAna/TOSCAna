@@ -144,7 +144,7 @@ public class CsarController {
         HttpServletRequest request,
         InvalidCsarException e
     ) {
-        return new CsarUploadErrorResponse(e, request.getContextPath(), 400);
+        return new CsarUploadErrorResponse(e, request.getServletPath(), 400);
     }
 
     /**

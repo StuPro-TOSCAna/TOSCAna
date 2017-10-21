@@ -22,7 +22,7 @@ public class ExecutionTask implements Runnable {
     ) {
         this.transformation = transformation;
         this.transformationService = transformationService;
-        this.log = transformation.getTransformationLogger(getClass());
+        this.log = transformation.getLog().getLogger(getClass());
         this.plugin = pluginService.findPluginByPlatform(transformation.getPlatform());
     }
 
