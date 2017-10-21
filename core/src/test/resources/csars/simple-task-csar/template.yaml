@@ -1,5 +1,4 @@
-tosca_definitions_version: tosca_simple_yaml_1_0
-description: Template for deploying the simple-task-app via docker 
+tosca_definitions_version: tosca_simple_yaml_1_0 description: Template for deploying the simple-task-app via docker 
 metadata:
   template_name: simple-task-docker-template
   template_author: stupro-toscana
@@ -16,8 +15,12 @@ topology_template:
     simpleTaskApp:
       type: DockerApp
       attributes:
-        tag: simple-task-app
-        identifier: simple-task-app-1
+        tag:
+          description: tag for docker image
+          value: simple-task-app
+        identifier:
+          description: identifier of docker container
+          value: simple-task-app-1
       interfaces:
         Standard:
           create:
