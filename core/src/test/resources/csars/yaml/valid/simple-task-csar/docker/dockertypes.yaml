@@ -52,16 +52,15 @@ node_types:
 capability_types:
   DockerHost:
     derived_from: tosca.capabilities.Root
-    type: tosca.capabilities.Root
-    sources: [ DockerApp ]
+    valid_source_types: [ DockerApp ]
   SimplePublicWebEndpoint:
     derived_from: tosca.capabilities.Endpoint
     properties:
       protocol:
-        value: http
+        default: http
       port:
-        value: 80
+        default: 80
       url_path:
-        value: /
+        default: /
       network_name:
-        value: PUBLIC
+        default: PUBLIC
