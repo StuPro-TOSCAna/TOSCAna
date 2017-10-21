@@ -1,6 +1,6 @@
 package org.opentosca.toscana.core.plugin;
 
-import org.opentosca.toscana.core.transformation.Transformation;
+import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.Property;
 import org.slf4j.Logger;
@@ -39,7 +39,7 @@ public abstract class AbstractPlugin implements TransformationPlugin {
     }
 
     @Override
-    public void transform(Transformation transformation) throws Exception {
+    public void transform(TransformationContext context) throws Exception {
 
     }
 }

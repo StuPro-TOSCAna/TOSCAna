@@ -24,16 +24,5 @@ public class KubernetesPlugin extends AbstractPlugin {
     public HashSet<Property> getPluginSpecificProperties() {
         return new HashSet<>();
     }
-
-    @Override
-    public void transform(Transformation transformation) throws Exception {
-        Logger logger = transformation.getTransformationLogger(getClass());
-        for (int i = 0; i < 150; i++) {
-            logger.info("Execution Round {}, Delay {}", i, i * 10);
-            Thread.sleep(10 * i);
-            if (i == 100) {
-                logger.info("Test error", new RuntimeException(i + ""));
-            }
-        }
-    }
+    
 }

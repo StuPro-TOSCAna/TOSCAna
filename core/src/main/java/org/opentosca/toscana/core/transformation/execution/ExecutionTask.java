@@ -33,7 +33,7 @@ public class ExecutionTask implements Runnable {
             transformation.getPlatform().id);
         transformation.setState(TransformationState.TRANSFORMING);
         try {
-            plugin.transform(transformation);
+            plugin.transform(transformation.toTransformationContext());
         } catch (Exception e) {
             log.error("Transforming of {}/{} has errored!",
                 transformation.getCsar().getIdentifier(),

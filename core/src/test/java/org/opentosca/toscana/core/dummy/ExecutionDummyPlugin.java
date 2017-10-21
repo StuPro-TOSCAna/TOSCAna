@@ -2,6 +2,7 @@ package org.opentosca.toscana.core.dummy;
 
 import org.opentosca.toscana.core.plugin.AbstractPlugin;
 import org.opentosca.toscana.core.transformation.Transformation;
+import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.core.transformation.properties.Property;
 import org.slf4j.Logger;
 
@@ -33,8 +34,8 @@ public class ExecutionDummyPlugin extends AbstractPlugin {
     }
 
     @Override
-    public void transform(Transformation transformation) throws Exception {
-        Logger logger = transformation.getTransformationLogger(getClass());
+    public void transform(TransformationContext transformation) throws Exception {
+        Logger logger = transformation.getLogger(getClass());
         int i = 0;
         logger.info("Waiting 1s until completion");
         while(!Thread.currentThread().isInterrupted() && i < 100) {

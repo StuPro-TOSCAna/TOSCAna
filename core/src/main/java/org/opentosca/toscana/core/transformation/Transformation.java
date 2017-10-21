@@ -1,6 +1,7 @@
 package org.opentosca.toscana.core.transformation;
 
 import org.opentosca.toscana.core.csar.Csar;
+import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.core.transformation.artifacts.TargetArtifact;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.platform.Platform;
@@ -59,6 +60,16 @@ public interface Transformation {
      */
     default Logger getTransformationLogger(Class<?> clazz) {
         return LoggerFactory.getLogger(clazz);
+    }
+
+    /**
+     * Creates a new Transfomation Context for the given transformation
+     *
+     * @return
+     */
+    default TransformationContext toTransformationContext() {
+        return new TransformationContext(this,
+            new PluginFileAccess(null, null));
     }
 
     /**
