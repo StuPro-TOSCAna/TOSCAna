@@ -31,13 +31,18 @@
 
 	<dependencies>
 		<!-- Winery -->
-		<dependency>
-			<groupId>com.github.c-mueller.winery</groupId>
-			<artifactId>org.eclipse.winery.yaml.common</artifactId>
-			<version>master-SNAPSHOT</version>
-		</dependency>
-		
-		<!-- Spring Dependencies -->
+        <dependency>
+        <groupId>com.github.stupro-toscana.winery</groupId>
+        <artifactId>org.eclipse.winery.yaml.common</artifactId>
+        <version>master-SNAPSHOT</version>
+        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.github.eclipse.winery</groupId>-->
+            <!--<artifactId>org.eclipse.winery.yaml.common</artifactId>-->
+            <!--<version>master-SNAPSHOT</version>-->
+        <!--</dependency>-->
+
+        <!-- Spring Dependencies -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-hateoas</artifactId>

@@ -19,10 +19,9 @@ public class CsarParserImpl implements CsarParser {
     public TServiceTemplate parse(Csar csar) throws InvalidCsarException {
         Reader reader = new Reader();
         File entrypoint = findEntrypoint(csar);
-        Path entrypointPath = Paths.get(entrypoint.getAbsolutePath());
         TServiceTemplate serviceTemplate = null;
         try {
-            serviceTemplate = reader.parse(entrypointPath);
+            serviceTemplate = reader.parse(entrypoint.getParent(), entrypoint.getName());
 
         } catch (MultiException e) {
             logger.error("An error occured while parsing the csar '{}'", csar, e);
