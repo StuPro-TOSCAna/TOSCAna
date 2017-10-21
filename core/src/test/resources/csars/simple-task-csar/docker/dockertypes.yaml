@@ -42,14 +42,13 @@ node_types:
           tag: { get_attribute: [ SELF, tag ] }
           identifier: { get_attribute: [ SELF, identifier ] }
         create:
-          dockerapp_create.sh
+          implementation: dockerapp_create.sh
         start:
-          dockerapp_create.sh
+          implementation: dockerapp_create.sh
         stop:
-          dockerapp_stop.sh
+          implementation: dockerapp_stop.sh
         delete:
-          dockerapp_delete.sh
-
+          implementation: dockerapp_delete.sh 
 capability_types:
   DockerHost:
     derived_from: tosca.capabilities.Root
