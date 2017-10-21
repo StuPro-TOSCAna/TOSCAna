@@ -58,7 +58,11 @@ capability_types:
   SimplePublicWebEndpoint:
     derived_from: tosca.capabilities.Endpoint
     properties:
-      protocol: http
-      port: 80
-      url_path: /
-      network_name: PUBLIC
+      protocol:
+        value: http
+      port:
+        value: 80
+      url_path:
+        value: /
+      network_name:
+        value: PUBLIC
