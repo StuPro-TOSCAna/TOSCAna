@@ -27,7 +27,12 @@ public abstract class AbstractPlugin implements TransformationPlugin {
      */
     public abstract String getIdentifier();
 
-    public abstract HashSet<Property> getPluginSpecificProperties();
+    /**
+     * @return The plugin specific properties like enpoints get provided by this mehtod
+     */
+    public HashSet<Property> getPluginSpecificProperties() {
+        return new HashSet<>();
+    }
 
     public void init() {
         //Empty method, allows plugin to run code on initialisation
@@ -36,10 +41,5 @@ public abstract class AbstractPlugin implements TransformationPlugin {
     @Override
     public Platform getPlatformDetails() {
         return new Platform(getIdentifier(), getName(), getPluginSpecificProperties());
-    }
-
-    @Override
-    public void transform(TransformationContext context) throws Exception {
-
     }
 }

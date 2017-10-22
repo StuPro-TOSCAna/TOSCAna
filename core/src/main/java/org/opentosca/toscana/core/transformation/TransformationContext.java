@@ -2,6 +2,7 @@ package org.opentosca.toscana.core.transformation;
 
 import org.eclipse.winery.model.tosca.yaml.TServiceTemplate;
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
+import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
 import org.slf4j.Logger;
 
 public final class TransformationContext {
@@ -22,11 +23,15 @@ public final class TransformationContext {
         return transformation.getCsar().getTemplate();
     }
 
+    public PropertyInstance getProperties() {
+        return transformation.getProperties();
+    }
+
     public Logger getLogger(String context) {
         return transformation.getLog().getLogger(context);
     }
-    
-    public Logger getLogger(Class clazz){
+
+    public Logger getLogger(Class clazz) {
         return transformation.getLog().getLogger(clazz);
     }
 }
