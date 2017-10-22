@@ -35,8 +35,20 @@ In order to perform a transformation, you might need to be able to get some prop
 
 When starting a transformation for a platform the `TransformationService` launches a asynchronous task that calls the `transform(TransformationContext)` method of the corresponding plugin. Therefore this method will perform the transformation. 
 
+Once the Transformation has been done the `PluginFileAccess` object provided by the `TransformatonContext` can be used to get Filepaths to which you can write the resulting target artifacts. These artifacts will be taken by the `core-component` in order to compress them and serve them using http. For more information about the `PluginFileAccess` please take a look at its javadoc.
+
 #### TransformationContext
 
 The `TransformationContext` is provided by the core component and contains everything needed to perform the Transformation. Including the `PropertyInstance`, containing all properties and the values set by the user. As well as a special logger factory method that should be used in order to ensure transformation specific logging (see [#Logging](Logging))
 
 #### Logging
+
+Because we want to be able to only log the events for a specific transformation in a special file and by the REST API a special logger factory has to be used if you want to log while the transformation is running. Using this feature is highly recomended because we currently don't have any other option that tells the user whats currently going on with the transfromation.
+
+#### Handling Exceptions
+
+You have to handle exceptions within the `transform(...)` method. unless the given eception should result in the abortion of the transformation process. If a exception gets thrown out of the method it will be caught and the execution of the transformation will be stopped immediately and the transformation state gets set to `ERROR`.
+
+#### Using multiple Threads within a transformation
+
+In the current version of the transformator the invocation of concurrent tasks by a transformation should not be done! This is a feature that might be adressed later!
