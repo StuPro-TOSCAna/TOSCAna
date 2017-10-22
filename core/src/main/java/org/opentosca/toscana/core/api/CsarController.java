@@ -20,6 +20,7 @@ import org.springframework.hateoas.Resources;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -116,12 +117,16 @@ public class CsarController {
     )
     public ResponseEntity<String> uploadCSAR(
         @PathVariable(name = "name") String name,
-//		@RequestParam(name = "file", required = true) MultipartFile file
-        HttpServletRequest request
+		@RequestParam(name = "file", required = true) MultipartFile file
+//        HttpServletRequest request
     ) throws InvalidCsarException {
         try {
-//			Csar result = csarService.submitCsar(name, file.getInputStream());
-            Csar result = csarService.submitCsar(name, getInputStream(request));
+			Csar result = csarService.submitCsar(name, file.getInputStream());
+//            InputStream input = getInputStream(request);
+//            if(input == null) {
+//                throw new IllegalArgumentException("No Multipart entry named file is given!");
+//            }
+//            Csar result = csarService.submitCsar(name, input);
             if (result == null) {
                 throw new CsarNameAlreadyUsedException();
             }
@@ -147,18 +152,19 @@ public class CsarController {
         return new CsarUploadErrorResponse(e, request.getServletPath(), 400);
     }
 
-    /**
-     * Internal helper method to allow the upload of files!
-     */
-    private InputStream getInputStream(HttpServletRequest request) throws IOException, FileUploadException {
-        ServletFileUpload upload = new ServletFileUpload();
-        FileItemIterator iterator = upload.getItemIterator(request);
-        while (iterator.hasNext()) {
-            FileItemStream stream = iterator.next();
-            if (Objects.equals(stream.getFieldName(), "file")) {
-                return stream.openStream();
-            }
-        }
-        return null;
-    }
+//    /**
+//     * Internal helper method to allow the upload of files!
+//     */
+//    private InputStream getInputStream(HttpServletRequest request) throws IOException, FileUploadException {
+//        ServletFileUpload upload = new ServletFileUpload();
+//        FileItemIterator iterator = upload.getItemIterator(request);
+//        while (iterator.hasNext()) {
+//            FileItemStream stream = iterator.next();
+//            System.out.println(stream.getFieldName()+" "+stream.getName());
+//            if(stream.getFieldName().equals("file")) {
+//                return stream.openStream();
+//            }
+//        }
+//        return null;
+//    }
 }

@@ -90,6 +90,15 @@
 			<version>4.12</version>
 			<scope>test</scope>
 		</dependency>
+        <!--Retrofit-->
+        <dependency>
+            <groupId>com.squareup.retrofit2</groupId>
+            <artifactId>retrofit</artifactId>
+            <version>LATEST</version>
+            <scope>test</scope>
+        </dependency>
+        <!--Apache Http Client (Might not be needed anymore.-->
+        <!--Did not remove it because its just a test dependency-->
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>

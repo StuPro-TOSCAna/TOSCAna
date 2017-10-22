@@ -6,24 +6,28 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opentosca.toscana.core.api.mocks.MockCsarService;
 import org.opentosca.toscana.core.csar.CsarService;
+import org.opentosca.toscana.core.dummy.DummyCsar;
 import org.opentosca.toscana.core.dummy.DummyPlatformService;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.platform.PlatformService;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.security.MessageDigest;
+import java.util.*;
 
+import static org.junit.Assert.assertTrue;
 import static org.opentosca.toscana.core.api.utils.HALRelationUtils.validateRelations;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.fileUpload;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -77,71 +81,71 @@ public class CsarControllerTest {
         resultActions.andReturn();
     }
 
-//	//@Test
-//	public void uploadTest() throws Exception {
-//		//Generate 10 MiB of "Random" (seeded) data
-//		byte[] data = new byte[(int) (Math.pow(2, 20) * 10)];
-//		Random rnd = new Random(12345678);
-//		rnd.nextBytes(data);
-//		// Get the sha hash of the data
-//		byte[] hash = MessageDigest.getInstance("SHA-256").digest(data);
-//
-//		MockMultipartFile mockMultipartFile = new MockMultipartFile(
-//			"file",
-//			"null",
-//			MediaType.APPLICATION_OCTET_STREAM_VALUE,
-//			data
-//		);
-//
-//		MockMultipartHttpServletRequestBuilder builder = fileUpload("/csars/rnd");
-//		builder.with(request -> {
-//			request.setMethod("PUT");
-//			return request;
-//		});
-//		builder = (MockMultipartHttpServletRequestBuilder) builder.file(mockMultipartFile)
-//			.contentType(MediaType.MULTIPART_FORM_DATA);
-//
-//		ResultActions resultActions = mvc.perform(
-//			builder
-//		).andDo(print()).andExpect(status().is2xxSuccessful());
-//		resultActions.andReturn();
-//
-//		byte[] hashUpload = MessageDigest
-//			.getInstance("SHA-256")
-//			.digest(((DummyCsar) service.getCsar("rnd")).getData());
-//		assertTrue(hashUpload.length == hash.length);
-//		for (int i = 0; i < hash.length; i++) {
-//			assertTrue(hash[i] == hashUpload[i]);
-//		}
-//	}
-//
-//	//@Test
-//	public void uploadTestArchiveAlreadyExists() throws Exception {
-//		//Generate 10 KiB of "Random" (seeded) data
-//		byte[] data = new byte[(int) (Math.pow(2, 10) * 10)];
-//		Random rnd = new Random(12345678);
-//		rnd.nextBytes(data);
-//
-//		MockMultipartFile mockMultipartFile = new MockMultipartFile(
-//			"file",
-//			"null",
-//			MediaType.APPLICATION_OCTET_STREAM_VALUE,
-//			data
-//		);
-//
-//		MockMultipartHttpServletRequestBuilder builder = fileUpload("/csars/apache");
-//		builder.with(request -> {
-//			request.setMethod("PUT");
-//			return request;
-//		});
-//		builder = (MockMultipartHttpServletRequestBuilder) builder.file(mockMultipartFile)
-//			.contentType(MediaType.MULTIPART_FORM_DATA);
-//
-//		ResultActions resultActions = mvc.perform(
-//			builder
-//		).andDo(print()).andExpect(status().is(400));
-//		resultActions.andReturn();
-//	}
+	//@Test
+	public void uploadTest() throws Exception {
+		//Generate 10 MiB of "Random" (seeded) data
+		byte[] data = new byte[(int) (Math.pow(2, 20) * 10)];
+		Random rnd = new Random(12345678);
+		rnd.nextBytes(data);
+		// Get the sha hash of the data
+		byte[] hash = MessageDigest.getInstance("SHA-256").digest(data);
+
+		MockMultipartFile mockMultipartFile = new MockMultipartFile(
+			"file",
+			"null",
+			MediaType.APPLICATION_OCTET_STREAM_VALUE,
+			data
+		);
+
+		MockMultipartHttpServletRequestBuilder builder = fileUpload("/csars/rnd");
+		builder.with(request -> {
+			request.setMethod("PUT");
+			return request;
+		});
+		builder = (MockMultipartHttpServletRequestBuilder) builder.file(mockMultipartFile)
+			.contentType(MediaType.MULTIPART_FORM_DATA);
+
+		ResultActions resultActions = mvc.perform(
+			builder
+		).andDo(print()).andExpect(status().is2xxSuccessful());
+		resultActions.andReturn();
+
+		byte[] hashUpload = MessageDigest
+			.getInstance("SHA-256")
+			.digest(((DummyCsar) service.getCsar("rnd")).getData());
+		assertTrue(hashUpload.length == hash.length);
+		for (int i = 0; i < hash.length; i++) {
+			assertTrue(hash[i] == hashUpload[i]);
+		}
+	}
+
+	//@Test
+	public void uploadTestArchiveAlreadyExists() throws Exception {
+		//Generate 10 KiB of "Random" (seeded) data
+		byte[] data = new byte[(int) (Math.pow(2, 10) * 10)];
+		Random rnd = new Random(12345678);
+		rnd.nextBytes(data);
+
+		MockMultipartFile mockMultipartFile = new MockMultipartFile(
+			"file",
+			"null",
+			MediaType.APPLICATION_OCTET_STREAM_VALUE,
+			data
+		);
+
+		MockMultipartHttpServletRequestBuilder builder = fileUpload("/csars/apache");
+		builder.with(request -> {
+			request.setMethod("PUT");
+			return request;
+		});
+		builder = (MockMultipartHttpServletRequestBuilder) builder.file(mockMultipartFile)
+			.contentType(MediaType.MULTIPART_FORM_DATA);
+
+		ResultActions resultActions = mvc.perform(
+			builder
+		).andDo(print()).andExpect(status().is(400));
+		resultActions.andReturn();
+	}
 
     @Test
     public void csarDetails() throws Exception {
