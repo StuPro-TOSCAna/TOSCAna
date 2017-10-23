@@ -2,43 +2,70 @@ package org.opentosca.toscana.core.transformation;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
-import org.opentosca.toscana.core.csar.CsarDao;
+import org.opentosca.toscana.core.BaseSpringTest;
+import org.opentosca.toscana.core.TestProfiles;
+import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.dummy.DummyCsar;
 import org.opentosca.toscana.core.dummy.ExecutionDummyPlugin;
-import org.opentosca.toscana.core.plugin.PluginServiceImpl;
+import org.opentosca.toscana.core.testdata.TestCsars;
+import org.opentosca.toscana.core.testdata.TestPlugins;
 import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.core.transformation.properties.PropertyType;
 import org.opentosca.toscana.core.transformation.properties.RequirementType;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
 
-import java.util.Arrays;
-import java.util.Collections;
+import java.io.FileNotFoundException;
 import java.util.HashSet;
 
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.*;
 
-@RunWith(JUnit4.class)
-public class TransformationServiceTest {
+@ActiveProfiles(TestProfiles.DUMMY_PLUGIN_SERVICE_TEST)
+public class TransformationServiceImplTest extends BaseSpringTest {
+    
+    @Autowired
+    private TransformationService service;
+    @Autowired
+    private TestCsars testCsars;
+    
+    private Csar csar;
+    
+    private ExecutionDummyPlugin passingDummy = TestPlugins.PASSING_DUMMY;
+    private ExecutionDummyPlugin failingDummy = TestPlugins.FAILING_DUMMY;
 
-    private TransformationDao dao;
 
-    private DummyCsar csar = new DummyCsar("test");
-    private TransformationServiceImpl service;
-
-    private ExecutionDummyPlugin passingDummy
-        = new ExecutionDummyPlugin("passing", false);
-    private ExecutionDummyPlugin failingDummy
-        = new ExecutionDummyPlugin("failing", true);
 
     @Before
-    public void setUp() throws Exception {
-        dao = mock(TransformationDao.class);
-//        when(dao.findAll()).thenReturn(Collections.singletonList(csar));
-        service = new TransformationServiceImpl(dao,
-            new PluginServiceImpl(Arrays.asList(passingDummy, failingDummy)));
+    public void setUp() throws FileNotFoundException {
+        csar = testCsars.getCsar(TestCsars.CSAR_YAML_VALID_SIMPLETASK);
+        
+    }
+    
+    @Test
+    public void createTransformation() throws Exception {
+        service.createTransformation(csar, TestPlugins.PLATFORM1);
+        Transformation expected = new TransformationImpl(csar,TestPlugins.PLATFORM1);
+        assertTrue(csar.getTransformations().containsValue(expected));
+        
+    }
+
+    @Test
+    public void testStartTransformationInvalidState() throws Exception {
+        service.createTransformation(csar, TestPlugins.PLATFORM1);
+        Transformation t = csar.getTransformations().get(TestPlugins.PLATFORM1.id);
+        t.setState(TransformationState.ERROR);
+        assertTrue(!service.startTransformation(t));
+    }
+
+    @Test
+    public void testStartTransformationPropertiesNotSet() throws Exception {
+        DummyCsar csar = new DummyCsar("test");
+        csar.modelSpecificProperties = new HashSet<>();
+        csar.modelSpecificProperties
+            .add(new Property("test", PropertyType.TEXT, RequirementType.TRANSFORMATION));
+        service.createTransformation(csar, passingDummy.getPlatformDetails());
+        Transformation t = csar.getTransformations().get("passing");
+        assertTrue(!service.startTransformation(t));
     }
 
     @Test
@@ -51,6 +78,7 @@ public class TransformationServiceTest {
 
     @Test
     public void transformationCreationInputNeeded() throws Exception {
+        DummyCsar csar = new DummyCsar("test");
         csar.modelSpecificProperties = new HashSet<>();
         csar.modelSpecificProperties
             .add(new Property("test", PropertyType.TEXT, RequirementType.TRANSFORMATION));
@@ -61,26 +89,11 @@ public class TransformationServiceTest {
     }
 
 
-    @Test
-    public void testStartTransformationInvalidState() throws Exception {
-        service.createTransformation(csar, passingDummy.getPlatformDetails());
-        Transformation t = csar.getTransformations().get("passing");
-        t.setState(TransformationState.ERROR);
-        assertTrue(!service.startTransformation(t));
-    }
 
-    @Test
-    public void testStartTransformationPropertiesNotSet() throws Exception {
-        csar.modelSpecificProperties = new HashSet<>();
-        csar.modelSpecificProperties
-            .add(new Property("test", PropertyType.TEXT, RequirementType.TRANSFORMATION));
-        service.createTransformation(csar, passingDummy.getPlatformDetails());
-        Transformation t = csar.getTransformations().get("passing");
-        assertTrue(!service.startTransformation(t));
-    }
 
     @Test
     public void testStartTransformationValidState() throws Exception {
+        DummyCsar csar = new DummyCsar("test");
         service.createTransformation(csar, passingDummy.getPlatformDetails());
         Transformation t = csar.getTransformations().get("passing");
         assertTrue(service.startTransformation(t));
@@ -88,7 +101,7 @@ public class TransformationServiceTest {
         waitForTransformationStateChange(t);
         assertTrue(t.getState() == TransformationState.DONE);
     }
-    
+
     @Test
     public void testStartTransformationValidStateExecutionFail() throws Exception {
         service.createTransformation(csar, failingDummy.getPlatformDetails());
@@ -133,4 +146,14 @@ public class TransformationServiceTest {
             Thread.sleep(100);
         }
     }
+    
+    @Test
+    public void deleteTransformation() throws Exception {
+        Transformation transformation = new TransformationImpl(csar,TestPlugins.PLATFORM1);
+        csar.getTransformations().put(TestPlugins.PLATFORM1.id, transformation);
+        service.deleteTransformation(transformation);
+        
+        assertFalse(csar.getTransformations().containsValue(transformation));
+    }
+
 }

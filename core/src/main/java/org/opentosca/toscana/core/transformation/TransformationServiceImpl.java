@@ -18,8 +18,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 @Service
-public class TransformationServiceImpl
-    implements TransformationService {
+public class TransformationServiceImpl implements TransformationService {
 
     public Logger log = LoggerFactory.getLogger(getClass());
 
@@ -59,7 +58,7 @@ public class TransformationServiceImpl
     public boolean abortTransformation(Transformation transformation) {
         Future<?> task = tasks.get(transformation);
         //Return false 
-        if(task == null) {
+        if (task == null) {
             return false;
         }
         //Return false because the transformation has already finished
@@ -71,8 +70,8 @@ public class TransformationServiceImpl
 
     @Override
     public boolean deleteTransformation(Transformation transformation) {
-        if(transformation.getState() == TransformationState.TRANSFORMING) {
-            return  false;
+        if (transformation.getState() == TransformationState.TRANSFORMING) {
+            return false;
         }
         transformationDao.delete(transformation);
         tasks.remove(transformation);

@@ -6,13 +6,8 @@ import org.opentosca.toscana.core.csar.CsarService;
 import org.opentosca.toscana.core.csar.CsarServiceImpl;
 import org.opentosca.toscana.core.parse.CsarParseService;
 import org.opentosca.toscana.core.parse.CsarParseServiceImpl;
-import org.opentosca.toscana.core.plugin.PluginServiceImpl;
-import org.opentosca.toscana.core.transformation.TransformationDao;
-import org.opentosca.toscana.core.transformation.TransformationFilesystemDao;
-import org.opentosca.toscana.core.transformation.platform.PlatformService;
 import org.opentosca.toscana.core.util.FileSystem;
 import org.opentosca.toscana.core.util.Preferences;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -33,7 +28,7 @@ public class CoreConfiguration {
         CsarFilesystemDao bean = new CsarFilesystemDao(preferences());
         return bean;
     }
-    
+
     @Bean
     public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
         return new PropertySourcesPlaceholderConfigurer();

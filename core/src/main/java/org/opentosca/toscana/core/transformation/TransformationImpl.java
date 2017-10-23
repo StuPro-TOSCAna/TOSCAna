@@ -8,6 +8,7 @@ import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.util.HashSet;
@@ -92,5 +93,11 @@ class TransformationImpl implements Transformation {
     @Override
     public String toString() {
         return "Transformation [csarId='{}', plattformId='{}']".format(csar.getIdentifier(), targetPlatform.id);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return (o instanceof Transformation && ((Transformation) o).getPlatform().equals(this.getPlatform())
+                                            && ((Transformation) o).getCsar().equals(this.getCsar()));
     }
 }

@@ -38,6 +38,7 @@ public class TransformationFilesystemDao implements TransformationDao {
     public Transformation create(Csar csar, Platform platform) {
         Transformation transformation = new TransformationImpl(csar, platform);
         delete(transformation);
+        csar.getTransformations().put(platform.id, transformation);
         getRootDir(transformation).mkdir();
         return transformation;
     }
@@ -48,6 +49,7 @@ public class TransformationFilesystemDao implements TransformationDao {
         File transformationDir = getRootDir(transformation);
         try {
             FileUtils.deleteDirectory(transformationDir);
+            transformation.getCsar().getTransformations().remove(transformation.getPlatform().id);
             logger.info("deleted transformation directory '{}'", transformationDir);
         } catch (IOException e) {
             logger.error("failed to delete directory of transformation '{}'", transformation, e);
