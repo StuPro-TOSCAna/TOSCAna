@@ -24,15 +24,10 @@ class CsarImpl implements Csar {
      * null if not yet parsed
      */
     private TServiceTemplate template;
-    /**
-     * The root directory of the unzipped CSAR
-     */
-    private final File root;
     private final Log log;
 
-    public CsarImpl(String identifier, File root) {
+    public CsarImpl(String identifier) {
         this.identifier = identifier;
-        this.root = root;
         log = new Log();
     }
 
@@ -60,11 +55,6 @@ class CsarImpl implements Csar {
     public void setTemplate(TServiceTemplate template) {
         this.template = template;
 
-    }
-
-    @Override
-    public File getRoot() {
-        return root;
     }
 
     @Override

@@ -1,5 +1,8 @@
 package org.opentosca.toscana.core.plugin;
 
+import org.opentosca.toscana.core.csar.Csar;
+import org.opentosca.toscana.core.transformation.Transformation;
+
 import java.io.File;
 
 public class PluginFileAccess {
@@ -7,7 +10,7 @@ public class PluginFileAccess {
     private File transformationRootPath;
 
     //TODO Implement mechanism to get the paths
-    public PluginFileAccess(File csarRootPath, File transformationRootPath) {
+    public PluginFileAccess(Csar csar, Transformation transformation) {
         this.csarRootPath = csarRootPath;
         this.transformationRootPath = transformationRootPath;
     }

@@ -3,12 +3,17 @@ package org.opentosca.toscana.core.parse;
 import org.eclipse.winery.model.tosca.yaml.TServiceTemplate;
 import org.eclipse.winery.yaml.common.reader.yaml.Reader;
 import org.opentosca.toscana.core.csar.Csar;
+import org.opentosca.toscana.core.csar.CsarDao;
 import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import java.io.File;
 
 public class CsarParseServiceImpl implements CsarParseService {
 
     private Logger logger;
+    @Autowired
+    CsarDao csarDao;
 
     @Override
     public TServiceTemplate parse(Csar csar) throws InvalidCsarException {
@@ -37,7 +42,7 @@ public class CsarParseServiceImpl implements CsarParseService {
      */
     private File findEntrypoint(Csar csar) throws InvalidCsarException {
         logger = csar.getLog().getLogger(getClass());
-        File content = csar.getRoot();
+        File content = csarDao.getContentDir(csar);
         File[] entrypoints = content.listFiles((file, s) -> s.matches(".*\\.ya?ml$"));
         if (entrypoints.length == 1) {
             File entrypoint = entrypoints[0].getAbsoluteFile();

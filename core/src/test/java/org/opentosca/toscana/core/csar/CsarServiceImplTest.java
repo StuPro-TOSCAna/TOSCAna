@@ -3,7 +3,7 @@ package org.opentosca.toscana.core.csar;
 import org.junit.Before;
 import org.junit.Test;
 import org.opentosca.toscana.core.BaseSpringTest;
-import org.opentosca.toscana.core.TestData;
+import org.opentosca.toscana.core.testdata.TestCsars;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
@@ -28,7 +28,7 @@ public class CsarServiceImplTest extends BaseSpringTest {
 
     @Test
     public void submitCsar() throws Exception {
-        File file = TestData.CSAR_YAML_VALID_SIMPLETASK;
+        File file = TestCsars.CSAR_YAML_VALID_SIMPLETASK;
         InputStream stream = new FileInputStream(file);
         csarService.submitCsar(identifier, stream);
 
@@ -44,7 +44,7 @@ public class CsarServiceImplTest extends BaseSpringTest {
     public void deleteCsar() throws Exception {
         File csarDir = new File(dataDir, identifier);
         File contentDir = new File(csarDir, CsarFilesystemDao.CONTENT_DIR);
-        Csar csar = new CsarImpl(identifier, contentDir);
+        Csar csar = new CsarImpl(identifier);
 
         csarDir.mkdir();
         assertTrue(csarDir.isDirectory());

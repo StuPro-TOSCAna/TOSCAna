@@ -70,9 +70,4 @@ public interface Transformation {
      */
     Csar getCsar();
 
-    /**
-     * @return the root dir of this transformation
-     */
-    File getRoot();
-
 }

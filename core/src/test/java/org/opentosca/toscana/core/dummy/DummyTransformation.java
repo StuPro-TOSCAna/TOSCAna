@@ -69,11 +69,6 @@ public class DummyTransformation implements Transformation {
         return null;
     }
 
-    @Override
-    public File getRoot() {
-        return null;
-    }
-
     public void setReturnTargetArtifact(boolean returnTargetArtifact) {
         this.returnTargetArtifact = returnTargetArtifact;
     }

@@ -60,7 +60,7 @@ public class CsarFilesystemDao implements CsarDao {
         } catch (IOException e) {
             logger.error("failed to unzip csar with identifier '{}'", identifier, e);
         }
-        Csar csar = new CsarImpl(identifier, contentDir);
+        Csar csar = new CsarImpl(identifier);
         csarMap.put(identifier, csar);
         return csar;
     }
@@ -106,6 +106,22 @@ public class CsarFilesystemDao implements CsarDao {
         return csarList;
     }
     
+    @Override
+    public File getRootDir(Csar csar) {
+        return new File(dataDir, csar.getIdentifier());
+    }
+
+
+    @Override
+    public File getContentDir(Csar csar) {
+        return new File(getRootDir(csar), CONTENT_DIR);
+    }
+
+    @Override
+    public File getTransformationsDir(Csar csar) {
+        return new File(getRootDir(csar), TRANSFORMATION_DIR);
+    }
+
     /**
      * Reads csars from disks
      * post: csarMap reflects contents of DATA_DIR on disk
@@ -116,8 +132,7 @@ public class CsarFilesystemDao implements CsarDao {
         for (int i = 0; i < files.length; i++) {
             File file = files[i];
             if (isCsarDir(file)) {
-                File contentDir = new File(file, CONTENT_DIR);
-                Csar csar = new CsarImpl(file.getName(), contentDir);
+                Csar csar = new CsarImpl(file.getName());
                 csarMap.put(csar.getIdentifier(), csar);
             }
         }

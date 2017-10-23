@@ -19,7 +19,6 @@ class TransformationImpl implements Transformation {
 
     private final Csar csar;
     private final Platform targetPlatform;
-    private final File root;
     private final Log log;
     private final PropertyInstance properties;
     private TransformationState state = TransformationState.CREATED;
@@ -30,12 +29,10 @@ class TransformationImpl implements Transformation {
      *
      * @param csar           the subject of transformation
      * @param targetPlatform the target platform
-     * @param root           the root dir of this transformation
      */
-    TransformationImpl(Csar csar, Platform targetPlatform, File root) {
+    TransformationImpl(Csar csar, Platform targetPlatform) {
         this.csar = csar;
         this.targetPlatform = targetPlatform;
-        this.root = root;
 
         //Collect Possible Properties From the Platform and the Model
         Set<Property> properties = new HashSet<>();
@@ -70,11 +67,6 @@ class TransformationImpl implements Transformation {
     }
 
     @Override
-    public File getRoot() {
-        return root;
-    }
-
-    @Override
     public Log getLog() {
         return log;
     }
@@ -97,4 +89,8 @@ class TransformationImpl implements Transformation {
         return properties;
     }
 
+    @Override
+    public String toString() {
+        return "Transformation [csarId='{}', plattformId='{}']".format(csar.getIdentifier(), targetPlatform.id);
+    }
 }

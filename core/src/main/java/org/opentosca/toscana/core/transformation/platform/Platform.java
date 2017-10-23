@@ -37,7 +37,7 @@ public class Platform {
      * @param name displayable name of platform
      * @see #Platform(String, String, Set<Property>)
      */
-    Platform(String id, String name) {
+    public Platform(String id, String name) {
         this(id, name, new HashSet<>());
     }
 

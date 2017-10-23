@@ -34,11 +34,6 @@ public interface Csar {
     public void setTemplate(TServiceTemplate template);
 
     /**
-     * @return the root directory of the unzipped CSAR artifact which belongs to this csar
-     */
-    public File getRoot();
-
-    /**
      * @return the log of this csar, which e.g. contains information about parsing
      */
     public Log getLog();

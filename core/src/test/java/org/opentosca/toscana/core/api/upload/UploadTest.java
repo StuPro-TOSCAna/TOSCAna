@@ -10,14 +10,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.opentosca.toscana.core.Main;
-import org.opentosca.toscana.core.TestData;
+import org.opentosca.toscana.core.testdata.TestCsars;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -58,7 +56,7 @@ public class UploadTest {
         System.err.println("Server started!");
         
         RequestBody file = RequestBody.create(MediaType.parse("multipart/form-data"),
-            TestData.CSAR_YAML_VALID_SIMPLETASK);
+            TestCsars.CSAR_YAML_VALID_SIMPLETASK);
 
         MultipartBody.Part p = MultipartBody.Part.createFormData("file","test.csar",file);
         

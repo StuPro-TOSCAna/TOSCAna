@@ -50,11 +50,6 @@ public class DummyCsar implements Csar {
     }
 
     @Override
-    public File getRoot() {
-        return null;
-    }
-
-    @Override
     public Log getLog() {
         return null;
     }

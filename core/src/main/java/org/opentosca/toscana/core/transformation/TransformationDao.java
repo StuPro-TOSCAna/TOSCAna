@@ -3,6 +3,7 @@ package org.opentosca.toscana.core.transformation;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -39,11 +40,17 @@ public interface TransformationDao {
      * @param csar
      * @return
      */
-    Transformation find(Csar csar);
+    List<Transformation> find(Csar csar);
 
     /**
      * Returns all transformation objects
      * @return
      */
     List<Transformation> findAll();
+
+    /**
+     * @param transformation
+     * @return the root directory of given transformation
+     */
+    File getRootDir(Transformation transformation);
 }

@@ -12,7 +12,7 @@ public final class TransformationContext {
 
     public TransformationContext(Transformation transformation) {
         this.transformation = transformation;
-        this.access = new PluginFileAccess(transformation.getCsar().getRoot(), transformation.getRoot());
+        this.access = new PluginFileAccess(transformation.getCsar(), transformation);
 
     }
 
