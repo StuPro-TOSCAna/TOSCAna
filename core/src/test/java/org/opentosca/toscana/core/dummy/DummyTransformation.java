@@ -8,6 +8,8 @@ import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
 
+import java.io.File;
+
 public class DummyTransformation implements Transformation {
 
     private TransformationState state = TransformationState.INPUT_REQUIRED;
@@ -64,6 +66,11 @@ public class DummyTransformation implements Transformation {
 
     @Override
     public Csar getCsar() {
+        return null;
+    }
+
+    @Override
+    public File getRoot() {
         return null;
     }
 

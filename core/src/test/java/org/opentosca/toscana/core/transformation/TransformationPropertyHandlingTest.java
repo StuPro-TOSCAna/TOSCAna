@@ -10,6 +10,7 @@ import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.core.transformation.properties.PropertyType;
 import org.opentosca.toscana.core.transformation.properties.RequirementType;
 
+import java.io.File;
 import java.util.HashSet;
 import java.util.Map;
 
@@ -32,7 +33,7 @@ public class TransformationPropertyHandlingTest {
             props.add(new Property("prop-deploy-" + i, PropertyType.UNSIGNED_INTEGER, RequirementType.DEPLOYMENT));
         }
         Platform p = new Platform("test", "Test Platform", props);
-        transformation = new TransformationImpl(csar, p);
+        transformation = new TransformationImpl(csar, p, new File(""));
     }
 
     @Test

@@ -23,22 +23,21 @@ public class TransformationServiceImpl
 
     public Logger log = LoggerFactory.getLogger(getClass());
 
-    private final CsarDao csarDao;
+    private final TransformationDao transformationDao;
     private final PluginService pluginService;
 
     private Map<Transformation, Future<?>> tasks = new HashMap<>();
     private ExecutorService executor = Executors.newSingleThreadExecutor();
 
     @Autowired
-    public TransformationServiceImpl(CsarDao csarDao, PluginService pluginService) {
-        this.csarDao = csarDao;
+    public TransformationServiceImpl(TransformationDao transformationDao, PluginService pluginService) {
+        this.transformationDao = transformationDao;
         this.pluginService = pluginService;
     }
 
     @Override
     public void createTransformation(Csar csar, Platform targetPlatform) {
-        Transformation transformation = new TransformationImpl(csar, targetPlatform);
-        csar.getTransformations().put(targetPlatform.id, transformation);
+        transformationDao.create(csar, targetPlatform);
     }
 
     @Override
@@ -75,9 +74,7 @@ public class TransformationServiceImpl
         if(transformation.getState() == TransformationState.TRANSFORMING) {
             return  false;
         }
-        //TODO Add mechanism to tell the csar dao to delete the working directories and artifacts.
-        Csar csar = transformation.getCsar();
-        csar.getTransformations().remove(transformation.getPlatform().id);
+        transformationDao.delete(transformation);
         tasks.remove(transformation);
         return true;
     }

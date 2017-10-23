@@ -6,7 +6,7 @@ import java.util.List;
 public interface CsarDao {
 
     /**
-     * Persists given CSAR.
+     * Persists given CSAR inputstream.
      * If a CSAR with the same name already exists, overwrites the old CSAR and all of its related transformations
      *
      * @param identifier  a unique idenfifier for the new csar

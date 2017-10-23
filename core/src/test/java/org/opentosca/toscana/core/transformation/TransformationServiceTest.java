@@ -23,7 +23,7 @@ import static org.mockito.Mockito.when;
 @RunWith(JUnit4.class)
 public class TransformationServiceTest {
 
-    private CsarDao dao;
+    private TransformationDao dao;
 
     private DummyCsar csar = new DummyCsar("test");
     private TransformationServiceImpl service;
@@ -35,8 +35,8 @@ public class TransformationServiceTest {
 
     @Before
     public void setUp() throws Exception {
-        dao = mock(CsarDao.class);
-        when(dao.findAll()).thenReturn(Collections.singletonList(csar));
+        dao = mock(TransformationDao.class);
+//        when(dao.findAll()).thenReturn(Collections.singletonList(csar));
         service = new TransformationServiceImpl(dao,
             new PluginServiceImpl(Arrays.asList(passingDummy, failingDummy)));
     }
