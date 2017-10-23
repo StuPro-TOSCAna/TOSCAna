@@ -33,13 +33,7 @@ public class CoreConfiguration {
         CsarFilesystemDao bean = new CsarFilesystemDao(preferences());
         return bean;
     }
-
-    @Bean
-    public TransformationDao transformationDao() {
-        TransformationFilesystemDao bean = new TransformationFilesystemDao(csarDao());
-        return bean;
-    }
-
+    
     @Bean
     public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
         return new PropertySourcesPlaceholderConfigurer();

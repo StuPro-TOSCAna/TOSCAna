@@ -8,14 +8,15 @@ import org.opentosca.toscana.core.transformation.platform.PlatformService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Service
 public class TransformationFilesystemDao implements TransformationDao {
 
     private final static Logger logger = LoggerFactory.getLogger(TransformationFilesystemDao.class);
@@ -26,9 +27,11 @@ public class TransformationFilesystemDao implements TransformationDao {
      * contains all transformations. filesystem is read once during construction
      */
     private final List<Transformation> transformationList = new ArrayList<>();
-    
-    public TransformationFilesystemDao(CsarDao csarDao){
+
+    @Autowired
+    public TransformationFilesystemDao(CsarDao csarDao, PlatformService service) {
         this.csarDao = csarDao;
+        this.platformService = service;
     }
 
     @Override
@@ -77,7 +80,7 @@ public class TransformationFilesystemDao implements TransformationDao {
     private void readFromDisk() {
         for (Csar csar : csarDao.findAll()) {
             File[] transformationFiles = csarDao.getTransformationsDir(csar).listFiles();
-            for (File transformationFile : transformationFiles){
+            for (File transformationFile : transformationFiles) {
                 Platform platform = getPlatform(transformationFile);
                 Transformation transformation = new TransformationImpl(csar, platform);
                 // TODO set transformation state
@@ -85,23 +88,18 @@ public class TransformationFilesystemDao implements TransformationDao {
             }
         }
     }
-    
-    private Platform getPlatform(File dir){
-        if (dir.isDirectory()){
+
+    private Platform getPlatform(File dir) {
+        if (dir.isDirectory()) {
             return platformService.findById(dir.getName());
         } else {
             return null;
         }
-        
+
     }
 
     @Override
     public File getRootDir(Transformation transformation) {
         return new File(csarDao.getTransformationsDir(transformation.getCsar()), transformation.getPlatform().id);
-    }
-    
-    @Autowired
-    public void setPlatformService(PlatformService platformService){
-        this.platformService = platformService;
     }
 }
