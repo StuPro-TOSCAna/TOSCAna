@@ -50,20 +50,6 @@ class TransformationImpl implements Transformation {
         this.log = new Log();
     }
 
-//    @Override
-//    public Logger getTransformationLogger(Class<?> clazz) {
-////        Logger tLog = (Logger) LoggerFactory.getLogger(clazz);
-////
-////        TransformationAppender appender = new TransformationAppender(log);
-////        appender.setContext(tLog.getLoggerContext());
-////        appender.start();
-////        tLog.addAppender(appender);
-////
-////        //TODO Add File Appender once mechanism for getting the filepath has been implemented.
-////
-////        return tLog;
-//    }
-
     @Override
     public TransformationState getState() {
         return state;
