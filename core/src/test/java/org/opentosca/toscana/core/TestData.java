@@ -26,7 +26,6 @@ public class TestData {
     private final static Logger logger = LoggerFactory.getLogger(TestData.class.getName());
 
     private final static File CSAR_DIR = new File("src/test/resources/csars");
-    private final static File XML_DIR = new File(CSAR_DIR, "xml");
     private final static File YAML_DIR = new File(CSAR_DIR, "yaml");
 
 
@@ -34,9 +33,6 @@ public class TestData {
     public final static File CSAR_YAML_VALID_SIMPLETASK = new File(YAML_DIR, "valid/simple-task.csar");
     public static final File CSAR_YAML_INVALID_ENTRYPOINT_MISSING = new File(YAML_DIR, "invalid/entrypoint_missing.csar");
     public static final File CSAR_YAML_INVALID_ENTRYPOINT_AMBIGUOUS = new File(YAML_DIR, "invalid/entrypoint_ambiguous.csar");
-
-    // xml csars
-    public final static File CSAR_XML_VALID_MOODLE = new File(XML_DIR, "valid/Moodle.csar");
 
 
     /**

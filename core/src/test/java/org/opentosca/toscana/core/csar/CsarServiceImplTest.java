@@ -28,7 +28,7 @@ public class CsarServiceImplTest extends BaseSpringTest {
 
     @Test
     public void submitCsar() throws Exception {
-        File file = TestData.CSAR_XML_VALID_MOODLE;
+        File file = TestData.CSAR_YAML_VALID_SIMPLETASK;
         InputStream stream = new FileInputStream(file);
         csarService.submitCsar(identifier, stream);
 
