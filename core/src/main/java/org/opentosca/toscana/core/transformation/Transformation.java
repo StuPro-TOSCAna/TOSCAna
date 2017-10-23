@@ -10,6 +10,8 @@ import org.opentosca.toscana.core.transformation.properties.RequirementType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+
 public interface Transformation {
 
     /**
@@ -53,16 +55,6 @@ public interface Transformation {
     }
 
     /**
-     * Creates a new Transfomation Context for the given transformation
-     *
-     * @return
-     */
-    default TransformationContext toTransformationContext() {
-        return new TransformationContext(this,
-            new PluginFileAccess(null, null));
-    }
-
-    /**
      * Returns the log of this transformation
      */
     Log getLog();
@@ -77,5 +69,10 @@ public interface Transformation {
      * @return Returns the underlying Csar of the transformation
      */
     Csar getCsar();
+
+    /**
+     * @return the root dir of this transformation
+     */
+    File getRoot();
 
 }

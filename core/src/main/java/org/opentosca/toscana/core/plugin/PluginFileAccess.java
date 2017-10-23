@@ -3,11 +3,11 @@ package org.opentosca.toscana.core.plugin;
 import java.io.File;
 
 public class PluginFileAccess {
-    private String csarRootPath;
-    private String transformationRootPath;
+    private File csarRootPath;
+    private File transformationRootPath;
 
     //TODO Implement mechanism to get the paths
-    public PluginFileAccess(String csarRootPath, String transformationRootPath) {
+    public PluginFileAccess(File csarRootPath, File transformationRootPath) {
         this.csarRootPath = csarRootPath;
         this.transformationRootPath = transformationRootPath;
     }

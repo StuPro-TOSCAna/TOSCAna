@@ -6,16 +6,13 @@ import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
 import org.slf4j.Logger;
 
 public final class TransformationContext {
-    private Transformation transformation;
-    private PluginFileAccess access;
+    private final Transformation transformation;
+    private final PluginFileAccess access;
 
-    public PluginFileAccess getPluginFileAccess() {
-        return access;
-    }
 
-    protected TransformationContext(Transformation transformation, PluginFileAccess access) {
+    public TransformationContext(Transformation transformation) {
         this.transformation = transformation;
-        this.access = access;
+        this.access = new PluginFileAccess(transformation.getCsar().getRoot(), transformation.getRoot());
 
     }
 
@@ -33,5 +30,9 @@ public final class TransformationContext {
 
     public Logger getLogger(Class clazz) {
         return transformation.getLog().getLogger(clazz);
+    }
+
+    public PluginFileAccess getPluginFileAccess() {
+        return access;
     }
 }

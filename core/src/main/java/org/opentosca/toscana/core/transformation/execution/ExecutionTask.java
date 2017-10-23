@@ -3,6 +3,7 @@ package org.opentosca.toscana.core.transformation.execution;
 import org.opentosca.toscana.core.plugin.PluginService;
 import org.opentosca.toscana.core.plugin.TransformationPlugin;
 import org.opentosca.toscana.core.transformation.Transformation;
+import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.core.transformation.TransformationService;
 import org.opentosca.toscana.core.transformation.TransformationState;
 import org.slf4j.Logger;
@@ -33,7 +34,7 @@ public class ExecutionTask implements Runnable {
             transformation.getPlatform().id);
         transformation.setState(TransformationState.TRANSFORMING);
         try {
-            plugin.transform(transformation.toTransformationContext());
+            plugin.transform(new TransformationContext(transformation));
         } catch (Exception e) {
             log.error("Transforming of {}/{} has errored!",
                 transformation.getCsar().getIdentifier(),
