@@ -3,7 +3,6 @@ package org.opentosca.toscana.core.transformation;
 import org.junit.Before;
 import org.junit.Test;
 import org.opentosca.toscana.core.BaseSpringTest;
-import org.opentosca.toscana.core.TestProfiles;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.dummy.DummyCsar;
 import org.opentosca.toscana.core.dummy.ExecutionDummyPlugin;
@@ -13,40 +12,38 @@ import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.core.transformation.properties.PropertyType;
 import org.opentosca.toscana.core.transformation.properties.RequirementType;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.io.FileNotFoundException;
 import java.util.HashSet;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-@ActiveProfiles(TestProfiles.DUMMY_PLUGIN_SERVICE_TEST)
 public class TransformationServiceImplTest extends BaseSpringTest {
-    
+
     @Autowired
     private TransformationService service;
     @Autowired
     private TestCsars testCsars;
-    
+
     private Csar csar;
-    
+
     private ExecutionDummyPlugin passingDummy = TestPlugins.PASSING_DUMMY;
     private ExecutionDummyPlugin failingDummy = TestPlugins.FAILING_DUMMY;
-
 
 
     @Before
     public void setUp() throws FileNotFoundException {
         csar = testCsars.getCsar(TestCsars.CSAR_YAML_VALID_SIMPLETASK);
-        
+
     }
-    
+
     @Test
     public void createTransformation() throws Exception {
         service.createTransformation(csar, TestPlugins.PLATFORM1);
-        Transformation expected = new TransformationImpl(csar,TestPlugins.PLATFORM1);
+        Transformation expected = new TransformationImpl(csar, TestPlugins.PLATFORM1);
         assertTrue(csar.getTransformations().containsValue(expected));
-        
+
     }
 
     @Test
@@ -87,8 +84,6 @@ public class TransformationServiceImplTest extends BaseSpringTest {
         Transformation t = csar.getTransformations().get("passing");
         assertTrue(t.getState() == TransformationState.INPUT_REQUIRED);
     }
-
-
 
 
     @Test
@@ -146,13 +141,13 @@ public class TransformationServiceImplTest extends BaseSpringTest {
             Thread.sleep(100);
         }
     }
-    
+
     @Test
     public void deleteTransformation() throws Exception {
-        Transformation transformation = new TransformationImpl(csar,TestPlugins.PLATFORM1);
+        Transformation transformation = new TransformationImpl(csar, TestPlugins.PLATFORM1);
         csar.getTransformations().put(TestPlugins.PLATFORM1.id, transformation);
         service.deleteTransformation(transformation);
-        
+
         assertFalse(csar.getTransformations().containsValue(transformation));
     }
 

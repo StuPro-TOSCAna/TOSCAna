@@ -4,6 +4,7 @@ import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Service
+@Component
 public class PluginServiceImpl implements PluginService {
 
     private final Logger log = LoggerFactory.getLogger(getClass());

@@ -7,10 +7,7 @@ import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.properties.Property;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 class CsarImpl implements Csar {
 
@@ -73,6 +70,12 @@ class CsarImpl implements Csar {
         return new HashCodeBuilder(17, 31)
             .append(identifier)
             .toHashCode();
+    }
+
+    public void setTransformations(List<Transformation> transformations) {
+        for (Transformation transformation : transformations){
+            this.transformations.put(transformation.getPlatform().id, transformation);
+        }
     }
 }
 

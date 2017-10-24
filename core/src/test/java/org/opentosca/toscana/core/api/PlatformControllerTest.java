@@ -5,7 +5,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opentosca.toscana.core.CoreConfiguration;
 import org.opentosca.toscana.core.Main;
+import org.opentosca.toscana.core.TestCoreConfiguration;
 import org.opentosca.toscana.core.plugin.PluginService;
+import org.opentosca.toscana.core.testdata.TestPlugins;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.platform.PlatformService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -29,19 +32,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(PlatformController.class)
-@ContextConfiguration(classes = {CoreConfiguration.class, Main.class})
+@ContextConfiguration(classes = {CoreConfiguration.class})
 @DirtiesContext(
     classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD
 )
 public class PlatformControllerTest {
 
-    private static Platform[] platforms = {
-        new Platform("kubernetes", "Kubernetes", new HashSet<>()),
-        new Platform("open-stack", "OpenStack", new HashSet<>()),
-        new Platform("cloud-foundry", "CloudFoundry", new HashSet<>())
-    };
+    private static List<Platform> platforms = TestPlugins.PLATFORMS;
 
-    private static List<String> ids = Arrays.asList("kubernetes", "open-stack", "cloud-foundry");
+    private static List<String> ids = platforms.stream().map(platform -> platform.id)
+        .collect(Collectors.toList());
 
     @MockBean
     private PluginService provider;
@@ -51,9 +51,8 @@ public class PlatformControllerTest {
 
     @Before
     public void setUp() throws Exception {
-        when(provider.getSupportedPlatforms()).thenReturn(Arrays.asList(platforms));
-        for (int i = 0; i < platforms.length; i++) {
-            Platform p = platforms[i];
+        when(provider.getSupportedPlatforms()).thenReturn(platforms);
+        for (Platform p : platforms){
             when(provider.findById(p.id)).thenReturn(p);
         }
     }

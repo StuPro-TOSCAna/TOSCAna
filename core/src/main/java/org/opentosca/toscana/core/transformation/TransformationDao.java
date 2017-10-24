@@ -43,12 +43,6 @@ public interface TransformationDao {
     List<Transformation> find(Csar csar);
 
     /**
-     * Returns all transformation objects
-     * @return
-     */
-    List<Transformation> findAll();
-
-    /**
      * @param transformation
      * @return the root directory of given transformation
      */

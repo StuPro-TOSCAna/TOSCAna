@@ -3,6 +3,7 @@ package org.opentosca.toscana.core.csar;
 import org.junit.Test;
 import org.opentosca.toscana.core.BaseSpringTest;
 import org.opentosca.toscana.core.testdata.TestCsars;
+import org.opentosca.toscana.core.testdata.TestPlugins;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +52,21 @@ public class CsarFilesystemDaoTest extends BaseSpringTest {
         Csar csar = csarDao.find(identifier);
         assertNotNull(csar);
         assertEquals(identifier, csar.getIdentifier());
+    }
+
+    @Test
+    public void returnedCsarHasPopulatedTransformations() {
+        // test whether CsarDao calls TransformationDao internally to populate list of transformations
+        String identifier = createFakeCsarDirectories(1)[0];
+        File csarDir = new File(preferences.getDataDir(), identifier);
+        File transformationsDir = new File(csarDir, "transformations");
+        TestPlugins.createFakeTransformationsOnDisk(transformationsDir, TestPlugins.PLATFORMS);
+
+        Csar csar = csarDao.find(identifier);
+
+        assertEquals(TestPlugins.PLATFORMS.size(), csar.getTransformations().size());
+
+
     }
 
     @Test

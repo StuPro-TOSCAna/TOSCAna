@@ -22,29 +22,24 @@ public class TestCoreConfiguration extends CoreConfiguration {
     }
 
     @Bean
-    @Profile(value = TestProfiles.DUMMY_PLUGIN_SERVICE_TEST)
-    @Primary
     public PlatformService platformService() {
         PluginServiceImpl bean = new PluginServiceImpl(TestPlugins.PLUGINS);
         return bean;
     }
     
     @Bean
-    @Profile(value = TestProfiles.DUMMY_PLUGIN_SERVICE_TEST)
-    @Primary
     public PluginService pluginService() {
         PluginServiceImpl bean = new PluginServiceImpl(TestPlugins.PLUGINS);
         return bean;
     }
 
-    @Profile(value = TestProfiles.DUMMY_PLUGIN_SERVICE_TEST)
     @Bean
     public TransformationDao transformationDao() {
-        TransformationFilesystemDao bean = new TransformationFilesystemDao(csarDao(), platformService());
+        TransformationFilesystemDao bean = new TransformationFilesystemDao();
+        bean.setPlatformService(platformService());
         return bean;
     }
 
-    @Profile(value = TestProfiles.DUMMY_PLUGIN_SERVICE_TEST)
     @Bean
     public TransformationService transformationService() {
         TransformationServiceImpl bean = new TransformationServiceImpl(transformationDao(), pluginService());

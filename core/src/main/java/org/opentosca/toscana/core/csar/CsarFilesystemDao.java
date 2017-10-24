@@ -1,6 +1,8 @@
 package org.opentosca.toscana.core.csar;
 
 import org.apache.commons.io.FileUtils;
+import org.opentosca.toscana.core.transformation.Transformation;
+import org.opentosca.toscana.core.transformation.TransformationDao;
 import org.opentosca.toscana.core.util.Preferences;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,10 +30,12 @@ public class CsarFilesystemDao implements CsarDao {
      */
     public final static String CONTENT_DIR = "content";
 
+    private TransformationDao transformationDao;
     private final File dataDir;
 
     // a map containing all csars. it should be kept in sync with the status of the file system
     private final Map<String, Csar> csarMap = new HashMap<>();
+    
 
     @Autowired
     public CsarFilesystemDao(Preferences preferences) {
@@ -132,8 +136,10 @@ public class CsarFilesystemDao implements CsarDao {
         for (int i = 0; i < files.length; i++) {
             File file = files[i];
             if (isCsarDir(file)) {
-                Csar csar = new CsarImpl(file.getName());
+                CsarImpl csar = new CsarImpl(file.getName());
                 csarMap.put(csar.getIdentifier(), csar);
+                List<Transformation> transformations = transformationDao.find(csar);
+                csar.setTransformations(transformations);
             }
         }
         logger.debug("in-memory csars in synced with file system");
@@ -151,5 +157,11 @@ public class CsarFilesystemDao implements CsarDao {
             return (contentDir.exists() && transformationDir.exists());
         }
         return false;
+    }
+
+    @Autowired
+    public void setTransformationDao(TransformationDao transformationDao) {
+        this.transformationDao = transformationDao;
+        readFromDisk();
     }
 }
