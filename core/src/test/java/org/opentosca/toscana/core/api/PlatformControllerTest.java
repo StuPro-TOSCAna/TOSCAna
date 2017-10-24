@@ -3,6 +3,7 @@ package org.opentosca.toscana.core.api;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.opentosca.toscana.core.CoreConfiguration;
 import org.opentosca.toscana.core.Main;
 import org.opentosca.toscana.core.TestCoreConfiguration;
@@ -13,8 +14,10 @@ import org.opentosca.toscana.core.transformation.platform.PlatformService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -32,10 +35,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(PlatformController.class)
-@ContextConfiguration(classes = {CoreConfiguration.class})
+//@ActiveProfiles("controller_test")
 @DirtiesContext(
     classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD
 )
+@ContextConfiguration(classes = {CoreConfiguration.class})
 public class PlatformControllerTest {
 
     private static List<Platform> platforms = TestPlugins.PLATFORMS;
@@ -45,12 +49,14 @@ public class PlatformControllerTest {
 
     @MockBean
     private PluginService provider;
-
+    
     @Autowired
     private MockMvc mvc;
 
     @Before
     public void setUp() throws Exception {
+        provider = Mockito.mock(PluginService.class);
+        
         when(provider.getSupportedPlatforms()).thenReturn(platforms);
         for (Platform p : platforms){
             when(provider.findById(p.id)).thenReturn(p);

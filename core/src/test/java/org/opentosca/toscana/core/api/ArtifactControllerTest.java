@@ -45,7 +45,9 @@ public class ArtifactControllerTest {
 
     private File testdir = new File("test-temp");
 
-    private byte[][] hashes = new byte[25][];
+    private final int count= 5;
+    
+    private byte[][] hashes = new byte[count][];
 
     private MessageDigest digest;
 
@@ -58,7 +60,7 @@ public class ArtifactControllerTest {
         //misc init
         Random rnd = new Random(1245);
         digest = MessageDigest.getInstance("SHA-256");
-        for (int i = 0; i < 25; i++) {
+        for (int i = 0; i < count; i++) {
             File dummy = new File(testdir, "test-" + i + ".bin");
             log.info("Creating dummy file {}", dummy.getAbsolutePath());
 
@@ -119,8 +121,8 @@ public class ArtifactControllerTest {
         //validate body contents
         JSONObject data = new JSONObject(result.getResponse().getContentAsString());
         JSONArray content = data.getJSONArray("content");
-        assertTrue(content.length() == 25);
-        boolean[] found = new boolean[25];
+        assertTrue(content.length() == count);
+        boolean[] found = new boolean[count];
         for (int i = 0; i < content.length(); i++) {
             JSONObject obj = content.getJSONObject(i);
             log.info("Validating {}", obj.toString());

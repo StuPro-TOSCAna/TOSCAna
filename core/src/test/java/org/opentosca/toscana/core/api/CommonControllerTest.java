@@ -4,6 +4,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opentosca.toscana.core.BaseSpringTest;
+import org.opentosca.toscana.core.CoreConfiguration;
+import org.opentosca.toscana.core.Main;
 import org.opentosca.toscana.core.TestCoreConfiguration;
 import org.opentosca.toscana.core.util.FileSystem;
 import org.opentosca.toscana.core.util.status.StatusService;
@@ -13,7 +15,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Profile;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -29,14 +33,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DirtiesContext(
     classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD
 )
-@ContextConfiguration(classes = {TestCoreConfiguration.class})
+@ActiveProfiles("controller_test")
 public class CommonControllerTest {
 
     private static final Logger log = LoggerFactory.getLogger(CommonControllerTest.class);
 
     @Autowired
     private MockMvc mvc;
-
+    
+    
+    
     @MockBean
     private FileSystem fileSystem;
 

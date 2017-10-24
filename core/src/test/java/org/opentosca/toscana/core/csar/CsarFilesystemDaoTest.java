@@ -7,6 +7,7 @@ import org.opentosca.toscana.core.testdata.TestPlugins;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,6 +16,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
+@ActiveProfiles("dummy_plugins")
 public class CsarFilesystemDaoTest extends BaseSpringTest {
 
     private final static Logger logger = LoggerFactory.getLogger(CsarFilesystemDaoTest.class.getName());

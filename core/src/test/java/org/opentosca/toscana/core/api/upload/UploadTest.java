@@ -9,7 +9,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-import org.opentosca.toscana.core.BaseSpringTest;
 import org.opentosca.toscana.core.Main;
 import org.opentosca.toscana.core.testdata.TestCsars;
 import retrofit2.Response;
@@ -21,7 +20,8 @@ import java.io.IOException;
 import static org.junit.Assert.fail;
 import static org.opentosca.toscana.core.util.FileUtils.delete;
 
-public class UploadTest extends BaseSpringTest{
+@RunWith(JUnit4.class)
+public class UploadTest {
 
     public static final String TEMPLATE_HASH
         = "d381ef5524ddbe0306a3e5034bed5ecaae66ac04134c474b7ac14d7e06a714cb";
@@ -45,12 +45,15 @@ public class UploadTest extends BaseSpringTest{
         api = retrofit.create(TOSCAnaUploadInterface.class);
 
         springThread = new Thread(() -> {
-            Main.main(new String[]{"--datadir=" + tempDir.getAbsolutePath()});
+            Main.main(new String[]{
+                "--datadir=" + tempDir.getAbsolutePath(),
+                "--spring.profiles.active=controller_test"
+            });
         });
         springThread.start();
     }
 
-    @Test(timeout = 5000)
+    @Test(timeout = 10000)
     public void testFileUpload() throws Exception {
         waitForServerToStart();
         System.err.println("Server started!");
@@ -106,5 +109,5 @@ public class UploadTest extends BaseSpringTest{
         springThread.stop();
     }
 
-    
+
 }

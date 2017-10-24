@@ -42,23 +42,4 @@ public class CoreConfiguration {
     public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
         return new PropertySourcesPlaceholderConfigurer();
     }
-
-
-    //TODO Replace with filesystem implementation
-//    @Bean
-//    public FileSystem fileSystem() {
-//        return new FileSystem();
-//    }
-
-//    @Bean
-//    public Preferences preferences() {
-//        Preferences bean = new Preferences();
-//        return bean;
-//    }
-
-//    @Bean
-//    public CsarParseService csarParser() {
-//        CsarParseServiceImpl bean = new CsarParseServiceImpl();
-//        return bean;
-//    }
 }
