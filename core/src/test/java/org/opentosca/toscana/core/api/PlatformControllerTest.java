@@ -4,30 +4,18 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.opentosca.toscana.core.CoreConfiguration;
-import org.opentosca.toscana.core.Main;
-import org.opentosca.toscana.core.TestCoreConfiguration;
 import org.opentosca.toscana.core.plugin.PluginService;
 import org.opentosca.toscana.core.plugin.PluginServiceImpl;
 import org.opentosca.toscana.core.testdata.TestPlugins;
 import org.opentosca.toscana.core.transformation.platform.Platform;
-import org.opentosca.toscana.core.transformation.platform.PlatformService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
-import org.springframework.context.annotation.Profile;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -63,7 +51,7 @@ public class PlatformControllerTest {
         provider = Mockito.mock(PluginService.class);
         
         when(provider.getSupportedPlatforms()).thenReturn(platforms);
-        for (Platform p : platforms){
+        for (Platform p : platforms) {
             when(provider.findById(p.id)).thenReturn(p);
         }
 

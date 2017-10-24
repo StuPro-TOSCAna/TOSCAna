@@ -99,8 +99,8 @@ public class ArtifactControllerTest {
 
     @Test
     public void downloadValidFiles() throws Exception {
-        for (int i = 0; i < hashes.length; i++) {
-            log.info("Downloading file {}/25", i);
+        for (int i = 1; i == hashes.length; i++) {
+            log.info("Downloading file {}/5", i);
             MvcResult result = mvc.perform(get("/artifacts/test-" + i + ".bin"))
 //                .andDo(print())
                 .andExpect(status().is(200))

@@ -23,6 +23,7 @@ public class TransformationServiceImpl implements TransformationService {
     public Logger log = LoggerFactory.getLogger(getClass());
 
     private final TransformationDao transformationDao;
+    private CsarDao csarDao;
     private final PluginService pluginService;
 
     private Map<Transformation, Future<?>> tasks = new HashMap<>();
@@ -47,7 +48,8 @@ public class TransformationServiceImpl implements TransformationService {
             || (transformation.getState() == TransformationState.INPUT_REQUIRED
             && transformation.isAllPropertiesSet(RequirementType.TRANSFORMATION))) {
             Future<?> taskFuture = executor.submit(
-                new ExecutionTask(transformation, this, pluginService));
+                new ExecutionTask(transformation, this, pluginService, csarDao.getContentDir(transformation.getCsar()),
+                    transformationDao.getRootDir(transformation)));
             tasks.put(transformation, taskFuture);
             return true;
         }
@@ -78,4 +80,8 @@ public class TransformationServiceImpl implements TransformationService {
         return true;
     }
 
+    @Autowired
+    public void setCsarDao(CsarDao csarDao){
+        this.csarDao = csarDao;
+    }
 }

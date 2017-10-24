@@ -55,7 +55,6 @@ public class CsarFilesystemDao implements CsarDao {
         }
 
         readFromDisk();
-        
         this.transformationDao = transformationDao;
     }
 
@@ -166,10 +165,4 @@ public class CsarFilesystemDao implements CsarDao {
         }
         return false;
     }
-
-//    @Autowired
-//    public void setTransformationDao(TransformationDao transformationDao) {
-//        this.transformationDao = transformationDao;
-//        readFromDisk();
-//    }
 }
