@@ -41,8 +41,6 @@ public class CommonControllerTest {
     @Autowired
     private MockMvc mvc;
     
-    
-    
     @MockBean
     private FileSystem fileSystem;
 

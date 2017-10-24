@@ -8,6 +8,7 @@ import org.opentosca.toscana.core.CoreConfiguration;
 import org.opentosca.toscana.core.Main;
 import org.opentosca.toscana.core.TestCoreConfiguration;
 import org.opentosca.toscana.core.plugin.PluginService;
+import org.opentosca.toscana.core.plugin.PluginServiceImpl;
 import org.opentosca.toscana.core.testdata.TestPlugins;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.platform.PlatformService;
@@ -15,7 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -34,12 +37,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(PlatformController.class)
-//@ActiveProfiles("controller_test")
+@WebMvcTest(value = PlatformController.class)
+@ActiveProfiles({"controller_test"})
 @DirtiesContext(
     classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD
 )
-@ContextConfiguration(classes = {CoreConfiguration.class})
 public class PlatformControllerTest {
 
     private static List<Platform> platforms = TestPlugins.PLATFORMS;
@@ -47,11 +49,14 @@ public class PlatformControllerTest {
     private static List<String> ids = platforms.stream().map(platform -> platform.id)
         .collect(Collectors.toList());
 
-    @MockBean
+    //@MockBean
     private PluginService provider;
     
     @Autowired
     private MockMvc mvc;
+    
+    @Autowired
+    private PluginService prov;
 
     @Before
     public void setUp() throws Exception {
@@ -61,6 +66,8 @@ public class PlatformControllerTest {
         for (Platform p : platforms){
             when(provider.findById(p.id)).thenReturn(p);
         }
+
+        System.out.println(prov instanceof PluginServiceImpl);
     }
 
     @Test
@@ -80,7 +87,7 @@ public class PlatformControllerTest {
 
     @Test
     public void platformDetails() throws Exception {
-        for (Platform platform : platforms) {
+        for (Platform platform : prov.getSupportedPlatforms()) {
             ResultActions resultActions = mvc.perform(
                 get("/platforms/" + platform.id)
             ).andDo(print());
@@ -99,4 +106,29 @@ public class PlatformControllerTest {
         resultActions.andExpect(status().isNotFound());
         resultActions.andReturn();
     }
+    
+//    @Configuration
+//    @Profile("pc_test")
+//    public static class PlatformControllerConfiguration {
+//        @Bean
+//        @Primary
+//        public PlatformService platformService() {
+//            return new PlatformService() {
+//                @Override
+//                public List<Platform> getSupportedPlatforms() {
+//                    return TestPlugins.PLATFORMS;
+//                }
+//
+//                @Override
+//                public Platform findById(String id) {
+//                    for (Platform platform : TestPlugins.PLATFORMS) {
+//                        if(platform.id == id) {
+//                            return platform;
+//                        }
+//                    }
+//                    return null;
+//                }
+//            };
+//        }
+//    }
 }

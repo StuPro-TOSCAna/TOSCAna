@@ -69,7 +69,7 @@ public class TestCoreConfiguration extends CoreConfiguration {
         return bean;
     }
 
-    @Autowired
+    @Bean
     public CsarService csarService(CsarDao repo, CsarParseService parser) {
         return new CsarServiceImpl(repo,parser);
     }    
@@ -94,4 +94,5 @@ public class TestCoreConfiguration extends CoreConfiguration {
         TransformationServiceImpl bean = new TransformationServiceImpl(repo, service);
         return bean;
     }
+
 }

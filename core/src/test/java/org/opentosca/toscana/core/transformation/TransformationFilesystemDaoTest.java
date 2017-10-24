@@ -9,6 +9,7 @@ import org.opentosca.toscana.core.csar.CsarFilesystemDao;
 import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.testdata.TestPlugins;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -18,6 +19,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
+@ActiveProfiles("dummy_plugins")
 public class TransformationFilesystemDaoTest extends BaseSpringTest {
 
     @Autowired
