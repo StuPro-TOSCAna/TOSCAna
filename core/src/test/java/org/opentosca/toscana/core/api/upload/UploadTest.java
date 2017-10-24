@@ -69,7 +69,7 @@ public class UploadTest extends BaseSpringTest{
         }
     }
 
-    @Test(timeout = 10000)
+    @Test(timeout = 5000)
     public void testFileUploadFail() throws Exception {
         waitForServerToStart();
         System.err.println("Server started!");
