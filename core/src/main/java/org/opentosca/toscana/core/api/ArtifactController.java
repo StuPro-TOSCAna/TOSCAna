@@ -25,8 +25,12 @@ public class ArtifactController {
     @Value("${toscana.mappings.enable-artifact-list}")
     public boolean enableArtifactList;
 
+    private final Preferences preferences;
+
     @Autowired
-    public Preferences preferences;
+    public ArtifactController(Preferences preferences) {
+        this.preferences = preferences;
+    }
 
 
     @RequestMapping(value = {"/", ""}, method = RequestMethod.GET, produces = "application/hal+json")
@@ -81,8 +85,15 @@ public class ArtifactController {
 
     @ResponseStatus(value = HttpStatus.FORBIDDEN,
         reason = "Operation has been disabled by the administrator")
-    @ExceptionHandler(IllegalArgumentException.class)
+    @ExceptionHandler(IllegalAccessException.class)
     public void handleDisabledList() {
+
+    }
+
+    @ResponseStatus(value = HttpStatus.NOT_FOUND,
+        reason = "File Not Found")
+    @ExceptionHandler(FileNotFoundException.class)
+    public void handleNotFoundList() {
 
     }
 

@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.IOException;
 
 import static org.junit.Assert.fail;
+import static org.opentosca.toscana.core.util.FileUtils.delete;
 
 public class UploadTest extends BaseSpringTest{
 
@@ -105,14 +106,5 @@ public class UploadTest extends BaseSpringTest{
         springThread.stop();
     }
 
-    public static void delete(File f) {
-        if (f.isFile()) {
-            f.delete();
-        } else if (f.isDirectory()) {
-            for (File file : f.listFiles()) {
-                delete(file);
-            }
-            f.delete();
-        }
-    }
+    
 }
