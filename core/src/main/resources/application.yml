@@ -1,0 +1,49 @@
+###############################
+##### TOSCAna Properties ######
+###############################
+
+toscana:
+  mappings:
+    enable-artifact-list: true
+
+################################
+##### Spring HTTP Settings #####
+################################
+
+spring:
+  main:
+    banner-mode: "off"
+#  http:
+#  	multipart:
+#     enabled: true
+#     max-file-size: 10000MB
+#     max-request-size: 100000MB:
+
+######################################
+##### Data Directory Properties ######
+######################################
+
+# no fallback value supplied here. value is computed at runtime, as it is platform dependent
+# use this at runtime
+datadir: 
+# if datadir was not supplied, datadir falls back to these values (depending on runtime environment)
+datadir_win: ${user.home}/AppData/toscana
+datadir_nix: ${user.home}/.toscana
+
+##########################################
+##### SPRING BOOT ACTUATOR SETTINGS ######
+##########################################
+
+# Disable security for spring boot actuator
+management:
+  security:
+    enabled: false
+
+# Comment out the following part to get full access to all spring boot actuator features
+endpoints.enabled: false
+endpoints:
+    metrics.enabled: true
+    health.enabled: true
+    mappings.enabled: true
+
+
