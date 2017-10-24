@@ -4,6 +4,7 @@ import org.apache.commons.io.FileUtils;
 import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.TransformationDao;
 import org.opentosca.toscana.core.util.Preferences;
+import org.opentosca.toscana.core.util.ZipUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,7 +60,7 @@ public class CsarFilesystemDao implements CsarDao {
         File transformationDir = new File(appDir, TRANSFORMATION_DIR);
         transformationDir.mkdir();
         try {
-            UnzipUtility.unzip(new ZipInputStream(inputStream), contentDir.getPath());
+            ZipUtility.unzip(new ZipInputStream(inputStream), contentDir.getPath());
             logger.info("extracted csar '{}' into '{}'", identifier, contentDir.getPath());
         } catch (IOException e) {
             logger.error("failed to unzip csar with identifier '{}'", identifier, e);

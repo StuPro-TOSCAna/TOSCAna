@@ -16,8 +16,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultHandler;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.io.File;
@@ -102,6 +100,7 @@ public class ArtifactControllerTest {
     @Test
     public void downloadValidFiles() throws Exception {
         for (int i = 0; i < hashes.length; i++) {
+            log.info("Downloading file {}/25", i);
             MvcResult result = mvc.perform(get("/artifacts/test-" + i + ".bin"))
 //                .andDo(print())
                 .andExpect(status().is(200))
