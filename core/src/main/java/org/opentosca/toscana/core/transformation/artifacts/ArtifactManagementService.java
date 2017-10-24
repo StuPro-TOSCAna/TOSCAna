@@ -3,6 +3,8 @@ package org.opentosca.toscana.core.transformation.artifacts;
 import org.opentosca.toscana.core.transformation.Transformation;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 /**
  * This interface describes a service that will tell spring to serve a file or multiple as a static resource
@@ -15,5 +17,5 @@ public interface ArtifactManagementService {
      * @param transformation
      * @return
      */
-    String saveToArtifactDirectory(File transformationDir);
+    String saveToArtifactDirectory(File transformationDir, String csarName, String platformName) throws IOException;
 }
