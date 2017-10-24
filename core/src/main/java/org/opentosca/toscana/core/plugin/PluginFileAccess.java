@@ -57,9 +57,9 @@ public class PluginFileAccess {
 
     /**
      * Writes given InputStream to given path
-     * Creates missing subdirectories.
+     * If necessary, creates missing subdirectories.
      * @param relativePath the path to the target file relative to the transformations root dir
-     * @param inputStream stream which will get written to file
+     * @param inputStream stream which will get written to file. Afterwards, this stream will be closed
      */
     public void write(String relativePath, InputStream inputStream) throws IOException {
         File target = new File(targetDir, relativePath);
@@ -69,6 +69,8 @@ public class PluginFileAccess {
         } catch (IOException e){
             logger.error("Failed to write stream to '{}'", target);
             throw e;
+        } finally {
+            inputStream.close();
         }
     }
 }
