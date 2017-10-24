@@ -11,6 +11,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.opentosca.toscana.core.Main;
 import org.opentosca.toscana.core.testdata.TestCsars;
+import org.opentosca.toscana.core.testutils.CICheckingJUnitRunner;
+import org.opentosca.toscana.core.testutils.ExcludeContinuousIntegration;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
@@ -18,9 +20,9 @@ import java.io.File;
 import java.io.IOException;
 
 import static org.junit.Assert.fail;
-import static org.opentosca.toscana.core.util.FileUtils.delete;
+import static org.opentosca.toscana.core.testutils.FileUtils.delete;
 
-@RunWith(JUnit4.class)
+@RunWith(CICheckingJUnitRunner.class)
 public class UploadTest {
 
     public static final String TEMPLATE_HASH
@@ -54,6 +56,7 @@ public class UploadTest {
     }
 
     @Test(timeout = 30000)
+    @ExcludeContinuousIntegration
     public void testFileUpload() throws Exception {
         waitForServerToStart();
         System.err.println("Server started!");
@@ -72,7 +75,8 @@ public class UploadTest {
         }
     }
 
-    @Test(timeout = 5000)
+    @Test(timeout = 30000)
+    @ExcludeContinuousIntegration
     public void testFileUploadFail() throws Exception {
         waitForServerToStart();
         System.err.println("Server started!");

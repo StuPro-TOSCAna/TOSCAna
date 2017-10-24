@@ -4,7 +4,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.opentosca.toscana.core.testutils.ExcludeContinuousIntegration;
+import org.opentosca.toscana.core.testutils.FileUtils;
+import org.opentosca.toscana.core.testutils.CICheckingJUnitRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +17,7 @@ import java.util.zip.ZipInputStream;
 
 import static org.junit.Assert.assertTrue;
 
-@RunWith(JUnit4.class)
+@RunWith(CICheckingJUnitRunner.class)
 public class ZipUtilityTest {
 
     private final Logger log = LoggerFactory.getLogger(getClass());

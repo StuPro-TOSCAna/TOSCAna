@@ -3,6 +3,8 @@ package org.opentosca.toscana.core;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.runner.RunWith;
+import org.opentosca.toscana.core.testutils.CICheckingJUnitRunner;
+import org.opentosca.toscana.core.testutils.CICheckingSpringRunner;
 import org.opentosca.toscana.core.util.Preferences;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +21,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * After every test method, refreshes the context.
  * After every test method, deletes written files from disk
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(CICheckingSpringRunner.class)
 @ContextConfiguration(classes = {TestCoreConfiguration.class})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @ActiveProfiles("dummy_plugins")

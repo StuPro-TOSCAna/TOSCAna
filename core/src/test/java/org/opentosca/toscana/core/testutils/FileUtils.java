@@ -1,4 +1,4 @@
-package org.opentosca.toscana.core.util;
+package org.opentosca.toscana.core.testutils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
