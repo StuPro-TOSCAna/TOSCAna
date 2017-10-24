@@ -53,7 +53,7 @@ public class UploadTest {
         springThread.start();
     }
 
-    @Test(timeout = 10000)
+    @Test(timeout = 30000)
     public void testFileUpload() throws Exception {
         waitForServerToStart();
         System.err.println("Server started!");
