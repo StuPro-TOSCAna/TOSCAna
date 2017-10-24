@@ -4,6 +4,7 @@ import org.opentosca.toscana.core.api.model.StatusResponse;
 import org.opentosca.toscana.core.util.FileSystem;
 import org.opentosca.toscana.core.util.status.StatusService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.ResourceSupport;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,6 +33,17 @@ public class CommonController {
     public CommonController(StatusService statusService, FileSystem fileSystem) {
         this.statusService = statusService;
         this.fileSystem = fileSystem;
+    }
+
+    @RequestMapping(value = {"/", ""}, method = RequestMethod.GET)
+    public ResourceSupport getIndex() {
+        ResourceSupport support = new ResourceSupport();
+        support.add(linkTo(methodOn(CommonController.class).getIndex()).withSelfRel());
+        support.add(linkTo(methodOn(CommonController.class).getStatus()).withRel("status"));
+        support.add(linkTo(methodOn(PlatformController.class).getPlatforms()).withRel("platforms"));
+        support.add(linkTo(methodOn(CsarController.class).listCSARs()).withRel("csars"));
+        //TODO add spring boot actuator refs.
+        return support;
     }
 
     /**

@@ -55,6 +55,17 @@ public class CommonControllerTest {
     }
 
     @Test
+    public void getIndexPage() throws Exception {
+        mvc.perform(get("/"))
+            .andDo(print())
+            .andExpect(status().is(200))
+            .andExpect(jsonPath("$._links.self.href").value("http://localhost/"))
+            .andExpect(jsonPath("$._links.platforms.href").value("http://localhost/platforms/"))
+            .andExpect(jsonPath("$._links.csars.href").value("http://localhost/csars/"))
+            .andExpect(jsonPath("$._links.status.href").value("http://localhost/status"));
+    }
+
+    @Test
     public void retrieveStatusUpdate() throws Exception {
         mvc.perform(
             get("/status").accept("application/hal+json")
