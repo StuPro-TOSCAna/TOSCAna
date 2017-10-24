@@ -18,7 +18,6 @@ import retrofit2.Retrofit;
 import java.io.File;
 import java.io.IOException;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class UploadTest extends BaseSpringTest{
@@ -54,19 +53,37 @@ public class UploadTest extends BaseSpringTest{
     public void testFileUpload() throws Exception {
         waitForServerToStart();
         System.err.println("Server started!");
-        
+
         RequestBody file = RequestBody.create(MediaType.parse("multipart/form-data"),
             TestCsars.CSAR_YAML_VALID_SIMPLETASK);
 
-        MultipartBody.Part p = MultipartBody.Part.createFormData("file","test.csar",file);
-        
+        MultipartBody.Part p = MultipartBody.Part.createFormData("file", "test.csar", file);
+
         Response<ResponseBody> response = api.upload(p, "test-archive").execute();
         //assertTrue(response.code() == 200);
-        if(response.code() != 200) {
+        if (response.code() != 200) {
             ResponseBody b = response.errorBody();
             System.out.println(b.string());
             fail();
         }
+    }
+
+    @Test(timeout = 10000)
+    public void testFileUploadFail() throws Exception {
+        waitForServerToStart();
+        System.err.println("Server started!");
+
+        RequestBody file = RequestBody.create(MediaType.parse("multipart/form-data"),
+            TestCsars.CSAR_YAML_INVALID_ENTRYPOINT_AMBIGUOUS);
+
+        MultipartBody.Part p = MultipartBody.Part.createFormData("file", "test.csar", file);
+
+        Response<ResponseBody> response = api.upload(p, "test-archive-fail").execute();
+        //assertTrue(response.code() == 200);
+        if (response.code() != 200) {
+            ResponseBody b = response.errorBody();
+            System.out.println(b.string());
+        } else fail();
     }
 
     private void waitForServerToStart() throws Exception {

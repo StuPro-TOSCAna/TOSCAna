@@ -22,6 +22,7 @@ public class Preferences {
     private String dataPathFallbackNix;
 
     private File dataDir;
+    private File artifactDir;
 
     private static final Logger logger = LoggerFactory.getLogger(Preferences.class.getName());
 
@@ -40,8 +41,11 @@ public class Preferences {
         }
         logger.info("datadir is '{}'", dataPath);
         dataDir = new File(dataPath);
+        artifactDir = new File(dataDir, "artifacts");
         dataDir.mkdirs();
-        System.out.println(dataDir.getAbsolutePath());
+        artifactDir.mkdirs();
+        logger.info("Data directory is {}", dataDir.getAbsolutePath());
+        logger.info("Artifact directory is {}", artifactDir.getAbsolutePath());
         if (!dataDir.exists()) {
             logger.error("Failed to create data directory");
         }
@@ -49,5 +53,9 @@ public class Preferences {
 
     public File getDataDir() {
         return dataDir;
+    }
+
+    public File getArtifactDir() {
+        return artifactDir;
     }
 }

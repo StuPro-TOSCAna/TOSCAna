@@ -50,10 +50,6 @@ public class TransformationResponse extends ResourceSupport {
         return progress;
     }
 
-    public void setProgress(int progress) {
-        this.progress = progress;
-    }
-
     @JsonProperty("status")
     public String getStatus() {
         return status;
@@ -62,9 +58,5 @@ public class TransformationResponse extends ResourceSupport {
     @JsonProperty("platform")
     public String getPlatform() {
         return platform;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
     }
 }
