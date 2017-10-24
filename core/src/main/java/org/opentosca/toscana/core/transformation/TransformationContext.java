@@ -5,14 +5,16 @@ import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
 import org.slf4j.Logger;
 
+import java.io.File;
+
 public final class TransformationContext {
     private final Transformation transformation;
     private final PluginFileAccess access;
 
 
-    public TransformationContext(Transformation transformation) {
+    public TransformationContext(Transformation transformation, File csarContentDir, File transformationRootDir) {
         this.transformation = transformation;
-        this.access = new PluginFileAccess(transformation.getCsar(), transformation);
+        this.access = new PluginFileAccess(transformation, csarContentDir, transformationRootDir);
 
     }
 
