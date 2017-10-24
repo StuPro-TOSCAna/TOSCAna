@@ -8,6 +8,8 @@ import org.opentosca.toscana.core.transformation.platform.PlatformService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,11 +18,18 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Repository
 public class TransformationFilesystemDao implements TransformationDao {
 
     private final static Logger logger = LoggerFactory.getLogger(TransformationFilesystemDao.class);
     private CsarDao csarDao;
     private PlatformService platformService;
+
+    @Autowired
+    public TransformationFilesystemDao(CsarDao csarDao, PlatformService platformService) {
+        this.csarDao = csarDao;
+        this.platformService = platformService;
+    }
 
     @Override
     public Transformation create(Csar csar, Platform platform) {
@@ -86,14 +95,5 @@ public class TransformationFilesystemDao implements TransformationDao {
     public File getRootDir(Transformation transformation) {
         return new File(csarDao.getTransformationsDir(transformation.getCsar()), transformation.getPlatform().id);
     }
-
-    @Autowired
-    public void setCsarDao(CsarDao csarDao) {
-        this.csarDao = csarDao;
-    }
-
-    @Autowired
-    public void setPlatformService(PlatformService platformService) {
-        this.platformService = platformService;
-    }
+    
 }

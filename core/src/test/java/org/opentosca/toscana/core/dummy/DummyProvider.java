@@ -42,6 +42,6 @@ public class DummyProvider {
 
     @Bean
     public FileSystem getFileSystem() {
-        return new FileSystemDummy();
+        return new FileSystemDummy(null);
     }
 }

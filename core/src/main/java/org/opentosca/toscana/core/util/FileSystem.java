@@ -1,12 +1,19 @@
 package org.opentosca.toscana.core.util;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.io.File;
 
+@Service
 public class FileSystem {
 
     private Preferences preferences;
+
+    @Autowired
+    public FileSystem(Preferences preferences) {
+        this.preferences = preferences;
+    }
 
     /**
      * Returns the (by the CSARS and targetArtifacts) used storage space in MB.
@@ -24,10 +31,5 @@ public class FileSystem {
         long freeBytes = dataDir.getFreeSpace();
         long freeMegabytes = freeBytes / (long) Math.pow(1024, 2);
         return freeMegabytes;
-    }
-
-    @Autowired
-    public void setPreferences(Preferences preferences) {
-        this.preferences = preferences;
     }
 }

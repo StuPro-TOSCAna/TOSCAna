@@ -8,7 +8,11 @@ import org.opentosca.toscana.core.util.ZipUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
+import javax.xml.ws.ServiceMode;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipInputStream;
 
+@Repository
 public class CsarFilesystemDao implements CsarDao {
 
     private final static Logger logger = LoggerFactory.getLogger(CsarFilesystemDao.class.getSimpleName());
@@ -39,7 +44,7 @@ public class CsarFilesystemDao implements CsarDao {
     
 
     @Autowired
-    public CsarFilesystemDao(Preferences preferences) {
+    public CsarFilesystemDao(Preferences preferences, @Lazy TransformationDao transformationDao) {
         this.dataDir = preferences.getDataDir();
 
         if (!dataDir.exists()) {
@@ -50,6 +55,8 @@ public class CsarFilesystemDao implements CsarDao {
         }
 
         readFromDisk();
+        
+        this.transformationDao = transformationDao;
     }
 
     @Override
@@ -160,9 +167,9 @@ public class CsarFilesystemDao implements CsarDao {
         return false;
     }
 
-    @Autowired
-    public void setTransformationDao(TransformationDao transformationDao) {
-        this.transformationDao = transformationDao;
-        readFromDisk();
-    }
+//    @Autowired
+//    public void setTransformationDao(TransformationDao transformationDao) {
+//        this.transformationDao = transformationDao;
+//        readFromDisk();
+//    }
 }

@@ -6,9 +6,11 @@ import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarDao;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.io.File;
 
+@Service
 public class CsarParseServiceImpl implements CsarParseService {
 
     private Logger logger;
