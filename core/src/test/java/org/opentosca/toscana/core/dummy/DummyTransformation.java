@@ -42,6 +42,7 @@ public class DummyTransformation implements Transformation {
         properties.setPropertyValue(key, value);
     }
 
+    @Override
     public void setState(TransformationState state) {
         this.state = state;
     }
@@ -58,9 +59,13 @@ public class DummyTransformation implements Transformation {
 
     @Override
     public TargetArtifact getTargetArtifact() {
-        return returnTargetArtifact ? new TargetArtifact() : null;
+        return returnTargetArtifact ? new TargetArtifact("some/path") : null;
     }
 
+    @Override
+    public void setTargetArtifact(TargetArtifact targetArtifact) {
+        throw new UnsupportedOperationException();
+    }
 
     @Override
     public Csar getCsar() {

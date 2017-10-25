@@ -2,20 +2,16 @@ package org.opentosca.toscana.core.transformation.artifacts;
 
 public class TargetArtifact {
 
-    private String relativeDlUrl = "";
+    private final String relativePath;
 
-    public TargetArtifact() {
-    }
-
-    public TargetArtifact(String relativeDlUrl) {
-        this.relativeDlUrl = relativeDlUrl;
+    /**
+     * @param relativePath relative path to the target artifact
+     */
+    public TargetArtifact(String relativePath) {
+        this.relativePath = relativePath;
     }
 
     public String getArtifactDownloadURL() {
-        return relativeDlUrl;
-    }
-
-    public void setArtifactDownloadURL(String url) {
-        this.relativeDlUrl = url;
+        return relativePath;
     }
 }

@@ -8,6 +8,7 @@ import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.core.transformation.TransformationState;
 import org.opentosca.toscana.core.transformation.artifacts.ArtifactManagementService;
+import org.opentosca.toscana.core.transformation.artifacts.TargetArtifact;
 
 import org.slf4j.Logger;
 
@@ -50,10 +51,9 @@ public class ExecutionTask implements Runnable {
 
             log.info("Compressing target artifacts");
             if (transformationRootDir != null && transformationRootDir.listFiles().length != 0) {
-                String path = ams.serveArtifact(transformation);
-                log.info("Artifact is can be downloaded at relative url {}", path);
-                //TODO Fix TargetArtifact not existing
-                //transformation.getTargetArtifact().setArtifactDownloadURL(path);
+                TargetArtifact artifact = ams.serveArtifact(transformation);
+                log.info("Artifact is can be downloaded at relative url {}", artifact.getArtifactDownloadURL());
+                transformation.setTargetArtifact(artifact);
             } else {
                 log.info("Failed to compress target artifacts: Transformation generated no output files");
             }

@@ -38,7 +38,7 @@ public class ArtifactManagementServiceImpl
     }
 
     @Override
-    public String serveArtifact(Transformation transformation) throws IOException {
+    public TargetArtifact serveArtifact(Transformation transformation) throws IOException {
         String csarId = transformation.getCsar().getIdentifier();
         String platformId = transformation.getPlatform().id;
         File transformationWorkingDirectory = transformatioDao.getRootDir(transformation);
@@ -51,7 +51,7 @@ public class ArtifactManagementServiceImpl
         ZipUtility.compressDirectory(transformationWorkingDirectory, out);
         out.close();
 
-        return "/artifacts/" + filename;
+        return new TargetArtifact("/artifacts/" + filename);
     }
 
     @Override

@@ -14,7 +14,7 @@ public interface ArtifactManagementService {
      * Takes the target artifact of the transformation and copies it to the "resource directory" to allow Spring to
      * serve its URL to the client.
      */
-    String serveArtifact(Transformation transformation) throws IOException;
+    TargetArtifact serveArtifact(Transformation transformation) throws IOException;
 
     /**
      * @return the general target artifact dir
