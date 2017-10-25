@@ -1,10 +1,10 @@
 package org.opentosca.toscana.core.dummy;
 
-import org.opentosca.toscana.core.transformation.TransformationContext;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Random;
+
+import org.opentosca.toscana.core.transformation.TransformationContext;
 
 public class FileCreatingExceutionDummyPlugin extends ExecutionDummyPlugin {
     public FileCreatingExceutionDummyPlugin(String name, boolean failDuringExec) {
@@ -29,7 +29,7 @@ public class FileCreatingExceutionDummyPlugin extends ExecutionDummyPlugin {
     }
 
     public void writeFilepath(TransformationContext transformation, Random rnd, String path) throws IOException {
-        byte[] data = new byte[1024 * 100];
+        byte[] data = new byte[1024 * 10];
         rnd.nextBytes(data);
         transformation.getPluginFileAccess().write(path, new ByteArrayInputStream(data));
     }

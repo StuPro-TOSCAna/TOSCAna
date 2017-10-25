@@ -1,17 +1,22 @@
 package org.opentosca.toscana.core.util;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.util.Random;
+import java.util.zip.ZipInputStream;
+
+import org.opentosca.toscana.core.testutils.CICheckingJUnitRunner;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.opentosca.toscana.core.testutils.CICheckingJUnitRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.*;
-import java.nio.file.Files;
-import java.util.Random;
-import java.util.zip.ZipInputStream;
 
 import static org.junit.Assert.assertTrue;
 
@@ -27,7 +32,7 @@ public class ZipUtilityTest {
 
     private Random rnd = new Random(123456);
 
-    private static final int FILE_SIZE = 256 * 1024;
+    private static final int FILE_SIZE = 1024;
 
     @Before
     public void setUp() throws Exception {
@@ -40,7 +45,6 @@ public class ZipUtilityTest {
         //generate folders Total 125 Directories with 10 files each (1250 files)
 
         generateFolderStructure(original, 2, 10, 5, rnd);
-
     }
 
     @Test
@@ -115,8 +119,5 @@ public class ZipUtilityTest {
                 rnd
             );
         }
-
     }
-
-
 }

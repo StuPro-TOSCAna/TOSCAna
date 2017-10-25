@@ -1,5 +1,13 @@
 package org.opentosca.toscana.core.api.upload;
 
+import java.io.File;
+import java.io.IOException;
+
+import org.opentosca.toscana.core.Main;
+import org.opentosca.toscana.core.testdata.TestCsars;
+import org.opentosca.toscana.core.testutils.CICheckingJUnitRunner;
+import org.opentosca.toscana.core.testutils.ExcludeContinuousIntegration;
+
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -8,15 +16,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.opentosca.toscana.core.Main;
-import org.opentosca.toscana.core.testdata.TestCsars;
-import org.opentosca.toscana.core.testutils.CICheckingJUnitRunner;
-import org.opentosca.toscana.core.testutils.ExcludeContinuousIntegration;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-
-import java.io.File;
-import java.io.IOException;
 
 import static org.junit.Assert.fail;
 import static org.opentosca.toscana.core.util.FileUtils.delete;
@@ -66,7 +67,6 @@ public class UploadTest {
         MultipartBody.Part p = MultipartBody.Part.createFormData("file", "test.csar", file);
 
         Response<ResponseBody> response = api.upload(p, "test-archive").execute();
-        //assertTrue(response.code() == 200);
         if (response.code() != 200) {
             ResponseBody b = response.errorBody();
             System.out.println(b.string());
@@ -78,7 +78,7 @@ public class UploadTest {
     @ExcludeContinuousIntegration
     public void testFileUploadFail() throws Exception {
         waitForServerToStart();
-        System.err.println("Server started!");
+        System.err.println("Server started");
 
         RequestBody file = RequestBody.create(MediaType.parse("multipart/form-data"),
             TestCsars.CSAR_YAML_INVALID_ENTRYPOINT_AMBIGUOUS);
@@ -86,7 +86,6 @@ public class UploadTest {
         MultipartBody.Part p = MultipartBody.Part.createFormData("file", "test.csar", file);
 
         Response<ResponseBody> response = api.upload(p, "test-archive-fail").execute();
-        //assertTrue(response.code() == 200);
         if (response.code() != 200) {
             ResponseBody b = response.errorBody();
             System.out.println(b.string());
@@ -98,11 +97,10 @@ public class UploadTest {
         while (code != 200) {
             try {
                 code = api.getStatus().execute().code();
-                Thread.sleep(100);
+                Thread.sleep(20);
             } catch (IOException e) {
                 code = -1;
             }
-
         }
     }
 
@@ -111,6 +109,4 @@ public class UploadTest {
         delete(tempDir);
         springThread.stop();
     }
-
-
 }
