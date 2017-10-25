@@ -30,7 +30,7 @@ public class TestCsars {
 
 
     // yaml csars
-    public final static File CSAR_YAML_VALID_SIMPLETASK = new File(YAML_DIR, "valid/simple-task.csar");
+    public final static File CSAR_YAML_VALID_DOCKER_SIMPLETASK = new File(YAML_DIR, "valid/simple-task.csar");
     public static final File CSAR_YAML_INVALID_ENTRYPOINT_MISSING = new File(YAML_DIR, "invalid/entrypoint_missing.csar");
     public static final File CSAR_YAML_INVALID_ENTRYPOINT_AMBIGUOUS = new File(YAML_DIR, "invalid/entrypoint_ambiguous.csar");
 

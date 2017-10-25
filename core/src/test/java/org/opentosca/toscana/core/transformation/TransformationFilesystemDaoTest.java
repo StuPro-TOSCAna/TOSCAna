@@ -39,10 +39,10 @@ public class TransformationFilesystemDaoTest extends BaseSpringTest {
 
     @Before
     public void setUp() throws FileNotFoundException {
-        csar1 = testCsars.getCsar("csar1", TestCsars.CSAR_YAML_VALID_SIMPLETASK);
-        csar2 = testCsars.getCsar("csar2", TestCsars.CSAR_YAML_VALID_SIMPLETASK);
-        csar3 = testCsars.getCsar("csar3", TestCsars.CSAR_YAML_VALID_SIMPLETASK);
-        csar4 = testCsars.getCsar("csar4", TestCsars.CSAR_YAML_VALID_SIMPLETASK);
+        csar1 = testCsars.getCsar("csar1", TestCsars.CSAR_YAML_VALID_DOCKER_SIMPLETASK);
+        csar2 = testCsars.getCsar("csar2", TestCsars.CSAR_YAML_VALID_DOCKER_SIMPLETASK);
+        csar3 = testCsars.getCsar("csar3", TestCsars.CSAR_YAML_VALID_DOCKER_SIMPLETASK);
+        csar4 = testCsars.getCsar("csar4", TestCsars.CSAR_YAML_VALID_DOCKER_SIMPLETASK);
         transformation1 = new TransformationImpl(csar1, TestPlugins.PLATFORM1);
         transformation1Dir = transformationDao.getRootDir(transformation1);
 

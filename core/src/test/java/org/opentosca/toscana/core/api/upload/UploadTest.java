@@ -61,7 +61,7 @@ public class UploadTest {
         System.err.println("Server started!");
 
         RequestBody file = RequestBody.create(MediaType.parse("multipart/form-data"),
-            TestCsars.CSAR_YAML_VALID_SIMPLETASK);
+            TestCsars.CSAR_YAML_VALID_DOCKER_SIMPLETASK);
 
         MultipartBody.Part p = MultipartBody.Part.createFormData("file", "test.csar", file);
 

@@ -42,7 +42,7 @@ public class TransformationServiceImplTest extends BaseSpringTest {
 
     @Before
     public void setUp() throws FileNotFoundException {
-        csar = testCsars.getCsar(TestCsars.CSAR_YAML_VALID_SIMPLETASK);
+        csar = testCsars.getCsar(TestCsars.CSAR_YAML_VALID_DOCKER_SIMPLETASK);
     }
 
     @Test
@@ -153,7 +153,7 @@ public class TransformationServiceImplTest extends BaseSpringTest {
     }
 
     private Transformation startTransfomationInternal(TransformationState expectedState, Platform platform) throws InterruptedException, FileNotFoundException {
-        Csar csar = testCsars.getCsar(TestCsars.CSAR_YAML_VALID_SIMPLETASK);
+        Csar csar = testCsars.getCsar(TestCsars.CSAR_YAML_VALID_DOCKER_SIMPLETASK);
         service.createTransformation(csar, platform);
         Transformation t = csar.getTransformations().get(platform.id);
         assertTrue(service.startTransformation(t));

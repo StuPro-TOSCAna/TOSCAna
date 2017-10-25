@@ -20,7 +20,7 @@ public class CsarParseServiceImplTest extends BaseSpringTest {
 
     @Test
     public void parseValidCsar() throws Exception {
-        Csar csar = testCsars.getCsar(TestCsars.CSAR_YAML_VALID_SIMPLETASK);
+        Csar csar = testCsars.getCsar(TestCsars.CSAR_YAML_VALID_DOCKER_SIMPLETASK);
         TServiceTemplate serviceTemplate = csarParser.parse(csar);
         assertNotNull(serviceTemplate);
     }

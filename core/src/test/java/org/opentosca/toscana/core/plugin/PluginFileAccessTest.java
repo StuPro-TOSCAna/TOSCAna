@@ -44,7 +44,7 @@ public class PluginFileAccessTest extends BaseSpringTest {
 
     @Before
     public void setUp() throws IOException {
-        csar = testCsars.getCsar(TestCsars.CSAR_YAML_VALID_SIMPLETASK);
+        csar = testCsars.getCsar(TestCsars.CSAR_YAML_VALID_DOCKER_SIMPLETASK);
         csarContentDir = csarDao.getContentDir(csar);
         transformationService.createTransformation(csar, TestPlugins.PLATFORM1);
         TestPlugins.createFakeTransformationsOnDisk(csarDao.getTransformationsDir(csar), TestPlugins.PLATFORMS);
