@@ -19,8 +19,8 @@ import org.springframework.stereotype.Service;
 import static java.lang.System.currentTimeMillis;
 
 @Service
-public class ArtifactManagementServiceImpl
-    implements ArtifactManagementService {
+public class ArtifactServiceImpl
+    implements ArtifactService {
 
     private final static String ARTIFACT_DIR = "artifacts";
 
@@ -30,7 +30,7 @@ public class ArtifactManagementServiceImpl
     private final File artifactDir;
 
     @Autowired
-    public ArtifactManagementServiceImpl(Preferences preferences, TransformationDao transformationDao) {
+    public ArtifactServiceImpl(Preferences preferences, TransformationDao transformationDao) {
         this.transformatioDao = transformationDao;
         artifactDir = new File(preferences.getDataDir(), ARTIFACT_DIR);
         artifactDir.mkdir();

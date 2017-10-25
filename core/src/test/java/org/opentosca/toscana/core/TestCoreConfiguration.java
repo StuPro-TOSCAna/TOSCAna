@@ -16,8 +16,8 @@ import org.opentosca.toscana.core.transformation.TransformationDao;
 import org.opentosca.toscana.core.transformation.TransformationFilesystemDao;
 import org.opentosca.toscana.core.transformation.TransformationService;
 import org.opentosca.toscana.core.transformation.TransformationServiceImpl;
-import org.opentosca.toscana.core.transformation.artifacts.ArtifactManagementService;
-import org.opentosca.toscana.core.transformation.artifacts.ArtifactManagementServiceImpl;
+import org.opentosca.toscana.core.transformation.artifacts.ArtifactService;
+import org.opentosca.toscana.core.transformation.artifacts.ArtifactServiceImpl;
 import org.opentosca.toscana.core.transformation.platform.PlatformService;
 import org.opentosca.toscana.core.util.FileSystem;
 import org.opentosca.toscana.core.util.Preferences;
@@ -38,8 +38,8 @@ import org.springframework.context.annotation.PropertySource;
 public class TestCoreConfiguration extends CoreConfiguration {
 
     @Bean
-    public ArtifactManagementService artifactManagementService(Preferences preferences, TransformationDao transformationDao) {
-        return new ArtifactManagementServiceImpl(preferences, transformationDao);
+    public ArtifactService artifactManagementService(Preferences preferences, TransformationDao transformationDao) {
+        return new ArtifactServiceImpl(preferences, transformationDao);
     }
 
     @Bean
@@ -105,7 +105,7 @@ public class TestCoreConfiguration extends CoreConfiguration {
         TransformationDao repo,
         @Lazy CsarDao csarDao,
         PluginService service,
-        ArtifactManagementService ams
+        ArtifactService ams
     ) {
         TransformationServiceImpl bean = new TransformationServiceImpl(repo, service, csarDao, ams);
         return bean;

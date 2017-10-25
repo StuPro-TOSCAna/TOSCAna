@@ -11,7 +11,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.opentosca.toscana.core.transformation.artifacts.ArtifactManagementService;
+import org.opentosca.toscana.core.transformation.artifacts.ArtifactService;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,10 +36,10 @@ public class ArtifactController {
     @Value("${toscana.mappings.enable-artifact-list}")
     public boolean enableArtifactList;
 
-    private final ArtifactManagementService ams;
+    private final ArtifactService ams;
 
     @Autowired
-    public ArtifactController(ArtifactManagementService ams) {
+    public ArtifactController(ArtifactService ams) {
         this.ams = ams;
     }
 

@@ -1,23 +1,24 @@
 package org.opentosca.toscana.core.transformation;
 
-import org.opentosca.toscana.core.csar.Csar;
-import org.opentosca.toscana.core.csar.CsarDao;
-import org.opentosca.toscana.core.plugin.PluginService;
-import org.opentosca.toscana.core.transformation.artifacts.ArtifactManagementService;
-import org.opentosca.toscana.core.transformation.execution.ExecutionTask;
-import org.opentosca.toscana.core.transformation.platform.Platform;
-import org.opentosca.toscana.core.transformation.properties.RequirementType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Service;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+
+import org.opentosca.toscana.core.csar.Csar;
+import org.opentosca.toscana.core.csar.CsarDao;
+import org.opentosca.toscana.core.plugin.PluginService;
+import org.opentosca.toscana.core.transformation.artifacts.ArtifactService;
+import org.opentosca.toscana.core.transformation.execution.ExecutionTask;
+import org.opentosca.toscana.core.transformation.platform.Platform;
+import org.opentosca.toscana.core.transformation.properties.RequirementType;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
 
 @Service
 public class TransformationServiceImpl implements TransformationService {
@@ -27,7 +28,7 @@ public class TransformationServiceImpl implements TransformationService {
     private final TransformationDao transformationDao;
     private final CsarDao csarDao;
     private final PluginService pluginService;
-    private final ArtifactManagementService artifactManagementService;
+    private final ArtifactService artifactService;
 
     private Map<Transformation, Future<?>> tasks = new HashMap<>();
     private ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -37,12 +38,12 @@ public class TransformationServiceImpl implements TransformationService {
         TransformationDao transformationDao,
         PluginService pluginService,
         @Lazy CsarDao csarDao,
-        ArtifactManagementService artifactManagementService
+        ArtifactService artifactService
     ) {
         this.transformationDao = transformationDao;
         this.pluginService = pluginService;
         this.csarDao = csarDao;
-        this.artifactManagementService = artifactManagementService;
+        this.artifactService = artifactService;
     }
 
     @Override
@@ -60,7 +61,7 @@ public class TransformationServiceImpl implements TransformationService {
             Future<?> taskFuture = executor.submit(
                 new ExecutionTask(
                     transformation,
-                    artifactManagementService,
+                    artifactService,
                     pluginService,
                     csarDao.getContentDir(transformation.getCsar()),
                     transformationDao.getRootDir(transformation)
@@ -95,5 +96,4 @@ public class TransformationServiceImpl implements TransformationService {
         tasks.remove(transformation);
         return true;
     }
-
 }

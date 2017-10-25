@@ -7,7 +7,7 @@ import org.opentosca.toscana.core.plugin.TransformationPlugin;
 import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.core.transformation.TransformationState;
-import org.opentosca.toscana.core.transformation.artifacts.ArtifactManagementService;
+import org.opentosca.toscana.core.transformation.artifacts.ArtifactService;
 import org.opentosca.toscana.core.transformation.artifacts.TargetArtifact;
 
 import org.slf4j.Logger;
@@ -18,13 +18,13 @@ public class ExecutionTask implements Runnable {
     private final TransformationPlugin plugin;
     private final File csarContentDir;
     private final File transformationRootDir;
-    private ArtifactManagementService ams;
+    private ArtifactService ams;
 
     private Logger log;
 
     public ExecutionTask(
         Transformation transformation,
-        ArtifactManagementService ams,
+        ArtifactService ams,
         PluginService pluginService,
         File csarContentDir,
         File transformationRootDir

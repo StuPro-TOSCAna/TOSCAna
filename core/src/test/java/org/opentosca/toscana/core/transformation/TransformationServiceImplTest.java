@@ -10,7 +10,7 @@ import org.opentosca.toscana.core.dummy.DummyCsar;
 import org.opentosca.toscana.core.dummy.ExecutionDummyPlugin;
 import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.testdata.TestPlugins;
-import org.opentosca.toscana.core.transformation.artifacts.ArtifactManagementService;
+import org.opentosca.toscana.core.transformation.artifacts.ArtifactService;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.core.transformation.properties.PropertyType;
@@ -31,7 +31,7 @@ public class TransformationServiceImplTest extends BaseSpringTest {
     @Autowired
     private TestCsars testCsars;
     @Autowired
-    private ArtifactManagementService ams;
+    private ArtifactService ams;
 
     private Csar csar;
 

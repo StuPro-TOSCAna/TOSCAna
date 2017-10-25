@@ -5,7 +5,7 @@ import java.io.FileOutputStream;
 import java.security.MessageDigest;
 import java.util.Random;
 
-import org.opentosca.toscana.core.transformation.artifacts.ArtifactManagementService;
+import org.opentosca.toscana.core.transformation.artifacts.ArtifactService;
 import org.opentosca.toscana.core.util.FileUtils;
 import org.opentosca.toscana.core.util.Preferences;
 
@@ -82,7 +82,7 @@ public class ArtifactControllerTest {
         }
 
         //Mocking preferences
-        ArtifactManagementService ams = Mockito.mock(ArtifactManagementService.class);
+        ArtifactService ams = Mockito.mock(ArtifactService.class);
         when(ams.getArtifactDir()).thenReturn(testdir);
 
         //initalizing controller
