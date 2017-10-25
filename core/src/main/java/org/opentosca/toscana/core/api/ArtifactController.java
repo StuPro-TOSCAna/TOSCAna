@@ -1,7 +1,19 @@
 package org.opentosca.toscana.core.api;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.opentosca.toscana.core.transformation.artifacts.ArtifactService;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.opentosca.toscana.core.util.Preferences;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.hateoas.Link;
@@ -10,13 +22,12 @@ import org.springframework.hateoas.Resources;
 import org.springframework.hateoas.core.Relation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/artifacts")
@@ -25,13 +36,12 @@ public class ArtifactController {
     @Value("${toscana.mappings.enable-artifact-list}")
     public boolean enableArtifactList;
 
-    private final Preferences preferences;
+    private final ArtifactService ams;
 
     @Autowired
-    public ArtifactController(Preferences preferences) {
-        this.preferences = preferences;
+    public ArtifactController(ArtifactService ams) {
+        this.ams = ams;
     }
-
 
     @RequestMapping(value = {"/", ""}, method = RequestMethod.GET, produces = "application/hal+json")
     public ResponseEntity<Resources<FileResource>> listFiles(HttpServletRequest request) throws Exception {
@@ -39,7 +49,7 @@ public class ArtifactController {
             throw new IllegalAccessException("This operation has been disabled by the administrator");
         }
         List<FileResource> resources = new ArrayList<>();
-        for (File file : preferences.getArtifactDir().listFiles()) {
+        for (File file : ams.getArtifactDir().listFiles()) {
             if (file.isFile()) {
                 resources.add(
                     new FileResource(
@@ -62,7 +72,7 @@ public class ArtifactController {
         @PathVariable("filename") String filename,
         HttpServletResponse response
     ) throws IOException {
-        File f = new File(preferences.getArtifactDir(), filename);
+        File f = new File(ams.getArtifactDir(), filename);
         if (!f.exists()) {
             throw new FileNotFoundException(f.getName() + " not found!");
         }

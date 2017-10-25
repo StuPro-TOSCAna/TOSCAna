@@ -19,7 +19,7 @@ import java.io.File;
 import java.io.IOException;
 
 import static org.junit.Assert.fail;
-import static org.opentosca.toscana.core.testutils.FileUtils.delete;
+import static org.opentosca.toscana.core.util.FileUtils.delete;
 
 @RunWith(CICheckingJUnitRunner.class)
 public class UploadTest {

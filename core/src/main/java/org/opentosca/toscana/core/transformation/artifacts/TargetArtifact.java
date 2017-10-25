@@ -1,8 +1,17 @@
 package org.opentosca.toscana.core.transformation.artifacts;
 
 public class TargetArtifact {
-    // TODO
+
+    private final String relativePath;
+
+    /**
+     * @param relativePath relative path to the target artifact
+     */
+    public TargetArtifact(String relativePath) {
+        this.relativePath = relativePath;
+    }
+
     public String getArtifactDownloadURL() {
-        return "http://not-yet-implemented.com/";
+        return relativePath;
     }
 }

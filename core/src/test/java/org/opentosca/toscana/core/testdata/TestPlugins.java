@@ -3,6 +3,7 @@ package org.opentosca.toscana.core.testdata;
 import org.assertj.core.util.Lists;
 import org.opentosca.toscana.core.dummy.DummyPlugin;
 import org.opentosca.toscana.core.dummy.ExecutionDummyPlugin;
+import org.opentosca.toscana.core.dummy.FileCreatingExceutionDummyPlugin;
 import org.opentosca.toscana.core.plugin.TransformationPlugin;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 
@@ -21,11 +22,23 @@ public class TestPlugins {
     public static final TransformationPlugin PLUGIN3 = new DummyPlugin(PLATFORM3);
     public static final TransformationPlugin PLUGIN4 = new DummyPlugin(PLATFORM4);
 
-    public static final ExecutionDummyPlugin PASSING_DUMMY = new ExecutionDummyPlugin("passing", false);
-    public static final ExecutionDummyPlugin FAILING_DUMMY = new ExecutionDummyPlugin("failing", true);
+    public static final ExecutionDummyPlugin PASSING_DUMMY =
+        new ExecutionDummyPlugin("passing", false);
+    public static final ExecutionDummyPlugin FAILING_DUMMY =
+        new ExecutionDummyPlugin("failing", true);
+
+    public static final ExecutionDummyPlugin PASSING_WRITING_DUMMY =
+        new FileCreatingExceutionDummyPlugin("passing-fw", false);
+    public static final ExecutionDummyPlugin FAILING_WRITING_DUMMY =
+        new FileCreatingExceutionDummyPlugin("failing-fw", true);
 
     public static final List<Platform> PLATFORMS = Lists.newArrayList(PLATFORM1, PLATFORM2, PLATFORM3, PLATFORM4);
-    public static final List<TransformationPlugin> PLUGINS = Lists.newArrayList(PLUGIN1, PLUGIN2, PLUGIN3, PLUGIN4, PASSING_DUMMY, FAILING_DUMMY);
+    public static final List<TransformationPlugin> PLUGINS = Lists.newArrayList(
+        PLUGIN1, PLUGIN2,
+        PLUGIN3, PLUGIN4,
+        PASSING_DUMMY, FAILING_DUMMY,
+        PASSING_WRITING_DUMMY, FAILING_WRITING_DUMMY
+    );
 
     /**
      * In given csarTransformationsDir, creates for every given target platform a fake transformation on disk

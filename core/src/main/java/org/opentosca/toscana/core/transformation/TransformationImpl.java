@@ -1,16 +1,17 @@
 package org.opentosca.toscana.core.transformation;
 
-import ch.qos.logback.classic.Logger;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.transformation.artifacts.TargetArtifact;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
-import org.slf4j.LoggerFactory;
 
-import java.util.HashSet;
-import java.util.Set;
+import ch.qos.logback.classic.Logger;
+import org.slf4j.LoggerFactory;
 
 class TransformationImpl implements Transformation {
 
@@ -71,11 +72,17 @@ class TransformationImpl implements Transformation {
     }
 
     /**
-     * @return if this transformation object's state is <code>DONE</code>, returns the target artifact of the transformation.
-     * Else returns null.
+     * @return if this transformation object's state is <code>DONE</code>, returns the target artifact of the
+     * transformation. Else returns null.
      */
+    @Override
     public TargetArtifact getTargetArtifact() {
         return targetArtifact;
+    }
+
+    @Override
+    public void setTargetArtifact(TargetArtifact artifact) {
+        this.targetArtifact = artifact;
     }
 
     @Override

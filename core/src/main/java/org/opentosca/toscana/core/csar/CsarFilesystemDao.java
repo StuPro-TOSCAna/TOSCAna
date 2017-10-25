@@ -1,16 +1,5 @@
 package org.opentosca.toscana.core.csar;
 
-import org.apache.commons.io.FileUtils;
-import org.opentosca.toscana.core.transformation.Transformation;
-import org.opentosca.toscana.core.transformation.TransformationDao;
-import org.opentosca.toscana.core.util.Preferences;
-import org.opentosca.toscana.core.util.ZipUtility;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Repository;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,6 +8,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipInputStream;
+
+import javax.annotation.PostConstruct;
+
+import org.opentosca.toscana.core.transformation.Transformation;
+import org.opentosca.toscana.core.transformation.TransformationDao;
+import org.opentosca.toscana.core.util.Preferences;
+import org.opentosca.toscana.core.util.ZipUtility;
+
+import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Repository;
 
 @Repository
 public class CsarFilesystemDao implements CsarDao {
@@ -40,7 +43,6 @@ public class CsarFilesystemDao implements CsarDao {
     // a map containing all csars. it should be kept in sync with the status of the file system
     private final Map<String, Csar> csarMap = new HashMap<>();
 
-
     @Autowired
     public CsarFilesystemDao(Preferences preferences, @Lazy TransformationDao transformationDao) {
         this.dataDir = preferences.getDataDir();
@@ -52,8 +54,13 @@ public class CsarFilesystemDao implements CsarDao {
             }
         }
 
-        readFromDisk();
         this.transformationDao = transformationDao;
+    }
+
+    @PostConstruct
+    public void init() {
+        transformationDao.setCsarDao(this);
+        readFromDisk();
     }
 
     @Override
@@ -101,7 +108,6 @@ public class CsarFilesystemDao implements CsarDao {
     public Csar find(String identifier) {
         readFromDisk(); // TODO: change this to some smart behaviour. e.g. file watcher
         return csarMap.get(identifier);
-
     }
 
     @Override
@@ -120,7 +126,6 @@ public class CsarFilesystemDao implements CsarDao {
         return new File(dataDir, csar.getIdentifier());
     }
 
-
     @Override
     public File getContentDir(Csar csar) {
         return new File(getRootDir(csar), CONTENT_DIR);
@@ -132,8 +137,7 @@ public class CsarFilesystemDao implements CsarDao {
     }
 
     /**
-     * Reads csars from disks
-     * post: csarMap reflects contents of DATA_DIR on disk
+     * Reads csars from disks post: csarMap reflects contents of DATA_DIR on disk
      */
     private void readFromDisk() {
         csarMap.clear();
@@ -148,12 +152,11 @@ public class CsarFilesystemDao implements CsarDao {
             }
         }
         logger.debug("in-memory csars in synced with file system");
-
     }
 
     /**
-     * Returns true if given file is a valid csar directory.
-     * Valid csar directories must contain 'transformations' and 'content' directory
+     * Returns true if given file is a valid csar directory. Valid csar directories must contain 'transformations' and
+     * 'content' directory
      */
     private boolean isCsarDir(File file) {
         if (file.isDirectory()) {

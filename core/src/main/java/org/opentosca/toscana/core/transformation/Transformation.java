@@ -16,8 +16,6 @@ public interface Transformation {
 
     /**
      * Sets the state of the transformation, this is only temporary and will be removed later.
-     *
-     * @param state
      */
     void setState(TransformationState state);
 
@@ -27,9 +25,8 @@ public interface Transformation {
     Platform getPlatform();
 
     /**
-     * Sets the value of the property with its given key.
-     * Throws a IllegalArgumentException if a property with the given key cannot be found
-     * or if the entered value is invalid
+     * Sets the value of the property with its given key. Throws a IllegalArgumentException if a property with the given
+     * key cannot be found or if the entered value is invalid
      */
     default void setProperty(String key, String value) {
         getProperties().setPropertyValue(key, value);
@@ -55,14 +52,15 @@ public interface Transformation {
     Log getLog();
 
     /**
-     * If the transformation is finished, this will return a TargetArtifact
-     * object pointing to the generated target artifact otherwise it returns null!
+     * If the transformation is finished, this will return a TargetArtifact object pointing to the generated target
+     * artifact otherwise it returns null!
      */
     TargetArtifact getTargetArtifact();
+
+    void setTargetArtifact(TargetArtifact targetArtifact);
 
     /**
      * @return Returns the underlying Csar of the transformation
      */
     Csar getCsar();
-
 }
