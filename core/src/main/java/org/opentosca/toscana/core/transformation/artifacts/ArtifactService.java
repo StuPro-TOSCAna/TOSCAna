@@ -11,8 +11,8 @@ import org.opentosca.toscana.core.transformation.Transformation;
 public interface ArtifactService {
 
     /**
-     * Takes the target artifact of the transformation and copies it to the "resource directory" to allow Spring to
-     * serve its URL to the client.
+     * Takes the target artifact of given transformation and copies it to the "resource directory" in order to allow
+     * Spring to serve its URL to the client.
      */
     TargetArtifact serveArtifact(Transformation transformation) throws IOException;
 

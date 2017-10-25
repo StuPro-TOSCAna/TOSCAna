@@ -42,7 +42,6 @@ public class ArtifactServiceImpl
         String csarId = transformation.getCsar().getIdentifier();
         String platformId = transformation.getPlatform().id;
         File transformationWorkingDirectory = transformatioDao.getRootDir(transformation);
-        //TODO Determine better name for artifacts
         String filename = csarId + "-" + platformId + "_" + format.format(new Date(currentTimeMillis())) + ".zip";
         File outputFile = new File(artifactDir, filename);
 
