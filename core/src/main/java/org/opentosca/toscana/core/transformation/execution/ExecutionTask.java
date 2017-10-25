@@ -1,14 +1,15 @@
 package org.opentosca.toscana.core.transformation.execution;
 
+import java.io.File;
+
 import org.opentosca.toscana.core.plugin.PluginService;
 import org.opentosca.toscana.core.plugin.TransformationPlugin;
 import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.core.transformation.TransformationState;
 import org.opentosca.toscana.core.transformation.artifacts.ArtifactManagementService;
-import org.slf4j.Logger;
 
-import java.io.File;
+import org.slf4j.Logger;
 
 public class ExecutionTask implements Runnable {
 
@@ -44,21 +45,17 @@ public class ExecutionTask implements Runnable {
         try {
             log.debug("Creating transformation root directory {}", transformationRootDir.getAbsolutePath());
             transformationRootDir.mkdirs();
-            
+
             plugin.transform(new TransformationContext(transformation, csarContentDir, transformationRootDir));
 
             log.info("Compressing target artifacts");
             if (transformationRootDir != null && transformationRootDir.listFiles().length != 0) {
-                String path = ams.saveToArtifactDirectory(
-                    transformationRootDir,
-                    transformation.getCsar().getIdentifier(),
-                    transformation.getPlatform().id
-                );
+                String path = ams.serveArtifact(transformation);
                 log.info("Artifact is can be downloaded at relative url {}", path);
                 //TODO Fix TargetArtifact not existing
                 //transformation.getTargetArtifact().setArtifactDownloadURL(path);
             } else {
-                log.info("No The transformation did not create any target artifacts");
+                log.info("Failed to compress target artifacts: Transformation generated no output files");
             }
         } catch (Exception e) {
             log.error("Transforming of {}/{} has errored!",

@@ -1,5 +1,7 @@
 package org.opentosca.toscana.core;
 
+import java.util.Arrays;
+
 import org.opentosca.toscana.core.csar.CsarDao;
 import org.opentosca.toscana.core.csar.CsarFilesystemDao;
 import org.opentosca.toscana.core.csar.CsarService;
@@ -22,20 +24,24 @@ import org.opentosca.toscana.core.util.Preferences;
 import org.opentosca.toscana.plugins.awscf.CloudFormationPlugin;
 import org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin;
 import org.opentosca.toscana.plugins.kubernetes.KubernetesPlugin;
-import org.springframework.context.annotation.*;
 
-import java.util.Arrays;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
+import org.springframework.context.annotation.PropertySource;
 
 @Configuration
 @PropertySource("classpath:application.yml")
 @Profile("!controller_test")
 public class TestCoreConfiguration extends CoreConfiguration {
-    
+
     @Bean
-    public ArtifactManagementService artifactManagementService(Preferences preferences) {
-        return new ArtifactManagementServiceImpl(preferences);
+    public ArtifactManagementService artifactManagementService(Preferences preferences, TransformationDao transformationDao) {
+        return new ArtifactManagementServiceImpl(preferences, transformationDao);
     }
-    
+
     @Bean
     public CsarDao csarDao(Preferences preferences, @Lazy TransformationDao transformationDao) {
         return new CsarFilesystemDao(preferences, transformationDao);
@@ -55,7 +61,6 @@ public class TestCoreConfiguration extends CoreConfiguration {
         TestCsars bean = new TestCsars(dao);
         return bean;
     }
-
 
     //TODO Replace with filesystem implementation
     @Bean
@@ -105,5 +110,4 @@ public class TestCoreConfiguration extends CoreConfiguration {
         TransformationServiceImpl bean = new TransformationServiceImpl(repo, service, csarDao, ams);
         return bean;
     }
-
 }
