@@ -1,5 +1,14 @@
 package org.opentosca.toscana.core.api;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.security.MessageDigest;
+import java.util.Random;
+
+import org.opentosca.toscana.core.transformation.artifacts.ArtifactManagementService;
+import org.opentosca.toscana.core.util.FileUtils;
+import org.opentosca.toscana.core.util.Preferences;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.After;
@@ -7,8 +16,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.opentosca.toscana.core.util.FileUtils;
-import org.opentosca.toscana.core.util.Preferences;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.annotation.DirtiesContext;
@@ -17,12 +24,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.security.MessageDigest;
-import java.util.Random;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -78,11 +82,11 @@ public class ArtifactControllerTest {
         }
 
         //Mocking preferences
-        preferences = Mockito.mock(Preferences.class);
-        when(preferences.getArtifactDir()).thenReturn(testdir);
+        ArtifactManagementService ams = Mockito.mock(ArtifactManagementService.class);
+        when(ams.getArtifactDir()).thenReturn(testdir);
 
         //initalizing controller
-        this.controller = new ArtifactController(preferences);
+        this.controller = new ArtifactController(ams);
         this.controller.enableArtifactList = true;
 
         //Building MockMvc

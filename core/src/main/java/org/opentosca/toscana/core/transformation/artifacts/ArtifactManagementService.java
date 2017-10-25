@@ -1,5 +1,6 @@
 package org.opentosca.toscana.core.transformation.artifacts;
 
+import java.io.File;
 import java.io.IOException;
 
 import org.opentosca.toscana.core.transformation.Transformation;
@@ -14,4 +15,9 @@ public interface ArtifactManagementService {
      * serve its URL to the client.
      */
     String serveArtifact(Transformation transformation) throws IOException;
+
+    /**
+     * @return the general target artifact dir
+     */
+    File getArtifactDir();
 }

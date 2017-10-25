@@ -1,24 +1,26 @@
 package org.opentosca.toscana.core.transformation;
 
-import org.junit.Before;
-import org.junit.Test;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.HashSet;
+
 import org.opentosca.toscana.core.BaseSpringTest;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.dummy.DummyCsar;
 import org.opentosca.toscana.core.dummy.ExecutionDummyPlugin;
 import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.testdata.TestPlugins;
+import org.opentosca.toscana.core.transformation.artifacts.ArtifactManagementService;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.core.transformation.properties.PropertyType;
 import org.opentosca.toscana.core.transformation.properties.RequirementType;
-import org.opentosca.toscana.core.util.Preferences;
+
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.HashSet;
-
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -29,7 +31,7 @@ public class TransformationServiceImplTest extends BaseSpringTest {
     @Autowired
     private TestCsars testCsars;
     @Autowired
-    private Preferences preferences;
+    private ArtifactManagementService ams;
 
     private Csar csar;
 
@@ -74,7 +76,7 @@ public class TransformationServiceImplTest extends BaseSpringTest {
         service.createTransformation(csar, passingDummy.getPlatformDetails());
         assertTrue(csar.getTransformations().get("passing") != null);
         Transformation t = csar.getTransformations().get("passing");
-        assertTrue(t.getState() == TransformationState.CREATED);
+        assertEquals(TransformationState.CREATED, t.getState());
     }
 
     @Test
@@ -86,9 +88,8 @@ public class TransformationServiceImplTest extends BaseSpringTest {
         service.createTransformation(csar, passingDummy.getPlatformDetails());
         assertTrue(csar.getTransformations().get("passing") != null);
         Transformation t = csar.getTransformations().get("passing");
-        assertTrue(t.getState() == TransformationState.INPUT_REQUIRED);
+        assertEquals(TransformationState.INPUT_REQUIRED, t.getState());
     }
-
 
     @Test
     public void startTransformation() throws Exception {
@@ -107,7 +108,7 @@ public class TransformationServiceImplTest extends BaseSpringTest {
 
         lookForArtifactArchive(id);
     }
-    
+
     @Test
     public void startTransformationWithArtifactsExecutionFail() throws Exception {
         startTransfomationInternal(TransformationState.ERROR, failingDummyFw.getPlatformDetails());
@@ -158,7 +159,7 @@ public class TransformationServiceImplTest extends BaseSpringTest {
         assertTrue(service.startTransformation(t));
         Thread.sleep(100);
         waitForTransformationStateChange(t);
-        assertTrue(t.getState() == expectedState);
+        assertEquals(expectedState, t.getState());
     }
 
     private void waitForTransformationStateChange(Transformation t) throws InterruptedException {
@@ -168,15 +169,14 @@ public class TransformationServiceImplTest extends BaseSpringTest {
     }
 
     public void lookForArtifactArchive(String id) {
-        String filename = "test-" + id+"_";
+        String filename = "test-" + id + "_";
         boolean found = false;
-        for (File file : preferences.getArtifactDir().listFiles()) {
-            if(file.getName().startsWith(filename)) {
+        for (File file : ams.getArtifactDir().listFiles()) {
+            if (file.getName().startsWith(filename)) {
                 found = true;
                 break;
             }
         }
-        assertTrue("Could not find artifact ZIP in Folder",found);
+        assertTrue("Could not find artifact ZIP in Folder", found);
     }
-
 }

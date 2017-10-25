@@ -33,6 +33,7 @@ public class ArtifactManagementServiceImpl
     public ArtifactManagementServiceImpl(Preferences preferences, TransformationDao transformationDao) {
         this.transformatioDao = transformationDao;
         artifactDir = new File(preferences.getDataDir(), ARTIFACT_DIR);
+        artifactDir.mkdir();
         logger.info("Artifact directory is {}", artifactDir.getAbsolutePath());
     }
 
@@ -51,5 +52,10 @@ public class ArtifactManagementServiceImpl
         out.close();
 
         return "/artifacts/" + filename;
+    }
+
+    @Override
+    public File getArtifactDir() {
+        return artifactDir;
     }
 }

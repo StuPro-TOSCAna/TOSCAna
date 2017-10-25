@@ -1,14 +1,18 @@
 package org.opentosca.toscana.core.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.*;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.LinkedList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ZipUtility {
 
@@ -19,12 +23,11 @@ public class ZipUtility {
     private static final int BUFFER_SIZE = 4096;
 
     /**
-     * Extracts a ZipInputStream specified by the zipIn to a directory specified by
-     * destDirectory (will be created if does not exists)
+     * Extracts a ZipInputStream specified by the zipIn to a directory specified by destDirectory (will be created if
+     * does not exists)
      *
      * @param zipIn         ZipInputStream of zip archive
      * @param destDirectory target directory for unzipping
-     * @throws IOException
      */
     public static void unzip(ZipInputStream zipIn, String destDirectory) throws IOException {
         File destDir = new File(destDirectory);
@@ -49,10 +52,6 @@ public class ZipUtility {
 
     /**
      * Extracts a zip entry (file entry)
-     *
-     * @param zipIn
-     * @param filePath
-     * @throws IOException
      */
     private static void extractFile(ZipInputStream zipIn, String filePath) throws IOException {
         logger.debug("Extracting file: {}", filePath);
@@ -72,12 +71,7 @@ public class ZipUtility {
     }
 
     /**
-     * Reads a given directory (and all its subdirectories) and createss a compressed version thats written to the given
-     * output stream
-     *
-     * @param directory
-     * @param output
-     * @throws IOException
+     * Compresses given directory recursively to given output stream
      */
     public static void compressDirectory(File directory, OutputStream output) throws IOException {
         logger.debug("Compressing Directory {}", directory.getAbsolutePath());
@@ -121,5 +115,4 @@ public class ZipUtility {
         //close zip output
         zipOut.close();
     }
-
 }
