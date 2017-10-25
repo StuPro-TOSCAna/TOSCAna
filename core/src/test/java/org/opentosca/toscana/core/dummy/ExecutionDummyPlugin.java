@@ -41,8 +41,8 @@ public class ExecutionDummyPlugin extends AbstractPlugin {
         int i = 0;
         InputStream stream = IOUtils.toInputStream("some transformation result");
         transformation.getPluginFileAccess().write("some-output-file", stream);
-        logger.info("Waiting 1s until completion");
-        while (!Thread.currentThread().isInterrupted() && i < 100) {
+        logger.info("Waiting 50ms until completion");
+        while (!Thread.currentThread().isInterrupted() && i < 5) {
             Thread.sleep(10);
             i++;
         }

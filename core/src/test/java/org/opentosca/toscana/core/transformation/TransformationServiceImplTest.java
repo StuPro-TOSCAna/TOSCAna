@@ -119,10 +119,10 @@ public class TransformationServiceImplTest extends BaseSpringTest {
         service.createTransformation(csar, passingDummy.getPlatformDetails());
         Transformation t = csar.getTransformations().get("passing");
         assertTrue(service.startTransformation(t));
-        Thread.sleep(100);
+        letTimePass();
         assertTrue(t.getState() == TransformationState.TRANSFORMING);
         assertTrue(service.abortTransformation(t));
-        Thread.sleep(100);
+        letTimePass();
         assertTrue("Transformation State is " + t.getState(),
             t.getState() == TransformationState.ERROR);
     }
@@ -157,7 +157,7 @@ public class TransformationServiceImplTest extends BaseSpringTest {
         service.createTransformation(csar, platform);
         Transformation t = csar.getTransformations().get(platform.id);
         assertTrue(service.startTransformation(t));
-        Thread.sleep(100);
+        letTimePass();
         waitForTransformationStateChange(t);
         assertEquals(expectedState, t.getState());
         return t;
@@ -165,7 +165,7 @@ public class TransformationServiceImplTest extends BaseSpringTest {
 
     private void waitForTransformationStateChange(Transformation t) throws InterruptedException {
         while (t.getState() == TransformationState.TRANSFORMING) {
-            Thread.sleep(100);
+            letTimePass();
         }
     }
 
@@ -179,5 +179,9 @@ public class TransformationServiceImplTest extends BaseSpringTest {
             }
         }
         assertTrue("Could not find artifact ZIP in Folder", found);
+    }
+
+    private void letTimePass() throws InterruptedException {
+        Thread.sleep(25);
     }
 }

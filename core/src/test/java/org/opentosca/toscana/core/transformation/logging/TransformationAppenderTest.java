@@ -1,12 +1,12 @@
 package org.opentosca.toscana.core.transformation.logging;
 
+import java.io.IOException;
+import java.util.List;
+
 import ch.qos.logback.classic.Logger;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.util.List;
 
 import static org.junit.Assert.assertTrue;
 
@@ -33,15 +33,16 @@ public class TransformationAppenderTest {
 
     @Test
     public void testAppender() throws Exception {
+        int logCount = 15;
         logger.info("Logging some messages!");
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < logCount; i++) {
             testLogger.info("Test Message {}", i);
-            Thread.sleep(10);
+            Thread.sleep(5);
         }
         logger.info("Checking list");
         List<LogEntry> logs = log.getLogEntries(0);
         logger.info("Logs length {}", logs.size());
-        assertTrue(logs.size() == 100);
+        assertTrue(logs.size() == logCount);
         long timestamp = 0;
         for (int i = 0; i < logs.size(); i++) {
             assertTrue(timestamp < logs.get(i).getTimestamp());

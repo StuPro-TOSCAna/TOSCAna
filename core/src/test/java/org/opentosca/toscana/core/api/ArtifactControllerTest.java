@@ -7,12 +7,11 @@ import java.util.Random;
 
 import org.opentosca.toscana.core.transformation.artifacts.ArtifactService;
 import org.opentosca.toscana.core.util.FileUtils;
-import org.opentosca.toscana.core.util.Preferences;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -38,24 +37,22 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 )
 public class ArtifactControllerTest {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private static final Logger log = LoggerFactory.getLogger(ArtifactControllerTest.class);
 
-    private MockMvc mvc;
+    private static MockMvc mvc;
 
-    private Preferences preferences;
+    private static ArtifactController controller;
 
-    private ArtifactController controller;
+    private static File testdir = new File("test-temp");
 
-    private File testdir = new File("test-temp");
+    private static final int count = 5;
 
-    private final int count = 5;
+    private static byte[][] hashes = new byte[count][];
 
-    private byte[][] hashes = new byte[count][];
+    private static MessageDigest digest;
 
-    private MessageDigest digest;
-
-    @Before
-    public void setUp() throws Exception {
+    @BeforeClass
+    public static void setUp() throws Exception {
         //Cleanup
         FileUtils.delete(testdir);
         //Recreation
@@ -86,8 +83,8 @@ public class ArtifactControllerTest {
         when(ams.getArtifactDir()).thenReturn(testdir);
 
         //initalizing controller
-        this.controller = new ArtifactController(ams);
-        this.controller.enableArtifactList = true;
+        controller = new ArtifactController(ams);
+        controller.enableArtifactList = true;
 
         //Building MockMvc
         mvc = MockMvcBuilders.standaloneSetup(controller).build();
@@ -117,6 +114,7 @@ public class ArtifactControllerTest {
 
     @Test
     public void listFiles() throws Exception {
+        controller.enableArtifactList = true;
         MvcResult result = mvc.perform(get("/artifacts"))
             .andDo(print())
             .andExpect(status().is(200))
@@ -144,12 +142,12 @@ public class ArtifactControllerTest {
 
     @Test
     public void listFilesDisabled() throws Exception {
-        this.controller.enableArtifactList = false;
+        controller.enableArtifactList = false;
         mvc.perform(get("/artifacts")).andDo(print()).andExpect(status().is(403)).andReturn();
     }
 
-    @After
-    public void tearDown() throws Exception {
+    @AfterClass
+    public static void tearDown() throws Exception {
         FileUtils.delete(testdir);
     }
 }
