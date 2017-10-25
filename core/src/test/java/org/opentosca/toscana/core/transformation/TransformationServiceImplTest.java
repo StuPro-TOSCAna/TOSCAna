@@ -12,8 +12,10 @@ import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.core.transformation.properties.PropertyType;
 import org.opentosca.toscana.core.transformation.properties.RequirementType;
+import org.opentosca.toscana.core.util.Preferences;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.HashSet;
 
@@ -26,6 +28,8 @@ public class TransformationServiceImplTest extends BaseSpringTest {
     private TransformationService service;
     @Autowired
     private TestCsars testCsars;
+    @Autowired
+    private Preferences preferences;
 
     private Csar csar;
 
@@ -88,22 +92,25 @@ public class TransformationServiceImplTest extends BaseSpringTest {
 
     @Test
     public void startTransformation() throws Exception {
-         startTransfomationInternal(TransformationState.DONE, passingDummy.getPlatformDetails());
-    }
-    
-    @Test
-    public void startTransformationWithArtifacts() throws Exception {
-        startTransfomationInternal(TransformationState.DONE, passingDummyFw.getPlatformDetails());
-    }
-
-    @Test
-    public void startTransformationWithArtifactsExecutionFail() throws Exception {
-        startTransfomationInternal(TransformationState.ERROR, failingDummyFw.getPlatformDetails());
+        startTransfomationInternal(TransformationState.DONE, passingDummy.getPlatformDetails());
     }
 
     @Test
     public void startTransformationExecutionFail() throws Exception {
         startTransfomationInternal(TransformationState.ERROR, failingDummy.getPlatformDetails());
+    }
+
+    @Test
+    public void startTransformationWithArtifacts() throws Exception {
+        startTransfomationInternal(TransformationState.DONE, passingDummyFw.getPlatformDetails());
+        String id = passingDummyFw.getIdentifier();
+
+        lookForArtifactArchive(id);
+    }
+    
+    @Test
+    public void startTransformationWithArtifactsExecutionFail() throws Exception {
+        startTransfomationInternal(TransformationState.ERROR, failingDummyFw.getPlatformDetails());
     }
 
     @Test
@@ -134,7 +141,7 @@ public class TransformationServiceImplTest extends BaseSpringTest {
         Transformation t = csar.getTransformations().get("passing");
         assertTrue(!service.abortTransformation(t));
     }
-    
+
     @Test
     public void deleteTransformation() throws Exception {
         Transformation transformation = new TransformationImpl(csar, TestPlugins.PLATFORM1);
@@ -159,5 +166,17 @@ public class TransformationServiceImplTest extends BaseSpringTest {
             Thread.sleep(100);
         }
     }
-    
+
+    public void lookForArtifactArchive(String id) {
+        String filename = "test-" + id+"_";
+        boolean found = false;
+        for (File file : preferences.getArtifactDir().listFiles()) {
+            if(file.getName().startsWith(filename)) {
+                found = true;
+                break;
+            }
+        }
+        assertTrue("Could not find artifact ZIP in Folder",found);
+    }
+
 }
