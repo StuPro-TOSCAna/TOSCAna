@@ -1,9 +1,5 @@
 package org.opentosca.toscana.core.api;
 
-import org.apache.tomcat.util.http.fileupload.FileItemIterator;
-import org.apache.tomcat.util.http.fileupload.FileItemStream;
-import org.apache.tomcat.util.http.fileupload.FileUploadException;
-import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
 import org.opentosca.toscana.core.api.exceptions.CsarNameAlreadyUsedException;
 import org.opentosca.toscana.core.api.exceptions.CsarNotFoundException;
 import org.opentosca.toscana.core.api.model.CsarResponse;
@@ -23,11 +19,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
@@ -117,11 +110,11 @@ public class CsarController {
     )
     public ResponseEntity<String> uploadCSAR(
         @PathVariable(name = "name") String name,
-		@RequestParam(name = "file", required = true) MultipartFile file
+        @RequestParam(name = "file", required = true) MultipartFile file
 //        HttpServletRequest request
     ) throws InvalidCsarException {
         try {
-			Csar result = csarService.submitCsar(name, file.getInputStream());
+            Csar result = csarService.submitCsar(name, file.getInputStream());
 //            InputStream input = getInputStream(request);
 //            if(input == null) {
 //                throw new IllegalArgumentException("No Multipart entry named file is given!");

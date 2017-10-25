@@ -1,7 +1,6 @@
 package org.opentosca.toscana.core.dummy;
 
 import org.opentosca.toscana.core.plugin.TransformationPlugin;
-import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 

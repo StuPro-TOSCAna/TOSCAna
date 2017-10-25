@@ -2,10 +2,7 @@ package org.opentosca.toscana.plugins.awscf;
 
 import org.opentosca.toscana.core.plugin.AbstractPlugin;
 import org.opentosca.toscana.core.transformation.TransformationContext;
-import org.opentosca.toscana.core.transformation.properties.Property;
 import org.springframework.stereotype.Component;
-
-import java.util.HashSet;
 
 @Component
 public class CloudFormationPlugin extends AbstractPlugin {
@@ -21,6 +18,6 @@ public class CloudFormationPlugin extends AbstractPlugin {
 
     @Override
     public void transform(TransformationContext context) throws Exception {
-        
+
     }
 }

@@ -1,11 +1,8 @@
 package org.opentosca.toscana.core.plugin;
 
 import org.apache.commons.io.FileUtils;
-import org.opentosca.toscana.core.csar.CsarDao;
 import org.opentosca.toscana.core.transformation.Transformation;
-import org.opentosca.toscana.core.transformation.TransformationDao;
 import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -28,9 +25,10 @@ public class PluginFileAccess {
     /**
      * Copies given file or directory from the csar content directory to the transformation directory
      * If given path specifies a directory, this directory's content gets copied aswell
+     *
      * @param relativePath the path to the source file relative to the csar's content directory
      * @throws FileNotFoundException if no file or directory was found for given path
-     * @throws IOException if an error occurred while copying
+     * @throws IOException           if an error occurred while copying
      */
     public void copy(String relativePath) throws FileNotFoundException, IOException {
         File source = new File(sourceDir, relativePath);
@@ -43,7 +41,7 @@ public class PluginFileAccess {
             if (source.isDirectory()) {
                 FileUtils.copyDirectory(source, target);
                 logger.info("Copied directory '{}' and its content to '{}'", sourceDir, targetDir);
-            } else if (source.isFile()){
+            } else if (source.isFile()) {
                 FileUtils.copyFile(source, target);
                 logger.info("Copied file '{}' to '{}'", sourceDir, targetDir);
             }
@@ -58,15 +56,16 @@ public class PluginFileAccess {
     /**
      * Writes given InputStream to given path
      * If necessary, creates missing subdirectories.
+     *
      * @param relativePath the path to the target file relative to the transformations root dir
-     * @param inputStream stream which will get written to file. Afterwards, this stream will be closed
+     * @param inputStream  stream which will get written to file. Afterwards, this stream will be closed
      */
     public void write(String relativePath, InputStream inputStream) throws IOException {
         File target = new File(targetDir, relativePath);
         try {
             FileUtils.copyInputStreamToFile(inputStream, target);
             logger.info("Written stream to new file '{}'", target);
-        } catch (IOException e){
+        } catch (IOException e) {
             logger.error("Failed to write stream to '{}'", target);
             throw e;
         } finally {

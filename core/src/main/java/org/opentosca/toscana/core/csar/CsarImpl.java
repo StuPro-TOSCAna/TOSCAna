@@ -6,7 +6,6 @@ import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.properties.Property;
 
-import java.io.File;
 import java.util.*;
 
 class CsarImpl implements Csar {
@@ -73,7 +72,7 @@ class CsarImpl implements Csar {
     }
 
     public void setTransformations(List<Transformation> transformations) {
-        for (Transformation transformation : transformations){
+        for (Transformation transformation : transformations) {
             this.transformations.put(transformation.getPlatform().id, transformation);
         }
     }

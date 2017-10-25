@@ -38,6 +38,7 @@ public class TestCsars {
     /**
      * Creates given file as csar.
      * Caution: Uses CsarDao internally
+     *
      * @param file a csar
      * @return instance of csar
      * @throws FileNotFoundException
@@ -50,8 +51,9 @@ public class TestCsars {
     /**
      * Creates given file as csar.
      * Caution: Uses CsarDao internally
+     *
      * @param identifier identifier for new csar
-     * @param file a csar
+     * @param file       a csar
      * @return instance of csar
      * @throws FileNotFoundException
      */

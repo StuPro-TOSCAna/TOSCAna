@@ -6,7 +6,6 @@ import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.properties.Property;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -18,7 +17,7 @@ public class DummyCsar implements Csar {
     private byte[] data;
 
     public Set<Property> modelSpecificProperties = new HashSet<>();
-    
+
     private Map<String, Transformation> transformations = new HashMap<>();
 
     public DummyCsar(String name) {

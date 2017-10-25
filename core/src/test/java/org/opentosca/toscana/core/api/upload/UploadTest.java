@@ -8,7 +8,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.opentosca.toscana.core.Main;
 import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.testutils.CICheckingJUnitRunner;

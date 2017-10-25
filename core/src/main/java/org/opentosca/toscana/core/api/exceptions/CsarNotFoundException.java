@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * <p>
  * The response code produced is 404
  */
-@ResponseStatus(value= HttpStatus.NOT_FOUND, reason="No such Csar")
+@ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "No such Csar")
 public class CsarNotFoundException extends RuntimeException {
     public CsarNotFoundException() {
     }

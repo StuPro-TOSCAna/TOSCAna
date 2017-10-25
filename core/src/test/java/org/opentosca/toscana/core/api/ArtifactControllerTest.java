@@ -44,8 +44,8 @@ public class ArtifactControllerTest {
 
     private File testdir = new File("test-temp");
 
-    private final int count= 5;
-    
+    private final int count = 5;
+
     private byte[][] hashes = new byte[count][];
 
     private MessageDigest digest;

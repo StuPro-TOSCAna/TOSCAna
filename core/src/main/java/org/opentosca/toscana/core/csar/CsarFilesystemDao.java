@@ -10,9 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Repository;
-import org.springframework.stereotype.Service;
 
-import javax.xml.ws.ServiceMode;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,7 +39,7 @@ public class CsarFilesystemDao implements CsarDao {
 
     // a map containing all csars. it should be kept in sync with the status of the file system
     private final Map<String, Csar> csarMap = new HashMap<>();
-    
+
 
     @Autowired
     public CsarFilesystemDao(Preferences preferences, @Lazy TransformationDao transformationDao) {
@@ -116,7 +114,7 @@ public class CsarFilesystemDao implements CsarDao {
         }
         return csarList;
     }
-    
+
     @Override
     public File getRootDir(Csar csar) {
         return new File(dataDir, csar.getIdentifier());

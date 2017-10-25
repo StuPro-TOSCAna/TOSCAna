@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.opentosca.toscana.core.parse.InvalidCsarException;
 import org.opentosca.toscana.core.transformation.logging.LogEntry;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class CsarUploadErrorResponse {

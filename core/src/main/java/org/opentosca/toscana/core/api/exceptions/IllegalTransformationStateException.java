@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * <p>
  * The response code produced is 404
  */
-@ResponseStatus(value= HttpStatus.BAD_REQUEST,
-    reason="This Operation is illegal, because the transformation is not in a valid state" +
+@ResponseStatus(value = HttpStatus.BAD_REQUEST,
+    reason = "This Operation is illegal, because the transformation is not in a valid state" +
         " to perform this operation!")
-public class IllegalTransformationStateException extends RuntimeException{
+public class IllegalTransformationStateException extends RuntimeException {
     public IllegalTransformationStateException() {
     }
 

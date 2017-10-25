@@ -14,14 +14,12 @@ import org.opentosca.toscana.core.transformation.TransformationDao;
 import org.opentosca.toscana.core.transformation.TransformationFilesystemDao;
 import org.opentosca.toscana.core.transformation.TransformationService;
 import org.opentosca.toscana.core.transformation.TransformationServiceImpl;
-import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.platform.PlatformService;
 import org.opentosca.toscana.core.util.FileSystem;
 import org.opentosca.toscana.core.util.Preferences;
 import org.opentosca.toscana.plugins.awscf.CloudFormationPlugin;
 import org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin;
 import org.opentosca.toscana.plugins.kubernetes.KubernetesPlugin;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
 
 import java.util.Arrays;
@@ -34,16 +32,16 @@ public class TestCoreConfiguration extends CoreConfiguration {
     public CsarDao csarDao(Preferences preferences, @Lazy TransformationDao transformationDao) {
         return new CsarFilesystemDao(preferences, transformationDao);
     }
-    
+
     @Bean
     public PluginService pluginService() {
         return new PluginServiceImpl(Arrays.asList(
-           new KubernetesPlugin(),
-           new CloudFoundryPlugin(),
-           new CloudFormationPlugin() 
+            new KubernetesPlugin(),
+            new CloudFoundryPlugin(),
+            new CloudFormationPlugin()
         ));
     }
-    
+
     @Bean
     public TestCsars testCsars(CsarDao dao) {
         TestCsars bean = new TestCsars(dao);
@@ -71,8 +69,8 @@ public class TestCoreConfiguration extends CoreConfiguration {
 
     @Bean
     public CsarService csarService(CsarDao repo, CsarParseService parser) {
-        return new CsarServiceImpl(repo,parser);
-    }    
+        return new CsarServiceImpl(repo, parser);
+    }
 
     @Bean
     @Primary
@@ -84,7 +82,7 @@ public class TestCoreConfiguration extends CoreConfiguration {
 
     @Bean
     @Primary
-    public TransformationDao transformationDao(PlatformService platforms,@Lazy CsarDao repo) {
+    public TransformationDao transformationDao(PlatformService platforms, @Lazy CsarDao repo) {
         TransformationFilesystemDao bean = new TransformationFilesystemDao(repo, platforms);
         return bean;
     }

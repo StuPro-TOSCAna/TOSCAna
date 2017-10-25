@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * <p>
  * The response code produced is 404
  */
-@ResponseStatus(value= HttpStatus.NOT_FOUND,
-    reason="This Csar has no transformation for the given platform!")
+@ResponseStatus(value = HttpStatus.NOT_FOUND,
+    reason = "This Csar has no transformation for the given platform!")
 public class TransformationNotFoundException extends RuntimeException {
     public TransformationNotFoundException() {
     }

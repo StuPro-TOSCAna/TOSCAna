@@ -5,7 +5,6 @@ import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.properties.Property;
 
-import java.io.File;
 import java.util.Map;
 import java.util.Set;
 

@@ -10,7 +10,6 @@ import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.core.transformation.properties.PropertyType;
 import org.opentosca.toscana.core.transformation.properties.RequirementType;
 
-import java.io.File;
 import java.util.HashSet;
 import java.util.Map;
 

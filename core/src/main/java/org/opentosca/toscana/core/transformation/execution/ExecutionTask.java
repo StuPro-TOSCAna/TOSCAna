@@ -18,7 +18,7 @@ public class ExecutionTask implements Runnable {
     private final File csarContentDir;
     private final File transformationRootDir;
 
-    
+
     private Logger log;
 
     public ExecutionTask(
@@ -51,6 +51,6 @@ public class ExecutionTask implements Runnable {
             return;
         }
         transformation.setState(TransformationState.DONE);
-        
+
     }
 }

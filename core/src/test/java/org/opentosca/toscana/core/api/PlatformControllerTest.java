@@ -39,17 +39,17 @@ public class PlatformControllerTest {
 
     //@MockBean
     private PluginService provider;
-    
+
     @Autowired
     private MockMvc mvc;
-    
+
     @Autowired
     private PluginService prov;
 
     @Before
     public void setUp() throws Exception {
         provider = Mockito.mock(PluginService.class);
-        
+
         when(provider.getSupportedPlatforms()).thenReturn(platforms);
         for (Platform p : platforms) {
             when(provider.findById(p.id)).thenReturn(p);
@@ -94,7 +94,7 @@ public class PlatformControllerTest {
         resultActions.andExpect(status().isNotFound());
         resultActions.andReturn();
     }
-    
+
 //    @Configuration
 //    @Profile("pc_test")
 //    public static class PlatformControllerConfiguration {

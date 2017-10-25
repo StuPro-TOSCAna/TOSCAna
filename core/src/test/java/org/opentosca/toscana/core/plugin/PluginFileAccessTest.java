@@ -36,7 +36,7 @@ public class PluginFileAccessTest extends BaseSpringTest {
     private TransformationDao transformationDao;
     @Autowired
     private TransformationService transformationService;
-    
+
     private String streamContent;
     private String streamTargetRelativePath;
     private InputStream inputStream;
@@ -55,7 +55,7 @@ public class PluginFileAccessTest extends BaseSpringTest {
         inputStream = IOUtils.toInputStream(streamContent, "UTF-8");
         streamTargetRelativePath = "testfile";
         streamTargetFile = new File(transformationRootDir, streamTargetRelativePath);
-         
+
     }
 
     @Test
@@ -101,13 +101,13 @@ public class PluginFileAccessTest extends BaseSpringTest {
         assertTrue(streamTargetFile.isFile());
         assertEquals(streamContent, FileUtils.readFileToString(streamTargetFile));
     }
-    
+
     @Test(expected = IOException.class)
     public void writePathIsDirectoryThrowsException() throws IOException {
         streamTargetFile.mkdir();
         access.write(streamTargetRelativePath, inputStream);
     }
-    
+
     @Test
     public void writeSubDirectoriesGetAutomaticallyCreated() throws IOException {
         String path = "test/some/subdirs/filename";
@@ -116,8 +116,8 @@ public class PluginFileAccessTest extends BaseSpringTest {
         File targetFile = new File(transformationRootDir, path);
         assertTrue(targetFile.isFile());
         assertEquals(streamContent, FileUtils.readFileToString(targetFile));
-        
+
     }
-    
+
 
 }

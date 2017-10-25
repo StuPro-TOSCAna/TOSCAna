@@ -18,6 +18,6 @@ public class CloudFoundryPlugin extends AbstractPlugin {
 
     @Override
     public void transform(TransformationContext context) throws Exception {
-        
+
     }
 }

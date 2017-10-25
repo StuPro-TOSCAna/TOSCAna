@@ -14,7 +14,8 @@ public interface TransformationDao {
     /**
      * Creates a new transformation for given csar and platform.
      * If a transformation with this csar and platform already exists, also deletes the old transformation.
-     * @param csar the csar on which the new transformation will be based on
+     *
+     * @param csar     the csar on which the new transformation will be based on
      * @param platform the target platform of the new transformation
      * @return the new transformation
      */
@@ -22,6 +23,7 @@ public interface TransformationDao {
 
     /**
      * Deletes given transformation
+     *
      * @param transformation
      */
     void delete(Transformation transformation);
@@ -29,6 +31,7 @@ public interface TransformationDao {
 
     /**
      * Returns all transformation objects which match given csar and plattform
+     *
      * @param csar
      * @param platform
      * @return
@@ -37,6 +40,7 @@ public interface TransformationDao {
 
     /**
      * Returns all transformation objects which match given csar
+     *
      * @param csar
      * @return
      */

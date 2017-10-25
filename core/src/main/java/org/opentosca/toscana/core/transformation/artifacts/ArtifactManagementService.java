@@ -1,9 +1,6 @@
 package org.opentosca.toscana.core.transformation.artifacts;
 
-import org.opentosca.toscana.core.transformation.Transformation;
-
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 /**

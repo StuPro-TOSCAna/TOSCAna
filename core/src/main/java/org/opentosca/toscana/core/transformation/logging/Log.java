@@ -74,8 +74,9 @@ public class Log {
 
     /**
      * Creates a logger which appends to this log
+     *
      * @param context the context of the logger
-     * @return 
+     * @return
      */
     public Logger getLogger(String context) {
         Logger tLog = (Logger) LoggerFactory.getLogger(context);
@@ -94,7 +95,7 @@ public class Log {
     /**
      * @see Log#getLogger(String)
      */
-    public Logger getLogger(Class context){
+    public Logger getLogger(Class context) {
         return getLogger(context.getName());
     }
 }

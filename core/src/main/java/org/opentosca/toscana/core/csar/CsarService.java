@@ -15,7 +15,7 @@ public interface CsarService {
      * @param csarStream the actual cloud service archive as InputStream
      * @return the newly created Csar instance
      * @throws InvalidCsarException if parsing, based on the content of given csarStream, failed
-     *          The exception contains the parsing log)
+     *                              The exception contains the parsing log)
      */
     Csar submitCsar(String identifier, InputStream csarStream) throws InvalidCsarException;
 

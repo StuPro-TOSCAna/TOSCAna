@@ -4,9 +4,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.opentosca.toscana.core.testutils.ExcludeContinuousIntegration;
-import org.opentosca.toscana.core.testutils.FileUtils;
 import org.opentosca.toscana.core.testutils.CICheckingJUnitRunner;
+import org.opentosca.toscana.core.testutils.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

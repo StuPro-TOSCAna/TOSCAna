@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * <p>
  * The response code produced is 404
  */
-@ResponseStatus(value= HttpStatus.NOT_FOUND, reason="Platform not found")
+@ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Platform not found")
 public class PlatformNotFoundException extends RuntimeException {
     public PlatformNotFoundException() {
     }

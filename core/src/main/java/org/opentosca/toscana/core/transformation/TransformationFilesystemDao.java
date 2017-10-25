@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
@@ -95,5 +94,5 @@ public class TransformationFilesystemDao implements TransformationDao {
     public File getRootDir(Transformation transformation) {
         return new File(csarDao.getTransformationsDir(transformation.getCsar()), transformation.getPlatform().id);
     }
-    
+
 }

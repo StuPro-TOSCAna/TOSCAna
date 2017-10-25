@@ -18,6 +18,6 @@ public class KubernetesPlugin extends AbstractPlugin {
 
     @Override
     public void transform(TransformationContext context) throws Exception {
-        
+
     }
 }
