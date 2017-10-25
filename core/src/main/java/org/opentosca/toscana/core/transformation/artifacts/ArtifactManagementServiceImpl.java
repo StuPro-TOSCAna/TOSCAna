@@ -22,28 +22,31 @@ import static java.lang.System.currentTimeMillis;
 public class ArtifactManagementServiceImpl
     implements ArtifactManagementService {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
-    private final Preferences preferences;
+    private final static String ARTIFACT_DIR = "artifacts";
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
     private final TransformationDao transformatioDao;
     private final SimpleDateFormat format = new SimpleDateFormat("dd-MM-yy_hh-mm");
+    private final File artifactDir;
 
     @Autowired
     public ArtifactManagementServiceImpl(Preferences preferences, TransformationDao transformationDao) {
-        this.preferences = preferences;
         this.transformatioDao = transformationDao;
+        artifactDir = new File(preferences.getDataDir(), ARTIFACT_DIR);
+        logger.info("Artifact directory is {}", artifactDir.getAbsolutePath());
     }
 
     @Override
     public String serveArtifact(Transformation transformation) throws IOException {
-        String csarName = transformation.getCsar().getIdentifier();
-        String platformName = transformation.getPlatform().id;
+        String csarId = transformation.getCsar().getIdentifier();
+        String platformId = transformation.getPlatform().id;
         File transformationWorkingDirectory = transformatioDao.getRootDir(transformation);
         //TODO Determine better name for artifacts
-        String filename = csarName + "-" + platformName + "_" + format.format(new Date(currentTimeMillis())) + ".zip";
-        File outputFile = new File(preferences.getArtifactDir(), filename);
+        String filename = csarId + "-" + platformId + "_" + format.format(new Date(currentTimeMillis())) + ".zip";
+        File outputFile = new File(artifactDir, filename);
 
         FileOutputStream out = new FileOutputStream(outputFile);
-        log.info("Writing artifact data to {}", outputFile.getAbsolutePath());
+        logger.info("Writing artifact data to {}", outputFile.getAbsolutePath());
         ZipUtility.compressDirectory(transformationWorkingDirectory, out);
         out.close();
 

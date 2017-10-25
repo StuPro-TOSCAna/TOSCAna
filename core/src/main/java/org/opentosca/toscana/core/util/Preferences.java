@@ -1,17 +1,18 @@
 package org.opentosca.toscana.core.util;
 
+import java.io.File;
+
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
-import java.io.File;
-
 /**
- * Manages all preferences.
- * Uses Spring Properties (therefore looks in property files, java flags and system environment for values)
+ * Manages all preferences. Uses Spring Properties (therefore looks in property files, java flags and system environment
+ * for values)
  */
 @Service
 public class Preferences {
@@ -24,7 +25,6 @@ public class Preferences {
     private String dataPathFallbackNix;
 
     private File dataDir;
-    private File artifactDir;
 
     private static final Logger logger = LoggerFactory.getLogger(Preferences.class.getName());
 
@@ -43,11 +43,8 @@ public class Preferences {
         }
         logger.info("datadir is '{}'", dataPath);
         dataDir = new File(dataPath);
-        artifactDir = new File(dataDir, "artifacts");
         dataDir.mkdirs();
-        artifactDir.mkdirs();
         logger.info("Data directory is {}", dataDir.getAbsolutePath());
-        logger.info("Artifact directory is {}", artifactDir.getAbsolutePath());
         if (!dataDir.exists()) {
             logger.error("Failed to create data directory");
         }
@@ -55,9 +52,5 @@ public class Preferences {
 
     public File getDataDir() {
         return dataDir;
-    }
-
-    public File getArtifactDir() {
-        return artifactDir;
     }
 }
