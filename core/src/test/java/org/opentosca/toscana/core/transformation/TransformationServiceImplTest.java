@@ -103,10 +103,10 @@ public class TransformationServiceImplTest extends BaseSpringTest {
 
     @Test
     public void startTransformationWithArtifacts() throws Exception {
-        startTransfomationInternal(TransformationState.DONE, passingDummyFw.getPlatformDetails());
+        Transformation transformation = startTransfomationInternal(TransformationState.DONE, passingDummyFw.getPlatformDetails());
         String id = passingDummyFw.getIdentifier();
 
-        lookForArtifactArchive(id);
+        lookForArtifactArchive(transformation);
     }
 
     @Test
@@ -152,14 +152,15 @@ public class TransformationServiceImplTest extends BaseSpringTest {
         assertFalse(csar.getTransformations().containsValue(transformation));
     }
 
-    private void startTransfomationInternal(TransformationState expectedState, Platform platform) throws InterruptedException {
-        DummyCsar csar = new DummyCsar("test");
+    private Transformation startTransfomationInternal(TransformationState expectedState, Platform platform) throws InterruptedException, FileNotFoundException {
+        Csar csar = testCsars.getCsar(TestCsars.CSAR_YAML_VALID_SIMPLETASK);
         service.createTransformation(csar, platform);
         Transformation t = csar.getTransformations().get(platform.id);
         assertTrue(service.startTransformation(t));
         Thread.sleep(100);
         waitForTransformationStateChange(t);
         assertEquals(expectedState, t.getState());
+        return t;
     }
 
     private void waitForTransformationStateChange(Transformation t) throws InterruptedException {
@@ -168,8 +169,8 @@ public class TransformationServiceImplTest extends BaseSpringTest {
         }
     }
 
-    public void lookForArtifactArchive(String id) {
-        String filename = "test-" + id + "_";
+    public void lookForArtifactArchive(Transformation transformation) {
+        String filename = transformation.getCsar().getIdentifier() + "-" + transformation.getPlatform().id + "_";
         boolean found = false;
         for (File file : ams.getArtifactDir().listFiles()) {
             if (file.getName().startsWith(filename)) {

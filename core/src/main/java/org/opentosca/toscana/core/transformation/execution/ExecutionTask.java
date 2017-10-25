@@ -59,7 +59,7 @@ public class ExecutionTask implements Runnable {
                 transformation.setTargetArtifact(artifact);
                 log.info("Artifact archive is served at relative url {}", artifact.getArtifactDownloadURL());
             } catch (IOException e) {
-                log.error("Failed to servce artifact archive for transformation {}/{}", csarId, platformId, e);
+                log.error("Failed to serve artifact archive for transformation {}/{}", csarId, platformId, e);
             }
         } else {
             transformation.setState(TransformationState.ERROR);
