@@ -8,6 +8,7 @@ import java.util.Date;
 
 import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.TransformationDao;
+import org.opentosca.toscana.core.transformation.TransformationState;
 import org.opentosca.toscana.core.util.Preferences;
 import org.opentosca.toscana.core.util.ZipUtility;
 
@@ -42,7 +43,8 @@ public class ArtifactServiceImpl
         String csarId = transformation.getCsar().getIdentifier();
         String platformId = transformation.getPlatform().id;
         File transformationWorkingDirectory = transformatioDao.getRootDir(transformation);
-        String filename = csarId + "-" + platformId + "_" + format.format(new Date(currentTimeMillis())) + ".zip";
+        String failed = transformation.getState() == TransformationState.ERROR ? "_failed" : "";
+        String filename = csarId + "-" + platformId + "_" + format.format(new Date(currentTimeMillis())) + failed + ".zip";
         File outputFile = new File(artifactDir, filename);
 
         FileOutputStream out = new FileOutputStream(outputFile);
