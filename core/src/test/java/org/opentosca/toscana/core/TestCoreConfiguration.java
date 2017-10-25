@@ -14,6 +14,8 @@ import org.opentosca.toscana.core.transformation.TransformationDao;
 import org.opentosca.toscana.core.transformation.TransformationFilesystemDao;
 import org.opentosca.toscana.core.transformation.TransformationService;
 import org.opentosca.toscana.core.transformation.TransformationServiceImpl;
+import org.opentosca.toscana.core.transformation.artifacts.ArtifactManagementService;
+import org.opentosca.toscana.core.transformation.artifacts.ArtifactManagementServiceImpl;
 import org.opentosca.toscana.core.transformation.platform.PlatformService;
 import org.opentosca.toscana.core.util.FileSystem;
 import org.opentosca.toscana.core.util.Preferences;
@@ -28,6 +30,12 @@ import java.util.Arrays;
 @PropertySource("classpath:application.yml")
 @Profile("!controller_test")
 public class TestCoreConfiguration extends CoreConfiguration {
+    
+    @Bean
+    public ArtifactManagementService artifactManagementService(Preferences preferences) {
+        return new ArtifactManagementServiceImpl(preferences);
+    }
+    
     @Bean
     public CsarDao csarDao(Preferences preferences, @Lazy TransformationDao transformationDao) {
         return new CsarFilesystemDao(preferences, transformationDao);
@@ -88,8 +96,13 @@ public class TestCoreConfiguration extends CoreConfiguration {
     }
 
     @Bean
-    public TransformationService transformationService(TransformationDao repo, PluginService service) {
-        TransformationServiceImpl bean = new TransformationServiceImpl(repo, service);
+    public TransformationService transformationService(
+        TransformationDao repo,
+        @Lazy CsarDao csarDao,
+        PluginService service,
+        ArtifactManagementService ams
+    ) {
+        TransformationServiceImpl bean = new TransformationServiceImpl(repo, service, csarDao, ams);
         return bean;
     }
 

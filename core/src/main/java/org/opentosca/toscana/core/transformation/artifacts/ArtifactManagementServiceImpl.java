@@ -16,7 +16,7 @@ import java.util.Date;
 import static java.lang.System.currentTimeMillis;
 
 @Service
-public class ResourceManager
+public class ArtifactManagementServiceImpl
     implements ArtifactManagementService {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
@@ -24,7 +24,7 @@ public class ResourceManager
     private final SimpleDateFormat format = new SimpleDateFormat("dd-MM-yy_hh-mm");
 
     @Autowired
-    public ResourceManager(Preferences preferences) {
+    public ArtifactManagementServiceImpl(Preferences preferences) {
         this.preferences = preferences;
     }
 
@@ -36,6 +36,7 @@ public class ResourceManager
         File outputFile = new File(preferences.getArtifactDir(), filename);
 
         FileOutputStream out = new FileOutputStream(outputFile);
+        log.info("Writing artifact data to {}",outputFile.getAbsolutePath());
         ZipUtility.compressDirectory(transformationWorkingDirectory, out);
         out.close();
 

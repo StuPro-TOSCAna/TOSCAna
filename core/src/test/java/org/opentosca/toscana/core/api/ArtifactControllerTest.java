@@ -7,7 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.opentosca.toscana.core.testutils.FileUtils;
+import org.opentosca.toscana.core.util.FileUtils;
 import org.opentosca.toscana.core.util.Preferences;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

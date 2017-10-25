@@ -5,7 +5,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opentosca.toscana.core.testutils.CICheckingJUnitRunner;
-import org.opentosca.toscana.core.testutils.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +18,7 @@ import static org.junit.Assert.assertTrue;
 @RunWith(CICheckingJUnitRunner.class)
 public class ZipUtilityTest {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private static final Logger log = LoggerFactory.getLogger(ZipUtility.class);
 
     private File dir = new File("test-temp");
 
@@ -84,7 +83,7 @@ public class ZipUtilityTest {
         FileUtils.delete(dir);
     }
 
-    private void generateFolderStructure(
+    public static void generateFolderStructure(
         File current,
         int depth,
         int fileCount,
