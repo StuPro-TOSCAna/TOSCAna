@@ -95,8 +95,8 @@ public class TestCoreConfiguration extends CoreConfiguration {
 
     @Bean
     @Primary
-    public TransformationDao transformationDao(PlatformService platforms, @Lazy CsarDao repo) {
-        TransformationFilesystemDao bean = new TransformationFilesystemDao(repo, platforms);
+    public TransformationDao transformationDao(PlatformService platforms) {
+        TransformationFilesystemDao bean = new TransformationFilesystemDao(platforms);
         return bean;
     }
 

@@ -1,6 +1,8 @@
 package org.opentosca.toscana.core.csar;
 
 import org.apache.commons.io.FileUtils;
+import javax.annotation.PostConstruct;
+
 import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.TransformationDao;
 import org.opentosca.toscana.core.util.Preferences;
@@ -54,6 +56,12 @@ public class CsarFilesystemDao implements CsarDao {
 
         readFromDisk();
         this.transformationDao = transformationDao;
+    }
+
+    @PostConstruct
+    public void init() {
+        transformationDao.setCsarDao(this);
+        readFromDisk();
     }
 
     @Override

@@ -25,8 +25,7 @@ public class TransformationFilesystemDao implements TransformationDao {
     private PlatformService platformService;
 
     @Autowired
-    public TransformationFilesystemDao(CsarDao csarDao, PlatformService platformService) {
-        this.csarDao = csarDao;
+    public TransformationFilesystemDao(PlatformService platformService) {
         this.platformService = platformService;
     }
 
@@ -95,4 +94,7 @@ public class TransformationFilesystemDao implements TransformationDao {
         return new File(csarDao.getTransformationsDir(transformation.getCsar()), transformation.getPlatform().id);
     }
 
+    public void setCsarDao(CsarDao csarDao) {
+        this.csarDao = csarDao;
+    }
 }

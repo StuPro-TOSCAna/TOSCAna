@@ -51,4 +51,5 @@ public interface TransformationDao {
      * @return the root directory of given transformation
      */
     File getRootDir(Transformation transformation);
+    void setCsarDao(CsarDao csarDao);
 }
