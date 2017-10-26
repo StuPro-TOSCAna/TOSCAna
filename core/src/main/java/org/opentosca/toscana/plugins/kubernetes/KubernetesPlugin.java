@@ -41,8 +41,8 @@ public class KubernetesPlugin extends AbstractPlugin {
         String manual = KubernetesManualCreator.createManual(appName, (appName + "_resource.yaml"));
         String resourceFilePath = "/" + appName + "_resource.yaml";
         String manualPath = "/Readme.md";
-        fileAccess.write(manualPath).write(manual);
-        fileAccess.write(resourceFilePath).write(resourceFile);
+        fileAccess.access(manualPath).write(manual);
+        fileAccess.access(resourceFilePath).write(resourceFile);
         List<String> dockerFilePaths = dockerApp.getDependencies();
         for (int i = 0; i < dockerFilePaths.size(); i++) {
             fileAccess.copy(dockerFilePaths.get(i));

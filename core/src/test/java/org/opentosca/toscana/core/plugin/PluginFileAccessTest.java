@@ -98,7 +98,7 @@ public class PluginFileAccessTest extends BaseSpringTest {
 
     @Test
     public void write() throws Exception {
-        access.write(streamTargetRelativePath).append(streamContent).close();
+        access.access(streamTargetRelativePath).append(streamContent).close();
         assertTrue(streamTargetFile.isFile());
         assertEquals(streamContent, FileUtils.readFileToString(streamTargetFile));
     }
@@ -106,13 +106,13 @@ public class PluginFileAccessTest extends BaseSpringTest {
     @Test(expected = IOException.class)
     public void writePathIsDirectoryThrowsException() throws IOException {
         streamTargetFile.mkdir();
-        access.write(streamTargetRelativePath);
+        access.access(streamTargetRelativePath);
     }
 
     @Test
     public void writeSubDirectoriesGetAutomaticallyCreated() throws IOException {
         String path = "test/some/subdirs/filename";
-        access.write(path).append(streamContent).close();
+        access.access(path).append(streamContent).close();
         File targetFile = new File(transformationRootDir, path);
         assertTrue(targetFile.isFile());
         assertEquals(streamContent, FileUtils.readFileToString(targetFile));

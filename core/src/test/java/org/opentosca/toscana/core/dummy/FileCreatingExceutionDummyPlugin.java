@@ -30,6 +30,6 @@ public class FileCreatingExceutionDummyPlugin extends ExecutionDummyPlugin {
     public void writeFilepath(TransformationContext transformation, Random rnd, String path) throws IOException {
         byte[] data = new byte[1024 * 10];
         rnd.nextBytes(data);
-        transformation.getPluginFileAccess().write(path).append(new String(data)).close();
+        transformation.getPluginFileAccess().access(path).append(new String(data)).close();
     }
 }

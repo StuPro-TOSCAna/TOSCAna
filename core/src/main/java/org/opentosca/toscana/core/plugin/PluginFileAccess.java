@@ -53,7 +53,7 @@ public class PluginFileAccess {
     }
 
     /**
-     * Returns a BufferedWriter which writes to given path
+     * Returns a BufferedWriter which can write to given path
      *
      * If necessary, creates missing subdirectories. <br>
      *
@@ -63,7 +63,7 @@ public class PluginFileAccess {
      * @return BufferedWriter which writes to target file.
      * @throws FileNotFoundException if given relativePath points to a directory
      */
-    public BufferedWriter write(String relativePath) throws IOException {
+    public BufferedWriter access(String relativePath) throws IOException {
         File target = new File(targetDir, relativePath);
         target.getParentFile().mkdirs();
         try {

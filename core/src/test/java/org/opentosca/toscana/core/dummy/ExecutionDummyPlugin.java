@@ -37,7 +37,7 @@ public class ExecutionDummyPlugin extends AbstractPlugin {
     public void transform(TransformationContext transformation) throws Exception {
         Logger logger = transformation.getLogger(getClass());
         int i = 0;
-        transformation.getPluginFileAccess().write("some-output-file").append("some transformation result").close();
+        transformation.getPluginFileAccess().access("some-output-file").append("some transformation result").close();
         logger.info("Waiting 50ms until completion");
         while (!Thread.currentThread().isInterrupted() && i < 5) {
             Thread.sleep(10);
