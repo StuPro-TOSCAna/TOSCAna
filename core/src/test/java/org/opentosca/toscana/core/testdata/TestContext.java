@@ -39,9 +39,8 @@ public class TestContext {
     public TransformationContext getContext(File csarFile, Platform platform) throws FileNotFoundException, InvalidCsarException {
         Csar csar = testCsars.getCsar(csarFile);
         csar.setTemplate(csarParser.parse(csar));
-        transformationService.createTransformation(csar, platform);
+        Transformation transformation = transformationService.createTransformation(csar, platform);
 
-        Transformation transformation = csar.getTransformations().get(platform.id);
         File csarContentRoot = csarDao.getContentDir(csar);
         File transformationRoot = transformationDao.getRootDir(transformation);
         TransformationContext context = new TransformationContext(transformation, csarContentRoot, transformationRoot);

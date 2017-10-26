@@ -10,9 +10,11 @@ public class DummyTransformationService implements TransformationService {
     private boolean returnValue = true;
 
     @Override
-    public void createTransformation(Csar csar, Platform targetPlatform) {
+    public Transformation createTransformation(Csar csar, Platform targetPlatform) {
         System.out.println("Creating Transformation for " + csar.getIdentifier() + " on " + targetPlatform.id);
-        csar.getTransformations().put(targetPlatform.id, new DummyTransformation(targetPlatform));
+        Transformation t = new DummyTransformation((targetPlatform));
+        csar.getTransformations().put(targetPlatform.id, t);
+        return t;
     }
 
     public void setReturnValue(boolean returnValue) {
@@ -34,5 +36,4 @@ public class DummyTransformationService implements TransformationService {
 
         return returnValue;
     }
-
 }

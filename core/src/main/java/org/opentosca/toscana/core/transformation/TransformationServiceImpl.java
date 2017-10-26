@@ -47,8 +47,8 @@ public class TransformationServiceImpl implements TransformationService {
     }
 
     @Override
-    public void createTransformation(Csar csar, Platform targetPlatform) {
-        transformationDao.create(csar, targetPlatform);
+    public Transformation createTransformation(Csar csar, Platform targetPlatform) {
+        return transformationDao.create(csar, targetPlatform);
     }
 
     @Override
