@@ -38,12 +38,26 @@ public interface Transformation {
     PropertyInstance getProperties();
 
     /**
-     * Checks if all Properties for the given Requirement type.
+     * Checks if all Properties for the given Requirement type are set.
+     * <p>
+     * This is just a "shortcut" for <code>getProperties().allPropertiesSetForType(type)</code>
      *
      * @return true if all properties have been set and are valid, false otherwise
      */
-    default boolean isAllPropertiesSet(RequirementType type) {
+    default boolean allPropertiesSet(RequirementType type) {
         return getProperties().allPropertiesSetForType(type);
+    }
+
+
+    /**
+     * Checks if all Properties for the given Requirement type are set.
+     * <p>
+     * This is just a "shortcut" for <code>getProperties().allRequiredPropertiesSetForType(type)</code>
+     *
+     * @return true if all required properties have been set and are valid, false otherwise
+     */
+    default boolean allRequiredPropertiesSet(RequirementType type) {
+        return getProperties().allRequiredPropertiesSetForType(type);
     }
 
     /**
