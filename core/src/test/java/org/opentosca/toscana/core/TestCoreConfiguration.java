@@ -1,6 +1,7 @@
 package org.opentosca.toscana.core;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.opentosca.toscana.core.csar.CsarDao;
 import org.opentosca.toscana.core.csar.CsarFilesystemDao;
@@ -10,6 +11,7 @@ import org.opentosca.toscana.core.parse.CsarParseService;
 import org.opentosca.toscana.core.parse.CsarParseServiceImpl;
 import org.opentosca.toscana.core.plugin.PluginService;
 import org.opentosca.toscana.core.plugin.PluginServiceImpl;
+import org.opentosca.toscana.core.plugin.TransformationPlugin;
 import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.testdata.TestPlugins;
 import org.opentosca.toscana.core.transformation.TransformationDao;
@@ -38,6 +40,16 @@ import org.springframework.test.context.TestPropertySource;
 @Profile("!controller_test")
 public class TestCoreConfiguration extends CoreConfiguration {
 
+    private List<TransformationPlugin> plugins;
+
+    public TestCoreConfiguration() {
+        this(TestPlugins.PLUGINS);
+    }
+
+    public TestCoreConfiguration(List<TransformationPlugin> plugins) {
+        this.plugins = plugins;
+    }
+
     @Bean
     public ArtifactService artifactManagementService(Preferences preferences, TransformationDao transformationDao) {
         return new ArtifactServiceImpl(preferences, transformationDao);
@@ -46,15 +58,6 @@ public class TestCoreConfiguration extends CoreConfiguration {
     @Bean
     public CsarDao csarDao(Preferences preferences, @Lazy TransformationDao transformationDao) {
         return new CsarFilesystemDao(preferences, transformationDao);
-    }
-
-    @Bean
-    public PluginService pluginService() {
-        return new PluginServiceImpl(Arrays.asList(
-            new KubernetesPlugin(),
-            new CloudFoundryPlugin(),
-            new CloudFormationPlugin()
-        ));
     }
 
     @Bean
@@ -87,8 +90,6 @@ public class TestCoreConfiguration extends CoreConfiguration {
     }
 
     @Bean
-    @Primary
-    @Profile("dummy_plugins")
     public PluginService dummyPluginService() {
         PluginServiceImpl bean = new PluginServiceImpl(TestPlugins.PLUGINS);
         return bean;
