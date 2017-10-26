@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 
 /**
  * Extend from this class in order to inherit important configurations
@@ -24,6 +25,7 @@ import org.springframework.test.context.ContextConfiguration;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @ActiveProfiles("dummy_plugins")
 @Component
+@TestPropertySource("classpath:test-properties.yml")
 public abstract class BaseSpringTest {
 
     private final static Logger logger = LoggerFactory.getLogger(BaseSpringTest.class);

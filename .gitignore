@@ -2,6 +2,7 @@
 **/target/
 **/*.iml
 
+**/toscana-test/*
 # CMake
 cmake-build-debug/
 
