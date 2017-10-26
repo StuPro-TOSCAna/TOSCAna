@@ -1,6 +1,5 @@
 package org.opentosca.toscana.core;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.opentosca.toscana.core.csar.CsarDao;
@@ -12,6 +11,7 @@ import org.opentosca.toscana.core.parse.CsarParseServiceImpl;
 import org.opentosca.toscana.core.plugin.PluginService;
 import org.opentosca.toscana.core.plugin.PluginServiceImpl;
 import org.opentosca.toscana.core.plugin.TransformationPlugin;
+import org.opentosca.toscana.core.testdata.TestContext;
 import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.testdata.TestPlugins;
 import org.opentosca.toscana.core.transformation.TransformationDao;
@@ -23,9 +23,6 @@ import org.opentosca.toscana.core.transformation.artifacts.ArtifactServiceImpl;
 import org.opentosca.toscana.core.transformation.platform.PlatformService;
 import org.opentosca.toscana.core.util.FileSystem;
 import org.opentosca.toscana.core.util.Preferences;
-import org.opentosca.toscana.plugins.awscf.CloudFormationPlugin;
-import org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin;
-import org.opentosca.toscana.plugins.kubernetes.KubernetesPlugin;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,7 +30,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.test.context.TestPropertySource;
 
 @Configuration
 @PropertySource("classpath:application.yml")
@@ -110,6 +106,12 @@ public class TestCoreConfiguration extends CoreConfiguration {
         ArtifactService ams
     ) {
         TransformationServiceImpl bean = new TransformationServiceImpl(repo, service, csarDao, ams);
+        return bean;
+    }
+
+    @Bean
+    public TestContext testContext() {
+        TestContext bean = new TestContext();
         return bean;
     }
 }
