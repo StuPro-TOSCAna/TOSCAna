@@ -4,7 +4,7 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/d002dc08115145e6992ba64aa494893e)](https://www.codacy.com/app/stupro-toscana/TOSCAna?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=StuPro-TOSCAna/TOSCAna&amp;utm_campaign=Badge_Grade) [![codecov](https://codecov.io/gh/StuPro-TOSCAna/TOSCAna/branch/master/graph/badge.svg)](https://codecov.io/gh/StuPro-TOSCAna/TOSCAna)
 ## Introduction
 The TOSCAna framework allows the transformation of TOSCA models into other cloud formats.
-Currently, it aims to support multiple cloud ecosystems, with Amazon Web Services and their AWS Cloud Formation being the first.
+Currently, it aims to support multiple cloud ecosystems, with Kubernetes, CloudFoundry, AWS CLoudFormation being the first.
 ## Project Structure
 - [`docs/user`](docs/user) - Documentation aimed at users
 - [`docs/dev`](docs/dev) - Documentation aimed at developers
