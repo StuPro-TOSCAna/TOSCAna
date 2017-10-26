@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class PluginFileAccessTest extends BaseSpringTest {
@@ -116,5 +117,24 @@ public class PluginFileAccessTest extends BaseSpringTest {
         File targetFile = new File(transformationRootDir, path);
         assertTrue(targetFile.isFile());
         assertEquals(streamContent, FileUtils.readFileToString(targetFile));
+    }
+
+    @Test
+    public void readSuccessful() throws IOException {
+        String path = "file";
+        File file = new File(csarContentDir, path);
+        FileUtils.copyInputStreamToFile(inputStream, file);
+        InputStream is = access.read(path);
+        String result = IOUtils.toString(is);
+
+        assertNotNull(result);
+
+        assertEquals(streamContent, result);
+    }
+
+    @Test(expected = FileNotFoundException.class)
+    public void readFileNotExists() throws FileNotFoundException {
+        String path = "nonexistent-file";
+        access.read(path);
     }
 }
