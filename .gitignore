@@ -12,14 +12,14 @@ cmake-build-debug/
 # IntelliJ
 **/out/
 
-# mpeltonen/sbt-idea plugin
+# mpeltonen/sbt-idea plugins
 **/.idea_modules/
 
-# JIRA plugin
+# JIRA plugins
 atlassian-ide-plugin.xml
 
 
-# Crashlytics plugin (for Android Studio and IntelliJ)
+# Crashlytics plugins (for Android Studio and IntelliJ)
 com_crashlytics_export_strings.xml
 crashlytics.properties
 crashlytics-build.properties

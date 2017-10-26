@@ -30,6 +30,11 @@
 	</repositories>
 
 	<dependencies>
+        <dependency>
+            <groupId>io.fabric8</groupId>
+            <artifactId>kubernetes-client</artifactId>
+            <version>2.6.2</version>
+        </dependency>
 		<!-- Winery -->
         <dependency>
         <groupId>com.github.stupro-toscana.winery</groupId>

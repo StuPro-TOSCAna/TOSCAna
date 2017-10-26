@@ -5,6 +5,8 @@ import java.io.FileNotFoundException;
 
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarDao;
+import org.opentosca.toscana.core.parse.CsarParseService;
+import org.opentosca.toscana.core.parse.InvalidCsarException;
 import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.core.transformation.TransformationDao;
@@ -26,15 +28,19 @@ public class TestContext {
     CsarDao csarDao;
     @Autowired
     TransformationDao transformationDao;
+    @Autowired
+    CsarParseService csarParser;
 
     /**
      * @param csarFile the csar for the context. To obtain a csar, use TestCsar.`your_csar`
      * @param platform the underlying target platform of the context;
      * @return a valid TransformationContext object based on given csar and platform
      */
-    public TransformationContext getContext(File csarFile, Platform platform) throws FileNotFoundException {
+    public TransformationContext getContext(File csarFile, Platform platform) throws FileNotFoundException, InvalidCsarException {
         Csar csar = testCsars.getCsar(csarFile);
+        csar.setTemplate(csarParser.parse(csar));
         transformationService.createTransformation(csar, platform);
+
         Transformation transformation = csar.getTransformations().get(platform.id);
         File csarContentRoot = csarDao.getContentDir(csar);
         File transformationRoot = transformationDao.getRootDir(transformation);
