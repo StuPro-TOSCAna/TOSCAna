@@ -98,7 +98,7 @@ public class PluginFileAccessTest extends BaseSpringTest {
 
     @Test
     public void write() throws Exception {
-        access.write(streamTargetRelativePath, inputStream);
+        access.write(streamTargetRelativePath).append(streamContent).close();
         assertTrue(streamTargetFile.isFile());
         assertEquals(streamContent, FileUtils.readFileToString(streamTargetFile));
     }
@@ -106,14 +106,13 @@ public class PluginFileAccessTest extends BaseSpringTest {
     @Test(expected = IOException.class)
     public void writePathIsDirectoryThrowsException() throws IOException {
         streamTargetFile.mkdir();
-        access.write(streamTargetRelativePath, inputStream);
+        access.write(streamTargetRelativePath);
     }
 
     @Test
     public void writeSubDirectoriesGetAutomaticallyCreated() throws IOException {
         String path = "test/some/subdirs/filename";
-        InputStream stream = IOUtils.toInputStream(streamContent, "UTF-8");
-        access.write(path, stream);
+        access.write(path).append(streamContent).close();
         File targetFile = new File(transformationRootDir, path);
         assertTrue(targetFile.isFile());
         assertEquals(streamContent, FileUtils.readFileToString(targetFile));
@@ -124,16 +123,15 @@ public class PluginFileAccessTest extends BaseSpringTest {
         String path = "file";
         File file = new File(csarContentDir, path);
         FileUtils.copyInputStreamToFile(inputStream, file);
-        InputStream is = access.read(path);
-        String result = IOUtils.toString(is);
+        String result = access.read(path);
 
         assertNotNull(result);
 
         assertEquals(streamContent, result);
     }
 
-    @Test(expected = FileNotFoundException.class)
-    public void readFileNotExists() throws FileNotFoundException {
+    @Test(expected = IOException.class)
+    public void readFileNotExists() throws IOException {
         String path = "nonexistent-file";
         access.read(path);
     }

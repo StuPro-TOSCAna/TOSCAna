@@ -1,13 +1,11 @@
 package org.opentosca.toscana.core.dummy;
 
-import java.io.InputStream;
 import java.util.HashSet;
 
 import org.opentosca.toscana.core.plugin.AbstractPlugin;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.core.transformation.properties.Property;
 
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 
 public class ExecutionDummyPlugin extends AbstractPlugin {
@@ -39,8 +37,7 @@ public class ExecutionDummyPlugin extends AbstractPlugin {
     public void transform(TransformationContext transformation) throws Exception {
         Logger logger = transformation.getLogger(getClass());
         int i = 0;
-        InputStream stream = IOUtils.toInputStream("some transformation result");
-        transformation.getPluginFileAccess().write("some-output-file", stream);
+        transformation.getPluginFileAccess().write("some-output-file").append("some transformation result").close();
         logger.info("Waiting 50ms until completion");
         while (!Thread.currentThread().isInterrupted() && i < 5) {
             Thread.sleep(10);
