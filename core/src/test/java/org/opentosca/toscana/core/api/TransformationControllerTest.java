@@ -116,6 +116,8 @@ public class TransformationControllerTest {
             .andExpect(jsonPath("$.properties").isNotEmpty())
             .andExpect(jsonPath("$.properties[0].key").isString())
             .andExpect(jsonPath("$.properties[0].type").isString())
+            .andExpect(jsonPath("$.properties[0].description").isString())
+            .andExpect(jsonPath("$.properties[0].required").isBoolean())
             .andExpect(jsonPath("$.links[0].rel").value("self"))
             .andExpect(jsonPath("$.links[0].href")
                 .value("http://localhost/csars/k8s-cluster/transformations/p-a/properties"))

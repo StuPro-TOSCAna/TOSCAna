@@ -57,7 +57,7 @@ public class TransformationServiceImpl implements TransformationService {
         //transformation does not need any addidtional properties
         if (transformation.getState() == TransformationState.CREATED
             || (transformation.getState() == TransformationState.INPUT_REQUIRED
-            && transformation.isAllPropertiesSet(RequirementType.TRANSFORMATION))) {
+            && transformation.allRequiredPropertiesSet(RequirementType.TRANSFORMATION))) {
             Future<?> taskFuture = executor.submit(
                 new ExecutionTask(
                     transformation,

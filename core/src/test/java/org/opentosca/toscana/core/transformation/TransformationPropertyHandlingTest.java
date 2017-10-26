@@ -26,7 +26,15 @@ public class TransformationPropertyHandlingTest {
         DummyCsar csar = new DummyCsar("dummy");
         HashSet<Property> props = new HashSet<>();
         for (int i = 0; i < 10; i++) {
-            props.add(new Property("prop-" + i, PropertyType.UNSIGNED_INTEGER, RequirementType.TRANSFORMATION));
+            props.add(
+                new Property(
+                    "prop-" + i,
+                    PropertyType.UNSIGNED_INTEGER,
+                    RequirementType.TRANSFORMATION,
+                    "No real Description",
+                    i < 5 //Only mark the first 5 properties as required
+                )
+            );
         }
         for (int i = 0; i < 10; i++) {
             props.add(new Property("prop-deploy-" + i, PropertyType.UNSIGNED_INTEGER, RequirementType.DEPLOYMENT));
@@ -61,7 +69,7 @@ public class TransformationPropertyHandlingTest {
         for (int i = 0; i < 9; i++) {
             transformation.setProperty("prop-" + i, "1");
         }
-        assertFalse(transformation.isAllPropertiesSet(RequirementType.TRANSFORMATION));
+        assertFalse(transformation.allPropertiesSet(RequirementType.TRANSFORMATION));
     }
 
     @Test
@@ -69,6 +77,34 @@ public class TransformationPropertyHandlingTest {
         for (int i = 0; i < 10; i++) {
             transformation.setProperty("prop-" + i, "1");
         }
-        assertTrue(transformation.isAllPropertiesSet(RequirementType.TRANSFORMATION));
+        assertTrue(transformation.allPropertiesSet(RequirementType.TRANSFORMATION));
+    }
+
+    @Test
+    public void checkAllRequiredPropertiesTrue() throws Exception {
+        for (int i = 0; i < 5; i++) {
+            transformation.setProperty("prop-" + i, "1");
+        }
+        assertTrue(transformation.allRequiredPropertiesSet(RequirementType.TRANSFORMATION));
+        assertFalse(transformation.allPropertiesSet(RequirementType.TRANSFORMATION));
+    }
+
+    @Test
+    public void checkAllRequiredPropertiesFalse() throws Exception {
+        for (int i = 0; i < 4; i++) {
+            transformation.setProperty("prop-" + i, "1");
+        }
+        assertFalse(transformation.allRequiredPropertiesSet(RequirementType.TRANSFORMATION));
+        assertFalse(transformation.allPropertiesSet(RequirementType.TRANSFORMATION));
+    }
+
+    @Test
+    public void checkEmptyProperties() throws Exception {
+        DummyCsar csar = new DummyCsar("dummy");
+        this.transformation = new TransformationImpl(csar, new Platform("test", "test", new HashSet<>()));
+        for (RequirementType type : RequirementType.values()) {
+            assertTrue(transformation.allRequiredPropertiesSet(type));
+            assertTrue(transformation.allPropertiesSet(type));
+        }
     }
 }

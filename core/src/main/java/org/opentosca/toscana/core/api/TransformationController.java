@@ -1,22 +1,8 @@
 package org.opentosca.toscana.core.api;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.opentosca.toscana.core.api.exceptions.CsarNotFoundException;
-import org.opentosca.toscana.core.api.exceptions.IllegalTransformationStateException;
-import org.opentosca.toscana.core.api.exceptions.PlatformNotFoundException;
-import org.opentosca.toscana.core.api.exceptions.TransformationAlreadyPresentException;
-import org.opentosca.toscana.core.api.exceptions.TransformationNotFoundException;
-import org.opentosca.toscana.core.api.model.ArtifactResponse;
-import org.opentosca.toscana.core.api.model.GetPropertiesResponse;
+import org.opentosca.toscana.core.api.exceptions.*;
+import org.opentosca.toscana.core.api.model.*;
 import org.opentosca.toscana.core.api.model.GetPropertiesResponse.PropertyWrap;
-import org.opentosca.toscana.core.api.model.LogResponse;
-import org.opentosca.toscana.core.api.model.SetPropertiesRequest;
-import org.opentosca.toscana.core.api.model.SetPropertiesResponse;
-import org.opentosca.toscana.core.api.model.TransformationResponse;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarService;
 import org.opentosca.toscana.core.transformation.Transformation;
@@ -28,7 +14,6 @@ import org.opentosca.toscana.core.transformation.logging.LogEntry;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.platform.PlatformService;
 import org.opentosca.toscana.core.transformation.properties.Property;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,13 +21,12 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resources;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
@@ -297,7 +281,13 @@ public class TransformationController {
         List<PropertyWrap> propertyWrapList = new ArrayList<>();
         //TODO add filtering depending on the transformation state (i.e. Transforming, Deploying...)
         for (Property property : transformation.getProperties().getPropertySchema()) {
-            propertyWrapList.add(new PropertyWrap(property.getKey(), property.getType().getTypeName()));
+            propertyWrapList.add(new PropertyWrap(
+                    property.getKey(),
+                    property.getType().getTypeName(),
+                    property.getDescription(),
+                    property.isRequired()
+                )
+            );
         }
         return ResponseEntity.ok(new GetPropertiesResponse(name, platform, propertyWrapList));
     }
