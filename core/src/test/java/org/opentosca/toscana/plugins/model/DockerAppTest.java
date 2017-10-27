@@ -9,6 +9,8 @@ import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.parse.CsarParseService;
 import org.opentosca.toscana.core.parse.InvalidCsarException;
 import org.opentosca.toscana.core.testdata.TestCsars;
+import org.opentosca.toscana.core.testutils.TestCategories;
+import org.opentosca.toscana.core.testutils.TestCategory;
 import org.opentosca.toscana.plugins.kubernetes.KubernetesPlugin;
 
 import org.eclipse.winery.model.tosca.yaml.TServiceTemplate;
@@ -18,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.Assert.*;
 
+@TestCategory(TestCategories.FAST)
 public class DockerAppTest extends BaseSpringTest {
     static TServiceTemplate tServiceTemplate;
     static KubernetesPlugin plugin;

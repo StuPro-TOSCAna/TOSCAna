@@ -5,8 +5,7 @@ import java.io.IOException;
 
 import org.opentosca.toscana.core.Main;
 import org.opentosca.toscana.core.testdata.TestCsars;
-import org.opentosca.toscana.core.testutils.CICheckingJUnitRunner;
-import org.opentosca.toscana.core.testutils.ExcludeContinuousIntegration;
+import org.opentosca.toscana.core.testutils.CategoryAwareJUnitRunner;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -16,13 +15,16 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.opentosca.toscana.core.testutils.TestCategory;
+import org.opentosca.toscana.core.testutils.TestCategories;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
 import static org.junit.Assert.fail;
 import static org.opentosca.toscana.core.util.FileUtils.delete;
 
-@RunWith(CICheckingJUnitRunner.class)
+@TestCategory(TestCategories.SLOW)
+@RunWith(CategoryAwareJUnitRunner.class)
 public class UploadTest {
 
     public static final String TEMPLATE_HASH
@@ -42,21 +44,21 @@ public class UploadTest {
         if (!tempDir.exists() && !tempDir.mkdirs()) {
             throw new IOException();
         }
-        retrofit = new Retrofit.Builder().baseUrl("http://127.0.0.1:8080/").build();
+        retrofit = new Retrofit.Builder().baseUrl("http://127.0.0.1:8091/").build();
 
         api = retrofit.create(TOSCAnaUploadInterface.class);
 
         springThread = new Thread(() -> {
             Main.main(new String[]{
                 "--datadir=" + tempDir.getAbsolutePath(),
-                "--spring.profiles.active=controller_test"
+                "--spring.profiles.active=controller_test",
+                "--server.port=8091"
             });
         });
         springThread.start();
     }
 
     @Test(timeout = 30000)
-    @ExcludeContinuousIntegration
     public void testFileUpload() throws Exception {
         waitForServerToStart();
         System.err.println("Server started!");
@@ -75,7 +77,6 @@ public class UploadTest {
     }
 
     @Test(timeout = 30000)
-    @ExcludeContinuousIntegration
     public void testFileUploadFail() throws Exception {
         waitForServerToStart();
         System.err.println("Server started");

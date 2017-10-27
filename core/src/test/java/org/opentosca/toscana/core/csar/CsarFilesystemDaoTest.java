@@ -24,7 +24,6 @@ public class CsarFilesystemDaoTest extends BaseSpringTest {
     @Autowired
     private CsarDao csarDao;
 
-
     @Test
     public void create() throws Exception {
         String identifier = "my-csar-name";

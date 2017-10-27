@@ -9,18 +9,21 @@ import java.nio.file.Files;
 import java.util.Random;
 import java.util.zip.ZipInputStream;
 
-import org.opentosca.toscana.core.testutils.CICheckingJUnitRunner;
+import org.opentosca.toscana.core.testutils.CategoryAwareJUnitRunner;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.opentosca.toscana.core.testutils.TestCategory;
+import org.opentosca.toscana.core.testutils.TestCategories;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertTrue;
 
-@RunWith(CICheckingJUnitRunner.class)
+
+@RunWith(CategoryAwareJUnitRunner.class)
 public class ZipUtilityTest {
 
     private static final Logger log = LoggerFactory.getLogger(ZipUtility.class);
