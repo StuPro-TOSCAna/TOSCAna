@@ -1,9 +1,9 @@
 package org.opentosca.toscana.core.plugin;
 
+import java.util.List;
+
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.platform.PlatformService;
-
-import java.util.List;
 
 public interface PluginService extends PlatformService {
 
@@ -14,7 +14,7 @@ public interface PluginService extends PlatformService {
             return null;
         List<TransformationPlugin> p = getPlugins();
         for (TransformationPlugin e : p) {
-            if (e.getPlatformDetails().id.equals(platform.id)) {
+            if (e.getPlatform().id.equals(platform.id)) {
                 return e;
             }
         }

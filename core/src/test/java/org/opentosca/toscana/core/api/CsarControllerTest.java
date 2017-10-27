@@ -1,15 +1,24 @@
 package org.opentosca.toscana.core.api;
 
-import org.json.JSONObject;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import java.security.MessageDigest;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
+
 import org.opentosca.toscana.core.api.mocks.MockCsarService;
 import org.opentosca.toscana.core.csar.CsarService;
 import org.opentosca.toscana.core.dummy.DummyCsar;
 import org.opentosca.toscana.core.dummy.DummyPlatformService;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.platform.PlatformService;
+
+import org.json.JSONObject;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.annotation.DirtiesContext;
@@ -20,9 +29,6 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-import java.security.MessageDigest;
-import java.util.*;
 
 import static org.junit.Assert.assertTrue;
 import static org.opentosca.toscana.core.api.utils.HALRelationUtils.validateRelations;
@@ -38,11 +44,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 )
 public class CsarControllerTest {
 
-    private static Platform[] platforms = {
+    private static Set<Platform> platforms = new HashSet<>(Arrays.asList(
         new Platform("kubernetes", "Kubernetes", new HashSet<>()),
         new Platform("open-stack", "OpenStack", new HashSet<>()),
-        new Platform("cloud-foundry", "CloudFoundry", new HashSet<>())
-    };
+        new Platform("cloud-foundry", "CloudFoundry", new HashSet<>())));
 
     public static Map<String, String> relations;
 
@@ -61,7 +66,7 @@ public class CsarControllerTest {
     @Before
     public void setUp() throws Exception {
         service = new MockCsarService();
-        provider = new DummyPlatformService(Arrays.asList(platforms));
+        provider = new DummyPlatformService(platforms);
         CsarController controller = new CsarController(service, provider);
         mvc = MockMvcBuilders.standaloneSetup(controller).build();
     }

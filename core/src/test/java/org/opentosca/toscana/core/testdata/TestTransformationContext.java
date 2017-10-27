@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 import org.opentosca.toscana.core.BaseSpringTest;
+import org.opentosca.toscana.core.api.exceptions.PlatformNotFoundException;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarDao;
 import org.opentosca.toscana.core.csar.CsarService;
@@ -41,7 +42,7 @@ public class TestTransformationContext extends BaseSpringTest {
      * @param platform the underlying target platform of the context;
      * @return a valid TransformationContext object based on given csar and platform
      */
-    public TransformationContext getContext(File csarFile, Platform platform) throws FileNotFoundException, InvalidCsarException {
+    public TransformationContext getContext(File csarFile, Platform platform) throws FileNotFoundException, InvalidCsarException, PlatformNotFoundException {
         InputStream is = new FileInputStream(csarFile);
         Csar csar = csarService.submitCsar("test-csar", is);
         Transformation transformation = transformationService.createTransformation(csar, platform);
@@ -53,7 +54,7 @@ public class TestTransformationContext extends BaseSpringTest {
     }
 
     @Test
-    public void serviceTemplateOfContextNotNull() throws FileNotFoundException, InvalidCsarException {
+    public void serviceTemplateOfContextNotNull() throws FileNotFoundException, InvalidCsarException, PlatformNotFoundException {
         TransformationContext context = getContext(TestCsars.CSAR_YAML_VALID_DOCKER_SIMPLETASK, TestPlugins.PLATFORM1);
         assertNotNull(context.getServiceTemplate());
     }

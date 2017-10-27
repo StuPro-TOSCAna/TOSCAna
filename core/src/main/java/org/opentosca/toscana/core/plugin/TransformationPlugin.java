@@ -8,15 +8,14 @@ import org.opentosca.toscana.core.transformation.platform.Platform;
  */
 public interface TransformationPlugin {
     /**
-     * @return The platform details for the plugin, containing the display name,
-     * identifier and the PlatformProperties.
-     * <p>
-     * This is required to not be null!
+     * @return The supported platform of the plugin, containing the display name, identifier and the PlatformProperties.
+     * <p> This is required to not be null!
      */
-    Platform getPlatformDetails();
+    Platform getPlatform();
 
     /**
-     * This method will transform a given Modell (in the context) and will store the result in a directory provided by the context.
+     * This method will transform a given Modell (in the context) and will store the result in a directory provided by
+     * the context.
      *
      * @param context The transformation to perform the transformation with
      * @throws Exception if any exception gets thrown the Transformation service will cancel the transformation

@@ -4,9 +4,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.opentosca.toscana.core.api.exceptions.PlatformNotFoundException;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarDao;
 import org.opentosca.toscana.core.transformation.platform.Platform;
@@ -31,7 +33,10 @@ public class TransformationFilesystemDao implements TransformationDao {
     }
 
     @Override
-    public Transformation create(Csar csar, Platform platform) {
+    public Transformation create(Csar csar, Platform platform) throws PlatformNotFoundException {
+        if (!platformService.isSupported(platform)) {
+            throw new PlatformNotFoundException();
+        }
         Transformation transformation = new TransformationImpl(csar, platform);
         delete(transformation);
         csar.getTransformations().put(platform.id, transformation);
@@ -52,11 +57,11 @@ public class TransformationFilesystemDao implements TransformationDao {
     }
 
     @Override
-    public Transformation find(Csar csar, Platform platform) {
+    public Optional<Transformation> find(Csar csar, Platform platform) {
         Set<Transformation> transformations = readFromDisk(csar);
-        return transformations.stream()
+        return Optional.ofNullable(transformations.stream()
             .filter(transformation -> transformation.getCsar().equals(csar) && transformation.getPlatform().equals(platform))
-            .findFirst().orElse(null);
+            .findFirst().orElse(null));
     }
 
     @Override
@@ -70,21 +75,26 @@ public class TransformationFilesystemDao implements TransformationDao {
     private Set<Transformation> readFromDisk(Csar csar) {
         File[] transformationFiles = csarDao.getTransformationsDir(csar).listFiles();
         Set<Transformation> transformations = new HashSet<>();
-        for (File transformationFile : transformationFiles) {
-            Platform platform = getPlatform(transformationFile);
-            Transformation transformation = new TransformationImpl(csar, platform);
-            // TODO set transformation state
-            transformations.add(transformation);
+        for (File pluginEntry : transformationFiles) {
+            if (!pluginEntry.isDirectory()) {
+                continue;
+            }
+            Platform platform = platformService.findPlatformById(pluginEntry.getName());
+            if (platform != null) {
+                Transformation transformation = new TransformationImpl(csar, platform);
+                // TODO set transformation state
+                transformations.add(transformation);
+            } else {
+                try {
+                    logger.warn("Found transformation '{}' for unsupported platform '{}' on disk", pluginEntry, pluginEntry.getName());
+                    logger.warn("Deleting '{}'", pluginEntry);
+                    FileUtils.deleteDirectory(pluginEntry);
+                } catch (IOException e) {
+                    logger.error("Failed to delete illegal transformation directory '{}'", pluginEntry, e);
+                }
+            }
         }
         return transformations;
-    }
-
-    private Platform getPlatform(File dir) {
-        if (dir.isDirectory()) {
-            return platformService.findById(dir.getName());
-        } else {
-            return null;
-        }
     }
 
     @Override
@@ -92,6 +102,7 @@ public class TransformationFilesystemDao implements TransformationDao {
         return new File(csarDao.getTransformationsDir(transformation.getCsar()), transformation.getPlatform().id);
     }
 
+    @Override
     public void setCsarDao(CsarDao csarDao) {
         this.csarDao = csarDao;
     }

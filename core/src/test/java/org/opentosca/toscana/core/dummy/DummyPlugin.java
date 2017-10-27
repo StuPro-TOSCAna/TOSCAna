@@ -13,7 +13,7 @@ public class DummyPlugin implements TransformationPlugin {
     }
 
     @Override
-    public Platform getPlatformDetails() {
+    public Platform getPlatform() {
         return platform;
     }
 
