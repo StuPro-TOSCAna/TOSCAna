@@ -11,9 +11,9 @@ import org.opentosca.toscana.core.parse.CsarParseServiceImpl;
 import org.opentosca.toscana.core.plugin.PluginService;
 import org.opentosca.toscana.core.plugin.PluginServiceImpl;
 import org.opentosca.toscana.core.plugin.TransformationPlugin;
-import org.opentosca.toscana.core.testdata.TestContext;
 import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.testdata.TestPlugins;
+import org.opentosca.toscana.core.testdata.TestTransformationContext;
 import org.opentosca.toscana.core.transformation.TransformationDao;
 import org.opentosca.toscana.core.transformation.TransformationFilesystemDao;
 import org.opentosca.toscana.core.transformation.TransformationService;
@@ -110,8 +110,8 @@ public class TestCoreConfiguration extends CoreConfiguration {
     }
 
     @Bean
-    public TestContext testContext() {
-        TestContext bean = new TestContext();
+    public TestTransformationContext testContext() {
+        TestTransformationContext bean = new TestTransformationContext();
         return bean;
     }
 }

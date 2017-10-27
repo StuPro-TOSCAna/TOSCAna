@@ -3,15 +3,14 @@ package org.opentosca.toscana.plugins.k8s;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.opentosca.toscana.core.BaseSpringTest;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.parse.CsarParseService;
 import org.opentosca.toscana.core.parse.InvalidCsarException;
-import org.opentosca.toscana.core.testdata.TestContext;
 import org.opentosca.toscana.core.testdata.TestCsars;
+import org.opentosca.toscana.core.testdata.TestTransformationContext;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.util.Preferences;
@@ -26,7 +25,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertTrue;
 import static org.opentosca.toscana.core.testdata.TestCsars.CSAR_YAML_VALID_DOCKER_SIMPLETASK;
@@ -41,7 +39,7 @@ public class K8sPluginTest extends BaseSpringTest {
     @Autowired
     Preferences preferences;
     @Autowired
-    TestContext testContext;
+    TestTransformationContext testTransformationContext;
     @Autowired
     private TestCsars testCsars;
 
@@ -68,8 +66,8 @@ public class K8sPluginTest extends BaseSpringTest {
     @Test
     public void transformTest() throws Exception {
         //TODO refactor this monster
-        TransformationContext transformationContext = testContext.getContext(CSAR_YAML_VALID_DOCKER_SIMPLETASK, new Platform("test", "bla"));
-        List<String> expectedTransformationRoot = Lists.newArrayList("simple-task-app","simple-task-app_resource.yaml","Readme.md");
+        TransformationContext transformationContext = testTransformationContext.getContext(CSAR_YAML_VALID_DOCKER_SIMPLETASK, new Platform("test", "bla"));
+        List<String> expectedTransformationRoot = Lists.newArrayList("simple-task-app", "simple-task-app_resource.yaml", "Readme.md");
         assertNotNull(transformationContext);
         plugin.transform(transformationContext);
         File transformationFileRootPath = new File(preferences.getDataDir(), "simple-taskcsar/transformations/test/");
@@ -78,7 +76,7 @@ public class K8sPluginTest extends BaseSpringTest {
             result.add(s);
         }
         assertTrue(expectedTransformationRoot.containsAll(result));
-        
+
         List<String> expectetDockerPathFiles = Lists.newArrayList("index.php", "mysql-credentials.php", "createdb.sql", "Dockerfile");
         File transformationDockerFilesPath = new File(preferences.getDataDir(), "simple-taskcsar/transformations/test/simple-task-app/");
         result.clear();
