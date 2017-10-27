@@ -1,15 +1,18 @@
 package org.opentosca.toscana.core.transformation.logging;
 
-import java.io.IOException;
-import java.util.List;
-
 import ch.qos.logback.classic.Logger;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.opentosca.toscana.core.testutils.CategoryAwareJUnitRunner;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.List;
 
 import static org.junit.Assert.assertTrue;
 
+@RunWith(CategoryAwareJUnitRunner.class)
 public class TransformationAppenderTest {
 
     private Logger logger = (Logger) LoggerFactory.getLogger(getClass());

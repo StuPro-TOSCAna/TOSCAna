@@ -1,8 +1,5 @@
 package org.opentosca.toscana.core.transformation.execution;
 
-import java.io.File;
-import java.io.IOException;
-
 import org.opentosca.toscana.core.plugin.PluginService;
 import org.opentosca.toscana.core.plugin.TransformationPlugin;
 import org.opentosca.toscana.core.transformation.Transformation;
@@ -10,8 +7,10 @@ import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.core.transformation.TransformationState;
 import org.opentosca.toscana.core.transformation.artifacts.ArtifactService;
 import org.opentosca.toscana.core.transformation.artifacts.TargetArtifact;
-
 import org.slf4j.Logger;
+
+import java.io.File;
+import java.io.IOException;
 
 public class ExecutionTask implements Runnable {
 
@@ -24,6 +23,8 @@ public class ExecutionTask implements Runnable {
     private ArtifactService ams;
 
     private Logger log;
+
+    private boolean failed = false;
 
     public ExecutionTask(
         Transformation transformation,
@@ -49,6 +50,7 @@ public class ExecutionTask implements Runnable {
         transformationRootDir.mkdirs();
         transform();
         serveArtifact();
+        transformation.setState(failed ? TransformationState.ERROR : TransformationState.DONE);
     }
 
     private void serveArtifact() {
@@ -60,10 +62,11 @@ public class ExecutionTask implements Runnable {
                 log.info("Artifact archive is served at relative url {}", artifact.getArtifactDownloadURL());
             } catch (IOException e) {
                 log.error("Failed to serve artifact archive for transformation {}/{}", csarId, platformId, e);
+                failed = true;
             }
         } else {
-            transformation.setState(TransformationState.ERROR);
-            log.info("Not compressing target artifacts: Transformation generated no output files");
+            failed = true;
+            log.error("Logfile missing! Not compressing target artifacts: Transformation generated no output files");
         }
     }
 
@@ -73,7 +76,8 @@ public class ExecutionTask implements Runnable {
             transformation.setState(TransformationState.DONE);
         } catch (Exception e) {
             log.info("Transformation of {}/{} failed", csarId, platformId);
-            transformation.setState(TransformationState.ERROR);
+            log.error("Something went wrong while transforming", e);
+            failed = true;
         }
     }
 }

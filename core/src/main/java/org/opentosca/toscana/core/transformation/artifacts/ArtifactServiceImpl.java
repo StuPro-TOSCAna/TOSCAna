@@ -34,12 +34,13 @@ public class ArtifactServiceImpl
     public ArtifactServiceImpl(Preferences preferences, TransformationDao transformationDao) {
         this.transformatioDao = transformationDao;
         artifactDir = new File(preferences.getDataDir(), ARTIFACT_DIR);
-        artifactDir.mkdir();
+        artifactDir.mkdirs();
         logger.info("Artifact directory is {}", artifactDir.getAbsolutePath());
     }
 
     @Override
     public TargetArtifact serveArtifact(Transformation transformation) throws IOException {
+        artifactDir.mkdirs();
         String csarId = transformation.getCsar().getIdentifier();
         String platformId = transformation.getPlatform().id;
         File transformationWorkingDirectory = transformatioDao.getRootDir(transformation);

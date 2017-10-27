@@ -3,8 +3,10 @@ package org.opentosca.toscana.core.transformation;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.opentosca.toscana.core.dummy.DummyCsar;
+import org.opentosca.toscana.core.testutils.CategoryAwareJUnitRunner;
+import org.opentosca.toscana.core.testutils.TestCategory;
+import org.opentosca.toscana.core.testutils.TestCategories;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.core.transformation.properties.PropertyType;
@@ -16,7 +18,7 @@ import java.util.Map;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-@RunWith(JUnit4.class)
+@RunWith(CategoryAwareJUnitRunner.class)
 public class TransformationPropertyHandlingTest {
 
     private TransformationImpl transformation;

@@ -13,6 +13,8 @@ import org.opentosca.toscana.core.csar.CsarDao;
 import org.opentosca.toscana.core.csar.CsarFilesystemDao;
 import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.testdata.TestPlugins;
+import org.opentosca.toscana.core.testutils.TestCategory;
+import org.opentosca.toscana.core.testutils.TestCategories;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -23,6 +25,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+
+import static org.junit.Assert.*;
 
 @ActiveProfiles("dummy_plugins")
 public class TransformationFilesystemDaoTest extends BaseSpringTest {

@@ -3,6 +3,9 @@ package org.opentosca.toscana.plugins.k8s;
 import java.io.File;
 import java.io.IOException;
 
+import org.opentosca.toscana.core.testutils.CategoryAwareJUnitRunner;
+import org.opentosca.toscana.core.testutils.TestCategories;
+import org.opentosca.toscana.core.testutils.TestCategory;
 import org.opentosca.toscana.core.util.FileHelper;
 import org.opentosca.toscana.plugins.kubernetes.KubernetesManualCreator;
 
@@ -13,7 +16,8 @@ import org.junit.runners.JUnit4;
 
 import static org.junit.Assert.assertEquals;
 
-@RunWith(JUnit4.class)
+@RunWith(CategoryAwareJUnitRunner.class)
+@TestCategory(TestCategories.FAST)
 public class K8sManualCreatorTest {
     private static String testManualCorrectFile;
 

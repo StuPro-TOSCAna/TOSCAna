@@ -11,6 +11,8 @@ import org.opentosca.toscana.core.dummy.DummyCsar;
 import org.opentosca.toscana.core.dummy.ExecutionDummyPlugin;
 import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.testdata.TestPlugins;
+import org.opentosca.toscana.core.testutils.TestCategory;
+import org.opentosca.toscana.core.testutils.TestCategories;
 import org.opentosca.toscana.core.transformation.artifacts.ArtifactService;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.Property;

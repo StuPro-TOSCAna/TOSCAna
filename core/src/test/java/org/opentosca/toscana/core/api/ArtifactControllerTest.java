@@ -1,13 +1,5 @@
 package org.opentosca.toscana.core.api;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.security.MessageDigest;
-import java.util.Random;
-
-import org.opentosca.toscana.core.transformation.artifacts.ArtifactService;
-import org.opentosca.toscana.core.util.FileUtils;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.AfterClass;
@@ -15,23 +7,29 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.opentosca.toscana.core.testutils.CategoryAwareSpringRunner;
+import org.opentosca.toscana.core.transformation.artifacts.ArtifactService;
+import org.opentosca.toscana.core.util.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.security.MessageDigest;
+import java.util.Random;
+
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@RunWith(SpringRunner.class)
+
+@RunWith(CategoryAwareSpringRunner.class)
 @DirtiesContext(
     classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD
 )
