@@ -1,11 +1,15 @@
 package org.opentosca.toscana.plugins.kubernetes;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.opentosca.toscana.core.plugin.AbstractPlugin;
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.core.transformation.TransformationContext;
+import org.opentosca.toscana.core.transformation.platform.Platform;
+import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.plugins.model.DockerApp;
 import org.opentosca.toscana.plugins.model.InvalidDockerAppException;
 
@@ -21,19 +25,20 @@ public class KubernetesPlugin extends AbstractPlugin {
     private final static Logger logger = LoggerFactory.getLogger(KubernetesPlugin.class);
     private PluginFileAccess fileAccess;
 
-    @Override
-    public String getName() {
-        return "Kubernetes";
+    public KubernetesPlugin() {
+        super(getPlatformDetails());
     }
 
-    @Override
-    public String getIdentifier() {
-        return "kubernetes";
+    private static Platform getPlatformDetails() {
+        String platformId = "kubernetes";
+        String platformName = "Kubernetes";
+        Set<Property> platformProperties = new HashSet<>();
+        return new Platform(platformId, platformName, platformProperties);
     }
 
     @Override
     public void transform(TransformationContext context) throws Exception {
-        logger.info("Started transformation to kubernetes artefact.");
+        logger.info("Started transformation to kubernetes artifact.");
         fileAccess = context.getPluginFileAccess();
         DockerApp dockerApp = getDockerApp(context.getServiceTemplate());
         String appName = dockerApp.getTag()[1];

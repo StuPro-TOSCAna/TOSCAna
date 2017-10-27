@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.opentosca.toscana.core.BaseSpringTest;
+import org.opentosca.toscana.core.api.exceptions.PlatformNotFoundException;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarDao;
 import org.opentosca.toscana.core.testdata.TestCsars;
@@ -47,7 +48,7 @@ public class PluginFileAccessTest extends BaseSpringTest {
     private File streamTargetFile;
 
     @Before
-    public void setUp() throws IOException {
+    public void setUp() throws IOException, PlatformNotFoundException {
         csar = testCsars.getCsar(TestCsars.CSAR_YAML_VALID_DOCKER_SIMPLETASK);
         csarContentDir = csarDao.getContentDir(csar);
         transformation = transformationService.createTransformation(csar, TestPlugins.PLATFORM1);

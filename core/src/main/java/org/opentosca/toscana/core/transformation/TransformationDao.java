@@ -2,7 +2,9 @@ package org.opentosca.toscana.core.transformation;
 
 import java.io.File;
 import java.util.List;
+import java.util.Optional;
 
+import org.opentosca.toscana.core.api.exceptions.PlatformNotFoundException;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarDao;
 import org.opentosca.toscana.core.transformation.platform.Platform;
@@ -19,8 +21,9 @@ public interface TransformationDao {
      * @param csar     the csar on which the new transformation will be based on
      * @param platform the target platform of the new transformation
      * @return the new transformation
+     * @throws PlatformNotFoundException if given platform is not supported by any known plugin
      */
-    Transformation create(Csar csar, Platform platform);
+    Transformation create(Csar csar, Platform platform) throws PlatformNotFoundException;
 
     /**
      * Deletes given transformation
@@ -28,9 +31,9 @@ public interface TransformationDao {
     void delete(Transformation transformation);
 
     /**
-     * Returns all transformation objects which match given csar and plattform
+     * Returns an optional transformation object which matches given csar and plattform
      */
-    Transformation find(Csar csar, Platform platform);
+    Optional<Transformation> find(Csar csar, Platform platform);
 
     /**
      * Returns all transformation objects which match given csar

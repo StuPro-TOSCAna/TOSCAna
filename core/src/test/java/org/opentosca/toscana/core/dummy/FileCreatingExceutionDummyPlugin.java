@@ -4,10 +4,11 @@ import java.io.IOException;
 import java.util.Random;
 
 import org.opentosca.toscana.core.transformation.TransformationContext;
+import org.opentosca.toscana.core.transformation.platform.Platform;
 
 public class FileCreatingExceutionDummyPlugin extends ExecutionDummyPlugin {
-    public FileCreatingExceutionDummyPlugin(String name, boolean failDuringExec) {
-        super(name, failDuringExec);
+    public FileCreatingExceutionDummyPlugin(Platform platform, boolean failDuringExec) {
+        super(platform, failDuringExec);
     }
 
     @Override

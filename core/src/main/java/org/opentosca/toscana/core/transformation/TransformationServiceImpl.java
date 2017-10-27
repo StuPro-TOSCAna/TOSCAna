@@ -6,6 +6,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import org.opentosca.toscana.core.api.exceptions.PlatformNotFoundException;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarDao;
 import org.opentosca.toscana.core.plugin.PluginService;
@@ -47,7 +48,7 @@ public class TransformationServiceImpl implements TransformationService {
     }
 
     @Override
-    public Transformation createTransformation(Csar csar, Platform targetPlatform) {
+    public Transformation createTransformation(Csar csar, Platform targetPlatform) throws PlatformNotFoundException {
         return transformationDao.create(csar, targetPlatform);
     }
 

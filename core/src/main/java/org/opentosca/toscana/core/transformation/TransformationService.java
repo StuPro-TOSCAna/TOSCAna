@@ -1,5 +1,6 @@
 package org.opentosca.toscana.core.transformation;
 
+import org.opentosca.toscana.core.api.exceptions.PlatformNotFoundException;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 
@@ -12,8 +13,9 @@ public interface TransformationService {
      * @param csar           csar which is going to get transformed
      * @param targetPlatform target platform of the new transformation
      * @return the new transformation instance
+     * @throws PlatformNotFoundException if given platform is not supported by any known plugin
      */
-    Transformation createTransformation(Csar csar, Platform targetPlatform);
+    Transformation createTransformation(Csar csar, Platform targetPlatform) throws PlatformNotFoundException;
 
     /**
      * Triggers the start of the transformation of given transformation instance. The transformation process itself

@@ -1,37 +1,24 @@
 package org.opentosca.toscana.core.dummy;
 
-import java.util.HashSet;
-
 import org.opentosca.toscana.core.plugin.AbstractPlugin;
 import org.opentosca.toscana.core.transformation.TransformationContext;
-import org.opentosca.toscana.core.transformation.properties.Property;
+import org.opentosca.toscana.core.transformation.platform.Platform;
 
+import org.opentosca.toscana.core.transformation.properties.Property;
 import org.slf4j.Logger;
+
+import java.util.Set;
 
 public class ExecutionDummyPlugin extends AbstractPlugin {
 
-    private String name;
-    private boolean failDuringExec;
+    protected boolean failDuringExec;
+    
 
-    public ExecutionDummyPlugin(String name, boolean failDuringExec) {
-        this.name = name;
+    public ExecutionDummyPlugin(Platform platform, boolean failDuringExec) {
+        super(platform);
         this.failDuringExec = failDuringExec;
     }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public String getIdentifier() {
-        return name;
-    }
-
-    @Override
-    public HashSet<Property> getPluginSpecificProperties() {
-        return new HashSet<>();
-    }
+    
 
     @Override
     public void transform(TransformationContext transformation) throws Exception {

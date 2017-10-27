@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.util.HashSet;
 
 import org.opentosca.toscana.core.BaseSpringTest;
+import org.opentosca.toscana.core.api.exceptions.PlatformNotFoundException;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.dummy.DummyCsar;
 import org.opentosca.toscana.core.dummy.ExecutionDummyPlugin;
@@ -67,16 +68,21 @@ public class TransformationServiceImplTest extends BaseSpringTest {
         csar.modelSpecificProperties = new HashSet<>();
         csar.modelSpecificProperties
             .add(new Property("test", PropertyType.TEXT, RequirementType.TRANSFORMATION));
-        Transformation t = service.createTransformation(csar, passingDummy.getPlatformDetails());
+        Transformation t = service.createTransformation(csar, passingDummy.getPlatform());
         assertTrue(!service.startTransformation(t));
     }
 
     @Test
     public void transformationCreationNoProps() throws Exception {
-        Transformation t = service.createTransformation(csar, passingDummy.getPlatformDetails());
-        assertNotNull(csar.getTransformations().get(passingDummy.getPlatformDetails().id));
+        Transformation t = service.createTransformation(csar, passingDummy.getPlatform());
+        assertNotNull(csar.getTransformations().get(passingDummy.getPlatform().id));
         assertNotNull(t);
         assertEquals(TransformationState.CREATED, t.getState());
+    }
+
+    @Test(expected = PlatformNotFoundException.class)
+    public void transformationCreationPlatformNotFound() throws PlatformNotFoundException {
+        service.createTransformation(csar, TestPlugins.PLATFORM_NOT_SUPPORTED);
     }
 
     @Test
@@ -85,38 +91,36 @@ public class TransformationServiceImplTest extends BaseSpringTest {
         csar.modelSpecificProperties = new HashSet<>();
         csar.modelSpecificProperties
             .add(new Property("test", PropertyType.TEXT, RequirementType.TRANSFORMATION));
-        Transformation t = service.createTransformation(csar, passingDummy.getPlatformDetails());
-        assertNotNull(csar.getTransformations().get(passingDummy.getPlatformDetails().id));
+        Transformation t = service.createTransformation(csar, passingDummy.getPlatform());
+        assertNotNull(csar.getTransformations().get(passingDummy.getPlatform().id));
         assertNotNull(t);
         assertEquals(TransformationState.INPUT_REQUIRED, t.getState());
     }
 
     @Test
     public void startTransformation() throws Exception {
-        startTransfomationInternal(TransformationState.DONE, passingDummy.getPlatformDetails());
+        startTransfomationInternal(TransformationState.DONE, passingDummy.getPlatform());
     }
 
     @Test
     public void startTransformationExecutionFail() throws Exception {
-        startTransfomationInternal(TransformationState.ERROR, failingDummy.getPlatformDetails());
+        startTransfomationInternal(TransformationState.ERROR, failingDummy.getPlatform());
     }
 
     @Test
     public void startTransformationWithArtifacts() throws Exception {
-        Transformation transformation = startTransfomationInternal(TransformationState.DONE, passingDummyFw.getPlatformDetails());
-        String id = passingDummyFw.getIdentifier();
-
+        Transformation transformation = startTransfomationInternal(TransformationState.DONE, passingDummyFw.getPlatform());
         lookForArtifactArchive(transformation);
     }
 
     @Test
     public void startTransformationWithArtifactsExecutionFail() throws Exception {
-        startTransfomationInternal(TransformationState.ERROR, failingDummyFw.getPlatformDetails());
+        startTransfomationInternal(TransformationState.ERROR, failingDummyFw.getPlatform());
     }
 
     @Test
     public void executionStopWithSleep() throws Exception {
-        Transformation t = service.createTransformation(csar, passingDummy.getPlatformDetails());
+        Transformation t = service.createTransformation(csar, passingDummy.getPlatform());
         assertTrue(service.startTransformation(t));
         letTimePass();
         assertTrue(t.getState() == TransformationState.TRANSFORMING);
@@ -151,7 +155,7 @@ public class TransformationServiceImplTest extends BaseSpringTest {
         assertFalse(csar.getTransformations().containsValue(transformation));
     }
 
-    private Transformation startTransfomationInternal(TransformationState expectedState, Platform platform) throws InterruptedException, FileNotFoundException {
+    private Transformation startTransfomationInternal(TransformationState expectedState, Platform platform) throws InterruptedException, FileNotFoundException, PlatformNotFoundException {
         Csar csar = testCsars.getCsar(TestCsars.CSAR_YAML_VALID_DOCKER_SIMPLETASK);
         Transformation t = service.createTransformation(csar, platform);
         assertTrue(service.startTransformation(t));

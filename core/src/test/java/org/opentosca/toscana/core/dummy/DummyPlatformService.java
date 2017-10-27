@@ -1,5 +1,10 @@
 package org.opentosca.toscana.core.dummy;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.opentosca.toscana.core.plugin.PluginService;
 import org.opentosca.toscana.core.plugin.TransformationPlugin;
 import org.opentosca.toscana.core.transformation.platform.Platform;
@@ -7,23 +12,19 @@ import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.core.transformation.properties.PropertyType;
 import org.opentosca.toscana.core.transformation.properties.RequirementType;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-
 /**
- * Mock Platform provider to be used in order to test Csar Controller and Transformation Controller
- * Once integration with the rest of the core is done this will be moved in the test package
+ * Mock Platform provider to be used in order to test Csar Controller and Transformation Controller Once integration
+ * with the rest of the core is done this will be moved in the test package
  */
 public class DummyPlatformService implements PluginService {
 
     private final char[] chars = "abcdefghijklmnopqrstuvwxyz".toCharArray();
 
-    private List<Platform> platforms = new ArrayList<>();
+    private Set<Platform> platforms = new HashSet<>();
     private List<TransformationPlugin> plugins = new ArrayList<>();
 
     public DummyPlatformService() {
-        ArrayList<Platform> platforms = new ArrayList<>();
+        Set<Platform> platforms = new HashSet<>();
 
         for (int i = 0; i < 5; i++) {
             HashSet<Property> properties = new HashSet<>();
@@ -36,20 +37,19 @@ public class DummyPlatformService implements PluginService {
         for (Platform platform : this.platforms) {
             plugins.add(new DummyPlugin(platform));
         }
-
     }
 
-    public DummyPlatformService(List<Platform> platforms) {
+    public DummyPlatformService(Set<Platform> platforms) {
         this.platforms = platforms;
     }
 
     @Override
-    public List<Platform> getSupportedPlatforms() {
+    public Set<Platform> getSupportedPlatforms() {
         return platforms;
     }
 
     @Override
-    public Platform findById(String id) {
+    public Platform findPlatformById(String id) {
         for (Platform platform : getSupportedPlatforms()) {
             if (platform.id.equals(id)) {
                 return platform;
@@ -59,8 +59,12 @@ public class DummyPlatformService implements PluginService {
     }
 
     @Override
+    public boolean isSupported(Platform platform) {
+        return platforms.contains(platform);
+    }
+
+    @Override
     public List<TransformationPlugin> getPlugins() {
         return plugins;
     }
-
 }

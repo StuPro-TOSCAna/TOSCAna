@@ -1,13 +1,18 @@
 package org.opentosca.toscana.core.api;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mockito;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.opentosca.toscana.core.plugin.PluginService;
 import org.opentosca.toscana.core.plugin.PluginServiceImpl;
 import org.opentosca.toscana.core.testdata.TestPlugins;
 import org.opentosca.toscana.core.transformation.platform.Platform;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.annotation.DirtiesContext;
@@ -16,13 +21,12 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(value = PlatformController.class)
@@ -32,7 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 )
 public class PlatformControllerTest {
 
-    private static List<Platform> platforms = TestPlugins.PLATFORMS;
+    private static Set<Platform> platforms = TestPlugins.PLATFORMS;
 
     private static List<String> ids = platforms.stream().map(platform -> platform.id)
         .collect(Collectors.toList());
@@ -52,7 +56,7 @@ public class PlatformControllerTest {
 
         when(provider.getSupportedPlatforms()).thenReturn(platforms);
         for (Platform p : platforms) {
-            when(provider.findById(p.id)).thenReturn(p);
+            when(provider.findPlatformById(p.id)).thenReturn(p);
         }
 
         System.out.println(prov instanceof PluginServiceImpl);
@@ -108,7 +112,7 @@ public class PlatformControllerTest {
 //                }
 //
 //                @Override
-//                public Platform findById(String id) {
+//                public Platform findPlatformById(String id) {
 //                    for (Platform platform : TestPlugins.PLATFORMS) {
 //                        if(platform.id == id) {
 //                            return platform;
