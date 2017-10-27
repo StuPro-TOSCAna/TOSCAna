@@ -5,13 +5,13 @@ import org.junit.runners.model.InitializationError;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 public class CategoryAwareSpringRunner extends SpringJUnit4ClassRunner {
-    
+
     private boolean skipAll = false;
-    
+
     public CategoryAwareSpringRunner(Class<?> clazz) throws InitializationError {
         super(clazz);
         TestCategory mode = clazz.getAnnotation(TestCategory.class);
-        if(mode != null) {
+        if (mode != null) {
             skipAll = !TestCategories.getCurrentTestMode().shouldBeExecuted(mode.value());
         } else {
             skipAll = !TestCategories.getCurrentTestMode().shouldBeExecuted(TestCategories.FAST);
@@ -20,7 +20,7 @@ public class CategoryAwareSpringRunner extends SpringJUnit4ClassRunner {
 
     @Override
     protected boolean isTestMethodIgnored(FrameworkMethod child) {
-        if(skipAll) {
+        if (skipAll) {
             return true;
         }
         TestCategory eci =
@@ -32,7 +32,7 @@ public class CategoryAwareSpringRunner extends SpringJUnit4ClassRunner {
 
     @Override
     protected boolean isIgnored(FrameworkMethod child) {
-        if(skipAll) {
+        if (skipAll) {
             return true;
         }
         TestCategory eci =

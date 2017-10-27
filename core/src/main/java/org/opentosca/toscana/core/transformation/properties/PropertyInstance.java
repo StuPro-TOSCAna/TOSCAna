@@ -12,7 +12,7 @@ import java.util.Set;
 public class PropertyInstance {
     private Map<String, String> propertyValues;
     private Set<Property> properties;
-    
+
     /**
      * Creates a new property instance with no set property values for the given list (set) of properties.
      *

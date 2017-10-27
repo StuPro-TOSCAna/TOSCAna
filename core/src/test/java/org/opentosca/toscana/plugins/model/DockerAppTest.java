@@ -1,9 +1,8 @@
 package org.opentosca.toscana.plugins.model;
 
-import java.io.FileNotFoundException;
-import java.util.LinkedList;
-import java.util.List;
-
+import org.eclipse.winery.model.tosca.yaml.TServiceTemplate;
+import org.junit.Before;
+import org.junit.Test;
 import org.opentosca.toscana.core.BaseSpringTest;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.parse.CsarParseService;
@@ -12,13 +11,13 @@ import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.testutils.TestCategories;
 import org.opentosca.toscana.core.testutils.TestCategory;
 import org.opentosca.toscana.plugins.kubernetes.KubernetesPlugin;
-
-import org.eclipse.winery.model.tosca.yaml.TServiceTemplate;
-import org.junit.Before;
-import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static org.junit.Assert.*;
+import java.io.FileNotFoundException;
+import java.util.LinkedList;
+import java.util.List;
+
+import static org.junit.Assert.assertArrayEquals;
 
 @TestCategory(TestCategories.FAST)
 public class DockerAppTest extends BaseSpringTest {
@@ -47,7 +46,7 @@ public class DockerAppTest extends BaseSpringTest {
         dependencies.add("simple-task-app/createdb.sql");
         dependencies.add("simple-task-app/index.php");
         dependencies.add("simple-task-app/mysql-credentials.php");
-        
+
         assertArrayEquals(validTag, dockerApp.getTag());
         assertArrayEquals(validIdentifier, dockerApp.getIdentifier());
         assertArrayEquals(dependencies.toArray(), dockerApp.getDependencies().toArray());

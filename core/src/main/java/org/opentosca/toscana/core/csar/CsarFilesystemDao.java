@@ -1,5 +1,17 @@
 package org.opentosca.toscana.core.csar;
 
+import org.apache.commons.io.FileUtils;
+import org.opentosca.toscana.core.transformation.Transformation;
+import org.opentosca.toscana.core.transformation.TransformationDao;
+import org.opentosca.toscana.core.util.Preferences;
+import org.opentosca.toscana.core.util.ZipUtility;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Repository;
+
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,20 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipInputStream;
-
-import javax.annotation.PostConstruct;
-
-import org.opentosca.toscana.core.transformation.Transformation;
-import org.opentosca.toscana.core.transformation.TransformationDao;
-import org.opentosca.toscana.core.util.Preferences;
-import org.opentosca.toscana.core.util.ZipUtility;
-
-import org.apache.commons.io.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Repository;
 
 @Repository
 public class CsarFilesystemDao implements CsarDao {

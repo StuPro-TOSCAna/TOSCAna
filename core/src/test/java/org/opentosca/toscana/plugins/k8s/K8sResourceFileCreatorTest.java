@@ -1,18 +1,16 @@
 package org.opentosca.toscana.plugins.k8s;
 
-import java.io.File;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.opentosca.toscana.core.testutils.CategoryAwareJUnitRunner;
 import org.opentosca.toscana.core.testutils.TestCategories;
 import org.opentosca.toscana.core.testutils.TestCategory;
 import org.opentosca.toscana.core.util.FileHelper;
 import org.opentosca.toscana.plugins.kubernetes.KubernetesResourceFileCreator;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import java.io.File;
 
 import static org.junit.Assert.assertEquals;
 

@@ -46,7 +46,7 @@ public class GetPropertiesResponse extends ResourceSupport {
         public PropertyWrap(
             @JsonProperty("key") String key,
             @JsonProperty("type") String type,
-            @JsonProperty("description") String description, 
+            @JsonProperty("description") String description,
             @JsonProperty("required") boolean required
         ) {
             this.key = key;

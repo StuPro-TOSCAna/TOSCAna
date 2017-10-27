@@ -1,14 +1,11 @@
 package org.opentosca.toscana.core;
 
-import java.io.IOException;
-
-import org.opentosca.toscana.core.testutils.CategoryAwareSpringRunner;
-import org.opentosca.toscana.core.util.Preferences;
-
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
+import org.opentosca.toscana.core.testutils.CategoryAwareSpringRunner;
+import org.opentosca.toscana.core.util.Preferences;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +14,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
+
+import java.io.IOException;
 
 /**
  * Extend from this class in order to inherit important configurations Sets up Spring Test Context regarding to the Test

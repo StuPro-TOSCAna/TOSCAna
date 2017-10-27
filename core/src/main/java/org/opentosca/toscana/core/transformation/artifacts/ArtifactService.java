@@ -1,9 +1,9 @@
 package org.opentosca.toscana.core.transformation.artifacts;
 
+import org.opentosca.toscana.core.transformation.Transformation;
+
 import java.io.File;
 import java.io.IOException;
-
-import org.opentosca.toscana.core.transformation.Transformation;
 
 /**
  * Service that will tell spring to serve a file or multiple as a static resource

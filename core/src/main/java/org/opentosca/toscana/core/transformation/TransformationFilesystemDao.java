@@ -1,5 +1,16 @@
 package org.opentosca.toscana.core.transformation;
 
+import org.apache.commons.io.FileUtils;
+import org.opentosca.toscana.core.api.exceptions.PlatformNotFoundException;
+import org.opentosca.toscana.core.csar.Csar;
+import org.opentosca.toscana.core.csar.CsarDao;
+import org.opentosca.toscana.core.transformation.platform.Platform;
+import org.opentosca.toscana.core.transformation.platform.PlatformService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
@@ -7,18 +18,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import org.opentosca.toscana.core.api.exceptions.PlatformNotFoundException;
-import org.opentosca.toscana.core.csar.Csar;
-import org.opentosca.toscana.core.csar.CsarDao;
-import org.opentosca.toscana.core.transformation.platform.Platform;
-import org.opentosca.toscana.core.transformation.platform.PlatformService;
-
-import org.apache.commons.io.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
 
 @Repository
 public class TransformationFilesystemDao implements TransformationDao {

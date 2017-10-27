@@ -1,15 +1,10 @@
 package org.opentosca.toscana.core.plugin;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-
-import org.opentosca.toscana.core.transformation.Transformation;
-
 import org.apache.commons.io.FileUtils;
+import org.opentosca.toscana.core.transformation.Transformation;
 import org.slf4j.Logger;
+
+import java.io.*;
 
 public class PluginFileAccess {
 
@@ -54,9 +49,9 @@ public class PluginFileAccess {
 
     /**
      * Returns a BufferedWriter which can write to given path
-     *
+     * <p>
      * If necessary, creates missing subdirectories. <br>
-     *
+     * <p>
      * Note: Close returned BufferWriter after usage.
      *
      * @param relativePath path to the target file, relative to the transformations root dir

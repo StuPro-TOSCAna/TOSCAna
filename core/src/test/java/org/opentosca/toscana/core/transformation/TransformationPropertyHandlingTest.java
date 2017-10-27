@@ -5,8 +5,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opentosca.toscana.core.dummy.DummyCsar;
 import org.opentosca.toscana.core.testutils.CategoryAwareJUnitRunner;
-import org.opentosca.toscana.core.testutils.TestCategory;
-import org.opentosca.toscana.core.testutils.TestCategories;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.core.transformation.properties.PropertyType;

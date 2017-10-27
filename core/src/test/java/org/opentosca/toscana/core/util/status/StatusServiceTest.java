@@ -7,8 +7,6 @@ import org.opentosca.toscana.core.csar.CsarDao;
 import org.opentosca.toscana.core.dummy.DummyCsar;
 import org.opentosca.toscana.core.dummy.DummyTransformation;
 import org.opentosca.toscana.core.testutils.CategoryAwareSpringRunner;
-import org.opentosca.toscana.core.testutils.TestCategory;
-import org.opentosca.toscana.core.testutils.TestCategories;
 import org.opentosca.toscana.core.transformation.TransformationState;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.springframework.boot.test.mock.mockito.MockBean;

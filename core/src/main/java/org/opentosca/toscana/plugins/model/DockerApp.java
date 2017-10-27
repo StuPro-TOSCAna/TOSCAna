@@ -1,11 +1,11 @@
 package org.opentosca.toscana.plugins.model;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.eclipse.winery.model.tosca.yaml.TNodeTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.LinkedList;
+import java.util.List;
 
 public class DockerApp {
     private final static Logger logger = LoggerFactory.getLogger(DockerApp.class);
@@ -57,7 +57,7 @@ public class DockerApp {
                 identifier[0] = tAttributeAssignment.getDescription();
                 identifier[1] = (String) tAttributeAssignment.getValue();
             } else if (s.equals("tag")) {
-                
+
                 tag[0] = tAttributeAssignment.getDescription();
                 tag[1] = (String) tAttributeAssignment.getValue();
                 System.out.println(tag[0]);

@@ -1,17 +1,16 @@
 package org.opentosca.toscana.core.transformation;
 
-import java.util.HashSet;
-import java.util.Set;
-
+import ch.qos.logback.classic.Logger;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.transformation.artifacts.TargetArtifact;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
-
-import ch.qos.logback.classic.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashSet;
+import java.util.Set;
 
 class TransformationImpl implements Transformation {
 

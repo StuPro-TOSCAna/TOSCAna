@@ -1,9 +1,7 @@
 package org.opentosca.toscana.core.transformation;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.HashSet;
-
+import org.junit.Before;
+import org.junit.Test;
 import org.opentosca.toscana.core.BaseSpringTest;
 import org.opentosca.toscana.core.api.exceptions.PlatformNotFoundException;
 import org.opentosca.toscana.core.csar.Csar;
@@ -11,22 +9,18 @@ import org.opentosca.toscana.core.dummy.DummyCsar;
 import org.opentosca.toscana.core.dummy.ExecutionDummyPlugin;
 import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.testdata.TestPlugins;
-import org.opentosca.toscana.core.testutils.TestCategory;
-import org.opentosca.toscana.core.testutils.TestCategories;
 import org.opentosca.toscana.core.transformation.artifacts.ArtifactService;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.core.transformation.properties.PropertyType;
 import org.opentosca.toscana.core.transformation.properties.RequirementType;
-
-import org.junit.Before;
-import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.HashSet;
+
+import static org.junit.Assert.*;
 
 public class TransformationServiceImplTest extends BaseSpringTest {
 
