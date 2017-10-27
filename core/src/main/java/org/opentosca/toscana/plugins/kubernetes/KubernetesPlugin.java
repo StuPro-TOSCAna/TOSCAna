@@ -1,7 +1,5 @@
 package org.opentosca.toscana.plugins.kubernetes;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -43,10 +41,8 @@ public class KubernetesPlugin extends AbstractPlugin {
         String manual = KubernetesManualCreator.createManual(appName, (appName + "_resource.yaml"));
         String resourceFilePath = "/" + appName + "_resource.yaml";
         String manualPath = "/Readme.md";
-        InputStream inResourceFile = new ByteArrayInputStream(resourceFile.getBytes("UTF-8"));
-        InputStream inManual = new ByteArrayInputStream(manual.getBytes("UTF-8"));
-        fileAccess.write(manualPath, inManual);
-        fileAccess.write(resourceFilePath, inResourceFile);
+        fileAccess.access(manualPath).write(manual);
+        fileAccess.access(resourceFilePath).write(resourceFile);
         List<String> dockerFilePaths = dockerApp.getDependencies();
         for (int i = 0; i < dockerFilePaths.size(); i++) {
             fileAccess.copy(dockerFilePaths.get(i));

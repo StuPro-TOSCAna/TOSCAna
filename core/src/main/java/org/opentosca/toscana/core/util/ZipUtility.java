@@ -18,7 +18,7 @@ public class ZipUtility {
 
     private final static Logger logger = LoggerFactory.getLogger(ZipUtility.class.getName());
     /**
-     * Size of the buffer to read/write data
+     * Size of the buffer to read/access data
      */
     private static final int BUFFER_SIZE = 4096;
 

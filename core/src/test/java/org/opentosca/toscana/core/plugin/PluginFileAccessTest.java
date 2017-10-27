@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class PluginFileAccessTest extends BaseSpringTest {
@@ -97,7 +98,7 @@ public class PluginFileAccessTest extends BaseSpringTest {
 
     @Test
     public void write() throws Exception {
-        access.write(streamTargetRelativePath, inputStream);
+        access.access(streamTargetRelativePath).append(streamContent).close();
         assertTrue(streamTargetFile.isFile());
         assertEquals(streamContent, FileUtils.readFileToString(streamTargetFile));
     }
@@ -105,16 +106,33 @@ public class PluginFileAccessTest extends BaseSpringTest {
     @Test(expected = IOException.class)
     public void writePathIsDirectoryThrowsException() throws IOException {
         streamTargetFile.mkdir();
-        access.write(streamTargetRelativePath, inputStream);
+        access.access(streamTargetRelativePath);
     }
 
     @Test
     public void writeSubDirectoriesGetAutomaticallyCreated() throws IOException {
         String path = "test/some/subdirs/filename";
-        InputStream stream = IOUtils.toInputStream(streamContent, "UTF-8");
-        access.write(path, stream);
+        access.access(path).append(streamContent).close();
         File targetFile = new File(transformationRootDir, path);
         assertTrue(targetFile.isFile());
         assertEquals(streamContent, FileUtils.readFileToString(targetFile));
+    }
+
+    @Test
+    public void readSuccessful() throws IOException {
+        String path = "file";
+        File file = new File(csarContentDir, path);
+        FileUtils.copyInputStreamToFile(inputStream, file);
+        String result = access.read(path);
+
+        assertNotNull(result);
+
+        assertEquals(streamContent, result);
+    }
+
+    @Test(expected = IOException.class)
+    public void readFileNotExists() throws IOException {
+        String path = "nonexistent-file";
+        access.read(path);
     }
 }
