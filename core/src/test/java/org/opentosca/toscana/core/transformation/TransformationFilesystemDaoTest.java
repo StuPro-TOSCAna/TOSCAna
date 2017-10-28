@@ -20,7 +20,6 @@ import java.util.Optional;
 
 import static org.junit.Assert.*;
 
-@ActiveProfiles("dummy_plugins")
 public class TransformationFilesystemDaoTest extends BaseSpringTest {
 
     @Autowired

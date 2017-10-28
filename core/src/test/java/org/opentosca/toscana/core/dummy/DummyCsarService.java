@@ -8,13 +8,15 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-//@Service //TODO If Transformation Service has been implemented
 public class DummyCsarService implements CsarService {
 
     private String[] names = {"k8s-cluster", "apache-test", "mongo-db"};
     List<Csar> dummies = new LinkedList<>();
+    
+    private final File tmpdir;
 
-    public DummyCsarService() {
+    public DummyCsarService(File tmpdir) {
+        this.tmpdir = tmpdir;
         for (String name : names) {
             dummies.add(new DummyCsar(name));
         }
@@ -28,7 +30,7 @@ public class DummyCsarService implements CsarService {
         }
         dummies.add(dummy);
         try {
-            File dummyPath = new File(name + ".csar");
+            File dummyPath = new File(tmpdir,name + ".csar");
             FileOutputStream fout = new FileOutputStream(dummyPath);
             writeTo(csarStream, fout);
         } catch (IOException e) {

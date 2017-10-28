@@ -1,9 +1,9 @@
 package org.opentosca.toscana.core.api;
 
-import org.json.JSONObject;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.opentosca.toscana.core.BaseSpringTest;
 import org.opentosca.toscana.core.api.exceptions.PlatformNotFoundException;
 import org.opentosca.toscana.core.api.utils.HALRelationUtils;
 import org.opentosca.toscana.core.csar.Csar;
@@ -12,29 +12,28 @@ import org.opentosca.toscana.core.dummy.DummyCsarService;
 import org.opentosca.toscana.core.dummy.DummyPlatformService;
 import org.opentosca.toscana.core.dummy.DummyTransformation;
 import org.opentosca.toscana.core.dummy.DummyTransformationService;
-import org.opentosca.toscana.core.testutils.CategoryAwareSpringRunner;
 import org.opentosca.toscana.core.transformation.TransformationService;
 import org.opentosca.toscana.core.transformation.TransformationState;
 import org.opentosca.toscana.core.transformation.platform.PlatformService;
+
+import org.json.JSONObject;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.http.MediaType;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import static org.junit.Assert.assertTrue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@RunWith(CategoryAwareSpringRunner.class)
-@DirtiesContext(
-    classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD
-)
-public class TransformationControllerTest {
+public class TransformationControllerTest extends BaseSpringTest {
 
     private static final String VALID_PROPERTY_INPUT = "{\n" +
         "\t\"properties\": {\n" +
@@ -62,7 +61,7 @@ public class TransformationControllerTest {
     @Before
     public void setUp() throws Exception {
         //Create Objects
-        csarService = new DummyCsarService();
+        csarService = new DummyCsarService(tmpdir);
         transformationService = new DummyTransformationService();
         platformService = new DummyPlatformService();
         controller = new TransformationController(csarService, transformationService, platformService);

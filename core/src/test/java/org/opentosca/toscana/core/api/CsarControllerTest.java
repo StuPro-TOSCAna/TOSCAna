@@ -4,6 +4,8 @@ import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import org.opentosca.toscana.core.BaseSpringTest;
 import org.opentosca.toscana.core.api.mocks.MockCsarService;
 import org.opentosca.toscana.core.csar.CsarService;
 import org.opentosca.toscana.core.dummy.DummyCsar;
@@ -32,11 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@RunWith(CategoryAwareSpringRunner.class)
-@DirtiesContext(
-    classMode = ClassMode.AFTER_EACH_TEST_METHOD
-)
-public class CsarControllerTest {
+public class CsarControllerTest extends BaseSpringTest{
 
     private static Set<Platform> platforms = new HashSet<>(Arrays.asList(
         new Platform("kubernetes", "Kubernetes", new HashSet<>()),

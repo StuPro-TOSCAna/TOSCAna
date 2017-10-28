@@ -139,6 +139,7 @@ public class CsarFilesystemDao implements CsarDao {
      */
     private void readFromDisk() {
         csarMap.clear();
+        dataDir.mkdir();
         File[] files = dataDir.listFiles();
         for (int i = 0; i < files.length; i++) {
             File file = files[i];

@@ -3,6 +3,8 @@ package org.opentosca.toscana.core.transformation;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import org.opentosca.toscana.core.BaseJUnitTest;
 import org.opentosca.toscana.core.dummy.DummyCsar;
 import org.opentosca.toscana.core.testutils.CategoryAwareJUnitRunner;
 import org.opentosca.toscana.core.transformation.platform.Platform;
@@ -13,11 +15,11 @@ import org.opentosca.toscana.core.transformation.properties.RequirementType;
 import java.util.HashSet;
 import java.util.Map;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-@RunWith(CategoryAwareJUnitRunner.class)
-public class TransformationPropertyHandlingTest {
+public class TransformationPropertyHandlingTest extends BaseJUnitTest {
 
     private TransformationImpl transformation;
 
@@ -50,7 +52,7 @@ public class TransformationPropertyHandlingTest {
         }
         Map<String, String> property = transformation.getProperties().getPropertyValues();
         for (int i = 0; i < 10; i++) {
-            assertTrue(property.get("prop-" + i).equals("1"));
+            assertEquals("1", property.get("prop-" + i));
         }
     }
 

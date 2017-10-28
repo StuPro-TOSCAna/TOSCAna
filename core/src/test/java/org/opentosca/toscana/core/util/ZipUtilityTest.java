@@ -4,6 +4,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import org.opentosca.toscana.core.BaseJUnitTest;
 import org.opentosca.toscana.core.testutils.CategoryAwareJUnitRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,15 +18,12 @@ import java.util.zip.ZipInputStream;
 import static org.junit.Assert.assertTrue;
 
 
-@RunWith(CategoryAwareJUnitRunner.class)
-public class ZipUtilityTest {
+public class ZipUtilityTest extends BaseJUnitTest {
 
     private static final Logger log = LoggerFactory.getLogger(ZipUtility.class);
 
-    private File dir = new File("test-temp");
-
-    private File original = new File(dir, "original");
-    private File unzipped = new File(dir, "unzipped");
+    private File original = new File(tmpdir, "original");
+    private File unzipped = new File(tmpdir, "unzipped");
 
     private Random rnd = new Random(123456);
 
@@ -32,9 +31,6 @@ public class ZipUtilityTest {
 
     @Before
     public void setUp() throws Exception {
-        //Cleanup
-        FileUtils.delete(dir);
-        dir.mkdirs();
         unzipped.mkdirs();
         original.mkdirs();
 
@@ -80,7 +76,7 @@ public class ZipUtilityTest {
 
     @After
     public void tearDown() throws Exception {
-        FileUtils.delete(dir);
+//        FileUtils.delete(dir);
     }
 
     public static void generateFolderStructure(

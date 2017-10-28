@@ -2,7 +2,7 @@
 **/target/
 **/*.iml
 
-**/toscana-test/*
+**/testsuite-spring-tmpdir/*
 # CMake
 cmake-build-debug/
 

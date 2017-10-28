@@ -22,7 +22,6 @@ import java.io.FileNotFoundException;
 
 import static org.opentosca.toscana.core.testdata.TestCsars.CSAR_YAML_VALID_DOCKER_SIMPLETASK;
 
-@TestCategory(TestCategories.FAST)
 public class K8sPluginTest extends BaseSpringTest {
     private static final Logger log = LoggerFactory.getLogger(K8sPluginTest.class);
 

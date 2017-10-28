@@ -4,6 +4,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+
+import org.opentosca.toscana.core.BaseSpringTest;
+import org.opentosca.toscana.core.BaseTest;
 import org.opentosca.toscana.core.plugin.PluginService;
 import org.opentosca.toscana.core.plugin.PluginServiceImpl;
 import org.opentosca.toscana.core.testdata.TestPlugins;
@@ -31,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DirtiesContext(
     classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD
 )
-public class PlatformControllerTest {
+public class PlatformControllerTest extends BaseTest {
 
     private static Set<Platform> platforms = TestPlugins.PLATFORMS;
 
@@ -55,8 +58,6 @@ public class PlatformControllerTest {
         for (Platform p : platforms) {
             when(provider.findPlatformById(p.id)).thenReturn(p);
         }
-
-        System.out.println(prov instanceof PluginServiceImpl);
     }
 
     @Test
@@ -95,29 +96,4 @@ public class PlatformControllerTest {
         resultActions.andExpect(status().isNotFound());
         resultActions.andReturn();
     }
-
-//    @Configuration
-//    @Profile("pc_test")
-//    public static class PlatformControllerConfiguration {
-//        @Bean
-//        @Primary
-//        public PlatformService platformService() {
-//            return new PlatformService() {
-//                @Override
-//                public List<Platform> getSupportedPlatforms() {
-//                    return TestPlugins.PLATFORMS;
-//                }
-//
-//                @Override
-//                public Platform findPlatformById(String id) {
-//                    for (Platform platform : TestPlugins.PLATFORMS) {
-//                        if(platform.id == id) {
-//                            return platform;
-//                        }
-//                    }
-//                    return null;
-//                }
-//            };
-//        }
-//    }
 }

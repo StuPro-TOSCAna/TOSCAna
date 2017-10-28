@@ -8,6 +8,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import org.opentosca.toscana.core.BaseJUnitTest;
 import org.opentosca.toscana.core.Main;
 import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.testutils.CategoryAwareJUnitRunner;
@@ -16,20 +18,14 @@ import org.opentosca.toscana.core.testutils.TestCategory;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
-import java.io.File;
 import java.io.IOException;
 
 import static org.junit.Assert.fail;
-import static org.opentosca.toscana.core.util.FileUtils.delete;
 
 @TestCategory(TestCategories.SLOW)
 @RunWith(CategoryAwareJUnitRunner.class)
-public class UploadTest {
+public class UploadTest extends BaseJUnitTest {
 
-    public static final String TEMPLATE_HASH
-        = "d381ef5524ddbe0306a3e5034bed5ecaae66ac04134c474b7ac14d7e06a714cb";
-
-    private File tempDir;
     private Thread springThread;
 
     private Retrofit retrofit;
@@ -37,19 +33,13 @@ public class UploadTest {
 
     @Before
     public void setUp() throws Exception {
-        tempDir = new File("test-temp");
-        delete(tempDir);
-        System.out.println(tempDir.getAbsolutePath());
-        if (!tempDir.exists() && !tempDir.mkdirs()) {
-            throw new IOException();
-        }
         retrofit = new Retrofit.Builder().baseUrl("http://127.0.0.1:8091/").build();
 
         api = retrofit.create(TOSCAnaUploadInterface.class);
 
         springThread = new Thread(() -> {
             Main.main(new String[]{
-                "--datadir=" + tempDir.getAbsolutePath(),
+                "--datadir=" + tmpdir.getAbsolutePath(),
                 "--spring.profiles.active=controller_test",
                 "--server.port=8091"
             });
@@ -106,7 +96,6 @@ public class UploadTest {
 
     @After
     public void tearDown() throws Exception {
-        delete(tempDir);
         springThread.stop();
     }
 }

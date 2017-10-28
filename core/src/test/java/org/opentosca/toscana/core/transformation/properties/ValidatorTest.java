@@ -1,14 +1,19 @@
 package org.opentosca.toscana.core.transformation.properties;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.opentosca.toscana.core.transformation.properties.validators.*;
-
 import java.util.Arrays;
 import java.util.Collection;
 
-import static org.junit.Assert.assertTrue;
+import org.opentosca.toscana.core.transformation.properties.validators.BooleanValidator;
+import org.opentosca.toscana.core.transformation.properties.validators.FloatValidator;
+import org.opentosca.toscana.core.transformation.properties.validators.IntegerValidator;
+import org.opentosca.toscana.core.transformation.properties.validators.StringValidator;
+import org.opentosca.toscana.core.transformation.properties.validators.ValueValidator;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+
+import static org.junit.Assert.assertSame;
 
 @RunWith(Parameterized.class)
 public class ValidatorTest {
@@ -44,6 +49,6 @@ public class ValidatorTest {
     @Test
     public void testValidation() throws Exception {
         boolean result = validator.isValid(testValue);
-        assertTrue(result == accept);
+        assertSame(accept, result);
     }
 }
