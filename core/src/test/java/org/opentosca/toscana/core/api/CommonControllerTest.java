@@ -3,6 +3,8 @@ package org.opentosca.toscana.core.api;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import org.opentosca.toscana.core.BaseTest;
 import org.opentosca.toscana.core.testutils.CategoryAwareSpringRunner;
 import org.opentosca.toscana.core.util.FileSystem;
 import org.opentosca.toscana.core.util.status.StatusService;
@@ -28,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD
 )
 @ActiveProfiles("controller_test")
-public class CommonControllerTest {
+public class CommonControllerTest extends BaseTest {
 
     private static final Logger log = LoggerFactory.getLogger(CommonControllerTest.class);
 

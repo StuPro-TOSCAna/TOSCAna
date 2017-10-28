@@ -1,19 +1,20 @@
 package org.opentosca.toscana.core.transformation.logging;
 
+import java.util.List;
+
+import org.opentosca.toscana.core.BaseJUnitTest;
+
 import ch.qos.logback.classic.Level;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.opentosca.toscana.core.testutils.CategoryAwareJUnitRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
-@RunWith(CategoryAwareJUnitRunner.class)
-public class LogTest {
+public class LogTest extends BaseJUnitTest {
 
     private Logger logger = LoggerFactory.getLogger(LogTest.class);
 
@@ -37,7 +38,7 @@ public class LogTest {
         logger.info("Checking data");
         for (int i = 0; i < logs.size(); i++) {
             LogEntry e = logs.get(i);
-            assertTrue(e.getMessage().equals(String.format("Log-Message-%d", i)));
+            assertEquals((String.format("Log-Message-%d", i)), e.getMessage());
         }
         logger.info("Done");
     }
@@ -51,7 +52,7 @@ public class LogTest {
         logger.info("Checking data");
         for (int i = 50; i < logs.size(); i++) {
             LogEntry e = logs.get(i);
-            assertTrue(e.getMessage().equals(String.format("Log-Message-%d", i)));
+            assertEquals(String.format("Log-Message-%d", i), e.getMessage());
         }
         logger.info("Done");
     }
@@ -59,7 +60,7 @@ public class LogTest {
     @Test
     public void getLogsFromOuterBound() throws Exception {
         logger.info("Trying to get logs from index 100");
-        assertTrue(log.getLogEntries(101).size() == 0);
+        assertSame(0, log.getLogEntries(101).size());
         logger.info("Done");
     }
 
@@ -68,11 +69,11 @@ public class LogTest {
         logger.info("Trying to log from index 0 to 10");
         List<LogEntry> logs = log.getLogEntries(0, 9);
         logger.info("Checking length");
-        assertTrue(logs.size() == 10);
+        assertSame(10, logs.size());
         logger.info("Checking data");
         for (int i = 0; i < logs.size(); i++) {
             LogEntry e = logs.get(i);
-            assertTrue(e.getMessage().equals(String.format("Log-Message-%d", i)));
+            assertEquals(String.format("Log-Message-%d", i), e.getMessage());
         }
         logger.info("Done");
     }

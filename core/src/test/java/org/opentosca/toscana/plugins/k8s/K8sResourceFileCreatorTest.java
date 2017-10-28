@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import org.opentosca.toscana.core.BaseJUnitTest;
 import org.opentosca.toscana.core.testutils.CategoryAwareJUnitRunner;
 import org.opentosca.toscana.core.testutils.TestCategories;
 import org.opentosca.toscana.core.testutils.TestCategory;
@@ -14,9 +16,7 @@ import java.io.File;
 
 import static org.junit.Assert.assertEquals;
 
-@RunWith(CategoryAwareJUnitRunner.class)
-@TestCategory(TestCategories.FAST)
-public class K8sResourceFileCreatorTest {
+public class K8sResourceFileCreatorTest extends BaseJUnitTest {
     public static KubernetesResourceFileCreator creator;
     public static String correctResourceFile;
 

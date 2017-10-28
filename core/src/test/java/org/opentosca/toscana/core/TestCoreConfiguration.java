@@ -1,5 +1,7 @@
 package org.opentosca.toscana.core;
 
+import java.util.List;
+
 import org.opentosca.toscana.core.csar.CsarDao;
 import org.opentosca.toscana.core.csar.CsarFilesystemDao;
 import org.opentosca.toscana.core.csar.CsarService;
@@ -21,9 +23,13 @@ import org.opentosca.toscana.core.transformation.artifacts.ArtifactServiceImpl;
 import org.opentosca.toscana.core.transformation.platform.PlatformService;
 import org.opentosca.toscana.core.util.FileSystem;
 import org.opentosca.toscana.core.util.Preferences;
-import org.springframework.context.annotation.*;
 
-import java.util.List;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
+import org.springframework.context.annotation.PropertySource;
 
 @Configuration
 @PropertySource("classpath:application.yml")

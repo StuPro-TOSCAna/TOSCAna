@@ -16,7 +16,6 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-@ActiveProfiles("dummy_plugins")
 public class CsarFilesystemDaoTest extends BaseSpringTest {
 
     private final static Logger logger = LoggerFactory.getLogger(CsarFilesystemDaoTest.class.getName());
@@ -30,7 +29,7 @@ public class CsarFilesystemDaoTest extends BaseSpringTest {
         File csarFile = TestCsars.CSAR_YAML_VALID_DOCKER_SIMPLETASK;
         InputStream csarStream = new FileInputStream(csarFile);
         csarDao.create(identifier, csarStream);
-        File csarFolder = new File(preferences.getDataDir(), identifier);
+        File csarFolder = new File(tmpdir, identifier);
         File contentFolder = new File(csarFolder, CsarFilesystemDao.CONTENT_DIR);
         File transformationFolder = new File(csarFolder, CsarFilesystemDao.TRANSFORMATION_DIR);
         assertTrue(contentFolder.isDirectory());
@@ -43,7 +42,7 @@ public class CsarFilesystemDaoTest extends BaseSpringTest {
     public void delete() throws Exception {
         String identifier = createFakeCsarDirectories(1)[0];
         csarDao.delete(identifier);
-        File csarDir = new File(preferences.getDataDir(), identifier);
+        File csarDir = new File(tmpdir, identifier);
         assertFalse(csarDir.exists());
     }
 
@@ -59,7 +58,7 @@ public class CsarFilesystemDaoTest extends BaseSpringTest {
     public void returnedCsarHasPopulatedTransformations() {
         // test whether CsarDao calls TransformationDao internally to populate list of transformations
         String identifier = createFakeCsarDirectories(1)[0];
-        File csarDir = new File(preferences.getDataDir(), identifier);
+        File csarDir = new File(tmpdir, identifier);
         File transformationsDir = new File(csarDir, "transformations");
         TestPlugins.createFakeTransformationsOnDisk(transformationsDir, TestPlugins.PLATFORMS);
 
@@ -81,10 +80,9 @@ public class CsarFilesystemDaoTest extends BaseSpringTest {
 
     private String[] createFakeCsarDirectories(int numberOfCsars) {
         String[] identifiers = new String[10];
-        File dataDir = preferences.getDataDir();
         for (int i = 0; i < numberOfCsars; i++) {
             identifiers[i] = "test" + i;
-            File fakeApp = new File(dataDir, identifiers[i]);
+            File fakeApp = new File(tmpdir, identifiers[i]);
             fakeApp.mkdir();
             File fakeContentDir = new File(fakeApp, CsarFilesystemDao.CONTENT_DIR);
             fakeContentDir.mkdir();
@@ -99,12 +97,11 @@ public class CsarFilesystemDaoTest extends BaseSpringTest {
      */
     @Test
     public void findAllOnlyDirs() throws Exception {
-        File dataDir = preferences.getDataDir();
         int numberOfCsars = 10;
         createFakeCsarDirectories(numberOfCsars);
         // create some random file in data_dir
         String simpleFileName = "randomFile";
-        File randomFile = new File(dataDir, simpleFileName);
+        File randomFile = new File(tmpdir, simpleFileName);
         randomFile.createNewFile();
 
         List<Csar> csarList = csarDao.findAll();

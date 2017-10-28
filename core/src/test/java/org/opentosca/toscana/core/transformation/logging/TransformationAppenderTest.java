@@ -1,19 +1,20 @@
 package org.opentosca.toscana.core.transformation.logging;
 
-import ch.qos.logback.classic.Logger;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.opentosca.toscana.core.testutils.CategoryAwareJUnitRunner;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.util.List;
 
+import org.opentosca.toscana.core.BaseJUnitTest;
+
+import ch.qos.logback.classic.Logger;
+import org.junit.Before;
+import org.junit.Test;
+import org.slf4j.LoggerFactory;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
-@RunWith(CategoryAwareJUnitRunner.class)
-public class TransformationAppenderTest {
+public class TransformationAppenderTest extends BaseJUnitTest {
 
     private Logger logger = (Logger) LoggerFactory.getLogger(getClass());
 
@@ -45,11 +46,11 @@ public class TransformationAppenderTest {
         logger.info("Checking list");
         List<LogEntry> logs = log.getLogEntries(0);
         logger.info("Logs length {}", logs.size());
-        assertTrue(logs.size() == logCount);
+        assertSame(logCount, logs.size());
         long timestamp = 0;
         for (int i = 0; i < logs.size(); i++) {
             assertTrue(timestamp < logs.get(i).getTimestamp());
-            assertTrue(logs.get(i).getMessage().equals(String.format("Test Message %d", i)));
+            assertEquals(String.format("Test Message %d", i), logs.get(i).getMessage());
             logger.info("Logger Message: {}", logs.get(i).getMessage());
         }
     }
@@ -65,9 +66,9 @@ public class TransformationAppenderTest {
         for (int i = 0; i < logs.size(); i++) {
             LogEntry entry = logs.get(i);
             if (i == 0) {
-                assertTrue(entry.getMessage().equals("Something went wrong"));
+                assertEquals("Something went wrong", entry.getMessage());
             } else if (i == 1) {
-                assertTrue("java.lang.RuntimeException: Test exception".equals(entry.getMessage()));
+                assertEquals("java.lang.RuntimeException: Test exception", entry.getMessage());
             } else if (i == 2) {
                 assertTrue(entry.getMessage().startsWith("at org.opentosca.toscana"));
             }
@@ -88,20 +89,20 @@ public class TransformationAppenderTest {
         for (int i = 0; i < logs.size(); i++) {
             LogEntry entry = logs.get(i);
             if (i == 0) {
-                assertTrue(entry.getMessage().equals("Something went wrong"));
+                assertEquals("Something went wrong", entry.getMessage());
             } else if (i == 1) {
-                assertTrue("java.lang.RuntimeException: Test exception".equals(entry.getMessage()));
+                assertEquals("java.lang.RuntimeException: Test exception", entry.getMessage());
             } else if (i == 2) {
                 assertTrue(entry.getMessage().startsWith("at org.opentosca.toscana"));
             } else if (entry.getMessage().equals("Cause:")) {
                 causeStart = i;
             } else if ((causeStart + 1) == i) {
-                assertTrue(entry.getMessage().equals("java.io.IOException: Root Exception"));
+                assertEquals("java.io.IOException: Root Exception", entry.getMessage());
             } else if ((causeStart + 2) == i) {
                 assertTrue(entry.getMessage().startsWith("at org.opentosca.toscana"));
             }
             logger.info("Line {}: {}", i + 1, entry.getMessage());
         }
-        assertTrue(causeStart > 3);
+        assert(causeStart > 3);
     }
 }

@@ -17,12 +17,6 @@ public class CsarServiceImplTest extends BaseSpringTest {
 
     @Autowired
     CsarService csarService;
-    private File dataDir;
-
-    @Before
-    public void setUp() {
-        dataDir = preferences.getDataDir();
-    }
 
     private String identifier = "my-awesome-csar";
 
@@ -32,7 +26,7 @@ public class CsarServiceImplTest extends BaseSpringTest {
         InputStream stream = new FileInputStream(file);
         csarService.submitCsar(identifier, stream);
 
-        File csarDir = new File(dataDir, identifier);
+        File csarDir = new File(tmpdir, identifier);
         File contentDir = new File(csarDir, CsarFilesystemDao.CONTENT_DIR);
 
         assertTrue(csarDir.isDirectory());
@@ -42,8 +36,7 @@ public class CsarServiceImplTest extends BaseSpringTest {
 
     @Test
     public void deleteCsar() throws Exception {
-        File csarDir = new File(dataDir, identifier);
-        File contentDir = new File(csarDir, CsarFilesystemDao.CONTENT_DIR);
+        File csarDir = new File(tmpdir, identifier);
         Csar csar = new CsarImpl(identifier);
 
         csarDir.mkdir();

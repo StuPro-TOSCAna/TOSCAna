@@ -19,7 +19,6 @@ import java.util.List;
 
 import static org.junit.Assert.assertArrayEquals;
 
-@TestCategory(TestCategories.FAST)
 public class DockerAppTest extends BaseSpringTest {
     static TServiceTemplate tServiceTemplate;
     static KubernetesPlugin plugin;
