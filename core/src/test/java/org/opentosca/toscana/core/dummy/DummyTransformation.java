@@ -75,4 +75,4 @@ public class DummyTransformation implements Transformation {
     public void setReturnTargetArtifact(boolean returnTargetArtifact) {
         this.returnTargetArtifact = returnTargetArtifact;
     }
-}
+} 

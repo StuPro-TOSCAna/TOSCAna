@@ -10,6 +10,6 @@ public class ApiContents {
     public String version = "1.0.0-SNAPSHOT";
     public String license = "Apache 2.0";
     public String licence_url = "http://www.apache.org/licenses/LICENSE-2.0";
-    public String description = "To be Done!";
+    public String description = "To be Done!"; // TODO write application description
     public String source_url = "https://github.com/StuPro-TOSCAna/TOSCAna";
 }

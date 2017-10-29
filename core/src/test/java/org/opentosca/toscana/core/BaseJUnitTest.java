@@ -1,12 +1,14 @@
 package org.opentosca.toscana.core;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.opentosca.toscana.core.testutils.CategoryAwareJUnitRunner;
 
+import org.apache.commons.io.FileUtils;
+import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
@@ -16,23 +18,28 @@ import org.junit.runner.RunWith;
  */
 @RunWith(CategoryAwareJUnitRunner.class)
 public abstract class BaseJUnitTest extends BaseTest {
+    
+    public static final File PROJECT_ROOT = new File(System.getProperty("user.dir"));
 
     /**
      * Grants disk access. Is reset before every test method.
      */
-    @ClassRule
-    public static TemporaryFolder temporaryFolder = new TemporaryFolder(new File(System.getProperty("user.dir")));
+    @Rule
+    public TemporaryFolder temporaryFolder = new TemporaryFolder(PROJECT_ROOT);
     // "user.dir" is module root
-    public static File tmpdir;
-    
-    @BeforeClass
-    public static void initTmpdir(){
+    public File tmpdir;
+
+    @Before
+    public final void initTmpdir() {
         tmpdir = temporaryFolder.getRoot();
-    }
-    
-    @AfterClass
-    public static void cleanUpDisk(){
-        temporaryFolder.delete();
+        tmpdir.deleteOnExit();
     }
 
+    @AfterClass
+    public static void cleanUpDisk() throws IOException, InterruptedException {
+        File[] files = PROJECT_ROOT.listFiles((file1, s) -> s.matches("junit[0-9]+"));
+        for (File file : files){
+            FileUtils.deleteDirectory(file);
+        }
+    }
 }

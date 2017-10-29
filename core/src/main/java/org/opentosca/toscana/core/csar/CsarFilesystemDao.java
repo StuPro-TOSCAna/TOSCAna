@@ -1,17 +1,5 @@
 package org.opentosca.toscana.core.csar;
 
-import org.apache.commons.io.FileUtils;
-import org.opentosca.toscana.core.transformation.Transformation;
-import org.opentosca.toscana.core.transformation.TransformationDao;
-import org.opentosca.toscana.core.util.Preferences;
-import org.opentosca.toscana.core.util.ZipUtility;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Repository;
-
-import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,6 +8,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipInputStream;
+
+import javax.annotation.PostConstruct;
+
+import org.opentosca.toscana.core.transformation.Transformation;
+import org.opentosca.toscana.core.transformation.TransformationDao;
+import org.opentosca.toscana.core.transformation.logging.Log;
+import org.opentosca.toscana.core.transformation.logging.LogImpl;
+import org.opentosca.toscana.core.util.Preferences;
+import org.opentosca.toscana.core.util.ZipUtility;
+
+import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Repository;
 
 @Repository
 public class CsarFilesystemDao implements CsarDao {
@@ -64,9 +68,9 @@ public class CsarFilesystemDao implements CsarDao {
     @Override
     public Csar create(String identifier, InputStream inputStream) {
         csarMap.remove(identifier);
-        File appDir = setupDir(identifier);
-        File contentDir = new File(appDir, CONTENT_DIR);
-        File transformationDir = new File(appDir, TRANSFORMATION_DIR);
+        File csarDir = setupDir(identifier);
+        File contentDir = new File(csarDir, CONTENT_DIR);
+        File transformationDir = new File(csarDir, TRANSFORMATION_DIR);
         transformationDir.mkdir();
         try {
             ZipUtility.unzip(new ZipInputStream(inputStream), contentDir.getPath());
@@ -74,7 +78,7 @@ public class CsarFilesystemDao implements CsarDao {
         } catch (IOException e) {
             logger.error("failed to unzip csar with identifier '{}'", identifier, e);
         }
-        Csar csar = new CsarImpl(identifier);
+        Csar csar = new CsarImpl(identifier, getLog(identifier));
         csarMap.put(identifier, csar);
         return csar;
     }
@@ -121,7 +125,11 @@ public class CsarFilesystemDao implements CsarDao {
 
     @Override
     public File getRootDir(Csar csar) {
-        return new File(dataDir, csar.getIdentifier());
+        return getRootDir(csar.getIdentifier());
+    }
+
+    private File getRootDir(String csarIdentifier) {
+        return new File(dataDir, csarIdentifier);
     }
 
     @Override
@@ -144,7 +152,8 @@ public class CsarFilesystemDao implements CsarDao {
         for (int i = 0; i < files.length; i++) {
             File file = files[i];
             if (isCsarDir(file)) {
-                CsarImpl csar = new CsarImpl(file.getName());
+                String csarIdentifier = file.getName();
+                CsarImpl csar = new CsarImpl(csarIdentifier, getLog(csarIdentifier));
                 csarMap.put(csar.getIdentifier(), csar);
                 List<Transformation> transformations = transformationDao.find(csar);
                 csar.setTransformations(transformations);
@@ -164,5 +173,10 @@ public class CsarFilesystemDao implements CsarDao {
             return (contentDir.exists() && transformationDir.exists());
         }
         return false;
+    }
+
+    private Log getLog(String identifier) {
+        File logFile = new File(getRootDir(identifier), identifier + ".log");
+        return new LogImpl(logFile);
     }
 }

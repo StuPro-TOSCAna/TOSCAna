@@ -1,5 +1,6 @@
 package org.opentosca.toscana.core.transformation.logging;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -14,7 +15,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
-public class TransformationAppenderTest extends BaseJUnitTest {
+public class MemoryAppenderTest extends BaseJUnitTest {
 
     private Logger logger = (Logger) LoggerFactory.getLogger(getClass());
 
@@ -25,14 +26,14 @@ public class TransformationAppenderTest extends BaseJUnitTest {
     public void setUp() throws Exception {
         logger.info("Initializing test Logger");
         testLogger = (Logger) LoggerFactory.getLogger("TEST_LOGGER");
-        log = new Log();
+        log = new LogImpl(new File(tmpdir, "log"));
         //Initialize Logger
         logger.info("Adding transformation appender");
-        TransformationAppender appender = new TransformationAppender(log);
+        MemoryAppender appender = new MemoryAppender(log);
         appender.start();
         appender.setContext(testLogger.getLoggerContext());
         testLogger.addAppender(appender);
-        logger.info("Initialisation done");
+        logger.info("Initialization done");
     }
 
     @Test
@@ -70,7 +71,7 @@ public class TransformationAppenderTest extends BaseJUnitTest {
             } else if (i == 1) {
                 assertEquals("java.lang.RuntimeException: Test exception", entry.getMessage());
             } else if (i == 2) {
-                assertTrue(entry.getMessage().startsWith("at org.opentosca.toscana"));
+                assertTrue(entry.getMessage().startsWith("\tat org.opentosca.toscana"));
             }
             logger.info("Line {}: {}", i + 1, entry.getMessage());
         }
@@ -93,16 +94,16 @@ public class TransformationAppenderTest extends BaseJUnitTest {
             } else if (i == 1) {
                 assertEquals("java.lang.RuntimeException: Test exception", entry.getMessage());
             } else if (i == 2) {
-                assertTrue(entry.getMessage().startsWith("at org.opentosca.toscana"));
+                assertTrue(entry.getMessage().startsWith("\tat org.opentosca.toscana"));
             } else if (entry.getMessage().equals("Cause:")) {
                 causeStart = i;
             } else if ((causeStart + 1) == i) {
                 assertEquals("java.io.IOException: Root Exception", entry.getMessage());
             } else if ((causeStart + 2) == i) {
-                assertTrue(entry.getMessage().startsWith("at org.opentosca.toscana"));
+                assertTrue(entry.getMessage().startsWith("\tat org.opentosca.toscana"));
             }
             logger.info("Line {}: {}", i + 1, entry.getMessage());
         }
-        assert(causeStart > 3);
+        assertTrue(causeStart > 3);
     }
 }

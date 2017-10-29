@@ -22,8 +22,8 @@ public class ZipUtilityTest extends BaseJUnitTest {
 
     private static final Logger log = LoggerFactory.getLogger(ZipUtility.class);
 
-    private File original = new File(tmpdir, "original");
-    private File unzipped = new File(tmpdir, "unzipped");
+    private File original;
+    private File unzipped;
 
     private Random rnd = new Random(123456);
 
@@ -31,6 +31,8 @@ public class ZipUtilityTest extends BaseJUnitTest {
 
     @Before
     public void setUp() throws Exception {
+        original = new File(tmpdir, "original");
+        unzipped = new File(tmpdir, "unzipped");
         unzipped.mkdirs();
         original.mkdirs();
 
