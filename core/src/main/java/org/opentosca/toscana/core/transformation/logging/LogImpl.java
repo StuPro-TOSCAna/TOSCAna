@@ -17,7 +17,7 @@ import ch.qos.logback.classic.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The logs of a specific transformation.
+ The logs of a specific transformation.
  */
 public class LogImpl implements Log {
 
@@ -28,7 +28,7 @@ public class LogImpl implements Log {
     private final File logFile;
 
     /**
-     * @param logFile the logFile to which the Logger will write to
+     @param logFile the logFile to which the Logger will write to
      */
     public LogImpl(File logFile) {
         this.logFile = logFile;

@@ -1,9 +1,10 @@
 package org.opentosca.toscana.core.plugin;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.tika.io.IOUtils;
-import org.junit.Before;
-import org.junit.Test;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.opentosca.toscana.core.BaseSpringTest;
 import org.opentosca.toscana.core.api.exceptions.PlatformNotFoundException;
 import org.opentosca.toscana.core.csar.Csar;
@@ -13,14 +14,17 @@ import org.opentosca.toscana.core.testdata.TestPlugins;
 import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.TransformationDao;
 import org.opentosca.toscana.core.transformation.TransformationService;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.tika.io.IOUtils;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class PluginFileAccessTest extends BaseSpringTest {
 

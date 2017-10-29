@@ -3,7 +3,7 @@ package org.opentosca.toscana.core.parse;
 import org.opentosca.toscana.core.transformation.logging.Log;
 
 /**
- * Gets thrown whenever an invalid csar is encountered
+ Gets thrown whenever an invalid csar is encountered
  */
 public class InvalidCsarException extends Exception {
 

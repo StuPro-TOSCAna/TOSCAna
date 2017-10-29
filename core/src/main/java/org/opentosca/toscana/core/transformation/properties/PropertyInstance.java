@@ -9,8 +9,8 @@ import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.TransformationState;
 
 /**
- * This class represents the instance of properties. That means that this is storing the values that get assigned to the
- * defined properties
+ This class represents the instance of properties.
+ That means that this is storing the values that get assigned to the defined properties.
  */
 public class PropertyInstance {
     private Map<String, String> propertyValues;
@@ -18,10 +18,11 @@ public class PropertyInstance {
     private Transformation transformation;
 
     /**
-     * Creates a new property instance with no set property values for the given list (set) of properties.
-     *
-     * @param properties the set of properties to create a property instance for. Is not allowed to be null, if no props
-     *                   are needed add a empty set
+     Creates a new property instance with no set property values for the given list (set) of properties.
+
+     @param properties the set of properties to create a property instance for.
+     Is not allowed to be null, 
+     if no props are needed add a empty set
      */
     public PropertyInstance(Set<Property> properties,
                             Transformation transformation) {
@@ -29,53 +30,52 @@ public class PropertyInstance {
         this.properties = properties;
         this.transformation = transformation;
         //Set state to input required if there are required properties
-        if(properties.stream().anyMatch(Property::isRequired)) {
+        if (properties.stream().anyMatch(Property::isRequired)) {
             transformation.setState(TransformationState.INPUT_REQUIRED);
         }
     }
 
     /**
-     * Sets the value of the property with its given key.
-     * Throws a IllegalArgumentException if a property with the given key cannot be found
-     * or if the entered value is invalid
+     Sets the value of the property with its given key. 
+     @throws IllegalArgumentException if a property with the given key cannot be found or if the entered value is invalid
      */
     public void setPropertyValue(Property property, String value) {
         this.setPropertyValue(property.getKey(), value);
     }
 
     /**
-     * Checks if all Properties for the given Requirement type.
-     *
-     * @return true if all properties have been set and are valid, false otherwise
+     Checks if all Properties for the given Requirement type.
+
+     @return true if all properties have been set and are valid, false otherwise
      */
     public boolean allPropertiesSet() {
         return checkPropsSet(true);
     }
-    
+
     private boolean isPropertySet(Map<String, String> propInstance, Property property) {
         return propInstance.get(property.getKey()) == null;
     }
 
     /**
-     * Checks if all required properties are set and valid
-     *
-     * @return true if all required properties are set and valid
+     Checks if all required properties are set and valid
+
+     @return true if all required properties are set and valid
      */
     public boolean allRequiredPropertiesSet() {
-        return checkPropsSet( false);
+        return checkPropsSet(false);
     }
 
     /**
-     * Checks if properties are set for a specific requirement type
-     *
-     * @param allProps if this is false it will check if all required properties are set,
-     *                 otherwise all properties have to be set
-     * @return true if all Properties in the wanted scope are set and valid
+     Checks if properties are set for a specific requirement type
+
+     @param allProps if this is false it will check if all required properties are set,
+     otherwise all properties have to be set
+     @return true if all Properties in the wanted scope are set and valid
      */
     private boolean checkPropsSet(boolean allProps) {
         Map<String, String> propInstance = getPropertyValues();
         for (Property property : properties) {
-            if ((property.isRequired() || allProps) && isPropertySet(propInstance, property) ) {
+            if ((property.isRequired() || allProps) && isPropertySet(propInstance, property)) {
                 return false;
             }
         }
@@ -83,13 +83,12 @@ public class PropertyInstance {
     }
 
     /**
-     * Sets the value of the property with its given key.
-     * Throws a IllegalArgumentException if a property with the given key cannot be found
-     * or if the entered value is invalid
+     Sets the value of the property with its given key. 
+     @throws IllegalArgumentException if a property with given key cannot be found or if the entered value is invalid
      */
     public void setPropertyValue(String key, String value) {
         setPropertyInternal(key, value);
-        if(allRequiredPropertiesSet() && transformation.getState() == TransformationState.INPUT_REQUIRED) {
+        if (allRequiredPropertiesSet() && transformation.getState() == TransformationState.INPUT_REQUIRED) {
             transformation.setState(TransformationState.READY);
         }
     }
@@ -101,11 +100,11 @@ public class PropertyInstance {
                     this.propertyValues.put(key, value);
                     return;
                 } else {
-                    throw new IllegalArgumentException("The Property value is invalid!");
+                    throw new IllegalArgumentException("The Property value is invalid");
                 }
             }
         }
-        throw new IllegalArgumentException("A property with the given key does not exist! Key: " + key);
+        throw new IllegalArgumentException("A property with the given key does not exist. Key: " + key);
     }
 
     public Map<String, String> getPropertyValues() {

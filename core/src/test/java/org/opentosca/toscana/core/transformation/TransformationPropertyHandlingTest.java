@@ -1,22 +1,19 @@
 package org.opentosca.toscana.core.transformation;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
+import java.util.HashSet;
+import java.util.Map;
 
 import org.opentosca.toscana.core.BaseJUnitTest;
 import org.opentosca.toscana.core.dummy.DummyCsar;
 import org.opentosca.toscana.core.dummy.DummyLog;
-import org.opentosca.toscana.core.testutils.CategoryAwareJUnitRunner;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.core.transformation.properties.PropertyType;
 
-import java.io.File;
-import java.util.HashSet;
-import java.util.Map;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mock;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
