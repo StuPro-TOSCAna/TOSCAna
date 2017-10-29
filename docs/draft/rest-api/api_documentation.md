@@ -8,7 +8,7 @@ The functionality of the API is designed around the following Workflow:
 
 **Note**: The diagram has been made using LucidCharts. The source document can be found [here](https://www.lucidchart.com/invitations/accept/b45c6d0f-0205-4049-9921-4cd888129157).
 
-Following this diagram the user first has to upload the Cloud Service Archive (CSAR) on the transformator. 
+Following this diagram the user first has to upload the Cloud Service Archive (CSAR) on the . 
 
 Once the upload is finished the user has to choose one or more of the supported platforms. In the first revisions of the transformator this will be limited to one platform per transformation. At this point the user also has to enter platform specific parameters.
 For example the user would have to select a Docker Registry and enter the corresponding credentials for it when selecting Kubernetes as one of the Target platforms.

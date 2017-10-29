@@ -19,7 +19,7 @@ public class PersistentAppenderTest extends BaseJUnitTest {
     private Logger logger;
 
     @Before
-    public void setup() {
+    public void setUp() {
         logfile = new File(tmpdir, "log");
     }
 
@@ -32,13 +32,13 @@ public class PersistentAppenderTest extends BaseJUnitTest {
         String result = FileUtils.readFileToString(logfile);
         assertTrue(result.contains(message1));
     }
-    
+
     @Test
     public void appenderWritesStackTracesToFile() throws IOException {
         log = new LogImpl(logfile);
         logger = log.getLogger(getClass());
         try {
-            double doesntWork = 1 / 0;
+            throw new ArithmeticException();
         } catch (ArithmeticException e) {
             logger.error("testing stacktraces", e);
         }

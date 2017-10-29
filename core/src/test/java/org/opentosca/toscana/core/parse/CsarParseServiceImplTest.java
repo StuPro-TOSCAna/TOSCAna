@@ -1,13 +1,14 @@
 package org.opentosca.toscana.core.parse;
 
-import org.eclipse.winery.model.tosca.yaml.TServiceTemplate;
-import org.junit.Test;
+import java.io.FileNotFoundException;
+
 import org.opentosca.toscana.core.BaseSpringTest;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.testdata.TestCsars;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.FileNotFoundException;
+import org.eclipse.winery.model.tosca.yaml.TServiceTemplate;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.Assert.assertNotNull;
 
@@ -36,5 +37,4 @@ public class CsarParseServiceImplTest extends BaseSpringTest {
         Csar csar = testCsars.getCsar(TestCsars.CSAR_YAML_INVALID_ENTRYPOINT_AMBIGUOUS);
         csarParser.parse(csar);
     }
-
 }

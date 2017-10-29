@@ -1,30 +1,25 @@
 package org.opentosca.toscana.core.api;
 
-import org.json.JSONObject;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import java.security.MessageDigest;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
 
 import org.opentosca.toscana.core.BaseSpringTest;
 import org.opentosca.toscana.core.api.mocks.MockCsarService;
 import org.opentosca.toscana.core.csar.CsarService;
 import org.opentosca.toscana.core.dummy.DummyCsar;
-import org.opentosca.toscana.core.dummy.DummyPlatformService;
-import org.opentosca.toscana.core.testutils.CategoryAwareSpringRunner;
-import org.opentosca.toscana.core.transformation.platform.Platform;
-import org.opentosca.toscana.core.transformation.platform.PlatformService;
+
+import org.json.JSONObject;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-import java.security.MessageDigest;
-import java.util.*;
 
 import static org.junit.Assert.assertTrue;
 import static org.opentosca.toscana.core.api.utils.HALRelationUtils.validateRelations;
@@ -34,22 +29,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class CsarControllerTest extends BaseSpringTest{
+public class CsarControllerTest extends BaseSpringTest {
 
-    private static Set<Platform> platforms = new HashSet<>(Arrays.asList(
-        new Platform("kubernetes", "Kubernetes", new HashSet<>()),
-        new Platform("open-stack", "OpenStack", new HashSet<>()),
-        new Platform("cloud-foundry", "CloudFoundry", new HashSet<>())));
-
-    public static Map<String, String> relations;
+    private static Map<String, String> relations;
 
     static {
         relations = new HashMap<>();
         relations.put("self", "http://localhost/csars/%s");
         relations.put("transformations", "http://localhost/csars/%s/transformations/");
     }
-
-    private PlatformService provider;
 
     private CsarService service;
 
@@ -58,8 +46,7 @@ public class CsarControllerTest extends BaseSpringTest{
     @Before
     public void setUp() throws Exception {
         service = new MockCsarService();
-        provider = new DummyPlatformService(platforms);
-        CsarController controller = new CsarController(service, provider);
+        CsarController controller = new CsarController(service);
         mvc = MockMvcBuilders.standaloneSetup(controller).build();
     }
 
@@ -116,7 +103,7 @@ public class CsarControllerTest extends BaseSpringTest{
 
     @Test
     public void uploadTestArchiveAlreadyExists() throws Exception {
-        //Generate 10 KiB of "Random" (seeded) data
+        //Generate 10 KiB of random data
         byte[] data = new byte[(int) (Math.pow(2, 10) * 10)];
         Random rnd = new Random(12345678);
         rnd.nextBytes(data);
@@ -161,8 +148,8 @@ public class CsarControllerTest extends BaseSpringTest{
 
     @Test
     public void csarDetails404() throws Exception {
-        ResultActions resultActions = mvc.perform(
-            get("/csars/notacsar").accept("application/hal+json")
+        mvc.perform(
+            get("/csars/not-a-csar").accept("application/hal+json")
         ).andDo(print()).andExpect(status().is(404));
     }
 }

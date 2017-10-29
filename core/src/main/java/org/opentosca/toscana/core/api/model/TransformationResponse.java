@@ -1,8 +1,9 @@
 package org.opentosca.toscana.core.api.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.opentosca.toscana.core.api.PlatformController;
 import org.opentosca.toscana.core.api.TransformationController;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.hateoas.ResourceSupport;
 import org.springframework.hateoas.core.Relation;
 
@@ -14,7 +15,6 @@ public class TransformationResponse extends ResourceSupport {
     private int progress;
     private String status;
     private String platform;
-    private String csarName;
 
     public TransformationResponse(
         @JsonProperty("progress") int progress,
@@ -24,7 +24,6 @@ public class TransformationResponse extends ResourceSupport {
     ) {
         this.progress = progress;
         this.status = status;
-        this.csarName = csarName;
         this.platform = platform;
         this.add(linkTo(methodOn(TransformationController.class)
             .getCSARTransformation(csarName, platform))

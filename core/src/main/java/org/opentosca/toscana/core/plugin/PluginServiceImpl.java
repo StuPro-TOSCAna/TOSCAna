@@ -1,17 +1,22 @@
 package org.opentosca.toscana.core.plugin;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.opentosca.toscana.core.transformation.platform.Platform;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
-
 @Component
 public class PluginServiceImpl implements PluginService {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final static Logger logger = LoggerFactory.getLogger(PluginServiceImpl.class);
     private final List<TransformationPlugin> plugins;
     private final Set<Platform> platforms = new HashSet<>();
 
@@ -21,7 +26,7 @@ public class PluginServiceImpl implements PluginService {
         Map<String, TransformationPlugin> pluginMap = new HashMap<>();
         for (TransformationPlugin plugin : plugins) {
             if (pluginMap.get(plugin.getPlatform().id) != null) {
-                log.error("Found duplicate plugin identifier '{}'", plugin.getPlatform().id);
+                logger.error("Found duplicate plugin identifier '{}'", plugin.getPlatform().id);
                 throw new IllegalArgumentException("The platform id '"
                     + plugin.getPlatform().id + "' is not unique.");
             }
@@ -30,7 +35,7 @@ public class PluginServiceImpl implements PluginService {
         for (TransformationPlugin plugin : plugins) {
             platforms.add(plugin.getPlatform());
         }
-        log.info("Loaded {} Plugins", plugins.size());
+        logger.info("Loaded {} Plugins", plugins.size());
     }
 
     @Override

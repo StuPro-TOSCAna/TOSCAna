@@ -1,23 +1,27 @@
 package org.opentosca.toscana.core.csar;
 
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.eclipse.winery.model.tosca.yaml.TServiceTemplate;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.properties.Property;
 
-import java.util.*;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.eclipse.winery.model.tosca.yaml.TServiceTemplate;
 
 class CsarImpl implements Csar {
 
     /**
-     * Stores all scheduled, ongoing or finished transformations of this CSAR.
-     * Key is the platform identifier.
+     Stores all scheduled, ongoing or finished transformations of this CSAR. Key is the platform identifier.
      */
     private Map<String, Transformation> transformations = new HashMap<>();
     private String identifier;
     /**
-     * null if not yet parsed
+     null if not yet parsed
      */
     private TServiceTemplate template;
     private final Log log;
@@ -50,14 +54,12 @@ class CsarImpl implements Csar {
     @Override
     public void setTemplate(TServiceTemplate template) {
         this.template = template;
-
     }
 
     @Override
     public Log getLog() {
         return log;
     }
-
 
     @Override
     public boolean equals(Object obj) {

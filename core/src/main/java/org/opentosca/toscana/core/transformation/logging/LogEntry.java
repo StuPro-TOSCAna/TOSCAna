@@ -2,7 +2,6 @@ package org.opentosca.toscana.core.transformation.logging;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Optional;
 import java.util.regex.Matcher;
 
 import ch.qos.logback.classic.Level;
@@ -34,34 +33,20 @@ public class LogEntry {
     }
 
     /**
-     * Constructs a LogEntry instance from a log line
-     * @param line the logline which gets parsed
-     * @precessor the precessor of the current line
+     Constructs a LogEntry instance from a log line
+
+     @param line      the log line which gets parsed
+     @param predecessor the LogEntry preceding this newly created LogEntry
      */
-    LogEntry(String line, Optional<LogEntry> precessor) throws LogParserException {
-        if (isRegularLine(line)){
-            parseRegularLine(line, precessor);
+    LogEntry(String line, LogEntry predecessor) throws LogParserException {
+        if (isRegularLine(line)) {
+            parseRegularLine(line, predecessor);
         } else {
-            parseStackTraceLine(line, precessor);
-                
-        }
-        String[] tokens = line.split(" ", 3);
-    }
-
-    private void parseStackTraceLine(String line, Optional<LogEntry> precessor) {
-        level = Level.ERROR;
-        message = line;
-        if (precessor.isPresent()){
-            timestamp = precessor.get().timestamp;
-            index = precessor.get().index + 1;
-        } else {
-            timestamp = -1;
-            index = 0;
-            logger.error("Failed to populate '{}' with timestamp", this);
+            parseStackTraceLine(line, predecessor);
         }
     }
 
-    private void parseRegularLine(String line, Optional<LogEntry> precessor) throws LogParserException {
+    private void parseRegularLine(String line, LogEntry precessor) throws LogParserException {
         String[] tokens = line.split(" ", 3);
         if (tokens.length == 3) {
             String dateString = tokens[0];
@@ -71,8 +56,8 @@ public class LogEntry {
             String levelString = tokens[1];
             level = Level.valueOf(levelString);
             message = tokens[2];
-            if (precessor.isPresent()){
-                index = precessor.get().index + 1;
+            if (precessor != null) {
+                index = precessor.index + 1;
             } else {
                 index = 0;
             }
@@ -81,8 +66,21 @@ public class LogEntry {
         }
     }
 
+    private void parseStackTraceLine(String line, LogEntry precessor) {
+        level = Level.ERROR;
+        message = line;
+        if (precessor != null) {
+            timestamp = precessor.timestamp;
+            index = precessor.index + 1;
+        } else {
+            timestamp = -1;
+            index = 0;
+            logger.error("Failed to populate '{}' with timestamp", this);
+        }
+    }
+
     // a regular logline is a line with beginning with date and time, else it's considered as part of a stacktrace
-    private boolean isRegularLine(String line){
+    private boolean isRegularLine(String line) {
         Matcher m = PersistentAppender.DATE_FORMAT_REGEX.matcher(line);
         return m.find();
     }

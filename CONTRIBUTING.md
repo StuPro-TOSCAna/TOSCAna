@@ -28,8 +28,8 @@ Any new releases must adhere to this versioning scheme.
 Our project uses checkstyle to ensure coding standards. If you want to read more about checkstyle visit [http://checkstyle.sourceforge.net](http://checkstyle.sourceforge.net).
 
 ### Set up
-- for **Eclipse** visist: [Eclipse configuration from the eclipse/winery repo](https://github.com/eclipse/winery/tree/master/docs/dev/config/Eclipse)
-- for **InteliJ** visist: [InteliJ configuration from the eclipse/winery repo](https://github.com/eclipse/winery/tree/master/docs/dev/config/IntelliJ%20IDEA)
+- for **Eclipse** visit: [Eclipse configuration from the eclipse/winery repo](https://github.com/eclipse/winery/tree/master/docs/dev/config/Eclipse)
+- for **IntelliJ** visit: [IntelliJ configuration from the eclipse/winery repo](https://github.com/eclipse/winery/tree/master/docs/dev/config/IntelliJ%20IDEA)
 ## Branches
 Our project currently consists of a _master_ and several _feature_ branches.
 The master branch always contains a stable version of the project. Only commits with small, insignificant changes should be done directly on the master branch.
@@ -48,7 +48,7 @@ PRs with unfinished features should have a [WIP] tag at the beginning of their t
 When a feature is considered finished it should be **reviewed** before merging the corresponding PR. During this stage the [WIP] label in the title should be removed.
 
 ### Merging a Pull Request
-Before a pull request can be merged, it must fullfill the criteria specified in the [Definition of Done](/docs/dev/dod.md).
+Before a pull request can be merged, it must fulfill the criteria specified in the [Definition of Done](/docs/dev/dod.md).
 Merging should be done through the **squash and merge** option in GitHub. This allows all to be combined into one commit on the master branch in order to not clutter up the commit history.
 
 ## Zenhub Issue Board
@@ -78,7 +78,7 @@ We use the GitHub Issues to track bugs. If you discovered a bug you can report i
 ### How do I submit a Bug Report?
 
 - **Use a clear and descriptive title** for the issue to identify the problem.
-- **Include which OS you where using.** It is important to know on which os the CLI or Transformator are running.
+- **Include which OS you where using.** It is important to know on which OS the CLI or transformer are running.
 - **Identify which component produces the bug.**
 - **Describe exactly all the steps needed to reproduce** this bug in as many details as possible.
   This makes it easier for others to test if they can reproduce it.

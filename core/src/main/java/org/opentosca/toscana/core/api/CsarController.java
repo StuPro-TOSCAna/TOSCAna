@@ -1,5 +1,10 @@
 package org.opentosca.toscana.core.api;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.opentosca.toscana.core.api.exceptions.CsarNameAlreadyUsedException;
 import org.opentosca.toscana.core.api.exceptions.CsarNotFoundException;
 import org.opentosca.toscana.core.api.model.CsarResponse;
@@ -7,7 +12,7 @@ import org.opentosca.toscana.core.api.model.CsarUploadErrorResponse;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarService;
 import org.opentosca.toscana.core.parse.InvalidCsarException;
-import org.opentosca.toscana.core.transformation.platform.PlatformService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,41 +20,43 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resources;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 /**
- * This contoller implements all Csar and Transformation specific operations
- * <p>
- * For sample Responses of the Requests, please have a look at docs/api/api_samples.md
+ This controller implements all Csar and Transformation specific operations
+ <p>
+ For sample Responses of the Requests,
+ please have a look at docs/api/api_samples.md
  */
 @CrossOrigin
 @RestController
 @RequestMapping("/csars")
 public class CsarController {
 
-    private final CsarService csarService;
-    private final PlatformService platformService;
+    private final static Logger log = LoggerFactory.getLogger(CsarController.class);
 
-    public Logger log = LoggerFactory.getLogger(getClass());
+    private final CsarService csarService;
 
     @Autowired
-    public CsarController(CsarService csarService, PlatformService platformService) {
+    public CsarController(CsarService csarService) {
         this.csarService = csarService;
-        this.platformService = platformService;
     }
 
     /**
-     * Responds with a list of csars stored on the transformator.
-     * <p>
-     * This always responds with HTTP-Code 200 (application/hal+json)
+     Responds with a list of csars stored on the transformer.
+     <p>
+     This always responds with HTTP-Code 200 (application/hal+json)
      */
     @RequestMapping(
         path = "",
@@ -67,10 +74,13 @@ public class CsarController {
     }
 
     /**
-     * Responds with the data for a specific CSAR
-     * <p>
-     * This Operation Response returns 200 (application/hal+json) if a archive with the given name exists
-     * if not Http 404 (application/hal+json) with a standart error message is returned (see samples.md for a example)
+     Responds with the data for a specific CSAR
+     <p>
+     <b>HTTP </b>
+     <p>
+     200 (application/hal+json): if a archive with the given name exists if not
+     404 (application/hal+json): with a standard error message is
+     returned (see samples.md for a example)
      */
     @RequestMapping(
         path = "/{name}",
@@ -94,14 +104,15 @@ public class CsarController {
     }
 
     /**
-     * This Request (Supporting Post and Put mehtods) uploads a csar to the transformator.
-     * <p>
-     * If the upload succeeded HTTP code 200 (no Content) is returned
-     * and HTTP code 400 (application/hal+json, with standart error message) if a csar with the given name already exists.
-     * <p>
-     * Http Code 400 (application/hal+json) with a special repsonse also containing the log output is returned if the parsing of the csar has failed
-     * <p>
-     * If something goes wrong while processing the upload HTTP Code 500 gets returned (no Content)
+     This Request (Supporting Post and Put methods) uploads a csar to the transformer.
+     <p>
+     <b>HTTP Response Codes</b>
+     <p>
+     200 (no Content): Upload succeeded
+     400 (application/hal+json, with standard error message): a csar with given name already exists
+     400 (application/hal+json): parsing of the csar failed. Response contains logs of parser.
+     <p>
+     500: Processing failed
      */
     @RequestMapping(
         path = "/{name}",
@@ -133,8 +144,9 @@ public class CsarController {
     }
 
     /**
-     * This exception handler creates the response for a failed upload (parsing failiure)
-     * The response also contains the log messages produced during parsing!
+     This exception handler creates the response for a failed upload (parsing failure).
+     <p>
+     The response also contains the log messages produced during parsing.
      */
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     @ExceptionHandler(InvalidCsarException.class)
@@ -144,20 +156,4 @@ public class CsarController {
     ) {
         return new CsarUploadErrorResponse(e, request.getServletPath(), 400);
     }
-
-//    /**
-//     * Internal helper method to allow the upload of files!
-//     */
-//    private InputStream getInputStream(HttpServletRequest request) throws IOException, FileUploadException {
-//        ServletFileUpload upload = new ServletFileUpload();
-//        FileItemIterator iterator = upload.getItemIterator(request);
-//        while (iterator.hasNext()) {
-//            FileItemStream stream = iterator.next();
-//            System.out.println(stream.getFieldName()+" "+stream.getName());
-//            if(stream.getFieldName().equals("file")) {
-//                return stream.openStream();
-//            }
-//        }
-//        return null;
-//    }
 }

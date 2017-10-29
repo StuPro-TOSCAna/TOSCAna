@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -17,7 +16,7 @@ import ch.qos.logback.classic.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The logs of a specific transformation.
+ The logs of a specific transformation.
  */
 public class LogImpl implements Log {
 
@@ -28,7 +27,7 @@ public class LogImpl implements Log {
     private final File logFile;
 
     /**
-     * @param logFile the logFile to which the Logger will write to
+     @param logFile the logFile to which the Logger will write to
      */
     public LogImpl(File logFile) {
         this.logFile = logFile;
@@ -40,15 +39,15 @@ public class LogImpl implements Log {
 
     private void readLogFromFile() {
         try (Scanner scanner = new Scanner(new BufferedReader(new FileReader(logFile)))) {
-            LogEntry precessor = null;
+            LogEntry predecessor = null;
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
                 try {
-                    LogEntry entry = new LogEntry(line, Optional.ofNullable(precessor));
+                    LogEntry entry = new LogEntry(line, predecessor);
                     addLogEntry(entry);
-                    precessor = entry;
+                    predecessor = entry;
                 } catch (LogParserException e) {
-                    exceptionHandlingLogger.error("Failed to parse logline from file '{}'", logFile, e);
+                    exceptionHandlingLogger.error("Failed to parse log line from file '{}'", logFile, e);
                 }
             }
         } catch (FileNotFoundException e) {
@@ -69,7 +68,7 @@ public class LogImpl implements Log {
 
     private List<LogEntry> getLogEntries(int first, int last, boolean checkUpperBound) {
         if (0 > first || (last < first && checkUpperBound)) {
-            throw new IllegalArgumentException("Given indicies are not within the bound 0 <= first <= last");
+            throw new IllegalArgumentException("Given indices are not within the bound 0 <= first <= last");
         } else if (first >= logEntries.size()) {
             return Collections.unmodifiableList(new ArrayList<>());
         }

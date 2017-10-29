@@ -1,22 +1,26 @@
 package org.opentosca.toscana.core.dummy;
 
-import org.opentosca.toscana.core.csar.Csar;
-import org.opentosca.toscana.core.csar.CsarService;
-
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.opentosca.toscana.core.csar.Csar;
+import org.opentosca.toscana.core.csar.CsarService;
+
 public class DummyCsarService implements CsarService {
 
-    private String[] names = {"k8s-cluster", "apache-test", "mongo-db"};
     List<Csar> dummies = new LinkedList<>();
-    
+
     private final File tmpdir;
 
     public DummyCsarService(File tmpdir) {
         this.tmpdir = tmpdir;
+        String[] names = {"k8s-cluster", "apache-test", "mongo-db"};
         for (String name : names) {
             dummies.add(new DummyCsar(name));
         }
@@ -30,7 +34,7 @@ public class DummyCsarService implements CsarService {
         }
         dummies.add(dummy);
         try {
-            File dummyPath = new File(tmpdir,name + ".csar");
+            File dummyPath = new File(tmpdir, name + ".csar");
             FileOutputStream fout = new FileOutputStream(dummyPath);
             writeTo(csarStream, fout);
         } catch (IOException e) {
@@ -54,6 +58,7 @@ public class DummyCsarService implements CsarService {
 
     @Override
     public void deleteCsar(Csar csar) {
+        //noop
     }
 
     @Override

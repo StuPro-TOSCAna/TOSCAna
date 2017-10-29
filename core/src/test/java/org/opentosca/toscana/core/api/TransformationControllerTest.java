@@ -59,7 +59,7 @@ public class TransformationControllerTest extends BaseSpringTest {
     public static final String START_TRANSFORMATION_VALID_URL = "/csars/k8s-cluster/transformations/p-a/start";
     public static final String GET_PROPERTIES_VALID_URL = "/csars/k8s-cluster/transformations/p-a/properties";
     public static final String DEFAULT_CHARSET_HAL_JSON = "application/hal+json;charset=UTF-8";
-    public static final String ARTIFACT_RESPONSE_EXPCETED_URL = "http://localhost/csars/k8s-cluster/transformations/p-a/artifact";
+    public static final String ARTIFACT_RESPONSE_EXPECTED_URL = "http://localhost/csars/k8s-cluster/transformations/p-a/artifact";
     public static final String GET_ARTIFACTS_VALID_URL = "/csars/k8s-cluster/transformations/p-a/artifact";
     public static final String GET_LOGS_AT_START_ZERO_VALID_URL = "/csars/k8s-cluster/transformations/p-a/logs?start=0";
     public static final String DELETE_TRANSFORMATION_VALID_URL = "/csars/k8s-cluster/transformations/p-a/delete";
@@ -71,7 +71,6 @@ public class TransformationControllerTest extends BaseSpringTest {
     public static final String PLATFORM_NOT_FOUND_URL = "/csars/k8s-cluster/transformations/p-z";
     public static final String CSAR_NOT_FOUND_URL = "/csars/keinechtescsar/transformations";
 
-    private TransformationController controller;
     private CsarService csarService;
     private DummyTransformationService transformationService;
     private PlatformService platformService;
@@ -83,7 +82,7 @@ public class TransformationControllerTest extends BaseSpringTest {
         csarService = new DummyCsarService(tmpdir);
         transformationService = new DummyTransformationService();
         platformService = new DummyPlatformService();
-        controller = new TransformationController(csarService, transformationService, platformService);
+        TransformationController controller = new TransformationController(csarService, transformationService, platformService);
 
         mvc = MockMvcBuilders.standaloneSetup(controller).build();
     }
@@ -207,7 +206,7 @@ public class TransformationControllerTest extends BaseSpringTest {
     }
 
     //</editor-fold>
-    
+
     //<editor-fold desc="Test Artifact Retrieval">
     @Test
     public void retrieveArtifact() throws Exception {
@@ -223,7 +222,7 @@ public class TransformationControllerTest extends BaseSpringTest {
             .andExpect(jsonPath("$.links").isArray())
             .andExpect(jsonPath("$.links[0].rel").value("self"))
             .andExpect(jsonPath("$.links[0].href")
-                .value(ARTIFACT_RESPONSE_EXPCETED_URL))
+                .value(ARTIFACT_RESPONSE_EXPECTED_URL))
             .andReturn();
     }
 
@@ -240,7 +239,7 @@ public class TransformationControllerTest extends BaseSpringTest {
     }
 
     //</editor-fold>
-    
+
     //<editor-fold desc="Test Transformation Logs">
     @Test
     public void retrieveTransformationLogs() throws Exception {
@@ -261,13 +260,13 @@ public class TransformationControllerTest extends BaseSpringTest {
     }
 
     //</editor-fold>
-    
+
     //<editor-fold desc="Delete Transformation Tests">
     @Test
     public void deleteTransformation() throws Exception {
         preInitNonCreationTests();
         //Set the return value of the delete method
-        ((DummyTransformationService) transformationService).setDeleteReturnValue(true);
+        transformationService.setDeleteReturnValue(true);
         //Execute Request
         mvc.perform(
             delete(DELETE_TRANSFORMATION_VALID_URL)
@@ -280,7 +279,7 @@ public class TransformationControllerTest extends BaseSpringTest {
     public void deleteTransformationStillRunning() throws Exception {
         preInitNonCreationTests();
         //Set the return value of the delete method
-        ((DummyTransformationService) transformationService).setDeleteReturnValue(false);
+        transformationService.setDeleteReturnValue(false);
         //Execute Request
         mvc.perform(
             delete(DELETE_TRANSFORMATION_VALID_URL)
@@ -289,7 +288,7 @@ public class TransformationControllerTest extends BaseSpringTest {
             .andReturn();
     }
     //</editor-fold>
-    
+
     //<editor-fold desc="Transformation Details Test">
     @Test
     public void transformationDetails() throws Exception {
@@ -324,7 +323,7 @@ public class TransformationControllerTest extends BaseSpringTest {
         return map;
     }
     //</editor-fold>
-    
+
     //<editor-fold desc="List Transformation Tests">
     @Test
     public void listTransformations() throws Exception {
@@ -363,7 +362,7 @@ public class TransformationControllerTest extends BaseSpringTest {
             .andReturn();
     }
     //</editor-fold>
-    
+
     //<editor-fold desc="Create Transformation Tests">
     @Test
     public void createTransformation() throws Exception {
@@ -396,7 +395,7 @@ public class TransformationControllerTest extends BaseSpringTest {
             .andReturn();
     }
     //</editor-fold>
-    
+
     //<editor-fold desc="Platform Not found Tests">
     @Test
     public void newTransformationPlatformNotFound() throws Exception {
@@ -449,7 +448,7 @@ public class TransformationControllerTest extends BaseSpringTest {
             .andDo(print()).andExpect(status().isNotFound()).andReturn();
     }
     //</editor-fold>
-    
+
     //<editor-fold desc="CSAR Not found Tests">
     @Test
     public void listTransformationsCsarNotFound() throws Exception {
@@ -508,7 +507,7 @@ public class TransformationControllerTest extends BaseSpringTest {
             .andDo(print()).andExpect(status().isNotFound()).andReturn();
     }
     //</editor-fold>
-    
+
     //<editor-fold desc="Util Methods">
     public void preInitNonCreationTests() throws PlatformNotFoundException {
         //add a transformation

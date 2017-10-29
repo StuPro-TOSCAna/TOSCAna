@@ -1,21 +1,20 @@
 package org.opentosca.toscana.core.transformation;
 
-import org.eclipse.winery.model.tosca.yaml.TServiceTemplate;
+import java.io.File;
+
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
-import org.slf4j.Logger;
 
-import java.io.File;
+import org.eclipse.winery.model.tosca.yaml.TServiceTemplate;
+import org.slf4j.Logger;
 
 public final class TransformationContext {
     private final Transformation transformation;
     private final PluginFileAccess access;
 
-
     public TransformationContext(Transformation transformation, File csarContentDir, File transformationRootDir) {
         this.transformation = transformation;
         this.access = new PluginFileAccess(transformation, csarContentDir, transformationRootDir);
-
     }
 
     public TServiceTemplate getServiceTemplate() {

@@ -3,18 +3,17 @@ package org.opentosca.toscana.core.dummy;
 import org.opentosca.toscana.core.plugin.AbstractPlugin;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.core.transformation.platform.Platform;
+
 import org.slf4j.Logger;
 
 public class ExecutionDummyPlugin extends AbstractPlugin {
 
     protected boolean failDuringExec;
 
-
     public ExecutionDummyPlugin(Platform platform, boolean failDuringExec) {
         super(platform);
         this.failDuringExec = failDuringExec;
     }
-
 
     @Override
     public void transform(TransformationContext transformation) throws Exception {
@@ -28,7 +27,7 @@ public class ExecutionDummyPlugin extends AbstractPlugin {
         }
         if (failDuringExec) {
             logger.info("Throwing test exception");
-            throw new RuntimeException("Test Exception");
+            throw new InterruptedException("Test Exception");
         }
     }
 }
