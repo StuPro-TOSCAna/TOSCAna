@@ -20,10 +20,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 
 /**
- * Extend from this class in order to inherit important configurations Sets up Spring Test Context regarding to the Test
- * Configuration After every test method, refreshes the context. 
- *
- * If disk access is needed, use {@field #tmpdir}
+ Extend from this class in order to inherit important configurations Sets up Spring Test Context regarding to the Test
+ Configuration After every test method, refreshes the context.
+ If disk access is needed, use {@field #tmpdir}
  */
 @RunWith(CategoryAwareSpringRunner.class)
 @ContextConfiguration(classes = {TestCoreConfiguration.class})
@@ -36,14 +35,14 @@ public abstract class BaseSpringTest extends BaseTest {
     @Autowired
     private Preferences preferences;
     /**
-     * temp data dir. if files need to get written to disk, use this as root directory.
-     * This folder is reset after every test method.
-     * Appropriate disk cleanup is performed automatically.
+     temp data dir. if files need to get written to disk, use this as root directory. This folder is reset after every
+     test method. Appropriate disk cleanup is performed automatically.
      */
     protected File tmpdir;
-    
+
     @PostConstruct
-    private void initTmpdir(){
+    @SuppressWarnings("PMD.UnusedPrivateMethod")
+    private void initTmpdir() {
         tmpdir = preferences.getDataDir();
     }
 

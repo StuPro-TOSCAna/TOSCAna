@@ -8,5 +8,4 @@ public class DummySystemStatusProvicer implements StatusService {
     public SystemStatus getSystemStatus() {
         return SystemStatus.values()[(int) Math.floor(SystemStatus.values().length * Math.random())];
     }
-
 }

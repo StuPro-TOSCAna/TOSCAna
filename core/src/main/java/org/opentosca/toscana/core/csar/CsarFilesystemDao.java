@@ -28,16 +28,16 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class CsarFilesystemDao implements CsarDao {
 
-    private final static Logger logger = LoggerFactory.getLogger(CsarFilesystemDao.class.getSimpleName());
-
     /**
-     * the name of the directory which contains the transformations
+     the name of the directory which contains the transformations
      */
     public final static String TRANSFORMATION_DIR = "transformations";
     /**
-     * the name of the directory which contains the unzipped content of the uploaded CSAR
+     the name of the directory which contains the unzipped content of the uploaded CSAR
      */
     public final static String CONTENT_DIR = "content";
+
+    private final static Logger logger = LoggerFactory.getLogger(CsarFilesystemDao.class.getSimpleName());
 
     private TransformationDao transformationDao;
     private final File dataDir;
@@ -52,7 +52,7 @@ public class CsarFilesystemDao implements CsarDao {
         if (!dataDir.exists()) {
             System.out.println(dataDir.getAbsolutePath());
             if (!dataDir.mkdirs()) {
-                throw new RuntimeException("Failed to create data dir '{}'".format(dataDir.getAbsolutePath()));
+                logger.error("Failed to create data dir '{}'", dataDir.getAbsolutePath());
             }
         }
 
@@ -143,7 +143,7 @@ public class CsarFilesystemDao implements CsarDao {
     }
 
     /**
-     * Reads csars from disks post: csarMap reflects contents of DATA_DIR on disk
+     Reads csars from disks post: csarMap reflects contents of DATA_DIR on disk
      */
     private void readFromDisk() {
         csarMap.clear();
@@ -163,8 +163,8 @@ public class CsarFilesystemDao implements CsarDao {
     }
 
     /**
-     * Returns true if given file is a valid csar directory. Valid csar directories must contain 'transformations' and
-     * 'content' directory
+     Returns true if given file is a valid csar directory.
+     Valid csar directories must contain 'transformations' and 'content' directory
      */
     private boolean isCsarDir(File file) {
         if (file.isDirectory()) {

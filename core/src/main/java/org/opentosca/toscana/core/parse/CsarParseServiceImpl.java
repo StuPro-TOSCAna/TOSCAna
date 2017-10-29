@@ -1,31 +1,32 @@
 package org.opentosca.toscana.core.parse;
 
-import org.eclipse.winery.model.tosca.yaml.TServiceTemplate;
-import org.eclipse.winery.yaml.common.reader.yaml.Reader;
+import java.io.File;
+
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarDao;
+
+import org.eclipse.winery.model.tosca.yaml.TServiceTemplate;
+import org.eclipse.winery.yaml.common.reader.yaml.Reader;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.io.File;
 
 @Service
 public class CsarParseServiceImpl implements CsarParseService {
 
-    private Logger logger;
+    private final static Logger logger = LoggerFactory.getLogger(CsarParseServiceImpl.class);
+
     @Autowired
-    CsarDao csarDao;
+    private CsarDao csarDao;
 
     @Override
     public TServiceTemplate parse(Csar csar) throws InvalidCsarException {
-        logger = csar.getLog().getLogger(getClass());
         Reader reader = new Reader();
         File entrypoint = findEntrypoint(csar);
         TServiceTemplate serviceTemplate = null;
         try {
             serviceTemplate = reader.parse(entrypoint.getParent(), entrypoint.getName());
-
         } catch (Exception e) {
             // the winery parser is like TNT; we have to catch all exceptions (even better: we run)
             logger.info("An error occured while parsing the csar '{}'", csar, e);
@@ -35,15 +36,15 @@ public class CsarParseServiceImpl implements CsarParseService {
     }
 
     /**
-     * Note: Entrypoints are currently only top level yaml files.
-     * An entrypoint specified in the tosca metadata file is currently ignored
-     *
-     * @param csar a csar object
-     * @return the entrypoint yaml file of given csar
-     * @throws InvalidCsarException if no or more than one top level yaml file was found in given csar
+     Note: Entrypoints are currently only top level .yaml files.
+     An entrypoint specified in the tosca metadata file is
+     currently ignored
+
+     @param csar a csar object
+     @return the entrypoint yaml file of given csar
+     @throws InvalidCsarException if no or more than one top level yaml file was found in given csar
      */
     private File findEntrypoint(Csar csar) throws InvalidCsarException {
-        logger = csar.getLog().getLogger(getClass());
         File content = csarDao.getContentDir(csar);
         File[] entrypoints = content.listFiles((file, s) -> s.matches(".*\\.ya?ml$"));
         if (entrypoints.length == 1) {

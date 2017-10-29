@@ -1,14 +1,14 @@
 package org.opentosca.toscana.plugins.kubernetes;
 
-import org.apache.commons.io.Charsets;
-import org.apache.commons.io.FileUtils;
-
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.commons.io.Charsets;
+import org.apache.commons.io.FileUtils;
+
 public class KubernetesManualCreator {
     /**
-     * This method fills the app name and the kubernetes resource file name into the generic template
+     This method fills the app name and the kubernetes resource file name into the generic template
      */
     public static String createManual(String appName, String resFileName) throws IOException {
         File manual = new File("src/main/resources/kubernetes/k8s_manual_guide.md");

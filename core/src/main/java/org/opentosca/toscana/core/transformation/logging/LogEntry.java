@@ -34,16 +34,15 @@ public class LogEntry {
     }
 
     /**
-     * Constructs a LogEntry instance from a log line
-     * @param line the logline which gets parsed
-     * @precessor the precessor of the current line
+     Constructs a LogEntry instance from a log line
+
+     @param line the logline which gets parsed
      */
     LogEntry(String line, Optional<LogEntry> precessor) throws LogParserException {
-        if (isRegularLine(line)){
+        if (isRegularLine(line)) {
             parseRegularLine(line, precessor);
         } else {
             parseStackTraceLine(line, precessor);
-                
         }
         String[] tokens = line.split(" ", 3);
     }
@@ -51,7 +50,7 @@ public class LogEntry {
     private void parseStackTraceLine(String line, Optional<LogEntry> precessor) {
         level = Level.ERROR;
         message = line;
-        if (precessor.isPresent()){
+        if (precessor.isPresent()) {
             timestamp = precessor.get().timestamp;
             index = precessor.get().index + 1;
         } else {
@@ -71,7 +70,7 @@ public class LogEntry {
             String levelString = tokens[1];
             level = Level.valueOf(levelString);
             message = tokens[2];
-            if (precessor.isPresent()){
+            if (precessor.isPresent()) {
                 index = precessor.get().index + 1;
             } else {
                 index = 0;
@@ -82,7 +81,7 @@ public class LogEntry {
     }
 
     // a regular logline is a line with beginning with date and time, else it's considered as part of a stacktrace
-    private boolean isRegularLine(String line){
+    private boolean isRegularLine(String line) {
         Matcher m = PersistentAppender.DATE_FORMAT_REGEX.matcher(line);
         return m.find();
     }

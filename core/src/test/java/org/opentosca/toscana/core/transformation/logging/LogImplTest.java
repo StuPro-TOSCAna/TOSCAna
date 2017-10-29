@@ -105,17 +105,17 @@ public class LogImplTest extends BaseJUnitTest {
         entries = testLog.getLogEntries(0);
         assertEquals(2, entries.size());
     }
-    
+
     @Test
-    public void readLogEntriesFromDiskSetLevelCorrectly(){
+    public void readLogEntriesFromDiskSetLevelCorrectly() {
         log = new LogImpl(logfile);
         Logger testLogger = log.getLogger("my-test-context");
-        String[] messages = { "info message", "warn message", "error message"};
+        String[] messages = {"info message", "warn message", "error message"};
         testLogger.info(messages[0]);
         testLogger.warn(messages[1]);
         testLogger.error(messages[2]);
         Log readFromDiskLog = new LogImpl(logfile);
-        List<LogEntry> logEntries =readFromDiskLog.getLogEntries(0);
+        List<LogEntry> logEntries = readFromDiskLog.getLogEntries(0);
         assertEquals(3, logEntries.size());
         assertTrue(logEntries.get(0).getMessage().contains(messages[0]));
         assertEquals(Level.INFO.toString(), logEntries.get(0).getLevel());
@@ -135,7 +135,7 @@ public class LogImplTest extends BaseJUnitTest {
         long result = testLog.getLogEntries(0).get(0).getTimestamp();
         assertEquals(expected, result);
     }
-    
+
     @Test
     public void logReadsLogfileWithIllegalLogsAndIgnoresThem() throws IOException {
         PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(logfile)));
@@ -144,19 +144,19 @@ public class LogImplTest extends BaseJUnitTest {
         List<LogEntry> entries = log.getLogEntries(0);
         assertEquals(0, entries.size());
     }
-    
+
     @Test
-    public void logReadsLogfileWithStacktraces(){
+    public void logReadsLogfileWithStacktraces() {
         log = new LogImpl(logfile);
         Logger testLogger = log.getLogger(getClass());
         try {
             int doesntWork = 1 / 0;
-        } catch (ArithmeticException e){
+        } catch (ArithmeticException e) {
             testLogger.error("printing stacktrace to log", e);
         }
         Log readFromDiskLog = new LogImpl(logfile);
         List<LogEntry> logEntries = readFromDiskLog.getLogEntries(0);
-        for (int index = 0; index < logEntries.size(); index++){
+        for (int index = 0; index < logEntries.size(); index++) {
             LogEntry entry = logEntries.get(index);
             assertNotEquals(0, entry.getTimestamp());
             assertEquals(index, entry.getIndex());

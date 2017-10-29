@@ -1,10 +1,10 @@
 package org.opentosca.toscana.core.dummy;
 
-import org.opentosca.toscana.core.transformation.TransformationContext;
-import org.opentosca.toscana.core.transformation.platform.Platform;
-
 import java.io.IOException;
 import java.util.Random;
+
+import org.opentosca.toscana.core.transformation.TransformationContext;
+import org.opentosca.toscana.core.transformation.platform.Platform;
 
 public class FileCreatingExceutionDummyPlugin extends ExecutionDummyPlugin {
     public FileCreatingExceutionDummyPlugin(Platform platform, boolean failDuringExec) {

@@ -1,12 +1,13 @@
 package org.opentosca.toscana.core.api.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.List;
+
 import org.opentosca.toscana.core.api.TransformationController;
 import org.opentosca.toscana.core.transformation.logging.LogEntry;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.hateoas.ResourceSupport;
 import org.springframework.hateoas.core.Relation;
-
-import java.util.List;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;

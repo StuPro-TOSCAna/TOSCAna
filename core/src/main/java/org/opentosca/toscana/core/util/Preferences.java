@@ -1,20 +1,23 @@
 package org.opentosca.toscana.core.util;
 
+import java.io.File;
+
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
-import java.io.File;
-
 /**
- * Manages all preferences. Uses Spring Properties (therefore looks in property files, java flags and system environment
- * for values)
+ Manages all preferences. Uses Spring Properties (therefore looks in property files, java flags and system environment
+ for values)
  */
 @Service
 public class Preferences {
+
+    private static final Logger logger = LoggerFactory.getLogger(Preferences.class.getName());
 
     @Value("${datadir}")
     private String dataPath;
@@ -24,8 +27,6 @@ public class Preferences {
     private String dataPathFallbackNix;
 
     private File dataDir;
-
-    private static final Logger logger = LoggerFactory.getLogger(Preferences.class.getName());
 
     @PostConstruct
     public void setup() {

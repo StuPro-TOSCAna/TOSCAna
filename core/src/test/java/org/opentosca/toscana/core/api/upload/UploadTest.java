@@ -1,5 +1,14 @@
 package org.opentosca.toscana.core.api.upload;
 
+import java.io.IOException;
+
+import org.opentosca.toscana.core.BaseJUnitTest;
+import org.opentosca.toscana.core.Main;
+import org.opentosca.toscana.core.testdata.TestCsars;
+import org.opentosca.toscana.core.testutils.CategoryAwareJUnitRunner;
+import org.opentosca.toscana.core.testutils.TestCategories;
+import org.opentosca.toscana.core.testutils.TestCategory;
+
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -8,19 +17,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import org.opentosca.toscana.core.BaseJUnitTest;
-import org.opentosca.toscana.core.Main;
-import org.opentosca.toscana.core.testdata.TestCsars;
-import org.opentosca.toscana.core.testutils.CategoryAwareJUnitRunner;
-import org.opentosca.toscana.core.testutils.TestCategories;
-import org.opentosca.toscana.core.testutils.TestCategory;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 
 import static org.junit.Assert.fail;
 
