@@ -1,12 +1,14 @@
 package org.opentosca.toscana.core.api.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.opentosca.toscana.core.transformation.platform.Platform;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.hateoas.ResourceSupport;
 import org.springframework.hateoas.core.Relation;
 
 /**
- * Represents the platform response (<code>/platforms/{id}</code>) as a Java Object that gets converted to json using Jackson
+ Represents the platform response (<code>/platforms/{id}</code>) as a Java Object that gets converted to json using
+ Jackson
  */
 @Relation(collectionRelation = "platform")
 public class PlatformResponse extends ResourceSupport {

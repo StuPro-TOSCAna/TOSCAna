@@ -102,23 +102,24 @@ public class TransformationServiceImplTest extends BaseSpringTest {
 
     @Test
     public void startTransformation() throws Exception {
-        startTransfomationInternal(TransformationState.DONE, passingDummy.getPlatform());
+        Transformation t = startTransformationInternal(TransformationState.DONE, passingDummy.getPlatform());
+        assertNotNull(t);
     }
 
     @Test
     public void startTransformationExecutionFail() throws Exception {
-        startTransfomationInternal(TransformationState.ERROR, failingDummy.getPlatform());
+        startTransformationInternal(TransformationState.ERROR, failingDummy.getPlatform());
     }
 
     @Test
     public void startTransformationWithArtifacts() throws Exception {
-        Transformation transformation = startTransfomationInternal(TransformationState.DONE, passingDummyFw.getPlatform());
+        Transformation transformation = startTransformationInternal(TransformationState.DONE, passingDummyFw.getPlatform());
         lookForArtifactArchive(transformation);
     }
 
     @Test
     public void startTransformationWithArtifactsExecutionFail() throws Exception {
-        startTransfomationInternal(TransformationState.ERROR, failingDummyFw.getPlatform());
+        startTransformationInternal(TransformationState.ERROR, failingDummyFw.getPlatform());
     }
 
     @Test
@@ -158,7 +159,7 @@ public class TransformationServiceImplTest extends BaseSpringTest {
         assertFalse(csar.getTransformations().containsValue(transformation));
     }
 
-    private Transformation startTransfomationInternal(TransformationState expectedState, Platform platform) throws InterruptedException, FileNotFoundException, PlatformNotFoundException {
+    private Transformation startTransformationInternal(TransformationState expectedState, Platform platform) throws InterruptedException, FileNotFoundException, PlatformNotFoundException {
         Csar csar = testCsars.getCsar(TestCsars.CSAR_YAML_VALID_DOCKER_SIMPLETASK);
         Transformation t = service.createTransformation(csar, platform);
         assertTrue(service.startTransformation(t));

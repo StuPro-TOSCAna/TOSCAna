@@ -1,5 +1,8 @@
 package org.opentosca.toscana.core.transformation.execution;
 
+import java.io.File;
+import java.io.IOException;
+
 import org.opentosca.toscana.core.plugin.PluginService;
 import org.opentosca.toscana.core.plugin.TransformationPlugin;
 import org.opentosca.toscana.core.transformation.Transformation;
@@ -7,10 +10,8 @@ import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.core.transformation.TransformationState;
 import org.opentosca.toscana.core.transformation.artifacts.ArtifactService;
 import org.opentosca.toscana.core.transformation.artifacts.TargetArtifact;
-import org.slf4j.Logger;
 
-import java.io.File;
-import java.io.IOException;
+import org.slf4j.Logger;
 
 public class ExecutionTask implements Runnable {
 

@@ -40,25 +40,25 @@ In this document the terms *'Must have'*, *'Should have'*, *'Could have'* and *'
 |TOSCA --> AWS Cloud Formation| CSAR -> Cloud Formation Template (& Orchestration, if needed)|Should have| Preferable as first transformation; it is acceptable to optimize the topology |
 | TOSCA Spec version | Latest YAML specification | Should have | if YAML seems not to be working out, switching to the older XML specification is acceptable |
 | Topology Optimization Mode | Implement normal and topology optimizing transformation mode | Could have| 'Tuning option' |
-| Adapt to target platform updates | If target platforms change, change transformator accordingly | Won't have | Beyond the scope of project; and most probably not relevant due to backward compatibility |
+| Adapt to target platform updates | If target platforms change, change transformer accordingly | Won't have | Beyond the scope of project; and most probably not relevant due to backward compatibility |
 
 ### TOSCA Support
 | What | How | Importance |Comment|
 |------|-----|------------|-------|
 | Specification support | most important elements | Must have | Not included: Policies. Leave out the bells and whistles ('fancy stuff'). However, build architecture in an extendable way, so the full TOSCA spec can be supported in the future |
 | Node Support | Must be deployable  via Lifecycle Interface | Must have | |
-| NodeType, RelationshipType Support | Support from YAML-Profile | Must have | A basic LAMP-Stack must be deployable with the transformator; the level of mininum node type and relationship type support can be derived from this requirement |
+| NodeType, RelationshipType Support | Support from YAML-Profile | Must have | A basic LAMP-Stack must be deployable with the transformer; the level of minimum node type and relationship type support can be derived from this requirement |
 | NodeType Support | Support custom NodeTypes of Institute | Could have | |
 | BPMN Support | Translator supports BPMN part of TOSCA specification | Won't have | would be awesome; too hard; for our project, only declarative (no imperative) node description must be supported |
 
 ### Transformation Center
 | What | How | Importance |Comment|
 |------|-----|------------|-------|
-| Deploy app |After transformation, offer mechanism for deployment| Must have (implicit)|Although not explicitly required by client: Some details of the TOSCA model might not be representable in the target platforms modelling language, hence orchestration will be neccessary. note: we have to develop this anyways for testing purposes|
+| Deploy app |After transformation, offer mechanism for deployment| Must have (implicit)|Although not explicitly required by client: Some details of the TOSCA model might not be representable in the target platforms modelling language, hence orchestration will be necessary. note: we have to develop this anyways for testing purposes|
 | Endpoint of deployed app | After deployment, the user must find information about how to reach the deployed app | Must have | only if information is found in boundary definition of the TOSCA model |
 | Request additional data | If not contained in the TOSCA model itself, the web app must request missing data from the user | Must have | e.g. credentials. in cli mode not required (throw error instead) |
 | Error handling | If transformation is not possible, the user gets informed about the problem and the state of the deployment, if any | Must have | |
-| | The application recognizes the problem and offers auto correction | Could have | in form of topology optimiziation |
+| | The application recognizes the problem and offers auto correction | Could have | in form of topology optimization |
 | | If deployment was started, but not finished correctly, compensate changes | Could have | Considered to be quite hard |
 |Status information | during deployment, show current status of deployment | Could have | Client would appreciate that very much |
 | App Monitoring | Provide health monitoring of deployed app | Could have | very nice to have but very unrealistic|

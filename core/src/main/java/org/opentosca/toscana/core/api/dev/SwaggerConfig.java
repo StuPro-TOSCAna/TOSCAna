@@ -1,5 +1,7 @@
 package org.opentosca.toscana.core.api.dev;
 
+import java.util.Objects;
+
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +16,7 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-import java.util.Objects;
-
+@SuppressWarnings("unchecked")
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig {

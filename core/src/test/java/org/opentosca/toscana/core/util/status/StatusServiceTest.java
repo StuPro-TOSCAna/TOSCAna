@@ -1,19 +1,20 @@
 package org.opentosca.toscana.core.util.status;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import java.util.Arrays;
+import java.util.HashSet;
+
 import org.opentosca.toscana.core.csar.CsarDao;
 import org.opentosca.toscana.core.dummy.DummyCsar;
 import org.opentosca.toscana.core.dummy.DummyTransformation;
 import org.opentosca.toscana.core.testutils.CategoryAwareSpringRunner;
 import org.opentosca.toscana.core.transformation.TransformationState;
 import org.opentosca.toscana.core.transformation.platform.Platform;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
-
-import java.util.Arrays;
-import java.util.HashSet;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
@@ -28,7 +29,7 @@ public class StatusServiceTest {
     public StatusService statusService;
 
     private DummyCsar testCsar = new DummyCsar("test");
-    private DummyCsar test2Csar = new DummyCsar("tezt");
+    private DummyCsar test2Csar = new DummyCsar("test2");
 
     @Before
     public void setUp() throws Exception {
@@ -51,13 +52,13 @@ public class StatusServiceTest {
     }
 
     @Test
-    public void testErroredState() throws Exception {
+    public void testErrorState() throws Exception {
         testCsar.getTransformations().get("p-1").setState(TransformationState.ERROR);
         assertTrue(statusService.getSystemStatus() == SystemStatus.ERROR);
     }
 
     @Test
-    public void testErroredAndTransformingState() throws Exception {
+    public void testErrorAndTransformingState() throws Exception {
         testCsar.getTransformations().get("p-1").setState(TransformationState.TRANSFORMING);
         testCsar.getTransformations().get("p-2").setState(TransformationState.ERROR);
         assertTrue(statusService.getSystemStatus() == SystemStatus.ERROR);

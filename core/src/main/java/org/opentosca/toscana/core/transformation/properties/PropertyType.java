@@ -1,6 +1,10 @@
 package org.opentosca.toscana.core.transformation.properties;
 
-import org.opentosca.toscana.core.transformation.properties.validators.*;
+import org.opentosca.toscana.core.transformation.properties.validators.BooleanValidator;
+import org.opentosca.toscana.core.transformation.properties.validators.FloatValidator;
+import org.opentosca.toscana.core.transformation.properties.validators.IntegerValidator;
+import org.opentosca.toscana.core.transformation.properties.validators.StringValidator;
+import org.opentosca.toscana.core.transformation.properties.validators.ValueValidator;
 
 public enum PropertyType {
     NAME("name", String.class, new StringValidator("([a-z])+((-)*([a-z]))*")),

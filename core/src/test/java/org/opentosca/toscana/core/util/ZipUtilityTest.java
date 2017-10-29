@@ -1,22 +1,23 @@
 package org.opentosca.toscana.core.util;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
-import org.opentosca.toscana.core.BaseJUnitTest;
-import org.opentosca.toscana.core.testutils.CategoryAwareJUnitRunner;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.Random;
 import java.util.zip.ZipInputStream;
 
-import static org.junit.Assert.assertTrue;
+import org.opentosca.toscana.core.BaseJUnitTest;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.junit.Assert.assertTrue;
 
 public class ZipUtilityTest extends BaseJUnitTest {
 
@@ -72,8 +73,8 @@ public class ZipUtilityTest extends BaseJUnitTest {
         }
     }
 
-    private String getRelativePath(File root, File subdir) {
-        return root.toPath().relativize(subdir.toPath()).toString();
+    private String getRelativePath(File root, File subDir) {
+        return root.toPath().relativize(subDir.toPath()).toString();
     }
 
     @After

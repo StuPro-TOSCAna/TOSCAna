@@ -35,7 +35,7 @@ public class ArtifactControllerTest extends BaseSpringTest {
 
     private ArtifactController controller;
 
-    int size = 20 * 1024;
+    private int size = 20 * 1024;
     private final int count = 5;
     private byte[][] hashes = new byte[count][];
     private MessageDigest digest;
@@ -66,7 +66,7 @@ public class ArtifactControllerTest extends BaseSpringTest {
         ArtifactService ams = Mockito.mock(ArtifactService.class);
         when(ams.getArtifactDir()).thenReturn(tmpdir);
 
-        //initalizing controller
+        //initializing controller
         controller = new ArtifactController(ams);
         controller.enableArtifactList = true;
 
