@@ -10,10 +10,13 @@ import org.opentosca.toscana.core.dummy.ExecutionDummyPlugin;
 import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.testdata.TestPlugins;
 import org.opentosca.toscana.core.transformation.artifacts.ArtifactService;
+import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.core.transformation.properties.PropertyType;
 import org.opentosca.toscana.core.transformation.properties.RequirementType;
+
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
@@ -30,6 +33,8 @@ public class TransformationServiceImplTest extends BaseSpringTest {
     private TestCsars testCsars;
     @Autowired
     private ArtifactService ams;
+    @Mock
+    private Log log;
 
     private Csar csar;
 
@@ -46,7 +51,7 @@ public class TransformationServiceImplTest extends BaseSpringTest {
     @Test
     public void createTransformation() throws Exception {
         Transformation transformation = service.createTransformation(csar, TestPlugins.PLATFORM1);
-        Transformation expected = new TransformationImpl(csar, TestPlugins.PLATFORM1);
+        Transformation expected = new TransformationImpl(csar, TestPlugins.PLATFORM1, log);
         assertTrue(csar.getTransformations().containsValue(expected));
         assertEquals(expected, transformation);
     }
@@ -144,7 +149,7 @@ public class TransformationServiceImplTest extends BaseSpringTest {
 
     @Test
     public void deleteTransformation() throws Exception {
-        Transformation transformation = new TransformationImpl(csar, TestPlugins.PLATFORM1);
+        Transformation transformation = new TransformationImpl(csar, TestPlugins.PLATFORM1, log);
         csar.getTransformations().put(TestPlugins.PLATFORM1.id, transformation);
         service.deleteTransformation(transformation);
 

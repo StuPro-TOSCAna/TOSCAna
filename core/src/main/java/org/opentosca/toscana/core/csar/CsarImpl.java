@@ -22,9 +22,9 @@ class CsarImpl implements Csar {
     private TServiceTemplate template;
     private final Log log;
 
-    public CsarImpl(String identifier) {
+    public CsarImpl(String identifier, Log log) {
         this.identifier = identifier;
-        log = new Log();
+        this.log = log;
     }
 
     @Override

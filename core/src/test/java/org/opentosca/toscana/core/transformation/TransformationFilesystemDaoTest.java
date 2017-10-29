@@ -8,6 +8,9 @@ import org.opentosca.toscana.core.csar.CsarDao;
 import org.opentosca.toscana.core.csar.CsarFilesystemDao;
 import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.testdata.TestPlugins;
+import org.opentosca.toscana.core.transformation.logging.Log;
+
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -35,6 +38,8 @@ public class TransformationFilesystemDaoTest extends BaseSpringTest {
     private Csar csar4;
     private Transformation transformation1;
     private File transformation1Dir;
+    @Mock
+    private Log log;
 
     @Before
     public void setUp() throws FileNotFoundException {
@@ -42,7 +47,7 @@ public class TransformationFilesystemDaoTest extends BaseSpringTest {
         csar2 = testCsars.getCsar("csar2", TestCsars.CSAR_YAML_VALID_DOCKER_SIMPLETASK);
         csar3 = testCsars.getCsar("csar3", TestCsars.CSAR_YAML_VALID_DOCKER_SIMPLETASK);
         csar4 = testCsars.getCsar("csar4", TestCsars.CSAR_YAML_VALID_DOCKER_SIMPLETASK);
-        transformation1 = new TransformationImpl(csar1, TestPlugins.PLATFORM1);
+        transformation1 = new TransformationImpl(csar1, TestPlugins.PLATFORM1, log);
         transformation1Dir = transformationDao.getRootDir(transformation1);
     }
 
@@ -86,10 +91,10 @@ public class TransformationFilesystemDaoTest extends BaseSpringTest {
 
     @Test
     public void findFromSpecificCsar() throws Exception {
-        createRandomFiles(transformationDao.getRootDir(new TransformationImpl(csar1, TestPlugins.PLATFORM1)));
-        createRandomFiles(transformationDao.getRootDir(new TransformationImpl(csar1, TestPlugins.PLATFORM2)));
-        createRandomFiles(transformationDao.getRootDir(new TransformationImpl(csar2, TestPlugins.PLATFORM1)));
-        createRandomFiles(transformationDao.getRootDir(new TransformationImpl(csar3, TestPlugins.PLATFORM1)));
+        createRandomFiles(transformationDao.getRootDir(new TransformationImpl(csar1, TestPlugins.PLATFORM1, log)));
+        createRandomFiles(transformationDao.getRootDir(new TransformationImpl(csar1, TestPlugins.PLATFORM2, log)));
+        createRandomFiles(transformationDao.getRootDir(new TransformationImpl(csar2, TestPlugins.PLATFORM1, log)));
+        createRandomFiles(transformationDao.getRootDir(new TransformationImpl(csar3, TestPlugins.PLATFORM1, log)));
 
         List<Transformation> transformations = transformationDao.find(csar1);
 
@@ -98,10 +103,10 @@ public class TransformationFilesystemDaoTest extends BaseSpringTest {
 
     @Test
     public void findSpecificTransformation() throws Exception {
-        createRandomFiles(transformationDao.getRootDir(new TransformationImpl(csar1, TestPlugins.PLATFORM1)));
-        createRandomFiles(transformationDao.getRootDir(new TransformationImpl(csar1, TestPlugins.PLATFORM2)));
-        createRandomFiles(transformationDao.getRootDir(new TransformationImpl(csar2, TestPlugins.PLATFORM1)));
-        createRandomFiles(transformationDao.getRootDir(new TransformationImpl(csar3, TestPlugins.PLATFORM1)));
+        createRandomFiles(transformationDao.getRootDir(new TransformationImpl(csar1, TestPlugins.PLATFORM1, log)));
+        createRandomFiles(transformationDao.getRootDir(new TransformationImpl(csar1, TestPlugins.PLATFORM2, log)));
+        createRandomFiles(transformationDao.getRootDir(new TransformationImpl(csar2, TestPlugins.PLATFORM1, log)));
+        createRandomFiles(transformationDao.getRootDir(new TransformationImpl(csar3, TestPlugins.PLATFORM1, log)));
 
         Transformation transformation = transformationDao.find(csar2, TestPlugins.PLATFORM1).get();
 
@@ -119,7 +124,7 @@ public class TransformationFilesystemDaoTest extends BaseSpringTest {
      */
     @Test
     public void readTransformationFromDiskWithIllegalPlatform() throws IOException {
-        Transformation t = new TransformationImpl(csar1, TestPlugins.PLATFORM_NOT_SUPPORTED);
+        Transformation t = new TransformationImpl(csar1, TestPlugins.PLATFORM_NOT_SUPPORTED, log);
         createRandomFiles(transformationDao.getRootDir(t));
 
         assertFalse(transformationDao.find(csar1, TestPlugins.PLATFORM_NOT_SUPPORTED).isPresent());

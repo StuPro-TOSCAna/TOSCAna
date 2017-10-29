@@ -1,9 +1,10 @@
 package org.opentosca.toscana.core.csar;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.opentosca.toscana.core.BaseSpringTest;
 import org.opentosca.toscana.core.testdata.TestCsars;
+import org.opentosca.toscana.core.transformation.logging.Log;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
@@ -12,6 +13,7 @@ import java.io.InputStream;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
 public class CsarServiceImplTest extends BaseSpringTest {
 
@@ -37,13 +39,12 @@ public class CsarServiceImplTest extends BaseSpringTest {
     @Test
     public void deleteCsar() throws Exception {
         File csarDir = new File(tmpdir, identifier);
-        Csar csar = new CsarImpl(identifier);
+        Csar csar = new CsarImpl(identifier, mock(Log.class));
 
         csarDir.mkdir();
         assertTrue(csarDir.isDirectory());
 
         csarService.deleteCsar(csar);
-
         assertFalse(csarDir.isDirectory());
     }
 }

@@ -18,7 +18,9 @@ import org.opentosca.toscana.core.testutils.TestCategory;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 import static org.junit.Assert.fail;
 
@@ -97,5 +99,6 @@ public class UploadTest extends BaseJUnitTest {
     @After
     public void tearDown() throws Exception {
         springThread.stop();
+        springThread.join();
     }
 }

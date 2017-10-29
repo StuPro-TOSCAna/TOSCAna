@@ -29,9 +29,10 @@ class TransformationImpl implements Transformation {
      * @param csar           the subject of transformation
      * @param targetPlatform the target platform
      */
-    TransformationImpl(Csar csar, Platform targetPlatform) {
+    TransformationImpl(Csar csar, Platform targetPlatform, Log log) {
         this.csar = csar;
         this.targetPlatform = targetPlatform;
+        this.log = log;
 
         //Collect Possible Properties From the Platform and the Model
         Set<Property> properties = new HashSet<>();
@@ -45,9 +46,6 @@ class TransformationImpl implements Transformation {
         if (!properties.isEmpty()) {
             state = TransformationState.INPUT_REQUIRED;
         }
-
-        //intialize internal log object
-        this.log = new Log();
     }
 
     @Override
