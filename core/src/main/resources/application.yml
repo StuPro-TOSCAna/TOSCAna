@@ -3,21 +3,22 @@
 ###############################
 
 toscana:
-  mappings:
-    enable-artifact-list: true
+    mappings:
+        enable-artifact-list: true
 
 ################################
 ##### Spring HTTP Settings #####
 ################################
 
 spring:
-  main:
-    banner-mode: "off"
-#  http:
-#  	multipart:
-#     enabled: true
-#     max-file-size: 10000MB
-#     max-request-size: 100000MB:
+    main:
+        banner-mode: "off"
+    http:
+        multipart:
+            enabled: true
+            max-file-size: 10000MB
+            max-request-size: 10000MB
+            file-size-threshold: 10MB
 
 ######################################
 ##### Data Directory Properties ######
@@ -36,14 +37,15 @@ datadir_nix: ${user.home}/.toscana
 
 # Disable security for spring boot actuator
 management:
-  security:
-    enabled: false
+    security:
+        enabled: false
 
 # Comment out the following part to get full access to all spring boot actuator features
-endpoints.enabled: false
 endpoints:
-    metrics.enabled: true
-    health.enabled: true
-    mappings.enabled: true
-
-
+    enabled: false
+    metrics:
+        enabled: true
+    health:
+        enabled: true
+    mappings:
+        enabled: true
