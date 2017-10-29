@@ -9,7 +9,6 @@ package org.opentosca.toscana.core.transformation.properties;
 public class Property {
     private String key;
     private PropertyType type;
-    private RequirementType requirementType;
 
     private String description;
     private boolean required;
@@ -19,16 +18,14 @@ public class Property {
      *
      * @param key             the unique key of the property
      * @param type            the expected "datatype" of the property value
-     * @param requirementType classifies the property for a specific type of process (Transformation or deployment)
      * @param description     a short description of the property (should not exceed 200 characters, does not get
      *                        checked tough)
      * @param required        determines if the property is required or not
      */
-    public Property(String key, PropertyType type, RequirementType requirementType,
+    public Property(String key, PropertyType type,
                     String description, boolean required) {
         this.key = key;
         this.type = type;
-        this.requirementType = requirementType;
         this.description = description;
         this.required = required;
     }
@@ -38,10 +35,9 @@ public class Property {
      *
      * @param key             the unique key of the property
      * @param type            the expected "datatype" of the property value
-     * @param requirementType classifies the property for a specific type of process (Transformation or deployment)
      */
-    public Property(String key, PropertyType type, RequirementType requirementType) {
-        this(key, type, requirementType, "", true);
+    public Property(String key, PropertyType type) {
+        this(key, type, "", true);
     }
 
     public String getKey() {
@@ -50,10 +46,6 @@ public class Property {
 
     public PropertyType getType() {
         return type;
-    }
-
-    public RequirementType getRequirementType() {
-        return requirementType;
     }
 
     public String getDescription() {

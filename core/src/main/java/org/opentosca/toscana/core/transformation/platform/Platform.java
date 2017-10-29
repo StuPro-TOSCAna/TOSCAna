@@ -1,11 +1,10 @@
 package org.opentosca.toscana.core.transformation.platform;
 
-import org.opentosca.toscana.core.transformation.properties.Property;
-import org.opentosca.toscana.core.transformation.properties.RequirementType;
-
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+
+import org.opentosca.toscana.core.transformation.properties.Property;
 
 public class Platform {
 
@@ -41,20 +40,11 @@ public class Platform {
         this(id, name, new HashSet<>());
     }
 
-
     /**
      * @return a list of properties which are necessary for a transformation to this platform.
      */
     public Set<Property> getProperties() {
         return Collections.unmodifiableSet(properties);
-    }
-
-    public Set<Property> getPropertiesForRequirementType(RequirementType type) {
-        HashSet<Property> filteredProperties = new HashSet<>();
-        properties.stream()
-            .filter((e) -> e.getRequirementType() == type)
-            .forEach(filteredProperties::add);
-        return Collections.unmodifiableSet(filteredProperties);
     }
 
     public String toString() {

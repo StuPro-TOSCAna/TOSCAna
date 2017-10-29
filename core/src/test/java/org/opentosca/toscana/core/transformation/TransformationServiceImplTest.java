@@ -1,7 +1,9 @@
 package org.opentosca.toscana.core.transformation;
 
-import org.junit.Before;
-import org.junit.Test;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.HashSet;
+
 import org.opentosca.toscana.core.BaseSpringTest;
 import org.opentosca.toscana.core.api.exceptions.PlatformNotFoundException;
 import org.opentosca.toscana.core.csar.Csar;
@@ -14,16 +16,16 @@ import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.core.transformation.properties.PropertyType;
-import org.opentosca.toscana.core.transformation.properties.RequirementType;
 
+import org.junit.Before;
+import org.junit.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.HashSet;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class TransformationServiceImplTest extends BaseSpringTest {
 
@@ -68,7 +70,7 @@ public class TransformationServiceImplTest extends BaseSpringTest {
         DummyCsar csar = new DummyCsar("test");
         csar.modelSpecificProperties = new HashSet<>();
         csar.modelSpecificProperties
-            .add(new Property("test", PropertyType.TEXT, RequirementType.TRANSFORMATION));
+            .add(new Property("test", PropertyType.TEXT));
         Transformation t = service.createTransformation(csar, passingDummy.getPlatform());
         assertTrue(!service.startTransformation(t));
     }
@@ -78,7 +80,7 @@ public class TransformationServiceImplTest extends BaseSpringTest {
         Transformation t = service.createTransformation(csar, passingDummy.getPlatform());
         assertNotNull(csar.getTransformations().get(passingDummy.getPlatform().id));
         assertNotNull(t);
-        assertEquals(TransformationState.CREATED, t.getState());
+        assertEquals(TransformationState.READY, t.getState());
     }
 
     @Test(expected = PlatformNotFoundException.class)
@@ -91,7 +93,7 @@ public class TransformationServiceImplTest extends BaseSpringTest {
         DummyCsar csar = new DummyCsar("test");
         csar.modelSpecificProperties = new HashSet<>();
         csar.modelSpecificProperties
-            .add(new Property("test", PropertyType.TEXT, RequirementType.TRANSFORMATION));
+            .add(new Property("test", PropertyType.TEXT));
         Transformation t = service.createTransformation(csar, passingDummy.getPlatform());
         assertNotNull(csar.getTransformations().get(passingDummy.getPlatform().id));
         assertNotNull(t);

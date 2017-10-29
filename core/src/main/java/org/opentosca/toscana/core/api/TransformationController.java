@@ -1,8 +1,22 @@
 package org.opentosca.toscana.core.api;
 
-import org.opentosca.toscana.core.api.exceptions.*;
-import org.opentosca.toscana.core.api.model.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.opentosca.toscana.core.api.exceptions.CsarNotFoundException;
+import org.opentosca.toscana.core.api.exceptions.IllegalTransformationStateException;
+import org.opentosca.toscana.core.api.exceptions.PlatformNotFoundException;
+import org.opentosca.toscana.core.api.exceptions.TransformationAlreadyPresentException;
+import org.opentosca.toscana.core.api.exceptions.TransformationNotFoundException;
+import org.opentosca.toscana.core.api.model.ArtifactResponse;
+import org.opentosca.toscana.core.api.model.GetPropertiesResponse;
 import org.opentosca.toscana.core.api.model.GetPropertiesResponse.PropertyWrap;
+import org.opentosca.toscana.core.api.model.LogResponse;
+import org.opentosca.toscana.core.api.model.SetPropertiesRequest;
+import org.opentosca.toscana.core.api.model.SetPropertiesResponse;
+import org.opentosca.toscana.core.api.model.TransformationResponse;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarService;
 import org.opentosca.toscana.core.transformation.Transformation;
@@ -14,6 +28,8 @@ import org.opentosca.toscana.core.transformation.logging.LogEntry;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.platform.PlatformService;
 import org.opentosca.toscana.core.transformation.properties.Property;
+import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +37,13 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resources;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
@@ -56,9 +73,26 @@ public class TransformationController {
     }
 
     /**
-     * This Request Returns a list of all transformations belonging to a csar <p> Response Codes: 200 - Operation was
-     * Performed Sucessfuly 404 - Csar not found <p> Response Content Types for Code: 200 - (application/hal+json) 404 -
-     * (application/hal+json), standard error response
+     * This Request Returns a list of all transformations belonging to a csar <p>
+     * <p>
+     * Accessed with http call <code>GET /csars/{csar}/transformatons/</code>
+     * <table summary="">
+     *      <tr>
+     *          <td>HTTP-Code</td>
+     *          <td>Mime-Type</td>
+     *          <td>Description (Returned if)</td>
+     *      </tr>
+     *      <tr>
+     *          <td>200</td>
+     *          <td>application/hal+json</td>
+     *          <td>Returns the resource (list) of all transformations that belong to this given csar</td>
+     *      </tr>
+     *      <tr>
+     *          <td>404</td>
+     *          <td>application/json</td>
+     *          <td>Returns a error message if the csar is not found (see returned error message for details)</td>
+     *      </tr>
+     * </table>     
      */
     @RequestMapping(
         path = "",
@@ -69,9 +103,6 @@ public class TransformationController {
         @PathVariable(name = "csarName") String name
     ) {
         Csar csar = findCsarByName(name);
-        if (csar == null) {
-            throw new CsarNotFoundException();
-        }
         Link selfLink =
             linkTo(methodOn(TransformationController.class)
                 .getCSARTransformations(name))
@@ -91,10 +122,26 @@ public class TransformationController {
     }
 
     /**
-     * Returns informations about a single transformation <p> Response Codes: 200 - Operation was Performed Sucessfuly
-     * 404 - Csar not found, the platform does not exist or no transformation for the specific platform was found for
-     * this csar <p> Response Content Types for Code: 200 - (application/hal+json) 404 - (application/hal+json),
-     * standard error response
+     * Returns informations about a single transformation <p> 
+     * <p>
+     * Accessed with http call <code>GET /csars/{csar}/transformatons/{platform}/</code>
+     * <table summary="">
+     *      <tr>
+     *          <td>HTTP-Code</td>
+     *          <td>Mime-Type</td>
+     *          <td>Description (Returned if)</td>
+     *      </tr>
+     *      <tr>
+     *          <td>200</td>
+     *          <td>application/hal+json</td>
+     *          <td>Returns a empty body if the transformation has been started</td>
+     *      </tr>
+     *      <tr>
+     *          <td>404</td>
+     *          <td>application/json</td>
+     *          <td>Returns a error message if the csar is not found or if the csar does not have a transformation for the given name (see returned error message for details)</td>
+     *      </tr>
+     * </table>    
      */
     @RequestMapping(
         path = "/{platform}",
@@ -106,13 +153,7 @@ public class TransformationController {
         @PathVariable(name = "platform") String platform
     ) {
         Csar csar = findCsarByName(name);
-        if (csar == null) {
-            throw new CsarNotFoundException();
-        }
-        Transformation transformation = csar.getTransformations().get(platform);
-        if (transformation == null) {
-            throw new TransformationNotFoundException();
-        }
+        Transformation transformation = findTransformationByPlatform(csar,platform);
         return ResponseEntity.ok().body(new TransformationResponse(
             0,
             transformation.getState().name(),
@@ -121,10 +162,26 @@ public class TransformationController {
     }
 
     /**
-     * Creates a new transformation for the given platform and csar <p> Response Codes: 200 - Creation was sucessfull
-     * 400 - This csar already has a transformation for this platform 404 - Csar not found or the platform does not
-     * exist <p> Response Content Types for Code: 200 - (application/hal+json) 400 - (application/hal+json), standard
-     * error response 404 - (application/hal+json), standard error response
+     * Creates a new transformation for the given platform and csar <p> 
+     * <p>
+     * Accessed with http call <code>PUT or POST /csars/{csar}/transformatons/{platform}/create</code>
+     * <table summary="">
+     *      <tr>
+     *          <td>HTTP-Code</td>
+     *          <td>Mime-Type</td>
+     *          <td>Description (Returned if)</td>
+     *      </tr>
+     *      <tr>
+     *          <td>200</td>
+     *          <td>application/hal+json</td>
+     *          <td>Returns a empty body if the transformation has been created</td>
+     *      </tr>
+     *      <tr>
+     *          <td>404</td>
+     *          <td>application/json</td>
+     *          <td>Returns a error message if the csar is not found or if the given platform name is not found (see returned error message for details)</td>
+     *      </tr>
+     * </table>
      */
     @RequestMapping(
         path = "/{platform}/create",
@@ -137,9 +194,6 @@ public class TransformationController {
     ) {
         log.info("Creating transformation for csar '{}' on '{}'", name, platform);
         Csar csar = findCsarByName(name);
-        if (csar == null) {
-            throw new CsarNotFoundException();
-        }
         //Return bad Request if a transformation for this platform is already present
         if (csar.getTransformations().get(platform) != null) {
             throw new TransformationAlreadyPresentException();
@@ -149,20 +203,87 @@ public class TransformationController {
         if (p == null) {
             throw new PlatformNotFoundException();
         }
-        Transformation transformation = null;
-        transformation = transformationService.createTransformation(csar, p);
-        if (transformation.getState() == TransformationState.CREATED) {
-            //TODO Replace with start query
-            transformationService.startTransformation(csar.getTransformations().get(platform));
-        }
+        Transformation transformation = transformationService.createTransformation(csar, p);
+        
+//        if (transformation.getState() == TransformationState.READY) {
+//            //TODO Replace with start query
+//            transformationService.startTransformation(csar.getTransformations().get(platform));
+//        }
         return ResponseEntity.ok().build();
     }
 
     /**
-     * Deletes a transformation. If it is still running, the job will be canceled! <p> Response Codes: 200 - Operation
-     * was Performed Sucessfuly 404 - Csar not found, the platform does not exist or no transformation for the specific
-     * platform was found for this csar 500 - Deletion has failed <p> Response Content Types for Code: 200 - Empty body
-     * 404 - (application/hal+json), standard error response 500 - Empty body
+     * This Mapping starts a transformation
+     * <p>
+     * Accessed with http call <code>GET /csars/{csar}/transformatons/{platform}/start</code>
+     * <table summary="">
+     *      <tr>
+     *          <td>HTTP-Code</td>
+     *          <td>Mime-Type</td>
+     *          <td>Description (Returned if)</td>
+     *      </tr>
+     *      <tr>
+     *          <td>200</td>
+     *          <td>application/hal+json</td>
+     *          <td>Returns a empty body if the transformation has been started</td>
+     *      </tr>
+     *      <tr>
+     *          <td>400</td>
+     *          <td>application/json</td>
+     *          <td>Returned if the transformation is not in a valid state (Required Properties missing, Already running/Done) to set properties</td>
+     *      </tr>
+     *      <tr>
+     *          <td>404</td>
+     *          <td>application/json</td>
+     *          <td>Returns a error message if the csar is not found or if the csar does not have a transformation for the givenname (see returned error message for details)</td>
+     *      </tr>
+     * </table>
+     */
+    @RequestMapping(
+        path = "/{platform}/start",
+        method = RequestMethod.POST,
+        produces = "application/hal+json"
+    )
+    public ResponseEntity startTransformation(
+        @PathVariable(name = "csarName") String name,
+        @PathVariable(name = "platform") String platform
+    ) {
+        log.info("Starting transformation for csar '{}' on '{}'", name, platform);
+        Csar csar = findCsarByName(name);
+        Transformation transformation = findTransformationByPlatform(csar,platform);
+        if (transformationService.startTransformation(transformation)) {
+            return ResponseEntity.ok().build();
+        } else {
+            throw new IllegalTransformationStateException("Transformation could not start because" +
+                " its not in a valid state to start.");
+        }
+    }
+    
+    /**
+     * Deletes a transformation. If it is still running, this request is ignored (returning 400)
+     * Accessed with http call <code>DELETE /csars/{csar}/transformatons/{platform}/delete</code>
+     * <table summary="">
+     *      <tr>
+     *          <td>HTTP-Code</td>
+     *          <td>Mime-Type</td>
+     *          <td>Description (Returned if)</td>
+     *      </tr>
+     *      <tr>
+     *          <td>200</td>
+     *          <td>application/hal+json</td>
+     *          <td>Returns a Empty body if the deletion was sucessful</td>
+     *      </tr>
+     *      <tr>
+     *          <td>400</td>
+     *          <td>application/hal+json</td>
+     *          <td>Returns a empty body if the transformation cannot be deleted (if its still running)</td>
+     *      </tr>     
+     *      <tr>
+     *          <td>404</td>
+     *          <td>application/json</td>
+     *          <td>Returns a error message if the csar is not found or if the csar does not have a transformation for the given name (see returned error message for details)</td>
+     *      </tr>
+     * </table>          
      */
     @RequestMapping(
         path = "/{platform}/delete",
@@ -174,28 +295,39 @@ public class TransformationController {
         @PathVariable(name = "platform") String platform
     ) {
         Csar csar = findCsarByName(name);
-        if (csar == null) {
-            throw new CsarNotFoundException();
-        }
-        Transformation transformation = csar.getTransformations().get(platform);
-        if (transformation == null) {
-            throw new TransformationNotFoundException();
-        }
+        Transformation transformation = findTransformationByPlatform(csar,platform);
+        
         if (transformationService.deleteTransformation(transformation)) {
             // return 200 if the deletion was sucessful
             return ResponseEntity.ok().build();
         } else {
             // return 500 if the deletion failed
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.status(400).build();
         }
     }
 
     /**
      * Returns the logs from a given start index to the current end of the log file. If the start index is higher then
-     * the current end index, a empty list is returned! <p> Response Codes: 200 - Operation was Performed Sucessfuly 404
-     * - Csar not found, the platform does not exist or no transformation for the specific platform was found for this
-     * csar <p> Response Content Types for Code: 200 - application/hal+json 404 - (application/hal+json), standard error
-     * response
+     * the current end index, a empty list is returned! The start parameter is a URL encoded parameter (<code>?start=0</code>)
+     * <p>
+     * Accessed with http call <code>GET /csars/{csar}/transformatons/{platform}/logs</code>
+     * <table summary="">
+     *      <tr>
+     *          <td>HTTP-Code</td>
+     *          <td>Mime-Type</td>
+     *          <td>Description (Returned if)</td>
+     *      </tr>
+     *      <tr>
+     *          <td>200</td>
+     *          <td>application/hal+json</td>
+     *          <td>Returns a Json object containing the desired part of the log for the transformation</td>
+     *      </tr>
+     *      <tr>
+     *          <td>404</td>
+     *          <td>application/json</td>
+     *          <td>Returns a error message if the csar is not found or if the csar does not have a transformation for the given name (see returned error message for details)</td>
+     *      </tr>
+     * </table>       
      */
     @RequestMapping(
         path = "/{platform}/logs",
@@ -208,13 +340,7 @@ public class TransformationController {
         @RequestParam(name = "start", required = false, defaultValue = "0") Long start
     ) {
         Csar csar = findCsarByName(name);
-        if (csar == null) {
-            throw new CsarNotFoundException();
-        }
-        Transformation transformation = csar.getTransformations().get(platform);
-        if (transformation == null) {
-            throw new TransformationNotFoundException();
-        }
+        Transformation transformation = findTransformationByPlatform(csar,platform);
         Log log = transformation.getLog();
         List<LogEntry> entries = log.getLogEntries(Math.toIntExact(start));
         return ResponseEntity.ok().body(new LogResponse(
@@ -227,10 +353,31 @@ public class TransformationController {
     }
 
     /**
-     * Returns the URL to download the target Artifact <p> Response Codes: 200 - Operation was Performed Sucessfuly 404
-     * - Csar not found, 400 - Transformation has not finished yet the platform does not exist or no transformation for
-     * the specific platform was found for this csar <p> Response Content Types for Code: 200 - application/hal+json 404
-     * - (application/hal+json), standard error response 400 - (application/hal+json), standard error response
+     * Returns the URL to download the target Artifact (Wrapped in json)<p>
+     * <p>
+     * Accessed with http call <code>GET /csars/{csar}/transformatons/{platform}/artifacts</code>
+     * <table summary="">
+     *      <tr>
+     *          <td>HTTP-Code</td>
+     *          <td>Mime-Type</td>
+     *          <td>Description (Returned if)</td>
+     *      </tr>
+     *      <tr>
+     *          <td>200</td>
+     *          <td>application/hal+json</td>
+     *          <td>Returns a Json object containing the download url for the artifact</td>
+     *      </tr>
+     *      <tr>
+     *          <td>400</td>
+     *          <td>application/json</td>
+     *          <td>Returned if the transformation is not in a valid state (has to be in DONE or ERROR) to set properties</td>
+     *      </tr>
+     *      <tr>
+     *          <td>404</td>
+     *          <td>application/json</td>
+     *          <td>Returns a error message if the csar is not found or if the csar does not have a transformation for the given name (see returned error message for details)</td>
+     *      </tr>
+     * </table>     
      */
     @RequestMapping(
         path = "/{platform}/artifact",
@@ -242,13 +389,7 @@ public class TransformationController {
         @PathVariable(name = "platform") String platform
     ) {
         Csar csar = findCsarByName(name);
-        if (csar == null) {
-            throw new CsarNotFoundException();
-        }
-        Transformation transformation = csar.getTransformations().get(platform);
-        if (transformation == null) {
-            throw new TransformationNotFoundException();
-        }
+        Transformation transformation = findTransformationByPlatform(csar,platform);
         TargetArtifact artifact = transformation.getTargetArtifact();
         if (artifact == null) {
             throw new IllegalTransformationStateException("The transformation has not finished yet!");
@@ -257,12 +398,26 @@ public class TransformationController {
     }
 
     /**
-     * Returns a list of properties that have to be entered in order for the transformator to proceed with the
-     * transformation This only happens, if the transfomation is in the "INPUT_REUQIRED" state otherwise this will
-     * return with error code 400 <p> Response Codes: 200 - Operation was Performed Sucessfuly 400 - The Transformation
-     * is not in the INPUT_REQUIRED State 404 - Csar not found, the platform does not exist, or no transformation for
-     * the specific platform was found for this csar <p> Response Content Types for Code: 200 - application/hal+json 400
-     * - (application/hal+json), standard error response 404 - (application/hal+json), standard error response
+     * Returns a list of properties (key-value pairs) that might have to be set (if they are required) in order to start
+     * the transformation <p>
+     * Acessed with http call <code>GET /csars/{csar}/transformatons/{platform}/properties</code>
+     * <table summary="">
+     *      <tr>
+     *          <td>HTTP-Code</td>
+     *          <td>Mime-Type</td>
+     *          <td>Description (Returned if)</td>
+     *      </tr>
+     *      <tr>
+     *          <td>200</td>
+     *          <td>application/hal+json</td>
+     *          <td>Returned with content body (See samples.md) if the operation was sucessful</td>
+     *      </tr>
+     *      <tr>
+     *          <td>404</td>
+     *          <td>application/json</td>
+     *          <td>Returns a error message if the csar is not found or if the csar does not have a transformation for the given name (see returned error message for details)</td>
+     *      </tr>
+     * </table>
      */
     @RequestMapping(
         path = "/{platform}/properties",
@@ -274,18 +429,17 @@ public class TransformationController {
         @PathVariable(name = "platform") String platform
     ) {
         Csar csar = findCsarByName(name);
-        if (csar == null) {
-            throw new CsarNotFoundException();
-        }
-        Transformation transformation = csar.getTransformations().get(platform);
-        checkTransformationsForProperties(transformation);
+        Transformation transformation = findTransformationByPlatform(csar,platform);
+        checkTransformationsForProperties(transformation, true);
         List<PropertyWrap> propertyWrapList = new ArrayList<>();
         //TODO add filtering depending on the transformation state (i.e. Transforming, Deploying...)
+        PropertyInstance instance = transformation.getProperties();
         for (Property property : transformation.getProperties().getPropertySchema()) {
             propertyWrapList.add(new PropertyWrap(
                     property.getKey(),
                     property.getType().getTypeName(),
                     property.getDescription(),
+                    instance.getPropertyValues().get(property.getKey()),
                     property.isRequired()
                 )
             );
@@ -294,15 +448,31 @@ public class TransformationController {
     }
 
     /**
-     * This operation is used to "enter" the required inputs for this a json body, containing the values defined by the
-     * user, gets POSTed or PUTed. Once received, the server checks the inputs if they are valid they get set. At the
-     * end a json Map is retuned. This map shows which values have been set an which ones have failed <p> Response
-     * Codes: 200 - Operation was Performed Sucessfuly (All properties that should have been set by this call have been
-     * set successfully) 406 - At least one property value was not set, because the key does not exist or the given
-     * value was invalid 400 - The Transformation is not in the INPUT_REQUIRED State 404 - Csar not found, the platform
-     * does not exist, or no transformation for the specific platform was found for this csar <p> Response Content Types
-     * for Code: 200 - application/json 400 - (application/json), standard error response 404 - (application/json),
-     * standard error response 406 - application/json
+     * This Mapping is used to post the inputs (properties) to the server. this will set the properties internally
+     * <p>
+     * Accessed with http call <code>PUT or POST /csars/{csar}/transformatons/{platform}/properties</code>
+     * <table summary="">
+     *      <tr>
+     *          <td>HTTP-Code</td>
+     *          <td>Mime-Type</td>
+     *          <td>Description (Returned if)</td>
+     *      </tr>
+     *      <tr>
+     *          <td>200</td>
+     *          <td>application/hal+json</td>
+     *          <td>Returns a empty body if all required properties have been set</td>
+     *      </tr>
+     *      <tr>
+     *          <td>400</td>
+     *          <td>application/json</td>
+     *          <td>Returned if the transformation is not in a valid state (has to be in INPUT_REQUIRED) to set properties</td>
+     *      </tr>
+     *      <tr>
+     *          <td>404</td>
+     *          <td>application/json</td>
+     *          <td>Returns a error message if the csar is not found or if the csar does not have a transformation for the given name (see returned error message for details)</td>
+     *      </tr>
+     * </table>
      */
     @RequestMapping(
         path = "/{platform}/properties",
@@ -315,11 +485,8 @@ public class TransformationController {
         @RequestBody SetPropertiesRequest setPropertiesRequest
     ) {
         Csar csar = findCsarByName(name);
-        if (csar == null) {
-            throw new CsarNotFoundException();
-        }
-        Transformation transformation = csar.getTransformations().get(platform);
-        checkTransformationsForProperties(transformation);
+        Transformation transformation = findTransformationByPlatform(csar,platform);
+        checkTransformationsForProperties(transformation, false);
         Map<String, Boolean> sucesses = new HashMap<>();
         boolean somethingFailed = false;
         //Set The Properties and check their validity
@@ -333,8 +500,15 @@ public class TransformationController {
             }
         }
         //Return the result (with code 200 if all inputs were valid and 400 if at least 1 was invalid)
+//        PropertyInstance instance = transformation.getProperties();
+//        //TODO if other requirement types get used, this needs a change!
+//        //Change state of the transformation to show the user that all required properties have been set
+//        if(instance.allRequiredPropertiesSet(RequirementType.TRANSFORMATION)) {
+//            //TODO Maybe a different method to change the state is needed!
+//            transformation.setState(TransformationState.READY);
+//        }
         if (!somethingFailed) {
-            return ResponseEntity.ok(new SetPropertiesResponse(sucesses));
+            return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(new SetPropertiesResponse(sucesses));
         }
@@ -344,15 +518,34 @@ public class TransformationController {
      * Checks if the given transformation exists and is in the required state otherwise a
      * TransformationNotFoundException or IllegalTransformationsStateException is thrown
      */
-    private void checkTransformationsForProperties(Transformation transformation) {
+    private void checkTransformationsForProperties(Transformation transformation, boolean isGetProps) {
         if (transformation == null) {
             throw new TransformationNotFoundException();
-        } else if (transformation.getState() != TransformationState.INPUT_REQUIRED) {
+        } else if (transformation.getState() != TransformationState.INPUT_REQUIRED && !isGetProps) {
             throw new IllegalTransformationStateException("The transformation is not in the INPUT_REQUIRED state");
         }
     }
 
+    /**
+     * Uses the csar service to find the csar instance (and handles error management)
+     */
     private Csar findCsarByName(String name) {
-        return csarService.getCsar(name);
+        Csar csar = csarService.getCsar(name);
+        if(csar == null) {
+            throw new CsarNotFoundException("No Csar with name '"+name+"# found!");
+        }
+        return csar;
+    }
+
+    /**
+     * Uses the csar to find the transformation instance (and handles error management)
+     */
+    private Transformation findTransformationByPlatform(Csar csar, String platform) {
+        Transformation transformation = csar.getTransformations().get(platform);
+        if(transformation == null) {
+            throw new TransformationNotFoundException("The Csar '"+csar.getIdentifier()+"' does not have " +
+                "a transformaiton for the platform '"+platform+"'.");
+        }
+        return transformation;
     }
 }

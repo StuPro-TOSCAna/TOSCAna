@@ -1,16 +1,15 @@
 package org.opentosca.toscana.core.dummy;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.opentosca.toscana.core.plugin.PluginService;
 import org.opentosca.toscana.core.plugin.TransformationPlugin;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.core.transformation.properties.PropertyType;
-import org.opentosca.toscana.core.transformation.properties.RequirementType;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Mock Platform provider to be used in order to test Csar Controller and Transformation Controller Once integration
@@ -29,7 +28,7 @@ public class DummyPlatformService implements PluginService {
         for (int i = 0; i < 5; i++) {
             HashSet<Property> properties = new HashSet<>();
             for (PropertyType type : PropertyType.values()) {
-                properties.add(new Property(type.getTypeName() + "_property", type, RequirementType.NEVER));
+                properties.add(new Property(type.getTypeName() + "_property", type));
             }
             platforms.add(new Platform("p-" + chars[i], "platform-" + (i + 1), properties));
         }

@@ -20,7 +20,7 @@ class TransformationImpl implements Transformation {
     private final Platform targetPlatform;
     private final Log log;
     private final PropertyInstance properties;
-    private TransformationState state = TransformationState.CREATED;
+    private TransformationState state = TransformationState.READY;
     private TargetArtifact targetArtifact;
 
     /**
@@ -40,12 +40,7 @@ class TransformationImpl implements Transformation {
         properties.addAll(targetPlatform.getProperties());
 
         //Create property instance
-        this.properties = new PropertyInstance(properties);
-
-        //Check if the property list is empty
-        if (!properties.isEmpty()) {
-            state = TransformationState.INPUT_REQUIRED;
-        }
+        this.properties = new PropertyInstance(properties,this );
     }
 
     @Override

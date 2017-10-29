@@ -10,9 +10,9 @@ public interface TOSCAnaUploadInterface {
     Call<ResponseBody> getStatus();
 
     @Multipart
-    @POST("csars/{name}")
+    @POST("csars/{checkStateNoPropsSet}")
     Call<ResponseBody> upload(
         @Part MultipartBody.Part body,
-        @Path("name") String name
+        @Path("checkStateNoPropsSet") String name
     );
 }

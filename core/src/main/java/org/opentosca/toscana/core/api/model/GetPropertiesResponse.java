@@ -42,17 +42,20 @@ public class GetPropertiesResponse extends ResourceSupport {
         private String type;
         private String description;
         private boolean required;
+        private String value;
 
         public PropertyWrap(
             @JsonProperty("key") String key,
             @JsonProperty("type") String type,
             @JsonProperty("description") String description,
+            @JsonProperty("value") String value,
             @JsonProperty("required") boolean required
         ) {
             this.key = key;
             this.type = type;
             this.description = description;
             this.required = required;
+            this.value = value;
         }
 
         @JsonProperty("key")
@@ -73,6 +76,11 @@ public class GetPropertiesResponse extends ResourceSupport {
         @JsonProperty("required")
         public boolean isRequired() {
             return required;
+        }
+
+        @JsonProperty("value")
+        public String getValue() {
+            return value;
         }
     }
 }
