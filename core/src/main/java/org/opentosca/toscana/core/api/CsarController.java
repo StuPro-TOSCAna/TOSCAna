@@ -124,7 +124,7 @@ public class CsarController {
                 throw new CsarNameAlreadyUsedException();
             }
             return ResponseEntity.ok().build();
-        } catch (InvalidCsarException e) {
+        } catch (InvalidCsarException | RuntimeException e) {
             throw e;
         } catch (Exception e) {
             log.error("Reading of uploaded CSAR Failed", e);

@@ -39,7 +39,7 @@ public class StatusServiceTest {
                 c.getTransformations().put("p-" + i,
                     new DummyTransformation(
                         new Platform("p", "p", new HashSet<>()),
-                        TransformationState.CREATED)
+                        TransformationState.READY)
                 );
             }
         }

@@ -19,7 +19,7 @@ public class DummyTransformation implements Transformation {
 
     public DummyTransformation(Platform platform) {
         this.platform = platform;
-        this.properties = new PropertyInstance(platform.properties);
+        this.properties = new PropertyInstance(platform.properties, this);
     }
 
     public DummyTransformation(Platform platform, TransformationState s) {

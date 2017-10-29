@@ -7,12 +7,12 @@ import org.mockito.Mock;
 
 import org.opentosca.toscana.core.BaseJUnitTest;
 import org.opentosca.toscana.core.dummy.DummyCsar;
+import org.opentosca.toscana.core.dummy.DummyLog;
 import org.opentosca.toscana.core.testutils.CategoryAwareJUnitRunner;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.core.transformation.properties.PropertyType;
-import org.opentosca.toscana.core.transformation.properties.RequirementType;
 
 import java.io.File;
 import java.util.HashSet;
@@ -37,14 +37,10 @@ public class TransformationPropertyHandlingTest extends BaseJUnitTest {
                 new Property(
                     "prop-" + i,
                     PropertyType.UNSIGNED_INTEGER,
-                    RequirementType.TRANSFORMATION,
                     "No real Description",
                     i < 5 //Only mark the first 5 properties as required
                 )
             );
-        }
-        for (int i = 0; i < 10; i++) {
-            props.add(new Property("prop-deploy-" + i, PropertyType.UNSIGNED_INTEGER, RequirementType.DEPLOYMENT));
         }
         Platform p = new Platform("test", "Test Platform", props);
         transformation = new TransformationImpl(csar, p, log);
@@ -76,7 +72,7 @@ public class TransformationPropertyHandlingTest extends BaseJUnitTest {
         for (int i = 0; i < 9; i++) {
             transformation.setProperty("prop-" + i, "1");
         }
-        assertFalse(transformation.allPropertiesSet(RequirementType.TRANSFORMATION));
+        assertFalse(transformation.allPropertiesSet());
     }
 
     @Test
@@ -84,7 +80,7 @@ public class TransformationPropertyHandlingTest extends BaseJUnitTest {
         for (int i = 0; i < 10; i++) {
             transformation.setProperty("prop-" + i, "1");
         }
-        assertTrue(transformation.allPropertiesSet(RequirementType.TRANSFORMATION));
+        assertTrue(transformation.allPropertiesSet());
     }
 
     @Test
@@ -92,8 +88,8 @@ public class TransformationPropertyHandlingTest extends BaseJUnitTest {
         for (int i = 0; i < 5; i++) {
             transformation.setProperty("prop-" + i, "1");
         }
-        assertTrue(transformation.allRequiredPropertiesSet(RequirementType.TRANSFORMATION));
-        assertFalse(transformation.allPropertiesSet(RequirementType.TRANSFORMATION));
+        assertTrue(transformation.allRequiredPropertiesSet());
+        assertFalse(transformation.allPropertiesSet());
     }
 
     @Test
@@ -101,17 +97,15 @@ public class TransformationPropertyHandlingTest extends BaseJUnitTest {
         for (int i = 0; i < 4; i++) {
             transformation.setProperty("prop-" + i, "1");
         }
-        assertFalse(transformation.allRequiredPropertiesSet(RequirementType.TRANSFORMATION));
-        assertFalse(transformation.allPropertiesSet(RequirementType.TRANSFORMATION));
+        assertFalse(transformation.allRequiredPropertiesSet());
+        assertFalse(transformation.allPropertiesSet());
     }
 
     @Test
     public void checkEmptyProperties() throws Exception {
         DummyCsar csar = new DummyCsar("dummy");
-        this.transformation = new TransformationImpl(csar, new Platform("test", "test", new HashSet<>()), log); 
-        for (RequirementType type : RequirementType.values()) {
-            assertTrue(transformation.allRequiredPropertiesSet(type));
-            assertTrue(transformation.allPropertiesSet(type));
-        }
+        this.transformation = new TransformationImpl(csar, new Platform("test", "test", new HashSet<>()), new DummyLog());
+        assertTrue(transformation.allRequiredPropertiesSet());
+        assertTrue(transformation.allPropertiesSet());
     }
 }

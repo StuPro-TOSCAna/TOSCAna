@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.opentosca.toscana.core.transformation.Transformation;
+import org.opentosca.toscana.core.transformation.TransformationState;
+
 /**
  * This class represents the instance of properties. That means that this is storing the values that get assigned to the
  * defined properties
@@ -12,6 +15,7 @@ import java.util.Set;
 public class PropertyInstance {
     private Map<String, String> propertyValues;
     private Set<Property> properties;
+    private Transformation transformation;
 
     /**
      * Creates a new property instance with no set property values for the given list (set) of properties.
@@ -19,9 +23,15 @@ public class PropertyInstance {
      * @param properties the set of properties to create a property instance for. Is not allowed to be null, if no props
      *                   are needed add a empty set
      */
-    public PropertyInstance(Set<Property> properties) {
+    public PropertyInstance(Set<Property> properties,
+                            Transformation transformation) {
         this.propertyValues = new HashMap<>();
         this.properties = properties;
+        this.transformation = transformation;
+        //Set state to input required if there are required properties
+        if(properties.stream().anyMatch(Property::isRequired)) {
+            transformation.setState(TransformationState.INPUT_REQUIRED);
+        }
     }
 
     /**
@@ -38,14 +48,10 @@ public class PropertyInstance {
      *
      * @return true if all properties have been set and are valid, false otherwise
      */
-    public boolean allPropertiesSetForType(RequirementType type) {
-        return checkPropsSet(type, true);
+    public boolean allPropertiesSet() {
+        return checkPropsSet(true);
     }
-
-    private boolean isEqualRequirementType(RequirementType type, Property property) {
-        return property.getRequirementType() == type;
-    }
-
+    
     private boolean isPropertySet(Map<String, String> propInstance, Property property) {
         return propInstance.get(property.getKey()) == null;
     }
@@ -53,26 +59,23 @@ public class PropertyInstance {
     /**
      * Checks if all required properties are set and valid
      *
-     * @param type the requirement type to for which to check the properties
      * @return true if all required properties are set and valid
      */
-    public boolean allRequiredPropertiesSetForType(RequirementType type) {
-        return checkPropsSet(type, false);
+    public boolean allRequiredPropertiesSet() {
+        return checkPropsSet( false);
     }
 
     /**
      * Checks if properties are set for a specific requirement type
      *
-     * @param type     the requirement type to check for
      * @param allProps if this is false it will check if all required properties are set,
      *                 otherwise all properties have to be set
      * @return true if all Properties in the wanted scope are set and valid
      */
-    private boolean checkPropsSet(RequirementType type, boolean allProps) {
+    private boolean checkPropsSet(boolean allProps) {
         Map<String, String> propInstance = getPropertyValues();
         for (Property property : properties) {
-            if ((property.isRequired() || allProps) && isPropertySet(propInstance, property) &&
-                isEqualRequirementType(type, property)) {
+            if ((property.isRequired() || allProps) && isPropertySet(propInstance, property) ) {
                 return false;
             }
         }
@@ -85,6 +88,13 @@ public class PropertyInstance {
      * or if the entered value is invalid
      */
     public void setPropertyValue(String key, String value) {
+        setPropertyInternal(key, value);
+        if(allRequiredPropertiesSet() && transformation.getState() == TransformationState.INPUT_REQUIRED) {
+            transformation.setState(TransformationState.READY);
+        }
+    }
+
+    private void setPropertyInternal(String key, String value) {
         for (Property p : properties) {
             if (p.getKey().equals(key)) {
                 if (p.getType().validate(value)) {

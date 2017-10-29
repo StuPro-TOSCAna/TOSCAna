@@ -25,7 +25,7 @@ public class CsarFilesystemDaoTest extends BaseSpringTest {
 
     @Test
     public void create() throws Exception {
-        String identifier = "my-csar-name";
+        String identifier = "my-csar-checkStateNoPropsSet";
         File csarFile = TestCsars.CSAR_YAML_VALID_DOCKER_SIMPLETASK;
         InputStream csarStream = new FileInputStream(csarFile);
         csarDao.create(identifier, csarStream);

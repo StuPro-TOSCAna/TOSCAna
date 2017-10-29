@@ -3,6 +3,7 @@ package org.opentosca.toscana.core.transformation.properties;
 import java.util.Arrays;
 import java.util.Collection;
 
+import org.opentosca.toscana.core.BaseJUnitTest;
 import org.opentosca.toscana.core.transformation.properties.validators.BooleanValidator;
 import org.opentosca.toscana.core.transformation.properties.validators.FloatValidator;
 import org.opentosca.toscana.core.transformation.properties.validators.IntegerValidator;
@@ -16,7 +17,7 @@ import org.junit.runners.Parameterized;
 import static org.junit.Assert.assertSame;
 
 @RunWith(Parameterized.class)
-public class ValidatorTest {
+public class ValidatorTest extends BaseJUnitTest{
 
     private ValueValidator validator;
     private boolean accept;

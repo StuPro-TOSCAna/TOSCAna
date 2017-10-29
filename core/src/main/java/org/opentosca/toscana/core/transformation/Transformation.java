@@ -5,7 +5,6 @@ import org.opentosca.toscana.core.transformation.artifacts.TargetArtifact;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
-import org.opentosca.toscana.core.transformation.properties.RequirementType;
 
 public interface Transformation {
 
@@ -38,26 +37,23 @@ public interface Transformation {
     PropertyInstance getProperties();
 
     /**
-     * Checks if all Properties for the given Requirement type are set.
-     * <p>
-     * This is just a "shortcut" for <code>getProperties().allPropertiesSetForType(type)</code>
+     * Checks if all Properties for the given Requirement type are set. <p> This is just a "shortcut" for
+     * <code>getProperties().allPropertiesSet(type)</code>
      *
      * @return true if all properties have been set and are valid, false otherwise
      */
-    default boolean allPropertiesSet(RequirementType type) {
-        return getProperties().allPropertiesSetForType(type);
+    default boolean allPropertiesSet() {
+        return getProperties().allPropertiesSet();
     }
 
-
     /**
-     * Checks if all Properties for the given Requirement type are set.
-     * <p>
-     * This is just a "shortcut" for <code>getProperties().allRequiredPropertiesSetForType(type)</code>
+     * Checks if all Properties for the given Requirement type are set. <p> This is just a "shortcut" for
+     * <code>getProperties().allRequiredPropertiesSet(type)</code>
      *
      * @return true if all required properties have been set and are valid, false otherwise
      */
-    default boolean allRequiredPropertiesSet(RequirementType type) {
-        return getProperties().allRequiredPropertiesSetForType(type);
+    default boolean allRequiredPropertiesSet() {
+        return getProperties().allRequiredPropertiesSet();
     }
 
     /**

@@ -1,5 +1,11 @@
 package org.opentosca.toscana.core.transformation;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
 import org.opentosca.toscana.core.api.exceptions.PlatformNotFoundException;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarDao;
@@ -7,18 +13,12 @@ import org.opentosca.toscana.core.plugin.PluginService;
 import org.opentosca.toscana.core.transformation.artifacts.ArtifactService;
 import org.opentosca.toscana.core.transformation.execution.ExecutionTask;
 import org.opentosca.toscana.core.transformation.platform.Platform;
-import org.opentosca.toscana.core.transformation.properties.RequirementType;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 @Service
 public class TransformationServiceImpl implements TransformationService {
@@ -55,9 +55,9 @@ public class TransformationServiceImpl implements TransformationService {
     public boolean startTransformation(Transformation transformation) {
         //Only start the transformation if the input has been validated or the 
         //transformation does not need any addidtional properties
-        if (transformation.getState() == TransformationState.CREATED
+        if (transformation.getState() == TransformationState.READY
             || (transformation.getState() == TransformationState.INPUT_REQUIRED
-            && transformation.allRequiredPropertiesSet(RequirementType.TRANSFORMATION))) {
+            && transformation.allRequiredPropertiesSet())) {
             Future<?> taskFuture = executor.submit(
                 new ExecutionTask(
                     transformation,
