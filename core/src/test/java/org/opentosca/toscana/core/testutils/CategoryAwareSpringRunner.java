@@ -27,7 +27,6 @@ public class CategoryAwareSpringRunner extends SpringJUnit4ClassRunner {
             child.getAnnotation(TestCategory.class);
         return (eci != null && !TestCategories.getCurrentTestMode().shouldBeExecuted(eci.value()))
             || super.isTestMethodIgnored(child);
-
     }
 
     @Override

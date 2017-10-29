@@ -12,12 +12,10 @@ import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.core.transformation.properties.PropertyType;
 
 /**
- * Mock Platform provider to be used in order to test Csar Controller and Transformation Controller Once integration
- * with the rest of the core is done this will be moved in the test package
+ Mock Platform provider to be used in order to test Csar Controller and Transformation Controller Once integration
+ with the rest of the core is done this will be moved in the test package
  */
 public class DummyPlatformService implements PluginService {
-
-    private final char[] chars = "abcdefghijklmnopqrstuvwxyz".toCharArray();
 
     private Set<Platform> platforms = new HashSet<>();
     private List<TransformationPlugin> plugins = new ArrayList<>();
@@ -30,6 +28,7 @@ public class DummyPlatformService implements PluginService {
             for (PropertyType type : PropertyType.values()) {
                 properties.add(new Property(type.getTypeName() + "_property", type));
             }
+            char[] chars = "abcdefghijklmnopqrstuvwxyz".toCharArray();
             platforms.add(new Platform("p-" + chars[i], "platform-" + (i + 1), properties));
         }
         this.platforms = platforms;

@@ -1,7 +1,12 @@
 package org.opentosca.toscana.core.transformation;
 
-import org.junit.Before;
-import org.junit.Test;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 import org.opentosca.toscana.core.BaseSpringTest;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarDao;
@@ -10,18 +15,15 @@ import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.testdata.TestPlugins;
 import org.opentosca.toscana.core.transformation.logging.Log;
 
+import org.junit.Before;
+import org.junit.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class TransformationFilesystemDaoTest extends BaseSpringTest {
 
@@ -61,7 +63,7 @@ public class TransformationFilesystemDaoTest extends BaseSpringTest {
     }
 
     /**
-     * When creating a new transformation, existing files in the transformation directory must be deleted
+     When creating a new transformation, existing files in the transformation directory must be deleted
      */
     @Test
     public void createDeletesOldFilesAndCreatesBlankDir() throws Exception {
@@ -77,7 +79,7 @@ public class TransformationFilesystemDaoTest extends BaseSpringTest {
     }
 
     /**
-     * tests whether all files in the csar's transformation directory are removed upon transformation deletion
+     tests whether all files in the csar's transformation directory are removed upon transformation deletion
      */
     @Test
     public void delete() throws Exception {
@@ -119,8 +121,8 @@ public class TransformationFilesystemDaoTest extends BaseSpringTest {
     }
 
     /**
-     * When reading a transformation from disk which has an unknown platform, application shall not crash but remove the
-     * illegal transformation directory from disk.
+     When reading a transformation from disk which has an unknown platform, application shall not crash but remove the
+     illegal transformation directory from disk.
      */
     @Test
     public void readTransformationFromDiskWithIllegalPlatform() throws IOException {
@@ -132,7 +134,7 @@ public class TransformationFilesystemDaoTest extends BaseSpringTest {
     }
 
     /**
-     * Creates some files in given dir
+     Creates some files in given dir
      */
     private List<File> createRandomFiles(File dir) throws IOException {
         dir.mkdir();

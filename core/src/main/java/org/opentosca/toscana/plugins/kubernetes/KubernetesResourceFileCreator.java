@@ -66,7 +66,6 @@ public class KubernetesResourceFileCreator {
     }
 
     public String toYaml(HasMetadata obj) throws JsonProcessingException {
-        String result = SerializationUtils.dumpAsYaml(obj);
-        return result;
+        return SerializationUtils.dumpAsYaml(obj);
     }
 }

@@ -17,7 +17,7 @@ import org.junit.runners.Parameterized;
 import static org.junit.Assert.assertSame;
 
 @RunWith(Parameterized.class)
-public class ValidatorTest extends BaseJUnitTest{
+public class ValidatorTest extends BaseJUnitTest {
 
     private ValueValidator validator;
     private boolean accept;
@@ -32,13 +32,13 @@ public class ValidatorTest extends BaseJUnitTest{
     @Parameterized.Parameters(name = "{index}: {0} of {2}")
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][]{
-            {new StringValidator(), true, "Hallo Welt"},
-            {new IntegerValidator(false), false, "Hallo Welt"},
+            {new StringValidator(), true, "Hello world"},
+            {new IntegerValidator(false), false, "Hello world"},
             {new IntegerValidator(false), true, "123456"},
             {new IntegerValidator(true), false, "-1"},
             {new IntegerValidator(true), true, "0"},
             {new IntegerValidator(true), true, "100"},
-            {new FloatValidator(), false, "Keine Zahl"},
+            {new FloatValidator(), false, "Not a number"},
             {new FloatValidator(), true, "10"},
             {new FloatValidator(), true, "10.1"},
             {new BooleanValidator(), true, "true"},

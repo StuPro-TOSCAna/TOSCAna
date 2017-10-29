@@ -1,7 +1,5 @@
 package org.opentosca.toscana.core;
 
-import java.util.List;
-
 import org.opentosca.toscana.core.csar.CsarDao;
 import org.opentosca.toscana.core.csar.CsarFilesystemDao;
 import org.opentosca.toscana.core.csar.CsarService;
@@ -10,7 +8,6 @@ import org.opentosca.toscana.core.parse.CsarParseService;
 import org.opentosca.toscana.core.parse.CsarParseServiceImpl;
 import org.opentosca.toscana.core.plugin.PluginService;
 import org.opentosca.toscana.core.plugin.PluginServiceImpl;
-import org.opentosca.toscana.core.plugin.TransformationPlugin;
 import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.testdata.TestPlugins;
 import org.opentosca.toscana.core.testdata.TestTransformationContext;
@@ -31,20 +28,11 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
 
+@SuppressWarnings("UnnecessaryLocalVariable")
 @Configuration
 @PropertySource("classpath:application.yml")
 @Profile("!controller_test")
 public class TestCoreConfiguration extends CoreConfiguration {
-
-    private List<TransformationPlugin> plugins;
-
-    public TestCoreConfiguration() {
-        this(TestPlugins.PLUGINS);
-    }
-
-    public TestCoreConfiguration(List<TransformationPlugin> plugins) {
-        this.plugins = plugins;
-    }
 
     @Bean
     public ArtifactService artifactManagementService(Preferences preferences, TransformationDao transformationDao) {
@@ -57,8 +45,8 @@ public class TestCoreConfiguration extends CoreConfiguration {
     }
 
     @Bean
-    public TestCsars testCsars(CsarDao dao) {
-        TestCsars bean = new TestCsars(dao);
+    public TestCsars testCsars() {
+        TestCsars bean = new TestCsars();
         return bean;
     }
 

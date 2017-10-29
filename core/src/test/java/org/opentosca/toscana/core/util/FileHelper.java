@@ -1,10 +1,10 @@
 package org.opentosca.toscana.core.util;
 
-import org.apache.commons.io.Charsets;
-import org.apache.commons.io.FileUtils;
-
 import java.io.File;
 import java.io.IOException;
+
+import org.apache.commons.io.Charsets;
+import org.apache.commons.io.FileUtils;
 
 import static org.junit.Assert.fail;
 

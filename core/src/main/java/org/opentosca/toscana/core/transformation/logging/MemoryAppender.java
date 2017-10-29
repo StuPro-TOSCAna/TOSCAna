@@ -1,6 +1,5 @@
 package org.opentosca.toscana.core.transformation.logging;
 
-import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.IThrowableProxy;
@@ -9,7 +8,7 @@ import ch.qos.logback.core.AppenderBase;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class implements the object (instance) specific logging functionality for transformations and deployments
+ This class implements the object (instance) specific logging functionality for transformations and deployments
  */
 class MemoryAppender extends AppenderBase<ILoggingEvent> {
 

@@ -9,7 +9,7 @@
     - problem with old version: if user wants to transform a specific csar to multiple platforms, he has to upload the same csar several times (a new transformation resource gets created for every platform)
     - solution: new hierarchy (/toscamodels/{id}/csar and /toscamodels/{id}/transformations, dropping /transformations)
         - the same toscamodel can have several transformations
-        - this hierarchy is much more taylored to our problem than the old one
+        - this hierarchy is much more tailored to our problem than the old one
 - omit the message property of transformation status. If needed, this information should be taken out of the logs
 - reworked the process of log transmission, as the old mechanism was neither non-redundant nor gapless
 - removed the notes section: whether the server computes the transformations sequentially or in parallel doesn't matter for api design (though i'd opt for the parallel approach)

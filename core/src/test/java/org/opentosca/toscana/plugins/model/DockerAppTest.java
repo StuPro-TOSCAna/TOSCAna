@@ -1,36 +1,27 @@
 package org.opentosca.toscana.plugins.model;
 
-import org.eclipse.winery.model.tosca.yaml.TServiceTemplate;
-import org.junit.Before;
-import org.junit.Test;
+import java.io.FileNotFoundException;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.opentosca.toscana.core.BaseSpringTest;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.parse.CsarParseService;
 import org.opentosca.toscana.core.parse.InvalidCsarException;
 import org.opentosca.toscana.core.testdata.TestCsars;
-import org.opentosca.toscana.core.testutils.TestCategories;
-import org.opentosca.toscana.core.testutils.TestCategory;
-import org.opentosca.toscana.plugins.kubernetes.KubernetesPlugin;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.FileNotFoundException;
-import java.util.LinkedList;
-import java.util.List;
+import org.eclipse.winery.model.tosca.yaml.TServiceTemplate;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.Assert.assertArrayEquals;
 
 public class DockerAppTest extends BaseSpringTest {
-    static TServiceTemplate tServiceTemplate;
-    static KubernetesPlugin plugin;
+    private TServiceTemplate tServiceTemplate;
     @Autowired
-    CsarParseService csarParser;
+    private CsarParseService csarParser;
     @Autowired
     private TestCsars testCsars;
-
-    @Before
-    public void setUp() {
-        plugin = new KubernetesPlugin();
-    }
 
     @Test
     public void validNodeTemplate() throws InvalidDockerAppException, FileNotFoundException, InvalidCsarException {
@@ -60,5 +51,4 @@ public class DockerAppTest extends BaseSpringTest {
     }
 
     // TODO add test for missing attributes
-
 }

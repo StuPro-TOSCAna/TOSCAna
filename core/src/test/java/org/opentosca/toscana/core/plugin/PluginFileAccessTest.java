@@ -1,9 +1,10 @@
 package org.opentosca.toscana.core.plugin;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.tika.io.IOUtils;
-import org.junit.Before;
-import org.junit.Test;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.opentosca.toscana.core.BaseSpringTest;
 import org.opentosca.toscana.core.api.exceptions.PlatformNotFoundException;
 import org.opentosca.toscana.core.csar.Csar;
@@ -13,19 +14,21 @@ import org.opentosca.toscana.core.testdata.TestPlugins;
 import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.TransformationDao;
 import org.opentosca.toscana.core.transformation.TransformationService;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.tika.io.IOUtils;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class PluginFileAccessTest extends BaseSpringTest {
 
     private PluginFileAccess access;
-    private Csar csar;
     private Transformation transformation;
     private File csarContentDir;
     private File transformationRootDir;
@@ -45,7 +48,7 @@ public class PluginFileAccessTest extends BaseSpringTest {
 
     @Before
     public void setUp() throws IOException, PlatformNotFoundException {
-        csar = testCsars.getCsar(TestCsars.CSAR_YAML_VALID_DOCKER_SIMPLETASK);
+        Csar csar = testCsars.getCsar(TestCsars.CSAR_YAML_VALID_DOCKER_SIMPLETASK);
         csarContentDir = csarDao.getContentDir(csar);
         transformation = transformationService.createTransformation(csar, TestPlugins.PLATFORM1);
         TestPlugins.createFakeTransformationsOnDisk(csarDao.getTransformationsDir(csar), TestPlugins.PLATFORMS);
@@ -53,14 +56,14 @@ public class PluginFileAccessTest extends BaseSpringTest {
         access = new PluginFileAccess(transformation, csarDao.getContentDir(csar), transformationDao.getRootDir(transformation));
         fileContent = "this is a test content";
         inputStream = IOUtils.toInputStream(fileContent, "UTF-8");
-        targetFilePath = "testfile";
+        targetFilePath = "testFile";
         targetFile = new File(transformationRootDir, targetFilePath);
     }
 
     @Test
     public void copyFile() throws Exception {
-        String filename = "testfile";
-        File file = new File(csarContentDir, "testfile");
+        String filename = "testFile";
+        File file = new File(csarContentDir, "testFile");
         file.createNewFile();
 
         File expectedFile = new File(transformationDao.getRootDir(transformation), filename);

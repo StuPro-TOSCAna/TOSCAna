@@ -13,11 +13,11 @@ public class Platform {
     public final Set<Property> properties;
 
     /**
-     * Creates a new platform.
-     *
-     * @param id         short identifier of platform. must match regex [a-z_-]+
-     * @param name       displayable name of platform. must not be an empty string
-     * @param properties the properties the platform requires.
+     Creates a new platform.
+
+     @param id         short identifier of platform. must match regex [a-z_-]+
+     @param name       displayable name of platform. must not be an empty string
+     @param properties the properties the platform requires.
      */
     public Platform(String id, String name, Set<Property> properties) {
         this.id = id;
@@ -30,18 +30,18 @@ public class Platform {
     }
 
     /**
-     * Creates a new platform. Used in case the platform does not require properties.
-     *
-     * @param id   short identifier of platform
-     * @param name displayable name of platform
-     * @see #Platform(String, String, Set<Property>)
+     Creates a new platform. Used in case the platform does not require properties.
+
+     @param id   short identifier of platform
+     @param name displayable name of platform
+     @see #Platform(String, String, Set)
      */
     public Platform(String id, String name) {
         this(id, name, new HashSet<>());
     }
 
     /**
-     * @return a list of properties which are necessary for a transformation to this platform.
+     @return a list of properties which are necessary for a transformation to this platform.
      */
     public Set<Property> getProperties() {
         return Collections.unmodifiableSet(properties);
