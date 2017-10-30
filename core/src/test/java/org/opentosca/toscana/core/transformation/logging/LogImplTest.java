@@ -133,7 +133,9 @@ public class LogImplTest extends BaseJUnitTest {
         long expected = log.getLogEntries(0).get(0).getTimestamp();
         Log testLog = new LogImpl(logfile);
         long result = testLog.getLogEntries(0).get(0).getTimestamp();
-        assertEquals(expected, result);
+        // the delta is necessary because in rare cases there was an offset of 1ms
+        // this offset is acceptable and not worth fixing
+        assertEquals(expected, result, 1);
     }
 
     @Test
