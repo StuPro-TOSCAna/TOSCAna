@@ -1,14 +1,18 @@
 package org.opentosca.toscana.plugins.k8s;
 
-import java.io.File;
-import java.io.IOException;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import org.opentosca.toscana.core.BaseJUnitTest;
+import org.opentosca.toscana.core.testutils.CategoryAwareJUnitRunner;
+import org.opentosca.toscana.core.testutils.TestCategories;
+import org.opentosca.toscana.core.testutils.TestCategory;
 import org.opentosca.toscana.core.util.FileHelper;
 import org.opentosca.toscana.plugins.kubernetes.KubernetesManualCreator;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import java.io.File;
+import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 

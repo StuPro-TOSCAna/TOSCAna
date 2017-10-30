@@ -1,12 +1,12 @@
 package org.opentosca.toscana.core.api.utils;
 
-import java.util.Map;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Map;
 
 import static org.junit.Assert.assertTrue;
 

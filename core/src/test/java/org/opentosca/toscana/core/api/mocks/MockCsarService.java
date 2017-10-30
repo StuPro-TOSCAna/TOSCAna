@@ -1,15 +1,15 @@
 package org.opentosca.toscana.core.api.mocks;
 
+import org.opentosca.toscana.core.api.utils.StreamUtils;
+import org.opentosca.toscana.core.csar.Csar;
+import org.opentosca.toscana.core.csar.CsarService;
+import org.opentosca.toscana.core.dummy.DummyCsar;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.opentosca.toscana.core.api.utils.StreamUtils;
-import org.opentosca.toscana.core.csar.Csar;
-import org.opentosca.toscana.core.csar.CsarService;
-import org.opentosca.toscana.core.dummy.DummyCsar;
 
 public class MockCsarService implements CsarService {
 

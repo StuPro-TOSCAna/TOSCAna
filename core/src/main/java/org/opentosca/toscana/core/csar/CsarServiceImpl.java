@@ -1,16 +1,16 @@
 package org.opentosca.toscana.core.csar;
 
-import java.io.InputStream;
-import java.util.List;
-
-import org.opentosca.toscana.core.parse.CsarParseService;
-import org.opentosca.toscana.core.parse.InvalidCsarException;
 
 import org.eclipse.winery.model.tosca.yaml.TServiceTemplate;
+import org.opentosca.toscana.core.parse.CsarParseService;
+import org.opentosca.toscana.core.parse.InvalidCsarException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.io.InputStream;
+import java.util.List;
 
 @Service
 public class CsarServiceImpl implements CsarService {

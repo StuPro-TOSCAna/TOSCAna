@@ -1,33 +1,28 @@
 package org.opentosca.toscana.core.util;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.*;
 import java.util.LinkedList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class ZipUtility {
 
     private final static Logger logger = LoggerFactory.getLogger(ZipUtility.class.getName());
     /**
-     Size of the buffer to read/access data
+     * Size of the buffer to read/access data
      */
     private static final int BUFFER_SIZE = 4096;
 
     /**
-     Extracts a ZipInputStream specified by the zipIn to a directory specified by destDirectory (will be created if
-     does not exists)
-
-     @param zipIn         ZipInputStream of zip archive
-     @param destDirectory target directory for unzipping
+     * Extracts a ZipInputStream specified by the zipIn to a directory specified by destDirectory (will be created if
+     * does not exists)
+     *
+     * @param zipIn         ZipInputStream of zip archive
+     * @param destDirectory target directory for unzipping
      */
     public static void unzip(ZipInputStream zipIn, String destDirectory) throws IOException {
         File destDir = new File(destDirectory);
@@ -51,7 +46,7 @@ public class ZipUtility {
     }
 
     /**
-     Extracts a zip entry (file entry)
+     * Extracts a zip entry (file entry)
      */
     private static void extractFile(ZipInputStream zipIn, String filePath) throws IOException {
         logger.debug("Extracting file: {}", filePath);
@@ -71,7 +66,7 @@ public class ZipUtility {
     }
 
     /**
-     Compresses given directory recursively to given output stream
+     * Compresses given directory recursively to given output stream
      */
     public static void compressDirectory(File directory, OutputStream output) throws IOException {
         logger.debug("Compressing Directory {}", directory.getAbsolutePath());

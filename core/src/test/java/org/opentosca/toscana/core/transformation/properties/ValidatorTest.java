@@ -17,7 +17,7 @@ import org.junit.runners.Parameterized;
 import static org.junit.Assert.assertSame;
 
 @RunWith(Parameterized.class)
-public class ValidatorTest extends BaseJUnitTest {
+public class ValidatorTest extends BaseJUnitTest{
 
     private ValueValidator validator;
     private boolean accept;

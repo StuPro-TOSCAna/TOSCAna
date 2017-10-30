@@ -19,7 +19,7 @@ public class PersistentAppenderTest extends BaseJUnitTest {
     private Logger logger;
 
     @Before
-    public void setUp() {
+    public void setup() {
         logfile = new File(tmpdir, "log");
     }
 
@@ -32,7 +32,7 @@ public class PersistentAppenderTest extends BaseJUnitTest {
         String result = FileUtils.readFileToString(logfile);
         assertTrue(result.contains(message1));
     }
-
+    
     @Test
     public void appenderWritesStackTracesToFile() throws IOException {
         log = new LogImpl(logfile);

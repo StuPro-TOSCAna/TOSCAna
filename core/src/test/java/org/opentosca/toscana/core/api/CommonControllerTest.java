@@ -1,14 +1,16 @@
 package org.opentosca.toscana.core.api;
 
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
 import org.opentosca.toscana.core.BaseTest;
 import org.opentosca.toscana.core.testutils.CategoryAwareSpringRunner;
 import org.opentosca.toscana.core.util.FileSystem;
 import org.opentosca.toscana.core.util.status.StatusService;
 import org.opentosca.toscana.core.util.status.SystemStatus;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -29,6 +31,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 )
 @ActiveProfiles("controller_test")
 public class CommonControllerTest extends BaseTest {
+
+    private static final Logger log = LoggerFactory.getLogger(CommonControllerTest.class);
 
     @Autowired
     private MockMvc mvc;
@@ -68,5 +72,6 @@ public class CommonControllerTest extends BaseTest {
             .andExpect(jsonPath("$.available_storage").value("100"))
             .andExpect(jsonPath("$._links.self.href").isString())
             .andReturn();
+
     }
 }

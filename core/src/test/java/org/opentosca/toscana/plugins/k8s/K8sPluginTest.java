@@ -1,23 +1,24 @@
 package org.opentosca.toscana.plugins.k8s;
 
-import java.io.FileNotFoundException;
-
+import org.eclipse.winery.model.tosca.yaml.TServiceTemplate;
+import org.junit.Before;
+import org.junit.Test;
 import org.opentosca.toscana.core.BaseSpringTest;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.parse.CsarParseService;
 import org.opentosca.toscana.core.parse.InvalidCsarException;
 import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.testdata.TestTransformationContext;
+import org.opentosca.toscana.core.testutils.TestCategories;
+import org.opentosca.toscana.core.testutils.TestCategory;
 import org.opentosca.toscana.core.util.Preferences;
 import org.opentosca.toscana.plugins.kubernetes.KubernetesPlugin;
 import org.opentosca.toscana.plugins.model.InvalidDockerAppException;
-
-import org.eclipse.winery.model.tosca.yaml.TServiceTemplate;
-import org.junit.Before;
-import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.io.FileNotFoundException;
 
 import static org.opentosca.toscana.core.testdata.TestCsars.CSAR_YAML_VALID_DOCKER_SIMPLETASK;
 

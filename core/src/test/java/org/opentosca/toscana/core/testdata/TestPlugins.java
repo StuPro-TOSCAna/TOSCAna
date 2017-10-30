@@ -1,18 +1,17 @@
 package org.opentosca.toscana.core.testdata;
 
-import java.io.File;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
+import org.assertj.core.util.Lists;
 import org.opentosca.toscana.core.dummy.DummyPlugin;
 import org.opentosca.toscana.core.dummy.ExecutionDummyPlugin;
 import org.opentosca.toscana.core.dummy.FileCreatingExceutionDummyPlugin;
 import org.opentosca.toscana.core.plugin.TransformationPlugin;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 
-import org.assertj.core.util.Lists;
+import java.io.File;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class TestPlugins {
 
@@ -61,10 +60,11 @@ public class TestPlugins {
     );
 
     /**
-     In given csarTransformationsDir, creates for every given target platform a fake transformation on disk <p>
-     Attention: Best is to use platforms which are supported by a plugin -- use TestPlugins.PLATFORMS
-
-     @param csarTransformationsDir the absolute path of {csarid}/transformations
+     * In given csarTransformationsDir, creates for every given target platform a fake transformation on disk
+     * <p>
+     * Attention: Best is to use platforms which are supported by a plugin -- use TestPlugins.PLATFORMS
+     *
+     * @param csarTransformationsDir the absolute path of {csarid}/transformations
      */
     public static void createFakeTransformationsOnDisk(File csarTransformationsDir, Set<Platform> targetPlatforms) {
         for (Platform platform : targetPlatforms) {

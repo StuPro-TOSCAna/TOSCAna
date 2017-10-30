@@ -1,21 +1,22 @@
 package org.opentosca.toscana.core.dummy;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.logging.LogEntry;
 
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.Logger;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-public class DummyLog implements Log {
+public class DummyLog implements Log{
 
     private List<LogEntry> entries = new ArrayList<>();
 
     public DummyLog() {
     }
+
 
     @Override
     public List<LogEntry> getLogEntries(int first, int last) {
@@ -42,9 +43,10 @@ public class DummyLog implements Log {
     public Logger getLogger(Class context) {
         return null;
     }
-
+    
     @Override
     public void addLogEntry(LogEntry e) {
         entries.add(e);
+
     }
 } 

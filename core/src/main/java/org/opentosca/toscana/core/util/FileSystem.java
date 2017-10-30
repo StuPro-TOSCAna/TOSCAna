@@ -1,9 +1,9 @@
 package org.opentosca.toscana.core.util;
 
-import java.io.File;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.io.File;
 
 @Service
 public class FileSystem {
@@ -16,7 +16,7 @@ public class FileSystem {
     }
 
     /**
-     Returns the (by the CSARS and targetArtifacts) used storage space in MB.
+     * Returns the (by the CSARS and targetArtifacts) used storage space in MB.
      */
     public long getUsedSpace() {
         File dir = preferences.getDataDir();
@@ -24,7 +24,7 @@ public class FileSystem {
     }
 
     /**
-     Returns the available storage space in MB.
+     * Returns the available storage space in MB.
      */
     public long getAvailableSpace() {
         File dataDir = preferences.getDataDir();
