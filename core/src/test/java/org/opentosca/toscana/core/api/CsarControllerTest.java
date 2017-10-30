@@ -34,8 +34,8 @@ public class CsarControllerTest extends BaseSpringTest {
     private static final Map<String, String> relations = new HashMap<>();
 
     static {
-        relations.put("self", "http://localhost/csars/%s");
-        relations.put("transformations", "http://localhost/csars/%s/transformations/");
+        relations.put("self", "http://localhost/api/csars/%s");
+        relations.put("transformations", "http://localhost/api/csars/%s/transformations/");
     }
 
     private CsarService service;
@@ -52,10 +52,10 @@ public class CsarControllerTest extends BaseSpringTest {
     @Test
     public void listCsars() throws Exception {
         ResultActions resultActions = mvc.perform(
-            get("/csars").accept("application/hal+json")
+            get("/api/csars").accept("application/hal+json")
         ).andDo(print()).andExpect(status().is2xxSuccessful());
         resultActions.andExpect(jsonPath("$.links[0].rel").value("self"));
-        resultActions.andExpect(jsonPath("$.links[0].href").value("http://localhost/csars/"));
+        resultActions.andExpect(jsonPath("$.links[0].href").value("http://localhost/api/csars/"));
         resultActions.andExpect(jsonPath("$.content").exists());
         resultActions.andExpect(jsonPath("$.content").isArray());
         resultActions.andExpect(jsonPath("$.content[2]").doesNotExist());
@@ -78,7 +78,7 @@ public class CsarControllerTest extends BaseSpringTest {
             data
         );
 
-        MockMultipartHttpServletRequestBuilder builder = fileUpload("/csars/rnd");
+        MockMultipartHttpServletRequestBuilder builder = fileUpload("/api/csars/rnd");
         builder.with(request -> {
             request.setMethod("PUT");
             return request;
@@ -114,7 +114,7 @@ public class CsarControllerTest extends BaseSpringTest {
             data
         );
 
-        MockMultipartHttpServletRequestBuilder builder = fileUpload("/csars/apache");
+        MockMultipartHttpServletRequestBuilder builder = fileUpload("/api/csars/apache");
         builder.with(request -> {
             request.setMethod("PUT");
             return request;
@@ -132,7 +132,7 @@ public class CsarControllerTest extends BaseSpringTest {
     public void csarDetails() throws Exception {
         for (String name : MockCsarService.names) {
             ResultActions resultActions = mvc.perform(
-                get("/csars/" + name).accept("application/hal+json")
+                get("/api/csars/" + name).accept("application/hal+json")
             ).andDo(print()).andExpect(status().is2xxSuccessful());
             resultActions.andExpect(jsonPath("$.name").value(name));
             resultActions.andExpect(jsonPath("$.links").isArray());
@@ -148,7 +148,7 @@ public class CsarControllerTest extends BaseSpringTest {
     @Test
     public void csarDetails404() throws Exception {
         mvc.perform(
-            get("/csars/not-a-csar").accept("application/hal+json")
+            get("/api/csars/not-a-csar").accept("application/hal+json")
         ).andDo(print()).andExpect(status().is(404));
     }
 }

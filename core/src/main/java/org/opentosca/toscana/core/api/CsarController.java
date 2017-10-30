@@ -41,7 +41,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
  */
 @CrossOrigin
 @RestController
-@RequestMapping("/csars")
+@RequestMapping("/api/csars")
 public class CsarController {
 
     private final static Logger log = LoggerFactory.getLogger(CsarController.class);

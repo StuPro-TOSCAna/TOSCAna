@@ -75,7 +75,7 @@ public class ArtifactControllerTest extends BaseSpringTest {
 
     @Test
     public void downloadMissingFile() throws Exception {
-        mvc.perform(get("/artifacts/test-1337.bin"))
+        mvc.perform(get("/api/artifacts/test-1337.bin"))
             .andDo(print())
             .andExpect(status().is(404))
             .andReturn();
@@ -85,7 +85,9 @@ public class ArtifactControllerTest extends BaseSpringTest {
     public void downloadValidFiles() throws Exception {
         for (int i = 1; i == hashes.length; i++) {
             log.info("Downloading file {}/5", i);
-            MvcResult result = mvc.perform(get("/artifacts/test-" + i + ".bin"))
+            MvcResult result = mvc.perform(
+                get("/api/artifacts/test-" + i + ".bin")
+            )
 //                .andDo(print())
                 .andExpect(status().is(200))
                 .andReturn();
@@ -98,7 +100,7 @@ public class ArtifactControllerTest extends BaseSpringTest {
     @Test
     public void listFiles() throws Exception {
         controller.enableArtifactList = true;
-        MvcResult result = mvc.perform(get("/artifacts"))
+        MvcResult result = mvc.perform(get("/api/artifacts"))
             .andDo(print())
             .andExpect(status().is(200))
             .andReturn();
@@ -116,7 +118,7 @@ public class ArtifactControllerTest extends BaseSpringTest {
             found[Integer.parseInt(val)] = true;
             assertTrue(obj.getInt("length") == (size));
             String ref = obj.getJSONArray("links").getJSONObject(0).getString("href");
-            assertEquals("http://localhost/artifacts/test-" + val + ".bin", ref);
+            assertEquals("http://localhost/api/artifacts/test-" + val + ".bin", ref);
         }
         for (boolean b : found) {
             assertTrue(b);
@@ -126,6 +128,6 @@ public class ArtifactControllerTest extends BaseSpringTest {
     @Test
     public void listFilesDisabled() throws Exception {
         controller.enableArtifactList = false;
-        mvc.perform(get("/artifacts")).andDo(print()).andExpect(status().is(403)).andReturn();
+        mvc.perform(get("/api/artifacts")).andDo(print()).andExpect(status().is(403)).andReturn();
     }
 }

@@ -43,9 +43,16 @@ management:
 # Comment out the following part to get full access to all spring boot actuator features
 endpoints:
     enabled: false
+    actuator:
+        enabled: true
+        path: /api/status
     metrics:
         enabled: true
+        path: /api/status/metrics
     health:
         enabled: true
+        path: /api/status/health
+    # TODO Only keep mappings enabled during development
     mappings:
         enabled: true
+        path: /api/status/mappings
