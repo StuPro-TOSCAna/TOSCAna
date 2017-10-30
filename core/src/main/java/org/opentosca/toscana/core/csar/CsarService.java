@@ -2,13 +2,14 @@ package org.opentosca.toscana.core.csar;
 
 import java.io.InputStream;
 import java.util.List;
+import java.util.Optional;
 
 import org.opentosca.toscana.core.parse.InvalidCsarException;
 
 public interface CsarService {
 
     /**
-     Creates a new Csar instance
+     Creates a new Csar instance.
 
      @param identifier identifying name of csar, must match [a-z0-9_-]+
      @param csarStream the actual cloud service archive as InputStream
@@ -24,12 +25,13 @@ public interface CsarService {
     void deleteCsar(Csar csar);
 
     /**
-     Returns all Csars currently managed by the application
+     Returns all Csars currently managed by the application.
      */
     List<Csar> getCsars();
 
     /**
-     Returns csar which identifier field matches given identifier. Returns null if no match is found
+     Returns an optional csar which identifier field matches given identifier.
+     Note: The optional is null, if no matching csar is found.
      */
-    Csar getCsar(String identifier);
+    Optional<Csar> getCsar(String identifier);
 }

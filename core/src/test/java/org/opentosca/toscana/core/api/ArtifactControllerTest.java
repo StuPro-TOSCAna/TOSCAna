@@ -34,7 +34,7 @@ public class ArtifactControllerTest extends BaseSpringTest {
     private final static int size = 20 * 1024;
     private final static int count = 5;
     private final static byte[][] hashes = new byte[count][];
-    
+
     private MockMvc mvc;
     private ArtifactController controller;
     private MessageDigest digest;

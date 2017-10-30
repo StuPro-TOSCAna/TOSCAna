@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarService;
@@ -67,7 +68,7 @@ public class DummyCsarService implements CsarService {
     }
 
     @Override
-    public Csar getCsar(String identifier) {
+    public Optional<Csar> getCsar(String identifier) {
         Csar csar = null;
         Collection<Csar> csars = getCsars();
         for (Csar c : csars) {
@@ -76,6 +77,6 @@ public class DummyCsarService implements CsarService {
                 break;
             }
         }
-        return csar;
+        return Optional.ofNullable(csar);
     }
 }

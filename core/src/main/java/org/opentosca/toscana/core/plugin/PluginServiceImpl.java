@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.opentosca.toscana.core.transformation.platform.Platform;
@@ -44,14 +45,11 @@ public class PluginServiceImpl implements PluginService {
     }
 
     @Override
-    public Platform findPlatformById(String id) {
-        Platform p = null;
-        for (TransformationPlugin plugin : plugins) {
-            if (id.equals(plugin.getPlatform().id)) {
-                p = plugin.getPlatform();
-            }
-        }
-        return p;
+    public Optional<Platform> findPlatformById(String id) {
+        return plugins.stream()
+            .filter(plugin -> plugin.getPlatform().id.equals(id))
+            .map(transformationPlugin -> transformationPlugin.getPlatform())
+            .findFirst();
     }
 
     @Override

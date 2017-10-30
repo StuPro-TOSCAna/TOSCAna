@@ -12,7 +12,7 @@ import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
 
 import static java.lang.String.format;
 
-class TransformationImpl implements Transformation {
+public class TransformationImpl implements Transformation {
 
     private final Csar csar;
     private final Platform targetPlatform;
@@ -27,7 +27,7 @@ class TransformationImpl implements Transformation {
      @param csar           the subject of transformation
      @param targetPlatform the target platform
      */
-    TransformationImpl(Csar csar, Platform targetPlatform, Log log) {
+    public TransformationImpl(Csar csar, Platform targetPlatform, Log log) {
         this.csar = csar;
         this.targetPlatform = targetPlatform;
         this.log = log;

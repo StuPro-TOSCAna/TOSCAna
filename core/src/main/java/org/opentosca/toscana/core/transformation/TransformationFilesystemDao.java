@@ -83,9 +83,10 @@ public class TransformationFilesystemDao implements TransformationDao {
             if (!pluginEntry.isDirectory()) {
                 continue;
             }
-            Platform platform = platformService.findPlatformById(pluginEntry.getName());
-            if (platform != null) {
-                Transformation transformation = new TransformationImpl(csar, platform, getLog(csar, platform));
+            Optional<Platform> platform = platformService.findPlatformById(pluginEntry.getName());
+            if (platform.isPresent()) {
+                Log log = getLog(csar, platform.get());
+                Transformation transformation = new TransformationImpl(csar, platform.get(), log);
                 // TODO set transformation state
                 transformations.add(transformation);
             } else {

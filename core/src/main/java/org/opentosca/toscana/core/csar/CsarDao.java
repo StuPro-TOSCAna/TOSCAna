@@ -3,6 +3,7 @@ package org.opentosca.toscana.core.csar;
 import java.io.File;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Optional;
 
 public interface CsarDao {
 
@@ -22,9 +23,10 @@ public interface CsarDao {
     void delete(String identifier);
 
     /**
-     Returns a CSAR which matches given csarName, or null if no match was found.
+     Returns a optional CSAR instance which matches given csarName.
+     If no match was found, the optional contains null.
      */
-    Csar find(String identifier);
+    Optional<Csar> find(String identifier);
 
     /**
      Returns a list of all csars.

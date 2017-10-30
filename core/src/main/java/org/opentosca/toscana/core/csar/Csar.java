@@ -1,6 +1,8 @@
 package org.opentosca.toscana.core.csar;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.opentosca.toscana.core.transformation.Transformation;
@@ -18,11 +20,22 @@ public interface Csar {
     Map<String, Transformation> getTransformations();
 
     /**
+     @param platformId the target platform id which will match the the returned transformation
+     @return the transformation of this csar which match given platform
+     */
+    Optional<Transformation> getTransformation(String platformId);
+
+    /**
      @return the identifier of the CSAR
      */
     String getIdentifier();
 
-    TServiceTemplate getTemplate();
+    /**
+     @return the parsed template (wrapped in Optional) of the csar.
+     <p>
+     Empty if not parsed yet.
+     */
+    Optional<TServiceTemplate> getTemplate();
 
     /**
      Returns model specific properties as a set. If there are none a empty set has to be returned. this must not
@@ -36,4 +49,6 @@ public interface Csar {
      @return the log of this csar, which e.g. contains information about parsing
      */
     Log getLog();
+
+    void setTransformations(List<Transformation> transformations);
 }

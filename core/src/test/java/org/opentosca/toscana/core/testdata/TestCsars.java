@@ -7,7 +7,10 @@ import java.io.FileNotFoundException;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarDao;
 
+import org.eclipse.winery.model.tosca.yaml.TServiceTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import static org.mockito.Mockito.mock;
 
 /**
  Supplies test classes with csars.
@@ -48,6 +51,8 @@ public class TestCsars {
      @return instance of csar
      */
     public Csar getCsar(String identifier, File file) throws FileNotFoundException {
-        return csarDao.create(identifier, new FileInputStream(file));
+        Csar csar = csarDao.create(identifier, new FileInputStream(file));
+        csar.setTemplate(mock(TServiceTemplate.class));
+        return csar;
     }
 }

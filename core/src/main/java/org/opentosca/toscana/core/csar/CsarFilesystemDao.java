@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.zip.ZipInputStream;
 
 import javax.annotation.PostConstruct;
@@ -106,9 +107,10 @@ public class CsarFilesystemDao implements CsarDao {
     }
 
     @Override
-    public Csar find(String identifier) {
+    public Optional<Csar> find(String identifier) {
         readFromDisk(); // TODO: change this to some smart behaviour. e.g. file watcher
-        return csarMap.get(identifier);
+        Csar csar = csarMap.get(identifier);
+        return Optional.ofNullable(csar);
     }
 
     @Override
