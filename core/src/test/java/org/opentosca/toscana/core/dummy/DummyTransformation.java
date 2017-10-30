@@ -14,6 +14,7 @@ public class DummyTransformation implements Transformation {
     private final Platform platform;
     private final Log log = new DummyLog();
     private boolean returnTargetArtifact = true;
+    private Csar csar;
 
     private final PropertyInstance properties;
 
@@ -69,7 +70,11 @@ public class DummyTransformation implements Transformation {
 
     @Override
     public Csar getCsar() {
-        return null;
+        return csar;
+    }
+
+    public void setCsar(Csar csar) {
+        this.csar = csar;
     }
 
     public void setReturnTargetArtifact(boolean returnTargetArtifact) {

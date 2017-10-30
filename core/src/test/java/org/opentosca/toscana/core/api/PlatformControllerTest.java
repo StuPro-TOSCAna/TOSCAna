@@ -37,7 +37,7 @@ public class PlatformControllerTest extends BaseTest {
     @Test
     public void listPlatforms() throws Exception {
         ResultActions resultActions = mvc.perform(
-            get("/platforms")
+            get("/api/platforms")
         ).andDo(print()).andExpect(status().is2xxSuccessful())
             .andExpect(content().contentType("application/hal+json;charset=UTF-8"));
         resultActions.andExpect(jsonPath("$._embedded.platform").isArray());
@@ -53,7 +53,7 @@ public class PlatformControllerTest extends BaseTest {
     public void platformDetails() throws Exception {
         for (Platform platform : prov.getSupportedPlatforms()) {
             ResultActions resultActions = mvc.perform(
-                get("/platforms/" + platform.id)
+                get("/api/platforms/" + platform.id)
             ).andDo(print());
             resultActions.andExpect(jsonPath("$.id").value(platform.id));
             resultActions.andExpect(jsonPath("$.name").value(platform.name));
@@ -65,7 +65,7 @@ public class PlatformControllerTest extends BaseTest {
     @Test
     public void platformDetails404() throws Exception {
         ResultActions resultActions = mvc.perform(
-            get("/platforms/not-a-platform")
+            get("/api/platforms/not-a-platform")
         ).andDo(print());
         resultActions.andExpect(status().isNotFound());
         resultActions.andReturn();

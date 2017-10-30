@@ -39,7 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class TransformationControllerTest extends BaseSpringTest {
 
-    private static final String VALID_PROPERTY_INPUT = "{\n" +
+    private final static String VALID_PROPERTY_INPUT = "{\n" +
         "\t\"properties\": {\n" +
         "\t\t\"text_property\":\"Hallo Welt\",\n" +
         "\t\t\"name_property\": \"hallo\",\n" +
@@ -47,7 +47,7 @@ public class TransformationControllerTest extends BaseSpringTest {
         "\t\t\"unsigned_integer_property\": \"1337\"\n" +
         "\t}\n" +
         "}";
-    private static final String INVALID_PROPERTY_INPUT = "{\n" +
+    private final static String INVALID_PROPERTY_INPUT = "{\n" +
         "\t\"properties\": {\n" +
         "\t\t\"text_property\":\"Meddl Loide\",\n" +
         "\t\t\"name_property\": \"meddl\",\n" +
@@ -55,22 +55,22 @@ public class TransformationControllerTest extends BaseSpringTest {
         "\t\t\"unsigned_integer_property\": \"-1337\"\n" +
         "\t}\n" +
         "}";
-    private static final String VALID_CSAR_NAME = "k8s-cluster";
-    private static final String VALID_PLATFORM_NAME = "p-a";
-    private static final String START_TRANSFORMATION_VALID_URL = "/csars/k8s-cluster/transformations/p-a/start";
-    private static final String GET_PROPERTIES_VALID_URL = "/csars/k8s-cluster/transformations/p-a/properties";
-    private static final String DEFAULT_CHARSET_HAL_JSON = "application/hal+json;charset=UTF-8";
-    private static final String ARTIFACT_RESPONSE_EXPECTED_URL = "http://localhost/csars/k8s-cluster/transformations/p-a/artifact";
-    private static final String GET_ARTIFACTS_VALID_URL = "/csars/k8s-cluster/transformations/p-a/artifact";
-    private static final String GET_LOGS_AT_START_ZERO_VALID_URL = "/csars/k8s-cluster/transformations/p-a/logs?start=0";
-    private static final String DELETE_TRANSFORMATION_VALID_URL = "/csars/k8s-cluster/transformations/p-a/delete";
-    private static final String TRANSFORMATION_DETAILS_VALID_URL = "/csars/k8s-cluster/transformations/p-a";
-    private static final String APPLICATION_HAL_JSON_MIME_TYPE = "application/hal+json";
-    private static final String LIST_TRANSFORMATIONS_VALID_URL = "/csars/k8s-cluster/transformations/";
-    private static final String LIST_TRANSFORMATIONS_EXPECTED_URL = "http://localhost/csars/k8s-cluster/transformations/";
-    private static final String CREATE_CSAR_VALID_URL = "/csars/k8s-cluster/transformations/p-a/create";
-    private static final String PLATFORM_NOT_FOUND_URL = "/csars/k8s-cluster/transformations/p-z";
-    private static final String CSAR_NOT_FOUND_URL = "/csars/keinechtescsar/transformations";
+    private final static String VALID_CSAR_NAME = "k8s-cluster";
+    private final static String VALID_PLATFORM_NAME = "p-a";
+    private final static String START_TRANSFORMATION_VALID_URL = "/api/csars/k8s-cluster/transformations/p-a/start";
+    private final static String GET_PROPERTIES_VALID_URL = "/api/csars/k8s-cluster/transformations/p-a/properties";
+    private final static String DEFAULT_CHARSET_HAL_JSON = "application/hal+json;charset=UTF-8";
+    private final static String ARTIFACT_RESPONSE_EXPECTED_URL = "http://localhost/api/csars/k8s-cluster/transformations/p-a/artifact";
+    private final static String GET_ARTIFACTS_VALID_URL = "/api/csars/k8s-cluster/transformations/p-a/artifact";
+    private final static String GET_LOGS_AT_START_ZERO_VALID_URL = "/api/csars/k8s-cluster/transformations/p-a/logs?start=0";
+    private final static String DELETE_TRANSFORMATION_VALID_URL = "/api/csars/k8s-cluster/transformations/p-a/delete";
+    private final static String TRANSFORMATION_DETAILS_VALID_URL = "/api/csars/k8s-cluster/transformations/p-a";
+    private final static String APPLICATION_HAL_JSON_MIME_TYPE = "application/hal+json";
+    private final static String LIST_TRANSFORMATIONS_VALID_URL = "/api/csars/k8s-cluster/transformations/";
+    private final static String LIST_TRANSFORMATIONS_EXPECTED_URL = "http://localhost/api/csars/k8s-cluster/transformations/";
+    private final static String CREATE_CSAR_VALID_URL = "/api/csars/k8s-cluster/transformations/p-a/create";
+    private final static String PLATFORM_NOT_FOUND_URL = "/api/csars/k8s-cluster/transformations/p-z";
+    private final static String CSAR_NOT_FOUND_URL = "/api/csars/keinechtescsar/transformations";
 
     private CsarService csarService;
     private DummyTransformationService transformationService;
@@ -172,7 +172,7 @@ public class TransformationControllerTest extends BaseSpringTest {
             .andExpect(jsonPath("$.properties[0].value").doesNotExist()) //Check that the value is null
             .andExpect(jsonPath("$.links[0].rel").value("self"))
             .andExpect(jsonPath("$.links[0].href")
-                .value("http://localhost/csars/k8s-cluster/transformations/p-a/properties"))
+                .value("http://localhost/api/csars/k8s-cluster/transformations/p-a/properties"))
             .andReturn();
     }
 
@@ -315,12 +315,12 @@ public class TransformationControllerTest extends BaseSpringTest {
 
     private Map<String, String> getLinkRelationsForTransformationDetails() {
         HashMap<String, String> map = new HashMap<>();
-        map.put("self", "http://localhost/csars/%s/transformations/%s");
-        map.put("logs", "http://localhost/csars/%s/transformations/%s/logs?start=0");
-        map.put("platform", "http://localhost/platforms/p-a");
-        map.put("artifact", "http://localhost/csars/%s/transformations/%s/artifact");
-        map.put("properties", "http://localhost/csars/%s/transformations/%s/properties");
-        map.put("delete", "http://localhost/csars/%s/transformations/%s/delete");
+        map.put("self", "http://localhost/api/csars/%s/transformations/%s");
+        map.put("logs", "http://localhost/api/csars/%s/transformations/%s/logs?start=0");
+        map.put("platform", "http://localhost/api/platforms/p-a");
+        map.put("artifact", "http://localhost/api/csars/%s/transformations/%s/artifact");
+        map.put("properties", "http://localhost/api/csars/%s/transformations/%s/properties");
+        map.put("delete", "http://localhost/api/csars/%s/transformations/%s/delete");
         return map;
     }
     //</editor-fold>

@@ -10,11 +10,11 @@ import retrofit2.http.Part;
 import retrofit2.http.Path;
 
 public interface TOSCAnaUploadInterface {
-    @GET("status")
+    @GET("api/status/health")
     Call<ResponseBody> getStatus();
 
     @Multipart
-    @POST("csars/{checkStateNoPropsSet}")
+    @POST("api/csars/{checkStateNoPropsSet}")
     Call<ResponseBody> upload(
         @Part MultipartBody.Part body,
         @Path("checkStateNoPropsSet") String name

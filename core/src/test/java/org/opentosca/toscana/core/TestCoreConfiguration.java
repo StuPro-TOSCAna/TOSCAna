@@ -18,7 +18,6 @@ import org.opentosca.toscana.core.transformation.TransformationServiceImpl;
 import org.opentosca.toscana.core.transformation.artifacts.ArtifactService;
 import org.opentosca.toscana.core.transformation.artifacts.ArtifactServiceImpl;
 import org.opentosca.toscana.core.transformation.platform.PlatformService;
-import org.opentosca.toscana.core.util.FileSystem;
 import org.opentosca.toscana.core.util.Preferences;
 
 import org.springframework.context.annotation.Bean;
@@ -48,12 +47,6 @@ public class TestCoreConfiguration extends CoreConfiguration {
     public TestCsars testCsars() {
         TestCsars bean = new TestCsars();
         return bean;
-    }
-
-    //TODO Replace with filesystem implementation
-    @Bean
-    public FileSystem fileSystem(Preferences preferences) {
-        return new FileSystem(preferences);
     }
 
     @Bean

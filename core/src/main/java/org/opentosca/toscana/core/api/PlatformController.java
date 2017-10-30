@@ -31,7 +31,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
  */
 @CrossOrigin
 @RestController
-@RequestMapping("/platforms")
+@RequestMapping("/api/platforms")
 public class PlatformController {
 
     private final static Logger logger = LoggerFactory.getLogger(PlatformController.class);
