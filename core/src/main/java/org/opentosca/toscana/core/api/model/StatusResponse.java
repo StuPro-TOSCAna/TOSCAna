@@ -8,9 +8,9 @@ import org.springframework.hateoas.ResourceSupport;
  Represents the status response as a Java Object that gets converted to json using Jackson
  */
 public class StatusResponse extends ResourceSupport {
-    private String status;
-    private Long availableStorage;
-    private Long totalStorage;
+    private final String status;
+    private final Long availableStorage;
+    private final Long totalStorage;
 
     @JsonCreator
     public StatusResponse(

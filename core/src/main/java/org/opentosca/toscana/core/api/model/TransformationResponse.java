@@ -12,9 +12,9 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 @Relation(collectionRelation = "transformation")
 public class TransformationResponse extends ResourceSupport {
-    private int progress;
-    private String status;
-    private String platform;
+    private final int progress;
+    private final String status;
+    private final String platform;
 
     public TransformationResponse(
         @JsonProperty("progress") int progress,

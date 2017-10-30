@@ -14,7 +14,7 @@ import org.opentosca.toscana.core.csar.CsarService;
 
 public class DummyCsarService implements CsarService {
 
-    private List<Csar> dummies = new LinkedList<>();
+    private final List<Csar> dummies = new LinkedList<>();
 
     private final File tmpdir;
 

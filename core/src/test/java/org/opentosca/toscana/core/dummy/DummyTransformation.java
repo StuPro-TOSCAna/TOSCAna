@@ -11,11 +11,11 @@ import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
 public class DummyTransformation implements Transformation {
 
     private TransformationState state = TransformationState.INPUT_REQUIRED;
-    private Platform platform;
-    private Log log = new DummyLog();
+    private final Platform platform;
+    private final Log log = new DummyLog();
     private boolean returnTargetArtifact = true;
 
-    private PropertyInstance properties;
+    private final PropertyInstance properties;
 
     public DummyTransformation(Platform platform) {
         this.platform = platform;

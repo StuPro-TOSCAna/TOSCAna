@@ -31,10 +31,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class CsarControllerTest extends BaseSpringTest {
 
-    private static Map<String, String> relations;
+    private static final Map<String, String> relations = new HashMap<>();
 
     static {
-        relations = new HashMap<>();
         relations.put("self", "http://localhost/csars/%s");
         relations.put("transformations", "http://localhost/csars/%s/transformations/");
     }

@@ -12,7 +12,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 public class GetPropertiesResponse extends ResourceSupport {
 
-    private List<PropertyWrap> properties;
+    private final List<PropertyWrap> properties;
 
     public GetPropertiesResponse(
         String csarName,
@@ -31,11 +31,11 @@ public class GetPropertiesResponse extends ResourceSupport {
     }
 
     public static class PropertyWrap {
-        private String key;
-        private String type;
-        private String description;
-        private boolean required;
-        private String value;
+        private final String key;
+        private final String type;
+        private final String description;
+        private final boolean required;
+        private final String value;
 
         public PropertyWrap(
             @JsonProperty("key") String key,

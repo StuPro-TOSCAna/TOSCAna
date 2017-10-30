@@ -34,7 +34,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 @RequestMapping("/platforms")
 public class PlatformController {
 
-    private Logger log = LoggerFactory.getLogger(getClass());
+    private final static Logger logger = LoggerFactory.getLogger(PlatformController.class);
 
     private final PlatformService platformService;
 
@@ -59,7 +59,7 @@ public class PlatformController {
         Link selfLink = linkTo(methodOn(PlatformController.class).getPlatforms()).withSelfRel();
         ArrayList<PlatformResponse> responses = new ArrayList<>();
         for (Platform platform : platformService.getSupportedPlatforms()) {
-            log.info("Adding Platform {} to response ", platform.id);
+            logger.info("Adding Platform {} to response ", platform.id);
             PlatformResponse res = getPlatformResource(platform);
             responses.add(res);
         }

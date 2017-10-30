@@ -16,10 +16,10 @@ public class DummyCsar implements Csar {
 
     public Set<Property> modelSpecificProperties = new HashSet<>();
     
-    private String name;
+    private final String name;
     private byte[] data;
 
-    private Map<String, Transformation> transformations = new HashMap<>();
+    private final Map<String, Transformation> transformations = new HashMap<>();
 
     public DummyCsar(String name) {
         this.name = name;

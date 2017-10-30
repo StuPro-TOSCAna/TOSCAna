@@ -39,7 +39,7 @@ public class CsarFilesystemDao implements CsarDao {
 
     private final static Logger logger = LoggerFactory.getLogger(CsarFilesystemDao.class.getSimpleName());
 
-    private TransformationDao transformationDao;
+    private final TransformationDao transformationDao;
     private final File dataDir;
 
     // a map containing all csars. it should be kept in sync with the status of the file system
@@ -48,6 +48,7 @@ public class CsarFilesystemDao implements CsarDao {
     @Autowired
     public CsarFilesystemDao(Preferences preferences, @Lazy TransformationDao transformationDao) {
         this.dataDir = preferences.getDataDir();
+        this.transformationDao = transformationDao;
 
         if (!dataDir.exists()) {
             System.out.println(dataDir.getAbsolutePath());
@@ -55,8 +56,6 @@ public class CsarFilesystemDao implements CsarDao {
                 logger.error("Failed to create data dir '{}'", dataDir.getAbsolutePath());
             }
         }
-
-        this.transformationDao = transformationDao;
     }
 
     @PostConstruct

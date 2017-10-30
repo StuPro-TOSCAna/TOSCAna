@@ -13,9 +13,9 @@ import org.opentosca.toscana.core.transformation.TransformationState;
  That means that this is storing the values that get assigned to the defined properties.
  */
 public class PropertyInstance {
-    private Map<String, String> propertyValues;
-    private Set<Property> properties;
-    private Transformation transformation;
+    private final Map<String, String> propertyValues;
+    private final Set<Property> properties;
+    private final Transformation transformation;
 
     /**
      Creates a new property instance with no set property values for the given list (set) of properties.

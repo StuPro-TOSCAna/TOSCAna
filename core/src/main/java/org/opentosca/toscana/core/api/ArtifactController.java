@@ -109,8 +109,8 @@ public class ArtifactController {
 
     @Relation(collectionRelation = "file")
     public static class FileResource extends ResourceSupport {
-        private String filename;
-        private Long fileSize;
+        private final String filename;
+        private final Long fileSize;
 
         public FileResource(
             @JsonProperty("filename") String filename,

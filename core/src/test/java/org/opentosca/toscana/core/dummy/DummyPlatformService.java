@@ -18,7 +18,7 @@ import org.opentosca.toscana.core.transformation.properties.PropertyType;
 public class DummyPlatformService implements PluginService {
 
     private Set<Platform> platforms = new HashSet<>();
-    private List<TransformationPlugin> plugins = new ArrayList<>();
+    private final List<TransformationPlugin> plugins = new ArrayList<>();
 
     public DummyPlatformService() {
         Set<Platform> platforms = new HashSet<>();

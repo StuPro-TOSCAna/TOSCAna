@@ -15,9 +15,9 @@ public enum PropertyType {
     FLOAT("float", Double.class, new FloatValidator()),
     BOOLEAN("boolean", Boolean.class, new BooleanValidator());
 
-    private ValueValidator valueValidator;
-    private String typeName;
-    private Class<?> outputClass;
+    private final ValueValidator valueValidator;
+    private final String typeName;
+    private final Class<?> outputClass;
 
     PropertyType(String typeName, Class<?> outputClass, ValueValidator valueValidator) {
         this.valueValidator = valueValidator;

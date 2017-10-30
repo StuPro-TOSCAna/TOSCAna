@@ -5,7 +5,7 @@ import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class SetPropertiesRequest {
-    private Map<String, String> properties;
+    private final Map<String, String> properties;
 
     public SetPropertiesRequest(
         @JsonProperty("properties") Map<String, String> properties

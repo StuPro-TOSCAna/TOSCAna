@@ -12,7 +12,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 @Relation(collectionRelation = "csar")
 public class CsarResponse extends ResourceSupport {
-    private String name;
+    private final String name;
 
     public CsarResponse(
         @JsonProperty("name") String name

@@ -9,7 +9,8 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 public class ArtifactResponse extends ResourceSupport {
-    private String accessURL;
+   
+    private final String accessURL;
 
     public ArtifactResponse(
         @JsonProperty("access_url") String accessURL,

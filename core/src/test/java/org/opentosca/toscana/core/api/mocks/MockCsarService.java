@@ -13,9 +13,9 @@ import org.opentosca.toscana.core.dummy.DummyCsar;
 
 public class MockCsarService implements CsarService {
 
-    public static String[] names = {"windows-server", "apache"};
+    public static final String[] names = {"windows-server", "apache"};
 
-    private List<Csar> csars = new ArrayList<>();
+    private final List<Csar> csars = new ArrayList<>();
 
     public MockCsarService() {
         for (String name : names) {

@@ -20,7 +20,7 @@ public class CsarServiceImplTest extends BaseSpringTest {
     @Autowired
     private CsarService csarService;
 
-    private String identifier = "my-awesome-csar";
+    private final String identifier = "my-awesome-csar";
 
     @Test
     public void submitCsar() throws Exception {

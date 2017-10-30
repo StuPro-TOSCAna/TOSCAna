@@ -17,7 +17,7 @@ import static org.junit.Assert.assertTrue;
 
 public class MemoryAppenderTest extends BaseJUnitTest {
 
-    private Logger logger = (Logger) LoggerFactory.getLogger(getClass());
+    private final Logger logger = (Logger) LoggerFactory.getLogger(getClass());
 
     private Logger testLogger;
     private Log log;

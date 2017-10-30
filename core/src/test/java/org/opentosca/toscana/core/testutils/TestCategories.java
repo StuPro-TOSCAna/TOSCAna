@@ -6,14 +6,10 @@ public enum TestCategories {
     SYSTEM("system"),
     ALL("all");
 
-    private String identifier;
+    private final String identifier;
 
     TestCategories(String identifier) {
         this.identifier = identifier;
-    }
-
-    public String getIdentifier() {
-        return identifier;
     }
 
     public boolean shouldBeExecuted(TestCategories mode) {

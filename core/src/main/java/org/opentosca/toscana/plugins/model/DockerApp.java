@@ -9,10 +9,10 @@ import org.slf4j.LoggerFactory;
 
 public class DockerApp {
     private final static Logger logger = LoggerFactory.getLogger(DockerApp.class);
-    private String[] tag;
-    private String[] identifier;
-    private List<String> dependencies;
-    private TNodeTemplate tNodeTemplate;
+    private final String[] tag;
+    private final String[] identifier;
+    private final List<String> dependencies;
+    private final TNodeTemplate tNodeTemplate;
 
     public DockerApp(TNodeTemplate tNodeTemplate) {
         tag = new String[2];

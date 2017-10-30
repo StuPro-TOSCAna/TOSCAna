@@ -58,7 +58,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 @RequestMapping("/csars/{csarName}/transformations")
 public class TransformationController {
 
-    private Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private final CsarService csarService;
     private final TransformationService transformationService;
@@ -195,7 +195,7 @@ public class TransformationController {
         @PathVariable(name = "csarName") String name,
         @PathVariable(name = "platform") String platform
     ) {
-        log.info("Creating transformation for csar '{}' on '{}'", name, platform);
+        logger.info("Creating transformation for csar '{}' on '{}'", name, platform);
         Csar csar = findCsarByName(name);
         //Return bad Request if a transformation for this platform is already present
         if (csar.getTransformations().get(platform) != null) {
@@ -254,7 +254,7 @@ public class TransformationController {
         @PathVariable(name = "csarName") String name,
         @PathVariable(name = "platform") String platform
     ) {
-        log.info("Starting transformation for csar '{}' on '{}'", name, platform);
+        logger.info("Starting transformation for csar '{}' on '{}'", name, platform);
         Csar csar = findCsarByName(name);
         Transformation transformation = findTransformationByPlatform(csar, platform);
         if (transformationService.startTransformation(transformation)) {
@@ -316,7 +316,7 @@ public class TransformationController {
     }
 
     /**
-     Returns the logs from a given start index to the current end of the log file. If the start index is higher then
+     Returns the logs from a given start index to the current end of the logger file. If the start index is higher then
      the current end index, a empty list is returned! The start parameter is a URL encoded parameter
      (<code>?start=0</code>)
      <p>
@@ -330,7 +330,7 @@ public class TransformationController {
      <tr>
      <td>200</td>
      <td>application/hal+json</td>
-     <td>Returns a Json object containing the desired part of the log for the transformation</td>
+     <td>Returns a Json object containing the desired part of the logger for the transformation</td>
      </tr>
      <tr>
      <td>404</td>

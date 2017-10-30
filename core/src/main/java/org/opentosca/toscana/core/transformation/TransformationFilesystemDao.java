@@ -28,8 +28,8 @@ import static java.lang.String.format;
 public class TransformationFilesystemDao implements TransformationDao {
 
     private final static Logger logger = LoggerFactory.getLogger(TransformationFilesystemDao.class);
+    private final PlatformService platformService;
     private CsarDao csarDao;
-    private PlatformService platformService;
 
     @Autowired
     public TransformationFilesystemDao(PlatformService platformService) {

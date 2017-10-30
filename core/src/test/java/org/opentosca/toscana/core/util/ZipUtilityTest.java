@@ -26,7 +26,7 @@ public class ZipUtilityTest extends BaseJUnitTest {
 
     private File original;
     private File unzipped;
-    private Random rnd = new Random(123456);
+    private final Random rnd = new Random(123456);
 
     @Before
     public void setUp() throws Exception {

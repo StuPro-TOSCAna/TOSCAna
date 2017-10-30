@@ -18,15 +18,15 @@ class CsarImpl implements Csar {
     /**
      Stores all scheduled, ongoing or finished transformations of this CSAR. Key is the platform identifier.
      */
-    private Map<String, Transformation> transformations = new HashMap<>();
-    private String identifier;
+    private final Map<String, Transformation> transformations = new HashMap<>();
+    private final String identifier;
     /**
      null if not yet parsed
      */
     private TServiceTemplate template;
     private final Log log;
 
-    public CsarImpl(String identifier, Log log) {
+    CsarImpl(String identifier, Log log) {
         this.identifier = identifier;
         this.log = log;
     }

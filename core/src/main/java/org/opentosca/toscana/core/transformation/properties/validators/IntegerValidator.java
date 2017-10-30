@@ -2,7 +2,7 @@ package org.opentosca.toscana.core.transformation.properties.validators;
 
 public class IntegerValidator implements ValueValidator {
 
-    private boolean onlyPositive;
+    private final boolean onlyPositive;
 
     public IntegerValidator(boolean onlyPositive) {
         this.onlyPositive = onlyPositive;

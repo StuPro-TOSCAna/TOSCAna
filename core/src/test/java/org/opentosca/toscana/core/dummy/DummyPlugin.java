@@ -6,7 +6,7 @@ import org.opentosca.toscana.core.transformation.platform.Platform;
 
 public class DummyPlugin implements TransformationPlugin {
 
-    private Platform platform;
+    private final Platform platform;
 
     public DummyPlugin(Platform platform) {
         this.platform = platform;

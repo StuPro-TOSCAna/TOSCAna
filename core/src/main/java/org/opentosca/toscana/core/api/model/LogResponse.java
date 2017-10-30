@@ -14,9 +14,9 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 @Relation(collectionRelation = "log")
 public class LogResponse extends ResourceSupport {
-    private long start;
-    private long end;
-    private List<LogEntry> logEntries;
+    private final long start;
+    private final long end;
+    private final List<LogEntry> logEntries;
 
     public LogResponse(
         @JsonProperty("start") long start,

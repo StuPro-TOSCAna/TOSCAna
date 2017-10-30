@@ -24,12 +24,12 @@ import static org.mockito.Mockito.when;
 public class StatusServiceTest {
 
     @MockBean
-    public CsarDao dao;
+    private CsarDao dao;
 
-    public StatusService statusService;
+    private StatusService statusService;
 
-    private DummyCsar testCsar = new DummyCsar("test");
-    private DummyCsar test2Csar = new DummyCsar("test2");
+    private final DummyCsar testCsar = new DummyCsar("test");
+    private final DummyCsar test2Csar = new DummyCsar("test2");
 
     @Before
     public void setUp() throws Exception {

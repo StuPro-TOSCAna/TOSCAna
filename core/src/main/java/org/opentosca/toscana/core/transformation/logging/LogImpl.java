@@ -22,8 +22,8 @@ public class LogImpl implements Log {
 
     private final static org.slf4j.Logger exceptionHandlingLogger = LoggerFactory.getLogger(LogImpl.class);
 
-    private List<LogEntry> logEntries;
-    private AtomicLong index;
+    private final List<LogEntry> logEntries;
+    private final AtomicLong index;
     private final File logFile;
 
     /**

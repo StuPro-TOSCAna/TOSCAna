@@ -11,13 +11,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class CsarUploadErrorResponse {
 
     @JsonIgnore
-    private InvalidCsarException exception;
+    private final InvalidCsarException exception;
     @JsonIgnore
-    private String path;
+    private final String path;
     @JsonIgnore
-    private long timestamp = System.currentTimeMillis();
+    private final long timestamp = System.currentTimeMillis();
     @JsonIgnore
-    private int status;
+    private final int status;
 
     public CsarUploadErrorResponse(
         InvalidCsarException exception,

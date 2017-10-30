@@ -5,7 +5,7 @@ import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class SetPropertiesResponse {
-    private Map<String, Boolean> validInputs;
+    private final Map<String, Boolean> validInputs;
 
     public SetPropertiesResponse(
         @JsonProperty("valid_inputs") Map<String, Boolean> validInputs

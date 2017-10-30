@@ -12,7 +12,7 @@ import ch.qos.logback.classic.Logger;
 
 public class DummyLog implements Log {
 
-    private List<LogEntry> entries = new ArrayList<>();
+    private final List<LogEntry> entries = new ArrayList<>();
 
     @Override
     public List<LogEntry> getLogEntries(int first, int last) {

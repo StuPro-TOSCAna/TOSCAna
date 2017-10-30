@@ -2,7 +2,7 @@ package org.opentosca.toscana.core.transformation.properties.validators;
 
 public class StringValidator implements ValueValidator {
 
-    private String regex;
+    private final String regex;
 
     public StringValidator() {
         this(null);

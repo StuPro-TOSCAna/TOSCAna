@@ -26,8 +26,8 @@ public class TransformationServiceImpl implements TransformationService {
     private final PluginService pluginService;
     private final ArtifactService artifactService;
 
-    private Map<Transformation, Future<?>> tasks = new HashMap<>();
-    private ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final Map<Transformation, Future<?>> tasks = new HashMap<>();
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     @Autowired
     public TransformationServiceImpl(

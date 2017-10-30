@@ -24,7 +24,7 @@ public abstract class BaseJUnitTest extends BaseTest {
      Grants disk access. Is reset before every test method.
      */
     @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder(PROJECT_ROOT);
+    public final TemporaryFolder temporaryFolder = new TemporaryFolder(PROJECT_ROOT);
     // "user.dir" is module root
     public File tmpdir;
 

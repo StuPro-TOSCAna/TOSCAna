@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
  */
 class MemoryAppender extends AppenderBase<ILoggingEvent> {
 
-    private Log log;
+    private final Log log;
 
     MemoryAppender(Log log) {
         this.log = log;

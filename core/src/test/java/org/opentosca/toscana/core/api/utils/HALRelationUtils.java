@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import static org.junit.Assert.assertTrue;
 
 public class HALRelationUtils {
-    private static Logger log = LoggerFactory.getLogger(HALRelationUtils.class);
+    private static final Logger logger = LoggerFactory.getLogger(HALRelationUtils.class);
 
     public static void validateRelations(
         JSONArray linkArray,
@@ -20,7 +20,7 @@ public class HALRelationUtils {
     ) throws JSONException {
         assertTrue(linkArray.length() == relations.size());
         for (Map.Entry<String, String> entry : relations.entrySet()) {
-            log.debug("Looking at Relation {} with expected URL {}",
+            logger.debug("Looking at Relation {} with expected URL {}",
                 entry.getKey(), String.format(entry.getValue(),
                     replacementParams)
             );

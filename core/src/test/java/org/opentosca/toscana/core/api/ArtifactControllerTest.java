@@ -31,13 +31,12 @@ public class ArtifactControllerTest extends BaseSpringTest {
 
     private static final Logger log = LoggerFactory.getLogger(ArtifactControllerTest.class);
 
+    private final static int size = 20 * 1024;
+    private final static int count = 5;
+    private final static byte[][] hashes = new byte[count][];
+    
     private MockMvc mvc;
-
     private ArtifactController controller;
-
-    private int size = 20 * 1024;
-    private final int count = 5;
-    private byte[][] hashes = new byte[count][];
     private MessageDigest digest;
 
     @Before

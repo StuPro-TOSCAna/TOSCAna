@@ -7,11 +7,11 @@ package org.opentosca.toscana.core.transformation.properties;
  The values get stored in the @PropertyInstance class
  */
 public class Property {
-    private String key;
-    private PropertyType type;
+    private final String key;
+    private final PropertyType type;
 
-    private String description;
-    private boolean required;
+    private final String description;
+    private final boolean required;
 
     /**
      Constructs a new property object, describing the key of a property and the type of the value.

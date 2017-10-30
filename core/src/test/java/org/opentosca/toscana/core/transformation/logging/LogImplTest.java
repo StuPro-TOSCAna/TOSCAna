@@ -22,7 +22,7 @@ import static org.junit.Assert.assertTrue;
 
 public class LogImplTest extends BaseJUnitTest {
 
-    private Logger logger = LoggerFactory.getLogger(LogImplTest.class);
+    private final Logger logger = LoggerFactory.getLogger(LogImplTest.class);
     private Log log;
     private File logfile;
 

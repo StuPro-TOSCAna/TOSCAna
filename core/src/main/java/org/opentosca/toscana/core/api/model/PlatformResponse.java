@@ -12,8 +12,8 @@ import org.springframework.hateoas.core.Relation;
  */
 @Relation(collectionRelation = "platform")
 public class PlatformResponse extends ResourceSupport {
-    private String identifier;
-    private String name;
+    private final String identifier;
+    private final String name;
 
     public PlatformResponse(
         @JsonProperty("id") String identifier,

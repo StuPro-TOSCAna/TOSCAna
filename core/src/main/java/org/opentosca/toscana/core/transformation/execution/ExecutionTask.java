@@ -21,9 +21,8 @@ public class ExecutionTask implements Runnable {
     private final File transformationRootDir;
     private final String platformId;
     private final String csarId;
-    private ArtifactService ams;
-
-    private Logger log;
+    private final ArtifactService ams;
+    private final Logger log;
 
     private boolean failed = false;
 

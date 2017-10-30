@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 
 public class ExecutionDummyPlugin extends AbstractPlugin {
 
-    protected boolean failDuringExec;
+    protected final boolean failDuringExec;
 
     public ExecutionDummyPlugin(Platform platform, boolean failDuringExec) {
         super(platform);

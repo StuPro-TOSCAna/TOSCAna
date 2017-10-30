@@ -19,9 +19,9 @@ import static org.junit.Assert.assertSame;
 @RunWith(Parameterized.class)
 public class ValidatorTest extends BaseJUnitTest {
 
-    private ValueValidator validator;
-    private boolean accept;
-    private String testValue;
+    private final ValueValidator validator;
+    private final boolean accept;
+    private final String testValue;
 
     public ValidatorTest(ValueValidator validator, boolean accept, String testValue) {
         this.validator = validator;

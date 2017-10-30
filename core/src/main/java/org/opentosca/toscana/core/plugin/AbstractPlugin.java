@@ -11,10 +11,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractPlugin implements TransformationPlugin {
 
-    /**
-     Can be used for non transformation specific logging within the subclasses
-     */
-    protected Logger logger = LoggerFactory.getLogger(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
     private final Platform platform;
 
     public AbstractPlugin(Platform platform) {
