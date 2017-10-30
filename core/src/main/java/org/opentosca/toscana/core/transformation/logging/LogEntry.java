@@ -22,7 +22,7 @@ public class LogEntry {
         this(System.currentTimeMillis(), index, message, level);
     }
 
-    LogEntry(long timestamp, long index, String message, Level level) {
+    private LogEntry(long timestamp, long index, String message, Level level) {
         this.timestamp = timestamp;
         this.message = message;
         this.level = level;
@@ -35,7 +35,7 @@ public class LogEntry {
     /**
      Constructs a LogEntry instance from a log line
 
-     @param line      the log line which gets parsed
+     @param line        the log line which gets parsed
      @param predecessor the LogEntry preceding this newly created LogEntry
      */
     LogEntry(String line, LogEntry predecessor) throws LogParserException {
@@ -85,7 +85,7 @@ public class LogEntry {
         return m.find();
     }
 
-    void setIndex(long index) {
+    public void setIndex(long index) {
         this.index = index;
     }
 

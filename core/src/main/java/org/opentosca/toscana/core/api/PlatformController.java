@@ -26,7 +26,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 /**
  This REST Controller handles every request to list the supported Platforms and to retrieve information about a
  specific platform.
- <p> 
+ <p>
  For sample Responses of the Requests, please have a look at docs/api/api_samples.md
  */
 @CrossOrigin
@@ -45,7 +45,7 @@ public class PlatformController {
 
     /**
      Lists all Supported Platforms (HTTP Response Method).
-     <p> 
+     <p>
      It handles the <code>/platforms</code> Request
      <p>
      Always responds with HTTP-Code 200 (application/hal+json)
@@ -70,7 +70,7 @@ public class PlatformController {
 
     /**
      Returns the information for a specific platform.
-     <p> 
+     <p>
      This method handles the <code>/platforms/{id}</code> request
      <p>
      jResponds with Http code 200 normally (application/hal+json) and with code 404 (application/hal+json, standard

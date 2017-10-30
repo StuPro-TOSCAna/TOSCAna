@@ -22,6 +22,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import static java.lang.String.format;
+
 @Repository
 public class TransformationFilesystemDao implements TransformationDao {
 
@@ -114,7 +116,7 @@ public class TransformationFilesystemDao implements TransformationDao {
     }
 
     private Log getLog(Csar csar, Platform platform) {
-        File logFile = new File(getRootDir(csar, platform), "{}-{}.log".format(csar.getIdentifier(), platform.id));
+        File logFile = new File(getRootDir(csar, platform), format("%s-%s.log", csar.getIdentifier(), platform.id));
         return new LogImpl(logFile);
     }
 }

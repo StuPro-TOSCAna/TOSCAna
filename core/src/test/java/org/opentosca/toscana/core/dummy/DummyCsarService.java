@@ -14,7 +14,7 @@ import org.opentosca.toscana.core.csar.CsarService;
 
 public class DummyCsarService implements CsarService {
 
-    List<Csar> dummies = new LinkedList<>();
+    private List<Csar> dummies = new LinkedList<>();
 
     private final File tmpdir;
 
@@ -43,7 +43,7 @@ public class DummyCsarService implements CsarService {
         return dummy;
     }
 
-    public static void writeTo(InputStream csarStream, OutputStream fout) throws IOException {
+    private void writeTo(InputStream csarStream, OutputStream fout) throws IOException {
         byte[] data = new byte[512];
         int bytesRead = 0;
         while (bytesRead != -1) {

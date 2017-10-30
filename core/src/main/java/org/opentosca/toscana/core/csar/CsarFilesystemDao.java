@@ -35,7 +35,7 @@ public class CsarFilesystemDao implements CsarDao {
     /**
      the name of the directory which contains the unzipped content of the uploaded CSAR
      */
-    public final static String CONTENT_DIR = "content";
+    final static String CONTENT_DIR = "content";
 
     private final static Logger logger = LoggerFactory.getLogger(CsarFilesystemDao.class.getSimpleName());
 

@@ -14,10 +14,10 @@ import org.eclipse.winery.model.tosca.yaml.TServiceTemplate;
 
 public class DummyCsar implements Csar {
 
+    public Set<Property> modelSpecificProperties = new HashSet<>();
+    
     private String name;
     private byte[] data;
-
-    public Set<Property> modelSpecificProperties = new HashSet<>();
 
     private Map<String, Transformation> transformations = new HashMap<>();
 
@@ -47,6 +47,7 @@ public class DummyCsar implements Csar {
 
     @Override
     public void setTemplate(TServiceTemplate template) {
+        //noop
     }
 
     @Override
@@ -60,5 +61,10 @@ public class DummyCsar implements Csar {
 
     public void setData(byte[] data) {
         this.data = data;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof Csar && getIdentifier().equals(((Csar) o).getIdentifier());
     }
 }

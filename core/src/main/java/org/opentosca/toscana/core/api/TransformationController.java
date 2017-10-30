@@ -239,7 +239,8 @@ public class TransformationController {
      <tr>
      <td>404</td>
      <td>application/json</td>
-     <td>Returns a error message if the csar is not found or if the csar does not have a transformation for the given name
+     <td>Returns a error message if the csar is not found or if the csar does not have a transformation for the given
+     name
      (see returned error message for details)</td>
      </tr>
      </table>

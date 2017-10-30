@@ -14,16 +14,12 @@ import org.opentosca.toscana.core.transformation.artifacts.ArtifactService;
 import org.opentosca.toscana.core.transformation.execution.ExecutionTask;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 @Service
 public class TransformationServiceImpl implements TransformationService {
-
-    public Logger log = LoggerFactory.getLogger(getClass());
 
     private final TransformationDao transformationDao;
     private final CsarDao csarDao;

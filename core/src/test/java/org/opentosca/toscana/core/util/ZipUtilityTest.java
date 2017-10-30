@@ -11,7 +11,6 @@ import java.util.zip.ZipInputStream;
 
 import org.opentosca.toscana.core.BaseJUnitTest;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -23,12 +22,11 @@ public class ZipUtilityTest extends BaseJUnitTest {
 
     private static final Logger log = LoggerFactory.getLogger(ZipUtility.class);
 
+    private static final int FILE_SIZE = 1024;
+
     private File original;
     private File unzipped;
-
     private Random rnd = new Random(123456);
-
-    private static final int FILE_SIZE = 1024;
 
     @Before
     public void setUp() throws Exception {
@@ -75,11 +73,6 @@ public class ZipUtilityTest extends BaseJUnitTest {
 
     private String getRelativePath(File root, File subDir) {
         return root.toPath().relativize(subDir.toPath()).toString();
-    }
-
-    @After
-    public void tearDown() throws Exception {
-//        FileUtils.delete(dir);
     }
 
     public static void generateFolderStructure(

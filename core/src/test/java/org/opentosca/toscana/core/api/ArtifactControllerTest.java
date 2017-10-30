@@ -41,7 +41,7 @@ public class ArtifactControllerTest extends BaseSpringTest {
     private MessageDigest digest;
 
     @Before
-    public void setup() throws Exception {
+    public void setUp() throws Exception {
         //misc init
         Random rnd = new Random(1245);
         digest = MessageDigest.getInstance("SHA-256");

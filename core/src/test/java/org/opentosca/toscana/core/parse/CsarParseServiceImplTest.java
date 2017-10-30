@@ -15,9 +15,9 @@ import static org.junit.Assert.assertNotNull;
 public class CsarParseServiceImplTest extends BaseSpringTest {
 
     @Autowired
-    CsarParseService csarParser;
+    private CsarParseService csarParser;
     @Autowired
-    TestCsars testCsars;
+    private TestCsars testCsars;
 
     @Test
     public void parseValidCsar() throws Exception {

@@ -25,6 +25,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.opentosca.toscana.core.transformation.TransformationState.TRANSFORMING;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -54,22 +55,22 @@ public class TransformationControllerTest extends BaseSpringTest {
         "\t\t\"unsigned_integer_property\": \"-1337\"\n" +
         "\t}\n" +
         "}";
-    public static final String VALID_CSAR_NAME = "k8s-cluster";
-    public static final String VALID_PLATFORM_NAME = "p-a";
-    public static final String START_TRANSFORMATION_VALID_URL = "/csars/k8s-cluster/transformations/p-a/start";
-    public static final String GET_PROPERTIES_VALID_URL = "/csars/k8s-cluster/transformations/p-a/properties";
-    public static final String DEFAULT_CHARSET_HAL_JSON = "application/hal+json;charset=UTF-8";
-    public static final String ARTIFACT_RESPONSE_EXPECTED_URL = "http://localhost/csars/k8s-cluster/transformations/p-a/artifact";
-    public static final String GET_ARTIFACTS_VALID_URL = "/csars/k8s-cluster/transformations/p-a/artifact";
-    public static final String GET_LOGS_AT_START_ZERO_VALID_URL = "/csars/k8s-cluster/transformations/p-a/logs?start=0";
-    public static final String DELETE_TRANSFORMATION_VALID_URL = "/csars/k8s-cluster/transformations/p-a/delete";
-    public static final String TRANSFORMATION_DETAILS_VALID_URL = "/csars/k8s-cluster/transformations/p-a";
-    public static final String APPLICATION_HAL_JSON_MIME_TYPE = "application/hal+json";
-    public static final String LIST_TRANSFORMATIONS_VALID_URL = "/csars/k8s-cluster/transformations/";
-    public static final String LIST_TRANSFORMATIONS_EXPECTED_URL = "http://localhost/csars/k8s-cluster/transformations/";
-    public static final String CREATE_CSAR_VALID_URL = "/csars/k8s-cluster/transformations/p-a/create";
-    public static final String PLATFORM_NOT_FOUND_URL = "/csars/k8s-cluster/transformations/p-z";
-    public static final String CSAR_NOT_FOUND_URL = "/csars/keinechtescsar/transformations";
+    private static final String VALID_CSAR_NAME = "k8s-cluster";
+    private static final String VALID_PLATFORM_NAME = "p-a";
+    private static final String START_TRANSFORMATION_VALID_URL = "/csars/k8s-cluster/transformations/p-a/start";
+    private static final String GET_PROPERTIES_VALID_URL = "/csars/k8s-cluster/transformations/p-a/properties";
+    private static final String DEFAULT_CHARSET_HAL_JSON = "application/hal+json;charset=UTF-8";
+    private static final String ARTIFACT_RESPONSE_EXPECTED_URL = "http://localhost/csars/k8s-cluster/transformations/p-a/artifact";
+    private static final String GET_ARTIFACTS_VALID_URL = "/csars/k8s-cluster/transformations/p-a/artifact";
+    private static final String GET_LOGS_AT_START_ZERO_VALID_URL = "/csars/k8s-cluster/transformations/p-a/logs?start=0";
+    private static final String DELETE_TRANSFORMATION_VALID_URL = "/csars/k8s-cluster/transformations/p-a/delete";
+    private static final String TRANSFORMATION_DETAILS_VALID_URL = "/csars/k8s-cluster/transformations/p-a";
+    private static final String APPLICATION_HAL_JSON_MIME_TYPE = "application/hal+json";
+    private static final String LIST_TRANSFORMATIONS_VALID_URL = "/csars/k8s-cluster/transformations/";
+    private static final String LIST_TRANSFORMATIONS_EXPECTED_URL = "http://localhost/csars/k8s-cluster/transformations/";
+    private static final String CREATE_CSAR_VALID_URL = "/csars/k8s-cluster/transformations/p-a/create";
+    private static final String PLATFORM_NOT_FOUND_URL = "/csars/k8s-cluster/transformations/p-z";
+    private static final String CSAR_NOT_FOUND_URL = "/csars/keinechtescsar/transformations";
 
     private CsarService csarService;
     private DummyTransformationService transformationService;
@@ -375,8 +376,8 @@ public class TransformationControllerTest extends BaseSpringTest {
             .andExpect(content().bytes(new byte[0]))
             .andReturn();
         //Check if the transformation has been added to the archive
-        assertTrue(csarService.getCsar(VALID_CSAR_NAME).getTransformations().entrySet().size() == 1);
-        assertTrue(csarService.getCsar(VALID_CSAR_NAME).getTransformations().get(VALID_PLATFORM_NAME) != null);
+        assertEquals(1, csarService.getCsar(VALID_CSAR_NAME).getTransformations().entrySet().size());
+        assertNotNull(csarService.getCsar(VALID_CSAR_NAME).getTransformations().get(VALID_PLATFORM_NAME));
     }
 
     @Test

@@ -21,7 +21,7 @@ public class PropertyInstance {
      Creates a new property instance with no set property values for the given list (set) of properties.
 
      @param properties the set of properties to create a property instance for.
-     Is not allowed to be null, 
+     Is not allowed to be null,
      if no props are needed add a empty set
      */
     public PropertyInstance(Set<Property> properties,
@@ -36,7 +36,8 @@ public class PropertyInstance {
     }
 
     /**
-     Sets the value of the property with its given key. 
+     Sets the value of the property with its given key.
+
      @throws IllegalArgumentException if a property with the given key cannot be found or if the entered value is invalid
      */
     public void setPropertyValue(Property property, String value) {
@@ -83,7 +84,8 @@ public class PropertyInstance {
     }
 
     /**
-     Sets the value of the property with its given key. 
+     Sets the value of the property with its given key.
+
      @throws IllegalArgumentException if a property with given key cannot be found or if the entered value is invalid
      */
     public void setPropertyValue(String key, String value) {

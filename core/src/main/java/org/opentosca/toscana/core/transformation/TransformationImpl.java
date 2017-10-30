@@ -10,12 +10,9 @@ import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
 
-import ch.qos.logback.classic.Logger;
-import org.slf4j.LoggerFactory;
+import static java.lang.String.format;
 
 class TransformationImpl implements Transformation {
-
-    private Logger logger = (Logger) LoggerFactory.getLogger(getClass());
 
     private final Csar csar;
     private final Platform targetPlatform;
@@ -90,7 +87,7 @@ class TransformationImpl implements Transformation {
 
     @Override
     public String toString() {
-        return "Transformation [csarId='{}', platformId='{}']".format(csar.getIdentifier(), targetPlatform.id);
+        return format("Transformation [csarId='%s', platformId='%s']", csar.getIdentifier(), targetPlatform.id);
     }
 
     @Override

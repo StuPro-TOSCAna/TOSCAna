@@ -24,20 +24,19 @@ import static org.opentosca.toscana.core.testdata.TestCsars.CSAR_YAML_VALID_DOCK
 public class K8sPluginTest extends BaseSpringTest {
     private static final Logger log = LoggerFactory.getLogger(K8sPluginTest.class);
 
-    static TServiceTemplate tServiceTemplate;
-    static KubernetesPlugin plugin;
+    private static TServiceTemplate tServiceTemplate;
+    private static KubernetesPlugin plugin;
     @Autowired
-    CsarParseService csarParser;
+    private CsarParseService csarParser;
     @Autowired
-    Preferences preferences;
+    private Preferences preferences;
     @Autowired
-    TestTransformationContext testTransformationContext;
+    private TestTransformationContext testTransformationContext;
     @Autowired
     private TestCsars testCsars;
 
     @Before
     public void setUp() {
-
         plugin = new KubernetesPlugin();
     }
 

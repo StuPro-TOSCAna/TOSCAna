@@ -62,7 +62,7 @@ public class TransformationServiceImplTest extends BaseSpringTest {
     public void startTransformationInvalidState() throws Exception {
         Transformation t = service.createTransformation(csar, TestPlugins.PLATFORM1);
         t.setState(TransformationState.ERROR);
-        assertTrue(!service.startTransformation(t));
+        assertFalse(service.startTransformation(t));
     }
 
     @Test
@@ -72,7 +72,7 @@ public class TransformationServiceImplTest extends BaseSpringTest {
         csar.modelSpecificProperties
             .add(new Property("test", PropertyType.TEXT));
         Transformation t = service.createTransformation(csar, passingDummy.getPlatform());
-        assertTrue(!service.startTransformation(t));
+        assertFalse(service.startTransformation(t));
     }
 
     @Test

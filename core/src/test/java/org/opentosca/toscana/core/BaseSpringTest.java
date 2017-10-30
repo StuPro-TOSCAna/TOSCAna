@@ -32,16 +32,16 @@ public abstract class BaseSpringTest extends BaseTest {
 
     private final static Logger logger = LoggerFactory.getLogger(BaseSpringTest.class);
 
+    protected File tmpdir;
     @Autowired
     private Preferences preferences;
+
     /**
      temp data dir. if files need to get written to disk, use this as root directory. This folder is reset after every
      test method. Appropriate disk cleanup is performed automatically.
      */
-    protected File tmpdir;
 
     @PostConstruct
-    @SuppressWarnings("PMD.UnusedPrivateMethod")
     private void initTmpdir() {
         tmpdir = preferences.getDataDir();
     }

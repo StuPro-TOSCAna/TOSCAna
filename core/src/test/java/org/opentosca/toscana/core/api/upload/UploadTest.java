@@ -91,6 +91,7 @@ public class UploadTest extends BaseJUnitTest {
         }
     }
 
+    @SuppressWarnings("deprecation")
     @After
     public void tearDown() throws Exception {
         springThread.stop();

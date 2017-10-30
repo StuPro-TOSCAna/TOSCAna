@@ -43,6 +43,7 @@ public class MockCsarService implements CsarService {
 
     @Override
     public void deleteCsar(Csar csar) {
+        csars.remove(csar);
     }
 
     @Override

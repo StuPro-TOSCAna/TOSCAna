@@ -14,9 +14,6 @@ public class DummyLog implements Log {
 
     private List<LogEntry> entries = new ArrayList<>();
 
-    public DummyLog() {
-    }
-
     @Override
     public List<LogEntry> getLogEntries(int first, int last) {
         return null;
