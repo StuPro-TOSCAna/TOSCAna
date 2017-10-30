@@ -1,14 +1,13 @@
 package org.opentosca.toscana.plugins.awscf;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.opentosca.toscana.core.plugin.AbstractPlugin;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.Property;
-
 import org.springframework.stereotype.Component;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Component
 public class CloudFormationPlugin extends AbstractPlugin {

@@ -1,8 +1,8 @@
 package org.opentosca.toscana.core.api.model;
 
-import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.util.Map;
 
 public class SetPropertiesResponse {
     private Map<String, Boolean> validInputs;

@@ -1,15 +1,15 @@
 package org.opentosca.toscana.core.csar;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-
+import org.junit.Test;
 import org.opentosca.toscana.core.BaseSpringTest;
 import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.transformation.logging.Log;
 
-import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -18,7 +18,7 @@ import static org.mockito.Mockito.mock;
 public class CsarServiceImplTest extends BaseSpringTest {
 
     @Autowired
-    private CsarService csarService;
+    CsarService csarService;
 
     private String identifier = "my-awesome-csar";
 

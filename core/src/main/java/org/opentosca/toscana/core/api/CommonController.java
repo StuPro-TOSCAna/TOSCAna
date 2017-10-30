@@ -3,7 +3,6 @@ package org.opentosca.toscana.core.api;
 import org.opentosca.toscana.core.api.model.StatusResponse;
 import org.opentosca.toscana.core.util.FileSystem;
 import org.opentosca.toscana.core.util.status.StatusService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.ResourceSupport;
 import org.springframework.http.ResponseEntity;
@@ -15,11 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
+
 /**
- This REST Controller handles the requests which do not relate to Platforms or Csars Currently the only request
- handled by this controller is the {@code status} request 
- <p>
- For sample Responses of the Requests, please have a look at docs/api/api_samples.md
+ * This REST Controller handles the requests which do not relate to Platforms or Csars
+ * Currently the only request handled by this controller is the <code>/status</code> request
+ * <p>
+ * For sample Responses of the Requests, please have a look at docs/api/api_samples.md
  */
 @CrossOrigin
 @RestController
@@ -47,11 +47,11 @@ public class CommonController {
     }
 
     /**
-     Responds with the status of the Transformator, including Available Disk space and the current status
-     <p>
-     This operation always reponds with HTTP-code 200 
-     <p>
-     ContentType is <code>application/hal+json</code>
+     * Responds with the status of the Transformator, including Available Disk space and the current status
+     * <p>
+     * This Operation always Reponds with HTTP-Code 200
+     * <p>
+     * Content Type is <code>application/hal+json</code>
      */
     @RequestMapping(
         path = "/status",
@@ -67,4 +67,5 @@ public class CommonController {
         response.add(linkTo(methodOn(CommonController.class).getStatus()).withSelfRel());
         return ResponseEntity.ok(response);
     }
+
 }

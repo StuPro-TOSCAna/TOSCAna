@@ -1,9 +1,8 @@
 package org.opentosca.toscana.core.api.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.opentosca.toscana.core.api.CsarController;
 import org.opentosca.toscana.core.api.TransformationController;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.hateoas.ResourceSupport;
 import org.springframework.hateoas.core.Relation;
 

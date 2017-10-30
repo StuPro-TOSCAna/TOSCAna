@@ -1,17 +1,16 @@
 package org.opentosca.toscana.core.transformation;
 
-import java.util.HashSet;
-import java.util.Set;
-
+import ch.qos.logback.classic.Logger;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.transformation.artifacts.TargetArtifact;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
-
-import ch.qos.logback.classic.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashSet;
+import java.util.Set;
 
 class TransformationImpl implements Transformation {
 
@@ -25,10 +24,10 @@ class TransformationImpl implements Transformation {
     private TargetArtifact targetArtifact;
 
     /**
-     Creates a new transformation for given csar to given targetPlatform.
-
-     @param csar           the subject of transformation
-     @param targetPlatform the target platform
+     * Creates a new transformation for given csar to given targetPlatform.
+     *
+     * @param csar           the subject of transformation
+     * @param targetPlatform the target platform
      */
     TransformationImpl(Csar csar, Platform targetPlatform, Log log) {
         this.csar = csar;
@@ -41,7 +40,7 @@ class TransformationImpl implements Transformation {
         properties.addAll(targetPlatform.getProperties());
 
         //Create property instance
-        this.properties = new PropertyInstance(properties, this);
+        this.properties = new PropertyInstance(properties,this );
     }
 
     @Override
@@ -65,8 +64,8 @@ class TransformationImpl implements Transformation {
     }
 
     /**
-     @return if this transformation object's state is <code>DONE</code>, returns the target artifact of the
-     transformation. Else returns null.
+     * @return if this transformation object's state is <code>DONE</code>, returns the target artifact of the
+     * transformation. Else returns null.
      */
     @Override
     public TargetArtifact getTargetArtifact() {

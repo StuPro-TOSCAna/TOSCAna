@@ -1,23 +1,20 @@
 package org.opentosca.toscana.core.csar;
 
+import org.junit.Test;
+import org.opentosca.toscana.core.BaseSpringTest;
+import org.opentosca.toscana.core.testdata.TestCsars;
+import org.opentosca.toscana.core.testdata.TestPlugins;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.List;
 
-import org.opentosca.toscana.core.BaseSpringTest;
-import org.opentosca.toscana.core.testdata.TestCsars;
-import org.opentosca.toscana.core.testdata.TestPlugins;
-
-import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class CsarFilesystemDaoTest extends BaseSpringTest {
 
@@ -38,6 +35,7 @@ public class CsarFilesystemDaoTest extends BaseSpringTest {
         assertTrue(contentFolder.isDirectory());
         assertTrue(transformationFolder.isDirectory());
         assertTrue(contentFolder.list().length > 3); // not elegant but lazy..
+
     }
 
     @Test
@@ -67,6 +65,8 @@ public class CsarFilesystemDaoTest extends BaseSpringTest {
         Csar csar = csarDao.find(identifier);
 
         assertEquals(TestPlugins.PLATFORMS.size(), csar.getTransformations().size());
+
+
     }
 
     @Test
@@ -93,7 +93,7 @@ public class CsarFilesystemDaoTest extends BaseSpringTest {
     }
 
     /**
-     Test whether only directories in the DATA_ROOT dir are used to instantiate a csar object
+     * Test whether only directories in the DATA_ROOT dir are used to instantiate a csar object
      */
     @Test
     public void findAllOnlyDirs() throws Exception {
@@ -116,4 +116,5 @@ public class CsarFilesystemDaoTest extends BaseSpringTest {
         }
         assertFalse(readWrongData);
     }
+
 }

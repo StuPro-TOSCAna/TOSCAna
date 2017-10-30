@@ -1,4 +1,4 @@
-package org.opentosca.toscana.core.dummy;
+    package org.opentosca.toscana.core.dummy;
 
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.transformation.Transformation;
@@ -8,7 +8,7 @@ import org.opentosca.toscana.core.transformation.platform.Platform;
 
 public class DummyTransformationService implements TransformationService {
     private boolean returnValue = true;
-
+    
     private boolean startReturnValue = false;
 
     @Override
@@ -29,7 +29,7 @@ public class DummyTransformationService implements TransformationService {
 
     @Override
     public boolean startTransformation(Transformation transformation) {
-        if (startReturnValue) {
+        if(startReturnValue) {
             transformation.setState(TransformationState.TRANSFORMING);
         }
         return startReturnValue;

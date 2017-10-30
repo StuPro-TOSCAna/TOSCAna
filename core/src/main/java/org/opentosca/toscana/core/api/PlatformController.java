@@ -1,12 +1,9 @@
 package org.opentosca.toscana.core.api;
 
-import java.util.ArrayList;
-
 import org.opentosca.toscana.core.api.exceptions.PlatformNotFoundException;
 import org.opentosca.toscana.core.api.model.PlatformResponse;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.platform.PlatformService;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,20 +11,16 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.ResourceSupport;
 import org.springframework.hateoas.Resources;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 /**
- This REST Controller handles every request to list the supported Platforms and to retrieve information about a
- specific platform.
- <p> 
- For sample Responses of the Requests, please have a look at docs/api/api_samples.md
+ * This REST Controller handles every request to list the supported Platforms and to retrieve information about a
+ * specific platform. <p> For sample Responses of the Requests, please have a look at docs/api/api_samples.md
  */
 @CrossOrigin
 @RestController
@@ -44,11 +37,8 @@ public class PlatformController {
     }
 
     /**
-     Lists all Supported Platforms (HTTP Response Method).
-     <p> 
-     It handles the <code>/platforms</code> Request
-     <p>
-     Always responds with HTTP-Code 200 (application/hal+json)
+     * Lists all Supported Platforms (HTTP Response Method) <p> It handles the <code>/platforms</code> Request <p>
+     * Always responds with HTTP-Code 200 (application/hal+json)
      */
     @RequestMapping(
         path = "",
@@ -69,14 +59,11 @@ public class PlatformController {
     }
 
     /**
-     Returns the information for a specific platform.
-     <p> 
-     This method handles the <code>/platforms/{id}</code> request
-     <p>
-     jResponds with Http code 200 normaly (application/hal+json) and with code 404 (application/hal+json, standard
-     error message) if the plaform with the given name (case sensitive) does not exist.
-
-     @param id the <code>id</code> (identifier) of the platform (HTTP Path Parameter)
+     * Returns the information for a specific platform. <p> This method handles the <code>/platforms/{id}</code> request
+     * <p> Responds with Http code 200 normaly (application/hal+json) and with code 404 (application/hal+json, standart
+     * error message) if the plaform with the given name (case sensitive) does not exist.
+     *
+     * @param id the <code>id</code> (identifier) of the platform (HTTP Path Parameter)
      */
     @RequestMapping(
         path = "/{id}",
@@ -94,7 +81,7 @@ public class PlatformController {
     }
 
     /**
-     Generates a Platform Response and adds a self link to it.
+     * Generates a Platform Response and adds a self link to it.
      */
     private PlatformResponse getPlatformResource(Platform platform) {
         PlatformResponse res = new PlatformResponse(platform);

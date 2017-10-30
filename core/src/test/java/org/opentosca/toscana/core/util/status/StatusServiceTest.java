@@ -1,20 +1,19 @@
 package org.opentosca.toscana.core.util.status;
 
-import java.util.Arrays;
-import java.util.HashSet;
-
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.opentosca.toscana.core.csar.CsarDao;
 import org.opentosca.toscana.core.dummy.DummyCsar;
 import org.opentosca.toscana.core.dummy.DummyTransformation;
 import org.opentosca.toscana.core.testutils.CategoryAwareSpringRunner;
 import org.opentosca.toscana.core.transformation.TransformationState;
 import org.opentosca.toscana.core.transformation.platform.Platform;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
+
+import java.util.Arrays;
+import java.util.HashSet;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;

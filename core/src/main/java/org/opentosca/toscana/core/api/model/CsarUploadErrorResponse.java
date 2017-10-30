@@ -1,12 +1,11 @@
 package org.opentosca.toscana.core.api.model;
 
-import java.util.List;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.opentosca.toscana.core.parse.InvalidCsarException;
 import org.opentosca.toscana.core.transformation.logging.LogEntry;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.List;
 
 public class CsarUploadErrorResponse {
 

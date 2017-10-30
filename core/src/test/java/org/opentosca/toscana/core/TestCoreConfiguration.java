@@ -57,8 +57,8 @@ public class TestCoreConfiguration extends CoreConfiguration {
     }
 
     @Bean
-    public TestCsars testCsars() {
-        TestCsars bean = new TestCsars();
+    public TestCsars testCsars(CsarDao dao) {
+        TestCsars bean = new TestCsars(dao);
         return bean;
     }
 

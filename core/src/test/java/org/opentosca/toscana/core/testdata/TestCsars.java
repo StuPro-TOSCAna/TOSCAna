@@ -1,21 +1,27 @@
 package org.opentosca.toscana.core.testdata;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarDao;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+
 /**
- Supplies test classes with csars Attention: Uses CsarDao internally. If unforeseen errrors occour, check if CsarDao
- works as advertised
+ * Supplies test classes with csars Attention: Uses CsarDao internally. If unforeseen errrors occour, check if CsarDao
+ * works as advertised
  */
 public class TestCsars {
+
+    public CsarDao csarDao;
+
+    @Autowired
+    public TestCsars(CsarDao csarDao) {
+        this.csarDao = csarDao;
+    }
 
     private final static Logger logger = LoggerFactory.getLogger(TestCsars.class.getName());
 
@@ -29,14 +35,11 @@ public class TestCsars {
     public static final File CSAR_YAML_INVALID_ENTRYPOINT_MISSING = new File(YAML_DIR, "invalid/entrypoint_missing.csar");
     public static final File CSAR_YAML_INVALID_ENTRYPOINT_AMBIGUOUS = new File(YAML_DIR, "invalid/entrypoint_ambiguous.csar");
 
-    @Autowired
-    private CsarDao csarDao;
-
     /**
-     Creates given file as csar. Caution: Uses CsarDao internally
-
-     @param file a csar
-     @return instance of csar
+     * Creates given file as csar. Caution: Uses CsarDao internally
+     *
+     * @param file a csar
+     * @return instance of csar
      */
     public Csar getCsar(File file) throws FileNotFoundException {
         String identifier = file.getName().toLowerCase().replaceAll("[^a-z0-1_-]", "");
@@ -44,11 +47,11 @@ public class TestCsars {
     }
 
     /**
-     Creates given file as csar. Caution: Uses CsarDao internally
-
-     @param identifier identifier for new csar
-     @param file       a csar
-     @return instance of csar
+     * Creates given file as csar. Caution: Uses CsarDao internally
+     *
+     * @param identifier identifier for new csar
+     * @param file       a csar
+     * @return instance of csar
      */
     public Csar getCsar(String identifier, File file) throws FileNotFoundException {
         Csar csar = csarDao.create(identifier, new FileInputStream(file));

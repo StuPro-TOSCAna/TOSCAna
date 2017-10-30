@@ -1,16 +1,15 @@
 package org.opentosca.toscana.core.dummy;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
+import org.eclipse.winery.model.tosca.yaml.TServiceTemplate;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.properties.Property;
 
-import org.eclipse.winery.model.tosca.yaml.TServiceTemplate;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class DummyCsar implements Csar {
 

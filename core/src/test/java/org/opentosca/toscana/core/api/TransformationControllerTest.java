@@ -207,7 +207,7 @@ public class TransformationControllerTest extends BaseSpringTest {
     }
 
     //</editor-fold>
-
+    
     //<editor-fold desc="Test Artifact Retrieval">
     @Test
     public void retrieveArtifact() throws Exception {
@@ -240,7 +240,7 @@ public class TransformationControllerTest extends BaseSpringTest {
     }
 
     //</editor-fold>
-
+    
     //<editor-fold desc="Test Transformation Logs">
     @Test
     public void retrieveTransformationLogs() throws Exception {
@@ -261,7 +261,7 @@ public class TransformationControllerTest extends BaseSpringTest {
     }
 
     //</editor-fold>
-
+    
     //<editor-fold desc="Delete Transformation Tests">
     @Test
     public void deleteTransformation() throws Exception {
@@ -289,7 +289,7 @@ public class TransformationControllerTest extends BaseSpringTest {
             .andReturn();
     }
     //</editor-fold>
-
+    
     //<editor-fold desc="Transformation Details Test">
     @Test
     public void transformationDetails() throws Exception {
@@ -324,7 +324,7 @@ public class TransformationControllerTest extends BaseSpringTest {
         return map;
     }
     //</editor-fold>
-
+    
     //<editor-fold desc="List Transformation Tests">
     @Test
     public void listTransformations() throws Exception {
@@ -363,7 +363,7 @@ public class TransformationControllerTest extends BaseSpringTest {
             .andReturn();
     }
     //</editor-fold>
-
+    
     //<editor-fold desc="Create Transformation Tests">
     @Test
     public void createTransformation() throws Exception {
@@ -396,7 +396,7 @@ public class TransformationControllerTest extends BaseSpringTest {
             .andReturn();
     }
     //</editor-fold>
-
+    
     //<editor-fold desc="Platform Not found Tests">
     @Test
     public void newTransformationPlatformNotFound() throws Exception {
@@ -449,7 +449,7 @@ public class TransformationControllerTest extends BaseSpringTest {
             .andDo(print()).andExpect(status().isNotFound()).andReturn();
     }
     //</editor-fold>
-
+    
     //<editor-fold desc="CSAR Not found Tests">
     @Test
     public void listTransformationsCsarNotFound() throws Exception {
@@ -508,7 +508,7 @@ public class TransformationControllerTest extends BaseSpringTest {
             .andDo(print()).andExpect(status().isNotFound()).andReturn();
     }
     //</editor-fold>
-
+    
     //<editor-fold desc="Util Methods">
     public void preInitNonCreationTests() throws PlatformNotFoundException {
         //add a transformation

@@ -1,15 +1,10 @@
 package org.opentosca.toscana.core.plugin;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-
-import org.opentosca.toscana.core.transformation.Transformation;
-
 import org.apache.commons.io.FileUtils;
+import org.opentosca.toscana.core.transformation.Transformation;
 import org.slf4j.Logger;
+
+import java.io.*;
 
 public class PluginFileAccess {
 
@@ -24,12 +19,12 @@ public class PluginFileAccess {
     }
 
     /**
-     Copies given file or directory from the csar content directory to the transformation directory.
-     If given path specifies a directory, this directory's content gets copied aswell.
-
-     @param relativePath the path to the source file relative to the csar's content directory
-     @throws FileNotFoundException if no file or directory was found for given path
-     @throws IOException           if an error occurred while copying
+     * Copies given file or directory from the csar content directory to the transformation directory If given path
+     * specifies a directory, this directory's content gets copied aswell
+     *
+     * @param relativePath the path to the source file relative to the csar's content directory
+     * @throws FileNotFoundException if no file or directory was found for given path
+     * @throws IOException           if an error occurred while copying
      */
     public void copy(String relativePath) throws FileNotFoundException, IOException {
         File source = new File(sourceDir, relativePath);
@@ -53,17 +48,15 @@ public class PluginFileAccess {
     }
 
     /**
-     Returns a BufferedWriter which can write to given path.
-     <p>
-     If necessary, creates missing subdirectories.
-     <p>
-     Note: Close returned BufferWriter after usage.
-     <p>
-     Tip (single-line usage): fileAccess.access("mypath").append("message").close()
-
-     @param relativePath path to the target file, relative to the transformations root dir
-     @return BufferedWriter which writes to target file.
-     @throws FileNotFoundException if given relativePath points to a directory
+     * Returns a BufferedWriter which can write to given path
+     * <p>
+     * If necessary, creates missing subdirectories. <br>
+     * <p>
+     * Note: Close returned BufferWriter after usage.
+     *
+     * @param relativePath path to the target file, relative to the transformations root dir
+     * @return BufferedWriter which writes to target file.
+     * @throws FileNotFoundException if given relativePath points to a directory
      */
     public BufferedWriter access(String relativePath) throws IOException {
         File target = new File(targetDir, relativePath);
@@ -77,11 +70,11 @@ public class PluginFileAccess {
     }
 
     /**
-     Returns the content of a file in the csar content diretory denoted by given path.
-
-     @param relativePath path to a file contained in the csar content directory, relative said directory
-     @return content of given file
-     @throws IOException if file denoted by given relativePath does not exist or is a directory
+     * Returns the content of a file in the csar content diretory denoted by given path.
+     *
+     * @param relativePath path to a file contained in the csar content directory, relative said directory
+     * @return content of given file
+     * @throws IOException if file denoted by given relativePath does not exist or is a directory
      */
     public String read(String relativePath) throws IOException {
         File source = new File(sourceDir, relativePath);

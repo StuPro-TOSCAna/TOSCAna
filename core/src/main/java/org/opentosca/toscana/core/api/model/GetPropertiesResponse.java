@@ -1,17 +1,22 @@
 package org.opentosca.toscana.core.api.model;
 
-import java.util.List;
-
-import org.opentosca.toscana.core.api.TransformationController;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.opentosca.toscana.core.api.TransformationController;
 import org.springframework.hateoas.ResourceSupport;
+
+import java.util.List;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
+
 public class GetPropertiesResponse extends ResourceSupport {
 
+    @JsonIgnore
+    private String csarName;
+    @JsonIgnore
+    private String platformName;
     private List<PropertyWrap> properties;
 
     public GetPropertiesResponse(
@@ -19,6 +24,8 @@ public class GetPropertiesResponse extends ResourceSupport {
         String platformName,
         @JsonProperty("properties") List<PropertyWrap> properties
     ) {
+        this.csarName = csarName;
+        this.platformName = platformName;
         this.properties = properties;
         add(linkTo(methodOn(TransformationController.class)
             .getTransformationProperties(csarName, platformName))

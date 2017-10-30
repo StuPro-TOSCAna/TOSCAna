@@ -1,9 +1,9 @@
 package org.opentosca.toscana.core.plugin;
 
-import java.util.List;
-
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.platform.PlatformService;
+
+import java.util.List;
 
 public interface PluginService extends PlatformService {
 

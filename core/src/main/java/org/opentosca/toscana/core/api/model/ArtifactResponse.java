@@ -1,8 +1,7 @@
 package org.opentosca.toscana.core.api.model;
 
-import org.opentosca.toscana.core.api.TransformationController;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.opentosca.toscana.core.api.TransformationController;
 import org.springframework.hateoas.ResourceSupport;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
