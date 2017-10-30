@@ -1,5 +1,6 @@
 package org.opentosca.toscana.core.transformation.platform;
 
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -15,9 +16,9 @@ public interface PlatformService {
      Finds a specific platform by its identifier
 
      @param id the id to look for
-     @return the resulting platform object, null if the platform does not exist
+     @return the resulting platform object wrapped in an optional - is empty if no match was found
      */
-    Platform findPlatformById(String id);
+    Optional<Platform> findPlatformById(String id);
 
     boolean isSupported(Platform platform);
 }

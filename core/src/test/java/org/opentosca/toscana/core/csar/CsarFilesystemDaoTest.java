@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Optional;
 
 import org.opentosca.toscana.core.BaseSpringTest;
 import org.opentosca.toscana.core.testdata.TestCsars;
@@ -16,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class CsarFilesystemDaoTest extends BaseSpringTest {
@@ -51,9 +51,9 @@ public class CsarFilesystemDaoTest extends BaseSpringTest {
     @Test
     public void find() throws Exception {
         String identifier = createFakeCsarDirectories(1)[0];
-        Csar csar = csarDao.find(identifier);
-        assertNotNull(csar);
-        assertEquals(identifier, csar.getIdentifier());
+        Optional<Csar> csar = csarDao.find(identifier);
+        assertTrue(csar.isPresent());
+        assertEquals(identifier, csar.get().getIdentifier());
     }
 
     @Test
@@ -64,9 +64,10 @@ public class CsarFilesystemDaoTest extends BaseSpringTest {
         File transformationsDir = new File(csarDir, "transformations");
         TestPlugins.createFakeTransformationsOnDisk(transformationsDir, TestPlugins.PLATFORMS);
 
-        Csar csar = csarDao.find(identifier);
+        Optional<Csar> csar = csarDao.find(identifier);
 
-        assertEquals(TestPlugins.PLATFORMS.size(), csar.getTransformations().size());
+        assertTrue(csar.isPresent());
+        assertEquals(TestPlugins.PLATFORMS.size(), csar.get().getTransformations().size());
     }
 
     @Test

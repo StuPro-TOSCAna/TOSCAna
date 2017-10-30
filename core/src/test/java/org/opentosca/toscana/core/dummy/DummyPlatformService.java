@@ -3,6 +3,7 @@ package org.opentosca.toscana.core.dummy;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.opentosca.toscana.core.plugin.PluginService;
@@ -47,13 +48,10 @@ public class DummyPlatformService implements PluginService {
     }
 
     @Override
-    public Platform findPlatformById(String id) {
-        for (Platform platform : getSupportedPlatforms()) {
-            if (platform.id.equals(id)) {
-                return platform;
-            }
-        }
-        return null;
+    public Optional<Platform> findPlatformById(String id) {
+        return getSupportedPlatforms().stream()
+            .filter(platform -> platform.id.equals(id))
+            .findFirst();
     }
 
     @Override

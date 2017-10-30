@@ -6,7 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import org.opentosca.toscana.core.transformation.Transformation;
+import org.opentosca.toscana.core.transformation.logging.Log;
 
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -17,8 +17,8 @@ public class PluginFileAccess {
     private final File sourceDir;
     private final File targetDir;
 
-    public PluginFileAccess(Transformation transformation, File sourceDir, File targetDir) {
-        logger = transformation.getLog().getLogger(getClass());
+    public PluginFileAccess(File sourceDir, File targetDir, Log log) {
+        this.logger = log.getLogger(getClass());
         this.sourceDir = sourceDir;
         this.targetDir = targetDir;
     }

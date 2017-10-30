@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.opentosca.toscana.core.api.exceptions.CsarNotFoundException;
 import org.opentosca.toscana.core.api.exceptions.IllegalTransformationStateException;
@@ -45,6 +46,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import static java.lang.String.format;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
@@ -198,19 +200,17 @@ public class TransformationController {
         logger.info("Creating transformation for csar '{}' on '{}'", name, platform);
         Csar csar = findCsarByName(name);
         //Return bad Request if a transformation for this platform is already present
-        if (csar.getTransformations().get(platform) != null) {
+        if (csar.getTransformation(platform).isPresent()) {
             throw new TransformationAlreadyPresentException();
         }
         //Return 404 if the platform does not exist
-        Platform p = platformService.findPlatformById(platform);
-        if (p == null) {
-            throw new PlatformNotFoundException();
-        }
+        Optional<Platform> optionalPlatform = platformService.findPlatformById(platform);
+        Platform p = optionalPlatform.orElseThrow(PlatformNotFoundException::new);
         Transformation transformation = transformationService.createTransformation(csar, p);
 
 //        if (transformation.getState() == TransformationState.READY) {
 //            //TODO Replace with start query
-//            transformationService.startTransformation(csar.getTransformations().get(platform));
+//            transformationService.startTransformation(csar.getTransformation().get(platform));
 //        }
         return ResponseEntity.ok().build();
     }
@@ -544,22 +544,16 @@ public class TransformationController {
      Uses the csar service to find the csar instance (and handles error management)
      */
     private Csar findCsarByName(String name) {
-        Csar csar = csarService.getCsar(name);
-        if (csar == null) {
-            throw new CsarNotFoundException("No Csar with name '" + name + "# found!");
-        }
-        return csar;
+        Optional<Csar> csar = csarService.getCsar(name);
+        return csar.orElseThrow(() -> new CsarNotFoundException(format("No csar with name '%s' found", name)));
     }
 
     /**
      Uses the csar to find the transformation instance (and handles error management)
      */
     private Transformation findTransformationByPlatform(Csar csar, String platform) {
-        Transformation transformation = csar.getTransformations().get(platform);
-        if (transformation == null) {
-            throw new TransformationNotFoundException("The Csar '" + csar.getIdentifier() + "' does not have " +
-                "a transformation for platform '" + platform + "'.");
-        }
-        return transformation;
+        Optional<Transformation> transformation = csar.getTransformation(platform);
+        return transformation.orElseThrow(() -> new TransformationNotFoundException(
+            format("The Csar '%s' does not have a transformation for platform '%s'", csar.getIdentifier(), platform)));
     }
 }

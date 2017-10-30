@@ -2,6 +2,7 @@ package org.opentosca.toscana.core.csar;
 
 import java.io.InputStream;
 import java.util.List;
+import java.util.Optional;
 
 import org.opentosca.toscana.core.parse.CsarParseService;
 import org.opentosca.toscana.core.parse.InvalidCsarException;
@@ -41,7 +42,7 @@ public class CsarServiceImpl implements CsarService {
     }
 
     private void populateWithTemplate(Csar csar) throws InvalidCsarException {
-        if (csar.getTemplate() == null) {
+        if (!csar.getTemplate().isPresent()) {
             TServiceTemplate template = csarParser.parse(csar);
             csar.setTemplate(template);
         }
@@ -67,13 +68,15 @@ public class CsarServiceImpl implements CsarService {
     }
 
     @Override
-    public Csar getCsar(String identifier) {
-        Csar csar = csarDao.find(identifier);
-        try {
-            populateWithTemplate(csar);
-        } catch (InvalidCsarException e) {
-            logger.error("Encountered invalid csar in repository.", csar, e);
-            // TODO wait for discussion outcome, maybe cleanup disk
+    public Optional<Csar> getCsar(String identifier) {
+        Optional<Csar> csar = csarDao.find(identifier);
+        if (csar.isPresent()) {
+            try {
+                populateWithTemplate(csar.get());
+            } catch (InvalidCsarException e) {
+                logger.error("Encountered invalid csar in repository.", csar, e);
+                // TODO wait for discussion outcome, maybe cleanup disk
+            }
         }
         return csar;
     }

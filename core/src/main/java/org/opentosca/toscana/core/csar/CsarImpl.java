@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.opentosca.toscana.core.transformation.Transformation;
@@ -37,13 +38,19 @@ class CsarImpl implements Csar {
     }
 
     @Override
+    public Optional<Transformation> getTransformation(String platformId) {
+        Transformation t = transformations.get(platformId);
+        return Optional.ofNullable(t);
+    }
+
+    @Override
     public String getIdentifier() {
         return identifier;
     }
 
     @Override
-    public TServiceTemplate getTemplate() {
-        return template;
+    public Optional<TServiceTemplate> getTemplate() {
+        return Optional.ofNullable(template);
     }
 
     @Override
@@ -73,6 +80,7 @@ class CsarImpl implements Csar {
             .toHashCode();
     }
 
+    @Override
     public void setTransformations(List<Transformation> transformations) {
         for (Transformation transformation : transformations) {
             this.transformations.put(transformation.getPlatform().id, transformation);

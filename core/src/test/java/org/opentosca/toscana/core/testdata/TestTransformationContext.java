@@ -15,12 +15,14 @@ import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.core.transformation.TransformationDao;
 import org.opentosca.toscana.core.transformation.TransformationService;
+import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.mock;
 
 /**
  Supplies valid TransformationContext objects for plugin integration tests. <br> Note: Internally, uses core
@@ -49,7 +51,8 @@ public class TestTransformationContext extends BaseSpringTest {
 
         File csarContentRoot = csarDao.getContentDir(csar);
         File transformationRoot = transformationDao.getRootDir(transformation);
-        return new TransformationContext(transformation, csarContentRoot, transformationRoot);
+        return new TransformationContext(csarContentRoot, transformationRoot, mock(Log.class),
+            csar.getTemplate().get(), transformation.getProperties());
     }
 
     @Test

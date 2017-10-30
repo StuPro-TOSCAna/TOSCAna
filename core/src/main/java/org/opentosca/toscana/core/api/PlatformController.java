@@ -1,6 +1,7 @@
 package org.opentosca.toscana.core.api;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 import org.opentosca.toscana.core.api.exceptions.PlatformNotFoundException;
 import org.opentosca.toscana.core.api.model.PlatformResponse;
@@ -86,10 +87,8 @@ public class PlatformController {
     public ResponseEntity<PlatformResponse> getPlatform(
         @PathVariable(name = "id") String id
     ) {
-        Platform p = platformService.findPlatformById(id);
-        if (p == null) {
-            throw new PlatformNotFoundException();
-        }
+        Optional<Platform> optionalPlatform = platformService.findPlatformById(id);
+        Platform p = optionalPlatform.orElseThrow(PlatformNotFoundException::new);
         return ResponseEntity.ok(getPlatformResource(p));
     }
 

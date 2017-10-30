@@ -51,9 +51,9 @@ public class TransformationServiceImplTest extends BaseSpringTest {
 
     @Test
     public void createTransformation() throws Exception {
-        Transformation transformation = service.createTransformation(csar, PLATFORM1);
         Transformation expected = new TransformationImpl(csar, PLATFORM1, log);
-        assertTrue(csar.getTransformations().containsValue(expected));
+        Transformation transformation = service.createTransformation(csar, PLATFORM1);
+        assertTrue(csar.getTransformation(PLATFORM1.id).isPresent());
         assertEquals(expected, transformation);
     }
 
@@ -77,7 +77,7 @@ public class TransformationServiceImplTest extends BaseSpringTest {
     @Test
     public void transformationCreationNoProps() throws Exception {
         Transformation t = service.createTransformation(csar, PASSING_DUMMY.getPlatform());
-        assertNotNull(csar.getTransformations().get(PASSING_DUMMY.getPlatform().id));
+        assertTrue(csar.getTransformation(PASSING_DUMMY.getPlatform().id).isPresent());
         assertNotNull(t);
         assertEquals(TransformationState.READY, t.getState());
     }
@@ -94,7 +94,7 @@ public class TransformationServiceImplTest extends BaseSpringTest {
         csar.modelSpecificProperties
             .add(new Property("test", PropertyType.TEXT));
         Transformation t = service.createTransformation(csar, PASSING_DUMMY.getPlatform());
-        assertNotNull(csar.getTransformations().get(PASSING_DUMMY.getPlatform().id));
+        assertTrue(csar.getTransformation(PASSING_DUMMY.getPlatform().id).isPresent());
         assertNotNull(t);
         assertEquals(TransformationState.INPUT_REQUIRED, t.getState());
     }
@@ -129,8 +129,8 @@ public class TransformationServiceImplTest extends BaseSpringTest {
         assertTrue(t.getState() == TransformationState.TRANSFORMING);
         assertTrue(service.abortTransformation(t));
         letTimePass();
-        assertTrue("Transformation State is " + t.getState(),
-            t.getState() == TransformationState.ERROR);
+        assertEquals("Transformation State is " + t.getState(),
+            TransformationState.ERROR, t.getState());
     }
 
     @Test
@@ -138,15 +138,15 @@ public class TransformationServiceImplTest extends BaseSpringTest {
         //Start a passing transformation
         startTransformation();
         //Wait for it to finish
-        Transformation t = csar.getTransformations().get("passing");
-        assertTrue(!service.abortTransformation(t));
+        csar.getTransformation(PASSING_DUMMY.getPlatform().id).get();
+        assertFalse(service.abortTransformation(null));
     }
 
     @Test
     public void stopNotStarted() throws Exception {
         transformationCreationNoProps();
-        Transformation t = csar.getTransformations().get("passing");
-        assertTrue(!service.abortTransformation(t));
+        Transformation t = csar.getTransformations().get(PASSING_DUMMY.getPlatform().id);
+        assertFalse(service.abortTransformation(t));
     }
 
     @Test
@@ -159,7 +159,7 @@ public class TransformationServiceImplTest extends BaseSpringTest {
     }
 
     private Transformation startTransformationInternal(TransformationState expectedState, Platform platform) throws InterruptedException, FileNotFoundException, PlatformNotFoundException {
-        Csar csar = testCsars.getCsar(TestCsars.CSAR_YAML_VALID_DOCKER_SIMPLETASK);
+        csar = testCsars.getCsar(TestCsars.CSAR_YAML_VALID_DOCKER_SIMPLETASK);
         Transformation t = service.createTransformation(csar, platform);
         assertTrue(service.startTransformation(t));
         letTimePass();

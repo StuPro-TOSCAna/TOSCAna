@@ -91,9 +91,10 @@ public class CsarControllerTest extends BaseSpringTest {
         ).andDo(print()).andExpect(status().is2xxSuccessful());
         resultActions.andReturn();
 
+        DummyCsar dummyCsar = (DummyCsar) service.getCsar("rnd").get();
         byte[] hashUpload = MessageDigest
             .getInstance("SHA-256")
-            .digest(((DummyCsar) service.getCsar("rnd")).getData());
+            .digest(dummyCsar.getData());
         assertTrue(hashUpload.length == hash.length);
         for (int i = 0; i < hash.length; i++) {
             assertTrue(hash[i] == hashUpload[i]);

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.opentosca.toscana.core.api.utils.StreamUtils;
 import org.opentosca.toscana.core.csar.Csar;
@@ -25,7 +26,7 @@ public class MockCsarService implements CsarService {
 
     @Override
     public Csar submitCsar(String name, InputStream csarStream) {
-        if (getCsar(name) != null) {
+        if (getCsar(name).isPresent()) {
             return null;
         }
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -52,12 +53,12 @@ public class MockCsarService implements CsarService {
     }
 
     @Override
-    public Csar getCsar(String identifier) {
+    public Optional<Csar> getCsar(String identifier) {
         for (Csar csar : csars) {
             if (csar.getIdentifier().equals(identifier)) {
-                return csar;
+                return Optional.of(csar);
             }
         }
-        return null;
+        return Optional.ofNullable(null);
     }
 }

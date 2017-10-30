@@ -9,7 +9,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 public class ArtifactResponse extends ResourceSupport {
-   
+
     private final String accessURL;
 
     public ArtifactResponse(

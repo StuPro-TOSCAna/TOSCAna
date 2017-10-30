@@ -53,7 +53,7 @@ public class PluginFileAccessTest extends BaseSpringTest {
         transformation = transformationService.createTransformation(csar, TestPlugins.PLATFORM1);
         TestPlugins.createFakeTransformationsOnDisk(csarDao.getTransformationsDir(csar), TestPlugins.PLATFORMS);
         transformationRootDir = transformationDao.getRootDir(transformation);
-        access = new PluginFileAccess(transformation, csarDao.getContentDir(csar), transformationDao.getRootDir(transformation));
+        access = new PluginFileAccess(csarDao.getContentDir(csar), transformationDao.getRootDir(transformation), transformation.getLog());
         fileContent = "this is a test content";
         inputStream = IOUtils.toInputStream(fileContent, "UTF-8");
         targetFilePath = "testFile";

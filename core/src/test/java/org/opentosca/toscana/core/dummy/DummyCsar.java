@@ -2,7 +2,9 @@ package org.opentosca.toscana.core.dummy;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.opentosca.toscana.core.csar.Csar;
@@ -15,7 +17,7 @@ import org.eclipse.winery.model.tosca.yaml.TServiceTemplate;
 public class DummyCsar implements Csar {
 
     public Set<Property> modelSpecificProperties = new HashSet<>();
-    
+
     private final String name;
     private byte[] data;
 
@@ -31,13 +33,18 @@ public class DummyCsar implements Csar {
     }
 
     @Override
+    public Optional<Transformation> getTransformation(String platformId) {
+        return Optional.ofNullable(transformations.get(platformId));
+    }
+
+    @Override
     public String getIdentifier() {
         return name;
     }
 
     @Override
-    public TServiceTemplate getTemplate() {
-        return null;
+    public Optional<TServiceTemplate> getTemplate() {
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -47,12 +54,17 @@ public class DummyCsar implements Csar {
 
     @Override
     public void setTemplate(TServiceTemplate template) {
-        //noop
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Log getLog() {
-        return null;
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setTransformations(List<Transformation> transformations) {
+        throw new UnsupportedOperationException();
     }
 
     public byte[] getData() {

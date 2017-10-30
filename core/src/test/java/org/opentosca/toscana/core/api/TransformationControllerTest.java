@@ -2,6 +2,7 @@ package org.opentosca.toscana.core.api;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import org.opentosca.toscana.core.BaseSpringTest;
 import org.opentosca.toscana.core.api.exceptions.PlatformNotFoundException;
@@ -25,7 +26,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.opentosca.toscana.core.transformation.TransformationState.TRANSFORMING;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -103,7 +103,7 @@ public class TransformationControllerTest extends BaseSpringTest {
             .andExpect(content().bytes(new byte[0]))
             .andReturn();
         assertEquals(TRANSFORMING,
-            csarService.getCsar(VALID_CSAR_NAME).getTransformations().get(VALID_PLATFORM_NAME).getState());
+            csarService.getCsar(VALID_CSAR_NAME).get().getTransformation(VALID_PLATFORM_NAME).get().getState());
     }
 
     @Test
@@ -119,7 +119,7 @@ public class TransformationControllerTest extends BaseSpringTest {
             .andExpect(content().bytes(new byte[0]))
             .andReturn();
         assertNotEquals(TRANSFORMING,
-            csarService.getCsar(VALID_CSAR_NAME).getTransformations().get(VALID_PLATFORM_NAME).getState());
+            csarService.getCsar(VALID_CSAR_NAME).get().getTransformation(VALID_PLATFORM_NAME).get().getState());
     }
 
     //</editor-fold>
@@ -181,7 +181,7 @@ public class TransformationControllerTest extends BaseSpringTest {
         preInitNonCreationTests();
         //Set a Property value
         csarService.getCsar(VALID_CSAR_NAME)
-            .getTransformations().get(VALID_PLATFORM_NAME)
+            .get().getTransformation(VALID_PLATFORM_NAME).get()
             .getProperties().setPropertyValue("secret_property", "geheim");
         //Perform a request
         MvcResult result = mvc.perform(
@@ -212,7 +212,7 @@ public class TransformationControllerTest extends BaseSpringTest {
     @Test
     public void retrieveArtifact() throws Exception {
         preInitNonCreationTests();
-        ((DummyTransformation) csarService.getCsar(VALID_CSAR_NAME).getTransformations().get(VALID_PLATFORM_NAME))
+        ((DummyTransformation) csarService.getCsar(VALID_CSAR_NAME).get().getTransformation(VALID_PLATFORM_NAME).get())
             .setReturnTargetArtifact(true);
         mvc.perform(
             get(GET_ARTIFACTS_VALID_URL)
@@ -230,7 +230,7 @@ public class TransformationControllerTest extends BaseSpringTest {
     @Test
     public void retrieveArtifactNotFinished() throws Exception {
         preInitNonCreationTests();
-        ((DummyTransformation) csarService.getCsar(VALID_CSAR_NAME).getTransformations().get(VALID_PLATFORM_NAME))
+        ((DummyTransformation) csarService.getCsar(VALID_CSAR_NAME).get().getTransformation(VALID_PLATFORM_NAME).get())
             .setReturnTargetArtifact(false);
         mvc.perform(
             get(GET_ARTIFACTS_VALID_URL)
@@ -368,7 +368,7 @@ public class TransformationControllerTest extends BaseSpringTest {
     @Test
     public void createTransformation() throws Exception {
         //Make sure no previous transformations are present
-        assertTrue(csarService.getCsar(VALID_CSAR_NAME).getTransformations().entrySet().size() == 0);
+        assertEquals(0, csarService.getCsar(VALID_CSAR_NAME).get().getTransformations().size());
         //Call creation Request
         mvc.perform(put(CREATE_CSAR_VALID_URL))
             .andDo(print())
@@ -376,8 +376,8 @@ public class TransformationControllerTest extends BaseSpringTest {
             .andExpect(content().bytes(new byte[0]))
             .andReturn();
         //Check if the transformation has been added to the archive
-        assertEquals(1, csarService.getCsar(VALID_CSAR_NAME).getTransformations().entrySet().size());
-        assertNotNull(csarService.getCsar(VALID_CSAR_NAME).getTransformations().get(VALID_PLATFORM_NAME));
+        assertEquals(1, csarService.getCsar(VALID_CSAR_NAME).get().getTransformations().size());
+        assertTrue(csarService.getCsar(VALID_CSAR_NAME).get().getTransformation(VALID_PLATFORM_NAME).isPresent());
     }
 
     @Test
@@ -512,9 +512,10 @@ public class TransformationControllerTest extends BaseSpringTest {
     //<editor-fold desc="Util Methods">
     public void preInitNonCreationTests() throws PlatformNotFoundException {
         //add a transformation
-        Csar csar = csarService.getCsar(VALID_CSAR_NAME);
-        transformationService.createTransformation(csar, platformService.findPlatformById(VALID_PLATFORM_NAME));
-        transformationService.createTransformation(csar, platformService.findPlatformById("p-b"));
+        Optional<Csar> csar = csarService.getCsar(VALID_CSAR_NAME);
+        assertTrue(csar.isPresent());
+        transformationService.createTransformation(csar.get(), platformService.findPlatformById(VALID_PLATFORM_NAME).get());
+        transformationService.createTransformation(csar.get(), platformService.findPlatformById("p-b").get());
     }
     //</editor-fold>
 }
