@@ -1,4 +1,4 @@
-package org.opentosca.toscana.core.api.dev;
+package org.opentosca.toscana.core.api.docs;
 
 import java.util.Objects;
 
@@ -16,13 +16,17 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-@SuppressWarnings("unchecked")
+@SuppressWarnings( {"unchecked", "Guava"})
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig {
 
+    private final ApiContents apiContents;
+
     @Autowired
-    public ApiContents apiContents;
+    public SwaggerConfig(ApiContents apiContents) {
+        this.apiContents = apiContents;
+    }
 
     @Bean
     public Docket api() {
@@ -48,9 +52,10 @@ public class SwaggerConfig {
 
     private Predicate<String> getPaths() {
         return Predicates.or(
-            s -> Objects.equals(s, "/status"),
-            PathSelectors.ant("/platforms/**"),
-            PathSelectors.ant("/csars/**")
+            s -> Objects.equals(s, "/api/status"),
+            PathSelectors.ant("/api/platforms/**"),
+            PathSelectors.ant("/api/csars/**"),
+            PathSelectors.ant("/api/*")
         );
     }
 }

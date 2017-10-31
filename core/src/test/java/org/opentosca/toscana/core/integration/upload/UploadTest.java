@@ -11,13 +11,17 @@ import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
 import static org.junit.Assert.fail;
 
 public class UploadTest extends BaseIntegrationTest {
-
+    
+    private static final Logger logger = LoggerFactory.getLogger(UploadTest.class);
+    
     private TOSCAnaUploadInterface api;
 
     @Before
@@ -38,9 +42,9 @@ public class UploadTest extends BaseIntegrationTest {
         MultipartBody.Part p = MultipartBody.Part.createFormData("file", "test.csar", file);
 
         Response<ResponseBody> response = api.upload(p, "test-archive").execute();
-        if (response.code() != 200) {
+        if (response.code() != 201) {
             ResponseBody b = response.errorBody();
-            System.out.println(b.string());
+            logger.error("Server returned {}", response.code());
             fail();
         }
     }

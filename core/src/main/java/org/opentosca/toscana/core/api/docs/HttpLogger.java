@@ -1,4 +1,4 @@
-package org.opentosca.toscana.core.api.dev;
+package org.opentosca.toscana.core.api.docs;
 
 import java.util.List;
 import java.util.Map;

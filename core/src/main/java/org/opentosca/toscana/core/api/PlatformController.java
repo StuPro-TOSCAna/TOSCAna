@@ -3,16 +3,23 @@ package org.opentosca.toscana.core.api;
 import java.util.ArrayList;
 import java.util.Optional;
 
+import org.opentosca.toscana.core.api.docs.HiddenResources;
+import org.opentosca.toscana.core.api.docs.PlatformResources;
+import org.opentosca.toscana.core.api.docs.RestErrorResponse;
 import org.opentosca.toscana.core.api.exceptions.PlatformNotFoundException;
 import org.opentosca.toscana.core.api.model.PlatformResponse;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.platform.PlatformService;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
-import org.springframework.hateoas.ResourceSupport;
 import org.springframework.hateoas.Resources;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -33,6 +40,11 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 @CrossOrigin
 @RestController
 @RequestMapping("/api/platforms")
+@Api(
+    tags = {"platforms"},
+    value = "/platforms",
+    description = "Operations for the supported platforms of the transformer"
+)
 public class PlatformController {
 
     private final static Logger logger = LoggerFactory.getLogger(PlatformController.class);
@@ -51,12 +63,19 @@ public class PlatformController {
      <p>
      Always responds with HTTP-Code 200 (application/hal+json)
      */
+    @ApiOperation(
+        value = "List all supported Platforms",
+        notes = "Returns a HAL resource (_embedded) containing all " +
+            "Platforms supported by this transformer",
+        code = 200,
+        response = PlatformResources.class
+    )
     @RequestMapping(
         path = "",
         method = RequestMethod.GET,
         produces = "application/hal+json"
     )
-    public ResponseEntity<ResourceSupport> getPlatforms() {
+    public ResponseEntity<Resources<PlatformResponse>> getPlatforms() {
         Link selfLink = linkTo(methodOn(PlatformController.class).getPlatforms()).withSelfRel();
         ArrayList<PlatformResponse> responses = new ArrayList<>();
         for (Platform platform : platformService.getSupportedPlatforms()) {
@@ -64,7 +83,7 @@ public class PlatformController {
             PlatformResponse res = getPlatformResource(platform);
             responses.add(res);
         }
-        Resources<PlatformResponse> resources = new Resources<>(responses, selfLink);
+        Resources<PlatformResponse> resources = new HiddenResources<>(responses, selfLink);
 
         return ResponseEntity.ok(resources);
     }
@@ -79,12 +98,30 @@ public class PlatformController {
 
      @param id the <code>id</code> (identifier) of the platform (HTTP Path Parameter)
      */
+    @ApiOperation(
+        value = "Get the Details for a specific Platform",
+        notes = "Returns the resource object for one specific plugin (platform)",
+        code = 200
+    )
+    @ApiResponses( {
+        @ApiResponse(
+            code = 200,
+            message = "The request has been executed with no error!",
+            response = PlatformResponse.class
+        ),
+        @ApiResponse(
+            code = 404,
+            message = "There is no platform with the given name",
+            response = RestErrorResponse.class
+        )
+    })
     @RequestMapping(
         path = "/{id}",
         method = RequestMethod.GET,
         produces = "application/hal+json"
     )
     public ResponseEntity<PlatformResponse> getPlatform(
+        @ApiParam(name = "id", value = "The Platform identifier", required = true)
         @PathVariable(name = "id") String id
     ) {
         Optional<Platform> optionalPlatform = platformService.findPlatformById(id);

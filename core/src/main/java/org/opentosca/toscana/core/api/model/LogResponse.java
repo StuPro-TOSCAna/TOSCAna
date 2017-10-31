@@ -3,17 +3,20 @@ package org.opentosca.toscana.core.api.model;
 import java.util.List;
 
 import org.opentosca.toscana.core.api.TransformationController;
+import org.opentosca.toscana.core.api.docs.HiddenResourceSupport;
 import org.opentosca.toscana.core.transformation.logging.LogEntry;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.springframework.hateoas.ResourceSupport;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import org.springframework.hateoas.core.Relation;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
+@ApiModel
 @Relation(collectionRelation = "log")
-public class LogResponse extends ResourceSupport {
+public class LogResponse extends HiddenResourceSupport {
     private final long start;
     private final long end;
     private final List<LogEntry> logEntries;
@@ -38,16 +41,32 @@ public class LogResponse extends ResourceSupport {
             .withRel("next").expand(csarName));
     }
 
+    @ApiModelProperty(
+        required = true,
+        notes = "The requested start index",
+        example = "0",
+        dataType = "integer"
+    )
     @JsonProperty("start")
     public long getStart() {
         return start;
     }
 
+    @ApiModelProperty(
+        required = true,
+        notes = "The End index of the logfile at the time of requesting this information.",
+        example = "0",
+        dataType = "integer"
+    )
     @JsonProperty("end")
     public long getEnd() {
         return end;
     }
 
+    @ApiModelProperty(
+        required = true,
+        notes = "The sorted list (ascending by timestamp) of all the logs between start index and the current end index"
+    )
     @JsonProperty("logs")
     public List<LogEntry> getLogEntries() {
         return logEntries;

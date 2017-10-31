@@ -29,6 +29,16 @@ public class CommonControllerTest extends BaseTest {
     private MockMvc mvc;
 
     @Test
+    public void getStatusIndexPage() throws Exception {
+        mvc.perform(get("/api/status"))
+            .andDo(print())
+            .andExpect(status().is(200))
+            .andExpect(jsonPath("$._links.self.href").value("http://localhost/api/status/"))
+            .andExpect(jsonPath("$._links.metrics.href").value("http://localhost/api/status/metrics"))
+            .andExpect(jsonPath("$._links.health.href").value("http://localhost/api/status/health"));
+    }
+
+    @Test
     public void getIndexPage() throws Exception {
         String url = "/api/";
         requestIndex(url);
@@ -46,6 +56,7 @@ public class CommonControllerTest extends BaseTest {
             .andExpect(status().is(200))
             .andExpect(jsonPath("$._links.self.href").value("http://localhost/api/"))
             .andExpect(jsonPath("$._links.platforms.href").value("http://localhost/api/platforms/"))
-            .andExpect(jsonPath("$._links.csars.href").value("http://localhost/api/csars/"));
+            .andExpect(jsonPath("$._links.csars.href").value("http://localhost/api/csars/"))
+            .andExpect(jsonPath("$._links.status.href").value("http://localhost/api/status/"));
     }
 }

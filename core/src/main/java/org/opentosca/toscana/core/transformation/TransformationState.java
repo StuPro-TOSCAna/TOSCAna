@@ -10,5 +10,5 @@ public enum TransformationState {
     INPUT_REQUIRED,
     TRANSFORMING,
     DONE,
-    ERROR,
+    ERROR
 }
