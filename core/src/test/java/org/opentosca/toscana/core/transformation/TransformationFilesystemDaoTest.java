@@ -12,7 +12,6 @@ import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarDao;
 import org.opentosca.toscana.core.csar.CsarFilesystemDao;
 import org.opentosca.toscana.core.testdata.TestCsars;
-import org.opentosca.toscana.core.testdata.TestPlugins;
 import org.opentosca.toscana.core.transformation.logging.Log;
 
 import org.junit.Before;
@@ -22,8 +21,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.opentosca.toscana.core.testdata.TestPlugins.PLATFORM1;
+import static org.opentosca.toscana.core.testdata.TestPlugins.PLATFORM2;
+import static org.opentosca.toscana.core.testdata.TestPlugins.PLATFORM4;
+import static org.opentosca.toscana.core.testdata.TestPlugins.PLATFORM_NOT_SUPPORTED;
 
 public class TransformationFilesystemDaoTest extends BaseSpringTest {
 
@@ -38,8 +42,8 @@ public class TransformationFilesystemDaoTest extends BaseSpringTest {
     private Csar csar2;
     private Csar csar3;
     private Csar csar4;
-    private Transformation transformation1;
-    private File transformation1Dir;
+    private Transformation transformation;
+    private File transformationRootDir;
     @Mock
     private Log log;
 
@@ -49,15 +53,15 @@ public class TransformationFilesystemDaoTest extends BaseSpringTest {
         csar2 = testCsars.getCsar("csar2", TestCsars.CSAR_YAML_VALID_DOCKER_SIMPLETASK);
         csar3 = testCsars.getCsar("csar3", TestCsars.CSAR_YAML_VALID_DOCKER_SIMPLETASK);
         csar4 = testCsars.getCsar("csar4", TestCsars.CSAR_YAML_VALID_DOCKER_SIMPLETASK);
-        transformation1 = new TransformationImpl(csar1, TestPlugins.PLATFORM1, log);
-        transformation1Dir = transformationDao.getRootDir(transformation1);
+        transformation = new TransformationImpl(csar1, PLATFORM1, log);
+        transformationRootDir = transformationDao.getRootDir(transformation);
     }
 
     @Test
     public void getRootDir() throws Exception {
         File expectedParent = new File(csarDao.getRootDir(csar1), CsarFilesystemDao.TRANSFORMATION_DIR);
-        File expected = new File(expectedParent, TestPlugins.PLATFORM1.id);
-        File actual = transformationDao.getRootDir(transformation1);
+        File expected = new File(expectedParent, PLATFORM1.id);
+        File actual = transformationDao.getRootDir(transformation);
 
         assertEquals(expected, actual);
     }
@@ -67,15 +71,19 @@ public class TransformationFilesystemDaoTest extends BaseSpringTest {
      */
     @Test
     public void createDeletesOldFilesAndCreatesBlankDir() throws Exception {
-        List<File> files = createRandomFiles(transformation1Dir);
+        List<File> files = createRandomFiles(transformationRootDir);
 
-        transformationDao.create(csar1, TestPlugins.PLATFORM1);
+        assertNotEquals(0, transformationRootDir.list().length);
+        transformationDao.create(csar1, PLATFORM1);
 
         for (File file : files) {
             assertFalse(file.exists());
         }
-        assertTrue(transformation1Dir.exists());
-        assertEquals(0, transformation1Dir.list().length);
+        assertTrue(transformationRootDir.exists());
+        File[] result = transformationRootDir.listFiles();
+        assertEquals(1, result.length);  // old files deleted, empty content dir got created
+        assertEquals(TransformationFilesystemDao.CONTENT_DIR, result[0].getName());
+        assertEquals(0, result[0].list().length);
     }
 
     /**
@@ -84,19 +92,19 @@ public class TransformationFilesystemDaoTest extends BaseSpringTest {
     @Test
     public void delete() throws Exception {
         // create some random files in transformation1 dir of csar1
-        createRandomFiles(transformation1Dir);
+        createRandomFiles(transformationRootDir);
 
-        transformationDao.delete(transformation1);
+        transformationDao.delete(transformation);
         // check if all files got deleted 
-        assertFalse(transformation1Dir.exists());
+        assertFalse(transformationRootDir.exists());
     }
 
     @Test
     public void findFromSpecificCsar() throws Exception {
-        createRandomFiles(transformationDao.getRootDir(new TransformationImpl(csar1, TestPlugins.PLATFORM1, log)));
-        createRandomFiles(transformationDao.getRootDir(new TransformationImpl(csar1, TestPlugins.PLATFORM2, log)));
-        createRandomFiles(transformationDao.getRootDir(new TransformationImpl(csar2, TestPlugins.PLATFORM1, log)));
-        createRandomFiles(transformationDao.getRootDir(new TransformationImpl(csar3, TestPlugins.PLATFORM1, log)));
+        createRandomFiles(transformationDao.getRootDir(new TransformationImpl(csar1, PLATFORM1, log)));
+        createRandomFiles(transformationDao.getRootDir(new TransformationImpl(csar1, PLATFORM2, log)));
+        createRandomFiles(transformationDao.getRootDir(new TransformationImpl(csar2, PLATFORM1, log)));
+        createRandomFiles(transformationDao.getRootDir(new TransformationImpl(csar3, PLATFORM1, log)));
 
         List<Transformation> transformations = transformationDao.find(csar1);
 
@@ -105,18 +113,18 @@ public class TransformationFilesystemDaoTest extends BaseSpringTest {
 
     @Test
     public void findSpecificTransformation() throws Exception {
-        createRandomFiles(transformationDao.getRootDir(new TransformationImpl(csar1, TestPlugins.PLATFORM1, log)));
-        createRandomFiles(transformationDao.getRootDir(new TransformationImpl(csar1, TestPlugins.PLATFORM2, log)));
-        createRandomFiles(transformationDao.getRootDir(new TransformationImpl(csar2, TestPlugins.PLATFORM1, log)));
-        createRandomFiles(transformationDao.getRootDir(new TransformationImpl(csar3, TestPlugins.PLATFORM1, log)));
+        createRandomFiles(transformationDao.getRootDir(new TransformationImpl(csar1, PLATFORM1, log)));
+        createRandomFiles(transformationDao.getRootDir(new TransformationImpl(csar1, PLATFORM2, log)));
+        createRandomFiles(transformationDao.getRootDir(new TransformationImpl(csar2, PLATFORM1, log)));
+        createRandomFiles(transformationDao.getRootDir(new TransformationImpl(csar3, PLATFORM1, log)));
 
-        Transformation transformation = transformationDao.find(csar2, TestPlugins.PLATFORM1).get();
+        Transformation transformation = transformationDao.find(csar2, PLATFORM1).get();
 
         assertNotNull(transformation);
         assertEquals(csar2, transformation.getCsar());
-        assertEquals(TestPlugins.PLATFORM1, transformation.getPlatform());
+        assertEquals(PLATFORM1, transformation.getPlatform());
 
-        Optional<Transformation> notStoredTransformation = transformationDao.find(csar4, TestPlugins.PLATFORM4);
+        Optional<Transformation> notStoredTransformation = transformationDao.find(csar4, PLATFORM4);
         assertFalse(notStoredTransformation.isPresent());
     }
 
@@ -126,10 +134,10 @@ public class TransformationFilesystemDaoTest extends BaseSpringTest {
      */
     @Test
     public void readTransformationFromDiskWithIllegalPlatform() throws IOException {
-        Transformation t = new TransformationImpl(csar1, TestPlugins.PLATFORM_NOT_SUPPORTED, log);
+        Transformation t = new TransformationImpl(csar1, PLATFORM_NOT_SUPPORTED, log);
         createRandomFiles(transformationDao.getRootDir(t));
 
-        assertFalse(transformationDao.find(csar1, TestPlugins.PLATFORM_NOT_SUPPORTED).isPresent());
+        assertFalse(transformationDao.find(csar1, PLATFORM_NOT_SUPPORTED).isPresent());
         assertFalse(transformationDao.getRootDir(t).exists());
     }
 
@@ -137,7 +145,7 @@ public class TransformationFilesystemDaoTest extends BaseSpringTest {
      Creates some files in given dir
      */
     private List<File> createRandomFiles(File dir) throws IOException {
-        dir.mkdir();
+        dir.mkdirs();
         List<File> files = new ArrayList<>();
         for (int i = 0; i < 20; i++) {
             File randomFile = new File(dir, String.valueOf(i));

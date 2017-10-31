@@ -41,7 +41,7 @@ public class PropertyInstanceTest extends BaseJUnitTest {
             assertEquals(INPUT_REQUIRED, this.transformation.getState());
             this.instance.setPropertyValue("p-" + i, "" + i);
         }
-        assertTrue(this.instance.allRequiredPropertiesSet());
+        assertTrue(this.instance.requiredPropertiesSet());
         assertFalse(this.instance.allPropertiesSet());
         assertEquals(READY, this.transformation.getState());
     }
@@ -56,7 +56,7 @@ public class PropertyInstanceTest extends BaseJUnitTest {
             }
             this.instance.setPropertyValue("p-" + i, "" + i);
         }
-        assertTrue(this.instance.allRequiredPropertiesSet());
+        assertTrue(this.instance.requiredPropertiesSet());
         assertTrue(this.instance.allPropertiesSet());
     }
 
@@ -71,7 +71,7 @@ public class PropertyInstanceTest extends BaseJUnitTest {
         } catch (IllegalArgumentException e) {
             e.printStackTrace(System.out);
         }
-        assertFalse(this.instance.allRequiredPropertiesSet());
+        assertFalse(this.instance.requiredPropertiesSet());
         assertFalse(this.instance.allPropertiesSet());
         assertEquals(INPUT_REQUIRED, this.transformation.getState());
     }

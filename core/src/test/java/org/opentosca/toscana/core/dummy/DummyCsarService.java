@@ -30,9 +30,6 @@ public class DummyCsarService implements CsarService {
     @Override
     public Csar submitCsar(String name, InputStream csarStream) {
         Csar dummy = new DummyCsar(name);
-        if (dummies.contains(dummy)) {
-            return null;
-        }
         dummies.add(dummy);
         try {
             File dummyPath = new File(tmpdir, name + ".csar");

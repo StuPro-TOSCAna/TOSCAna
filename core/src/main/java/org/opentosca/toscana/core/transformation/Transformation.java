@@ -1,5 +1,7 @@
 package org.opentosca.toscana.core.transformation;
 
+import java.util.Optional;
+
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.transformation.artifacts.TargetArtifact;
 import org.opentosca.toscana.core.transformation.logging.Log;
@@ -51,12 +53,12 @@ public interface Transformation {
     /**
      Checks if all Properties for the given Requirement type are set.
      <p>
-     This is just a "shortcut" for <code>getProperties().allRequiredPropertiesSet(type)</code>
+     This is just a "shortcut" for <code>getProperties().requiredPropertiesSet(type)</code>
 
      @return true if all required properties have been set and are valid, false otherwise
      */
     default boolean allRequiredPropertiesSet() {
-        return getProperties().allRequiredPropertiesSet();
+        return getProperties().requiredPropertiesSet();
     }
 
     /**
@@ -68,7 +70,7 @@ public interface Transformation {
      If the transformation is finished, this will return a TargetArtifact object pointing to the generated target
      artifact otherwise returns null.
      */
-    TargetArtifact getTargetArtifact();
+    Optional<TargetArtifact> getTargetArtifact();
 
     void setTargetArtifact(TargetArtifact targetArtifact);
 

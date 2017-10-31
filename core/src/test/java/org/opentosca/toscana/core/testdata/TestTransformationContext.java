@@ -49,9 +49,9 @@ public class TestTransformationContext extends BaseSpringTest {
         Csar csar = csarService.submitCsar("test-csar", is);
         Transformation transformation = transformationService.createTransformation(csar, platform);
 
-        File csarContentRoot = csarDao.getContentDir(csar);
-        File transformationRoot = transformationDao.getRootDir(transformation);
-        return new TransformationContext(csarContentRoot, transformationRoot, mock(Log.class),
+        File csarContentDir = csarDao.getContentDir(csar);
+        File transformationContentDir = transformationDao.getContentDir(transformation);
+        return new TransformationContext(csarContentDir, transformationContentDir, mock(Log.class),
             csar.getTemplate().get(), transformation.getProperties());
     }
 

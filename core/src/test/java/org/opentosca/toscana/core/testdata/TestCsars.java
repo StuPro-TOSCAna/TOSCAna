@@ -32,6 +32,15 @@ public class TestCsars {
     @Autowired
     private CsarDao csarDao;
 
+    //TODO move somewhere else
+    public static byte[] getFFBytes() {
+        byte[] data = new byte[10000];
+        for (int i = 0; i < data.length; i++) {
+            data[i] = (byte) 0xFF;
+        }
+        return data;
+    }
+
     /**
      Creates given file as csar. Caution: Uses CsarDao internally
 

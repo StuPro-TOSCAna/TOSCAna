@@ -2,10 +2,10 @@ package org.opentosca.toscana.core.api;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.opentosca.toscana.core.api.exceptions.CsarNameAlreadyUsedException;
 import org.opentosca.toscana.core.api.exceptions.CsarNotFoundException;
 import org.opentosca.toscana.core.api.model.CsarResponse;
 import org.opentosca.toscana.core.api.model.CsarUploadErrorResponse;
@@ -90,17 +90,9 @@ public class CsarController {
     public ResponseEntity<CsarResponse> getCSARInfo(
         @PathVariable(name = "name") String name
     ) {
-        Csar archive = null;
-        for (Csar csar : csarService.getCsars()) {
-            if (name.equals(csar.getIdentifier())) {
-                archive = csar;
-                break;
-            }
-        }
-        if (archive == null) {
-            throw new CsarNotFoundException();
-        }
-        return ResponseEntity.ok().body(new CsarResponse(archive.getIdentifier()));
+        Optional<Csar> optionalCsar = csarService.getCsar(name);
+        Csar csar = optionalCsar.orElseThrow(CsarNotFoundException::new);
+        return ResponseEntity.ok().body(new CsarResponse(csar.getIdentifier()));
     }
 
     /**
@@ -109,7 +101,6 @@ public class CsarController {
      <b>HTTP Response Codes</b>
      <p>
      200 (no Content): Upload succeeded
-     400 (application/hal+json, with standard error message): a csar with given name already exists
      400 (application/hal+json): parsing of the csar failed. Response contains logs of parser.
      <p>
      500: Processing failed
@@ -125,20 +116,12 @@ public class CsarController {
 //        HttpServletRequest request
     ) throws InvalidCsarException {
         try {
-            Csar result = csarService.submitCsar(name, file.getInputStream());
-//            InputStream input = getInputStream(request);
-//            if(input == null) {
-//                throw new IllegalArgumentException("No Multipart entry named file is given!");
-//            }
-//            Csar result = csarService.submitCsar(name, input);
-            if (result == null) {
-                throw new CsarNameAlreadyUsedException();
-            }
+            csarService.submitCsar(name, file.getInputStream());
             return ResponseEntity.ok().build();
         } catch (InvalidCsarException | RuntimeException e) {
             throw e;
         } catch (Exception e) {
-            log.error("Reading of uploaded CSAR Failed", e);
+            log.error("Failed to process submitted CSAR", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }

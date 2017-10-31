@@ -1,12 +1,14 @@
 package org.opentosca.toscana.core.transformation;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Optional;
 
 import org.opentosca.toscana.core.api.exceptions.PlatformNotFoundException;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarDao;
+import org.opentosca.toscana.core.transformation.artifacts.TargetArtifact;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 
 /**
@@ -45,5 +47,18 @@ public interface TransformationDao {
      */
     File getRootDir(Transformation transformation);
 
+    /**
+     @return the content directory of given transformation
+     */
+    File getContentDir(Transformation transformation);
+
+    /**
+     Returns the output stream for given transformation
+     */
+    TargetArtifact createTargetArtifact(Transformation transformation) throws FileNotFoundException;
+
+    /**
+     Do not call. Used for internal initialization
+     */
     void setCsarDao(CsarDao csarDao);
 }

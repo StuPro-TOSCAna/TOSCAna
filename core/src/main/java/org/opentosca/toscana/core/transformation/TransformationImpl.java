@@ -1,6 +1,7 @@
 package org.opentosca.toscana.core.transformation;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import org.opentosca.toscana.core.csar.Csar;
@@ -37,7 +38,7 @@ public class TransformationImpl implements Transformation {
         properties.addAll(csar.getModelSpecificProperties());
         properties.addAll(targetPlatform.getProperties());
 
-        //Create property instance
+        // transformationState can get set to INPUT_REQUIRED by this call
         this.properties = new PropertyInstance(properties, this);
     }
 
@@ -63,11 +64,12 @@ public class TransformationImpl implements Transformation {
 
     /**
      @return if this transformation object's state is <code>DONE</code>, returns the target artifact of the
-     transformation. Else returns null.
+     transformation wrapped in an Optional. Else returns empty Optional.
+     // TODO change to Optional
      */
     @Override
-    public TargetArtifact getTargetArtifact() {
-        return targetArtifact;
+    public Optional<TargetArtifact> getTargetArtifact() {
+        return Optional.ofNullable(targetArtifact);
     }
 
     @Override

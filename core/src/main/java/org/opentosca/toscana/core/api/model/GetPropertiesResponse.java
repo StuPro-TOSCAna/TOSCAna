@@ -21,8 +21,8 @@ public class GetPropertiesResponse extends ResourceSupport {
     ) {
         this.properties = properties;
         add(linkTo(methodOn(TransformationController.class)
-            .getTransformationProperties(csarName, platformName))
-            .withSelfRel().expand(csarName)
+            .getTransformationProperties(null, null))
+            .withSelfRel().expand(csarName, platformName)
         );
     }
 

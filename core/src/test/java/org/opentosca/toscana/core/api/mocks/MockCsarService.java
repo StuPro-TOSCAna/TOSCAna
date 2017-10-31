@@ -26,9 +26,6 @@ public class MockCsarService implements CsarService {
 
     @Override
     public Csar submitCsar(String name, InputStream csarStream) {
-        if (getCsar(name).isPresent()) {
-            return null;
-        }
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         try {
             StreamUtils.writeTo(csarStream, out);
