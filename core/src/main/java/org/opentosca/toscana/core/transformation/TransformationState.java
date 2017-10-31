@@ -6,12 +6,9 @@ package org.opentosca.toscana.core.transformation;
  For more information see <code>/docs/dev/core/transformation-states.md</code>
  */
 public enum TransformationState {
-    /**
-     The transformation is in this state, once it has been created but it has not been started or scheduled
-     */
     READY,
+    INPUT_REQUIRED,
     TRANSFORMING,
     DONE,
     ERROR,
-    INPUT_REQUIRED
 }

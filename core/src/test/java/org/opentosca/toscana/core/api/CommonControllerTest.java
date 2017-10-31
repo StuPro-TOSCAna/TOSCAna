@@ -32,7 +32,7 @@ public class CommonControllerTest extends BaseTest {
         String url = "/api/";
         requestIndex(url);
     }
-    
+
     @Test
     public void getIndexPageNoSlash() throws Exception {
         String url = "/api";

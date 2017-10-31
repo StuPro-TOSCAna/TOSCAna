@@ -60,7 +60,7 @@ public class TransformationServiceImpl implements TransformationService {
                     artifactService,
                     pluginService,
                     csarDao.getContentDir(transformation.getCsar()),
-                    transformationDao.getRootDir(transformation)
+                    transformationDao.getContentDir(transformation)
                 )
             );
             tasks.put(transformation, taskFuture);

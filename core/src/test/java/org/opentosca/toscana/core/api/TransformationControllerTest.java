@@ -13,6 +13,7 @@ import org.opentosca.toscana.core.dummy.DummyCsarService;
 import org.opentosca.toscana.core.dummy.DummyPlatformService;
 import org.opentosca.toscana.core.dummy.DummyTransformation;
 import org.opentosca.toscana.core.dummy.DummyTransformationService;
+import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.transformation.platform.PlatformService;
 
 import org.json.JSONArray;
@@ -218,12 +219,8 @@ public class TransformationControllerTest extends BaseSpringTest {
             get(GET_ARTIFACTS_VALID_URL)
         ).andDo(print())
             .andExpect(status().is(200))
-            .andExpect(content().contentType(DEFAULT_CHARSET_HAL_JSON))
-            .andExpect(jsonPath("$.access_url").isString())
-            .andExpect(jsonPath("$.links").isArray())
-            .andExpect(jsonPath("$.links[0].rel").value("self"))
-            .andExpect(jsonPath("$.links[0].href")
-                .value(ARTIFACT_RESPONSE_EXPECTED_URL))
+            .andExpect(content().contentType("application/octet-stream"))
+            .andExpect(content().bytes(TestCsars.getFFBytes()))
             .andReturn();
     }
 

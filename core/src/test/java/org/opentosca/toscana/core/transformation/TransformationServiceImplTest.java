@@ -1,15 +1,15 @@
 package org.opentosca.toscana.core.transformation;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.HashSet;
+import java.util.Optional;
 
 import org.opentosca.toscana.core.BaseSpringTest;
 import org.opentosca.toscana.core.api.exceptions.PlatformNotFoundException;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.dummy.DummyCsar;
 import org.opentosca.toscana.core.testdata.TestCsars;
-import org.opentosca.toscana.core.transformation.artifacts.ArtifactService;
+import org.opentosca.toscana.core.transformation.artifacts.TargetArtifact;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.Property;
@@ -37,8 +37,6 @@ public class TransformationServiceImplTest extends BaseSpringTest {
     private TransformationService service;
     @Autowired
     private TestCsars testCsars;
-    @Autowired
-    private ArtifactService ams;
     @Mock
     private Log log;
 
@@ -113,7 +111,10 @@ public class TransformationServiceImplTest extends BaseSpringTest {
     @Test
     public void startTransformationWithArtifacts() throws Exception {
         Transformation transformation = startTransformationInternal(TransformationState.DONE, PASSING_WRITING_DUMMY.getPlatform());
-        lookForArtifactArchive(transformation);
+        Optional<TargetArtifact> targetArtifactOptional = transformation.getTargetArtifact();
+        assertTrue(targetArtifactOptional.isPresent());
+        TargetArtifact targetArtifact = targetArtifactOptional.get();
+        assertFalse(targetArtifact.name.matches(TransformationFilesystemDao.ARTIFACT_FAILED_REGEX));
     }
 
     @Test
@@ -172,18 +173,6 @@ public class TransformationServiceImplTest extends BaseSpringTest {
         while (t.getState() == TransformationState.TRANSFORMING) {
             letTimePass();
         }
-    }
-
-    public void lookForArtifactArchive(Transformation transformation) {
-        String filename = transformation.getCsar().getIdentifier() + "-" + transformation.getPlatform().id + "_";
-        boolean found = false;
-        for (File file : ams.getArtifactDir().listFiles()) {
-            if (file.getName().startsWith(filename)) {
-                found = true;
-                break;
-            }
-        }
-        assertTrue("Could not find artifact ZIP in Folder", found);
     }
 
     private void letTimePass() throws InterruptedException {

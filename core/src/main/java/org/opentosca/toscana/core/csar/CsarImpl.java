@@ -14,7 +14,7 @@ import org.opentosca.toscana.core.transformation.properties.Property;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.eclipse.winery.model.tosca.yaml.TServiceTemplate;
 
-class CsarImpl implements Csar {
+public class CsarImpl implements Csar {
 
     /**
      Stores all scheduled, ongoing or finished transformations of this CSAR. Key is the platform identifier.
@@ -27,7 +27,7 @@ class CsarImpl implements Csar {
     private TServiceTemplate template;
     private final Log log;
 
-    CsarImpl(String identifier, Log log) {
+    public CsarImpl(String identifier, Log log) {
         this.identifier = identifier;
         this.log = log;
     }

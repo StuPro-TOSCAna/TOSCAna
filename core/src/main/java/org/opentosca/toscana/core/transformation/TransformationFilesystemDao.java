@@ -1,7 +1,10 @@
 package org.opentosca.toscana.core.transformation;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -11,6 +14,7 @@ import java.util.stream.Collectors;
 import org.opentosca.toscana.core.api.exceptions.PlatformNotFoundException;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarDao;
+import org.opentosca.toscana.core.transformation.artifacts.TargetArtifact;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.logging.LogImpl;
 import org.opentosca.toscana.core.transformation.platform.Platform;
@@ -23,9 +27,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import static java.lang.String.format;
+import static java.lang.System.currentTimeMillis;
 
 @Repository
 public class TransformationFilesystemDao implements TransformationDao {
+
+    public final static String ARTIFACT_FAILED_REGEX = ".+-.+_.+_failed\\.zip";
+    public final static String ARTIFACT_SUCCESSFUL_REGEX = ".+-.+_.+\\.zip";
+    public final static String CONTENT_DIR = "content";
+
+    private final static SimpleDateFormat FORMAT = new SimpleDateFormat("dd-MM-yy_hh-mm");
+    private final static String FAILED = "_failed";
 
     private final static Logger logger = LoggerFactory.getLogger(TransformationFilesystemDao.class);
     private final PlatformService platformService;
@@ -44,7 +56,7 @@ public class TransformationFilesystemDao implements TransformationDao {
         Transformation transformation = new TransformationImpl(csar, platform, getLog(csar, platform));
         delete(transformation);
         csar.getTransformations().put(platform.id, transformation);
-        getRootDir(transformation).mkdir();
+        getContentDir(transformation).mkdirs();
         return transformation;
     }
 
@@ -87,7 +99,7 @@ public class TransformationFilesystemDao implements TransformationDao {
             if (platform.isPresent()) {
                 Log log = getLog(csar, platform.get());
                 Transformation transformation = new TransformationImpl(csar, platform.get(), log);
-                // TODO set transformation state
+                readTargetArtifactFromDisk(transformation);
                 transformations.add(transformation);
             } else {
                 try {
@@ -102,6 +114,34 @@ public class TransformationFilesystemDao implements TransformationDao {
         return transformations;
     }
 
+    private void readTargetArtifactFromDisk(Transformation transformation) {
+        File[] files = getRootDir(transformation).listFiles();
+        for (File file : files) {
+            String fileName = file.getName();
+            if (fileName.matches(ARTIFACT_FAILED_REGEX)) {
+                transformation.setState(TransformationState.ERROR);
+                transformation.setTargetArtifact(new TargetArtifact(file));
+                break;
+            } else if (fileName.matches(ARTIFACT_SUCCESSFUL_REGEX)) {
+                transformation.setState(TransformationState.DONE);
+                transformation.setTargetArtifact(new TargetArtifact(file));
+                break;
+            }
+        }
+    }
+
+    @Override
+    public TargetArtifact createTargetArtifact(Transformation transformation) throws FileNotFoundException {
+        String csarId = transformation.getCsar().getIdentifier();
+        String platformId = transformation.getPlatform().id;
+        String failed = transformation.getState() == TransformationState.ERROR ? FAILED : "";
+        String filename = csarId + "-" + platformId + "_" + FORMAT.format(new Date(currentTimeMillis())) + failed + ".zip";
+        File outfile = new File(getRootDir(transformation), filename);
+        TargetArtifact artifact = new TargetArtifact(outfile);
+        transformation.setTargetArtifact(artifact);
+        return artifact;
+    }
+
     @Override
     public File getRootDir(Transformation transformation) {
         return getRootDir(transformation.getCsar(), transformation.getPlatform());
@@ -112,12 +152,21 @@ public class TransformationFilesystemDao implements TransformationDao {
     }
 
     @Override
+    public File getContentDir(Transformation transformation) {
+        return new File(getRootDir(transformation), CONTENT_DIR);
+    }
+
+    private File getContentDir(Csar csar, Platform platform) {
+        return new File(getRootDir(csar, platform), CONTENT_DIR);
+    }
+
+    @Override
     public void setCsarDao(CsarDao csarDao) {
         this.csarDao = csarDao;
     }
 
     private Log getLog(Csar csar, Platform platform) {
-        File logFile = new File(getRootDir(csar, platform), format("%s-%s.log", csar.getIdentifier(), platform.id));
+        File logFile = new File(getContentDir(csar, platform), format("%s-%s.log", csar.getIdentifier(), platform.id));
         return new LogImpl(logFile);
     }
 }

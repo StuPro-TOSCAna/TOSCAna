@@ -9,7 +9,7 @@ import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.TransformationState;
 
 /**
- This class represents the instance of properties.
+ Represents the instance of properties.
  That means that this is storing the values that get assigned to the defined properties.
  */
 public class PropertyInstance {
@@ -20,15 +20,15 @@ public class PropertyInstance {
     /**
      Creates a new property instance with no set property values for the given list (set) of properties.
 
-     @param properties the set of properties to create a property instance for.
-     Is not allowed to be null,
-     if no props are needed add a empty set
+     @param properties     the set of properties to create a property instance for.
+     Is not allowed to be null, if no props are needed add a empty set
+     @param transformation the related transformation. It's TransformationState will be altered by this instance
+     according to the state of the properties
      */
-    public PropertyInstance(Set<Property> properties,
-                            Transformation transformation) {
+    public PropertyInstance(Set<Property> properties, Transformation transformation) {
+        this.transformation = transformation;
         this.propertyValues = new HashMap<>();
         this.properties = properties;
-        this.transformation = transformation;
         //Set state to input required if there are required properties
         if (properties.stream().anyMatch(Property::isRequired)) {
             transformation.setState(TransformationState.INPUT_REQUIRED);
@@ -62,7 +62,7 @@ public class PropertyInstance {
 
      @return true if all required properties are set and valid
      */
-    public boolean allRequiredPropertiesSet() {
+    public boolean requiredPropertiesSet() {
         return checkPropsSet(false);
     }
 
@@ -90,7 +90,7 @@ public class PropertyInstance {
      */
     public void setPropertyValue(String key, String value) {
         setPropertyInternal(key, value);
-        if (allRequiredPropertiesSet() && transformation.getState() == TransformationState.INPUT_REQUIRED) {
+        if (requiredPropertiesSet() && transformation.getState() == TransformationState.INPUT_REQUIRED) {
             transformation.setState(TransformationState.READY);
         }
     }

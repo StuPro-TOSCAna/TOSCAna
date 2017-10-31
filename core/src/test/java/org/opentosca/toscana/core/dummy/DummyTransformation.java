@@ -1,12 +1,19 @@
 package org.opentosca.toscana.core.dummy;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Optional;
+
 import org.opentosca.toscana.core.csar.Csar;
+import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.TransformationState;
 import org.opentosca.toscana.core.transformation.artifacts.TargetArtifact;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
+
+import org.apache.commons.io.FileUtils;
 
 public class DummyTransformation implements Transformation {
 
@@ -59,8 +66,21 @@ public class DummyTransformation implements Transformation {
     }
 
     @Override
-    public TargetArtifact getTargetArtifact() {
-        return returnTargetArtifact ? new TargetArtifact("some/path") : null;
+    public Optional<TargetArtifact> getTargetArtifact() {
+        File out = new File("test-artifact");
+        //TODO Remove this after Removing all dummies
+        if (returnTargetArtifact) {
+            if (out.exists()) {
+                out.delete();
+            }
+            byte[] data = TestCsars.getFFBytes();
+            try {
+                FileUtils.writeByteArrayToFile(out, data);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return returnTargetArtifact ? Optional.of(new TargetArtifact(new File("test-artifact"))) : Optional.empty();
     }
 
     @Override

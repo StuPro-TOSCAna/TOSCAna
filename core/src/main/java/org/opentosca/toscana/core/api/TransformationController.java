@@ -1,17 +1,21 @@
 package org.opentosca.toscana.core.api;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.opentosca.toscana.core.api.exceptions.CsarNotFoundException;
 import org.opentosca.toscana.core.api.exceptions.IllegalTransformationStateException;
 import org.opentosca.toscana.core.api.exceptions.PlatformNotFoundException;
 import org.opentosca.toscana.core.api.exceptions.TransformationAlreadyPresentException;
 import org.opentosca.toscana.core.api.exceptions.TransformationNotFoundException;
-import org.opentosca.toscana.core.api.model.ArtifactResponse;
 import org.opentosca.toscana.core.api.model.GetPropertiesResponse;
 import org.opentosca.toscana.core.api.model.GetPropertiesResponse.PropertyWrap;
 import org.opentosca.toscana.core.api.model.LogResponse;
@@ -31,6 +35,7 @@ import org.opentosca.toscana.core.transformation.platform.PlatformService;
 import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
 
+import org.apache.commons.compress.utils.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +62,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
  */
 @CrossOrigin
 @RestController
-@RequestMapping("/api/csars/{csarName}/transformations")
+@RequestMapping("/api/csars/{csarId}/transformations")
 public class TransformationController {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
@@ -103,9 +108,9 @@ public class TransformationController {
         produces = "application/hal+json"
     )
     public ResponseEntity<Resources<TransformationResponse>> getCSARTransformations(
-        @PathVariable(name = "csarName") String name
+        @PathVariable(name = "csarId") String name
     ) {
-        Csar csar = findCsarByName(name);
+        Csar csar = findByCsarId(name);
         Link selfLink =
             linkTo(methodOn(TransformationController.class)
                 .getCSARTransformations(name))
@@ -153,10 +158,10 @@ public class TransformationController {
         produces = "application/hal+json"
     )
     public ResponseEntity<TransformationResponse> getCSARTransformation(
-        @PathVariable(name = "csarName") String name,
+        @PathVariable(name = "csarId") String name,
         @PathVariable(name = "platform") String platform
     ) {
-        Csar csar = findCsarByName(name);
+        Csar csar = findByCsarId(name);
         Transformation transformation = findTransformationByPlatform(csar, platform);
         return ResponseEntity.ok().body(new TransformationResponse(
             0,
@@ -194,11 +199,11 @@ public class TransformationController {
         produces = "application/hal+json"
     )
     public ResponseEntity<TransformationResponse> addTransformation(
-        @PathVariable(name = "csarName") String name,
+        @PathVariable(name = "csarId") String name,
         @PathVariable(name = "platform") String platform
     ) {
         logger.info("Creating transformation for csar '{}' on '{}'", name, platform);
-        Csar csar = findCsarByName(name);
+        Csar csar = findByCsarId(name);
         //Return bad Request if a transformation for this platform is already present
         if (csar.getTransformation(platform).isPresent()) {
             throw new TransformationAlreadyPresentException();
@@ -251,11 +256,11 @@ public class TransformationController {
         produces = "application/hal+json"
     )
     public ResponseEntity startTransformation(
-        @PathVariable(name = "csarName") String name,
+        @PathVariable(name = "csarId") String name,
         @PathVariable(name = "platform") String platform
     ) {
         logger.info("Starting transformation for csar '{}' on '{}'", name, platform);
-        Csar csar = findCsarByName(name);
+        Csar csar = findByCsarId(name);
         Transformation transformation = findTransformationByPlatform(csar, platform);
         if (transformationService.startTransformation(transformation)) {
             return ResponseEntity.ok().build();
@@ -300,10 +305,10 @@ public class TransformationController {
         produces = "application/hal+json"
     )
     public ResponseEntity<TransformationResponse> deleteTransformation(
-        @PathVariable(name = "csarName") String name,
+        @PathVariable(name = "csarId") String name,
         @PathVariable(name = "platform") String platform
     ) {
-        Csar csar = findCsarByName(name);
+        Csar csar = findByCsarId(name);
         Transformation transformation = findTransformationByPlatform(csar, platform);
 
         if (transformationService.deleteTransformation(transformation)) {
@@ -346,20 +351,20 @@ public class TransformationController {
         produces = "application/hal+json"
     )
     public ResponseEntity<LogResponse> getTransformationLogs(
-        @PathVariable(name = "csarName") String name,
-        @PathVariable(name = "platform") String platform,
+        @PathVariable(name = "csarId") String csarId,
+        @PathVariable(name = "platform") String platformId,
         @RequestParam(name = "start", required = false, defaultValue = "0") Long start
     ) {
-        Csar csar = findCsarByName(name);
-        Transformation transformation = findTransformationByPlatform(csar, platform);
+        Csar csar = findByCsarId(csarId);
+        Transformation transformation = findTransformationByPlatform(csar, platformId);
         Log log = transformation.getLog();
         List<LogEntry> entries = log.getLogEntries(Math.toIntExact(start));
         return ResponseEntity.ok().body(new LogResponse(
             start,
             start + entries.size() - 1, //TODO Maybe move this calculation into the LogResponse Class
             entries,
-            platform,
-            name
+            platformId,
+            csarId
         ));
     }
 
@@ -393,20 +398,31 @@ public class TransformationController {
      */
     @RequestMapping(
         path = "/{platform}/artifact",
-        method = RequestMethod.GET,
-        produces = "application/hal+json"
+        method = RequestMethod.GET
     )
-    public ResponseEntity<ArtifactResponse> getTransformationArtifact(
-        @PathVariable(name = "csarName") String name,
-        @PathVariable(name = "platform") String platform
-    ) {
-        Csar csar = findCsarByName(name);
-        Transformation transformation = findTransformationByPlatform(csar, platform);
-        TargetArtifact artifact = transformation.getTargetArtifact();
-        if (artifact == null) {
-            throw new IllegalTransformationStateException("The transformation has not finished yet!");
-        }
-        return ResponseEntity.ok().body(new ArtifactResponse(artifact.getArtifactDownloadURL(), platform, name));
+    public ResponseEntity<Void> getTransformationArtifact(
+        @PathVariable(name = "csarId") String csarName,
+        @PathVariable(name = "platform") String platform,
+        HttpServletResponse response
+    ) throws IOException {
+        Csar csar = csarService.getCsar(csarName).orElseThrow(CsarNotFoundException::new);
+        Transformation transformation = csar.getTransformation(platform).orElseThrow(TransformationNotFoundException::new);
+        TargetArtifact artifact = transformation.getTargetArtifact().orElseThrow(() ->
+            new IllegalTransformationStateException(
+                format("Artifact for csar '{}' and platform '{}' not found", csarName, platform)
+            )
+        );
+
+        response.setHeader("Content-Disposition", "attachment; filename=\"" + artifact.name + "\"");
+        response.setHeader("Content-Type", "application/octet-stream");
+        response.setHeader("Content-Length", artifact.getFileSize() + "");
+
+        InputStream in = artifact.readAccess();
+        OutputStream out = response.getOutputStream();
+        IOUtils.copy(in, out);
+        in.close();
+        out.close();
+        return ResponseEntity.ok().build();
     }
 
     /**
@@ -438,11 +454,11 @@ public class TransformationController {
         produces = "application/hal+json"
     )
     public ResponseEntity<GetPropertiesResponse> getTransformationProperties(
-        @PathVariable(name = "csarName") String name,
-        @PathVariable(name = "platform") String platform
+        @PathVariable(name = "csarId") String csarId,
+        @PathVariable(name = "platform") String platformId
     ) {
-        Csar csar = findCsarByName(name);
-        Transformation transformation = findTransformationByPlatform(csar, platform);
+        Csar csar = findByCsarId(csarId);
+        Transformation transformation = findTransformationByPlatform(csar, platformId);
         checkTransformationsForProperties(transformation, true);
         List<PropertyWrap> propertyWrapList = new ArrayList<>();
         //TODO add filtering depending on the transformation state (i.e. Transforming, Deploying...)
@@ -457,7 +473,8 @@ public class TransformationController {
                 )
             );
         }
-        return ResponseEntity.ok(new GetPropertiesResponse(name, platform, propertyWrapList));
+        GetPropertiesResponse response = new GetPropertiesResponse(csarId, platformId, propertyWrapList);
+        return ResponseEntity.ok(response);
     }
 
     /**
@@ -494,12 +511,12 @@ public class TransformationController {
         produces = "application/json"
     )
     public ResponseEntity<SetPropertiesResponse> setTransformationProperties(
-        @PathVariable(name = "csarName") String name,
-        @PathVariable(name = "platform") String platform,
+        @PathVariable(name = "csarId") String csarId,
+        @PathVariable(name = "platform") String platformId,
         @RequestBody SetPropertiesRequest setPropertiesRequest
     ) {
-        Csar csar = findCsarByName(name);
-        Transformation transformation = findTransformationByPlatform(csar, platform);
+        Csar csar = findByCsarId(csarId);
+        Transformation transformation = findTransformationByPlatform(csar, platformId);
         checkTransformationsForProperties(transformation, false);
         Map<String, Boolean> successes = new HashMap<>();
         boolean somethingFailed = false;
@@ -517,7 +534,7 @@ public class TransformationController {
 //        PropertyInstance instance = transformation.getProperties();
 //        //TODO if other requirement types get used, this needs a change!
 //        //Change state of the transformation to show the user that all required properties have been set
-//        if(instance.allRequiredPropertiesSet(RequirementType.TRANSFORMATION)) {
+//        if(instance.requiredPropertiesSet(RequirementType.TRANSFORMATION)) {
 //            //TODO Maybe a different method to change the state is needed!
 //            transformation.setState(TransformationState.READY);
 //        }
@@ -543,17 +560,17 @@ public class TransformationController {
     /**
      Uses the csar service to find the csar instance (and handles error management)
      */
-    private Csar findCsarByName(String name) {
-        Optional<Csar> csar = csarService.getCsar(name);
-        return csar.orElseThrow(() -> new CsarNotFoundException(format("No csar with name '%s' found", name)));
+    private Csar findByCsarId(String csarId) {
+        Optional<Csar> csar = csarService.getCsar(csarId);
+        return csar.orElseThrow(() -> new CsarNotFoundException(format("No csar with name '%s' found", csarId)));
     }
 
     /**
      Uses the csar to find the transformation instance (and handles error management)
      */
-    private Transformation findTransformationByPlatform(Csar csar, String platform) {
-        Optional<Transformation> transformation = csar.getTransformation(platform);
+    private Transformation findTransformationByPlatform(Csar csar, String platformId) {
+        Optional<Transformation> transformation = csar.getTransformation(platformId);
         return transformation.orElseThrow(() -> new TransformationNotFoundException(
-            format("The Csar '%s' does not have a transformation for platform '%s'", csar.getIdentifier(), platform)));
+            format("The Csar '%s' does not have a transformation for platform '%s'", csar.getIdentifier(), platformId)));
     }
 }

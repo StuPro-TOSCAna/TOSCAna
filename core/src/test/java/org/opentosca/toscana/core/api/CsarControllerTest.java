@@ -125,7 +125,7 @@ public class CsarControllerTest extends BaseSpringTest {
 
         ResultActions resultActions = mvc.perform(
             builder
-        ).andDo(print()).andExpect(status().is(400));
+        ).andDo(print()).andExpect(status().is(200));
         resultActions.andReturn();
     }
 

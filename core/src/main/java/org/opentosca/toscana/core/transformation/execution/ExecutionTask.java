@@ -22,7 +22,7 @@ public class ExecutionTask implements Runnable {
     private final File transformationRootDir;
     private final String platformId;
     private final String csarId;
-    private final ArtifactService ams;
+    private final ArtifactService artifactService;
     private final Logger log;
 
     private boolean failed = false;
@@ -39,7 +39,7 @@ public class ExecutionTask implements Runnable {
         this.plugin = pluginService.findPluginByPlatform(transformation.getPlatform());
         this.csarContentDir = csarContentDir;
         this.transformationRootDir = transformationRootDir;
-        this.ams = ams;
+        this.artifactService = ams;
         this.csarId = transformation.getCsar().getIdentifier();
         this.platformId = transformation.getPlatform().id;
     }
@@ -57,10 +57,10 @@ public class ExecutionTask implements Runnable {
     private void serveArtifact() {
         if (transformationRootDir.listFiles().length != 0) {
             try {
-                log.info("Compressing target artifacts");
-                TargetArtifact artifact = ams.serveArtifact(transformation);
+                log.info("Compressing transformation artifacts");
+                TargetArtifact artifact = artifactService.serveArtifact(transformation);
                 transformation.setTargetArtifact(artifact);
-                log.info("Artifact archive is served at relative url {}", artifact.getArtifactDownloadURL());
+                log.info("Artifact archive ready for download");
             } catch (IOException e) {
                 log.error("Failed to serve artifact archive for transformation {}/{}", csarId, platformId, e);
                 failed = true;

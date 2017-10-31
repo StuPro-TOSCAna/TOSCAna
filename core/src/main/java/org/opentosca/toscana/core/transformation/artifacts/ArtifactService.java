@@ -1,6 +1,5 @@
 package org.opentosca.toscana.core.transformation.artifacts;
 
-import java.io.File;
 import java.io.IOException;
 
 import org.opentosca.toscana.core.transformation.Transformation;
@@ -11,13 +10,7 @@ import org.opentosca.toscana.core.transformation.Transformation;
 public interface ArtifactService {
 
     /**
-     Takes the target artifact of given transformation, zips and copies it to the resource directory in order to allow
-     Spring to serve the artifacts URL to the client.
+     Takes the resulting files of given transformation and zips them.
      */
     TargetArtifact serveArtifact(Transformation transformation) throws IOException;
-
-    /**
-     @return the general target artifact dir
-     */
-    File getArtifactDir();
 }

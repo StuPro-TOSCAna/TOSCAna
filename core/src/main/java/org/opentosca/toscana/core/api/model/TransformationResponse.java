@@ -1,5 +1,7 @@
 package org.opentosca.toscana.core.api.model;
 
+import java.io.IOException;
+
 import org.opentosca.toscana.core.api.PlatformController;
 import org.opentosca.toscana.core.api.TransformationController;
 
@@ -33,15 +35,20 @@ public class TransformationResponse extends ResourceSupport {
             .withRel("logs").expand(csarName));
         this.add(linkTo(methodOn(PlatformController.class)
             .getPlatform(platform)).withRel("platform"));
-        this.add(linkTo(methodOn(TransformationController.class)
-            .getTransformationArtifact(csarName, platform))
-            .withRel("artifact").expand(csarName));
+        // TODO FIX
         this.add(linkTo(methodOn(TransformationController.class)
             .getTransformationProperties(csarName, platform))
             .withRel("properties").expand(csarName));
         this.add(linkTo(methodOn(TransformationController.class)
             .deleteTransformation(csarName, platform))
             .withRel("delete").expand(csarName));
+        try {
+            this.add(linkTo(methodOn(TransformationController.class)
+                .getTransformationArtifact(csarName, platform, null))
+                .withRel("artifact").expand(csarName));
+        } catch (IOException e) {
+            //Never happens because the call above is a dummy call
+        }
     }
 
     @JsonProperty("progress")

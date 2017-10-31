@@ -34,8 +34,8 @@ import org.springframework.context.annotation.PropertySource;
 public class TestCoreConfiguration extends CoreConfiguration {
 
     @Bean
-    public ArtifactService artifactManagementService(Preferences preferences, TransformationDao transformationDao) {
-        return new ArtifactServiceImpl(preferences, transformationDao);
+    public ArtifactService artifactManagementService(TransformationDao transformationDao) {
+        return new ArtifactServiceImpl(transformationDao);
     }
 
     @Bean

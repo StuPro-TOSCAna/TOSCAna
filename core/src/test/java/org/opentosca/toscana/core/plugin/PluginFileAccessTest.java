@@ -31,7 +31,7 @@ public class PluginFileAccessTest extends BaseSpringTest {
     private PluginFileAccess access;
     private Transformation transformation;
     private File csarContentDir;
-    private File transformationRootDir;
+    private File transformationContentDir;
     @Autowired
     private TestCsars testCsars;
     @Autowired
@@ -52,12 +52,13 @@ public class PluginFileAccessTest extends BaseSpringTest {
         csarContentDir = csarDao.getContentDir(csar);
         transformation = transformationService.createTransformation(csar, TestPlugins.PLATFORM1);
         TestPlugins.createFakeTransformationsOnDisk(csarDao.getTransformationsDir(csar), TestPlugins.PLATFORMS);
-        transformationRootDir = transformationDao.getRootDir(transformation);
-        access = new PluginFileAccess(csarDao.getContentDir(csar), transformationDao.getRootDir(transformation), transformation.getLog());
+        transformationContentDir = transformationDao.getContentDir(transformation);
+        access = new PluginFileAccess(csarDao.getContentDir(csar), transformationDao.getContentDir(transformation),
+            transformation.getLog());
         fileContent = "this is a test content";
         inputStream = IOUtils.toInputStream(fileContent, "UTF-8");
         targetFilePath = "testFile";
-        targetFile = new File(transformationRootDir, targetFilePath);
+        targetFile = new File(transformationContentDir, targetFilePath);
     }
 
     @Test
@@ -66,7 +67,7 @@ public class PluginFileAccessTest extends BaseSpringTest {
         File file = new File(csarContentDir, "testFile");
         file.createNewFile();
 
-        File expectedFile = new File(transformationDao.getRootDir(transformation), filename);
+        File expectedFile = new File(transformationDao.getContentDir(transformation), filename);
         assertFalse(expectedFile.exists());
         access.copy(filename);
         assertTrue(expectedFile.exists());
@@ -81,7 +82,7 @@ public class PluginFileAccessTest extends BaseSpringTest {
             new File(dir, String.valueOf(i)).createNewFile();
         }
 
-        File expectedDir = new File(transformationRootDir, dirname);
+        File expectedDir = new File(transformationContentDir, dirname);
         assertFalse(expectedDir.exists());
         access.copy(dirname);
         assertTrue(expectedDir.exists());
@@ -113,7 +114,7 @@ public class PluginFileAccessTest extends BaseSpringTest {
     public void writeSubDirectoriesGetAutomaticallyCreated() throws IOException {
         String path = "test/some/subdirs/filename";
         access.access(path).append(fileContent).close();
-        File targetFile = new File(transformationRootDir, path);
+        File targetFile = new File(transformationContentDir, path);
         assertTrue(targetFile.isFile());
         assertEquals(fileContent, FileUtils.readFileToString(targetFile));
     }
