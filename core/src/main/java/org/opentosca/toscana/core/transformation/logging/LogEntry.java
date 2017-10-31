@@ -6,9 +6,12 @@ import java.util.regex.Matcher;
 
 import ch.qos.logback.classic.Level;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@ApiModel
 public class LogEntry {
 
     private final static Logger logger = LoggerFactory.getLogger(LogEntry.class);
@@ -89,21 +92,44 @@ public class LogEntry {
         this.index = index;
     }
 
+    @ApiModelProperty(
+        required = true,
+        notes = "the index of the logline in the list of all loglines for this list of log entries",
+        example = "0",
+        dataType = "integer"
+    )
     @JsonProperty("index")
     public long getIndex() {
         return index;
     }
 
+    @ApiModelProperty(
+        required = true,
+        notes = "The unix timestamp (in milliseconds) when this log was created",
+        example = "1509907624000",
+        dataType = "integer"
+    )
     @JsonProperty("timestamp")
     public long getTimestamp() {
         return timestamp;
     }
 
+    @ApiModelProperty(
+        required = true,
+        notes = "The log message",
+        example = "Some log message"
+    )
     @JsonProperty("message")
     public String getMessage() {
         return message;
     }
 
+    @ApiModelProperty(
+        required = true,
+        notes = "The log level for this log entry. The value has to be one of the following: " +
+            "\"DEBUG\",\"INFO\",\"WARN\",\"TRACE\", \"ERROR\" or \"ALL\"",
+        example = "DEBUG"
+    )
     @JsonProperty("level")
     public String getLevel() {
         return level.levelStr;

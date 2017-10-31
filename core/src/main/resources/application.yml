@@ -2,10 +2,6 @@
 ##### TOSCAna Properties ######
 ###############################
 
-toscana:
-    mappings:
-        enable-artifact-list: true
-
 ################################
 ##### Spring HTTP Settings #####
 ################################
@@ -43,9 +39,6 @@ management:
 # Comment out the following part to get full access to all spring boot actuator features
 endpoints:
     enabled: false
-    actuator:
-        enabled: true
-        path: /api/status
     metrics:
         enabled: true
         path: /api/status/metrics

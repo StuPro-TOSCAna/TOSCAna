@@ -6,6 +6,9 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.opentosca.toscana.core.api.docs.CsarResources;
+import org.opentosca.toscana.core.api.docs.HiddenResources;
+import org.opentosca.toscana.core.api.docs.RestErrorResponse;
 import org.opentosca.toscana.core.api.exceptions.ActiveTransformationsException;
 import org.opentosca.toscana.core.api.exceptions.CsarNotFoundException;
 import org.opentosca.toscana.core.api.model.CsarResponse;
@@ -15,6 +18,11 @@ import org.opentosca.toscana.core.csar.CsarService;
 import org.opentosca.toscana.core.parse.InvalidCsarException;
 import org.opentosca.toscana.core.transformation.TransformationState;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,9 +49,15 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
  For sample Responses of the Requests,
  please have a look at docs/api/api_samples.md
  */
+@SuppressWarnings("DefaultAnnotationParam") //Suppressing this to allow better readability of the Swagger docs in code
 @CrossOrigin
 @RestController
 @RequestMapping("/api/csars")
+@Api(
+    tags = {"csars"},
+    value = "/csars",
+    description = "Operations for Cloud Service Archives (CSARs)"
+)
 public class CsarController {
 
     private final static Logger log = LoggerFactory.getLogger(CsarController.class);
@@ -60,6 +74,13 @@ public class CsarController {
      <p>
      This always responds with HTTP-Code 200 (application/hal+json)
      */
+    @ApiOperation(
+        value = "List all CSARs stored on the server",
+        notes = "Returns a Hypermedia Resource containing all CSARs" +
+            " that have been uploaded to the server and did not get removed",
+        response = CsarResources.class,
+        produces = "application/hal+json"
+    )
     @RequestMapping(
         path = "",
         method = RequestMethod.GET,
@@ -71,7 +92,7 @@ public class CsarController {
         for (Csar csar : csarService.getCsars()) {
             responses.add(new CsarResponse(csar.getIdentifier()));
         }
-        Resources<CsarResponse> csarResources = new Resources<>(responses, selfLink);
+        Resources<CsarResponse> csarResources = new HiddenResources<>(responses, selfLink);
         return ResponseEntity.ok().body(csarResources);
     }
 
@@ -84,12 +105,30 @@ public class CsarController {
      404 (application/hal+json): with a standard error message is
      returned (see samples.md for a example)
      */
+    @ApiOperation(
+        value = "Returns details for a specific name (identifier)",
+        notes = "Returns the element with the given name, Object contents are " +
+            "equal to a regular /csars request (if you just look at the desired entry)"
+    )
+    @ApiResponses( {
+        @ApiResponse(
+            code = 200,
+            message = "The Csar was found and the contents are found in the body",
+            response = CsarResponse.class
+        ),
+        @ApiResponse(
+            code = 404,
+            message = "There is no CSAR for the given name (identifier)",
+            response = RestErrorResponse.class
+        )
+    })
     @RequestMapping(
         path = "/{name}",
         method = RequestMethod.GET,
         produces = "application/hal+json"
     )
     public ResponseEntity<CsarResponse> getCSARInfo(
+        @ApiParam(value = "The unique identifier for the CSAR", required = true, example = "test")
         @PathVariable(name = "name") String name
     ) {
         Csar csar = getCsarForName(name);
@@ -106,19 +145,47 @@ public class CsarController {
      <p>
      500: Processing failed
      */
+    @ApiOperation(
+        value = "Creates a new CSAR",
+        notes = "This operation creates a new CSAR if the name (identifier) is not used already. " +
+            "The uploaded file has to be a valid CSAR archive. " +
+            "Once the file was uploaded the server will synchronously " +
+            "(the client has to wait for the response) unzip the archive and parse it. " +
+            "Upload gets performed using Multipart Form upload.",
+        code = 201
+    )
+    @ApiResponses( {
+        @ApiResponse(
+            code = 201,
+            message = "The upload and parsing of the csar was sucessful",
+            response = Void.class
+        ),
+        @ApiResponse(
+            code = 400,
+            message = "Processing of the csar failed. Information why can be found in the attached error message!",
+            response = CsarUploadErrorResponse.class
+        ),
+        @ApiResponse(
+            code = 500,
+            message = "The server encountered a unexcpected problem.",
+            response = Void.class
+        )
+    })
     @RequestMapping(
         path = "/{name}",
         method = {RequestMethod.PUT, RequestMethod.POST},
         produces = "application/hal+json"
     )
-    public ResponseEntity<String> uploadCSAR(
+    public ResponseEntity<Void> uploadCSAR(
+        @ApiParam(value = "The unique identifier for the CSAR", required = true)
         @PathVariable(name = "name") String name,
+        @ApiParam(value = "The CSAR Archive (Compressed as ZIP)", required = true)
         @RequestParam(name = "file", required = true) MultipartFile file
 //        HttpServletRequest request
     ) throws InvalidCsarException {
         try {
             csarService.submitCsar(name, file.getInputStream());
-            return ResponseEntity.ok().build();
+            return ResponseEntity.status(HttpStatus.CREATED).build();
         } catch (InvalidCsarException | RuntimeException e) {
             throw e;
         } catch (Exception e) {
@@ -127,12 +194,35 @@ public class CsarController {
         }
     }
 
+    @ApiOperation(
+        value = "Deletes a Existing CSAR",
+        notes = "Deletes the Resulting CSAR and its transformations (if none of them is running). " +
+            "If a transformation is running (in the state TRANSFORMING) the csar cannot be deleted!"
+    )
+    @ApiResponses({
+        @ApiResponse(
+            code = 200,
+            message = "The deletion of the csar was sucessful!",
+            response = Void.class
+        ),
+        @ApiResponse(
+            code = 400,
+            message = "The deletion of the csar failed, because there is one or more transformations still running.",
+            response = RestErrorResponse.class
+        ),
+        @ApiResponse(
+            code = 404,
+            message = "There is no CSAR for the given name (identifier)",
+            response = RestErrorResponse.class
+        )
+    })
     @RequestMapping(
         path = "/{name}/delete",
         method = {RequestMethod.DELETE},
         produces = "application/hal+json"
     )
-    public ResponseEntity deleteCsar(
+    public ResponseEntity<Void> deleteCsar(
+        @ApiParam(value = "The unique identifier for the CSAR", required = true, example = "test")
         @PathVariable("name") String name
     ) {
         Csar csar = getCsarForName(name);

@@ -4,16 +4,19 @@ import java.io.IOException;
 
 import org.opentosca.toscana.core.api.PlatformController;
 import org.opentosca.toscana.core.api.TransformationController;
+import org.opentosca.toscana.core.api.docs.HiddenResourceSupport;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.springframework.hateoas.ResourceSupport;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import org.springframework.hateoas.core.Relation;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
+@ApiModel
 @Relation(collectionRelation = "transformation")
-public class TransformationResponse extends ResourceSupport {
+public class TransformationResponse extends HiddenResourceSupport {
     private final int progress;
     private final String status;
     private final String platform;
@@ -35,7 +38,6 @@ public class TransformationResponse extends ResourceSupport {
             .withRel("logs").expand(csarName));
         this.add(linkTo(methodOn(PlatformController.class)
             .getPlatform(platform)).withRel("platform"));
-        // TODO FIX
         this.add(linkTo(methodOn(TransformationController.class)
             .getTransformationProperties(csarName, platform))
             .withRel("properties").expand(csarName));
@@ -51,16 +53,33 @@ public class TransformationResponse extends ResourceSupport {
         }
     }
 
+    @ApiModelProperty(
+        required = true,
+        notes = "The progress in % of how much is done to complete the transformation",
+        example = "0"
+    )
     @JsonProperty("progress")
     public int getProgress() {
         return progress;
     }
 
+    @ApiModelProperty(
+        required = true,
+        //Sadly Java does not allow Dynamic calls here, therefore this has to be updated manually
+        notes = "The Current State of the transformation. Has to be one of the following: " +
+            "\"READY\", \"INPUT_REQUIRED\", \"TRANSFORMING\", \"DONE\" or \"ERROR\"", 
+        example = "READY"
+    )
     @JsonProperty("status")
     public String getStatus() {
         return status;
     }
 
+    @ApiModelProperty(
+        required = true,
+        notes = "The platform identifier for this transformation",
+        example = "kubernetes"
+    )
     @JsonProperty("platform")
     public String getPlatform() {
         return platform;

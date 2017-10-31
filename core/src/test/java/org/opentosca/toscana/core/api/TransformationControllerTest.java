@@ -86,6 +86,7 @@ public class TransformationControllerTest extends BaseSpringTest {
     private final static String ARTIFACT_RESPONSE_EXPECTED_URL = "http://localhost/api/csars/k8s-cluster/transformations/p-a/artifact";
     private final static String GET_ARTIFACTS_VALID_URL = "/api/csars/k8s-cluster/transformations/p-a/artifact";
     private final static String GET_LOGS_AT_START_ZERO_VALID_URL = "/api/csars/k8s-cluster/transformations/p-a/logs?start=0";
+    private final static String GET_LOGS_NEGATIVE_START_URL = "/api/csars/k8s-cluster/transformations/p-a/logs?start=-1";
     private final static String DELETE_TRANSFORMATION_VALID_URL = "/api/csars/k8s-cluster/transformations/p-a/delete";
     private final static String TRANSFORMATION_DETAILS_VALID_URL = "/api/csars/k8s-cluster/transformations/p-a";
     private final static String APPLICATION_HAL_JSON_MIME_TYPE = "application/hal+json";
@@ -337,6 +338,15 @@ public class TransformationControllerTest extends BaseSpringTest {
             .andExpect(jsonPath("$.logs[0].level").isString())
             .andExpect(jsonPath("$.logs[0].message").isString())
             .andReturn();
+    }
+
+    @Test
+    public void retrieveLogsNegativeIndex() throws Exception {
+        preInitNonCreationTests();
+        mvc.perform(
+            get(GET_LOGS_NEGATIVE_START_URL)
+        ).andDo(print())
+            .andExpect(status().is(400));
     }
 
     //</editor-fold>
