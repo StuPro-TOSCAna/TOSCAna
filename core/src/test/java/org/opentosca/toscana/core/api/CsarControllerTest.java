@@ -1,15 +1,21 @@
 package org.opentosca.toscana.core.api;
 
-import java.security.MessageDigest;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 
 import org.opentosca.toscana.core.BaseSpringTest;
-import org.opentosca.toscana.core.api.mocks.MockCsarService;
+import org.opentosca.toscana.core.csar.Csar;
+import org.opentosca.toscana.core.csar.CsarImpl;
 import org.opentosca.toscana.core.csar.CsarService;
-import org.opentosca.toscana.core.dummy.DummyCsar;
+import org.opentosca.toscana.core.transformation.logging.Log;
 
+import org.apache.commons.io.IOUtils;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,8 +27,16 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.opentosca.toscana.core.api.utils.HALRelationUtils.validateRelations;
+import static org.opentosca.toscana.core.testdata.ByteArrayUtils.assertHashesEqual;
+import static org.opentosca.toscana.core.testdata.ByteArrayUtils.generateRandomByteArray;
+import static org.opentosca.toscana.core.testdata.ByteArrayUtils.getSHA256Hash;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.fileUpload;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -31,6 +45,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class CsarControllerTest extends BaseSpringTest {
 
+    private static final String[] MOCK_CSAR_NAMES = {"windows-server", "apache"};
     private static final Map<String, String> relations = new HashMap<>();
 
     static {
@@ -40,11 +55,42 @@ public class CsarControllerTest extends BaseSpringTest {
 
     private CsarService service;
 
+    private Random rnd = new Random(123456789);
+
+    private byte[] dataRead;
+
     private MockMvc mvc;
 
     @Before
     public void setUp() throws Exception {
-        service = new MockCsarService();
+        List<Csar> mockedCsars = new ArrayList<>();
+
+        service = mock(CsarService.class);
+        when(service.getCsars()).thenReturn(mockedCsars);
+        when(service.getCsar(anyString())).thenReturn(Optional.empty());
+        for (String name : MOCK_CSAR_NAMES) {
+            Csar csar = new CsarImpl(name, mock(Log.class));
+            when(service.getCsar(name)).thenReturn(Optional.of(csar));
+            mockedCsars.add(csar);
+        }
+
+        when(service.submitCsar(anyString(), any(InputStream.class)))
+            .thenAnswer(iom -> {
+                //Check if the csar is already known
+                if (service.getCsar(iom.getArgumentAt(0, String.class)).isPresent()) {
+                    return null;
+                }
+
+                //Copy "sent" data into a byte array
+                InputStream in = iom.getArgumentAt(1, InputStream.class);
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                IOUtils.copy(in, out);
+                dataRead = out.toByteArray();
+
+                //Create Csar Mock
+                return (Csar) new CsarImpl(iom.getArguments()[0].toString(), mock(Log.class));
+            });
+
         CsarController controller = new CsarController(service);
         mvc = MockMvcBuilders.standaloneSetup(controller).build();
     }
@@ -64,64 +110,33 @@ public class CsarControllerTest extends BaseSpringTest {
 
     @Test
     public void uploadTest() throws Exception {
-        //Generate 10 MiB of "Random" (seeded) data
-        byte[] data = new byte[(int) (Math.pow(2, 20) * 10)];
-        Random rnd = new Random(12345678);
-        rnd.nextBytes(data);
-        // Get the sha hash of the data
-        byte[] hash = MessageDigest.getInstance("SHA-256").digest(data);
+        byte[] data = generateRandomByteArray(rnd, 10 * 1024);
+        byte[] hash = getSHA256Hash(data);
 
-        MockMultipartFile mockMultipartFile = new MockMultipartFile(
-            "file",
-            "null",
-            MediaType.APPLICATION_OCTET_STREAM_VALUE,
-            data
-        );
+        String path = "/api/csars/rnd";
 
-        MockMultipartHttpServletRequestBuilder builder = fileUpload("/api/csars/rnd");
-        builder.with(request -> {
-            request.setMethod("PUT");
-            return request;
-        });
-        builder = (MockMultipartHttpServletRequestBuilder) builder.file(mockMultipartFile)
-            .contentType(MediaType.MULTIPART_FORM_DATA);
+        MockMultipartHttpServletRequestBuilder builder = buildMockedMultipartUploadRequest(data, path);
 
         ResultActions resultActions = mvc.perform(
             builder
         ).andDo(print()).andExpect(status().is2xxSuccessful());
         resultActions.andReturn();
 
-        DummyCsar dummyCsar = (DummyCsar) service.getCsar("rnd").get();
-        byte[] hashUpload = MessageDigest
-            .getInstance("SHA-256")
-            .digest(dummyCsar.getData());
-        assertTrue(hashUpload.length == hash.length);
-        for (int i = 0; i < hash.length; i++) {
-            assertTrue(hash[i] == hashUpload[i]);
-        }
-    }
+        assertNotNull(dataRead);
+        assertEquals(data.length, dataRead.length);
 
+        byte[] hashUpload = getSHA256Hash(this.dataRead);
+        assertHashesEqual(hash, hashUpload);
+    }
+    
     @Test
     public void uploadTestArchiveAlreadyExists() throws Exception {
         //Generate 10 KiB of random data
-        byte[] data = new byte[(int) (Math.pow(2, 10) * 10)];
-        Random rnd = new Random(12345678);
-        rnd.nextBytes(data);
+        byte[] data = generateRandomByteArray(rnd, 10);
 
-        MockMultipartFile mockMultipartFile = new MockMultipartFile(
-            "file",
-            "null",
-            MediaType.APPLICATION_OCTET_STREAM_VALUE,
-            data
-        );
+        String path = "/api/csars/apache";
 
-        MockMultipartHttpServletRequestBuilder builder = fileUpload("/api/csars/apache");
-        builder.with(request -> {
-            request.setMethod("PUT");
-            return request;
-        });
-        builder = (MockMultipartHttpServletRequestBuilder) builder.file(mockMultipartFile)
-            .contentType(MediaType.MULTIPART_FORM_DATA);
+        MockMultipartHttpServletRequestBuilder builder = buildMockedMultipartUploadRequest(data, path);
 
         ResultActions resultActions = mvc.perform(
             builder
@@ -131,7 +146,7 @@ public class CsarControllerTest extends BaseSpringTest {
 
     @Test
     public void csarDetails() throws Exception {
-        for (String name : MockCsarService.names) {
+        for (String name : MOCK_CSAR_NAMES) {
             ResultActions resultActions = mvc.perform(
                 get("/api/csars/" + name).accept("application/hal+json")
             ).andDo(print()).andExpect(status().is2xxSuccessful());
@@ -151,5 +166,23 @@ public class CsarControllerTest extends BaseSpringTest {
         mvc.perform(
             get("/api/csars/not-a-csar").accept("application/hal+json")
         ).andDo(print()).andExpect(status().is(404));
+    }
+
+    public MockMultipartHttpServletRequestBuilder buildMockedMultipartUploadRequest(byte[] data, String path) {
+        MockMultipartFile mockMultipartFile = new MockMultipartFile(
+            "file",
+            "null",
+            MediaType.APPLICATION_OCTET_STREAM_VALUE,
+            data
+        );
+
+        MockMultipartHttpServletRequestBuilder builder = fileUpload(path);
+        builder.with(request -> {
+            request.setMethod("PUT");
+            return request;
+        });
+        builder = (MockMultipartHttpServletRequestBuilder) builder.file(mockMultipartFile)
+            .contentType(MediaType.MULTIPART_FORM_DATA);
+        return builder;
     }
 }

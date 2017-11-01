@@ -1,4 +1,4 @@
-package org.opentosca.toscana.core.dummy;
+package org.opentosca.toscana.core.testdata.dummyplugins;
 
 import org.opentosca.toscana.core.plugin.AbstractPlugin;
 import org.opentosca.toscana.core.transformation.TransformationContext;
@@ -20,9 +20,9 @@ public class ExecutionDummyPlugin extends AbstractPlugin {
         Logger logger = transformation.getLogger(getClass());
         int i = 0;
         transformation.getPluginFileAccess().access("some-output-file").append("some transformation result").close();
-        logger.info("Waiting 50ms until completion");
+        logger.info("Waiting 500ms until completion");
         while (!Thread.currentThread().isInterrupted() && i < 5) {
-            Thread.sleep(10);
+            Thread.sleep(100);
             i++;
         }
         if (failDuringExec) {

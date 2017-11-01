@@ -1,4 +1,4 @@
-package org.opentosca.toscana.core.dummy;
+package org.opentosca.toscana.core.testdata.dummyplugins;
 
 import java.io.IOException;
 import java.util.Random;

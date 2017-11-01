@@ -6,10 +6,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.opentosca.toscana.core.dummy.DummyPlugin;
-import org.opentosca.toscana.core.dummy.ExecutionDummyPlugin;
-import org.opentosca.toscana.core.dummy.FileCreationExcecutionDummy;
 import org.opentosca.toscana.core.plugin.TransformationPlugin;
+import org.opentosca.toscana.core.testdata.dummyplugins.DummyPlugin;
+import org.opentosca.toscana.core.testdata.dummyplugins.ExecutionDummyPlugin;
+import org.opentosca.toscana.core.testdata.dummyplugins.FileCreationExcecutionDummy;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 
 import org.assertj.core.util.Lists;

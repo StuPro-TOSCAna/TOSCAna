@@ -1,19 +1,25 @@
 package org.opentosca.toscana.core.api;
 
+import java.util.Optional;
+
 import org.opentosca.toscana.core.BaseTest;
 import org.opentosca.toscana.core.plugin.PluginService;
 import org.opentosca.toscana.core.testutils.CategoryAwareSpringRunner;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import static org.opentosca.toscana.core.testdata.TestPlugins.PLATFORMS;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -31,8 +37,15 @@ public class PlatformControllerTest extends BaseTest {
     @Autowired
     private MockMvc mvc;
 
-    @Autowired
+    @MockBean
     private PluginService prov;
+
+    @Before
+    public void setUp() throws Exception {
+        Mockito.when(prov.getSupportedPlatforms()).thenReturn(PLATFORMS);
+        Mockito.when(prov.findPlatformById(Mockito.anyString())).thenReturn(Optional.empty());
+        PLATFORMS.forEach(e -> Mockito.when(prov.findPlatformById(e.id)).thenReturn(Optional.of(e)));
+    }
 
     @Test
     public void listPlatforms() throws Exception {
@@ -41,8 +54,8 @@ public class PlatformControllerTest extends BaseTest {
         ).andDo(print()).andExpect(status().is2xxSuccessful())
             .andExpect(content().contentType("application/hal+json;charset=UTF-8"));
         resultActions.andExpect(jsonPath("$._embedded.platform").isArray());
-        resultActions.andExpect(jsonPath("$._embedded.platform[3]").doesNotExist());
-        for (int i = 0; i < 3; i++) {
+        resultActions.andExpect(jsonPath("$._embedded.platform[" + PLATFORMS.size() + "]").doesNotExist());
+        for (int i = 0; i < PLATFORMS.size(); i++) {
             resultActions.andExpect(jsonPath("$._embedded.platform[" + i + "].id").isString());
             resultActions.andExpect(jsonPath("$._embedded.platform[" + i + "].name").isString());
         }
