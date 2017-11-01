@@ -6,12 +6,14 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.opentosca.toscana.core.api.exceptions.ActiveTransformationsException;
 import org.opentosca.toscana.core.api.exceptions.CsarNotFoundException;
 import org.opentosca.toscana.core.api.model.CsarResponse;
 import org.opentosca.toscana.core.api.model.CsarUploadErrorResponse;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarService;
 import org.opentosca.toscana.core.parse.InvalidCsarException;
+import org.opentosca.toscana.core.transformation.TransformationState;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,8 +92,7 @@ public class CsarController {
     public ResponseEntity<CsarResponse> getCSARInfo(
         @PathVariable(name = "name") String name
     ) {
-        Optional<Csar> optionalCsar = csarService.getCsar(name);
-        Csar csar = optionalCsar.orElseThrow(CsarNotFoundException::new);
+        Csar csar = getCsarForName(name);
         return ResponseEntity.ok().body(new CsarResponse(csar.getIdentifier()));
     }
 
@@ -126,6 +127,32 @@ public class CsarController {
         }
     }
 
+    @RequestMapping(
+        path = "/{name}/delete",
+        method = {RequestMethod.DELETE},
+        produces = "application/hal+json"
+    )
+    public ResponseEntity deleteCsar(
+        @PathVariable("name") String name
+    ) {
+        Csar csar = getCsarForName(name);
+
+        csar.getTransformations().forEach((k, v) -> {
+            if (v.getState() == TransformationState.TRANSFORMING) {
+                throw new ActiveTransformationsException(
+                    String.format(
+                        "Transformation %s/%s is still running. Cannot delete csar while a transformation is running!",
+                        name, k
+                    )
+                );
+            }
+        });
+
+        csarService.deleteCsar(csar);
+
+        return ResponseEntity.ok().build();
+    }
+
     /**
      This exception handler creates the response for a failed upload (parsing failure).
      <p>
@@ -138,5 +165,10 @@ public class CsarController {
         InvalidCsarException e
     ) {
         return new CsarUploadErrorResponse(e, request.getServletPath(), 400);
+    }
+
+    private Csar getCsarForName(@PathVariable("name") String name) {
+        Optional<Csar> optionalCsar = csarService.getCsar(name);
+        return optionalCsar.orElseThrow(CsarNotFoundException::new);
     }
 }
