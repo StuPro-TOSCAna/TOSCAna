@@ -26,6 +26,7 @@ public class ZipUtilityTest extends BaseJUnitTest {
 
     private File original;
     private File unzipped;
+    //Using seeded random to always get the same data
     private final Random rnd = new Random(123456);
 
     @Before
@@ -35,7 +36,7 @@ public class ZipUtilityTest extends BaseJUnitTest {
         unzipped.mkdirs();
         original.mkdirs();
 
-        //generate folders Total 125 Directories with 10 files each (1250 files)
+        //generate folders Total 25 Directories with 10 files each (250 files)
 
         generateFolderStructure(original, 2, 10, 5, rnd);
     }

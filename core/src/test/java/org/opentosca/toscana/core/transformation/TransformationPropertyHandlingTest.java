@@ -4,8 +4,8 @@ import java.util.HashSet;
 import java.util.Map;
 
 import org.opentosca.toscana.core.BaseJUnitTest;
-import org.opentosca.toscana.core.dummy.DummyCsar;
-import org.opentosca.toscana.core.dummy.DummyLog;
+import org.opentosca.toscana.core.csar.Csar;
+import org.opentosca.toscana.core.csar.CsarImpl;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.Property;
@@ -18,16 +18,20 @@ import org.mockito.Mock;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
 public class TransformationPropertyHandlingTest extends BaseJUnitTest {
+    private static final String MOCK_CSAR_NAME = "test";
 
     private TransformationImpl transformation;
+
     @Mock
     private Log log;
 
     @Before
     public void setUp() throws Exception {
-        DummyCsar csar = new DummyCsar("dummy");
+        Csar csar = new CsarImpl(MOCK_CSAR_NAME, log);
+
         HashSet<Property> props = new HashSet<>();
         for (int i = 0; i < 10; i++) {
             props.add(
@@ -100,8 +104,8 @@ public class TransformationPropertyHandlingTest extends BaseJUnitTest {
 
     @Test
     public void checkEmptyProperties() throws Exception {
-        DummyCsar csar = new DummyCsar("dummy");
-        this.transformation = new TransformationImpl(csar, new Platform("test", "test", new HashSet<>()), new DummyLog());
+        Csar csar = new CsarImpl(MOCK_CSAR_NAME, log);
+        this.transformation = new TransformationImpl(csar, new Platform("test", "test", new HashSet<>()), mock(Log.class));
         assertTrue(transformation.allRequiredPropertiesSet());
         assertTrue(transformation.allPropertiesSet());
     }

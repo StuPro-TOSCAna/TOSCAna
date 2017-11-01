@@ -1,4 +1,4 @@
-package org.opentosca.toscana.core.dummy;
+package org.opentosca.toscana.core.testdata.dummyplugins;
 
 import org.opentosca.toscana.core.plugin.TransformationPlugin;
 import org.opentosca.toscana.core.transformation.TransformationContext;

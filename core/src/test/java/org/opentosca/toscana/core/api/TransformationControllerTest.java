@@ -1,21 +1,36 @@
 package org.opentosca.toscana.core.api;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
+import java.util.Set;
 
 import org.opentosca.toscana.core.BaseSpringTest;
 import org.opentosca.toscana.core.api.exceptions.PlatformNotFoundException;
 import org.opentosca.toscana.core.api.utils.HALRelationUtils;
 import org.opentosca.toscana.core.csar.Csar;
+import org.opentosca.toscana.core.csar.CsarImpl;
 import org.opentosca.toscana.core.csar.CsarService;
-import org.opentosca.toscana.core.dummy.DummyCsarService;
-import org.opentosca.toscana.core.dummy.DummyPlatformService;
-import org.opentosca.toscana.core.dummy.DummyTransformation;
-import org.opentosca.toscana.core.dummy.DummyTransformationService;
-import org.opentosca.toscana.core.testdata.TestCsars;
+import org.opentosca.toscana.core.testdata.ByteArrayUtils;
+import org.opentosca.toscana.core.transformation.Transformation;
+import org.opentosca.toscana.core.transformation.TransformationImpl;
+import org.opentosca.toscana.core.transformation.TransformationService;
+import org.opentosca.toscana.core.transformation.artifacts.TargetArtifact;
+import org.opentosca.toscana.core.transformation.logging.Log;
+import org.opentosca.toscana.core.transformation.logging.LogEntry;
+import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.platform.PlatformService;
+import org.opentosca.toscana.core.transformation.properties.Property;
+import org.opentosca.toscana.core.transformation.properties.PropertyType;
 
+import ch.qos.logback.classic.Level;
+import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Before;
@@ -28,6 +43,11 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 import static org.opentosca.toscana.core.transformation.TransformationState.TRANSFORMING;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -40,6 +60,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class TransformationControllerTest extends BaseSpringTest {
 
+    //<editor-fold desc="Constant Definition">
+    
     private final static String VALID_PROPERTY_INPUT = "{\n" +
         "\t\"properties\": {\n" +
         "\t\t\"text_property\":\"Hallo Welt\",\n" +
@@ -72,29 +94,82 @@ public class TransformationControllerTest extends BaseSpringTest {
     private final static String CREATE_CSAR_VALID_URL = "/api/csars/k8s-cluster/transformations/p-a/create";
     private final static String PLATFORM_NOT_FOUND_URL = "/api/csars/k8s-cluster/transformations/p-z";
     private final static String CSAR_NOT_FOUND_URL = "/api/csars/keinechtescsar/transformations";
+    private static final String[] CSAR_NAMES = new String[] {"k8s-cluster", "apache-test", "mongo-db"};
+    private static final String SECOND_VALID_PLATFORM_NAME = "p-b";
+    //</editor-fold>
 
     private CsarService csarService;
-    private DummyTransformationService transformationService;
+    private TransformationService transformationService;
     private PlatformService platformService;
     private MockMvc mvc;
 
+    //<editor-fold desc="Initialization">
+    
     @Before
     public void setUp() throws Exception {
         //Create Objects
-        csarService = new DummyCsarService(tmpdir);
-        transformationService = new DummyTransformationService();
-        platformService = new DummyPlatformService();
+        mockCsarService();
+        mockPlatformService();
+        mockTransformationService();
+
         TransformationController controller = new TransformationController(csarService, transformationService, platformService);
 
         mvc = MockMvcBuilders.standaloneSetup(controller).build();
     }
 
+    private void mockCsarService() {
+        csarService = mock(CsarService.class);
+        List<Csar> csars = new ArrayList<>();
+        when(csarService.getCsar(anyString())).thenReturn(Optional.empty());
+        for (String name : CSAR_NAMES) {
+            Csar csar = new CsarImpl(name, mock(Log.class));
+            when(csarService.getCsar(name)).thenReturn(Optional.of(csar));
+        }
+        when(csarService.getCsars()).thenReturn(csars);
+    }
+
+    private void mockPlatformService() {
+        platformService = mock(PlatformService.class);
+
+        Set<Platform> platforms = new HashSet<>();
+
+        for (int i = 0; i < 5; i++) {
+            HashSet<Property> properties = new HashSet<>();
+            for (PropertyType type : PropertyType.values()) {
+                properties.add(new Property(type.getTypeName() + "_property", type));
+            }
+            char[] chars = "abcdefghijklmnopqrstuvwxyz".toCharArray();
+            platforms.add(new Platform("p-" + chars[i], "platform-" + (i + 1), properties));
+        }
+        when(platformService.getSupportedPlatforms()).thenReturn(platforms);
+        when(platformService.isSupported(any(Platform.class))).thenReturn(false);
+        when(platformService.findPlatformById(anyString())).thenReturn(Optional.empty());
+        for (Platform platform : platforms) {
+            when(platformService.findPlatformById(platform.id)).thenReturn(Optional.of(platform));
+            when(platformService.isSupported(platform)).thenReturn(true);
+        }
+    }
+
+    private void mockTransformationService() {
+        transformationService = mock(TransformationService.class);
+        when(transformationService.createTransformation(any(Csar.class), any(Platform.class))).then(iom -> {
+            Csar csar = (Csar) iom.getArguments()[0];
+            Platform platform = (Platform) iom.getArguments()[1];
+            Transformation t = new TransformationImpl(csar, platform, mock(Log.class));
+            csar.getTransformations().put(platform.id, t);
+            return t;
+        });
+    }
+    //</editor-fold>
+    
     //<editor-fold desc="Start transformation tests">
 
     @Test
     public void testStartTransformationSuccess() throws Exception {
         preInitNonCreationTests();
-        transformationService.setStartReturnValue(true);
+
+        when(transformationService.startTransformation(any(Transformation.class))).thenReturn(true);
+
         mvc.perform(
             post(START_TRANSFORMATION_VALID_URL)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -103,14 +178,12 @@ public class TransformationControllerTest extends BaseSpringTest {
             .andExpect(status().is(200))
             .andExpect(content().bytes(new byte[0]))
             .andReturn();
-        assertEquals(TRANSFORMING,
-            csarService.getCsar(VALID_CSAR_NAME).get().getTransformation(VALID_PLATFORM_NAME).get().getState());
     }
 
     @Test
     public void testStartTransformationFail() throws Exception {
         preInitNonCreationTests();
-        transformationService.setStartReturnValue(false);
+        when(transformationService.startTransformation(any(Transformation.class))).thenReturn(false);
         mvc.perform(
             post(START_TRANSFORMATION_VALID_URL)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -213,22 +286,31 @@ public class TransformationControllerTest extends BaseSpringTest {
     @Test
     public void retrieveArtifact() throws Exception {
         preInitNonCreationTests();
-        ((DummyTransformation) csarService.getCsar(VALID_CSAR_NAME).get().getTransformation(VALID_PLATFORM_NAME).get())
-            .setReturnTargetArtifact(true);
+
+        File dummyFile = new File(tmpdir, "test.bin");
+        dummyFile.delete();
+        byte[] data = ByteArrayUtils.generateRandomByteArray(new Random(123), 2048);
+        FileUtils.writeByteArrayToFile(dummyFile, data);
+
+        when(csarService.getCsar(VALID_CSAR_NAME).get().getTransformation(VALID_PLATFORM_NAME).get().getTargetArtifact())
+            .thenReturn(Optional.of(new TargetArtifact(dummyFile)));
+
         mvc.perform(
             get(GET_ARTIFACTS_VALID_URL)
         ).andDo(print())
             .andExpect(status().is(200))
             .andExpect(content().contentType("application/octet-stream"))
-            .andExpect(content().bytes(TestCsars.getFFBytes()))
+            .andExpect(content().bytes(data))
             .andReturn();
     }
 
     @Test
     public void retrieveArtifactNotFinished() throws Exception {
         preInitNonCreationTests();
-        ((DummyTransformation) csarService.getCsar(VALID_CSAR_NAME).get().getTransformation(VALID_PLATFORM_NAME).get())
-            .setReturnTargetArtifact(false);
+        when(
+            csarService.getCsar(VALID_CSAR_NAME).get()
+                .getTransformation(VALID_PLATFORM_NAME).get().getTargetArtifact()
+        ).thenReturn(Optional.empty());
         mvc.perform(
             get(GET_ARTIFACTS_VALID_URL)
         ).andDo(print())
@@ -264,7 +346,7 @@ public class TransformationControllerTest extends BaseSpringTest {
     public void deleteTransformation() throws Exception {
         preInitNonCreationTests();
         //Set the return value of the delete method
-        transformationService.setDeleteReturnValue(true);
+        when(transformationService.deleteTransformation(any(Transformation.class))).thenReturn(true);
         //Execute Request
         mvc.perform(
             delete(DELETE_TRANSFORMATION_VALID_URL)
@@ -277,7 +359,7 @@ public class TransformationControllerTest extends BaseSpringTest {
     public void deleteTransformationStillRunning() throws Exception {
         preInitNonCreationTests();
         //Set the return value of the delete method
-        transformationService.setDeleteReturnValue(false);
+        when(transformationService.deleteTransformation(any(Transformation.class))).thenReturn(false);
         //Execute Request
         mvc.perform(
             delete(DELETE_TRANSFORMATION_VALID_URL)
@@ -511,8 +593,22 @@ public class TransformationControllerTest extends BaseSpringTest {
         //add a transformation
         Optional<Csar> csar = csarService.getCsar(VALID_CSAR_NAME);
         assertTrue(csar.isPresent());
-        transformationService.createTransformation(csar.get(), platformService.findPlatformById(VALID_PLATFORM_NAME).get());
-        transformationService.createTransformation(csar.get(), platformService.findPlatformById("p-b").get());
+        String[] pnames = {VALID_PLATFORM_NAME, SECOND_VALID_PLATFORM_NAME};
+
+        for (String pname : pnames) {
+
+            Log mockLog = mock(Log.class);
+            LogEntry entry = new LogEntry(0, "Test Message", Level.DEBUG);
+            when(mockLog.getLogEntries(0)).thenReturn(Collections.singletonList(entry));
+
+            Transformation transformation = new TransformationImpl(
+                csar.get(),
+                platformService.findPlatformById(pname).get(),
+                mockLog
+            );
+            transformation = spy(transformation);
+            csar.get().getTransformations().put(pname, transformation);
+        }
     }
     //</editor-fold>
 }

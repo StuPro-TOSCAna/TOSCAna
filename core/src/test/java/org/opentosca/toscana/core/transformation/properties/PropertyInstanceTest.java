@@ -3,7 +3,10 @@ package org.opentosca.toscana.core.transformation.properties;
 import java.util.HashSet;
 
 import org.opentosca.toscana.core.BaseJUnitTest;
-import org.opentosca.toscana.core.dummy.DummyTransformation;
+import org.opentosca.toscana.core.csar.CsarImpl;
+import org.opentosca.toscana.core.transformation.Transformation;
+import org.opentosca.toscana.core.transformation.TransformationImpl;
+import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 
 import org.junit.Before;
@@ -12,13 +15,14 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 import static org.opentosca.toscana.core.transformation.TransformationState.INPUT_REQUIRED;
 import static org.opentosca.toscana.core.transformation.TransformationState.READY;
 
 public class PropertyInstanceTest extends BaseJUnitTest {
 
     private PropertyInstance instance;
-    private DummyTransformation transformation;
+    private Transformation transformation;
 
     @Before
     public void init() throws Exception {
@@ -26,8 +30,15 @@ public class PropertyInstanceTest extends BaseJUnitTest {
         for (int i = 0; i < 10; i++) {
             properties.add(new Property("p-" + i, PropertyType.INTEGER, "", i < 5));
         }
-        this.transformation = new DummyTransformation(new Platform("test", "test", properties));
-        this.instance = transformation.getProperties();
+        Platform testPlatform = new Platform("test", "test", properties);
+
+        transformation = new TransformationImpl(
+            new CsarImpl("test", mock(Log.class)),
+            testPlatform,
+            mock(Log.class)
+        );
+
+        this.instance = new PropertyInstance(properties, transformation);
     }
 
     @Test
