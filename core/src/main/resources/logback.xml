@@ -3,7 +3,8 @@
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %-36logger{36} %msg%n</pattern>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger %msg%n</pattern>
+            <!--<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %-36logger{36} %msg%n</pattern>-->
         </encoder>
     </appender>
 
@@ -14,6 +15,8 @@
     <logger name="org.jboss.logging" level="WARN"/>
     <logger name="org.apache.coyote.http11" level="WARN"/>
     <logger name="org.apache.tomcat.util.net.NioSelectorPool" level="WARN"/>
+    <logger name="springfox.documenation.*" level="WARN"/>
+    <logger name="com.jayway.jsonpath.*" level="WARN"/>
 
 
     <root level="DEBUG">

@@ -41,7 +41,6 @@ public class Preferences {
                 dataPath = FileUtils.getTempDirectory() + File.separator + "toscana";
             }
         }
-        logger.info("datadir is '{}'", dataPath);
         dataDir = new File(dataPath);
         dataDir.mkdirs();
         logger.info("Data directory is {}", dataDir.getAbsolutePath());

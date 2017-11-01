@@ -54,9 +54,9 @@ public class TransformationFilesystemDao implements TransformationDao {
         try {
             FileUtils.deleteDirectory(transformationDir);
             transformation.getCsar().getTransformations().remove(transformation.getPlatform().id);
-            logger.info("deleted transformation directory '{}'", transformationDir);
+            logger.info("Deleted transformation directory '{}'", transformationDir);
         } catch (IOException e) {
-            logger.error("failed to delete directory of transformation '{}'", transformation, e);
+            logger.error("Failed to delete directory of transformation '{}'", transformation, e);
         }
     }
 

@@ -38,7 +38,7 @@ public class CsarFilesystemDao implements CsarDao {
      */
     final static String CONTENT_DIR = "content";
 
-    private final static Logger logger = LoggerFactory.getLogger(CsarFilesystemDao.class.getSimpleName());
+    private final static Logger logger = LoggerFactory.getLogger(CsarFilesystemDao.class);
 
     private final TransformationDao transformationDao;
     private final File dataDir;
@@ -74,9 +74,9 @@ public class CsarFilesystemDao implements CsarDao {
         transformationDir.mkdir();
         try {
             ZipUtility.unzip(new ZipInputStream(inputStream), contentDir.getPath());
-            logger.info("extracted csar '{}' into '{}'", identifier, contentDir.getPath());
+            logger.info("Extracted csar '{}' into '{}'", identifier, contentDir.getPath());
         } catch (IOException e) {
-            logger.error("failed to unzip csar with identifier '{}'", identifier, e);
+            logger.error("Failed to unzip csar with identifier '{}'", identifier, e);
         }
         Csar csar = new CsarImpl(identifier, getLog(identifier));
         csarMap.put(identifier, csar);
@@ -100,9 +100,9 @@ public class CsarFilesystemDao implements CsarDao {
         File csarDir = new File(dataDir, identifier);
         try {
             FileUtils.deleteDirectory(csarDir);
-            logger.info("deleted csar directory '{}'", csarDir);
+            logger.info("Deleted csar directory '{}'", csarDir);
         } catch (IOException e) {
-            logger.error("failed to delete csar directory with identifier '{}'", identifier, e);
+            logger.error("Failed to delete csar directory with identifier '{}'", identifier, e);
         }
     }
 
@@ -157,7 +157,7 @@ public class CsarFilesystemDao implements CsarDao {
                 csar.setTransformations(transformations);
             }
         }
-        logger.debug("in-memory csars in synced with file system");
+        logger.debug("In-memory csars in synced with file system");
     }
 
     /**

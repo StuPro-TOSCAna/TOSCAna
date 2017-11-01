@@ -20,7 +20,7 @@ import static org.junit.Assert.assertTrue;
 
 public class ZipUtilityTest extends BaseJUnitTest {
 
-    private static final Logger log = LoggerFactory.getLogger(ZipUtility.class);
+    private static final Logger log = LoggerFactory.getLogger(ZipUtilityTest.class);
 
     private static final int FILE_SIZE = 1024;
 
@@ -57,7 +57,7 @@ public class ZipUtilityTest extends BaseJUnitTest {
         if (current.isFile()) {
             String relative = getRelativePath(currRoot, current);
             File comp = new File(compRoot, relative);
-            log.debug("Comparing files {} and {}", current.getAbsolutePath(), comp.getAbsolutePath());
+            log.trace("Comparing files {} and {}", current.getAbsolutePath(), comp.getAbsolutePath());
             assertTrue(comp.isFile() && comp.length() == current.length());
             byte[] currentData = Files.readAllBytes(current.toPath());
             byte[] compareData = Files.readAllBytes(comp.toPath());
@@ -85,7 +85,7 @@ public class ZipUtilityTest extends BaseJUnitTest {
         if (depth == 0) {
             return;
         }
-        log.debug("Creating Directory {}", current.getAbsolutePath());
+        log.trace("Creating Directory {}", current.getAbsolutePath());
         current.mkdirs();
 
         //generate random files
@@ -93,7 +93,7 @@ public class ZipUtilityTest extends BaseJUnitTest {
             byte[] data = new byte[FILE_SIZE];
             rnd.nextBytes(data);
             File file = new File(current, "rnd-" + i + ".bin");
-            log.debug("Creating File {}", file.getAbsolutePath());
+            log.trace("Creating File {}", file.getAbsolutePath());
             Files.write(file.toPath(), data);
         }
 

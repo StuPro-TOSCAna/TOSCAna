@@ -40,7 +40,7 @@ public class ZipUtility {
             if (!entry.isDirectory()) {
                 extractFile(zipIn, filePath);
             } else {
-                logger.debug("Creating directory: {}", filePath);
+                logger.trace("Creating directory: {}", filePath);
                 File dir = new File(filePath);
                 dir.mkdir();
             }
@@ -54,7 +54,7 @@ public class ZipUtility {
      Extracts a zip entry (file entry)
      */
     private static void extractFile(ZipInputStream zipIn, String filePath) throws IOException {
-        logger.debug("Extracting file: {}", filePath);
+        logger.trace("Extracting file: {}", filePath);
         //Create parent directories if they don't exist
         File parentPath = new File(filePath).getParentFile();
         if (!parentPath.exists() && !parentPath.mkdirs()) {
@@ -74,7 +74,7 @@ public class ZipUtility {
      Compresses given directory recursively to given output stream
      */
     public static void compressDirectory(File directory, OutputStream output) throws IOException {
-        logger.debug("Compressing Directory {}", directory.getAbsolutePath());
+        logger.debug("Compressing directory {}", directory.getAbsolutePath());
         ZipOutputStream zipOut = new ZipOutputStream(output);
 
         LinkedList<File> fileStack = new LinkedList<>();
@@ -90,7 +90,7 @@ public class ZipUtility {
                 FileInputStream in = new FileInputStream(f);
                 //Get the relative path
                 String relative = directory.toPath().relativize(f.toPath()).toString();
-                logger.debug("Compressing {}", relative);
+                logger.trace("Compressing {}", relative);
 
                 //create the zip entry
                 ZipEntry entry = new ZipEntry(relative);
@@ -111,8 +111,8 @@ public class ZipUtility {
                 in.close();
             }
         }
-        logger.debug("Closing stream");
         //close zip output
         zipOut.close();
+        logger.debug("Closing stream");
     }
 }
