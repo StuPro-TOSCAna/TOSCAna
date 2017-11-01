@@ -20,6 +20,7 @@ public class CsarResponse extends ResourceSupport {
         this.name = name;
         add(linkTo(methodOn(CsarController.class)
             .getCSARInfo(name)).withSelfRel());
+        add(linkTo(methodOn(CsarController.class).deleteCsar(name)).withRel("delete"));
         add(linkTo(methodOn(TransformationController.class)
             .getCSARTransformations(name)).withRel("transformations").expand(name));
     }
