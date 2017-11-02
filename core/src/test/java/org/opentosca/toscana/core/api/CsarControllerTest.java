@@ -77,12 +77,12 @@ public class CsarControllerTest extends BaseSpringTest {
         when(service.submitCsar(anyString(), any(InputStream.class)))
             .thenAnswer(iom -> {
                 //Check if the csar is already known
-                if (service.getCsar(iom.getArgumentAt(0, String.class)).isPresent()) {
+                if (service.getCsar(iom.getArguments()[0].toString()).isPresent()) {
                     return null;
                 }
 
                 //Copy "sent" data into a byte array
-                InputStream in = iom.getArgumentAt(1, InputStream.class);
+                InputStream in = (InputStream) iom.getArguments()[1];
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
                 IOUtils.copy(in, out);
                 dataRead = out.toByteArray();
@@ -128,7 +128,7 @@ public class CsarControllerTest extends BaseSpringTest {
         byte[] hashUpload = getSHA256Hash(this.dataRead);
         assertHashesEqual(hash, hashUpload);
     }
-    
+
     @Test
     public void uploadTestArchiveAlreadyExists() throws Exception {
         //Generate 10 KiB of random data
