@@ -296,8 +296,7 @@ public class TransformationControllerTest extends BaseSpringTest {
             .thenReturn(Optional.of(new TargetArtifact(dummyFile)));
 
         mvc.perform(
-            get(GET_ARTIFACTS_VALID_URL)
-        ).andDo(print())
+            get(GET_ARTIFACTS_VALID_URL))
             .andExpect(status().is(200))
             .andExpect(content().contentType("application/octet-stream"))
             .andExpect(content().bytes(data))
