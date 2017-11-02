@@ -48,12 +48,13 @@ public class KubernetesPlugin extends AbstractPlugin {
         fileAccess.access(manualPath).write(manual);
         fileAccess.access(resourceFilePath).write(resourceFile);
         List<String> dockerFilePaths = dockerApp.getDependencies();
-        for (String dockerFilePath : dockerFilePaths) {
-            fileAccess.copy(dockerFilePath);
+        for (String s : dockerFilePaths) {
+            logger.info("copied: " + s);
+            fileAccess.copy(s);
         }
     }
 
-    public DockerApp getDockerApp(TServiceTemplate template) throws InvalidDockerAppException {
+    private DockerApp getDockerApp(TServiceTemplate template) throws InvalidDockerAppException {
         logger.info(template.toString());
         TTopologyTemplateDefinition tTopologyTemplateDefinition = template.getTopologyTemplate();
 

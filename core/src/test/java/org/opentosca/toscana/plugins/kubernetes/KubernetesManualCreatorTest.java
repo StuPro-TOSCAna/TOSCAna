@@ -1,18 +1,17 @@
-package org.opentosca.toscana.plugins.k8s;
+package org.opentosca.toscana.plugins.kubernetes;
 
 import java.io.File;
 import java.io.IOException;
 
 import org.opentosca.toscana.core.BaseJUnitTest;
 import org.opentosca.toscana.core.util.FileHelper;
-import org.opentosca.toscana.plugins.kubernetes.KubernetesManualCreator;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class K8sManualCreatorTest extends BaseJUnitTest {
+public class KubernetesManualCreatorTest extends BaseJUnitTest {
     private static String testManualCorrectFile;
 
     @BeforeClass
