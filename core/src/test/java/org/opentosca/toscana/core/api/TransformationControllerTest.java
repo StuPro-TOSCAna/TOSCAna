@@ -297,7 +297,7 @@ public class TransformationControllerTest extends BaseSpringTest {
 
         mvc.perform(
             get(GET_ARTIFACTS_VALID_URL)
-        ).andDo(print())
+        )
             .andExpect(status().is(200))
             .andExpect(content().contentType("application/octet-stream"))
             .andExpect(content().bytes(data))
