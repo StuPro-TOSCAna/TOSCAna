@@ -8,7 +8,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.opentosca.toscana.core.BaseJUnitTest;
-import org.opentosca.toscana.core.BaseSpringTest;
 import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.testdata.TestPlugins;
 import org.opentosca.toscana.core.transformation.Transformation;
@@ -22,7 +21,6 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -41,9 +39,9 @@ public class CsarFilesystemDaoTest extends BaseJUnitTest {
     private Preferences preferences;
     @Mock
     private Log fakeLog;
-    
+
     @Before
-    public void setUp(){
+    public void setUp() {
         preferences = mock(Preferences.class);
         when(preferences.getDataDir()).thenReturn(tmpdir);
         transformationDao = mock(TransformationDao.class);

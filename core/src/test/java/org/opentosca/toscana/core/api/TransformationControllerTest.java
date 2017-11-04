@@ -61,7 +61,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class TransformationControllerTest extends BaseSpringTest {
 
     //<editor-fold desc="Constant Definition">
-    
+
     private final static String VALID_PROPERTY_INPUT = "{\n" +
         "\t\"properties\": {\n" +
         "\t\t\"text_property\":\"Hallo Welt\",\n" +
@@ -94,7 +94,7 @@ public class TransformationControllerTest extends BaseSpringTest {
     private final static String CREATE_CSAR_VALID_URL = "/api/csars/k8s-cluster/transformations/p-a/create";
     private final static String PLATFORM_NOT_FOUND_URL = "/api/csars/k8s-cluster/transformations/p-z";
     private final static String CSAR_NOT_FOUND_URL = "/api/csars/keinechtescsar/transformations";
-    private static final String[] CSAR_NAMES = new String[] {"k8s-cluster", "apache-test", "mongo-db"};
+    private static final String[] CSAR_NAMES = new String[]{"k8s-cluster", "apache-test", "mongo-db"};
     private static final String SECOND_VALID_PLATFORM_NAME = "p-b";
     //</editor-fold>
 
@@ -104,7 +104,7 @@ public class TransformationControllerTest extends BaseSpringTest {
     private MockMvc mvc;
 
     //<editor-fold desc="Initialization">
-    
+
     @Before
     public void setUp() throws Exception {
         //Create Objects
@@ -161,7 +161,7 @@ public class TransformationControllerTest extends BaseSpringTest {
         });
     }
     //</editor-fold>
-    
+
     //<editor-fold desc="Start transformation tests">
 
     @Test

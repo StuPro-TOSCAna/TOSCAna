@@ -5,69 +5,53 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.opentosca.toscana.core.BaseSpringTest;
-import org.opentosca.toscana.core.api.exceptions.PlatformNotFoundException;
-import org.opentosca.toscana.core.csar.Csar;
-import org.opentosca.toscana.core.csar.CsarDao;
-import org.opentosca.toscana.core.testdata.TestCsars;
-import org.opentosca.toscana.core.testdata.TestPlugins;
-import org.opentosca.toscana.core.transformation.Transformation;
-import org.opentosca.toscana.core.transformation.TransformationDao;
-import org.opentosca.toscana.core.transformation.TransformationService;
+import org.opentosca.toscana.core.BaseJUnitTest;
+import org.opentosca.toscana.core.transformation.logging.Log;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.tika.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.Mock;
+import org.slf4j.Logger;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-public class PluginFileAccessTest extends BaseSpringTest {
+public class PluginFileAccessTest extends BaseJUnitTest {
 
     private PluginFileAccess access;
-    private Transformation transformation;
-    private File csarContentDir;
-    private File transformationContentDir;
-    @Autowired
-    private TestCsars testCsars;
-    @Autowired
-    private CsarDao csarDao;
-    @Autowired
-    private TransformationDao transformationDao;
-    @Autowired
-    private TransformationService transformationService;
-
-    private String fileContent;
-    private String targetFilePath;
-    private InputStream inputStream;
+    @Mock
+    private Log log;
+    private File sourceDir;
+    private File targetDir;
+    private String fileContent = "this is a test content";
+    private String targetFileName = "filename";
     private File targetFile;
 
     @Before
-    public void setUp() throws IOException, PlatformNotFoundException {
-        Csar csar = testCsars.getCsar(TestCsars.CSAR_YAML_VALID_DOCKER_SIMPLETASK);
-        csarContentDir = csarDao.getContentDir(csar);
-        transformation = transformationService.createTransformation(csar, TestPlugins.PLATFORM1);
-        TestPlugins.createFakeTransformationsOnDisk(csarDao.getTransformationsDir(csar), TestPlugins.PLATFORMS);
-        transformationContentDir = transformationDao.getContentDir(transformation);
-        access = new PluginFileAccess(csarDao.getContentDir(csar), transformationDao.getContentDir(transformation),
-            transformation.getLog());
-        fileContent = "this is a test content";
-        inputStream = IOUtils.toInputStream(fileContent, "UTF-8");
-        targetFilePath = "testFile";
-        targetFile = new File(transformationContentDir, targetFilePath);
+    public void setUp() {
+        sourceDir = new File(tmpdir, "sourceDir");
+        targetDir = new File(tmpdir, "targetDir");
+        targetFile = new File(targetDir, targetFileName);
+        sourceDir.mkdir();
+        targetDir.mkdir();
+        when(log.getLogger(any(Class.class))).thenReturn(mock(Logger.class));
+        access = new PluginFileAccess(sourceDir, targetDir, log);
     }
 
     @Test
     public void copyFile() throws Exception {
         String filename = "testFile";
-        File file = new File(csarContentDir, "testFile");
+        File file = new File(sourceDir, "testFile");
         file.createNewFile();
+        File expectedFile = new File(targetDir, filename);
 
-        File expectedFile = new File(transformationDao.getContentDir(transformation), filename);
         assertFalse(expectedFile.exists());
         access.copy(filename);
         assertTrue(expectedFile.exists());
@@ -76,13 +60,13 @@ public class PluginFileAccessTest extends BaseSpringTest {
     @Test
     public void copyDirRecursively() throws IOException {
         String dirname = "dir";
-        File dir = new File(csarContentDir, dirname);
+        File dir = new File(sourceDir, dirname);
         dir.mkdir();
         for (int i = 0; i < 10; i++) {
             new File(dir, String.valueOf(i)).createNewFile();
         }
 
-        File expectedDir = new File(transformationContentDir, dirname);
+        File expectedDir = new File(targetDir, dirname);
         assertFalse(expectedDir.exists());
         access.copy(dirname);
         assertTrue(expectedDir.exists());
@@ -99,7 +83,7 @@ public class PluginFileAccessTest extends BaseSpringTest {
 
     @Test
     public void write() throws Exception {
-        access.access(targetFilePath).append(fileContent).close();
+        access.access(targetFileName).append(fileContent).close();
         assertTrue(targetFile.isFile());
         assertEquals(fileContent, FileUtils.readFileToString(targetFile));
     }
@@ -107,14 +91,14 @@ public class PluginFileAccessTest extends BaseSpringTest {
     @Test(expected = IOException.class)
     public void writePathIsDirectoryThrowsException() throws IOException {
         targetFile.mkdir();
-        access.access(targetFilePath);
+        access.access(targetFileName);
     }
 
     @Test
     public void writeSubDirectoriesGetAutomaticallyCreated() throws IOException {
         String path = "test/some/subdirs/filename";
         access.access(path).append(fileContent).close();
-        File targetFile = new File(transformationContentDir, path);
+        File targetFile = new File(targetDir, path);
         assertTrue(targetFile.isFile());
         assertEquals(fileContent, FileUtils.readFileToString(targetFile));
     }
@@ -122,7 +106,8 @@ public class PluginFileAccessTest extends BaseSpringTest {
     @Test
     public void readSuccessful() throws IOException {
         String path = "file";
-        File file = new File(csarContentDir, path);
+        File file = new File(sourceDir, path);
+        InputStream inputStream = IOUtils.toInputStream(fileContent, "UTF-8");
         FileUtils.copyInputStreamToFile(inputStream, file);
         String result = access.read(path);
 

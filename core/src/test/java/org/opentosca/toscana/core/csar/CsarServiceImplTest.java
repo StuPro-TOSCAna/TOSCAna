@@ -4,47 +4,50 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
-import org.opentosca.toscana.core.BaseSpringTest;
+import org.opentosca.toscana.core.BaseJUnitTest;
+import org.opentosca.toscana.core.parse.CsarParseService;
 import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.transformation.logging.Log;
 
+import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.Mock;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-public class CsarServiceImplTest extends BaseSpringTest {
-
-    @Autowired
-    private CsarService csarService;
+public class CsarServiceImplTest extends BaseJUnitTest {
 
     private final String identifier = "my-awesome-csar";
+
+    private CsarService csarService;
+    @Mock
+    private CsarDao csarDao;
+    @Mock
+    private CsarParseService parseService;
+    private Csar csar;
+
+    @Before
+    public void setUp() {
+        csarService = new CsarServiceImpl(csarDao, parseService);
+        csar = new CsarImpl(identifier, mock(Log.class));
+    }
 
     @Test
     public void submitCsar() throws Exception {
         File file = TestCsars.CSAR_YAML_VALID_DOCKER_SIMPLETASK;
         InputStream stream = new FileInputStream(file);
-        csarService.submitCsar(identifier, stream);
+        when(csarDao.create(identifier, stream)).thenReturn(csar);
 
-        File csarDir = new File(tmpdir, identifier);
-        File contentDir = new File(csarDir, CsarFilesystemDao.CONTENT_DIR);
-
-        assertTrue(csarDir.isDirectory());
-        assertTrue(contentDir.isDirectory());
-        assertTrue(contentDir.list().length > 3); // lazy..
+        Csar result = csarService.submitCsar(identifier, stream);
+        assertEquals(csar, result);
     }
 
     @Test
     public void deleteCsar() throws Exception {
-        File csarDir = new File(tmpdir, identifier);
-        Csar csar = new CsarImpl(identifier, mock(Log.class));
-
-        csarDir.mkdir();
-        assertTrue(csarDir.isDirectory());
-
         csarService.deleteCsar(csar);
-        assertFalse(csarDir.isDirectory());
+        verify(csarDao).delete(csar.getIdentifier());
     }
 }
