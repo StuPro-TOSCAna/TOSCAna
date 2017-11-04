@@ -44,7 +44,9 @@ pipeline {
             }
         } 
         stage('Deploy') {
-            agent { label 'deploy' }
+            when {
+                environment name: 'TOSCANA_DEPLOY_ON_BUILD', value: 'true'
+            }
             steps {
 //  the JENKINS_NODE_COOKIE variable must be set to a different value than the id of this jenkins build in order for subprocesses to live longer than the build process
                  sh 'JENKINS_NODE_COOKIE=dontKillMe toscanad' 
