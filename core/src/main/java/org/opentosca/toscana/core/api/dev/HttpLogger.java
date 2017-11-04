@@ -29,11 +29,11 @@ public class HttpLogger implements TraceRepository {
         String method = (String) traceInfo.get("method");
         String path = (String) traceInfo.get("path");
         String timeTaken = (String) traceInfo.get("timeTaken");
-        Map<String, Map<String,String>> headerMap = (Map<String, Map<String, String>>) traceInfo.get("headers");
+        Map<String, Map<String, String>> headerMap = (Map<String, Map<String, String>>) traceInfo.get("headers");
 //        Map<String, String> requestMap = headerMap.get("request");
         Map<String, String> responseMap = headerMap.get("response");
         String responseStatus = responseMap.get("status");
-        LOG.info("Request: \"{} {}\", response: {} after {}ms", method, path, responseStatus,timeTaken);
+        LOG.info("Request: \"{} {}\", response: {} after {}ms", method, path, responseStatus, timeTaken);
         this.delegate.add(traceInfo);
     }
 }

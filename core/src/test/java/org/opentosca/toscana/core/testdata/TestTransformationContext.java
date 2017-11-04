@@ -27,6 +27,7 @@ import static org.mockito.Mockito.mock;
 /**
  Supplies valid TransformationContext objects for plugin integration tests. <br> Note: Internally, uses core
  functionality. Do <b>NOT</b> use this for isolated testing.
+ Try to build unit tests instead. Use this only as a last resort.
  */
 public class TestTransformationContext extends BaseSpringTest {
 

@@ -2,7 +2,7 @@ package org.opentosca.toscana.core.transformation.logging;
 
 import java.util.List;
 
-import ch.qos.logback.classic.Logger;
+import org.slf4j.Logger;
 
 public interface Log {
     /**

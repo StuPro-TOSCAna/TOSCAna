@@ -45,7 +45,7 @@ public class TransformerHealthIndicatorTest extends BaseJUnitTest {
     //Mock data to generate the transformations 
     //First index represents the platform
     //second index represents the Current transformation state
-    private static final Object[][] MOCK_DATA = new Object[][] {
+    private static final Object[][] MOCK_DATA = new Object[][]{
         {PLATFORM1, TRANSFORMING},
         {PLATFORM2, ERROR}
     };

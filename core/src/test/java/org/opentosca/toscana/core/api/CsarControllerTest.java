@@ -185,7 +185,7 @@ public class CsarControllerTest extends BaseSpringTest {
     @Test
     public void testDelete() throws Exception {
         //Mechanism to set this value to true once delete has been called
-        final boolean[] executed = new boolean[] {false};
+        final boolean[] executed = new boolean[]{false};
         doAnswer(iom -> executed[0] = true).when(service).deleteCsar(any(Csar.class));
         //Perform request
         mvc.perform(

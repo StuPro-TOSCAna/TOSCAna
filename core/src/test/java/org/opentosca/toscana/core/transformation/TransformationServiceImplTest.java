@@ -37,10 +37,10 @@ import static org.opentosca.toscana.core.testdata.TestPlugins.PLATFORM_NOT_SUPPO
 import static org.opentosca.toscana.core.testdata.TestPlugins.PLATFORM_PASSING_DUMMY;
 
 public class TransformationServiceImplTest extends BaseSpringTest {
-    
+
     private static final int WAIT_DELAY_MS = 100;
     private static final int TEST_EXECUTION_TIMEOUT_MS = 10000;
-    
+
     private static final Logger logger = LoggerFactory.getLogger(TransformationServiceImplTest.class);
     @Autowired
     private TransformationService service;
@@ -48,7 +48,7 @@ public class TransformationServiceImplTest extends BaseSpringTest {
     private TestCsars testCsars;
     @Mock
     private Log log;
-    
+
     private Csar csar;
 
     @Before
