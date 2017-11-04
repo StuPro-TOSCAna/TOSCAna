@@ -5,26 +5,51 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import org.opentosca.toscana.core.BaseJUnitTest;
 import org.opentosca.toscana.core.BaseSpringTest;
 import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.testdata.TestPlugins;
+import org.opentosca.toscana.core.transformation.Transformation;
+import org.opentosca.toscana.core.transformation.TransformationDao;
+import org.opentosca.toscana.core.transformation.TransformationImpl;
+import org.opentosca.toscana.core.transformation.logging.Log;
+import org.opentosca.toscana.core.util.Preferences;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-public class CsarFilesystemDaoTest extends BaseSpringTest {
+public class CsarFilesystemDaoTest extends BaseJUnitTest {
 
     private final static Logger logger = LoggerFactory.getLogger(CsarFilesystemDaoTest.class.getName());
 
-    @Autowired
-    private CsarDao csarDao;
+    private CsarFilesystemDao csarDao;
+    private TransformationDao transformationDao;
+    private Preferences preferences;
+    @Mock
+    private Log fakeLog;
+    
+    @Before
+    public void setUp(){
+        preferences = mock(Preferences.class);
+        when(preferences.getDataDir()).thenReturn(tmpdir);
+        transformationDao = mock(TransformationDao.class);
+        csarDao = new CsarFilesystemDao(preferences, transformationDao);
+        csarDao.init();
+    }
 
     @Test
     public void create() throws Exception {
@@ -51,6 +76,9 @@ public class CsarFilesystemDaoTest extends BaseSpringTest {
     @Test
     public void find() throws Exception {
         String identifier = createFakeCsarDirectories(1)[0];
+        // create new CsarDao -- disk is initialized only on startup
+        csarDao = new CsarFilesystemDao(preferences, transformationDao);
+        csarDao.init();
         Optional<Csar> csar = csarDao.find(identifier);
         assertTrue(csar.isPresent());
         assertEquals(identifier, csar.get().getIdentifier());
@@ -60,14 +88,18 @@ public class CsarFilesystemDaoTest extends BaseSpringTest {
     public void returnedCsarHasPopulatedTransformations() {
         // test whether CsarDao calls TransformationDao internally to populate list of transformations
         String identifier = createFakeCsarDirectories(1)[0];
-        File csarDir = new File(tmpdir, identifier);
-        File transformationsDir = new File(csarDir, "transformations");
-        TestPlugins.createFakeTransformationsOnDisk(transformationsDir, TestPlugins.PLATFORMS);
+        Csar csar = new CsarImpl(identifier, fakeLog);
 
-        Optional<Csar> csar = csarDao.find(identifier);
+        csarDao = new CsarFilesystemDao(preferences, transformationDao);
+        List<Transformation> transformations = TestPlugins.PLATFORMS.stream()
+            .map(platform -> new TransformationImpl(csar, platform, fakeLog))
+            .collect(Collectors.toList());
+        when(transformationDao.find(any())).thenReturn(transformations);
+        csarDao.init();
+        Optional<Csar> result = csarDao.find(identifier);
 
-        assertTrue(csar.isPresent());
-        assertEquals(TestPlugins.PLATFORMS.size(), csar.get().getTransformations().size());
+        assertTrue(result.isPresent());
+        assertEquals(TestPlugins.PLATFORMS.size(), result.get().getTransformations().size());
     }
 
     @Test
@@ -75,6 +107,8 @@ public class CsarFilesystemDaoTest extends BaseSpringTest {
         int numberOfCsars = 10;
         createFakeCsarDirectories(numberOfCsars);
 
+        csarDao = new CsarFilesystemDao(preferences, transformationDao);
+        csarDao.init();
         List<Csar> csarList = csarDao.findAll();
         assertEquals("Correct amount of csars returned", numberOfCsars, csarList.size());
     }
@@ -105,16 +139,12 @@ public class CsarFilesystemDaoTest extends BaseSpringTest {
         File randomFile = new File(tmpdir, simpleFileName);
         randomFile.createNewFile();
 
+        csarDao = new CsarFilesystemDao(preferences, transformationDao);
+        csarDao.init();
         List<Csar> csarList = csarDao.findAll();
         assertEquals("Correct amount of csars returned", numberOfCsars, csarList.size());
 
         boolean readWrongData = false;
-        for (Csar csar : csarList) {
-            if (csar.getIdentifier().equals(simpleFileName)) {
-                readWrongData = true;
-                break;
-            }
-        }
-        assertFalse(readWrongData);
+        csarList.stream().forEach(csar -> assertNotEquals(simpleFileName, csar.getIdentifier()));
     }
 }

@@ -6,6 +6,8 @@ import java.io.FileNotFoundException;
 
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarDao;
+import org.opentosca.toscana.core.csar.CsarImpl;
+import org.opentosca.toscana.core.transformation.logging.Log;
 
 import org.eclipse.winery.model.tosca.yaml.TServiceTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,11 +26,11 @@ public class TestCsars {
 
     // yaml csars
     public final static File CSAR_YAML_VALID_DOCKER_SIMPLETASK = new File(YAML_DIR, "valid/simple-task.csar");
-    public static final File CSAR_YAML_INVALID_DEPENDENCIES_MISSING = new File(YAML_DIR, "invalid/dependencies_missing.csar");
-    public static final File CSAR_YAML_INVALID_DOCKERAPP_MISSING = new File(YAML_DIR, "invalid/dockerapp_missing.csar");
-    public static final File CSAR_YAML_INVALID_ENTRYPOINT_MISSING = new File(YAML_DIR, "invalid/entrypoint_missing.csar");
-    public static final File CSAR_YAML_INVALID_ENTRYPOINT_AMBIGUOUS = new File(YAML_DIR, "invalid/entrypoint_ambiguous.csar");
-
+    public final static File CSAR_YAML_INVALID_DEPENDENCIES_MISSING = new File(YAML_DIR, "invalid/dependencies_missing.csar");
+    public final static File CSAR_YAML_INVALID_DOCKERAPP_MISSING = new File(YAML_DIR, "invalid/dockerapp_missing.csar");
+    public final static File CSAR_YAML_INVALID_ENTRYPOINT_MISSING = new File(YAML_DIR, "invalid/entrypoint_missing.csar");
+    public final static File CSAR_YAML_INVALID_ENTRYPOINT_AMBIGUOUS = new File(YAML_DIR, "invalid/entrypoint_ambiguous.csar");
+    
     @Autowired
     private CsarDao csarDao;
 

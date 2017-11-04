@@ -52,7 +52,6 @@ public class CsarFilesystemDao implements CsarDao {
         this.transformationDao = transformationDao;
 
         if (!dataDir.exists()) {
-            System.out.println(dataDir.getAbsolutePath());
             if (!dataDir.mkdirs()) {
                 logger.error("Failed to create data dir '{}'", dataDir.getAbsolutePath());
             }
@@ -108,15 +107,12 @@ public class CsarFilesystemDao implements CsarDao {
 
     @Override
     public Optional<Csar> find(String identifier) {
-        readFromDisk(); // TODO: change this to some smart behaviour. e.g. file watcher
         Csar csar = csarMap.get(identifier);
         return Optional.ofNullable(csar);
     }
 
     @Override
     public List<Csar> findAll() {
-        readFromDisk(); // TODO: change this to some smart behaviour. e.g. file watcher
-        // (refresh on change, not on every access)
         List<Csar> csarList = new ArrayList<>();
         csarList.addAll(csarMap.values());
         return csarList;
@@ -157,7 +153,7 @@ public class CsarFilesystemDao implements CsarDao {
                 csar.setTransformations(transformations);
             }
         }
-        logger.debug("In-memory csars in synced with file system");
+        logger.debug("Read csars from disk");
     }
 
     /**
