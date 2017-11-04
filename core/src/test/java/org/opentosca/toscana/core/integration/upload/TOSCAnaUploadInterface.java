@@ -1,4 +1,4 @@
-package org.opentosca.toscana.core.api.upload;
+package org.opentosca.toscana.core.integration.upload;
 
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
