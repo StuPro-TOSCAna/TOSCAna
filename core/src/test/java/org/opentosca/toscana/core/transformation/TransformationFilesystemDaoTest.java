@@ -7,58 +7,56 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.opentosca.toscana.core.BaseSpringTest;
+import org.opentosca.toscana.core.BaseJUnitTest;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarDao;
 import org.opentosca.toscana.core.csar.CsarFilesystemDao;
-import org.opentosca.toscana.core.testdata.TestCsars;
+import org.opentosca.toscana.core.csar.CsarImpl;
 import org.opentosca.toscana.core.transformation.logging.Log;
+import org.opentosca.toscana.core.transformation.platform.PlatformService;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 import static org.opentosca.toscana.core.testdata.TestPlugins.PLATFORM1;
 import static org.opentosca.toscana.core.testdata.TestPlugins.PLATFORM2;
-import static org.opentosca.toscana.core.testdata.TestPlugins.PLATFORM4;
+import static org.opentosca.toscana.core.testdata.TestPlugins.PLATFORM3;
 import static org.opentosca.toscana.core.testdata.TestPlugins.PLATFORM_NOT_SUPPORTED;
 
-public class TransformationFilesystemDaoTest extends BaseSpringTest {
+public class TransformationFilesystemDaoTest extends BaseJUnitTest {
 
-    @Autowired
-    private TestCsars testCsars;
-    @Autowired
     private TransformationDao transformationDao;
-    @Autowired
+    @Mock
     private CsarDao csarDao;
-
-    private Csar csar1;
-    private Csar csar2;
-    private Csar csar3;
-    private Csar csar4;
-    private Transformation transformation;
-    private File transformationRootDir;
+    @Mock
+    private PlatformService platformService;
     @Mock
     private Log log;
 
+    private Csar csar1 = new CsarImpl("csar1", log);
+    private Transformation transformation;
+    private File transformationRootDir;
+
     @Before
     public void setUp() throws FileNotFoundException {
-        csar1 = testCsars.getCsar("csar1", TestCsars.CSAR_YAML_VALID_DOCKER_SIMPLETASK);
-        csar2 = testCsars.getCsar("csar2", TestCsars.CSAR_YAML_VALID_DOCKER_SIMPLETASK);
-        csar3 = testCsars.getCsar("csar3", TestCsars.CSAR_YAML_VALID_DOCKER_SIMPLETASK);
-        csar4 = testCsars.getCsar("csar4", TestCsars.CSAR_YAML_VALID_DOCKER_SIMPLETASK);
+        transformationDao = new TransformationFilesystemDao(platformService);
+        transformationDao.setCsarDao(csarDao);
         transformation = new TransformationImpl(csar1, PLATFORM1, log);
         transformationRootDir = transformationDao.getRootDir(transformation);
     }
 
     @Test
     public void getRootDir() throws Exception {
+        when(csarDao.getTransformationsDir(csar1)).thenReturn(new File(new File(tmpdir, csar1.getIdentifier()),
+            CsarFilesystemDao.TRANSFORMATION_DIR));
+        when(csarDao.getRootDir(csar1)).thenReturn(new File(tmpdir, csar1.getIdentifier()));
         File expectedParent = new File(csarDao.getRootDir(csar1), CsarFilesystemDao.TRANSFORMATION_DIR);
         File expected = new File(expectedParent, PLATFORM1.id);
         File actual = transformationDao.getRootDir(transformation);
@@ -74,6 +72,7 @@ public class TransformationFilesystemDaoTest extends BaseSpringTest {
         List<File> files = createRandomFiles(transformationRootDir);
 
         assertNotEquals(0, transformationRootDir.list().length);
+        when(platformService.isSupported(PLATFORM1)).thenReturn(true);
         transformationDao.create(csar1, PLATFORM1);
 
         for (File file : files) {
@@ -101,11 +100,12 @@ public class TransformationFilesystemDaoTest extends BaseSpringTest {
 
     @Test
     public void findFromSpecificCsar() throws Exception {
-        createRandomFiles(transformationDao.getRootDir(new TransformationImpl(csar1, PLATFORM1, log)));
-        createRandomFiles(transformationDao.getRootDir(new TransformationImpl(csar1, PLATFORM2, log)));
-        createRandomFiles(transformationDao.getRootDir(new TransformationImpl(csar2, PLATFORM1, log)));
-        createRandomFiles(transformationDao.getRootDir(new TransformationImpl(csar3, PLATFORM1, log)));
-
+        when(csarDao.getTransformationsDir(csar1)).thenReturn(tmpdir);
+        createRandomFiles(new File(tmpdir, PLATFORM1.id));
+        createRandomFiles(new File(tmpdir, PLATFORM2.id));
+        createRandomFiles(new File(tmpdir, PLATFORM_NOT_SUPPORTED.id));
+        when(platformService.findPlatformById(PLATFORM1.id)).thenReturn(Optional.of(PLATFORM1));
+        when(platformService.findPlatformById(PLATFORM2.id)).thenReturn(Optional.of(PLATFORM2));
         List<Transformation> transformations = transformationDao.find(csar1);
 
         assertEquals(2, transformations.size());
@@ -113,18 +113,18 @@ public class TransformationFilesystemDaoTest extends BaseSpringTest {
 
     @Test
     public void findSpecificTransformation() throws Exception {
-        createRandomFiles(transformationDao.getRootDir(new TransformationImpl(csar1, PLATFORM1, log)));
-        createRandomFiles(transformationDao.getRootDir(new TransformationImpl(csar1, PLATFORM2, log)));
-        createRandomFiles(transformationDao.getRootDir(new TransformationImpl(csar2, PLATFORM1, log)));
-        createRandomFiles(transformationDao.getRootDir(new TransformationImpl(csar3, PLATFORM1, log)));
+        when(csarDao.getTransformationsDir(csar1)).thenReturn(tmpdir);
+        when(platformService.findPlatformById(PLATFORM1.id)).thenReturn(Optional.of(PLATFORM1));
+        when(platformService.findPlatformById(PLATFORM2.id)).thenReturn(Optional.of(PLATFORM2));
+        createRandomFiles(new File(tmpdir, PLATFORM1.id));
+        createRandomFiles(new File(tmpdir, PLATFORM2.id));
 
-        Transformation transformation = transformationDao.find(csar2, PLATFORM1).get();
-
+        Transformation transformation = transformationDao.find(csar1, PLATFORM1).get();
         assertNotNull(transformation);
-        assertEquals(csar2, transformation.getCsar());
+        assertEquals(csar1, transformation.getCsar());
         assertEquals(PLATFORM1, transformation.getPlatform());
 
-        Optional<Transformation> notStoredTransformation = transformationDao.find(csar4, PLATFORM4);
+        Optional<Transformation> notStoredTransformation = transformationDao.find(csar1, PLATFORM3);
         assertFalse(notStoredTransformation.isPresent());
     }
 
@@ -134,6 +134,7 @@ public class TransformationFilesystemDaoTest extends BaseSpringTest {
      */
     @Test
     public void readTransformationFromDiskWithIllegalPlatform() throws IOException {
+        when(csarDao.getTransformationsDir(csar1)).thenReturn(tmpdir);
         Transformation t = new TransformationImpl(csar1, PLATFORM_NOT_SUPPORTED, log);
         createRandomFiles(transformationDao.getRootDir(t));
 
@@ -144,13 +145,17 @@ public class TransformationFilesystemDaoTest extends BaseSpringTest {
     /**
      Creates some files in given dir
      */
-    private List<File> createRandomFiles(File dir) throws IOException {
+    private List<File> createRandomFiles(File dir) {
         dir.mkdirs();
         List<File> files = new ArrayList<>();
         for (int i = 0; i < 20; i++) {
             File randomFile = new File(dir, String.valueOf(i));
             files.add(randomFile);
-            randomFile.createNewFile();
+            try {
+                randomFile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         return files;
     }
