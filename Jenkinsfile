@@ -15,7 +15,7 @@ pipeline {
                         TEST_MODE = 'fast' 
                     } 
                     steps { 
-                        sh 'export DATADIR=$(pwd)/toscana-data && rm -rf $(pwd)/toscana-data && mkdir $(pwd)/toscana-data && mvn test -B' 
+                        sh 'export DATADIR=$(pwd)/toscana-data && rm -rf $(pwd)/toscana-data && mkdir $(pwd)/toscana-data && mvn surefire:test -B' 
                     } 
                     post { 
                         always { 
@@ -31,7 +31,7 @@ pipeline {
                         TEST_MODE = 'slow' 
                     } 
                     steps { 
-                        sh 'export DATADIR=$(pwd)/toscana-data2 && rm -rf $(pwd)/toscana-data2 && mkdir $(pwd)/toscana-data2 && mvn test -B' 
+                        sh 'export DATADIR=$(pwd)/toscana-data2 && rm -rf $(pwd)/toscana-data2 && mkdir $(pwd)/toscana-data2 && mvn surefire:test -B' 
                     } 
                     post { 
                         always { 
@@ -44,6 +44,7 @@ pipeline {
             }
         } 
         stage('Deploy') {
+            agent { label 'deploy' }
             steps {
 //  the JENKINS_NODE_COOKIE variable must be set to a different value than the id of this jenkins build in order for subprocesses to live longer than the build process
                  sh 'JENKINS_NODE_COOKIE=dontKillMe toscanad' 
