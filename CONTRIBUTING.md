@@ -7,10 +7,11 @@
 - [Checkstyle](#checkstyle)
 	- [Set up](#set-up)
 - [Branches](#branches)
+	- [Branch naming guidelines](#branch-naming-guidelines)
 - [Pull Requests](#pull-requests)
 	- [Working on a Pull Request](#working-on-a-pull-request)
 	- [Reviewing a Pull Request](#reviewing-a-pull-request)
-	- [Merging a Pull Request](#merging-a-pull-request)
+	- [Prepare a Pull Request](#prepare-a-pull-request)
 - [Zenhub Issue Board](#zenhub-issue-board)
 	- [Pipelines](#pipelines)
 - [Reporting a Bug](#reporting-a-bug)
@@ -18,6 +19,7 @@
 	- [How do I submit a Bug Report?](#how-do-i-submit-a-bug-report)
 
 <!-- /TOC -->
+
 ## Versioning
 
 This project uses [Semantic Versioning](http://semver.org/) or _SemVer_ for short. If you do not know what SemVer is, a detailed explanation is available on their website.
