@@ -58,7 +58,7 @@ PRs with unfinished features should have a **[WIP]** tag at the beginning of the
 
 ### Reviewing a Pull Request
 When a feature is considered finished it is necessary to get a **review**.
-To get a review, remove the **[WIP]** tag and assign reviewers, also move the pull request to the ZenHub `Review/QA`. If the reviewers submitted their review react to their comments and update your feature. A pull request is ready to merge if the reviewers approved it.
+To get a review, remove the **[WIP]** tag and assign reviewers, also move the pull request to the ZenHub `Review/QA` pipeline. If the reviewers submitted their review react to their comments and update your feature. A pull request is ready to merge if the reviewers approved it.
 
 ### Prepare a Pull Request
 Before a pull request can be merged, it must fulfill the criteria specified in the [Definition of Done](/docs/dev/dod.md).
