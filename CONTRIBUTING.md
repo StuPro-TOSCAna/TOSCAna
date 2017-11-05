@@ -51,21 +51,23 @@ Here is a list of tags that should be used:
 - `misc/<name>` - A branch containing something thats not covered in the above categories
 
 ## Pull Requests
-Any major changes to existing or the addition of new features or artifacts should be done through pull requests or PRs.
+Any major changes to existing or the addition of new features or artifacts should be done through pull requests.
 
 ### Working on a Pull Request
-PRs with unfinished features should have a [WIP] tag at the beginning of their title. This shows that this feature is still in progress and not ready to be merged.
+PRs with unfinished features should have a **[WIP]** tag at the beginning of their title. This shows that this feature is still in progress and not ready to be merged.
 
 ### Reviewing a Pull Request
 When a feature is considered finished it is necessary to get a **review**.
-To get a review remove the [WIP] tag and assign reviewers. If they submitted a review react to their changes and update your feature. A Pull Request is ready to merge if the reviewers approved it.
+To get a review, remove the **[WIP]** tag and assign reviewers, also move the pull request to the ZenHub `Review/QA`. If the reviewers submitted their review react to their comments and update your feature. A pull request is ready to merge if the reviewers approved it.
 
 ### Prepare a Pull Request
 Before a pull request can be merged, it must fulfill the criteria specified in the [Definition of Done](/docs/dev/dod.md).
 
-The aim of the following steps is to create a **single commit**.
+The goal of the following steps is to get a single commit, containing all differences between the `master` branch and the branch of the pull request.
 
 Steps to prepare the pull request (reference [Winery - Prepare a Pull Request](https://eclipse.github.io/winery/dev/ToolChain#github---prepare-pull-request)):
+> Note: If you forked our repository you have to replace `origin` with `upstream`
+
 1. `git fetch origin` - fetches all updates from origin.
 2. `git merge origin/master` - merges all the updates from the origin into the local branch.
 3. If there are any merge conflicts then resolve them.
@@ -79,7 +81,7 @@ Steps to prepare the pull request (reference [Winery - Prepare a Pull Request](h
 8. `git commit` - commit your changes with a meaningfull title and description.
 9. Force push your changes with `git push -f` to overwrite the remote commits.
 
-You dont habe to use the `git reset` - Method you also can use `git rebase -i <commit-id>` (see [stackoverflow](https://stackoverflow.com/questions/5189560/squash-my-last-x-commits-together-using-git)) to squash your commits. But in general the result should be the same.
+You dont have to use the `git reset` - Method you also can use `git rebase -i <commit-id>` (see [stackoverflow](https://stackoverflow.com/questions/5189560/squash-my-last-x-commits-together-using-git)) to squash your commits. But in general the result should be the same.
 
 
 ## Zenhub Issue Board
