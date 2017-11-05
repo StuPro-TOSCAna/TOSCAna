@@ -30,13 +30,25 @@ Our project uses checkstyle to ensure coding standards. If you want to read more
 ### Set up
 - for **Eclipse** visit: [Eclipse configuration from the eclipse/winery repo](https://github.com/eclipse/winery/tree/master/docs/dev/config/Eclipse)
 - for **IntelliJ** visit: [IntelliJ configuration from the eclipse/winery repo](https://github.com/eclipse/winery/tree/master/docs/dev/config/IntelliJ%20IDEA)
+
 ## Branches
 Our project currently consists of a _master_ and several _feature_ branches.
 The master branch always contains a stable version of the project. Only commits with small, insignificant changes should be done directly on the master branch.
 
-Any other changes should first be implemented and tested on a feature branch. The name of this feature branch should closely describe the added changes.
+Any other changes should first be implemented and tested on a feature branch. The name of this feature branch should closely describe the added changes. Also take a look at our [Branch naming guidelines](branch-naming-guidelines)
 
 If you want to add your changes to the main branch you can do so by proposing a [pull request](#pull-requests).
+
+### Branch naming guidelines
+
+To organize we have naming conventions for our branches, each branch should start with a `tag` to indicate in which categorie the branch belongs.
+
+Here is a list of tags that should be used:
+
+- `docs/<name>` - Represents a Branch that covers the documentation of something
+- `feature/<name>` - Repesents a branch that will implement a feature (size is irrelevant, the whole CLI or a new Request Mapping for the API are both features)
+- `bugfix/<name>` - A branch used to fix a bug
+- `misc/<name>` - A branch containing something thats not covered in the above categories
 
 ## Pull Requests
 Any major changes to existing or the addition of new features or artifacts should be done through pull requests or PRs.
@@ -45,11 +57,30 @@ Any major changes to existing or the addition of new features or artifacts shoul
 PRs with unfinished features should have a [WIP] tag at the beginning of their title. This shows that this feature is still in progress and not ready to be merged.
 
 ### Reviewing a Pull Request
-When a feature is considered finished it should be **reviewed** before merging the corresponding PR. During this stage the [WIP] label in the title should be removed.
+When a feature is considered finished it is necessary to get a **review**.
+To get a review remove the [WIP] tag and assign reviewers. If they submitted a review react to their changes and update your feature. A Pull Request is ready to merge if the reviewers approved it.
 
-### Merging a Pull Request
+### Prepare a Pull Request
 Before a pull request can be merged, it must fulfill the criteria specified in the [Definition of Done](/docs/dev/dod.md).
-Merging should be done through the **squash and merge** option in GitHub. This allows all to be combined into one commit on the master branch in order to not clutter up the commit history.
+
+The aim of the following steps is to create a **single commit**.
+
+Steps to prepare the pull request (reference [Winery - Prepare a Pull Request](https://eclipse.github.io/winery/dev/ToolChain#github---prepare-pull-request)):
+1. `git fetch origin` - fetches all updates from origin.
+2. `git merge origin/master` - merges all the updates from the origin into the local branch.
+3. If there are any merge conflicts then resolve them.
+4. Commit & Push to ensure there is a back up if something in the following steps goes wrong.
+5. `git reset origin/master` - this prepares that all commits can be squashed togheter: The local checkout (“working tree”) is left untouched, but the “pointer” of the current branch is reset to `origin/master`.
+6. Check changes in your favourite git tool:
+	- Is each of your changes recognized?
+	- Are there to much changed files? - Do not stage things you did not intend to change.
+	- Check if your Code follows our style guidelines.
+7. `git add .` - stage your changes for the commit.
+8. `git commit` - commit your changes with a meaningfull title and description.
+9. Force push your changes with `git push -f` to overwrite the remote commits.
+
+You dont habe to use the `git reset` - Method you also can use `git rebase -i <commit-id>` (see [stackoverflow](https://stackoverflow.com/questions/5189560/squash-my-last-x-commits-together-using-git)) to squash your commits. But in general the result should be the same.
+
 
 ## Zenhub Issue Board
 ### Pipelines
