@@ -64,11 +64,23 @@ public class CsarFilesystemDaoTest extends BaseJUnitTest {
     }
 
     @Test
-    public void delete() throws Exception {
+    public void deleteCsarRemovesDataOnDisk() throws Exception {
         String identifier = createFakeCsarDirectories(1)[0];
         csarDao.delete(identifier);
         File csarDir = new File(tmpdir, identifier);
         assertFalse(csarDir.exists());
+    }
+    
+    @Test
+    public void deleteCsarRemovesCsarFromCache() {
+        String identifier = createFakeCsarDirectories(1)[0];
+        csarDao = new CsarFilesystemDao(preferences, transformationDao);
+        csarDao.init(); // reads from filesystem
+        Optional<Csar> csar = csarDao.find(identifier);        
+        assertTrue(csar.isPresent());
+        csarDao.delete(identifier);
+        csar = csarDao.find(identifier);
+        assertFalse(csar.isPresent());
     }
 
     @Test
