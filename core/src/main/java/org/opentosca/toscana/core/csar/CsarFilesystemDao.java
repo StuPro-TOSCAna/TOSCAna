@@ -99,6 +99,7 @@ public class CsarFilesystemDao implements CsarDao {
         File csarDir = new File(dataDir, identifier);
         try {
             FileUtils.deleteDirectory(csarDir);
+            csarMap.remove(identifier);
             logger.info("Deleted csar directory '{}'", csarDir);
         } catch (IOException e) {
             logger.error("Failed to delete csar directory with identifier '{}'", identifier, e);
