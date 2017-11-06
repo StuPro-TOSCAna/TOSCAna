@@ -6,6 +6,7 @@
 - [Versioning](#versioning)
 - [Checkstyle](#checkstyle)
 	- [Set up](#set-up)
+- [Writing commit messages](#commit-messages)
 - [Branches](#branches)
 	- [Branch naming guidelines](#branch-naming-guidelines)
 - [Pull Requests](#pull-requests)
@@ -20,10 +21,6 @@
 
 <!-- /TOC -->
 
-## Versioning
-
-This project uses [Semantic Versioning](http://semver.org/) or _SemVer_ for short. If you do not know what SemVer is, a detailed explanation is available on their website.
-Any new releases must adhere to this versioning scheme.
 
 ## Checkstyle
 
@@ -32,6 +29,9 @@ Our project uses checkstyle to ensure coding standards. If you want to read more
 ### Set up
 - for **Eclipse** visit: [Eclipse configuration from the eclipse/winery repo](https://github.com/eclipse/winery/tree/master/docs/dev/config/Eclipse)
 - for **IntelliJ** visit: [IntelliJ configuration from the eclipse/winery repo](https://github.com/eclipse/winery/tree/master/docs/dev/config/IntelliJ%20IDEA)
+
+## Writing commit messages 
+Make sure your commits have [a good commit message](https://chris.beams.io/posts/git-commit/).
 
 ## Branches
 Our project currently consists of a _master_ and several _feature_ branches.
@@ -43,7 +43,7 @@ If you want to add your changes to the main branch you can do so by proposing a 
 
 ### Branch naming guidelines
 
-To organize we have naming conventions for our branches, each branch should start with a `tag` to indicate in which categorie the branch belongs.
+To organize we have naming conventions for our branches, each branch should start with a `tag` to indicate in which category the branch belongs.
 
 Here is a list of tags that should be used:
 
@@ -60,7 +60,10 @@ PRs with unfinished features should have a **[WIP]** tag at the beginning of the
 
 ### Reviewing a Pull Request
 When a feature is considered finished it is necessary to get a **review**.
-To get a review, remove the **[WIP]** tag and assign reviewers, also move the pull request to the ZenHub `Review/QA` pipeline. If the reviewers submitted their review react to their comments and update your feature. A pull request is ready to merge if the reviewers approved it.
+To get a review, remove the **[WIP]** tag and assign reviewers, also move the pull request to the ZenHub `Review/QA` pipeline.  
+
+Also make sure you're PR is up to date with the master branch.
+When the reviewers submitted their review, react to their comments and update your PR. A pull request is ready to merge when the reviewers approved it.
 
 ### Prepare a Pull Request
 Before a pull request can be merged, it must fulfill the criteria specified in the [Definition of Done](/docs/dev/dod.md).
@@ -83,7 +86,7 @@ Steps to prepare the pull request (reference [Winery - Prepare a Pull Request](h
 8. `git commit` - commit your changes with a meaningfull title and description.
 9. Force push your changes with `git push -f` to overwrite the remote commits.
 
-You dont have to use the `git reset` - Method you also can use `git rebase -i <commit-id>` (see [stackoverflow](https://stackoverflow.com/questions/5189560/squash-my-last-x-commits-together-using-git)) to squash your commits. But in general the result should be the same.
+You dont have to use the `git reset` - Method you also can use `git rebase -i <commit-id>` (see [stackoverflow](https://stackoverflow.com/questions/5189560/squash-my-last-x-commits-together-using-git)) to squash your commits. Rebasing instead of resetting eases writing the resulting commit message, as you can simply rephrase all commit messages of the PR into one final commit message.
 
 
 ## Zenhub Issue Board
@@ -125,3 +128,8 @@ We use the GitHub Issues to track bugs. If you discovered a bug you can report i
 
 For bugs appearing in the web app:
 - **Include the Browser and its version.**
+
+## Versioning
+
+This project uses [Semantic Versioning](http://semver.org/) or _SemVer_ for short. If you do not know what SemVer is, a detailed explanation is available on their website.
+Any new releases must adhere to this versioning scheme.
