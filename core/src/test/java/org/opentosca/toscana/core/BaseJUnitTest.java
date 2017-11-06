@@ -29,10 +29,8 @@ public abstract class BaseJUnitTest extends BaseTest {
     public File tmpdir;
 
     @Before
-    public final void initTmpdir() {
-        tmpdir = temporaryFolder.getRoot();
-        tmpdir.mkdir();
-        tmpdir.deleteOnExit();
+    public final void initTmpdir() throws IOException {
+        tmpdir = temporaryFolder.newFolder();
     }
 
     @AfterClass
