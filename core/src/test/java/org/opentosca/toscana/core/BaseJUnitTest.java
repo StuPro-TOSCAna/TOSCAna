@@ -31,6 +31,7 @@ public abstract class BaseJUnitTest extends BaseTest {
     @Before
     public final void initTmpdir() {
         tmpdir = temporaryFolder.getRoot();
+        tmpdir.mkdir();
         tmpdir.deleteOnExit();
     }
 
