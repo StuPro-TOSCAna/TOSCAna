@@ -3,16 +3,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <!--Removed TOSCAna parent for inheritence from spring boot root project-->
-        <!--<groupId>org.opentosca.toscana</groupId>-->
-        <!--<artifactId>toscana</artifactId>-->
-        <!--<version>1.0-SNAPSHOT</version>-->
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.5.7.RELEASE</version>
-        <relativePath/>
+        <groupId>org.opentosca.toscana</groupId>
+        <artifactId>toscana</artifactId>
+        <version>1.0-SNAPSHOT</version>
     </parent>
-    <groupId>org.opentosca.toscana</groupId>
     <artifactId>core</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
@@ -124,7 +118,6 @@
         </dependency>
     </dependencies>
     <build>
-        <sourceDirectory>src/main/java</sourceDirectory>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
