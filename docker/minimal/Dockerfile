@@ -1,15 +1,15 @@
-FROM openjdk:8-jdk
+FROM openjdk:8-jdk-alpine
 MAINTAINER c-muelller (cmueller.dev@gmail.com)
 WORKDIR /toscana
-RUN apt-get update && \
-    apt-get install -y maven git && \
+RUN apk update && \
+    apk add maven git && \
     git clone https://github.com/StuPro-TOSCAna/TOSCAna.git && \ 
     cd TOSCAna && \
     mvn install -DskipTests && \
     cd .. && \
     cp TOSCAna/core/target/core-1.0-SNAPSHOT.jar core.jar && \
     rm -r TOSCAna && \
-    apt-get autoremove -y maven git && \
+    apk del maven git && \
     rm -r /root/.m2/
 EXPOSE 8080
 ENV DATADIR="/toscana/data"
