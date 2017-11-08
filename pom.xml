@@ -19,6 +19,6 @@
     </properties>
     <modules>
         <module>cli</module>
-        <module>core</module>
+        <module>server</module>
     </modules>
 </project>
