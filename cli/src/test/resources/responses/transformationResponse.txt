@@ -1,0 +1,8 @@
+{
+	"valid_inputs": {
+		"name_property": true,
+		"text_property": true,
+		"secret_property": true,
+		"unsigned_integer_property": true
+	}
+}

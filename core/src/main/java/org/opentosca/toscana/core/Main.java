@@ -11,7 +11,7 @@ import static org.springframework.hateoas.config.EnableHypermediaSupport.Hyperme
 @SpringBootApplication
 @EnableHypermediaSupport(type = HAL)
 public class Main {
-    
+
     public static void main(String[] args) {
         SpringApplication.run(Main.class, args);
     }

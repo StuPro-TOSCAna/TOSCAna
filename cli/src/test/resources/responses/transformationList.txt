@@ -1,0 +1,36 @@
+{
+	"_embedded": {
+		"transformation": [
+			{
+				"progress": 0,
+				"status": "INPUT_REQUIRED",
+				"platform": "p-a",
+				"_links": {
+					"self": {
+						"href": "http://localhost:8080/csars/mongo-db/transformations/p-a"
+					},
+					"logs": {
+						"href": "http://localhost:8080/csars/mongo-db/transformations/p-a/logs?start=0"
+					},
+					"platform": {
+						"href": "http://localhost:8080/platforms/p-a"
+					},
+					"artifact": {
+						"href": "http://localhost:8080/csars/mongo-db/transformations/p-a/artifact"
+					},
+					"properties": {
+						"href": "http://localhost:8080/csars/mongo-db/transformations/p-a/properties"
+					},
+					"delete": {
+						"href": "http://localhost:8080/csars/mongo-db/transformations/p-a/delete"
+					}
+				}
+			}
+		]
+	},
+	"_links": {
+		"self": {
+			"href": "http://localhost:8080/csars/mongo-db/transformations/"
+		}
+	}
+}
