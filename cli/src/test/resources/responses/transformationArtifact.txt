@@ -1,0 +1,8 @@
+{
+	"access_url": "http://not-yet-implemented.com/",
+	"_links": {
+		"self": {
+			"href": "http://localhost:8080/csars/mongo-db/transformations/p-a/artifact"
+		}
+	}
+}
