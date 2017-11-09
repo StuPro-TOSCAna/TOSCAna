@@ -1,0 +1,38 @@
+@startuml
+
+together {
+    interface TLI {
+        + validate(): SupportedNodeList
+        + analyze()
+        + prepare()
+        + transform()
+        + clean()
+    }
+    abstract class BaseTLI {
+        # context: TransformationContext
+        # logger: Logger
+        + BaseTLI(ctx: TransformationContext): <<constructor>>
+    }
+}
+
+class SupportedNodeList {
+    - nodes: List<EffectiveNodeTemplate>
+}
+
+together {
+    interface TOSCAnaPlugin  {
+        + getPlatform(): Platform
+        + transform(ctx: TransformationContext)
+    }
+    abstract class BasePlugin<T extends TLI> {
+        # build(ctx: TransformationContext): T
+        + transform(ctx: TransformationContext)
+    }
+}
+
+BasePlugin -left-|> TOSCAnaPlugin
+TLI -left-|> BaseTLI
+
+BasePlugin -down-> TLI: instantiates
+SupportedNodeList - TLI
+@enduml

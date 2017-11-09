@@ -1,6 +1,7 @@
 **/.idea/
 **/target/
 **/*.iml
+.settings/
 
 **/testsuite-spring-tmpdir/*
 # CMake

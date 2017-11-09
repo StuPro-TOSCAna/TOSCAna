@@ -1,0 +1,55 @@
+@startuml
+
+actor User as U
+participant ExecutionTask as Task
+participant TOSCAnaPlugin as Plugin
+participant TLI 
+
+U -> Task : User launches\ntransformation
+note left
+    The parts between API
+    call and launch of the
+    Execution task have been
+    simplified
+end note
+activate Task
+
+Task -> Plugin : transform()
+note left of Task
+    The execution of the
+    plugin gets started
+end note
+activate Plugin
+
+Plugin -> Plugin : build()
+activate Plugin
+note left of Plugin
+    This factory method
+    creates a instance
+    of the plugin specific
+    TLI interface
+end note
+
+Plugin --> Plugin
+deactivate Plugin
+
+Plugin -> TLI : validate()
+activate TLI
+TLI --> Plugin
+deactivate TLI
+
+note left of Task
+    The execution of the
+    lifecycle operations
+    except for validate
+    have been excluded
+    because this diagram
+    only shows the creation
+    part of a TLI instance
+end note
+
+Plugin --> Task
+deactivate Plugin
+deactivate Task
+
+@enduml
