@@ -1,0 +1,39 @@
+package org.opentosca.toscana.model.relation;
+
+import java.util.Optional;
+
+import org.opentosca.toscana.model.datatype.Credential;
+
+import lombok.Builder;
+import lombok.Data;
+
+/**
+ Represents a network connection relationship between two nodes.
+ (TOSCA Simple Profile in YAML Version 1.1, p. 160)
+ */
+@Data
+public class ConnectsTo extends RootRelationship {
+
+    /**
+     Used to present to the target endpoint for either authentication or authorization purposes.
+     (TOSCA Simple Profile in YAML Version 1.1, p. 161)
+     */
+    private final Credential credential;
+
+    @Builder
+    protected ConnectsTo(Credential credential,
+                         String description) {
+        super(description);
+        this.credential = credential;
+    }
+
+    /**
+     @return {@link #credential}
+     */
+    public Optional<Credential> getCredential() {
+        return Optional.ofNullable(credential);
+    }
+
+    public static class ConnectsToBuilder extends RootRelationshipBuilder {
+    }
+}
