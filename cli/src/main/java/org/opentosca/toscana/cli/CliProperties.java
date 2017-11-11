@@ -11,6 +11,7 @@ import org.apache.commons.io.FileUtils;
 
 public class CliProperties {
 
+    public static final String CLI_PROPS_ENDPOINT_KEY = "endpoint";
     private static String filePath;
     private static String dataPath = null;
     private static final String dataPathWin = "/AppData/toscana";
@@ -18,7 +19,7 @@ public class CliProperties {
     private static final String cliProp = "/cli.properties";
     private static Properties properties = new Properties();
     private static File file;
-    private static String OS = null;
+    private static String operatingSystem = null;
 
     /**
      * Creates a cli.properties config file
@@ -26,9 +27,7 @@ public class CliProperties {
     private static void createProperties() {
         try {
             FileWriter writer = new FileWriter(file);
-            properties.setProperty("ip","http://localhost");
-            properties.setProperty("port","8080");
-            properties.setProperty("url","");
+            properties.setProperty(CLI_PROPS_ENDPOINT_KEY,"http://127.0.0.1:8080/");
             properties.store(writer, "Cli Settings");
             writer.close();
         } catch (IOException e) {
@@ -53,9 +52,7 @@ public class CliProperties {
             System.err.println(e.getMessage());
         }
         
-        url += properties.getProperty("ip");
-        url += ":" + properties.getProperty("port");
-        url += "/" + properties.getProperty("url");
+        url += properties.getProperty(CLI_PROPS_ENDPOINT_KEY);
         return url;
     }
 
@@ -66,14 +63,14 @@ public class CliProperties {
         if (dataPath == null || dataPath.isEmpty()) {
             // init dataPath to platform dependent value
             dataPath = System.getProperty("user.home");
-            if (OS == null) {
-                OS = System.getProperty("os.name");
+            if (operatingSystem == null) {
+                operatingSystem = System.getProperty("os.name");
             }
             
-            if (OS.contains("Linux") || OS.contains("Mac")) {
+            if (operatingSystem.contains("Linux") || operatingSystem.contains("Mac")) {
                 dataPath += dataPathNix;
                 filePath = dataPath + cliProp;
-            } else if (OS.contains("Windows")) {
+            } else if (operatingSystem.contains("Windows")) {
                 dataPath += dataPathWin;
                 filePath = dataPath + cliProp;
             } else {

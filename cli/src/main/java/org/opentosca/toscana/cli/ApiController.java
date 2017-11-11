@@ -96,7 +96,7 @@ public class ApiController {
         Call<ResponseBody> uploadCsarCall = service.upCsar(file.getName(), part);
         Response<ResponseBody> response = uploadCsarCall.execute();
 
-        if (response.code() == 201) {
+        if (response.code() == 200) {
             return con.CSAR_UPLOAD_SUCCESS;
         } else if (response.code() == 400) {
             if (response.errorBody().string() != null) {
