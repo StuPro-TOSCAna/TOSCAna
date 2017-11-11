@@ -92,6 +92,15 @@ Options explanation:
 ![Class Diagram](img/example_usage.png)
 ***Note:*** Example usage of the CLI for Platform Informations
 
+## Change API Url
+After you executed the CLI at least once, a config file named `cli.properties` can be found in the created toscana folder. There you can change the API Url to fit your required Url.
+
+The folder can be found for Unix Systems at:
+`$HOME/.config/toscana/`
+
+For Windows Systems at:
+`$HOME/AppData/toscana/`
+
 ## License
 
 Copyright (c) 2017 University of Stuttgart.

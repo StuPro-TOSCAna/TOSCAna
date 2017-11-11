@@ -39,7 +39,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ApiController {
 
-    private static final String API_URL = "http://localhost:8080/";
     private RestService service;
     private Constants con;
 
@@ -50,6 +49,7 @@ public class ApiController {
      * @param verbose     some output
      */
     public ApiController(boolean moreVerbose, boolean verbose) {
+        final String API_URL = CliProperties.getApiUrl();
         con = new Constants();
 
         //starts the retrofit client with the chosen loglevel
