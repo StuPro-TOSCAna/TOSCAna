@@ -212,7 +212,7 @@ public class ApiController {
         Response<ResponseBody> response = startTransformationCall.execute();
 
         if (response.code() == 200) {
-            return con.TRANSFORMATION_START_SUCCESS;
+            return launchTransformation(csar, plat);
         } else if (response.code() == 400) {
             if (response.errorBody().string() != null) {
                 return con.TRANSFORMATION_START_ERROR400M + response.errorBody().string();
@@ -230,6 +230,16 @@ public class ApiController {
         }
     }
 
+    private String launchTransformation(String csar, String platform) throws IOException {
+        int code = service.startTransformation(csar, platform).execute().code();
+        switch(code) {
+            case 200:
+                return con.TRANSFORMATION_START_SUCCESS;
+            default:
+                return con.TRANSFORMATION_START_ERROR;
+        }
+    }
+    
     /**
      * TODO: Implement functionality
      * Calls the REST API and stops the currently running Transformation if it's running
