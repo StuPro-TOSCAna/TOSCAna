@@ -5,7 +5,8 @@
 
 - [Versioning](#versioning)
 - [Checkstyle](#checkstyle)
-	- [Set up](#set-up)
+	- [Set up checkstyle](#set-up-checkstyle)
+- [Commit messages](#commit-messages)
 - [Branches](#branches)
 	- [Branch naming guidelines](#branch-naming-guidelines)
 - [Pull Requests](#pull-requests)
@@ -29,9 +30,28 @@ Any new releases must adhere to this versioning scheme.
 
 Our project uses checkstyle to ensure coding standards. If you want to read more about checkstyle visit [http://checkstyle.sourceforge.net](http://checkstyle.sourceforge.net).
 
-### Set up
-- for **Eclipse** visit: [Eclipse configuration from the eclipse/winery repo](https://github.com/eclipse/winery/tree/master/docs/dev/config/Eclipse)
-- for **IntelliJ** visit: [IntelliJ configuration from the eclipse/winery repo](https://github.com/eclipse/winery/tree/master/docs/dev/config/IntelliJ%20IDEA)
+### Set up checkstyle
+
+**Install and setup the checkstyle plugin:**
+- Install the IntelliJ Checkstyle Plugin.
+- Open Settings > Other Settings > CheckStyle.
+- Click on the green plus and add checkstyle.xml from the root of the toscana code repository.
+
+**Configure the code style:**
+1. Press <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>S</kbd>
+2. Go to "Editor > Code Style"
+3. Click "Manage..." (right of "Scheme:")
+4. Click "Import..."
+4. IntelliJ Code Style XML
+5. Navigate to  `IntelliJ Code Style.xml`. It is located inside the winery git repository under `docs/config/`.
+6. Press "OK"
+7. Press "OK"
+8. Press "Close"
+9. Press "OK"
+
+## Commit messages
+
+To contribute to our project please read and follow this [How to Write a Git Commit Message](https://chris.beams.io/posts/git-commit/) - Guide.
 
 ## Branches
 Our project currently consists of a _master_ and several _feature_ branches.
