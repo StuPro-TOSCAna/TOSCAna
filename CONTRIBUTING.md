@@ -51,7 +51,7 @@ Our project uses checkstyle to ensure coding standards. If you want to read more
 
 ## Commit messages
 
-Before you contribute to our project please read this [How to Write a Git Commit Message](https://chris.beams.io/posts/git-commit/) - Guide.
+To contribute to our project please read and follow this [How to Write a Git Commit Message](https://chris.beams.io/posts/git-commit/) - Guide.
 
 ## Branches
 Our project currently consists of a _master_ and several _feature_ branches.
