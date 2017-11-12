@@ -18,7 +18,6 @@ import org.opentosca.toscana.cli.restclient.model.Platforms;
 import org.opentosca.toscana.cli.restclient.model.PlatformsResponse;
 import org.opentosca.toscana.cli.restclient.model.Status;
 import org.opentosca.toscana.cli.restclient.model.Transformation;
-import org.opentosca.toscana.cli.restclient.model.TransformationArtifact;
 import org.opentosca.toscana.cli.restclient.model.TransformationInput;
 import org.opentosca.toscana.cli.restclient.model.TransformationInputs;
 import org.opentosca.toscana.cli.restclient.model.TransformationLog;

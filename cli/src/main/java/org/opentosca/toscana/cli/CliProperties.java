@@ -31,7 +31,7 @@ public class CliProperties {
     private void createProperties() {
         try {
             FileWriter writer = new FileWriter(file);
-            properties.setProperty(CLI_PROPS_ENDPOINT_KEY,"http://127.0.0.1:5327/");
+            properties.setProperty(CLI_PROPS_ENDPOINT_KEY,"http://127.0.0.1:8084/");
             properties.store(writer, "Cli Settings");
             writer.close();
         } catch (IOException e) {
