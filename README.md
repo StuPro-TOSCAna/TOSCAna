@@ -7,7 +7,7 @@ The TOSCAna framework allows the transformation of TOSCA models into other cloud
 Currently, it aims to support multiple cloud ecosystems, with Kubernetes, CloudFoundry, AWS CloudFormation being the first.
 ## Project Structure
 - [`docs/dev`](docs/dev) - Documentation aimed at developers
-- [`core`](core) - Folder for the core - Module
+- [`server`](server) - Folder for the server - Module
 - [`cli`](cli) - Folder for the CLI - Module
 ## Contributing
 See our [contribution guidelines](CONTRIBUTING.md) for detailed information on how to contribute to TOSCAna.
