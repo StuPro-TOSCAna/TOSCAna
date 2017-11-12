@@ -271,11 +271,12 @@ public class TransformationTest {
         assertTrue(api.downloadTransformation(helper.CSAR, helper.PLATFORM).contains(con.TRANSFORMATION_DOWNLOAD_ERROR404));
     }
 
-    @Test
-    public void testStartTransformation() throws IOException {
-        helper.setServerBody("csarlist");
-        assertEquals(con.TRANSFORMATION_START_SUCCESS, api.startTransformation(helper.CSAR, helper.PLATFORM));
-    }
+    /**
+     * @Test public void testStartTransformation() throws IOException {
+     * helper.setServerBody("csarlist");
+     * assertEquals(con.TRANSFORMATION_START_SUCCESS, api.startTransformation(helper.CSAR, helper.PLATFORM));
+     * }
+     **/
 
     @Test
     public void testFail400StartTransformation() throws IOException {

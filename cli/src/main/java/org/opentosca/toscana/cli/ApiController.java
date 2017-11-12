@@ -200,6 +200,7 @@ public class ApiController {
     }
 
     /**
+     * TODO split this into a real start and create operation
      * Calls the REST API and starts the Transformation, handles response codes
      *
      * @param csar CSAR for which a transformation should be started
@@ -212,7 +213,7 @@ public class ApiController {
         Response<ResponseBody> response = startTransformationCall.execute();
 
         if (response.code() == 200) {
-            return con.TRANSFORMATION_START_SUCCESS;
+            return launchTransformation(csar, plat);
         } else if (response.code() == 400) {
             if (response.errorBody().string() != null) {
                 return con.TRANSFORMATION_START_ERROR400M + response.errorBody().string();
@@ -227,6 +228,16 @@ public class ApiController {
             }
         } else {
             return con.TRANSFORMATION_START_ERROR;
+        }
+    }
+
+    private String launchTransformation(String csar, String platform) throws IOException {
+        int code = service.startTransformation(csar, platform).execute().code();
+        switch (code) {
+            case 200:
+                return con.TRANSFORMATION_START_SUCCESS;
+            default:
+                return con.TRANSFORMATION_START_ERROR;
         }
     }
 

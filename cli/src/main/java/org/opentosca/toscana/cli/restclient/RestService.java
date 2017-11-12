@@ -58,6 +58,9 @@ public interface RestService {
     @POST("api/csars/{csar}/transformations/{platform}/create")
     Call<ResponseBody> createTransformation(@Path("csar") String csar, @Path("platform") String platform);
 
+    @POST("api/csars/{csar}/transformations/{platform}/start")
+    Call<ResponseBody> startTransformation(@Path("csar") String csar, @Path("platform") String platform);
+    
     @DELETE("api/csars/{csar}/transformations/{platform}/delete")
     Call<ResponseBody> deleteTransformation(@Path("csar") String csar, @Path("platform") String platform);
 
