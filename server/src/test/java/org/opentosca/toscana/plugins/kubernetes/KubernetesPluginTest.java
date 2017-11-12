@@ -13,8 +13,6 @@ import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.assertj.core.util.Lists;
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.mockito.Matchers.any;
@@ -24,7 +22,6 @@ import static org.mockito.Mockito.when;
 import static org.opentosca.toscana.core.testdata.TestCsars.CSAR_YAML_VALID_DOCKER_SIMPLETASK;
 
 public class KubernetesPluginTest extends BaseSpringTest {
-    private static final Logger log = LoggerFactory.getLogger(KubernetesPluginTest.class);
 
     private static KubernetesPlugin plugin;
     @Autowired
@@ -53,7 +50,7 @@ public class KubernetesPluginTest extends BaseSpringTest {
         verify(pluginFileAccess).access("/simple-task-app_resource.yaml");
         List<String> expectedDockerPathFiles = Lists.newArrayList("index.php", "mysql-credentials.php", "createdb.sql", "Dockerfile");
         for (String s : expectedDockerPathFiles) {
-            verify(pluginFileAccess).copy("simple-task-app/" + s);
+            verify(pluginFileAccess).copy("content/simple-task-app/" + s);
         }
     }
 }
