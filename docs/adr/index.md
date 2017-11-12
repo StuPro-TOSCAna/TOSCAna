@@ -6,6 +6,10 @@ This log lists the architectural decisions for *[project name]*.
 
 - [ADR-0000](0000-use-markdown-architectural-decision-records.md) - Use Markdown Architectural Decision Records
 - [ADR-0001](0001-model-for-transformations.md) - Use custom model for transformations
+- [ADR-0002](0002-general-plugin-architecture.md) - Design a general plugin architecture
+
+
+0002-general-plugin-architecture.md
 
 <!-- adrlogstop -->
 
