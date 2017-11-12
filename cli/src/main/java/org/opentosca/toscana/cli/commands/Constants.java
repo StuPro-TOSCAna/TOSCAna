@@ -5,6 +5,7 @@ package org.opentosca.toscana.cli.commands;
  */
 public final class Constants {
 
+    public final Integer API_PORT = 5327;
     public static final String PARAM_CSAR = "<CSAR>";
     public static final String PARAM_PLATFORM = "<Platform>";
     public final String CSAR_UPLOAD_SUCCESS = "Upload of CSAR Archive was successful!";
