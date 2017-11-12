@@ -11,27 +11,28 @@ import org.apache.commons.io.FileUtils;
 
 public class CliProperties {
 
-    public static final String CLI_PROPS_ENDPOINT_KEY = "endpoint";
-    private static String filePath;
-    private static String dataPath = null;
-    private static final String dataPathWin = "/AppData/toscana";
-    private static final String dataPathNix = "/.toscana";
-    private static final String cliProp = "/cli.properties";
-    private static Properties properties = new Properties();
-    private static File file;
-    private static String operatingSystem = null;
+    public final String CLI_PROPS_ENDPOINT_KEY = "endpoint";
+    private String filePath;
+    private String dataPath = null;
+    private final String dataPathWin = "/AppData/toscana";
+    private final String dataPathNix = "/.toscana";
+    private final String cliProp = "/cli.properties";
+    private Properties properties = new Properties();
+    private File file;
+    private String operatingSystem = null;
 
     /**
      * Creates a cli.properties config file
      */
-    private static void createProperties() {
+    private void createProperties() {
         try {
             FileWriter writer = new FileWriter(file);
             properties.setProperty(CLI_PROPS_ENDPOINT_KEY,"http://127.0.0.1:8080/");
             properties.store(writer, "Cli Settings");
             writer.close();
         } catch (IOException e) {
-            System.err.println(e.getMessage());
+            System.err.println("Something went wrong while trying to store the cli.properties config file");
+            e.printStackTrace();
         }
     }
 
@@ -40,7 +41,7 @@ public class CliProperties {
      * default config gets created
      * @return API Url
      */
-    public static String getApiUrl() {
+    public String getApiUrl() {
         String url = "";
         setupPath();
         
@@ -49,7 +50,8 @@ public class CliProperties {
             properties.load(inputStream);
             inputStream.close();
         } catch (IOException e) {
-            System.err.println(e.getMessage());
+            System.err.println("Something went wrong while trying to load the API Endpoint.");
+            e.printStackTrace();
         }
         
         url += properties.getProperty(CLI_PROPS_ENDPOINT_KEY);
@@ -59,7 +61,7 @@ public class CliProperties {
     /**
      * Sets the path for Unix or Windows Systems to the cli.properties file
      */
-    public static void setupPath() {
+    public void setupPath() {
         if (dataPath == null || dataPath.isEmpty()) {
             // init dataPath to platform dependent value
             dataPath = System.getProperty("user.home");
@@ -76,7 +78,7 @@ public class CliProperties {
             } else {
                 dataPath = FileUtils.getTempDirectory() + File.separator + "toscana";
                 filePath = dataPath + cliProp;
-                System.err.println("fallback value for datadir not defined for this platform. Falling back to tmp dir");
+                System.err.println(String.format("fallback value for datadir not defined for current platform '%s'. Falling back to '%s'", operatingSystem, filePath));
             }
         }
         File dataDir = new File(dataPath);
@@ -89,7 +91,7 @@ public class CliProperties {
             }
         }
 
-        if (!new File(filePath).exists()) {
+        if (file.exists()) {
             createProperties();
         }
     }    

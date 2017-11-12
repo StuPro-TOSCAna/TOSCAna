@@ -110,7 +110,7 @@ public class CsarTest {
     public void testUploadCsar() throws IOException {
         ClassLoader classLoader = getClass().getClassLoader();
         File file = new File(classLoader.getResource("csar/simple-task.csar").getFile());
-        helper.serverEnqueue();
+        helper.server201Response();
         assertEquals(con.CSAR_UPLOAD_SUCCESS, api.uploadCsar(file));
     }
 

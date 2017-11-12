@@ -35,7 +35,8 @@ public class CliMain extends AbstractCommand implements Runnable {
         System.setProperty("picocli.ansi", "true");
         
         //First startup to create cli.properties
-        CliProperties.setupPath();
+        CliProperties prop = new CliProperties();
+        prop.setupPath();
 
         //System Property gets set here, because picocli.trace must be set before CommandLine starts
         String input = String.join("", args);

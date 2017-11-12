@@ -41,6 +41,7 @@ public class ApiController {
 
     private RestService service;
     private Constants con;
+    private CliProperties prop;
 
     /**
      * Constructor for the ApiController, parameters decide if there should be any output of information
@@ -49,8 +50,9 @@ public class ApiController {
      * @param verbose     some output
      */
     public ApiController(boolean moreVerbose, boolean verbose) {
-        final String API_URL = CliProperties.getApiUrl();
         con = new Constants();
+        prop = new CliProperties();
+        final String API_URL = prop.getApiUrl();
 
         //starts the retrofit client with the chosen loglevel
         OkHttpClient client;

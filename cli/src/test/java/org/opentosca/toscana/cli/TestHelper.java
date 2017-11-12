@@ -118,6 +118,12 @@ final class TestHelper {
         server.start(8080);
     }
 
+    final void server201Response() throws IOException {
+        response.setResponseCode(201);
+        server.enqueue(response);
+        server.start(8080);
+    }
+
     final void server400Response() throws IOException {
         response.setResponseCode(400);
         server.enqueue(response);

@@ -92,8 +92,8 @@ Options explanation:
 ![Class Diagram](img/example_usage.png)
 ***Note:*** Example usage of the CLI for Platform Informations
 
-## Change API Url
-After you executed the CLI at least once, a config file named `cli.properties` can be found in the created toscana folder. There you can change the API Url to fit your required Url.
+## Change API Endpoint
+After you executed the CLI at least once, a config file named `cli.properties` can be found in the created toscana folder. There you can change the API Endpoint to fit your provided REST API Endpoint.
 
 The folder can be found for Unix Systems at:
 `$HOME/.config/toscana/`
