@@ -50,7 +50,7 @@ public class KubernetesPluginTest extends BaseSpringTest {
         verify(pluginFileAccess).access("/simple-task-app_resource.yaml");
         List<String> expectedDockerPathFiles = Lists.newArrayList("index.php", "mysql-credentials.php", "createdb.sql", "Dockerfile");
         for (String s : expectedDockerPathFiles) {
-            verify(pluginFileAccess).copy("content/simple-task-app/" + s);
+            verify(pluginFileAccess).copy("simple-task-app/" + s);
         }
     }
 }

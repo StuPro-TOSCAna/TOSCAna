@@ -67,11 +67,10 @@ public class KubernetesPlugin extends AbstractPlugin {
     }
 
     private void copyImplementationArtifacts(PluginFileAccess fileAccess, DockerApp dockerApp) throws IOException {
-        String contentDir = "content/";
         List<String> dockerFilePaths = dockerApp.getDependencies();
         for (String s : dockerFilePaths) {
             logger.info("copied: " + s);
-            fileAccess.copy(contentDir + s);
+            fileAccess.copy(s);
         }
     }
 

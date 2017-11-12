@@ -67,7 +67,7 @@ public class DockerImageBuildScript {
     }
 
     private void appendDockerBuildLine(String dockerAppRootPath, String tag) {
-        result.appendln("docker image -t " + tag + " ../content/" + dockerAppRootPath);
+        result.appendln("docker image -t " + tag + " ../" + dockerAppRootPath);
         result.appendNewLine();
     }
 

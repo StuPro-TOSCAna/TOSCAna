@@ -11,7 +11,7 @@ if ! [ -x "$(pgrep -f docker > /dev/null)" ]; then
   exit 1                                                                               
 fi
 
-docker image -t simple-task-app ../content/simple-task-app/
+docker image -t simple-task-app ../simple-task-app/
 
 if [ $? -eq 0 ]; then
  echo "Building the docker image was successful!"                                    
