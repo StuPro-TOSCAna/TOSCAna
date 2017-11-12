@@ -20,6 +20,10 @@ public class CliProperties {
     private Properties properties = new Properties();
     private File file;
     private String operatingSystem = null;
+    
+    public CliProperties(){
+        setupPath();
+    }
 
     /**
      * Creates a cli.properties config file
@@ -43,7 +47,6 @@ public class CliProperties {
      */
     public String getApiUrl() {
         String url = "";
-        setupPath();
         
         try {
             InputStream inputStream = new FileInputStream(file);
@@ -61,7 +64,7 @@ public class CliProperties {
     /**
      * Sets the path for Unix or Windows Systems to the cli.properties file
      */
-    public void setupPath() {
+    private void setupPath() {
         if (dataPath == null || dataPath.isEmpty()) {
             // init dataPath to platform dependent value
             dataPath = System.getProperty("user.home");
@@ -91,7 +94,7 @@ public class CliProperties {
             }
         }
 
-        if (file.exists()) {
+        if (!file.exists()) {
             createProperties();
         }
     }    
