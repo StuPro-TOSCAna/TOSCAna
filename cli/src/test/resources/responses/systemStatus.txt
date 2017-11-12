@@ -1,0 +1,10 @@
+{
+	"status": "idle",
+	"available_storage": 1000,
+	"total_storage": 1100,
+	"_links": {
+		"self": {
+			"href": "http://localhost:8080/status"
+		}
+	}
+}

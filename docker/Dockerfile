@@ -7,11 +7,11 @@ RUN apt-get update && \
     cd TOSCAna && \
     mvn install -DskipTests && \
     cd .. && \
-    cp TOSCAna/core/target/core-1.0-SNAPSHOT.jar core.jar && \
+    cp TOSCAna/server/target/server-1.0-SNAPSHOT.jar server.jar && \
     rm -r TOSCAna && \
     apt-get autoremove -y maven git && \
     rm -r /root/.m2/
 EXPOSE 8080
 ENV DATADIR="/toscana/data"
 VOLUME ["/toscana/data"]
-ENTRYPOINT java -jar core.jar
+ENTRYPOINT java -jar server.jar
