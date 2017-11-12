@@ -1,0 +1,45 @@
+{
+    "properties": [
+        {
+            "key": "text_property",
+            "type": "text",
+            "required": true,
+            "description": ""
+        },
+        {
+            "key": "float_property",
+            "type": "float",
+            "required": true,
+            "description": ""
+        },
+        {
+            "key": "name_property",
+            "type": "name",
+            "required": true,
+            "description": ""
+        },
+        {
+            "key": "unsigned_integer_property",
+            "type": "unsigned_integer",
+            "required": true,
+            "description": ""
+        },
+        {
+            "key": "secret_property",
+            "type": "secret",
+            "required": true,
+            "description": ""
+        },
+        {
+            "key": "integer_property",
+            "type": "integer",
+            "required": true,
+            "description": ""
+        }
+    ],
+    "_links": {
+        "self": {
+            "href": "http://localhost:8080/csars/mongo-db/transformations/p-a/properties"
+        }
+    }
+}
