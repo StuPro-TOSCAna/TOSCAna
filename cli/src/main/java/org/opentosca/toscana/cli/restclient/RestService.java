@@ -68,7 +68,7 @@ public interface RestService {
     Call<TransformationLogs> getLogs(@Path("csar") String csar, @Path("platform") String platform, @Query("start") int start);
 
     @GET("api/csars/{csar}/transformations/{platform}/artifact")
-    Call<TransformationArtifact> getArtifact(@Path("csar") String csar, @Path("platform") String platform);
+    Call<ResponseBody> getArtifact(@Path("csar") String csar, @Path("platform") String platform);
 
     @GET("api/csars/{csar}/transformations/{platform}/properties")
     Call<TransformationInputs> getInputs(@Path("csar") String csar, @Path("platform") String platform);

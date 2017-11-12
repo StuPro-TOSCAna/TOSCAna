@@ -297,16 +297,15 @@ public class ApiController {
      * @throws IOException if the responsebody is null
      */
     public String downloadTransformation(String csar, String plat) throws IOException {
-        Call<TransformationArtifact> artifactCall = service.getArtifact(csar, plat);
-        Response<TransformationArtifact> response = artifactCall.execute();
+        Call<ResponseBody> artifactCall = service.getArtifact(csar, plat);
+        Response<ResponseBody> response = artifactCall.execute();
 
         if (response.code() == 200) {
-            TransformationArtifact artifact = response.body();
-            if (artifact.getAccessUrl() != null) {
-                return con.TRANSFORMATION_DOWNLOAD_SUCCESS + artifact.getAccessUrl();
-            } else {
-                return con.TRANSFORMATION_DOWNLOAD_EMPTY;
-            }
+            StringBuilder builder = new StringBuilder(response.toString());
+            int start = builder.indexOf("url=")+4;
+            int end = builder.indexOf("}");
+            String downloadLink = builder.substring(start, end);
+            return con.TRANSFORMATION_DOWNLOAD_SUCCESS + downloadLink;
         } else if (response.code() == 400) {
             if (response.errorBody().string() != null) {
                 return con.TRANSFORMATION_DOWNLOAD_ERROR400M + response.errorBody().string();
