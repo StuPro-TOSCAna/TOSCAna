@@ -1,4 +1,4 @@
-# *Design a general plugin architecture*
+# Design a general plugin architecture
 
 Should we design a general plugin architecture?
 
@@ -21,11 +21,12 @@ Should we design a general plugin architecture?
 
 - `+` every plugin implements the same interface
 - `+` similarities can be extracted to a more abstract level
-- `+` reduction of information the plugins need, for example file acces could be handled in the abstract layer
+- `+` reduction of information the plugins need, for example file access could be handled in the abstract layer
+- `-` there may be things that are not required by every plugin
 
 ### Every plugin has its own architecture
 
 * `+` no need for discussion with other plugin teams
 * `-` every plugin does what it wants
 * `-` "duplicated code", same things are implemented the same in every plugin
-* `-` How to check wheter every plugin supports the given csar?
+* `-` How to check whether every plugin supports the given csar?
