@@ -44,13 +44,11 @@ public class ResponseTest extends BaseTOSCAnaAPITest {
         enqueResponse("json/parse_error.json", 400, "application/json");
         try {
             api.uploadCsar("test", new byte[100]);
-        } catch (Exception e) {
-            if (e instanceof TOSCAnaServerException) {
-                assertEquals(400, ((TOSCAnaServerException) e).getStatusCode());
-                ServerError error = ((TOSCAnaServerException) e).getErrorResponse();
-                assertNull(error.getMessage());
-                return;
-            }
+        } catch (TOSCAnaServerException e) {
+            assertEquals(400, ((TOSCAnaServerException) e).getStatusCode());
+            ServerError error = ((TOSCAnaServerException) e).getErrorResponse();
+            assertNull(error.getMessage());
+            return;
         }
         fail();
     }

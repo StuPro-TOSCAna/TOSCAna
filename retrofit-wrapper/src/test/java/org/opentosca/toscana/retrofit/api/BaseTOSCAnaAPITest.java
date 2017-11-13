@@ -14,6 +14,7 @@ import org.junit.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@SuppressWarnings("WeakerAccess")
 public abstract class BaseTOSCAnaAPITest {
 
     public static final String MIME_TYPE_JSON = "application/json";
@@ -34,7 +35,7 @@ public abstract class BaseTOSCAnaAPITest {
         api = new TOSCAnaAPI(baseURL, LoggingMode.HIGH);
     }
 
-    void enqueResponse(String resourcePath, int code, String mimeType) throws IOException {
+    protected void enqueResponse(String resourcePath, int code, String mimeType) throws IOException {
         InputStream in = getClass().getClassLoader().getResourceAsStream(resourcePath);
         Buffer buffer = new Buffer();
         buffer.readFrom(in);
@@ -46,7 +47,7 @@ public abstract class BaseTOSCAnaAPITest {
         server.enqueue(response);
     }
 
-    void enqueError(int code) throws IOException {
+    protected void enqueError(int code) throws IOException {
         enqueResponse("json/regular_error.json", code, MIME_TYPE_JSON);
     }
     
