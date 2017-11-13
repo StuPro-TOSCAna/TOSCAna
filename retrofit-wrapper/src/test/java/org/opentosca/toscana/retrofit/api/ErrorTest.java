@@ -12,6 +12,34 @@ import org.junit.runners.Parameterized;
 
 @RunWith(Parameterized.class)
 public class ErrorTest extends BaseTOSCAnaAPITest {
+
+    private ErrorTestParam param;
+
+    @SuppressWarnings("unused")
+    public ErrorTest(ErrorTestParam param, String name) {
+        this.param = param;
+    }
+
+    @Test(expected = TOSCAnaServerException.class)
+    public void executeTest() throws Exception {
+        enqueError(param.code);
+        param.callGenerator.excec(api);
+    }
+
+    private static class ErrorTestParam {
+        private int code;
+        private ErrorTestFunction callGenerator;
+
+        ErrorTestParam(int code, ErrorTestFunction callGenerator) {
+            this.code = code;
+            this.callGenerator = callGenerator;
+        }
+    }
+
+    private interface ErrorTestFunction {
+        Object excec(TOSCAnaAPI api) throws Exception;
+    }
+
     @Parameterized.Parameters(name = "{index}: {1}")
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][] {
@@ -61,33 +89,5 @@ public class ErrorTest extends BaseTOSCAnaAPITest {
                 "Csar Upload"
             }
         });
-    }
-
-    private ErrorTestParam param;
-    private String name;
-
-    public ErrorTest(ErrorTestParam param, String name) {
-        this.param = param;
-        this.name = name;
-    }
-
-    @Test(expected = TOSCAnaServerException.class)
-    public void executeTest() throws Exception {
-        enqueError(param.code);
-        param.callGenerator.excec(api);
-    }
-
-    private static class ErrorTestParam {
-        private int code;
-        private ErrorTestFunction callGenerator;
-
-        public ErrorTestParam(int code, ErrorTestFunction callGenerator) {
-            this.code = code;
-            this.callGenerator = callGenerator;
-        }
-    }
-
-    private static interface ErrorTestFunction {
-        Object excec(TOSCAnaAPI api) throws Exception;
     }
 }

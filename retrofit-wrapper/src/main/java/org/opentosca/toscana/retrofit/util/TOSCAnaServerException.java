@@ -6,7 +6,11 @@ public class TOSCAnaServerException extends Exception {
     private ServerError errorResponse;
     private int statusCode;
 
-    public TOSCAnaServerException(String message, ServerError errorResponse, int statusCode) {
+    public TOSCAnaServerException(
+        String message,
+        ServerError errorResponse,
+        int statusCode
+    ) {
         super(message);
         this.errorResponse = errorResponse;
         this.statusCode = statusCode;

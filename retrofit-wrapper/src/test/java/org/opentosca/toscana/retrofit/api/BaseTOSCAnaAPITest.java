@@ -3,8 +3,8 @@ package org.opentosca.toscana.retrofit.api;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.opentosca.toscana.retrofit.util.LoggingMode;
 import org.opentosca.toscana.retrofit.TOSCAnaAPI;
+import org.opentosca.toscana.retrofit.util.LoggingMode;
 
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
@@ -16,11 +16,11 @@ import org.slf4j.LoggerFactory;
 
 public abstract class BaseTOSCAnaAPITest {
 
+    public static final String MIME_TYPE_JSON = "application/json";
     protected final Logger logger = LoggerFactory.getLogger(getClass());
-
-    protected MockWebServer server;
-
+    
     protected TOSCAnaAPI api;
+    private MockWebServer server;
 
     @Before
     public void setUp() throws Exception {
@@ -34,7 +34,7 @@ public abstract class BaseTOSCAnaAPITest {
         api = new TOSCAnaAPI(baseURL, LoggingMode.HIGH);
     }
 
-    protected void enqueResponse(String resourcePath, int code, String mimeType) throws IOException {
+    void enqueResponse(String resourcePath, int code, String mimeType) throws IOException {
         InputStream in = getClass().getClassLoader().getResourceAsStream(resourcePath);
         Buffer buffer = new Buffer();
         buffer.readFrom(in);
@@ -46,14 +46,8 @@ public abstract class BaseTOSCAnaAPITest {
         server.enqueue(response);
     }
 
-    protected void enqueError(int code) throws IOException {
-        enqueResponse("json/regular_error.json", code, "application/json");
-    }
-
-    protected void enqueResponse(int code) {
-        MockResponse response = new MockResponse()
-            .setResponseCode(code);
-        server.enqueue(response);
+    void enqueError(int code) throws IOException {
+        enqueResponse("json/regular_error.json", code, MIME_TYPE_JSON);
     }
     
     @After

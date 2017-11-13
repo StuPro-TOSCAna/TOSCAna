@@ -36,15 +36,19 @@ public class ModelTest {
     private String resourcePath;
     private Class<?> resultClass;
     private IModelValidator modelValidator;
-    private String name;
 
     private ObjectMapper mapper;
 
-    public ModelTest(String resourcePath, Class<?> resultClass, IModelValidator modelValidator, String name) {
+    @SuppressWarnings("unused")
+    public ModelTest(
+        String resourcePath,
+        Class<?> resultClass,
+        IModelValidator modelValidator,
+        String name
+    ) {
         this.resourcePath = resourcePath;
         this.resultClass = resultClass;
         this.modelValidator = modelValidator;
-        this.name = name;
     }
 
     @Parameters(name = "{index}: {3}")

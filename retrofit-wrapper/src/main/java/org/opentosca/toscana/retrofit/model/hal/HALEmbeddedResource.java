@@ -8,11 +8,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public abstract class HALEmbeddedResource<T extends HALResource>
     extends HALResource {
-
-    public abstract String getResourcesName();
-
+    
     private Map<String, List<T>> embeddedResources;
-
+    
+    public abstract String getResourcesName();
+    
     @JsonProperty("_embedded")
     public Map<String, List<T>> getEmbeddedResources() {
         return embeddedResources;

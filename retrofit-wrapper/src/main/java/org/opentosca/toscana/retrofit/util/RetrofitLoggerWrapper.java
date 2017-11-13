@@ -9,7 +9,7 @@ public class RetrofitLoggerWrapper implements HttpLoggingInterceptor.Logger {
     private final Logger logger;
 
     public RetrofitLoggerWrapper(String endpoint) {
-        logger = LoggerFactory.getLogger("TOSCAna-API - "+endpoint);
+        logger = LoggerFactory.getLogger("TOSCAna-API - " + endpoint);
     }
 
     @Override
