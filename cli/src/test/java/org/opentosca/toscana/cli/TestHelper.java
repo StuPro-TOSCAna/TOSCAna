@@ -11,6 +11,7 @@ import org.apache.commons.io.FileUtils;
 
 final class TestHelper {
 
+    public static final int MOCK_SERVER_PORT = 8084;
     final String CSAR = "mongo-db";
     final String PLATFORM = "p-a";
     final String[] EMPTY = {};
@@ -109,38 +110,38 @@ final class TestHelper {
 
     final void serverEnqueue() throws IOException {
         server.enqueue(response);
-        server.start(8080);
+        server.start(MOCK_SERVER_PORT);
     }
 
     final void server200Response() throws IOException {
         response.setResponseCode(200);
         server.enqueue(response);
-        server.start(8080);
+        server.start(MOCK_SERVER_PORT);
     }
 
     final void server400Response() throws IOException {
         response.setResponseCode(400);
         server.enqueue(response);
-        server.start(8080);
+        server.start(MOCK_SERVER_PORT);
     }
 
     final void server404Response() throws IOException {
         response.setResponseCode(404);
         server.enqueue(response);
-        server.start(8080);
+        server.start(MOCK_SERVER_PORT);
     }
 
     final void server500Response() throws IOException {
         response.setResponseCode(500);
         server.enqueue(response);
-        server.start(8080);
+        server.start(MOCK_SERVER_PORT);
     }
 
     final void setServerBody(String help) throws IOException {
         if (helpMap.containsKey(help)) {
             response.setBody(helpMap.get(help));
             server.enqueue(response);
-            server.start(8080);
+            server.start(MOCK_SERVER_PORT);
         }
     }
 }
