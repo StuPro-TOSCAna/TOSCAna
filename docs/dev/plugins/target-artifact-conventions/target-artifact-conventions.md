@@ -8,14 +8,14 @@ The purpose of this document is to specify conventions for the target artifact t
 **Structure:**
 ```
 <target-artifact-name>.zip
-├── Readme.html
+├── readme.html
 ├── docs/
 └── output/
     └── scripts/
 ```
 
 ## Must have
-- `Readme.html` - a Readme file in the root folder of the target artifact is mandatory. It holds the basic information of the target artifact. A readme file must contain at least the following sections:
+- `readme.html` - a Readme file in the root folder of the target artifact is mandatory. It holds the basic information of the target artifact. A readme file must contain at least the following sections:
    - explanation of the ZIP contents
       - folder structure
       - output contents
