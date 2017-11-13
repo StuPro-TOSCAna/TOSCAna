@@ -39,7 +39,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ApiController {
 
-    private static final String API_URL = "http://localhost:8080/";
+    private static final String API_URL = "http://localhost:8084/";
     private RestService service;
     private Constants con;
 

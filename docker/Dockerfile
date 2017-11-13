@@ -13,5 +13,6 @@ RUN apt-get update && \
     rm -r /root/.m2/
 EXPOSE 8080
 ENV DATADIR="/toscana/data"
+ENV SERVER_PORT="8080
 VOLUME ["/toscana/data"]
 ENTRYPOINT java -jar server.jar
