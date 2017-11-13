@@ -1,0 +1,38 @@
+{
+    "_embedded": {
+        "platform": [
+            {
+                "id": "p-a",
+                "name": "platform-1",
+                "_links": {
+                    "self": {
+                        "href": "http://localhost:8080/platforms/p-a"
+                    }
+                }
+            },
+            {
+                "id": "p-b",
+                "name": "platform-2",
+                "_links": {
+                    "self": {
+                        "href": "http://localhost:8080/platforms/p-b"
+                    }
+                }
+            },
+            {
+                "id": "p-c",
+                "name": "platform-3",
+                "_links": {
+                    "self": {
+                        "href": "http://localhost:8080/platforms/p-c"
+                    }
+                }
+            }
+        ]
+    },
+    "_links": {
+        "self": {
+            "href": "http://localhost:8080/platforms/"
+        }
+    }
+}

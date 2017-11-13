@@ -1,0 +1,11 @@
+{
+    "name": "k8s-cluster",
+    "_links": {
+        "self": {
+            "href": "http://localhost:8080/csars/k8s-cluster"
+        },
+        "transformations": {
+            "href": "http://localhost:8080/csars/k8s-cluster/transformations/"
+        }
+    }
+}
