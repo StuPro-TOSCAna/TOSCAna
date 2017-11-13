@@ -100,6 +100,7 @@ The folder can be found for Unix Systems at:
 
 For Windows Systems at:
 `$HOME/AppData/toscana/`
+If you can't find the folder on Windows, enter `%appdata%` in the explorer directory field or `cd %appdata%` in the Command Line and move from Roaming one folder level back to AppData.
 
 ## License
 

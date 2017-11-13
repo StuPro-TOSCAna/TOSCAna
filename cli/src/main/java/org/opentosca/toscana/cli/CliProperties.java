@@ -12,16 +12,13 @@ import org.apache.commons.io.FileUtils;
 public class CliProperties {
 
     public final String CLI_PROPS_ENDPOINT_KEY = "endpoint";
+    private final Properties properties = new Properties();
     private String filePath;
     private String dataPath = null;
-    private final String dataPathWin = "/AppData/toscana";
-    private final String dataPathNix = "/.toscana";
-    private final String cliProp = "/cli.properties";
-    private Properties properties = new Properties();
     private File file;
     private String operatingSystem = null;
-    
-    public CliProperties(){
+
+    public CliProperties() {
         setupPath();
     }
 
@@ -31,7 +28,7 @@ public class CliProperties {
     private void createProperties() {
         try {
             FileWriter writer = new FileWriter(file);
-            properties.setProperty(CLI_PROPS_ENDPOINT_KEY,"http://127.0.0.1:8084/");
+            properties.setProperty(CLI_PROPS_ENDPOINT_KEY, "http://127.0.0.1:8084/");
             properties.store(writer, "Cli Settings");
             writer.close();
         } catch (IOException e) {
@@ -41,13 +38,13 @@ public class CliProperties {
     }
 
     /**
-     * Gets the API Url from the cli.properties config, if the config doesn't exist a
-     * default config gets created
+     * Gets the API Url from the cli.properties config, if the config doesn't exist a default config gets created
+     *
      * @return API Url
      */
     public String getApiUrl() {
         String url = "";
-        
+
         try {
             InputStream inputStream = new FileInputStream(file);
             properties.load(inputStream);
@@ -56,7 +53,7 @@ public class CliProperties {
             System.err.println("Something went wrong while trying to load the API Endpoint.");
             e.printStackTrace();
         }
-        
+
         url += properties.getProperty(CLI_PROPS_ENDPOINT_KEY);
         return url;
     }
@@ -71,11 +68,14 @@ public class CliProperties {
             if (operatingSystem == null) {
                 operatingSystem = System.getProperty("os.name");
             }
-            
+
+            final String cliProp = "/cli.properties";
             if (operatingSystem.contains("Linux") || operatingSystem.contains("Mac")) {
+                final String dataPathNix = "/.toscana";
                 dataPath += dataPathNix;
                 filePath = dataPath + cliProp;
             } else if (operatingSystem.contains("Windows")) {
+                final String dataPathWin = "/AppData/toscana";
                 dataPath += dataPathWin;
                 filePath = dataPath + cliProp;
             } else {
@@ -97,5 +97,5 @@ public class CliProperties {
         if (!file.exists()) {
             createProperties();
         }
-    }    
+    }
 }

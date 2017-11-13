@@ -58,13 +58,13 @@ public class CsarTest {
     @Test
     public void testFail404DeleteCsar() throws IOException {
         helper.server404Response();
-        assertEquals(con.CSAR_DELETE_ERROR404M, api.deleteCsar(helper.CSAR));
+        assertEquals(con.CSAR_DELETE_ERROR404 + "\n", api.deleteCsar(helper.CSAR));
     }
 
     @Test
     public void testFail500DeleteCsar() throws IOException {
         helper.server500Response();
-        assertEquals(con.CSAR_DELETE_ERROR500M, api.deleteCsar(helper.CSAR));
+        assertEquals(con.CSAR_DELETE_ERROR500 + "\n", api.deleteCsar(helper.CSAR));
     }
 
     @Test
@@ -96,7 +96,7 @@ public class CsarTest {
     @Test
     public void testFail404InfoCsar() throws IOException {
         helper.server404Response();
-        assertEquals(con.CSAR_INFO_ERROR404M, api.infoCsar(helper.CSAR));
+        assertEquals(con.CSAR_INFO_ERROR404 + "\n", api.infoCsar(helper.CSAR));
     }
 
     @Test

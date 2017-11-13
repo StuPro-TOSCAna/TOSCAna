@@ -112,8 +112,7 @@ public class ApiController {
     }
 
     /**
-     * Calls the REST API and deletes the specified CSAR if it's available, handles different response
-     * codes
+     * Calls the REST API and deletes the specified CSAR if it's available, handles different response codes
      *
      * @param csar CSAR to delete from the Transformator
      * @return output for the CLI
@@ -127,13 +126,13 @@ public class ApiController {
             return con.CSAR_DELETE_SUCCESS;
         } else if (response.code() == 404) {
             if (response.errorBody().string() != null) {
-                return con.CSAR_DELETE_ERROR404M + response.errorBody().string();
+                return con.CSAR_DELETE_ERROR404 + "\n" + response.errorBody().string();
             } else {
                 return con.CSAR_DELETE_ERROR404;
             }
         } else if (response.code() == 500) {
             if (response.errorBody().string() != null) {
-                return con.CSAR_DELETE_ERROR500M + response.errorBody().string();
+                return con.CSAR_DELETE_ERROR500 + "\n" + response.errorBody().string();
             } else {
                 return con.CSAR_DELETE_ERROR500;
             }
@@ -149,7 +148,7 @@ public class ApiController {
      * @throws IOException if the responsebody is null
      */
     public String listCsar() throws IOException {
-        String stringCsars = "";
+        StringBuilder stringCsars = new StringBuilder();
         Call<CsarsResponse> csarsResponseCall = service.getCsars();
         Response<CsarsResponse> response = csarsResponseCall.execute();
 
@@ -159,7 +158,7 @@ public class ApiController {
                 List<Csar> csars = aCsars.getCsar();
 
                 for (Csar c : csars) {
-                    stringCsars += "\nName: " + c.getName();
+                    stringCsars.append("\nName: ").append(c.getName());
                 }
                 return con.CSAR_LIST_SUCCESS + stringCsars;
             } else {
@@ -190,7 +189,7 @@ public class ApiController {
             }
         } else if (response.code() == 404) {
             if (response.errorBody().string() != null) {
-                return con.CSAR_INFO_ERROR404M + response.errorBody().string();
+                return con.CSAR_INFO_ERROR404 + "\n" + response.errorBody().string();
             } else {
                 return con.CSAR_INFO_ERROR404;
             }
@@ -200,8 +199,8 @@ public class ApiController {
     }
 
     /**
-     * TODO split this into a real start and create operation
-     * Calls the REST API and starts the Transformation, handles response codes
+     * TODO split this into a real start and create operation Calls the REST API and starts the Transformation, handles
+     * response codes
      *
      * @param csar CSAR for which a transformation should be started
      * @param plat platform for which a transformation should be started
@@ -216,13 +215,13 @@ public class ApiController {
             return launchTransformation(csar, plat);
         } else if (response.code() == 400) {
             if (response.errorBody().string() != null) {
-                return con.TRANSFORMATION_START_ERROR400M + response.errorBody().string();
+                return con.TRANSFORMATION_START_ERROR400 + "\n" + response.errorBody().string();
             } else {
                 return con.TRANSFORMATION_START_ERROR400;
             }
         } else if (response.code() == 404) {
             if (response.errorBody().string() != null) {
-                return con.TRANSFORMATION_START_ERROR404M + response.errorBody().string();
+                return con.TRANSFORMATION_START_ERROR404 + "\n" + response.errorBody().string();
             } else {
                 return con.TRANSFORMATION_START_ERROR404;
             }
@@ -242,8 +241,7 @@ public class ApiController {
     }
 
     /**
-     * TODO: Implement functionality
-     * Calls the REST API and stops the currently running Transformation if it's running
+     * TODO: Implement functionality Calls the REST API and stops the currently running Transformation if it's running
      *
      * @param csar CSAR to stop transformation for
      * @param plat platform to stop transformation for
@@ -270,13 +268,13 @@ public class ApiController {
             return con.TRANSFORMATION_DELETE_SUCCESS;
         } else if (response.code() == 404) {
             if (response.errorBody().string() != null) {
-                return con.TRANSFORMATION_DELETE_ERROR404M + response.errorBody().string();
+                return con.TRANSFORMATION_DELETE_ERROR404 + "\n" + response.errorBody().string();
             } else {
                 return con.TRANSFORMATION_DELETE_ERROR404;
             }
         } else if (response.code() == 500) {
             if (response.errorBody().string() != null) {
-                return con.TRANSFORMATION_DELETE_ERROR500M + response.errorBody().string();
+                return con.TRANSFORMATION_DELETE_ERROR500 + "\n" + response.errorBody().string();
             } else {
                 return con.TRANSFORMATION_DELETE_ERROR500;
             }
@@ -286,8 +284,7 @@ public class ApiController {
     }
 
     /**
-     * Calls the REST API to download an Artifact for the specified finished Transformation,
-     * handles response codes
+     * Calls the REST API to download an Artifact for the specified finished Transformation, handles response codes
      *
      * @param csar CSAR for which to download an Artifact
      * @param plat Platform for which the Artifact should be downloaded
@@ -300,19 +297,19 @@ public class ApiController {
 
         if (response.code() == 200) {
             StringBuilder builder = new StringBuilder(response.toString());
-            int start = builder.indexOf("url=")+4;
+            int start = builder.indexOf("url=") + 4;
             int end = builder.indexOf("}");
             String downloadLink = builder.substring(start, end);
             return con.TRANSFORMATION_DOWNLOAD_SUCCESS + downloadLink;
         } else if (response.code() == 400) {
             if (response.errorBody().string() != null) {
-                return con.TRANSFORMATION_DOWNLOAD_ERROR400M + response.errorBody().string();
+                return con.TRANSFORMATION_DOWNLOAD_ERROR400 + "\n" + response.errorBody().string();
             } else {
                 return con.TRANSFORMATION_DOWNLOAD_ERROR400;
             }
         } else if (response.code() == 404) {
             if (response.errorBody().string() != null) {
-                return con.TRANSFORMATION_DOWNLOAD_ERROR404M + response.errorBody().string();
+                return con.TRANSFORMATION_DOWNLOAD_ERROR404 + "\n" + response.errorBody().string();
             } else {
                 return con.TRANSFORMATION_DOWNLOAD_ERROR404;
             }
@@ -329,7 +326,7 @@ public class ApiController {
      * @throws IOException if the responsebody is null
      */
     public String listTransformation(String csar) throws IOException {
-        String stringTransformations = "";
+        StringBuilder stringTransformations = new StringBuilder();
         Call<TransformationsResponse> transformationsResponseCall = service.getTransformations(csar);
         Response<TransformationsResponse> response = transformationsResponseCall.execute();
 
@@ -339,7 +336,7 @@ public class ApiController {
                 List<Transformation> transformations = aTrans.getTransformation();
 
                 for (Transformation t : transformations) {
-                    stringTransformations += "\nPlatform: " + t.getPlatform();
+                    stringTransformations.append("\nPlatform: ").append(t.getPlatform());
                 }
                 return con.TRANSFORMATION_LIST_SUCCESS + csar + ": " + stringTransformations;
             } else {
@@ -347,7 +344,7 @@ public class ApiController {
             }
         } else if (response.code() == 404) {
             if (response.errorBody().string() != null) {
-                return con.TRANSFORMATION_LIST_ERROR404M + response.errorBody().string();
+                return con.TRANSFORMATION_LIST_ERROR404 + "\n" + response.errorBody().string();
             } else {
                 return con.TRANSFORMATION_LIST_ERROR404;
             }
@@ -379,7 +376,7 @@ public class ApiController {
             }
         } else if (response.code() == 404) {
             if (response.errorBody().string() != null) {
-                return con.TRANSFORMATION_INFO_ERROR404M + response.errorBody().string();
+                return con.TRANSFORMATION_INFO_ERROR404 + "\n" + response.errorBody().string();
             } else {
                 return con.TRANSFORMATION_INFO_ERROR404;
             }
@@ -398,7 +395,7 @@ public class ApiController {
      * @throws IOException if the responsebody is null
      */
     public String logsTransformation(String csar, String plat, int start) throws IOException {
-        String stringLogs = "";
+        StringBuilder stringLogs = new StringBuilder();
         Call<TransformationLogs> logsCall = service.getLogs(csar, plat, start);
         Response<TransformationLogs> response = logsCall.execute();
 
@@ -413,8 +410,7 @@ public class ApiController {
                             LocalDateTime.ofInstant(Instant.ofEpochMilli(time),
                                 TimeZone.getDefault().toZoneId());
 
-                        stringLogs += "\nTimestamp: " + timeStamp
-                            + ", Message: " + transLogs.get(i).getMessage();
+                        stringLogs.append("\nTimestamp: ").append(timeStamp).append(", Message: ").append(transLogs.get(i).getMessage());
                     }
                     return con.TRANSFORMATION_LOGS_SUCCESS + stringLogs;
                 } else {
@@ -425,7 +421,7 @@ public class ApiController {
             }
         } else if (response.code() == 404) {
             if (response.errorBody().string() != null) {
-                return con.TRANSFORMATION_LOGS_ERROR404M + response.errorBody().string();
+                return con.TRANSFORMATION_LOGS_ERROR404 + "\n" + response.errorBody().string();
             } else {
                 return con.TRANSFORMATION_LOGS_ERROR404;
             }
@@ -435,8 +431,7 @@ public class ApiController {
     }
 
     /**
-     * Calls the REST API and shows every needed Input, that must be set before a transformation
-     * can be started
+     * Calls the REST API and shows every needed Input, that must be set before a transformation can be started
      *
      * @param csar CSAR for which required inputs should be shown
      * @param plat Platform for which required inputs should be shown
@@ -444,7 +439,7 @@ public class ApiController {
      * @throws IOException if the responsebody is null
      */
     public String inputList(String csar, String plat) throws IOException {
-        String stringInputs = "";
+        StringBuilder stringInputs = new StringBuilder();
         Call<TransformationInputs> inputsCall = service.getInputs(csar, plat);
         Response<TransformationInputs> response = inputsCall.execute();
 
@@ -453,8 +448,7 @@ public class ApiController {
                 List<TransformationInput> transProperty = response.body().getProperties();
 
                 for (TransformationInput p : transProperty) {
-                    stringInputs += "\nKey: " + p.getKey()
-                        + " Type: " + p.getType();
+                    stringInputs.append("\nKey: ").append(p.getKey()).append(" Type: ").append(p.getType());
                 }
                 return con.INPUT_LIST_SUCCESS + stringInputs;
             } else {
@@ -462,13 +456,13 @@ public class ApiController {
             }
         } else if (response.code() == 400) {
             if (response.errorBody().string() != null) {
-                return con.INPUT_LIST_ERROR400M + response.errorBody().string();
+                return con.INPUT_LIST_ERROR400 + "\n" + response.errorBody().string();
             } else {
                 return con.INPUT_LIST_ERROR400;
             }
         } else if (response.code() == 404) {
             if (response.errorBody().string() != null) {
-                return con.INPUT_LIST_ERROR404M + response.errorBody().string();
+                return con.INPUT_LIST_ERROR404 + "\n" + response.errorBody().string();
             } else {
                 return con.INPUT_LIST_ERROR404;
             }
@@ -478,8 +472,8 @@ public class ApiController {
     }
 
     /**
-     * Calls the REST API, and trys to set the required Inputs. After they are set successfully
-     * a transformation can be started
+     * Calls the REST API, and trys to set the required Inputs. After they are set successfully a transformation can be
+     * started
      *
      * @param csar   CSAR for which to set Inputs
      * @param plat   Platform for which to set Inputs
@@ -495,13 +489,13 @@ public class ApiController {
             return con.INPUT_SET_SUCCESS;
         } else if (response.code() == 400) {
             if (response.errorBody().string() != null) {
-                return con.INPUT_SET_ERROR400M + response.errorBody().string();
+                return con.INPUT_SET_ERROR400 + "\n" + response.errorBody().string();
             } else {
                 return con.INPUT_SET_ERROR400;
             }
         } else if (response.code() == 404) {
             if (response.errorBody().string() != null) {
-                return con.INPUT_SET_ERROR404M + response.errorBody().string();
+                return con.INPUT_SET_ERROR404 + "\n" + response.errorBody().string();
             } else {
                 return con.INPUT_SET_ERROR404;
             }
@@ -517,7 +511,7 @@ public class ApiController {
      * @throws IOException if the responsebody is null
      */
     public String listPlatform() throws IOException {
-        String stringPlatforms = "";
+        StringBuilder stringPlatforms = new StringBuilder();
         Call<PlatformsResponse> platformsResponseCall = service.getPlatforms();
         Response<PlatformsResponse> response = platformsResponseCall.execute();
 
@@ -527,7 +521,7 @@ public class ApiController {
                 List<Platform> platforms = plat.getPlatform();
 
                 for (Platform p : platforms) {
-                    stringPlatforms += "\nID: " + p.getId() + " Name: " + p.getName();
+                    stringPlatforms.append("\nID: ").append(p.getId()).append(" Name: ").append(p.getName());
                 }
                 return con.PLATFORM_LIST_SUCCESS + stringPlatforms;
             } else {
@@ -558,7 +552,7 @@ public class ApiController {
             }
         } else if (response.code() == 404) {
             if (response.errorBody().string() != null) {
-                return con.PLATFORM_INFO_ERROR404M + response.errorBody().string();
+                return con.PLATFORM_INFO_ERROR404 + "\n" + response.errorBody().string();
             } else {
                 return con.PLATFORM_INFO_ERROR404;
             }
