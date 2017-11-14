@@ -8,14 +8,22 @@ The purpose of this document is to specify conventions for the target artifact t
 **Structure:**
 ```
 <target-artifact-name>.zip
-├── Readme.html
+├── readme.html
 ├── docs/
 └── output/
     └── scripts/
 ```
 
 ## Must have
-- `Readme.html` - a Readme file in the root folder of the target artifact is mandatory. It holds the basic information of the target artifact, also if the plugin needs a short usage guide include it in this file.
+- `readme.html` - a Readme file in the root folder of the target artifact is mandatory. It holds the basic information of the target artifact. A readme file must contain at least the following sections:
+   - explanation of the ZIP contents
+      - folder structure
+      - output contents
+   - usage guide
+      - step by step guide on how to handle the deployment of the target artifact
+      - which scripts are included, what do they do and how should they be used
+   - links to further documentation (see `docs`)
+   
 - `output` - the `output` - folder holds everything generated during the transformation.
   - `output/scripts` - `scripts` is a subfolder of `output` it holds executable scripts generated during the transformation, that are needed to deploy the artifact. Scripts are all lowercase and to seperate logical words use `-`.
 
