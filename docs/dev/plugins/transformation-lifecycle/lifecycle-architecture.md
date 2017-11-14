@@ -1,13 +1,10 @@
 # Transformation Lifecycle Archtecture
 
-**IMPORTANT**: Currently the diagrams are created using PlantUML once this has been finalized I will convert this to a proper LucidCharts diagram. PlantUML just seems to be the most suitable solution to quickly get a decently looking class diagram. (especially when working on this with a smartphone)
-
 ## Introduction
 
 This document and the corresponding diagrams represent a potential architecture for the lifecycle operations of a transformation described in Pull Request #159. It was expected, that a transformation has to support the following operations (descriptions have been taken from [here](transformation-lifecycle.md)):
 
-1. `validate()` - in this phase the plugin provides a list of supported TOSCA types, then the graph that is enqued for transformation will be checked if it contains types the plugin can not handle. If the result is positive the transformation continues else it will abort.
-2. `analyze()` - in this phase the plugin analyzes the graph to find out how to handle it.
+1. `validate()` - The validation phase performs several checks to ensure that the transformation can even be executed (for details see [Validation Phase](#validation-phase))
 3. `prepare()` - in this step the plugin processes the graph to transform it in the following step. For example the kubernetes plugin needs to split the graph into container and pods.
 4. `transform()` - this is where the real transformation is happening.
 5. `clean()` - in this phase the plugin cleans up remaining leftovers from the previos steps. This can be for example files generated during the transformation that are not part of the target artifact.
@@ -22,15 +19,55 @@ The TransformationLifecycleInterface (short: TLI) has methods that represent eac
 
 The creation is done using a factory method that has to be implemented by all subclasses of the `BasePlugin` (currently called `AbstractPlugin`) to produce a Plugin Specific instance of the TLI interface.
 
-The creation process (in a simplified version) has been modeled in the following sequence diagram. The execution of the lifecycle tasks is not shown here. They will be executed in the order described above if the validation (`validate()`) is sucessful,
+## Validation Phase
 
-![Creation sequence diagram](diagrams/creation-sequence.svg)
+The validation phase can be split into three different validation phases:
+- `environment check` - in this phase the plugin should check if it has everything available to perform the transformation. This means that all required CLI applications have been installed and are accessible. For example: The kubernetes plugin needs a connection to a running docker daemon to perform the transformation (when following the point that docker images get built automatically)
+- `supported node type check` - this represents the original `analyze` phase. The plugin will return a list of supported node types, this list then gets compared with a list conatining all node types used by this platform. If not all node types of the model are contained in the supported list the transformation will stop at this point.
+- `model check` (property check) - this phase checks the model for invalid properties. For example the kubernetes plugin will reject the transformation if a node is based on windows. 
 
-**Class Diagram** The class diagram show here is a simple representation that only partially contains return types and parameters
+### Execution order
 
-![Draft Class Diagram without annotations](diagrams/class-diagram-na.svg)
+The execution of these phases should look like this:
 
-Currently no parameters and return values get defined except for the `SupportedNodesList` this is just a wrapper. It is only used to illustrate
+`env-check -> node-type-check -> model-check`
+
+This order is chosen because the first task is probably the "simplest" one to execute and the last one (model check) is the modt complex because we have to iterate over the whole graph to look for those problems. 
+
+### Implementation approaches
+
+While thinking about this i came across two implementation approaches, the following part will discuss both of them. The implementation approaches only cover the node type check and the model check. The environment has to be checked anyways. With some more efforts the env check could also get done before the transformation even launches. However this will require some modifications in the `core` part of the application. 
+
+#### Seperate checks
+
+This approach clearly splits the node type check (short `type check`) and the model check into two seperate phases. 
+
+The interfaces defined by using this approach will look like this (just to showcase):
+
+TOSCAna Plugin (just for illustration purposes, class diagrams will follow):
+```java
+public abstract class LifecycleAwarePlugin<T extends TransformationLifecycle>
+    implements TransformationPlugin {
+    protected abstract List<NodeTypes> getSupportedNodeTypes();
+    protected abstract boolean checkEnvironment();
+    protected abstract T getInstance(TransformationContext ctx);
+
+    public void transform(TransformationContext ctx) {
+        //This method will implement the mechanism to execute the seperate phases
+    }
+} 
+```
+
+```java
+public interface TransformationLifecycle {
+    void validateModel();
+    void prepare();
+    void transform();
+    void cleanup();
+}
+```
+
+#### Combined model and type check
 
 ## Progress caluclation
 
