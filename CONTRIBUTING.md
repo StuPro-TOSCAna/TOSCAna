@@ -68,7 +68,7 @@ To organize we have naming conventions for our branches, each branch should star
 Here is a list of tags that should be used:
 
 - `docs/<name>` - Represents a Branch that covers the documentation of something
-- `feature/<name>` - Repesents a branch that will implement a feature (size is irrelevant, the whole CLI or a new Request Mapping for the API are both features)
+- `feature/<name>` - Represents a branch that will implement a feature (size is irrelevant, the whole CLI or a new Request Mapping for the API are both features)
 - `bugfix/<name>` - A branch used to fix a bug
 - `misc/<name>` - A branch containing something thats not covered in the above categories
 
