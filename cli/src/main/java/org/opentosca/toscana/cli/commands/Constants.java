@@ -1,7 +1,7 @@
 package org.opentosca.toscana.cli.commands;
 
 /**
- * Strings that are used in the CLI, for easier test usage declared here
+ Strings that are used in the CLI, for easier test usage declared here
  */
 public final class Constants {
 
