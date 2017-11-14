@@ -11,6 +11,17 @@ node_types:
 
   mysql:
     derived_from: tosca.nodes.Database
+    requirements:
+      - host:
+          node: tosca.nodes.DBMS.MySQL
+
+  dbms:
+    derived_from: tosca.nodes.DBMS
+    properties:
+      port:
+        description: reflect the default MySQL server port
+        default: 3306
+
 
 
 topology_template:
@@ -20,6 +31,10 @@ topology_template:
       properties: #TODO
       requirements:
         - host: WebServer
+
+    WebServer:
+      type: tosca.nodes.Compute
+      # TODO
 
     mysql:
       type: tosca.nodes.DBMS.MySQL
