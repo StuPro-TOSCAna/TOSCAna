@@ -5,44 +5,58 @@ metadata:
   template_author: stupro-toscana
   template_version: 1.0
 
-node_types:
-  ApacheWebServer:
-    derived_from: tosca.nodes.WebServer
-
-  mysql:
-    derived_from: tosca.nodes.Database
-    requirements:
-      - host:
-          node: tosca.nodes.DBMS.MySQL
-
-  dbms:
-    derived_from: tosca.nodes.DBMS
-    properties:
-      port:
-        description: reflect the default MySQL server port
-        default: 3306
-
-
 
 topology_template:
   node_templates:
+
+    my_app:
+      type: tosca.nodes.SoftwareComponent
+      requirements:
+        - host: ApacheWebServer
+
     ApacheWebServer:
-      type: tosca.nodes.WebServer.Apache
+      type: tosca.nodes.WebServer
       properties: #TODO
       requirements:
-        - host: WebServer
+        - host: server
+      interfaces:
+        Standard:
+          create: webserver_install.sh
+          start: webserver_start.sh
 
-    WebServer:
-      type: tosca.nodes.Compute
-      # TODO
+    my_db:
+      type: tosca.nodes.Database.MySQL
+      properties:
+        name: { get_input: database_name }
+        user: { get_input: database_user }
+        password: { get_input: database_password }
+        port: { get_input: database_port }
+      capabilities:
+        database_endpoint:
+          properties:
+            port: { get_input: db_port }
+      requirements:
+        - host: mysql_dbms
+        interfaces:
+          Standard:
+            create:
+              implementation: db_create.sh
 
-    mysql:
+    mysql_dbms:
       type: tosca.nodes.DBMS.MySQL
       properties:
           root_password: { get_input: my_mysql_rootpw }
           port: { get_input: my_mysql_port }
         requirements:
-          - host: db_server
+          - host: server
         interfaces:
           Standard:
-            configure: scripts/my_own_configure.sh
+            inputs:
+              db_root_password: { get_property: [ mysql_dbms, root_password ] }
+              create: mysql_dbms_install.sh
+              start: mysql_dbms_start.sh
+              configure: mysql_dbms_configure.sh
+
+    server:
+      type: tosca.nodes.Compute
+      capabilities: #TODO
