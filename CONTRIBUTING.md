@@ -70,6 +70,7 @@ Here is a list of tags that should be used:
 - `docs/<name>` - Represents a Branch that covers the documentation of something
 - `feature/<name>` - Represents a branch that will implement a feature (size is irrelevant, the whole CLI or a new Request Mapping for the API are both features)
 - `bugfix/<name>` - A branch used to fix a bug
+- `resource/<name>` - Represents a branch that covers the addition or modification of a project resource. (e.g. a CSAR file for testing)
 - `misc/<name>` - A branch containing something thats not covered in the above categories
 
 ## Pull Requests
