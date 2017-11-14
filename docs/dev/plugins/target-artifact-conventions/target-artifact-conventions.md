@@ -34,6 +34,8 @@ To prevent random names scripts also have to follow conventions.
 - Scripts need to have the following format:
   > `<action>-<short-title>.sh`
 
+Short title should be the short name of the object on which the action is performed on.
+
 Actions should be as general as possible. Here is a list of script names that can be used:
 - build scripts - `build-<short-title>.sh`
 - deploy scripts - `deploy-<short-title>.sh`
