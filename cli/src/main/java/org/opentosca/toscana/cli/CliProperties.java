@@ -13,7 +13,6 @@ public class CliProperties {
 
     public final String CLI_PROPS_ENDPOINT_KEY = "endpoint";
     private final Properties properties = new Properties();
-    private String filePath;
     private String dataPath = null;
     private File file;
     private String operatingSystem = null;
@@ -34,6 +33,7 @@ public class CliProperties {
         } catch (IOException e) {
             System.err.println("Something went wrong while trying to store the cli.properties config file");
             e.printStackTrace();
+            System.exit(1);
         }
     }
 
@@ -43,7 +43,7 @@ public class CliProperties {
      @return API Url
      */
     public String getApiUrl() {
-        String url;
+        String url = "";
 
         try {
             InputStream inputStream = new FileInputStream(file);
@@ -52,19 +52,17 @@ public class CliProperties {
         } catch (IOException e) {
             System.err.println("Something went wrong while trying to load the API Endpoint.");
             e.printStackTrace();
+            System.exit(1);
         }
 
-        url = properties.getProperty(CLI_PROPS_ENDPOINT_KEY);
+        url += properties.getProperty(CLI_PROPS_ENDPOINT_KEY);
 
         if (url.length() > 0) {
             return url;
         } else {
             createProperties();
-            try {
-                throw new IOException("API Endpoint not correctly set, using default value");
-            } catch (IOException e) {
-                System.err.println(e.getMessage());
-            }
+            System.err.println("API Endpoint not correctly set, using default value http://127.0.0.1:8084/");
+            System.exit(2);
             return getApiUrl();
         }
     }
@@ -84,15 +82,16 @@ public class CliProperties {
             final String cliProp = "/cli.properties";
             if (operatingSystem.contains("Linux") || operatingSystem.contains("Mac")) {
                 dataDir = new File(dataPath, "/.toscana");
-                file = new File(dataDir.getPath(), cliProp);
+                file = new File(dataDir, cliProp);
             } else if (operatingSystem.contains("Windows")) {
                 dataDir = new File(dataPath, "/AppData/toscana");
-                file = new File(dataDir.getPath(), cliProp);
+                file = new File(dataDir, cliProp);
             } else {
                 dataPath = FileUtils.getTempDirectory() + File.separator + "toscana";
                 dataDir = new File(dataPath);
-                file = new File(dataDir.getPath(), cliProp);
-                System.err.println(String.format("fallback value for datadir not defined for current platform '%s'. Falling back to '%s'", operatingSystem, filePath));
+                file = new File(dataDir, cliProp);
+                System.err.println(String.format("fallback value for data directory not defined for current platform '%s'. Falling back to '%s'", operatingSystem, dataDir.getPath()));
+                System.exit(1);
             }
         }
 
@@ -100,6 +99,7 @@ public class CliProperties {
             dataDir.mkdirs();
             if (!dataDir.exists()) {
                 System.err.println("Failed to create data directory");
+                System.exit(1);
             }
         }
 
