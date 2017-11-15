@@ -65,9 +65,12 @@ topology_template:
       capabilities:
         host:
           properties:
+            num_cpus: 1
             disk_size: 10 GB
+            meme_size: 4096 MB
         os:
           properties:
+            architecture: x86_64
             type: linux
             distribution: ubuntu
             version: 16.04
