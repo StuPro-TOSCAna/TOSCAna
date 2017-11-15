@@ -11,7 +11,7 @@ public class KubernetesManualCreator {
      */
     public static String createManual(String appName, String resFileName) throws IOException {
         Class clazz = KubernetesManualCreator.class;
-        InputStream manual = clazz.getResourceAsStream("/kubernetes/k8s_manual_guide.md");
+        InputStream manual = clazz.getResourceAsStream("/kubernetes/kubernetes_manual_guide.md");
         String result = IOUtils.toString(manual);
         manual.close();
         result = result.replaceAll("\\{app_name}", appName);
