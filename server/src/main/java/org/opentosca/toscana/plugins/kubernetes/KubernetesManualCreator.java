@@ -15,7 +15,7 @@ public class KubernetesManualCreator {
         String result = IOUtils.toString(manual);
         manual.close();
         result = result.replaceAll("\\{app_name}", appName);
-        result = result.replaceAll("\\{k8s_resource_file}", resFileName);
+        result = result.replaceAll("\\{kubernetes_resource_file}", resFileName);
         return result;
     }
 }
