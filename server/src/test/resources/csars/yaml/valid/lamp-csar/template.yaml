@@ -33,7 +33,7 @@ topology_template:
           start:
             implementation: scripts/start_myphpapp.php
             inputs:
-              db_host: { #TODO needs to be the address of the Apache server? }
+              db_host: { get_attribute: [ apache_web_server, private_address ] }
               db_name: { get_property: [ my_db, name ] }
               db_user: { get_property: [ my_db, user ] }
               db_password: { get_property: [ my_db, password ] }
