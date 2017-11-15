@@ -1,8 +1,8 @@
-# Transformation Lifecycle Archtecture
+# Transformation Lifecycle Architecture
 
 ## Introduction
 
-This document and the corresponding diagrams represent a potential architecture for the lifecycle operations of a transformation described in Pull Request #159. It was expected, that a transformation has to support the following operations (descriptions have been taken from [here](transformation-lifecycle.md)):
+This document and the corresponding diagrams represent a potential architecture for the lifecycle operations of a transformation described in Pull Request [#159](https://github.com/StuPro-TOSCAna/TOSCAna/pull/159). It was expected, that a transformation has to support the following operations (descriptions have been taken from [here](transformation-lifecycle.md)):
 
 1. `validate()` - The validation phase performs several checks to ensure that the transformation can even be executed (for details see [Validation Phase](#validation-phase))
 3. `prepare()` - in this step the plugin processes the graph to transform it in the following step. For example the kubernetes plugin needs to split the graph into container and pods.
@@ -15,7 +15,7 @@ The lifecyle approach is resolving several general issues:
 - Simplifies the plugin implementation in terms of code size because common parts can get externalized (removes boilerplate code)
 - The plugins structure gets way clearer.
 
-The TransformationLifecycleInterface (short: TLI) has methods that represent each task these methods get called in the sequence that was defined in PR #159 (or above).
+The TransformationLifecycleInterface (short: TLI) has methods that represent each task these methods get called in the sequence that was defined in PR Pull Request [#159](https://github.com/StuPro-TOSCAna/TOSCAna/pull/159) (or above).
 
 The creation is done using a factory method that has to be implemented by all subclasses of the `BasePlugin` (currently called `AbstractPlugin`) to produce a Plugin Specific instance of the TLI interface.
 
@@ -42,30 +42,46 @@ While thinking about this i came across two implementation approaches, the follo
 
 This approach clearly splits the node type check (short `type check`) and the model check into two seperate phases. 
 
-The interfaces defined by using this approach will look like this (just to showcase):
+The interfaces and classes defined by using this approach will look like this (just to showcase):
 
 TOSCAna Plugin (just for illustration purposes, class diagrams will follow):
 ```java
 public abstract class LifecycleAwarePlugin<T extends TransformationLifecycle>
     implements TransformationPlugin {
-    protected abstract List<NodeTypes> getSupportedNodeTypes();
+    protected abstract Set<NodeTypes> getSupportedNodeTypes();
     protected abstract boolean checkEnvironment();
     protected abstract T getInstance(TransformationContext ctx);
 
     public void transform(TransformationContext ctx) {
         //This method will implement the mechanism to execute the seperate phases
     }
+
 } 
 ```
+**Method descriptions**
+- `getSupportedNodeTypes()` - Returns a set of classes for the supported node types
+- `checkEnvironment()` - Performs ths `env-check` part of the validation phase
+- `getInstance()` - Factory method, to produce a instance of the plugin specific Lifecycle interface with the given transformation Context
 
 ```java
 public interface TransformationLifecycle {
-    void validateModel();
+    boolean validateNodeTypes();
+    boolean validateModel();
     void prepare();
     void transform();
     void cleanup();
 }
 ```
+**Method descriptions**
+- `validateNodeType()` - This method will be implemented by a common base class. It gets or builds a set of all node types used in the model. and then compares them to the set of supported nodes (`LifecycleAwarePlugin.getSupportedNodeTypes()`) if all Node types of the modell are in the set of the supported ones the transformation will proceed (the method will return `true`)
+- `validateModel()` - This method should be used to check the model (probably by iterating over it). If a property is not supported (i.e. Windows on Kubernetes) the check should return false.
+- `prepare()`, `transform()` and `cleanup()` - Perform the corresponding phase described in the [Introduction](#introduction)  
+
+##### Sequence diagram
+
+The order in which these methods get called is shown in the following sequence diagram:
+
+![](diagrams/seperate-validation-sequence-diagram.png)
 
 #### Combined model and type check
 
