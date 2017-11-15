@@ -48,7 +48,7 @@ TOSCAna Plugin (just for illustration purposes, class diagrams will follow):
 ```java
 public abstract class LifecycleAwarePlugin<T extends TransformationLifecycle>
     implements TransformationPlugin {
-    protected abstract Set<NodeTypes> getSupportedNodeTypes();
+    protected abstract Set<Class<? extends RootNode>> getSupportedNodeTypes();
     protected abstract boolean checkEnvironment();
     protected abstract T getInstance(TransformationContext ctx);
 
