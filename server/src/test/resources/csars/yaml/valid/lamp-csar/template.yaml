@@ -7,6 +7,19 @@ metadata:
 
 
 topology_template:
+  inputs:
+    database_name:
+      type: string
+    database_user:
+      type: string
+    database_password:
+      type: string
+    database_port:
+      type: integer
+    my_mysql_rootpw:
+      type: string
+    my_mysql_port:
+      type: integer
 
   node_templates:
     my_app:
@@ -38,7 +51,7 @@ topology_template:
       capabilities:
         database_endpoint:
           properties:
-            port: { get_input: db_port }
+            port: { get_property: [SELF, port] }
       requirements:
         - host: mysql_dbms
         interfaces:
@@ -74,3 +87,7 @@ topology_template:
             type: linux
             distribution: ubuntu
             version: 16.04
+    outputs:
+      endpoint:
+        description: endpoint of the php-app
+          value: { get_attribute: [ my_app, #TODO ] }
