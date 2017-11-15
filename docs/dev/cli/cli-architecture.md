@@ -30,6 +30,10 @@ The methods shown in the above class diagram have the following functionality:
 
 The **CliMain** is the main class to initialize the CLI and show the possible commands, subcommands or options that can be executed in the CLI. After the user has made a correct commandline input, the CliController trys to call the corresponding classes which run the methods.
 
+## CliProperties
+
+The **CliProperties** class, creates a cli.properties config file if it doesn't exist and returns the API Url that is used to call the REST API.
+
 ## Commands Package
 The **commands package** contains several classes and three packages: csar, platform and the transformation package. The packages and classes are mandatory to create the Picocli components for the CLI.
 ToscanaHelp shows the Help Page of the CLI, ToscanaStatus the status of the System and AbstractCommands contains the Options that are used from most of the classes.

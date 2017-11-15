@@ -19,7 +19,7 @@ public class PlatformInfo extends AbstractCommand implements Runnable {
     private String platformInfo;
 
     /**
-     * show's information about the wanted platform
+     show's information about the wanted platform
      */
     public PlatformInfo() {
     }

@@ -94,7 +94,8 @@ public class TransformationInput extends AbstractTransformation implements Runna
         Properties properties = new Properties();
         InputStream inputStream = new FileInputStream(file);
         properties.load(inputStream);
-        Enumeration<?> pro = properties.propertyNames();
+        inputStream.close();
+        Enumeration pro = properties.propertyNames();
 
         while (pro.hasMoreElements()) {
             String key = pro.nextElement().toString();
