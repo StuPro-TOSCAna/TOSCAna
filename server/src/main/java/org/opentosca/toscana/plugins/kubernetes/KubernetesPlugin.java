@@ -1,5 +1,6 @@
 package org.opentosca.toscana.plugins.kubernetes;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -41,12 +42,31 @@ public class KubernetesPlugin extends AbstractPlugin {
         PluginFileAccess fileAccess = context.getPluginFileAccess();
         DockerApp dockerApp = getDockerApp(context.getServiceTemplate());
         String appName = dockerApp.getTag()[1];
+        generateReadme(fileAccess, appName);
+        generateResources(fileAccess, appName);
+        copyImplementationArtifacts(fileAccess, dockerApp);
+        generateBuildScript(fileAccess, dockerApp);
+    }
+
+    private void generateBuildScript(PluginFileAccess fileAccess, DockerApp dockerApp) throws IOException, DockerImageBuildScript.DockerImageBuildScriptException {
+        DockerImageBuildScript buildScript = new DockerImageBuildScript();
+        buildScript.addDockerApp(dockerApp);
+        fileAccess.access("/scripts/build.sh").append(buildScript.generateBuildScript()).close();
+    }
+
+    private void generateResources(PluginFileAccess fileAccess, String appName) throws IOException {
         String resourceFile = new KubernetesResourceFileCreator().createResourceFileAsString(appName);
-        String manual = KubernetesManualCreator.createManual(appName, (appName + "_resource.yaml"));
         String resourceFilePath = "/" + appName + "_resource.yaml";
+        fileAccess.access(resourceFilePath).append(resourceFile).close();
+    }
+
+    private void generateReadme(PluginFileAccess fileAccess, String appName) throws IOException {
+        String manual = KubernetesManualCreator.createManual(appName, (appName + "_resource.yaml"));
         String manualPath = "/Readme.md";
-        fileAccess.access(manualPath).write(manual);
-        fileAccess.access(resourceFilePath).write(resourceFile);
+        fileAccess.access(manualPath).append(manual).close();
+    }
+
+    private void copyImplementationArtifacts(PluginFileAccess fileAccess, DockerApp dockerApp) throws IOException {
         List<String> dockerFilePaths = dockerApp.getDependencies();
         for (String s : dockerFilePaths) {
             logger.info("copied: " + s);

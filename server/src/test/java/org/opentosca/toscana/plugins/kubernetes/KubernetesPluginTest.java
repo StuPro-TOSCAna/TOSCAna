@@ -1,8 +1,6 @@
 package org.opentosca.toscana.plugins.kubernetes;
 
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.util.List;
 
 import org.opentosca.toscana.core.BaseSpringTest;
@@ -15,8 +13,6 @@ import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.assertj.core.util.Lists;
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.mockito.Matchers.any;
@@ -26,7 +22,6 @@ import static org.mockito.Mockito.when;
 import static org.opentosca.toscana.core.testdata.TestCsars.CSAR_YAML_VALID_DOCKER_SIMPLETASK;
 
 public class KubernetesPluginTest extends BaseSpringTest {
-    private static final Logger log = LoggerFactory.getLogger(KubernetesPluginTest.class);
 
     private static KubernetesPlugin plugin;
     @Autowired
@@ -47,7 +42,9 @@ public class KubernetesPluginTest extends BaseSpringTest {
         PluginFileAccess pluginFileAccess = mock(PluginFileAccess.class);
         when(context.getPluginFileAccess()).thenReturn(pluginFileAccess);
         when(context.getServiceTemplate()).thenReturn(csarParseService.parse(csar));
-        when(pluginFileAccess.access(any(String.class))).thenReturn(new BufferedWriter(new FileWriter(new File(tmpdir, "blob.blob"))));
+        BufferedWriter mock = mock(BufferedWriter.class);
+        when(pluginFileAccess.access(any(String.class))).thenReturn(mock);
+        when(mock.append(any(String.class))).thenReturn(mock);
         plugin.transform(context);
         verify(pluginFileAccess).access("/Readme.md");
         verify(pluginFileAccess).access("/simple-task-app_resource.yaml");

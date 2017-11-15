@@ -20,5 +20,6 @@
     <modules>
         <module>cli</module>
         <module>server</module>
+        <module>retrofit-wrapper</module>
     </modules>
 </project>

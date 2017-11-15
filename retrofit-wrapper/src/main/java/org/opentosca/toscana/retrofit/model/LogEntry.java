@@ -1,0 +1,34 @@
+package org.opentosca.toscana.retrofit.model;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public class LogEntry {
+    private Long timestamp;
+    private String level;
+    private String message;
+
+    public LogEntry(
+        @JsonProperty("timestamp") Long timestamp,
+        @JsonProperty("level") String level,
+        @JsonProperty("message") String message
+    ) {
+        this.timestamp = timestamp;
+        this.level = level;
+        this.message = message;
+    }
+
+    @JsonProperty("timestamp")
+    public Long getTimestamp() {
+        return timestamp;
+    }
+
+    @JsonProperty("level")
+    public String getLevel() {
+        return level;
+    }
+
+    @JsonProperty("message")
+    public String getMessage() {
+        return message;
+    }
+}
