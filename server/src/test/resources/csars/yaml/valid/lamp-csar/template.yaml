@@ -13,10 +13,13 @@ topology_template:
       type: tosca.nodes.SoftwareComponent
       requirements:
         - host: ApacheWebServer
+      interfaces:
+        Standard:
+          create: install_php.sh
+          start: start_myphpapp.sh
 
     ApacheWebServer:
       type: tosca.nodes.WebServer
-      properties: #TODO
       requirements:
         - host: server
       interfaces:
