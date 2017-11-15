@@ -2,11 +2,11 @@
 // include the credentials to connect to the db
 //include_once "mysql-credentials.php";
 
-$host = "127.0.0.1";
-$username = "root";
-$password = "";
-$database = "mydb";
-$port = 3306;
+$db_host = "127.0.0.1";
+$db_user = "root";
+$db_password = "";
+$db_name = "mydb";
+$db_port = 3306;
 
 // get task from post after task was entered in form
 $post = $_POST['task'];
@@ -49,7 +49,7 @@ function readFromDb()
 function newDbConnection()
 {
     extract($GLOBALS);
-   $conn = new mysqli($host, $username, $password, $database, $port);
+   $conn = new mysqli($db_host, $db_user, $db_password, $db_name, $db_port);
     if ($conn->connect_error) {
         die("Connection failed: " . $conn->connect_error);
     }

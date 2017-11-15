@@ -1,2 +1,2 @@
 #!/bin/bash
-sudo mysqladmin -u root -p password my_mysql_rootpw
+sudo mysqladmin -u root -p password db_root_password

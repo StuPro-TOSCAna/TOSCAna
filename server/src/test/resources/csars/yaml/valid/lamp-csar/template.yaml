@@ -23,14 +23,21 @@ topology_template:
 
   node_templates:
     my_app:
-      type: tosca.nodes.SoftwareComponent
+      type: tosca.nodes.WebApplication
       requirements:
         - host: apache_web_server
         - database_endpoint: my_db
       interfaces:
         Standard:
           create: scripts/install_php.sh
-          start: scripts/start_myphpapp.php
+          start:
+            implementation: scripts/start_myphpapp.php
+            inputs:
+              db_host: { #TODO needs to be the address of the Apache server? }
+              db_name: { get_property: [ my_db, name ] }
+              db_user: { get_property: [ my_db, user ] }
+              db_password: { get_property: [ my_db, password ] }
+              db_port: { get_property: [ SELF, database_endpoint, port ] }
 
     apache_web_server:
       type: tosca.nodes.WebServer
@@ -51,13 +58,12 @@ topology_template:
       capabilities:
         database_endpoint:
           properties:
-            port: { get_property: [SELF, port] }
+            port: { get_input: database_port }
       requirements:
         - host: mysql_dbms
         interfaces:
           Standard:
-            create:
-              implementation: scripts/db_create.sh
+            create: scripts/db_create.sh
 
     mysql_dbms:
       type: tosca.nodes.DBMS.MySQL
@@ -70,9 +76,9 @@ topology_template:
           Standard:
             inputs:
               db_root_password: { get_property: [ mysql_dbms, root_password ] }
-              create: scripts/mysql_dbms_install.sh
-              start: scripts/mysql_dbms_start.sh
-              configure: scripts/mysql_dbms_configure.sh
+            create: scripts/mysql_dbms_install.sh
+            start: scripts/mysql_dbms_start.sh
+            configure: scripts/mysql_dbms_configure.sh
 
     server:
       type: tosca.nodes.Compute
@@ -90,4 +96,4 @@ topology_template:
     outputs:
       endpoint:
         description: endpoint of the php-app
-          value: { get_attribute: [ my_app, #TODO ] }
+          value: { get_attribute: [ server, public_address ] }
