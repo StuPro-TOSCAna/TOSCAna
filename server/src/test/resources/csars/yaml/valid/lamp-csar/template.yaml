@@ -15,8 +15,8 @@ topology_template:
         - host: ApacheWebServer
       interfaces:
         Standard:
-          create: install_php.sh
-          start: start_myphpapp.sh
+          create: scripts/install_php.sh
+          start: scripts/start_myphpapp.php
 
     ApacheWebServer:
       type: tosca.nodes.WebServer
@@ -24,8 +24,8 @@ topology_template:
         - host: server
       interfaces:
         Standard:
-          create: webserver_install.sh
-          start: webserver_start.sh
+          create: scripts/webserver_install.sh
+          start: scripts/webserver_start.sh
 
     my_db:
       type: tosca.nodes.Database.MySQL
@@ -43,7 +43,7 @@ topology_template:
         interfaces:
           Standard:
             create:
-              implementation: db_create.sh
+              implementation: scripts/db_create.sh
 
     mysql_dbms:
       type: tosca.nodes.DBMS.MySQL
@@ -56,10 +56,18 @@ topology_template:
           Standard:
             inputs:
               db_root_password: { get_property: [ mysql_dbms, root_password ] }
-              create: mysql_dbms_install.sh
-              start: mysql_dbms_start.sh
-              configure: mysql_dbms_configure.sh
+              create: scripts/mysql_dbms_install.sh
+              start: scripts/mysql_dbms_start.sh
+              configure: scripts/mysql_dbms_configure.sh
 
     server:
       type: tosca.nodes.Compute
-      capabilities: #TODO
+      capabilities:
+        host:
+          properties:
+            disk_size: 10 GB
+        os:
+          properties:
+            type: linux
+            distribution: ubuntu
+            version: 16.04
