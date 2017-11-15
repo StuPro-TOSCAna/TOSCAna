@@ -1,5 +1,5 @@
 tosca_definitions_version: tosca_simple_yaml_1_0
-description: Template for deploying a lamp-stack application
+description: Template for deploying a LAMP stack.
 metadata:
   template_name: lamp-stack-template
   template_author: stupro-toscana
@@ -7,18 +7,19 @@ metadata:
 
 
 topology_template:
-  node_templates:
 
+  node_templates:
     my_app:
       type: tosca.nodes.SoftwareComponent
       requirements:
-        - host: ApacheWebServer
+        - host: apache_web_server
+        - database_endpoint: my_db
       interfaces:
         Standard:
           create: scripts/install_php.sh
           start: scripts/start_myphpapp.php
 
-    ApacheWebServer:
+    apache_web_server:
       type: tosca.nodes.WebServer
       requirements:
         - host: server
@@ -66,11 +67,10 @@ topology_template:
         host:
           properties:
             num_cpus: 1
-            disk_size: 10 GB
-            meme_size: 4096 MB
+            disk_size: 25 GB
+            mem_size: 2048 MB
         os:
           properties:
-            architecture: x86_64
             type: linux
             distribution: ubuntu
             version: 16.04
