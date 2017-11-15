@@ -62,7 +62,6 @@ public class CliProperties {
         } else {
             createProperties();
             System.err.println("API Endpoint not correctly set, using default value http://127.0.0.1:8084/");
-            System.exit(2);
             return getApiUrl();
         }
     }
