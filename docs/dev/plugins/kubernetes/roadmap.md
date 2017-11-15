@@ -1,4 +1,4 @@
-# K8s roadmap
+# Kubernetes roadmap
 
 # Transformation
 1. simple plugin that generates artefact with a single template
