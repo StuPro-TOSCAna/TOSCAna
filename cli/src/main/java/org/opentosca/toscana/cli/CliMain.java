@@ -18,7 +18,8 @@ import static picocli.CommandLine.usage;
     header = "@|bold,green TOSCAna Command Line Interface%n|@",
     customSynopsis = "@|bold toscana|@ [@|yellow <command>|@] [@|yellow <subcommand>|@] [@|yellow -mv|@]",
     commandListHeading = "%nMost commonly used TOSCAna commands are:%n",
-    footer = {"%nSee 'toscana help [@|yellow <command>|@]' or 'toscana help [@|yellow <command>|@] [@|yellow <subcommand>|@]' to read about a specific command or subcommand."},
+    footer = {"%nSee 'toscana help [@|yellow <command>|@]' or 'toscana help [@|yellow <command>|@] [@|yellow <subcommand>|@]' to read about a specific command or subcommand.",
+    "You can set the API URL which is used in the CLI, in the cli.properties file under the Toscana folder" },
     subcommands = {ToscanaCsar.class,
         ToscanaHelp.class,
         TransformationInput.class,
@@ -32,6 +33,9 @@ public class CliMain extends AbstractCommand implements Runnable {
         //Activate ANSI on Windows
         AnsiConsole.systemInstall();
         System.setProperty("picocli.ansi", "true");
+        
+        //First startup to create cli.properties
+        new CliProperties();
 
         //System Property gets set here, because picocli.trace must be set before CommandLine starts
         String input = String.join("", args);

@@ -6,7 +6,7 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
 /**
- * Abstract class to provide often used Options and the ApiController initialization
+ Abstract class to provide often used Options and the ApiController initialization
  */
 @Command(//parameterListHeading = "%nParameters:%n",
     optionListHeading = "%nOptions:%n",
