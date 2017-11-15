@@ -42,10 +42,10 @@ public class ApiController {
     private Constants con;
 
     /**
-     * Constructor for the ApiController, parameters decide if there should be any output of information
-     *
-     * @param moreVerbose very detailed output
-     * @param verbose     some output
+     Constructor for the ApiController, parameters decide if there should be any output of information
+
+     @param moreVerbose very detailed output
+     @param verbose     some output
      */
     public ApiController(boolean moreVerbose, boolean verbose) {
         con = new Constants();
@@ -55,40 +55,46 @@ public class ApiController {
         //starts the retrofit client with the chosen loglevel
         OkHttpClient client;
         HttpLoggingInterceptor interceptor;
-        Retrofit retrofit;
-        if (verbose) {
-            interceptor = new HttpLoggingInterceptor();
-            interceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
-            client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
-            retrofit = new Retrofit.Builder()
-                .baseUrl(API_URL)
-                .client(client)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        } else if (moreVerbose) {
-            interceptor = new HttpLoggingInterceptor();
-            interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-            client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
-            retrofit = new Retrofit.Builder()
-                .baseUrl(API_URL)
-                .client(client)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        } else {
-            retrofit = new Retrofit.Builder()
-                .baseUrl(API_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
+        Retrofit retrofit = null;
+        try {
+            if (verbose) {
+                interceptor = new HttpLoggingInterceptor();
+                interceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
+                client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
+                retrofit = new Retrofit.Builder()
+                    .baseUrl(API_URL)
+                    .client(client)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+            } else if (moreVerbose) {
+                interceptor = new HttpLoggingInterceptor();
+                interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+                client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
+                retrofit = new Retrofit.Builder()
+                    .baseUrl(API_URL)
+                    .client(client)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+            } else {
+                retrofit = new Retrofit.Builder()
+                    .baseUrl(API_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+            }
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+            System.exit(1);
         }
+
         service = retrofit.create(RestService.class);
     }
 
     /**
-     * Calls the REST API to upload the CSAR, handles different response codes which are returned
-     *
-     * @param file CSAR Archive to upload
-     * @return output for the CLI
-     * @throws IOException if the responsebody is null
+     Calls the REST API to upload the CSAR, handles different response codes which are returned
+
+     @param file CSAR Archive to upload
+     @return output for the CLI
+     @throws IOException if the responsebody is null
      */
     public String uploadCsar(File file) throws IOException {
         RequestBody reqFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
@@ -112,11 +118,11 @@ public class ApiController {
     }
 
     /**
-     * Calls the REST API and deletes the specified CSAR if it's available, handles different response codes
-     *
-     * @param csar CSAR to delete from the Transformator
-     * @return output for the CLI
-     * @throws IOException if the responsebody is null
+     Calls the REST API and deletes the specified CSAR if it's available, handles different response codes
+
+     @param csar CSAR to delete from the Transformator
+     @return output for the CLI
+     @throws IOException if the responsebody is null
      */
     public String deleteCsar(String csar) throws IOException {
         Call<ResponseBody> deleteCsarCall = service.deleteCsar(csar);
@@ -142,10 +148,10 @@ public class ApiController {
     }
 
     /**
-     * Calls the REST API and lists all available CSARs, only handles code 200 or exception responses
-     *
-     * @return output for the CLI
-     * @throws IOException if the responsebody is null
+     Calls the REST API and lists all available CSARs, only handles code 200 or exception responses
+
+     @return output for the CLI
+     @throws IOException if the responsebody is null
      */
     public String listCsar() throws IOException {
         StringBuilder stringCsars = new StringBuilder();
@@ -170,11 +176,11 @@ public class ApiController {
     }
 
     /**
-     * Calls the REST API and prints detailed Information for the specified CSAR if it's available
-     *
-     * @param csarName Name of the CSAR which information should be shown
-     * @return output for the CLI
-     * @throws IOException if the responsebody is null
+     Calls the REST API and prints detailed Information for the specified CSAR if it's available
+
+     @param csarName Name of the CSAR which information should be shown
+     @return output for the CLI
+     @throws IOException if the responsebody is null
      */
     public String infoCsar(String csarName) throws IOException {
         Call<Csar> csarCall = service.getCsar(csarName);
@@ -199,13 +205,12 @@ public class ApiController {
     }
 
     /**
-     * TODO split this into a real start and create operation Calls the REST API and starts the Transformation, handles
-     * response codes
-     *
-     * @param csar CSAR for which a transformation should be started
-     * @param plat platform for which a transformation should be started
-     * @return output for the CLI
-     * @throws IOException if the responsebody is null
+     Calls the REST API and starts the Transformation, handles response codes
+
+     @param csar CSAR for which a transformation should be started
+     @param plat platform for which a transformation should be started
+     @return output for the CLI
+     @throws IOException if the responsebody is null
      */
     public String startTransformation(String csar, String plat) throws IOException {
         Call<ResponseBody> startTransformationCall = service.createTransformation(csar, plat);
@@ -241,24 +246,24 @@ public class ApiController {
     }
 
     /**
-     * TODO: Implement functionality Calls the REST API and stops the currently running Transformation if it's running
-     *
-     * @param csar CSAR to stop transformation for
-     * @param plat platform to stop transformation for
-     * @return output for the CLI
-     * @throws IOException if the responsebody is null
+     TODO: Implement functionality Calls the REST API and stops the currently running Transformation if it's running
+
+     @param csar CSAR to stop transformation for
+     @param plat platform to stop transformation for
+     @return output for the CLI
+     @throws IOException if the responsebody is null
      */
     public String stopTransformation(String csar, String plat) throws IOException {
         return con.TRANSFORMATION_STOP;
     }
 
     /**
-     * Calls the REST API and deletes the specified Transformation, handles response codes
-     *
-     * @param csar CSAR for which transformation should be deleted
-     * @param plat platform for which the transformation should be deleted
-     * @return output for the CLI
-     * @throws IOException if the responsebody is null
+     Calls the REST API and deletes the specified Transformation, handles response codes
+
+     @param csar CSAR for which transformation should be deleted
+     @param plat platform for which the transformation should be deleted
+     @return output for the CLI
+     @throws IOException if the responsebody is null
      */
     public String deleteTransformation(String csar, String plat) throws IOException {
         Call<ResponseBody> deleteTransformationCall = service.deleteTransformation(csar, plat);
@@ -284,12 +289,12 @@ public class ApiController {
     }
 
     /**
-     * Calls the REST API to download an Artifact for the specified finished Transformation, handles response codes
-     *
-     * @param csar CSAR for which to download an Artifact
-     * @param plat Platform for which the Artifact should be downloaded
-     * @return output for the CLI
-     * @throws IOException if the responsebody is null
+     Calls the REST API to download an Artifact for the specified finished Transformation, handles response codes
+
+     @param csar CSAR for which to download an Artifact
+     @param plat Platform for which the Artifact should be downloaded
+     @return output for the CLI
+     @throws IOException if the responsebody is null
      */
     public String downloadTransformation(String csar, String plat) throws IOException {
         Call<ResponseBody> artifactCall = service.getArtifact(csar, plat);
@@ -319,11 +324,11 @@ public class ApiController {
     }
 
     /**
-     * Calls the REST API and lists all available Transformations for the CSAR
-     *
-     * @param csar CSAR, for which transformations should be shown
-     * @return output for the CLI
-     * @throws IOException if the responsebody is null
+     Calls the REST API and lists all available Transformations for the CSAR
+
+     @param csar CSAR, for which transformations should be shown
+     @return output for the CLI
+     @throws IOException if the responsebody is null
      */
     public String listTransformation(String csar) throws IOException {
         StringBuilder stringTransformations = new StringBuilder();
@@ -354,12 +359,12 @@ public class ApiController {
     }
 
     /**
-     * Calls the REST API and returns all Information about the Transformation
-     *
-     * @param csar CSAR, for which Transformation Info should be shown
-     * @param plat Platform, for which Information should be shown
-     * @return output for the CLI
-     * @throws IOException if the responsebody is null
+     Calls the REST API and returns all Information about the Transformation
+
+     @param csar CSAR, for which Transformation Info should be shown
+     @param plat Platform, for which Information should be shown
+     @return output for the CLI
+     @throws IOException if the responsebody is null
      */
     public String infoTransformation(String csar, String plat) throws IOException {
         Call<Transformation> transformationCall = service.getTransformation(csar, plat);
@@ -386,13 +391,13 @@ public class ApiController {
     }
 
     /**
-     * Calls the REST API and returns logs for the specified Transformation
-     *
-     * @param csar  CSAR for which a transformation is available
-     * @param plat  Platform for which a transformation is available
-     * @param start where to start with log output, default is start position 0
-     * @return output for the CLI
-     * @throws IOException if the responsebody is null
+     Calls the REST API and returns logs for the specified Transformation
+
+     @param csar  CSAR for which a transformation is available
+     @param plat  Platform for which a transformation is available
+     @param start where to start with log output, default is start position 0
+     @return output for the CLI
+     @throws IOException if the responsebody is null
      */
     public String logsTransformation(String csar, String plat, int start) throws IOException {
         StringBuilder stringLogs = new StringBuilder();
@@ -431,12 +436,12 @@ public class ApiController {
     }
 
     /**
-     * Calls the REST API and shows every needed Input, that must be set before a transformation can be started
-     *
-     * @param csar CSAR for which required inputs should be shown
-     * @param plat Platform for which required inputs should be shown
-     * @return output for the CLI
-     * @throws IOException if the responsebody is null
+     Calls the REST API and shows every needed Input, that must be set before a transformation can be started
+
+     @param csar CSAR for which required inputs should be shown
+     @param plat Platform for which required inputs should be shown
+     @return output for the CLI
+     @throws IOException if the responsebody is null
      */
     public String inputList(String csar, String plat) throws IOException {
         StringBuilder stringInputs = new StringBuilder();
@@ -472,14 +477,14 @@ public class ApiController {
     }
 
     /**
-     * Calls the REST API, and trys to set the required Inputs. After they are set successfully a transformation can be
-     * started
-     *
-     * @param csar   CSAR for which to set Inputs
-     * @param plat   Platform for which to set Inputs
-     * @param inputs the required inputs, format is key=value, = is not allowed as an identifier
-     * @return output for the CLI
-     * @throws IOException if the responsebody is null
+     Calls the REST API, and trys to set the required Inputs. After they are set successfully a transformation can be
+     started
+
+     @param csar   CSAR for which to set Inputs
+     @param plat   Platform for which to set Inputs
+     @param inputs the required inputs, format is key=value, = is not allowed as an identifier
+     @return output for the CLI
+     @throws IOException if the responsebody is null
      */
     public String placeInput(String csar, String plat, Map<String, String> inputs) throws IOException {
         Call<ResponseBody> inputsCall = service.setInputs(csar, plat, inputs);
@@ -505,10 +510,10 @@ public class ApiController {
     }
 
     /**
-     * Calls the REST API and returns all Platforms, that are available for a transformation
-     *
-     * @return output for the CLI
-     * @throws IOException if the responsebody is null
+     Calls the REST API and returns all Platforms, that are available for a transformation
+
+     @return output for the CLI
+     @throws IOException if the responsebody is null
      */
     public String listPlatform() throws IOException {
         StringBuilder stringPlatforms = new StringBuilder();
@@ -533,11 +538,11 @@ public class ApiController {
     }
 
     /**
-     * Calls the REST API and returns all Information about the Platform
-     *
-     * @param platform Platform for which all it's information should be shown
-     * @return output for the CLI
-     * @throws IOException if the responsebody is null
+     Calls the REST API and returns all Information about the Platform
+
+     @param platform Platform for which all it's information should be shown
+     @return output for the CLI
+     @throws IOException if the responsebody is null
      */
     public String infoPlatform(String platform) throws IOException {
         Call<Platform> platformCall = service.getPlatform(platform);
@@ -562,10 +567,10 @@ public class ApiController {
     }
 
     /**
-     * Calls the REST API and returns the current state of the system
-     *
-     * @return output for the CLI
-     * @throws IOException if the responsebody is null
+     Calls the REST API and returns the current state of the system
+
+     @return output for the CLI
+     @throws IOException if the responsebody is null
      */
     public String showStatus() throws IOException {
         Call<Status> statusCall = service.getSystemStatus();

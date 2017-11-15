@@ -57,7 +57,12 @@ public class CliProperties {
         }
 
         url += properties.getProperty(CLI_PROPS_ENDPOINT_KEY);
-
+        boolean escapedString = url.contains("\"");
+        if (escapedString) {
+            url = url.replaceAll("\"", "");
+            System.out.println("Given URL has a illegal quotation marks.");
+            System.out.println("Removing the illegal characters.");
+        }
         if (url.length() > 0) {
             return url;
         } else {
