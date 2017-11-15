@@ -83,8 +83,6 @@ The order in which these methods get called is shown in the following sequence d
 
 ![](diagrams/seperate-validation-sequence-diagram.png)
 
-#### Combined model and type check
-
 ## Progress caluclation
 
 Putting tasks in seperate methods allows a very simple, but also very inacurate way to calculate the progress. (at least when looking at execution time):
