@@ -1,7 +1,12 @@
 <?php
 // include the credentials to connect to the db
-include_once "mysql-credentials.php";
+//include_once "mysql-credentials.php";
 
+$db_host = "127.0.0.1";
+$db_user = "root";
+$db_password = "abc";
+$db_name = "mydb";
+$db_port = 3306;
 
 // get task from post after task was entered in form
 $post = $_POST['task'];

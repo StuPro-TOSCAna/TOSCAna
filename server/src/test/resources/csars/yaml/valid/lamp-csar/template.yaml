@@ -34,7 +34,8 @@ topology_template:
             implementation:
               primary: scripts/start_myphpapp.sh
               dependencies:
-                - scripts/myphpapp.php
+                - myphpapp.php
+                - mysql-credentials.php
             inputs:
               db_host: { get_attribute: [ apache_web_server, private_address ] }
               db_name: { get_property: [ my_db, name ] }
