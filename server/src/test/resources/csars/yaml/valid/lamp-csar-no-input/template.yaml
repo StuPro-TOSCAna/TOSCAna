@@ -22,12 +22,6 @@ topology_template:
               dependencies:
                 - myphpapp.php
                 - mysql-credentials.php
-            inputs:
-              db_host: { get_attribute: [ apache_web_server, private_address ] }
-              db_name: { get_property: [ my_db, name ] }
-              db_user: { get_property: [ my_db, user ] }
-              db_password: { get_property: [ my_db, password ] }
-              db_port: { get_property: [ SELF, database_endpoint, port ] }
 
     apache_web_server:
       type: tosca.nodes.WebServer.Apache
@@ -41,14 +35,14 @@ topology_template:
     my_db:
       type: tosca.nodes.Database.MySQL
       properties:
-        name: { get_input: database_name }
-        user: { get_input: database_user }
-        password: { get_input: database_password }
-        port: { get_input: database_port }
+        name: { mydb }
+        user: { root }
+        password: { abc }
+        port: { 3306 }
       capabilities:
         database_endpoint:
           properties:
-            port: { get_input: database_port }
+            port: { 3306 }
       requirements:
         - host: mysql_dbms
         interfaces:
@@ -64,8 +58,6 @@ topology_template:
           - host: server
         interfaces:
           Standard:
-            inputs:
-              db_root_password: { get_property: [ mysql_dbms, root_password ] }
             create: mysql_dbms/mysql_dbms_install.sh
             start: mysql_dbms/mysql_dbms_start.sh
             configure: mysql_dbms/mysql_dbms_configure.sh
