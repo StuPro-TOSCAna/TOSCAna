@@ -29,10 +29,10 @@ topology_template:
         - database_endpoint: my_db
       interfaces:
         Standard:
-          create: scripts/install_php.sh
+          create: my_app/install_php.sh
           start:
             implementation:
-              primary: scripts/start_myphpapp.sh
+              primary: my_app/start_myphpapp.sh
               dependencies:
                 - myphpapp.php
                 - mysql-credentials.php
@@ -49,8 +49,8 @@ topology_template:
         - host: server
       interfaces:
         Standard:
-          create: scripts/webserver_install.sh
-          start: scripts/webserver_start.sh
+          create: apache_web_server/webserver_install.sh
+          start: apache_web_server/webserver_start.sh
 
     my_db:
       type: tosca.nodes.Database.MySQL
@@ -67,7 +67,7 @@ topology_template:
         - host: mysql_dbms
         interfaces:
           Standard:
-            create: scripts/db_create.sh
+            create: my_db/db_create.sh
 
     mysql_dbms:
       type: tosca.nodes.DBMS.MySQL
@@ -80,9 +80,9 @@ topology_template:
           Standard:
             inputs:
               db_root_password: { get_property: [ mysql_dbms, root_password ] }
-            create: scripts/mysql_dbms_install.sh
-            start: scripts/mysql_dbms_start.sh
-            configure: scripts/mysql_dbms_configure.sh
+            create: mysql_dbms/mysql_dbms_install.sh
+            start: mysql_dbms/mysql_dbms_start.sh
+            configure: mysql_dbms/mysql_dbms_configure.sh
 
     server:
       type: tosca.nodes.Compute
