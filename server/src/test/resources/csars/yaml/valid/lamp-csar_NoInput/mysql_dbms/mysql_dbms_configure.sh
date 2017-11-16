@@ -1,5 +1,4 @@
 #!/bin/bash
-# Setup MySQL root password and create user
 cat << EOF | mysql -u root --password=abc
 CREATE DATABASE mydb;
 USE mydb;
