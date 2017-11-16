@@ -53,3 +53,13 @@ hs_err_pid*
 
 
 
+
+\.project
+
+\.settings/
+
+cli/\.classpath
+
+retrofit-wrapper/\.classpath
+
+server/\.classpath
