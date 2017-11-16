@@ -70,7 +70,7 @@ function newDbConnection()
    <body>
       <h1>SimpleTaskApp</h1>
       <!-- form to enter tasks -->
-      <form class="insertTask" action="index.php" method="post">
+      <form class="insertTask" action="myphpapp.php" method="post">
          <input type="text" name="task" />
          <button type="submit" name="button">submit</button>
       </form>
