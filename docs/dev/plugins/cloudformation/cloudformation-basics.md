@@ -1,6 +1,9 @@
 # AWS CloudFormation
 How to transform a TOSCA model to an Amazon Web Services CloudFormation template.
 
+## Mapping
+see [this](mapping.md)
+
 ## Transformation Lyfecycle
 
 ### validate
