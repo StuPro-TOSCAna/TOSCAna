@@ -1,7 +1,8 @@
 language: bash
-sudo: enabled
+os: linux
+sudo: required
 
-- before_script:
+- install:
   - sh install_docker.sh
   - wget https://cdn.rawgit.com/Mirantis/kubeadm-dind-cluster/master/fixed/dind-cluster-v1.8.sh
   - chmod +x dind-cluster-v1.8.sh
