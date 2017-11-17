@@ -14,7 +14,7 @@ public class TransformationLogs {
 
     /**
      *
-     * @param logs
+     * @param logList
      * @param start
      * @param end
      */

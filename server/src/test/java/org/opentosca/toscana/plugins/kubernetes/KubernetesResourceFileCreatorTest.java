@@ -12,13 +12,13 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 public class KubernetesResourceFileCreatorTest extends BaseJUnitTest {
-    public static KubernetesResourceFileCreator creator;
-    public static String correctResourceFile;
+    private static KubernetesResourceFileCreator creator;
+    private static String correctResourceFile;
 
     @BeforeClass
     public static void setUp() {
         creator = new KubernetesResourceFileCreator();
-        File file = new File("src/test/resources/kubernetes/", "k8s_test_resource.yaml");
+        File file = new File("src/test/resources/kubernetes/", "kubernetes_test_resource.yaml");
         correctResourceFile = FileHelper.readFileToString(file);
     }
 
@@ -27,3 +27,4 @@ public class KubernetesResourceFileCreatorTest extends BaseJUnitTest {
         assertEquals(correctResourceFile, creator.createResourceFileAsString("test-app"));
     }
 }
+

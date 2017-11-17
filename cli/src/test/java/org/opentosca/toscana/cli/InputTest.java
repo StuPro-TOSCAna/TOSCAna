@@ -119,13 +119,13 @@ public class InputTest {
     @Test
     public void testFail400TransformationInputs() throws IOException {
         helper.server400Response();
-        assertEquals(con.INPUT_LIST_ERROR400M, api.inputList(helper.CSAR, helper.PLATFORM));
+        assertEquals(con.INPUT_LIST_ERROR400 + "\n", api.inputList(helper.CSAR, helper.PLATFORM));
     }
 
     @Test
     public void testFail404TransformationInputs() throws IOException {
         helper.server404Response();
-        assertEquals(con.INPUT_LIST_ERROR404M, api.inputList(helper.CSAR, helper.PLATFORM));
+        assertEquals(con.INPUT_LIST_ERROR404 + "\n", api.inputList(helper.CSAR, helper.PLATFORM));
     }
 
     @Test
@@ -147,7 +147,7 @@ public class InputTest {
         list.add("text_property=Hallo Welt");
         Map<String, String> input = in.inputManual(list);
         assertTrue(input.size() == 1);
-        assertEquals(con.INPUT_SET_ERROR404M, api.placeInput(helper.CSAR, helper.PLATFORM, input));
+        assertEquals(con.INPUT_SET_ERROR404 + "\n", api.placeInput(helper.CSAR, helper.PLATFORM, input));
     }
 
     @Test
@@ -158,7 +158,7 @@ public class InputTest {
         list.add("text_property=Hallo Welt");
         Map<String, String> input = in.inputManual(list);
         assertTrue(input.size() == 1);
-        assertEquals(con.INPUT_SET_ERROR400M, api.placeInput(helper.CSAR, helper.PLATFORM, input));
+        assertEquals(con.INPUT_SET_ERROR400 + "\n", api.placeInput(helper.CSAR, helper.PLATFORM, input));
     }
 
     @Test

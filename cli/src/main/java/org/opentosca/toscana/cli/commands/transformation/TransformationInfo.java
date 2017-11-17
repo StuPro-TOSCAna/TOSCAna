@@ -25,7 +25,7 @@ public class TransformationInfo extends AbstractTransformation implements Runnab
         try {
             final String[] entered = getInput();
             if (entered != null) {
-                System.out.println(api.startTransformation(entered[0], entered[1]));
+                System.out.println(api.infoTransformation(entered[0], entered[1]));
             }
         } catch (IOException e) {
             System.err.println(e.getMessage());

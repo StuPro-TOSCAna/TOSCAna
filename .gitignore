@@ -52,9 +52,6 @@ hs_err_pid*
 #Apple files
 .DS_Store
 
-
-
-
 cli/\.project
 
 cli/\.classpath
@@ -64,3 +61,13 @@ cli/\.classpath
 server/\.classpath
 
 retrofit-wrapper/\.classpath
+
+\.project
+
+\.settings/
+
+cli/\.classpath
+
+retrofit-wrapper/\.classpath
+
+server/\.classpath
