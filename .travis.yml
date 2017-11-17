@@ -1,9 +1,8 @@
-language: bash
 os: linux
 sudo: required
+service: docker
 
 - install:
-  - sh install_docker.sh
   - wget https://cdn.rawgit.com/Mirantis/kubeadm-dind-cluster/master/fixed/dind-cluster-v1.8.sh
   - chmod +x dind-cluster-v1.8.sh
   - ./dind-cluster-v1.8.sh up
