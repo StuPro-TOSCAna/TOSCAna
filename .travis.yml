@@ -1,0 +1,12 @@
+language: bash
+sudo: required
+
+- before_script:
+  - sh install_docker.sh
+  - wget https://cdn.rawgit.com/Mirantis/kubeadm-dind-cluster/master/fixed/dind-cluster-v1.8.sh
+  - chmod +x dind-cluster-v1.8.sh
+  - ./dind-cluster-v1.8.sh up
+  - export PATH="$HOME/.kubeadm-dind-cluster:$PATH"
+
+- script:
+  - kubectl apply -f resource.yaml --validate=false
