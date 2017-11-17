@@ -1,12 +1,13 @@
-os: linux
-sudo: required
-service: docker
+language: bash
+os:       linux
+sudo:     required
+service:  docker
 
-- install:
+install:
   - wget https://cdn.rawgit.com/Mirantis/kubeadm-dind-cluster/master/fixed/dind-cluster-v1.8.sh
   - chmod +x dind-cluster-v1.8.sh
   - ./dind-cluster-v1.8.sh up
   - export PATH="$HOME/.kubeadm-dind-cluster:$PATH"
 
-- script:
+script:
   - kubectl apply -f resource.yaml --validate=false
