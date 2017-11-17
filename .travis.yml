@@ -1,5 +1,5 @@
 language: bash
-sudo: required
+sudo: enabled
 
 - before_script:
   - sh install_docker.sh
