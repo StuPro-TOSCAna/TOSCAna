@@ -21,6 +21,7 @@ public class OsCapability extends Capability {
     public enum Architecture {
         x86_32,
         x86_64,
+        POWER_PC
         // might grow
     }
 
@@ -38,6 +39,10 @@ public class OsCapability extends Capability {
         FEDORA,
         RHEL,
         UBUNTU,
+        CENTOS,
+        ALPINE,
+        BUSYBOX,
+        OPEN_SUSE,
         // might grow
     }
 
