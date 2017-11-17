@@ -18,6 +18,7 @@ import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
@@ -27,6 +28,17 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface TOSCAnaAPIService {
+    @DELETE("/api/csars/{csarName}/delete")
+    Call<ResponseBody> deleteCsar(
+        @Path("csarName") String name
+    );
+
+    @DELETE("/api/csars/{csarName}/transformations/{platform}/delete")
+    Call<ResponseBody> deleteTransformation(
+        @Path("csarName") String csarName,
+        @Path("platform") String platform
+    );
+
     @GET("/api/")
     Call<HALResource> getAPIRoot();
 
@@ -64,6 +76,12 @@ public interface TOSCAnaAPIService {
         @Path("csarName") String csarName,
         @Path("platform") String platform,
         @Query("start") Long start
+    );
+
+    @POST("api/csars/{csarName}/transformations/{platform}/create")
+    Call<ResponseBody> createTransformation(
+        @Path("csarName") String csarName,
+        @Path("platform") String platform
     );
 
     @POST("/api/csars/{csarName}/transformations/{platform}/start")

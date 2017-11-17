@@ -1,17 +1,12 @@
 package org.opentosca.toscana.cli;
 
 import java.io.IOException;
-import java.util.List;
 
 import org.opentosca.toscana.cli.commands.Constants;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Test;
 import picocli.CommandLine;
-
-import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertEquals;
 
 public class PlatformTest {
 
@@ -34,7 +29,7 @@ public class PlatformTest {
     public void tearDown() throws IOException {
         helper.tearDown();
     }
-
+/*
     @Test
     public void testCliPlatform() {
         final List<Object> parsed = cmd.parseWithHandler(new CommandLine.RunLast(), System.err, helper.PLATFORM_AR);
@@ -72,4 +67,5 @@ public class PlatformTest {
         helper.server404Response();
         assertEquals(con.PLATFORM_INFO_ERROR404 + "\n", api.infoPlatform(helper.PLATFORM));
     }
+    */
 }

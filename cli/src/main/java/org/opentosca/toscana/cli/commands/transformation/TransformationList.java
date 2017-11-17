@@ -1,7 +1,5 @@
 package org.opentosca.toscana.cli.commands.transformation;
 
-import java.io.IOException;
-
 import org.opentosca.toscana.cli.ApiController;
 import org.opentosca.toscana.cli.commands.AbstractCommand;
 
@@ -25,11 +23,6 @@ public class TransformationList extends AbstractCommand implements Runnable {
     @Override
     public void run() {
         ApiController api = startApi();
-
-        try {
-            System.out.println(api.listTransformation(csar));
-        } catch (IOException e) {
-            System.err.println(e.getMessage());
-        }
+        System.out.println(api.listTransformation(csar));
     }
 }

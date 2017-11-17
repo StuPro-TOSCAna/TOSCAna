@@ -121,6 +121,11 @@ public class TOSCAnaAPI {
         return performCall(apiService.getPlatformDetails(name));
     }
 
+    public ResponseBody deleteCsar(String name)
+        throws IOException, TOSCAnaServerException {
+        return performCall(apiService.deleteCsar(name));
+    }
+
     public CsarResources getCsars()
         throws IOException, TOSCAnaServerException {
         return performCall(apiService.getCsars());
@@ -136,9 +141,19 @@ public class TOSCAnaAPI {
         return performCall(apiService.getTransformationsForCsar(csarName));
     }
 
+    public ResponseBody deleteTransformation(String csarName, String platform)
+        throws IOException, TOSCAnaServerException {
+        return performCall(apiService.deleteTransformation(csarName, platform));
+    }
+
     public Transformation getTransformation(String csarName, String platform)
         throws IOException, TOSCAnaServerException {
         return performCall(apiService.getTransformationDetails(csarName, platform));
+    }
+
+    public ResponseBody createTransformation(String csarName, String platform)
+        throws IOException, TOSCAnaServerException {
+        return performCall(apiService.createTransformation(csarName, platform));
     }
 
     public ResponseBody startTransformation(String csarName, String platform)
@@ -210,7 +225,7 @@ public class TOSCAnaAPI {
         uploadInternal(name, n, fileBody);
     }
 
-    public void uploadCsar(String name, byte[] data) 
+    public void uploadCsar(String name, byte[] data)
         throws IOException, TOSCAnaServerException {
         RequestBody body = RequestBody.create(UPLOAD_MIME_TYPE, data);
         uploadInternal(name, name + ".csar", body);

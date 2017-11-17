@@ -1,7 +1,5 @@
 package org.opentosca.toscana.cli.commands.csar;
 
-import java.io.IOException;
-
 import org.opentosca.toscana.cli.ApiController;
 import org.opentosca.toscana.cli.commands.AbstractCommand;
 import org.opentosca.toscana.cli.commands.Constants;
@@ -26,11 +24,6 @@ public class CsarInfo extends AbstractCommand implements Runnable {
     @Override
     public void run() {
         ApiController api = startApi();
-
-        try {
-            System.out.println(api.infoCsar(csar));
-        } catch (IOException e) {
-            System.err.println(e.getMessage());
-        }
+        System.out.println(api.infoCsar(csar));
     }
 }

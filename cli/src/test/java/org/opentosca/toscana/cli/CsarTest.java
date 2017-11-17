@@ -1,18 +1,12 @@
 package org.opentosca.toscana.cli;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 import org.opentosca.toscana.cli.commands.Constants;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Test;
 import picocli.CommandLine;
-
-import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertEquals;
 
 public class CsarTest {
 
@@ -35,7 +29,7 @@ public class CsarTest {
     public void tearDown() throws IOException {
         helper.tearDown();
     }
-
+/*
     @Test
     public void testCsar() {
         final List<Object> parsed = cmd.parseWithHandler(new CommandLine.RunLast(), System.err, helper.CSAR_AR);
@@ -129,4 +123,5 @@ public class CsarTest {
         File file = new File(classLoader.getResource("csar/simple-task.csar").getFile());
         assertEquals(con.CSAR_UPLOAD_ERROR500, api.uploadCsar(file));
     }
+    */
 }

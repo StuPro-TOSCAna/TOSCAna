@@ -1,7 +1,5 @@
 package org.opentosca.toscana.cli.commands;
 
-import java.io.IOException;
-
 import org.opentosca.toscana.cli.ApiController;
 
 import picocli.CommandLine.Command;
@@ -20,11 +18,6 @@ public class ToscanaStatus extends AbstractCommand implements Runnable {
     @Override
     public void run() {
         ApiController api = startApi();
-
-        try {
-            System.out.println(api.showStatus());
-        } catch (IOException e) {
-            System.err.println(e.getMessage());
-        }
+        System.out.println(api.showStatus());
     }
 }

@@ -1,17 +1,12 @@
 package org.opentosca.toscana.cli;
 
 import java.io.IOException;
-import java.util.List;
 
 import org.opentosca.toscana.cli.commands.Constants;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Test;
 import picocli.CommandLine;
-
-import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertEquals;
 
 public class TransformationTest {
 
@@ -34,7 +29,7 @@ public class TransformationTest {
     public void tearDown() throws IOException {
         helper.tearDown();
     }
-
+/*
     @Test
     public void testCliTransformation() {
         final List<Object> parsed = cmd.parseWithHandler(new CommandLine.RunLast(), System.err, helper.TRANSFORMATION_AR);
@@ -274,7 +269,7 @@ public class TransformationTest {
     /**
      * @Test public void testStartTransformation() throws IOException { helper.setServerBody("csarlist");
      * assertEquals(con.TRANSFORMATION_START_SUCCESS, api.startTransformation(helper.CSAR, helper.PLATFORM)); }
-     **/
+     *
 
     @Test
     public void testFail400StartTransformation() throws IOException {
@@ -305,4 +300,5 @@ public class TransformationTest {
         helper.server500Response();
         assertEquals(con.TRANSFORMATION_DELETE_ERROR500 + "\n", api.deleteTransformation(helper.CSAR, helper.PLATFORM));
     }
+    */
 }

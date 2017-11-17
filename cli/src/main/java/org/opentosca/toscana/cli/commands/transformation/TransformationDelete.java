@@ -25,7 +25,7 @@ public class TransformationDelete extends AbstractTransformation implements Runn
         try {
             final String[] entered = getInput();
             if (entered != null) {
-                System.out.println(api.deleteTransformation(entered[0], entered[1]));
+                api.deleteTransformation(entered[0], entered[1]);
             }
         } catch (IOException e) {
             System.err.println(e.getMessage());
