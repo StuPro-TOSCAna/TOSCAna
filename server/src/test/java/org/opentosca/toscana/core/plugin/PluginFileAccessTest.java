@@ -154,4 +154,15 @@ public class PluginFileAccessTest extends BaseJUnitTest {
         access.getAbsolutePath(filename);
         fail("getAbsoultePath() should have raised FileNotFoundException.");
     }
+    
+    @Test
+    public void delete() throws IOException {
+        String filename = "some-file";
+        File file = new File(targetDir, filename);
+        file.createNewFile();
+        assertTrue(file.exists());
+        
+        access.delete(filename);
+        assertFalse(file.exists());
+    }
 }
