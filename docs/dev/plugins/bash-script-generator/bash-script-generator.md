@@ -4,16 +4,22 @@ To provide the user a easy to use target artifact we provide him several build a
 
 ## Idea
 
-Provide a general so called **BashScriptGenerator** that functions as interface for a general `utils.sh` script which contains different functions.
+![](bash-script.png)
+
+Provide a `BashScript`-class which initializes a `.sh` file with a Shebang (`#!/bin/sh`) and a line that sources all component scripts. To add lines to the the bash script just use the append method.
+
+![](util-components.png)
+
+To ease the process of adding needed functions to the bash script there are several static util component classes. The `EnvironmentCheck` and `DockerUtil` in the diagram aboth are two examples. Each of them has a underlying bash script that contains functions that are sourced in a script created by the `BashScript` class.
 
 ## Example
 
-This function can be used to check if a executable is installed on the system the script is run on.
-
-**Bash function:**
+**EnvironmentCheck script in the components folder:**
 
 ```bash
-function check_executable () {
+#!/bin/sh
+
+function check () {
   echo "Check if $1 is available."                                                      
   if ! [ -x "$(command -v $1)" ]; then                                                 
     echo "Error: $1 is not installed." >&2                                             
@@ -22,18 +28,32 @@ function check_executable () {
 }
 ```
 
-**Java wrapper:**
+**EnvironmentCheck::check(String executable):**
 
 ```Java
-public void checkExecutable (String executable) {
-    list.add("check_executable " + executable);
+public String check (String executable) {
+    return "check " + string;
 }
 ```
 
-The `BashScriptGenerator` can be extended if there are any additional functions.
+**Code that generates a script:**
 
-**Example:**
+```java
+public void createScript(Path path) {
+    BuildScript script = new BuildScript(path);
+    buildScript.append(EnvironmentCheck.check("docker"));
+}
 
-![](BashScriptGenerator.png)
+```
 
-In general the scripts are saved in the `output/scripts/util/` folder in the target artifact. If a plugin provides is own utils functions the script containing them is saved with the name `util-<util-name>.sh`.
+**Result:**
+
+```Bash
+#!/bin/sh
+
+source components/*
+
+check "docker"
+```
+
+The util scripts are saved in the target artifact in the `output/scripts/util`-folder the scripts genereated with the `BuildScript`-class should be saved in `output/scripts/`.
