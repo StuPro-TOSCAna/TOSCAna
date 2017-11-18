@@ -24,16 +24,30 @@ public class PluginFileAccess {
     }
 
     /**
-     Copies given file or directory from the csar content directory to the transformation directory.
-     If given path specifies a directory, this directory's content gets copied as well.
+     Copies given file or directory (recursively) from the csar content directory to the transformation directory.
+     After the successful call the copied files will reside in given path (relative to the transformation content dir)
 
-     @param relativePath the path to the source file relative to the csar's content directory
-     @throws FileNotFoundException if no file or directory was found for given path
+     @param relativePath path to the source file relative to the csar content directory
+     @throws FileNotFoundException if no file or directory was found for given relativePath
      @throws IOException           if an error occurred while copying
      */
     public void copy(String relativePath) throws FileNotFoundException, IOException {
-        File source = new File(sourceDir, relativePath);
-        File target = new File(targetDir, relativePath);
+        copy(relativePath, relativePath);
+    }
+
+    /**
+     Copies given file or directory (recursively) located at given relativeSourcePath to the given relativeTargetPath.
+     <p>
+     Note: Will create new directories if necessary.
+
+     @param relativeSourcePath path to the source file relative to the csar content directory
+     @param relativeTargetPath target location for the copy operation, relative to the transformation content dir
+     @throws FileNotFoundException if no file or directory was found for given relativeSourcePath
+     @throws IOException           if an error occured while copying
+     */
+    public void copy(String relativeSourcePath, String relativeTargetPath) throws FileNotFoundException, IOException {
+        File source = new File(sourceDir, relativeSourcePath);
+        File target = new File(targetDir, relativeTargetPath);
         if (!source.exists()) {
             logger.error("Failed to copy '{}': file not found", sourceDir);
             throw new FileNotFoundException();
@@ -90,6 +104,20 @@ public class PluginFileAccess {
         } catch (IOException e) {
             logger.error("Failed to read content from file '{}'", source);
             throw e;
+        }
+    }
+
+    /**
+     @param relativePath a path (relative to the transformation content directory) to a file or directory.
+     @return the absolute path for given relativePath.
+     @throws FileNotFoundException if no file is found for given relativePath
+     */
+    public String getAbsolutePath(String relativePath) throws FileNotFoundException {
+        File targetFile = new File(targetDir, relativePath);
+        if (targetFile.exists()) {
+            return targetFile.getAbsolutePath();
+        } else {
+            throw new FileNotFoundException(String.format("File '%s' not found", targetFile));
         }
     }
 }
