@@ -18,8 +18,8 @@ spec:
     app: "test-app"
   type: "NodePort"
 ---
-apiVersion: "extensions/v1beta1"
-kind: "Deployment"
+apiVersion: v1
+kind: ReplicationController
 metadata:
   annotations: {}
   finalizers: []
@@ -27,12 +27,12 @@ metadata:
   name: "test-app-deployment"
   ownerReferences: []
 spec:
+  replicas: 1
   selector:
-    matchExpressions: []
-    matchLabels:
       app: "test-app"
   template:
     metadata:
+      name: "test-app"
       annotations: {}
       finalizers: []
       labels:

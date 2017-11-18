@@ -5,15 +5,15 @@ service:  docker
 
 install:
   - docker run --rm --privileged -v /:/host solita/ubuntu-systemd setup
-  - docker run --security-opt seccomp=unconfined \
-      --tmpfs /run --tmpfs /run/lock \
-      -v /sys/fs/cgroup:/sys/fs/cgroup:ro \
-      -v $PWD:/testfolder \
-      -dt --name test --rm \
-      --privileged nfode/minikube
+  - "docker run --security-opt seccomp=unconfined
+      --tmpfs /run --tmpfs /run/lock
+      -v /sys/fs/cgroup:/sys/fs/cgroup:ro
+      -v $PWD:/testfolder
+      -dt --name test --rm
+      --privileged nfode/minikube"
 
+before_script:
+  - docker exec -it test minikube start
 script:
-  - docker exec -it test bash
-  - minikube start
-  - kubectl apply -f testfolder/resource.yaml --validate=false
-  - exit
+  - "docker exec -it test
+      kubectl apply -f testfolder/resource.yaml --validate=false"
