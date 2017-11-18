@@ -120,4 +120,13 @@ public class PluginFileAccess {
             throw new FileNotFoundException(String.format("File '%s' not found", targetFile));
         }
     }
+
+    /**
+     Deletes file or directory (recusively) denoted by given path. If target does not exists, does nothing.
+     @param relativePath relative (to the transformation content directory) path to a file or directory.
+     */
+    public void delete(String relativePath) {
+        File file = new File(targetDir, relativePath);
+        FileUtils.deleteQuietly(file);
+    }
 }
