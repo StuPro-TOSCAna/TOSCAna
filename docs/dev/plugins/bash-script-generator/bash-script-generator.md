@@ -30,6 +30,10 @@ public void checkExecutable (String executable) {
 }
 ```
 
-A plugin can extend the `BashScriptGenerator` if it has additional functions.
+The `BashScriptGenerator` can be extended if there are any additional functions.
 
-In general the scripts are saved in the `output\scripts\utils\` folder in the target artifact. If a plugin provides is own utils functions the script containing them is saved with the name `utils-<plugin-name>.sh`.
+**Example:**
+
+![](BashScriptGenerator.png)
+
+In general the scripts are saved in the `output/scripts/util/` folder in the target artifact. If a plugin provides is own utils functions the script containing them is saved with the name `util-<util-name>.sh`.
