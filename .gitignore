@@ -1,6 +1,7 @@
 **/.idea/
 **/target/
 **/*.iml
+.settings/
 
 **/testsuite-spring-tmpdir/*
 # CMake
@@ -51,8 +52,15 @@ hs_err_pid*
 #Apple files
 .DS_Store
 
+cli/\.project
 
+cli/\.classpath
 
+\.project
+
+server/\.classpath
+
+retrofit-wrapper/\.classpath
 
 \.project
 
