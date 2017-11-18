@@ -13,7 +13,7 @@ install:
       --privileged nfode/minikube"
 
 before_script:
-  - docker exec -it test minikube start
+  - docker exec -it test minikube start --vm-driver=none
 script:
   - "docker exec -it test
       kubectl apply -f testfolder/resource.yaml --validate=false"

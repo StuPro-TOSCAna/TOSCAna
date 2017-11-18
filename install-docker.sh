@@ -13,4 +13,6 @@ add-apt-repository -y \
    stable"
 
 apt-get update
+
+# this fails everytime because systemd is not available on install
 apt-get install -y docker-ce || true
