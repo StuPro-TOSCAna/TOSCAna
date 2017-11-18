@@ -4,10 +4,16 @@ sudo:     required
 service:  docker
 
 install:
-  - wget https://cdn.rawgit.com/Mirantis/kubeadm-dind-cluster/master/fixed/dind-cluster-v1.8.sh
-  - chmod +x dind-cluster-v1.8.sh
-  - ./dind-cluster-v1.8.sh up
-  - export PATH="$HOME/.kubeadm-dind-cluster:$PATH"
+  - docker run --rm --privileged -v /:/host solita/ubuntu-systemd setup
+  - docker run --security-opt seccomp=unconfined \
+      --tmpfs /run --tmpfs /run/lock \
+      -v /sys/fs/cgroup:/sys/fs/cgroup:ro \
+      -v $PWD:/testfolder \
+      -dt --name test --rm \
+      --privileged nfode/minikube
 
 script:
-  - kubectl apply -f resource.yaml --validate=false
+  - docker exec -it test bash
+  - minikube start
+  - kubectl apply -f testfolder/resource.yaml --validate=false
+  - exit
