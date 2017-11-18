@@ -58,12 +58,6 @@ cli/\.classpath
 
 \.project
 
-server/\.classpath
-
-retrofit-wrapper/\.classpath
-
-\.project
-
 \.settings/
 
 cli/\.classpath
