@@ -23,6 +23,8 @@ import org.opentosca.toscana.retrofit.util.LoggingMode;
 import org.opentosca.toscana.retrofit.util.RetrofitLoggerWrapper;
 import org.opentosca.toscana.retrofit.util.TOSCAnaServerException;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -30,7 +32,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -39,7 +40,7 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 
 public class TOSCAnaAPI {
 
-    private static final Logger logger = LoggerFactory.getLogger(TOSCAnaAPI.class);
+    private static final Logger logger = (Logger) LoggerFactory.getLogger(TOSCAnaAPI.class);
     private static final MediaType UPLOAD_MIME_TYPE = MediaType.parse("multipart/form-data");
 
     private String url;
@@ -50,10 +51,12 @@ public class TOSCAnaAPI {
 
     public TOSCAnaAPI(String url) {
         this(url, LoggingMode.OFF);
+        logger.setLevel(Level.OFF);
     }
 
     public TOSCAnaAPI(String url, LoggingMode mode) {
         this.url = url;
+        logger.setLevel(Level.valueOf(mode.name()));
 
         //Build the logging interceptor
         logger.debug("Creating Http Logging Interceptor with mode {}", mode.name());
@@ -81,14 +84,14 @@ public class TOSCAnaAPI {
 
     private <E> E performCall(Call<E> call)
         throws TOSCAnaServerException, IOException {
-        logger.debug("Perfoming call to {}", call.request().url().toString());
+        logger.debug("Performing call to {}", call.request().url().toString());
         Response<E> response = call.execute();
 
         if (response.isSuccessful()) {
-            logger.debug("Exceution of the call was sucessful");
+            logger.debug("Execution of the call was successful");
             return response.body();
         } else {
-            logger.debug("Exceution of the call was not sucessful");
+            logger.debug("Execution of the call was not successful");
             throwToscanaException(call, response);
             //Dead code (used to prevent "Missing return statement" compilaton
             //Error

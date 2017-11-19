@@ -2,6 +2,7 @@ package org.opentosca.toscana.cli;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -28,22 +29,19 @@ public class ApiController {
 
     /**
      Constructor for the ApiController, parameters decide if there should be any output of information
-
-     @param moreVerbose very detailed output
-     @param verbose     some output
      */
-    public ApiController(boolean moreVerbose, boolean verbose) {
+    public ApiController(Mode modeName) {
         con = new Constants();
         CliProperties prop = new CliProperties();
         final String API_URL = prop.getApiUrl();
 
         //starts the retrofit client with the chosen loglevel
         try {
-            if (verbose) {
-                toscAnaAPI = new TOSCAnaAPI(API_URL, LoggingMode.MEDIUM);
-            } else if (moreVerbose) {
+            if (modeName == Mode.LOW) {
+                toscAnaAPI = new TOSCAnaAPI(API_URL, LoggingMode.LOW);
+            } else if (modeName == Mode.HIGH) {
                 toscAnaAPI = new TOSCAnaAPI(API_URL, LoggingMode.HIGH);
-            } else {
+            } else if (modeName == Mode.NONE) {
                 toscAnaAPI = new TOSCAnaAPI(API_URL);
             }
         } catch (IllegalArgumentException e) {
@@ -58,14 +56,15 @@ public class ApiController {
      @param file CSAR Archive to upload
      @return output for the CLI
      */
-    public void uploadCsar(File file) {
+    public String uploadCsar(File file) {
         try {
             toscAnaAPI.uploadCsar(file.getName(), file);
         } catch (IOException e) {
-            System.err.println(String.format("Something went wrong while loading Csar '%s':%n'%s'", file.getName(), e.getMessage()));
+            System.err.println(String.format(con.CSAR_UPLOAD_IO_ERROR + " '%s'", e.getMessage()));
         } catch (TOSCAnaServerException e) {
-            System.err.println(String.format("Something went wrong while uploading Csar '%s':%n%s '%s'", file.getName(), e.getStatusCode(), e.getErrorResponse().getMessage()));
+            System.err.println(String.format(con.CSAR_UPLOAD_RESPONSE_ERROR + " %s '%s'", e.getStatusCode(), e.getErrorResponse().getMessage()));
         }
+        return con.METHOD_SUCCESS;
     }
 
     /**
@@ -74,14 +73,15 @@ public class ApiController {
      @param csar CSAR to delete from the Transformator
      @return output for the CLI
      */
-    public void deleteCsar(String csar) {
+    public String deleteCsar(String csar) {
         try {
             toscAnaAPI.deleteCsar(csar);
         } catch (IOException e) {
-            System.err.println(String.format("Something went wrong while deleting Csar '%s':%n'%s'", csar, e.getMessage()));
+            System.err.println(String.format(con.CSAR_DELETE_ERROR + " '%s'", e.getMessage()));
         } catch (TOSCAnaServerException e) {
-            System.err.println(String.format("Something went wrong while deleting Csar '%s':%n%s '%s'", csar, e.getStatusCode(), e.getErrorResponse().getMessage()));
+            System.err.println(String.format(con.CSAR_DELETE_ERROR + " %s '%s'", e.getStatusCode(), e.getErrorResponse().getMessage()));
         }
+        return con.METHOD_SUCCESS;
     }
 
     /**
@@ -97,12 +97,13 @@ public class ApiController {
             List<Csar> list = csarList.getContent();
 
             for (Csar c : list) {
-                stringCsars.append("\n").append(c.getName());
+                stringCsars.append(c.getName()).append("\n");
             }
+            stringCsars.delete(stringCsars.length() - 1, stringCsars.length());
         } catch (IOException e) {
-            System.err.println(String.format("Something went wrong while loading Csar List:%n'%s'", e.getMessage()));
+            System.err.println(String.format(con.CSAR_LIST_ERROR + " '%s'", e.getMessage()));
         } catch (TOSCAnaServerException e) {
-            System.err.println(String.format("Something went wrong while loading Csar List:%n%s '%s'", e.getStatusCode(), e.getErrorResponse().getMessage()));
+            System.err.println(String.format(con.CSAR_LIST_ERROR + " %s '%s'", e.getStatusCode(), e.getErrorResponse().getMessage()));
         }
         return stringCsars.toString();
     }
@@ -120,9 +121,9 @@ public class ApiController {
             csar = toscAnaAPI.getCsarDetails(csarName);
             cName = csar.getName();
         } catch (IOException e) {
-            System.err.println(String.format("Something went wrong while loading Csar List:%n'%s'", e.getMessage()));
+            System.err.println(String.format(con.CSAR_INFO_ERROR + " '%s'", e.getMessage()));
         } catch (TOSCAnaServerException e) {
-            System.err.println(String.format("Something went wrong loading Csar List:%n%s '%s'", e.getStatusCode(), e.getErrorResponse().getMessage()));
+            System.err.println(String.format(con.CSAR_INFO_ERROR + " %s '%s'", e.getStatusCode(), e.getErrorResponse().getMessage()));
         }
         return cName;
     }
@@ -134,25 +135,34 @@ public class ApiController {
      @param plat platform for which a transformation should be started
      @return output for the CLI
      */
-    public void startTransformation(String csar, String plat) {
+    public String startTransformation(String csar, String plat) {
         try {
             toscAnaAPI.createTransformation(csar, plat);
             launchTransformation(csar, plat);
         } catch (IOException e) {
-            System.err.println(String.format("Something went wrong while creating Transformation:%n'%s'", e.getMessage()));
+            System.err.println(String.format(con.TRANSFORMATION_CREATE_ERROR + " '%s'", e.getMessage()));
         } catch (TOSCAnaServerException e) {
-            System.err.println(String.format("Something went wrong while creating Transformation:%n%s '%s'", e.getStatusCode(), e.getErrorResponse().getMessage()));
+            System.err.println(String.format(con.TRANSFORMATION_CREATE_ERROR + " %s '%s'", e.getStatusCode(), e.getErrorResponse().getMessage()));
         }
+        return con.METHOD_SUCCESS;
     }
 
-    private void launchTransformation(String csar, String platform) {
+    /**
+     Calls the REST API and launches the Transformation, handles response codes
+
+     @param csar     CSAR for which a transformation should be launched
+     @param platform platform for which a transformation should be launched
+     @return output for the CLI
+     */
+    private String launchTransformation(String csar, String platform) {
         try {
             toscAnaAPI.startTransformation(csar, platform);
         } catch (IOException e) {
-            System.err.println(String.format("Something went wrong while starting Transformation:%n'%s'", e.getMessage()));
+            System.err.println(String.format(con.TRANSFORMATION_START_ERROR + " '%s'", e.getMessage()));
         } catch (TOSCAnaServerException e) {
-            System.err.println(String.format("Something went wrong while starting Transformation:%n%s '%s'", e.getStatusCode(), e.getErrorResponse().getMessage()));
+            System.err.println(String.format(con.TRANSFORMATION_START_ERROR + " %s '%s'", e.getStatusCode(), e.getErrorResponse().getMessage()));
         }
+        return con.METHOD_SUCCESS;
     }
 
     /**
@@ -173,14 +183,15 @@ public class ApiController {
      @param plat platform for which the transformation should be deleted
      @return output for the CLI
      */
-    public void deleteTransformation(String csar, String plat) {
+    public String deleteTransformation(String csar, String plat) {
         try {
             toscAnaAPI.deleteTransformation(csar, plat);
         } catch (IOException e) {
-            System.err.println(String.format("Something went wrong while deleting Csar '%s' on Platform '%s':%n'%s'", csar, plat, e.getMessage()));
+            System.err.println(String.format(con.TRANSFORMATION_DELETE_ERROR + " '%s'", e.getMessage()));
         } catch (TOSCAnaServerException e) {
-            System.err.println(String.format("Something went wrong while deleting Csar '%s':%n%s '%s'", csar, e.getStatusCode(), e.getErrorResponse().getMessage()));
+            System.err.println(String.format(con.TRANSFORMATION_DELETE_ERROR + " %s '%s'", e.getStatusCode(), e.getErrorResponse().getMessage()));
         }
+        return con.METHOD_SUCCESS;
     }
 
     /**
@@ -211,12 +222,13 @@ public class ApiController {
             List<Transformation> list = transformationList.getContent();
 
             for (Transformation t : list) {
-                stringTransformations.append("\n").append(t.getPlatform());
+                stringTransformations.append(t.getPlatform()).append("\n");
             }
+            stringTransformations.delete(stringTransformations.length() - 1, stringTransformations.length());
         } catch (IOException e) {
-            System.err.println(String.format("Something went wrong while loading Transformation List:%n'%s'", e.getMessage()));
+            System.err.println(String.format(con.TRANSFORMATION_LIST_ERROR + " '%s'", e.getMessage()));
         } catch (TOSCAnaServerException e) {
-            System.err.println(String.format("Something went wrong while loading Transformation List:%n%s '%s'", e.getStatusCode(), e.getErrorResponse().getMessage()));
+            System.err.println(String.format(con.TRANSFORMATION_LIST_ERROR + " %s '%s'", e.getStatusCode(), e.getErrorResponse().getMessage()));
         }
         return stringTransformations.toString();
     }
@@ -236,11 +248,10 @@ public class ApiController {
 
             stringTransformation.append(transformation.getPlatform()).append(", ").append(transformation.getProgress()).append(", ").append(transformation.getStatus());
         } catch (IOException e) {
-            System.err.println(String.format("Something went wrong while loading Csar List:%n'%s'", e.getMessage()));
+            System.err.println(String.format(con.TRANSFORMATION_INFO_ERROR + " '%s'", e.getMessage()));
         } catch (TOSCAnaServerException e) {
-            System.err.println(String.format("Something went wrong loading Csar List:%n%s '%s'", e.getStatusCode(), e.getErrorResponse().getMessage()));
+            System.err.println(String.format(con.TRANSFORMATION_INFO_ERROR + " %s '%s'", e.getStatusCode(), e.getErrorResponse().getMessage()));
         }
-
         return stringTransformation.toString();
     }
 
@@ -263,9 +274,9 @@ public class ApiController {
                 stringLogs.append(l.getTimestamp()).append(", ").append(l.getMessage()).append(", ").append(l.getLevel());
             }
         } catch (IOException e) {
-            System.err.println(String.format("Something went wrong while loading Platform List:%n'%s'", e.getMessage()));
+            System.err.println(String.format(con.TRANSFORMATION_LOGS_ERROR + " '%s'", e.getMessage()));
         } catch (TOSCAnaServerException e) {
-            System.err.println(String.format("Something went wrong while loading Platform List:%n%s '%s'", e.getStatusCode(), e.getErrorResponse().getMessage()));
+            System.err.println(String.format(con.TRANSFORMATION_LOGS_ERROR + " %s '%s'", e.getStatusCode(), e.getErrorResponse().getMessage()));
         }
         return stringLogs.toString();
     }
@@ -288,9 +299,9 @@ public class ApiController {
                 stringProperties.append(p.getKey()).append(", ").append(p.getValue()).append(", ").append(p.getDescription());
             }
         } catch (IOException e) {
-            System.err.println(String.format("Something went wrong while loading Platform List:%n'%s'", e.getMessage()));
+            System.err.println(String.format(con.INPUT_LIST_ERROR + " '%s'", e.getMessage()));
         } catch (TOSCAnaServerException e) {
-            System.err.println(String.format("Something went wrong while loading Platform List:%n%s '%s'", e.getStatusCode(), e.getErrorResponse().getMessage()));
+            System.err.println(String.format(con.INPUT_LIST_ERROR + " %s '%s'", e.getStatusCode(), e.getErrorResponse().getMessage()));
         }
         return stringProperties.toString();
     }
@@ -305,8 +316,30 @@ public class ApiController {
      @return output for the CLI
      */
     public String placeInput(String csar, String plat, Map<String, String> inputs) {
-        return null;
-        //TODO
+        //prepare Inputs which should be updated
+        List<TransformationProperty> properties = new ArrayList<>();
+        for (Map.Entry<String, String> mapEntry : inputs.entrySet()) {
+            TransformationProperty p = new TransformationProperty();
+            p.setKey(mapEntry.getKey());
+            p.setValue(mapEntry.getValue());
+            properties.add(p);
+        }
+        TransformationProperties sendProp = new TransformationProperties(properties);
+
+        //get Return of the update if it was successfull
+        Map<String, Boolean> propertiesReturn;
+        StringBuilder stringProperties = new StringBuilder();
+        try {
+            propertiesReturn = toscAnaAPI.updateProperties(csar, plat, sendProp);
+            for (String s : propertiesReturn.keySet()) {
+                stringProperties.append("%n").append(s).append(" ").append(propertiesReturn.get(s));
+            }
+        } catch (IOException e) {
+            System.err.println(String.format(con.INPUT_SET_ERROR + " '%s'", e.getMessage()));
+        } catch (TOSCAnaServerException e) {
+            System.err.println(String.format(con.INPUT_SET_ERROR + " %s '%s'", e.getStatusCode(), e.getErrorResponse().getMessage()));
+        }
+        return stringProperties.toString();
     }
 
     /**
@@ -322,12 +355,13 @@ public class ApiController {
             List<Platform> list = platformList.getContent();
 
             for (Platform p : list) {
-                stringPlatforms.append("\n").append(p.getId()).append(", ").append(p.getName());
+                stringPlatforms.append(p.getId()).append(", ").append(p.getName()).append("\n");
             }
+            stringPlatforms.delete(stringPlatforms.length() - 1, stringPlatforms.length());
         } catch (IOException e) {
-            System.err.println(String.format("Something went wrong while loading Platform List:%n'%s'", e.getMessage()));
+            System.err.println(String.format(con.PLATFORM_LIST_ERROR + " '%s'", e.getMessage()));
         } catch (TOSCAnaServerException e) {
-            System.err.println(String.format("Something went wrong while loading Platform List:%n%s '%s'", e.getStatusCode(), e.getErrorResponse().getMessage()));
+            System.err.println(String.format(con.PLATFORM_LIST_ERROR + " %s '%s'", e.getStatusCode(), e.getErrorResponse().getMessage()));
         }
         return stringPlatforms.toString();
     }
@@ -346,11 +380,10 @@ public class ApiController {
 
             stringPlatform.append(platform.getId()).append(", ").append(platform.getName());
         } catch (IOException e) {
-            System.err.println(String.format("Something went wrong while loading Csar List:%n'%s'", e.getMessage()));
+            System.err.println(String.format(con.PLATFORM_INFO_ERROR + " '%s'", e.getMessage()));
         } catch (TOSCAnaServerException e) {
-            System.err.println(String.format("Something went wrong loading Csar List:%n%s '%s'", e.getStatusCode(), e.getErrorResponse().getMessage()));
+            System.err.println(String.format(con.PLATFORM_INFO_ERROR + " %s '%s'", e.getStatusCode(), e.getErrorResponse().getMessage()));
         }
-
         return stringPlatform.toString();
     }
 
@@ -367,11 +400,10 @@ public class ApiController {
 
             stringStatus.append(status.getStatus()).append(", ").append(status.getFileSystemHealth()).append(", ").append(status.getTransformerHealth());
         } catch (IOException e) {
-            System.err.println(String.format("Something went wrong while loading Csar List:%n'%s'", e.getMessage()));
+            System.err.println(String.format(con.STATUS_ERROR + " '%s'", e.getMessage()));
         } catch (TOSCAnaServerException e) {
-            System.err.println(String.format("Something went wrong loading Csar List:%n%s '%s'", e.getStatusCode(), e.getErrorResponse().getMessage()));
+            System.err.println(String.format(con.STATUS_ERROR + " %s '%s'", e.getStatusCode(), e.getErrorResponse().getMessage()));
         }
-
         return stringStatus.toString();
     }
 
@@ -383,11 +415,14 @@ public class ApiController {
 
             stringMetrics.append(status.keySet());
         } catch (IOException e) {
-            System.err.println(String.format("Something went wrong while loading Csar List:%n'%s'", e.getMessage()));
+            System.err.println(String.format(con.STATUS_METRIC_ERROR + " '%s'", e.getMessage()));
         } catch (TOSCAnaServerException e) {
-            System.err.println(String.format("Something went wrong loading Csar List:%n%s '%s'", e.getStatusCode(), e.getErrorResponse().getMessage()));
+            System.err.println(String.format(con.STATUS_METRIC_ERROR + " %s '%s'", e.getStatusCode(), e.getErrorResponse().getMessage()));
         }
-
         return stringMetrics.toString();
+    }
+
+    public enum Mode {
+        HIGH, LOW, NONE
     }
 }

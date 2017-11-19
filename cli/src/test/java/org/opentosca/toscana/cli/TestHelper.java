@@ -49,6 +49,7 @@ final class TestHelper {
     final String[] INPUT_MANUAL_ERROR = {"input", "-c", CSAR, "-p", PLATFORM, "test="};
     final String[] INPUT_FILE_VALID = {"input", "-c", CSAR, "-p", PLATFORM, "-f", "src/test/resources/responses/test.txt"};
     final String[] INPUT_NOINPUT = {"input"};
+    final String TEST_SUCCESS = "success";
     private final String TRANSFORMATION_VALID = "mongo-db/p-a";
     final String[] TRANSFORMATION_DELETE_T_VALID = {"transformation", "delete", "-t", TRANSFORMATION_VALID};
     final String[] TRANSFORMATION_DOWNLOAD_T_VALID = {"transformation", "download", "-t", TRANSFORMATION_VALID};
@@ -104,7 +105,7 @@ final class TestHelper {
         helpMap.put("transformationartifact", TRANSFORMATION_ARTIFACT);
         helpMap.put("transformationinputs", TRANSFORMATION_INPUTS);
         helpMap.put("transformationresponse", TRANSFORMATION_RESPONSE);
-        
+
         con = new Constants();
     }
 

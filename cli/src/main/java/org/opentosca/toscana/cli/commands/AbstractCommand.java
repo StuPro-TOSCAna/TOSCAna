@@ -1,6 +1,7 @@
 package org.opentosca.toscana.cli.commands;
 
 import org.opentosca.toscana.cli.ApiController;
+import org.opentosca.toscana.cli.ApiController.Mode;
 
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -22,13 +23,13 @@ public abstract class AbstractCommand {
     public ApiController startApi() {
         ApiController api;
         if (showMVerbose) {
-            api = new ApiController(true, false);
+            api = new ApiController(Mode.HIGH);
             return api;
         } else if (showVerbose) {
-            api = new ApiController(false, true);
+            api = new ApiController(Mode.LOW);
             return api;
         } else {
-            api = new ApiController(false, false);
+            api = new ApiController(Mode.NONE);
             return api;
         }
     }

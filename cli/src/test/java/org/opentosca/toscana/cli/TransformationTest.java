@@ -17,7 +17,7 @@ public class TransformationTest {
 
     @Before
     public void setUp() throws IOException {
-        api = new ApiController(false, false);
+        api = new ApiController(ApiController.Mode.NONE);
         CliMain cli = new CliMain();
         cmd = new CommandLine(cli);
         helper = new TestHelper();

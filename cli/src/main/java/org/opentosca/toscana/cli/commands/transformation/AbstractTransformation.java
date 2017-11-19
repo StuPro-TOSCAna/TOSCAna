@@ -3,6 +3,7 @@ package org.opentosca.toscana.cli.commands.transformation;
 import java.io.IOException;
 
 import org.opentosca.toscana.cli.ApiController;
+import org.opentosca.toscana.cli.ApiController.Mode;
 import org.opentosca.toscana.cli.commands.Constants;
 
 import picocli.CommandLine.Command;
@@ -32,13 +33,13 @@ public abstract class AbstractTransformation {
 
     public ApiController startApi() {
         if (showMVerbose) {
-            api = new ApiController(true, false);
+            api = new ApiController(Mode.HIGH);
             return api;
         } else if (showVerbose) {
-            api = new ApiController(false, true);
+            api = new ApiController(Mode.LOW);
             return api;
         } else {
-            api = new ApiController(false, false);
+            api = new ApiController(Mode.NONE);
             return api;
         }
     }

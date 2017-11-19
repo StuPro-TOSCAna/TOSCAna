@@ -17,7 +17,7 @@ public class CsarTest {
 
     @Before
     public void setUp() throws IOException {
-        api = new ApiController(false, false);
+        api = new ApiController(ApiController.Mode.NONE);
         CliMain cli = new CliMain();
         cmd = new CommandLine(cli);
         helper = new TestHelper();
@@ -46,19 +46,19 @@ public class CsarTest {
     @Test
     public void testDeleteCsar() throws IOException {
         helper.server200Response();
-        assertEquals(con.CSAR_DELETE_SUCCESS, api.deleteCsar(helper.CSAR));
+        assertEquals(helper.TEST_SUCCESS, api.deleteCsar(helper.CSAR));
     }
-
+    
     @Test
     public void testFail404DeleteCsar() throws IOException {
         helper.server404Response();
-        assertEquals(con.CSAR_DELETE_ERROR404 + "\n", api.deleteCsar(helper.CSAR));
+        assertEquals("" + "\n", api.deleteCsar(helper.CSAR));
     }
 
     @Test
     public void testFail500DeleteCsar() throws IOException {
         helper.server500Response();
-        assertEquals(con.CSAR_DELETE_ERROR500 + "\n", api.deleteCsar(helper.CSAR));
+        assertEquals("" + "\n", api.deleteCsar(helper.CSAR));
     }
 
     @Test
@@ -78,19 +78,19 @@ public class CsarTest {
     @Test
     public void testCsarsList() throws IOException {
         helper.setServerBody("csarlist");
-        assertTrue(api.listCsar().contains(con.CSAR_LIST_SUCCESS));
+        assertTrue(api.listCsar().length() > 0);
     }
 
     @Test
     public void testInfoCsar() throws IOException {
         helper.setServerBody("csarinfo");
-        assertTrue(api.infoCsar(helper.CSAR).contains(con.CSAR_INFO_SUCCESS));
+        assertTrue(api.infoCsar(helper.CSAR).length() > 0);
     }
 
     @Test
     public void testFail404InfoCsar() throws IOException {
         helper.server404Response();
-        assertEquals(con.CSAR_INFO_ERROR404 + "\n", api.infoCsar(helper.CSAR));
+        assertEquals("" + "\n", api.infoCsar(helper.CSAR));
     }
 
     @Test
@@ -105,7 +105,7 @@ public class CsarTest {
         ClassLoader classLoader = getClass().getClassLoader();
         File file = new File(classLoader.getResource("csar/simple-task.csar").getFile());
         helper.server201Response();
-        assertEquals(con.CSAR_UPLOAD_SUCCESS, api.uploadCsar(file));
+        assertEquals(helper.TEST_SUCCESS, api.uploadCsar(file));
     }
 
     @Test
@@ -113,7 +113,7 @@ public class CsarTest {
         helper.server400Response();
         ClassLoader classLoader = getClass().getClassLoader();
         File file = new File(classLoader.getResource("csar/simple-task.csar").getFile());
-        assertEquals(con.CSAR_UPLOAD_ERROR400M, api.uploadCsar(file));
+        assertEquals("", api.uploadCsar(file));
     }
 
     @Test
@@ -121,7 +121,6 @@ public class CsarTest {
         helper.server500Response();
         ClassLoader classLoader = getClass().getClassLoader();
         File file = new File(classLoader.getResource("csar/simple-task.csar").getFile());
-        assertEquals(con.CSAR_UPLOAD_ERROR500, api.uploadCsar(file));
-    }
-    */
+        assertEquals("", api.uploadCsar(file));
+    } */
 }

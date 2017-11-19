@@ -18,7 +18,7 @@ public class InputTest {
 
     @Before
     public void setUp() throws IOException {
-        api = new ApiController(false, false);
+        api = new ApiController(ApiController.Mode.NONE);
         cli = new CliMain();
         cmd = new CommandLine(cli);
         helper = new TestHelper();
