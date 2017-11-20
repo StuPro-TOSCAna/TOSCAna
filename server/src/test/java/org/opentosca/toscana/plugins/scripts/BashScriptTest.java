@@ -22,6 +22,7 @@ public class BashScriptTest extends BaseJUnitTest {
 
     private BashScript bashScript;
     private PluginFileAccess access;
+    private File targetScriptFolder;
 
     @Before
     public void setUp() {
@@ -32,6 +33,7 @@ public class BashScriptTest extends BaseJUnitTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        targetScriptFolder = new File(tmpdir, "content/scripts/");
     }
 
     @Test
@@ -46,19 +48,19 @@ public class BashScriptTest extends BaseJUnitTest {
     }
 
     public void runCreateScriptTest() throws IOException {
-        File expectedGeneratedScript = new File(tmpdir, "content/scripts/test.sh");
+        File expectedGeneratedScript = new File(targetScriptFolder, "test.sh");
         assertTrue(expectedGeneratedScript.exists());
         List<String> result = readFile(expectedGeneratedScript);
         assertEquals("#!/bin/sh", result.get(0));
         assertEquals("source util/*", result.get(1));
-        File expectedUtilsFile = new File(tmpdir, "content/scripts/util/environment-check.sh");
+        File expectedUtilsFile = new File(targetScriptFolder, "util/environment-check.sh");
         assertTrue(expectedUtilsFile.exists());
     }
 
     @Test
     public void appendTest() throws IOException {
         bashScript.append("test");
-        File expectedGeneratedScript = new File(tmpdir, "content/scripts/test.sh");
+        File expectedGeneratedScript = new File(targetScriptFolder, "test.sh");
         List<String> result = readFile(expectedGeneratedScript);
         assertEquals("test", result.get(result.size() - 1));
     }
