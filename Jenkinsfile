@@ -51,6 +51,32 @@ pipeline {
                 }
             }
         }
+        stage('Generate Reports') {
+            parallel{
+                stage('Count Lines of Code (cloc)') {
+                    steps {
+                        sh 'cloc $(git ls-files) --out cloc-report.txt'
+                        archiveArtifacts allowEmptyArchive: true, artifacts: 'target/cloc/*.txt'
+                    }
+                    post {
+                        always {
+                            sh 'rm cloc-report.txt || true'
+                        }
+                    }
+                }
+                stage('Gitinspector Report') {
+                    steps {
+                        sh 'gitinspector --grading --format=htmlembedded > gitinspector.html'
+                        archiveArtifacts allowEmptyArchive: true, artifacts: 'gitinspector.html'
+                    }
+                    post {
+                        always {
+                            sh 'rm gitinspector.html || true'
+                        }
+                    }
+                }
+            }
+        }
         stage('Deploy') {
             when {
                 allOf {
