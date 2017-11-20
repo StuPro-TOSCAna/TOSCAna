@@ -81,7 +81,7 @@ public class PluginFileAccessTest extends BaseJUnitTest {
         String file = "nonexistent_file";
         access.copy(file);
     }
-    
+
     @Test
     public void copySourceToGivenTargetSuccessful() throws IOException {
         String filename = "some-file";
@@ -90,10 +90,10 @@ public class PluginFileAccessTest extends BaseJUnitTest {
         String alternativeDirName = "some-dir/nested/even-deeper";
         File alternateDirectory = new File(targetDir, alternativeDirName);
         File targetFile = new File(alternateDirectory, filename);
-        
+
         String relativeTargetPath = String.format("%s/%s", alternativeDirName, filename);
         access.copy(filename, relativeTargetPath);
-        
+
         assertTrue(targetFile.exists());
     }
 
@@ -137,32 +137,40 @@ public class PluginFileAccessTest extends BaseJUnitTest {
         String path = "nonexistent-file";
         access.read(path);
     }
-    
+
     @Test
     public void getAbsolutePathSuccess() throws IOException {
         String filename = "some-source-file";
         File sourceFile = new File(targetDir, filename);
         sourceFile.createNewFile();
-        
+
         String result = access.getAbsolutePath(filename);
         assertEquals(sourceFile.getAbsolutePath(), result);
     }
-    
+
     @Test(expected = FileNotFoundException.class)
     public void getAbsolutePathNoSuchFile() throws FileNotFoundException {
         String filename = "nonexistent-file";
         access.getAbsolutePath(filename);
         fail("getAbsoultePath() should have raised FileNotFoundException.");
     }
-    
+
     @Test
     public void delete() throws IOException {
         String filename = "some-file";
         File file = new File(targetDir, filename);
         file.createNewFile();
         assertTrue(file.exists());
-        
+
         access.delete(filename);
         assertFalse(file.exists());
+    }
+
+    @Test
+    public void createFolder() {
+        String folder = "some-folder/some-subfolder/some-subsubfolder";
+        access.createFolder(folder);
+        File expectedFolder = new File(targetDir, folder);
+        assertTrue(expectedFolder.exists());
     }
 }
