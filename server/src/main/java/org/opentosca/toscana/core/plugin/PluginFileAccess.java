@@ -142,4 +142,9 @@ public class PluginFileAccess {
         File targetFolder = new File(targetDir, relativePath);
         targetFolder.mkdirs();
     }
+
+    public boolean fileExists(String relativePath) {
+        File file = new File(targetDir, relativePath);
+        return file.exists();
+    }
 }
