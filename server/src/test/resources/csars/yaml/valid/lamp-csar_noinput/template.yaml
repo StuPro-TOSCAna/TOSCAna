@@ -7,20 +7,6 @@ metadata:
 
 
 topology_template:
-  inputs:
-    database_name:
-      type: string
-    database_user:
-      type: string
-    database_password:
-      type: string
-    database_port:
-      type: integer
-    my_mysql_rootpw:
-      type: string
-    my_mysql_port:
-      type: integer
-
   node_templates:
     my_app:
       type: tosca.nodes.WebApplication
@@ -41,38 +27,30 @@ topology_template:
       type: tosca.nodes.WebServer.Apache
       requirements:
         - host: server
-      interfaces:
-        Standard:
-          create: apache_web_server/webserver_install.sh
-          start: apache_web_server/webserver_start.sh
 
     my_db:
       type: tosca.nodes.Database.MySQL
       properties:
-        name: { mydb }
-        user: { root }
-        password: { 123 }
-        port: { 3306 }
+        name: mydb
+        user: root
+        password: abc
+        port: 3306
       capabilities:
         database_endpoint:
           properties:
-            port: { 3306 }
+            port: 3306
       requirements:
         - host: mysql_dbms
 
     mysql_dbms:
       type: tosca.nodes.DBMS.MySQL
       properties:
-          root_password: { get_input: my_mysql_rootpw }
-          port: { get_input: my_mysql_port }
+          root_password: abc
+          port: 3306
         requirements:
           - host: server
         interfaces:
           Standard:
-            inputs:
-              db_root_password: { get_property: [ mysql_dbms, root_password ] }
-            create: mysql_dbms/mysql_dbms_install.sh
-            start: mysql_dbms/mysql_dbms_start.sh
             configure: mysql_dbms/mysql_dbms_configure.sh
 
     server:
@@ -88,7 +66,8 @@ topology_template:
             type: linux
             distribution: ubuntu
             version: 16.04
+
     outputs:
-      endpoint:
-        description: endpoint of the php-app
-          value: { get_attribute: [ server, public_address ] }
+      server_url:
+        description: Concatenated URL with public server address and port
+        value: { concat: [ 'http://', get_attribute: [ server, public_address ], ':', get_attribute: [ server, port ]] }
