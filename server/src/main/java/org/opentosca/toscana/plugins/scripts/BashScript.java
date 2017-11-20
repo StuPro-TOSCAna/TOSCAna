@@ -12,9 +12,9 @@ import org.slf4j.LoggerFactory;
 
 public class BashScript {
     private final static Logger logger = LoggerFactory.getLogger(BashScript.class);
+    private final String scriptsTargetDir = "content/scripts/";
     private String name;
     private PluginFileAccess access;
-    private final String scriptsTargetDir = "content/scripts/";
     private File script;
 
     public BashScript(PluginFileAccess access, String name) throws IOException {
@@ -45,8 +45,9 @@ public class BashScript {
 
     private void copyUtilScriptsIfNotExistent() throws IOException {
         File targetArtifactScript = new File(access.getAbsolutePath(""));
-        File targetScriptUtils = new File(targetArtifactScript, scriptsTargetDir);
+        File targetScriptUtils = new File(targetArtifactScript, scriptsTargetDir + "/util");
         if (targetScriptUtils.exists()) return;
+        logger.info("Copying util scripts to target artifact.");
         targetScriptUtils.mkdirs();
         File sourceScriptUtils = new File(getClass().getResource("/plugins/scripts/util/").getFile());
         FileUtils.copyDirectory(sourceScriptUtils, targetScriptUtils);
@@ -54,6 +55,7 @@ public class BashScript {
 
     public void append(String string) throws IOException {
         FileWriter fileWriter = new FileWriter(script);
+        logger.info("Appending {} to {}.sh", string, name);
         fileWriter.append(string + "\n");
         fileWriter.close();
     }

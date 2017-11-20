@@ -51,6 +51,8 @@ public class BashScriptTest extends BaseJUnitTest {
         List<String> result = readFile(expectedGeneratedScript);
         assertEquals("#!/bin/sh", result.get(0));
         assertEquals("source util/*", result.get(1));
+        File expectedUtilsFile = new File(tmpdir, "content/scripts/util/environment-check.sh");
+        assertTrue(expectedUtilsFile.exists());
     }
 
     @Test
