@@ -1,4 +1,4 @@
-package org.opentosca.toscana.plugins.awscf;
+package org.opentosca.toscana.plugins.cloudformation;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -24,7 +24,7 @@ public class CloudFormationPlugin extends AbstractPlugin {
 
     private static Platform getPlatformDetails() {
         String platformId = "cloud-formation";
-        String platformName = "Amazon Cloud Formation";
+        String platformName = "AWS CloudFormation";
         Set<Property> platformProperties = new HashSet<>();
         return new Platform(platformId, platformName, platformProperties);
     }
