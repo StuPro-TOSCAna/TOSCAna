@@ -23,7 +23,7 @@ topology_template:
         - database_endpoint: my_db
       interfaces:
         Standard:
-          inputs: db_host: { get_attribute: [ server, private_address ] }
+          inputs: database_host: { get_attribute: [ server, private_address ] }
           create: my_app/install_php.sh
           start:
             implementation:
@@ -76,7 +76,8 @@ topology_template:
             type: linux
             distribution: ubuntu
             version: 16.04
+
     outputs:
-      endpoint:
-        description: endpoint of the php-app
-          value: { get_attribute: [ server, public_address ] }
+      server_url:
+        description: Concatenated URL with public server address and port
+        value: { concat: [ 'http://', get_attribute: [ server, public_address ], ':', get_attribute: [ server, port ]] }
