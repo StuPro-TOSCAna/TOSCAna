@@ -7,14 +7,6 @@ metadata:
 
 
 topology_template:
-  inputs:
-    database_name:
-      type: string
-    database_port:
-      type: integer
-    database_password:
-      type: string
-
   node_templates:
     my_app:
       type: tosca.nodes.WebApplication
@@ -23,7 +15,6 @@ topology_template:
         - database_endpoint: my_db
       interfaces:
         Standard:
-          inputs: database_host: { get_attribute: [ server, private_address ] }
           create: my_app/install_php.sh
           start:
             implementation:
@@ -40,27 +31,26 @@ topology_template:
     my_db:
       type: tosca.nodes.Database.MySQL
       properties:
-        name: { get_input: database_name }
-        password: { get_input: database_password }
-        port: { get_input: database_port }
+        name: mydb
+        user: root
+        password: abc
+        port: 3306
       capabilities:
         database_endpoint:
           properties:
-            port: { get_property: [ SELF, port ] }
+            port: 3306
       requirements:
         - host: mysql_dbms
 
     mysql_dbms:
       type: tosca.nodes.DBMS.MySQL
       properties:
-          root_password: { get_input: database_password }
-          port: { get_input: database_port }
+          root_password: abc
+          port: 3306
         requirements:
           - host: server
         interfaces:
           Standard:
-            inputs:
-              db_root_password: { get_property: [ SELF, root_password ] }
             configure: mysql_dbms/mysql_dbms_configure.sh
 
     server:
