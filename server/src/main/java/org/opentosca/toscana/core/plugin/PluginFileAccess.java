@@ -123,10 +123,24 @@ public class PluginFileAccess {
 
     /**
      Deletes file or directory (recusively) denoted by given path. If target does not exists, does nothing.
+
      @param relativePath relative (to the transformation content directory) path to a file or directory.
      */
     public void delete(String relativePath) {
         File file = new File(targetDir, relativePath);
         FileUtils.deleteQuietly(file);
+    }
+
+    /**
+     Creates folder in the target artifact. Does nothing if folder already exists.
+
+     @param relativePath relative (to the transformation content directory) path to a file or directory.
+     @return the created folder.
+     */
+
+    public File createFolder(String relativePath) {
+        File targetFolder = new File(targetDir, relativePath);
+        targetFolder.mkdirs();
+        return targetFolder;
     }
 }
