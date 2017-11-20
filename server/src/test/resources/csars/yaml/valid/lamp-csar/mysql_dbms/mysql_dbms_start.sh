@@ -1,2 +1,2 @@
 #!/bin/bash
-sudo systemctl start mysql.service
+sudo systemctl start mysql
