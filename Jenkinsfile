@@ -66,7 +66,7 @@ pipeline {
                 }
                 stage('Gitinspector Report') {
                     steps {
-                        sh 'gitinspector --grading --format=htmlembedded > gitinspector.html'
+                        sh 'gitinspector --grading -F html > gitinspector.html'
                         archiveArtifacts allowEmptyArchive: true, artifacts: 'gitinspector.html'
                     }
                     post {
