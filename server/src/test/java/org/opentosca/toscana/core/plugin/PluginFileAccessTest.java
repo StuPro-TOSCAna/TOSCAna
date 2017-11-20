@@ -169,8 +169,8 @@ public class PluginFileAccessTest extends BaseJUnitTest {
     @Test
     public void createFolder() {
         String folder = "some-folder/some-subfolder/some-subsubfolder";
-        File actualFolder = access.createFolder(folder);
+        access.createFolder(folder);
         File expectedFolder = new File(targetDir, folder);
-        assertEquals(expectedFolder, actualFolder);
+        assertTrue(expectedFolder.exists());
     }
 }

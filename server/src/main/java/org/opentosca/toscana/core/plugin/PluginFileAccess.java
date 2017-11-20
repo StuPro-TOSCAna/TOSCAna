@@ -132,15 +132,14 @@ public class PluginFileAccess {
     }
 
     /**
-     Creates folder in the target artifact. Does nothing if folder already exists.
+     Creates folders recursively in the transformation content directory. Does nothing if folder already exists.
 
      @param relativePath relative (to the transformation content directory) path to a file or directory.
      @return the created folder.
      */
 
-    public File createFolder(String relativePath) {
+    public void createFolder(String relativePath) {
         File targetFolder = new File(targetDir, relativePath);
         targetFolder.mkdirs();
-        return targetFolder;
     }
 }
