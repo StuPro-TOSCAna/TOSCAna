@@ -59,9 +59,6 @@ topology_template:
             port: { 3306 }
       requirements:
         - host: mysql_dbms
-        interfaces:
-          Standard:
-            create: my_db/db_create.sh
 
     mysql_dbms:
       type: tosca.nodes.DBMS.MySQL
