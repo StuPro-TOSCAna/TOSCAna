@@ -5,7 +5,6 @@ import java.io.IOException;
 
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,11 +15,17 @@ public class BashScript {
     private PluginFileAccess access;
     private File script;
 
+    /**
+     Creates a bash script in the <i>content/scripts</i> folder in the transformation content directory.
+     If not already present, it also copies the util scripts into the <i>content/scripts/util</i> folder.
+
+     @param access PluginFileAccess
+     @param name   Script name without the extension
+     */
     public BashScript(PluginFileAccess access, String name) throws IOException {
         this.access = access;
         this.name = name;
 
-        this.copyUtilScriptsIfNotExistent();
         this.setUpScript();
     }
 
@@ -28,30 +33,16 @@ public class BashScript {
         File scriptsFolder = new File(scriptsTargetDir);
         script = new File(scriptsFolder, "test.sh");
 
-        if (access.fileExists(script.getPath())) {
-            logger.info("Creating new bash script: " + script);
-        } else {
-            logger.info("Overwriting bash script: " + script);
-            access.delete(script.getPath());
-        }
+        logger.info("Creating new bash script: " + script);
+        access.delete(script.getPath());
 
         access.access(script.getPath()).append("#!/bin/sh\n")
             .append("source util/*\n")
             .close();
     }
 
-    private void copyUtilScriptsIfNotExistent() throws IOException {
-        String utilFolderPath = scriptsTargetDir + "/util/";
-        File targetScriptUtilsFolder = new File(utilFolderPath);
-        if (access.fileExists(targetScriptUtilsFolder.getPath())) return;
-        logger.info("Copying util scripts to target artifact.");
-        access.createFolder(utilFolderPath);
-        File sourceScriptUtils = new File(getClass().getResource("/plugins/scripts/util/").getFile());
-        FileUtils.copyDirectory(sourceScriptUtils, new File(access.getAbsolutePath(targetScriptUtilsFolder.getPath())));
-    }
-
     public void append(String string) throws IOException {
-        logger.info("Appending {} to {}.sh", string, name);
+        logger.debug("Appending {} to {}.sh", string, name);
         access.access(script.toString()).append(string + "\n").close();
     }
 }

@@ -31,7 +31,7 @@ public class PluginFileAccess {
      @throws FileNotFoundException if no file or directory was found for given relativePath
      @throws IOException           if an error occurred while copying
      */
-    public void copy(String relativePath) throws FileNotFoundException, IOException {
+    public void copy(String relativePath) throws IOException {
         copy(relativePath, relativePath);
     }
 
@@ -45,7 +45,7 @@ public class PluginFileAccess {
      @throws FileNotFoundException if no file or directory was found for given relativeSourcePath
      @throws IOException           if an error occured while copying
      */
-    public void copy(String relativeSourcePath, String relativeTargetPath) throws FileNotFoundException, IOException {
+    public void copy(String relativeSourcePath, String relativeTargetPath) throws IOException {
         File source = new File(sourceDir, relativeSourcePath);
         File target = new File(targetDir, relativeTargetPath);
         if (!source.exists()) {
@@ -137,14 +137,8 @@ public class PluginFileAccess {
      @param relativePath relative (to the transformation content directory) path to a file or directory.
      @return the created folder.
      */
-
     public void createFolder(String relativePath) {
         File targetFolder = new File(targetDir, relativePath);
         targetFolder.mkdirs();
-    }
-
-    public boolean fileExists(String relativePath) {
-        File file = new File(targetDir, relativePath);
-        return file.exists();
     }
 }

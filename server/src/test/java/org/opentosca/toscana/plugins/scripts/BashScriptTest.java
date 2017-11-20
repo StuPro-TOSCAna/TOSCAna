@@ -38,23 +38,11 @@ public class BashScriptTest extends BaseJUnitTest {
 
     @Test
     public void createScriptTest() throws IOException {
-        runCreateScriptTest();
-    }
-
-    @Test
-    public void overwriteExistingScript() throws IOException {
-        bashScript = new BashScript(access, "test");
-        runCreateScriptTest();
-    }
-
-    public void runCreateScriptTest() throws IOException {
         File expectedGeneratedScript = new File(targetScriptFolder, "test.sh");
         assertTrue(expectedGeneratedScript.exists());
         List<String> result = readFile(expectedGeneratedScript);
         assertEquals("#!/bin/sh", result.get(0));
         assertEquals("source util/*", result.get(1));
-        File expectedUtilsFile = new File(targetScriptFolder, "util/environment-check.sh");
-        assertTrue(expectedUtilsFile.exists());
     }
 
     @Test
