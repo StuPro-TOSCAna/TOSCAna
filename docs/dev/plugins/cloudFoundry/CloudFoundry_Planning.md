@@ -6,6 +6,9 @@ To test some CF specific functionalities and to determine how the different node
 Therefore we have an "test-account" on pivotal.
 For automatical testing it is probably useful to checkout how to implement CF on vSphere.
 
+### Tests
+To create end-to-end tests the java library [CF-JavaClient](https://github.com/cloudfoundry/cf-java-client) might be useful. Using it in the plugin-implementation it isn´t a option, because the plugin only creates the targetartifact and don`t connect to the cf instance. (But this decision isnt finally. Has to be discussed!)
+
 ## Next Steps
 
 ### open issues
