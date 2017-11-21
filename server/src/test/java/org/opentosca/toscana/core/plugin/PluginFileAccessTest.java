@@ -169,7 +169,7 @@ public class PluginFileAccessTest extends BaseJUnitTest {
     @Test
     public void createFolder() {
         String folder = "some-folder/some-subfolder/some-subsubfolder";
-        access.createFolder(folder);
+        access.createDirectories(folder);
         File expectedFolder = new File(targetDir, folder);
         assertTrue(expectedFolder.exists());
     }

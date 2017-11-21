@@ -36,14 +36,14 @@ public abstract class AbstractLifecycle implements TransformationLifecycle {
         this.logger = context.getLogger(getClass());
         PluginFileAccess access = context.getPluginFileAccess();
 
-        setUpFolders(access);
+        setUpDirectories(access);
     }
 
-    private void setUpFolders(PluginFileAccess access) throws IOException {
-        String folder = "output/scripts/util";
-        access.createFolder(folder);
+    private void setUpDirectories(PluginFileAccess access) throws IOException {
+        String directory = "output/scripts/util";
+        access.createDirectories(directory);
 
         File sourceScriptUtils = new File(getClass().getResource("/plugins/scripts/util/").getFile());
-        FileUtils.copyDirectory(sourceScriptUtils, new File(access.getAbsolutePath(folder)));
+        FileUtils.copyDirectory(sourceScriptUtils, new File(access.getAbsolutePath(directory)));
     }
 }

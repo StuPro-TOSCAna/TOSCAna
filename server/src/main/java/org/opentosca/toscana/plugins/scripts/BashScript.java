@@ -1,6 +1,5 @@
 package org.opentosca.toscana.plugins.scripts;
 
-import java.io.File;
 import java.io.IOException;
 
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
@@ -9,14 +8,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class BashScript {
+    public static final String SHEBANG = "#!/bin/sh";
     private final static Logger logger = LoggerFactory.getLogger(BashScript.class);
     private final String scriptsTargetDir = "content/scripts/";
     private String name;
     private PluginFileAccess access;
-    private File script;
+    private String scriptPath;
 
     /**
-     Creates a bash script in the <i>content/scripts</i> folder in the transformation content directory.
+     Creates a bash scriptPath in the <i>content/scripts</i> folder in the transformation content directory.
      If not already present, it also copies the util scripts into the <i>content/scripts/util</i> folder.
 
      @param access PluginFileAccess
@@ -30,19 +30,18 @@ public class BashScript {
     }
 
     private void setUpScript() throws IOException {
-        File scriptsFolder = new File(scriptsTargetDir);
-        script = new File(scriptsFolder, name + ".sh");
+        scriptPath = scriptsTargetDir + name + ".sh";
 
-        logger.info("Creating new bash script: " + script);
-        access.delete(script.getPath());
+        logger.info("Creating new bash scriptPath: " + this.scriptPath);
+        access.delete(scriptPath);
 
-        access.access(script.getPath()).append("#!/bin/sh\n")
+        access.access(scriptPath).append(SHEBANG + "\n")
             .append("source util/*\n")
             .close();
     }
 
     public void append(String string) throws IOException {
         logger.debug("Appending {} to {}.sh", string, name);
-        access.access(script.toString()).append(string + "\n").close();
+        access.access(scriptPath.toString()).append(string + "\n").close();
     }
 }
