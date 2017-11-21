@@ -16,6 +16,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle.UTIL_DIR_PATH;
 
 public class AbstractLifeCycleTest extends BaseJUnitTest {
 
@@ -30,7 +31,7 @@ public class AbstractLifeCycleTest extends BaseJUnitTest {
 
     @Test
     public void utilFolderCopyTest() {
-        File util = new File(tmpdir, "output/scripts/util");
+        File util = new File(tmpdir, UTIL_DIR_PATH);
         assertTrue(util.exists());
         assertTrue(util.listFiles().length > 0);
     }
