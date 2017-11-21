@@ -51,7 +51,6 @@ topology_template:
           - host: server
         interfaces:
           Standard:
-            create: mysql_dbms/mysql_dbms_install.sh
             configure: mysql_dbms/mysql_dbms_configure.sh
 
     server:
