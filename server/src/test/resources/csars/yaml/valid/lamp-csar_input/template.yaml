@@ -78,6 +78,9 @@ topology_template:
             version: 16.04
 
     outputs:
-      server_url:
-        description: Concatenated URL with public server address and port
-        value: { concat: [ 'http://', get_attribute: [ server, public_address ], ':', get_attribute: [ server, port ]] }
+      public_address:
+        description: Public address of the server
+        value: { get_attribute: [ server, public_address ] }
+      port:
+        description: Port of the server
+        value: { get_attribute: [ server, port ] }
