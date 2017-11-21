@@ -1,7 +1,7 @@
 <?php
-$db_host = getenv('database_host');
+$db_host = "DATABASE_HOST";
 $db_user = "root";
-$db_password = getenv('database_password');
-$db_name = getenv('database_name');
-$db_port = getenv('database_port');
+$db_password = "DATABASE_PASSWORD";
+$db_name = "DATABASE_NAME";
+$db_port = DATABASE_PORT;
 ?>
