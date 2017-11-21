@@ -7,17 +7,18 @@ import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle.SCRIPTS_DIR_PATH;
+import static org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle.UTIL_DIR_NAME;
+
 public class BashScript {
     public static final String SHEBANG = "#!/bin/sh";
     private final static Logger logger = LoggerFactory.getLogger(BashScript.class);
-    private final String scriptsTargetDir = "content/scripts/";
     private String name;
     private PluginFileAccess access;
     private String scriptPath;
 
     /**
-     Creates a bash scriptPath in the <i>content/scripts</i> folder in the transformation content directory.
-     If not already present, it also copies the util scripts into the <i>content/scripts/util</i> folder.
+     Creates a bash scriptPath in the <i>content/scripts/</i> directory in the transformation content directory.
 
      @param access PluginFileAccess
      @param name   Script name without the extension
@@ -30,13 +31,13 @@ public class BashScript {
     }
 
     private void setUpScript() throws IOException {
-        scriptPath = scriptsTargetDir + name + ".sh";
+        scriptPath = SCRIPTS_DIR_PATH + name + ".sh";
 
         logger.info("Creating new bash scriptPath: " + this.scriptPath);
         access.delete(scriptPath);
 
         access.access(scriptPath).append(SHEBANG + "\n")
-            .append("source util/*\n")
+            .append("source " + UTIL_DIR_NAME + "*\n")
             .close();
     }
 

@@ -18,6 +18,9 @@ import org.junit.Test;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
+import static org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle.SCRIPTS_DIR_PATH;
+import static org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle.UTIL_DIR_NAME;
+import static org.opentosca.toscana.plugins.scripts.BashScript.SHEBANG;
 
 public class BashScriptTest extends BaseJUnitTest {
 
@@ -36,7 +39,7 @@ public class BashScriptTest extends BaseJUnitTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        targetScriptFolder = new File(tmpdir, "content/scripts/");
+        targetScriptFolder = new File(tmpdir, SCRIPTS_DIR_PATH);
     }
 
     @Test
@@ -45,16 +48,17 @@ public class BashScriptTest extends BaseJUnitTest {
         File expectedGeneratedScript = new File(targetScriptFolder, fileName + ".sh");
         assertTrue(expectedGeneratedScript.exists());
         List<String> result = readFile(expectedGeneratedScript);
-        assertEquals("#!/bin/sh", result.get(0));
-        assertEquals("source util/*", result.get(1));
+        assertEquals(SHEBANG, result.get(0));
+        assertEquals("source " + UTIL_DIR_NAME + "*", result.get(1));
     }
 
     @Test
     public void appendTest() throws IOException {
-        bashScript.append("test");
-        File expectedGeneratedScript = new File(targetScriptFolder, "test.sh");
+        String string = UUID.randomUUID().toString();
+        bashScript.append(string);
+        File expectedGeneratedScript = new File(targetScriptFolder, fileName + ".sh");
         List<String> result = readFile(expectedGeneratedScript);
-        assertEquals("test", result.get(result.size() - 1));
+        assertEquals(string, result.get(result.size() - 1));
     }
 
     public List<String> readFile(File file) throws IOException {

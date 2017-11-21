@@ -18,8 +18,17 @@ import org.slf4j.Logger;
 public abstract class AbstractLifecycle implements TransformationLifecycle {
 
     /**
-     The transformation specific logger that can be used to log to the transformations Log
-     Object
+     Declare transformation content specific directories name and paths
+     */
+    public static final String OUTPUT_DIR = "output/";
+    public static final String OUTPUT_DIR_PATH = OUTPUT_DIR;
+    public static final String SCRIPTS_DIR_NAME = "scripts/";
+    public static final String SCRIPTS_DIR_PATH = OUTPUT_DIR_PATH + SCRIPTS_DIR_NAME;
+    public static final String UTIL_DIR_NAME = "util/";
+    public static final String UTIL_DIR_PATH = SCRIPTS_DIR_PATH + UTIL_DIR_NAME;
+
+    /**
+     The transformation specific logger that can be used to log to the transformations Log Object
      */
     protected Logger logger;
     /**
@@ -40,10 +49,9 @@ public abstract class AbstractLifecycle implements TransformationLifecycle {
     }
 
     private void setUpDirectories(PluginFileAccess access) throws IOException {
-        String directory = "output/scripts/util";
-        access.createDirectories(directory);
+        access.createDirectories(UTIL_DIR_PATH);
 
         File sourceScriptUtils = new File(getClass().getResource("/plugins/scripts/util/").getFile());
-        FileUtils.copyDirectory(sourceScriptUtils, new File(access.getAbsolutePath(directory)));
+        FileUtils.copyDirectory(sourceScriptUtils, new File(access.getAbsolutePath(UTIL_DIR_PATH)));
     }
 }
