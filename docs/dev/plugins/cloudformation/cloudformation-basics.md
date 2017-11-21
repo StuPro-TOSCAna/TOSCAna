@@ -20,4 +20,17 @@ see [this](mapping.md)
 
 ## Deployment / Readme
 - target artifact should be a single template file (JSON/YAML)
-- deployment is either handled by calling the AWS API, using the AWS CLI or manually uploading the template file on the AWS Console
+- deployment is handled by using the AWS Command Line Interface, see [this adr](../../../adr/0007-plugin-cloudformation-cli.md)
+
+## Next steps
+
+- Manually creating a template for the test LAMP-CSAR
+
+- Transforming the test LAMP-CSAR with following node-types and relationships:
+    - tosca.nodes.WebApplication
+    - tosca.nodes.WebServer.Apache
+    - tosca.nodes.Database.MySQL
+    - tosca.nodes.DBMS.MySQL
+    - tosca.nodes.Compute
+    - tosca.relationships.ConnectsTo
+    - tosca.relationships.HostedOn
