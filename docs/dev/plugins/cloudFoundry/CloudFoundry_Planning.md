@@ -30,3 +30,5 @@ The next step is to test the LAMP-csar. Therefore the plugin have to know follow
 - tosca.nodes.Database.MySQL
 - tosca.nodes.WebServer.Apache
 - tosca.nodes.WebApplication
+
+For this the `connects-to` and `hosted-on` relationships are sufficient.
