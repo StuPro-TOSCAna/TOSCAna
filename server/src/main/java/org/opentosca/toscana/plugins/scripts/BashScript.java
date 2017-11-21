@@ -31,7 +31,7 @@ public class BashScript {
 
     private void setUpScript() throws IOException {
         File scriptsFolder = new File(scriptsTargetDir);
-        script = new File(scriptsFolder, "test.sh");
+        script = new File(scriptsFolder, name + ".sh");
 
         logger.info("Creating new bash script: " + script);
         access.delete(script.getPath());

@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.opentosca.toscana.core.BaseJUnitTest;
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
@@ -23,13 +24,15 @@ public class BashScriptTest extends BaseJUnitTest {
     private BashScript bashScript;
     private PluginFileAccess access;
     private File targetScriptFolder;
+    private String fileName;
 
     @Before
     public void setUp() {
         bashScript = null;
+        fileName = UUID.randomUUID().toString();
         access = new PluginFileAccess(tmpdir, tmpdir, mock(Log.class));
         try {
-            bashScript = new BashScript(access, "test");
+            bashScript = new BashScript(access, fileName);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -38,7 +41,8 @@ public class BashScriptTest extends BaseJUnitTest {
 
     @Test
     public void createScriptTest() throws IOException {
-        File expectedGeneratedScript = new File(targetScriptFolder, "test.sh");
+
+        File expectedGeneratedScript = new File(targetScriptFolder, fileName + ".sh");
         assertTrue(expectedGeneratedScript.exists());
         List<String> result = readFile(expectedGeneratedScript);
         assertEquals("#!/bin/sh", result.get(0));
