@@ -12,7 +12,7 @@ import static picocli.CommandLine.usage;
     commandListHeading = "%nAvailable Subcommands are:%n",
     subcommands = {PlatformInfo.class,
         PlatformList.class})
-public class ToscanaPlatform extends AbstractCommand implements Runnable {
+public class ToscanaPlatform extends AbstractCommand {
 
     /**
      Show's the usage of the platform command and all available subcommands

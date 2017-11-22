@@ -2,8 +2,6 @@ package org.opentosca.toscana.cli.commands.transformation;
 
 import java.io.IOException;
 
-import org.opentosca.toscana.cli.ApiController;
-
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
@@ -11,7 +9,7 @@ import picocli.CommandLine.Option;
     description = {"Returns logs for the specified Transformation"},
     customSynopsis = {"@|bold toscana transformation logs|@ @|yellow -c=<name>|@ @|yellow -p=<name>|@ @|yellow -s=<number>|@ [@|yellow -mv|@]",
         "   or: @|bold toscana transformation logs|@ @|yellow -t=<csar/platform>|@ @|yellow -s=<number>|@ [@|yellow -mv|@]%n"})
-public class TransformationLogs extends AbstractTransformation implements Runnable {
+public class TransformationLogs extends AbstractTransformation {
 
     @Option(names = {"-s", "--start"}, paramLabel = "Logs start", description = "Provide where to start with the Logs")
     private int start = 0;
@@ -24,13 +22,8 @@ public class TransformationLogs extends AbstractTransformation implements Runnab
 
     @Override
     public void run() {
-        ApiController api = startApi();
-
         try {
-            final String[] entered = getInput();
-            if (entered != null) {
-                System.out.println(api.logsTransformation(entered[0], entered[1], start));
-            }
+            System.out.println(callLogs(start));
         } catch (IOException e) {
             System.err.println(e.getMessage());
         }

@@ -49,7 +49,7 @@ import static picocli.CommandLine.usage;
         "   @|bold logs|@                       Returns logs for the specified Transformation",
         "   @|bold start|@                      Starts a Transformation",
         "   @|bold stop|@                       Stops the specified Transformation"})
-public class ToscanaHelp extends AbstractCommand implements Runnable {
+public class ToscanaHelp extends AbstractCommand {
 
     @Parameters(arity = "0..1", paramLabel = "command", description = "Shows help page for every command", hidden = true)
     private String[] helpCommand;

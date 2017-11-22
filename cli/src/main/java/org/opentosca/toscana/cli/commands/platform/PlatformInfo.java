@@ -1,6 +1,5 @@
 package org.opentosca.toscana.cli.commands.platform;
 
-import org.opentosca.toscana.cli.ApiController;
 import org.opentosca.toscana.cli.commands.AbstractCommand;
 import org.opentosca.toscana.cli.commands.Constants;
 
@@ -11,7 +10,7 @@ import picocli.CommandLine.Option;
     description = {"Information about the specified Platform"},
     customSynopsis = "@|bold toscana platform info|@ @|yellow -p=<name>|@ [@|yellow -mv|@]%n",
     optionListHeading = "%nOptions:%n")
-public class PlatformInfo extends AbstractCommand implements Runnable {
+public class PlatformInfo extends AbstractCommand {
 
     @Option(names = {"-p", "--platform"}, required = true, paramLabel = Constants.PARAM_PLATFORM, description = "Information about the Platform")
     private String platformInfo;
@@ -24,7 +23,6 @@ public class PlatformInfo extends AbstractCommand implements Runnable {
 
     @Override
     public void run() {
-        ApiController api = startApi();
-        System.out.println(api.infoPlatform(platformInfo));
+        System.out.println(getApi().infoPlatform(platformInfo));
     }
 }

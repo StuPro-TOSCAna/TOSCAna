@@ -64,7 +64,7 @@ public class ApiController {
         } catch (TOSCAnaServerException e) {
             System.err.println(String.format(con.CSAR_UPLOAD_RESPONSE_ERROR + " %s '%s'", e.getStatusCode(), e.getErrorResponse().getMessage()));
         }
-        return con.METHOD_SUCCESS;
+        return "";
     }
 
     /**
@@ -81,7 +81,7 @@ public class ApiController {
         } catch (TOSCAnaServerException e) {
             System.err.println(String.format(con.CSAR_DELETE_ERROR + " %s '%s'", e.getStatusCode(), e.getErrorResponse().getMessage()));
         }
-        return con.METHOD_SUCCESS;
+        return "";
     }
 
     /**
@@ -144,7 +144,7 @@ public class ApiController {
         } catch (TOSCAnaServerException e) {
             System.err.println(String.format(con.TRANSFORMATION_CREATE_ERROR + " %s '%s'", e.getStatusCode(), e.getErrorResponse().getMessage()));
         }
-        return con.METHOD_SUCCESS;
+        return "";
     }
 
     /**
@@ -162,7 +162,7 @@ public class ApiController {
         } catch (TOSCAnaServerException e) {
             System.err.println(String.format(con.TRANSFORMATION_START_ERROR + " %s '%s'", e.getStatusCode(), e.getErrorResponse().getMessage()));
         }
-        return con.METHOD_SUCCESS;
+        return "";
     }
 
     /**
@@ -191,7 +191,7 @@ public class ApiController {
         } catch (TOSCAnaServerException e) {
             System.err.println(String.format(con.TRANSFORMATION_DELETE_ERROR + " %s '%s'", e.getStatusCode(), e.getErrorResponse().getMessage()));
         }
-        return con.METHOD_SUCCESS;
+        return "";
     }
 
     /**
@@ -377,7 +377,6 @@ public class ApiController {
         StringBuilder stringPlatform = new StringBuilder();
         try {
             platform = toscAnaAPI.getPlatformDetails(plat);
-
             stringPlatform.append(platform.getId()).append(", ").append(platform.getName());
         } catch (IOException e) {
             System.err.println(String.format(con.PLATFORM_INFO_ERROR + " '%s'", e.getMessage()));

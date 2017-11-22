@@ -36,6 +36,6 @@ public final class Constants {
     public final String STATUS_EMPTY = "No Status found.";
     public final String STATUS_ERROR = "Something went wrong while getting the System Status:";
     public final String STATUS_METRIC_ERROR = "Something went wrong while getting the System Status:";
-    public final String NOT_PROVIDED = "CSAR or Platform not provided, please specify!";
+    public final String NOT_PROVIDED = "CSAR and/ or Platform not provided, please specify!";
     public final String METHOD_SUCCESS = "success";
 }

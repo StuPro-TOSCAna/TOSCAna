@@ -14,7 +14,7 @@ import static picocli.CommandLine.usage;
         CsarInfo.class,
         CsarList.class,
         CsarUpload.class})
-public class ToscanaCsar extends AbstractCommand implements Runnable {
+public class ToscanaCsar extends AbstractCommand {
 
     /**
      Show's the usage of the CSAR command and available subcommands

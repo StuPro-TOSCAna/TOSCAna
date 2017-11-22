@@ -1,10 +1,10 @@
 package org.opentosca.toscana.cli.commands;
 
 import org.opentosca.toscana.cli.ApiController;
-import org.opentosca.toscana.cli.ApiController.Mode;
+import org.opentosca.toscana.cli.commands.csar.CsarList;
+import org.opentosca.toscana.cli.commands.platform.PlatformList;
 
 import picocli.CommandLine.Command;
-import picocli.CommandLine.Option;
 
 /**
  Abstract class to provide often used Options and the ApiController initialization
@@ -12,25 +12,26 @@ import picocli.CommandLine.Option;
 @Command(//parameterListHeading = "%nParameters:%n",
     optionListHeading = "%nOptions:%n",
     commandListHeading = "%nCommands:%n")
-public abstract class AbstractCommand {
+public abstract class AbstractCommand extends AbstractApiCall {
 
-    @Option(names = {"-v", "--verbose"}, description = "Enable Info Level Process Output")
-    private boolean showVerbose;
+    private ApiController api;
 
-    @Option(names = {"-m", "--moreverbose"}, description = "Enable Debug Level Process Output")
-    private boolean showMVerbose;
+    public AbstractCommand() {
+        api = getApi();
+    }
 
-    public ApiController startApi() {
-        ApiController api;
-        if (showMVerbose) {
-            api = new ApiController(Mode.HIGH);
-            return api;
-        } else if (showVerbose) {
-            api = new ApiController(Mode.LOW);
-            return api;
-        } else {
-            api = new ApiController(Mode.NONE);
-            return api;
+    @Override
+    public void run() {
+        System.out.println(callApi(this.getClass()));
+    }
+
+    String callApi(Class call) {
+        String response = "";
+        if (call == CsarList.class) {
+            response = api.listCsar();
+        } else if (call == PlatformList.class) {
+            response = api.listPlatform();
         }
+        return response;
     }
 }

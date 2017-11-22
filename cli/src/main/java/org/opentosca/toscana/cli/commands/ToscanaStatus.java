@@ -1,13 +1,11 @@
 package org.opentosca.toscana.cli.commands;
 
-import org.opentosca.toscana.cli.ApiController;
-
 import picocli.CommandLine.Command;
 
 @Command(name = "status",
     description = {"Show the current State of the System"},
     customSynopsis = "@|bold toscana status|@ [@|yellow -mv|@]%n")
-public class ToscanaStatus extends AbstractCommand implements Runnable {
+public class ToscanaStatus extends AbstractCommand {
 
     /**
      Get's called if the current state of the system is requested
@@ -17,7 +15,6 @@ public class ToscanaStatus extends AbstractCommand implements Runnable {
 
     @Override
     public void run() {
-        ApiController api = startApi();
-        System.out.println(api.showStatus());
+        System.out.println(getApi().showStatus());
     }
 }

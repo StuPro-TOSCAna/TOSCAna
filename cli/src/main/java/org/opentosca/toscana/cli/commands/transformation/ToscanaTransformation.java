@@ -1,7 +1,5 @@
 package org.opentosca.toscana.cli.commands.transformation;
 
-import org.opentosca.toscana.cli.commands.AbstractCommand;
-
 import picocli.CommandLine.Command;
 
 import static picocli.CommandLine.usage;
@@ -17,7 +15,7 @@ import static picocli.CommandLine.usage;
         TransformationStart.class,
         TransformationStop.class,
         TransformationList.class})
-public class ToscanaTransformation extends AbstractCommand implements Runnable {
+public class ToscanaTransformation extends AbstractTransformation {
 
     /**
      shows the transformation usage and available subcommands
