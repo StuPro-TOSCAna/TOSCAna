@@ -1,0 +1,11 @@
+#!/bin/bash
+# run this script (no args required) in order to (re)pack all csars
+pushd "$(dirname "$0")" > /dev/null
+for CSAR_DIR in $(find -mindepth 3 -maxdepth 3 -type d); do
+    pushd $CSAR_DIR > /dev/null
+    NAME=$(basename $CSAR_DIR)
+    zip -r ../${NAME}.csar * > /dev/null
+    echo Packaged $NAME as ${NAME}.csar
+    popd > /dev/null
+done
+popd > /dev/null
