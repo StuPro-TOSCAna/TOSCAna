@@ -1,6 +1,8 @@
 package org.opentosca.toscana.cli.commands;
 
 import org.opentosca.toscana.cli.ApiController;
+import org.opentosca.toscana.cli.CliProperties;
+import org.opentosca.toscana.retrofit.util.LoggingMode;
 
 import picocli.CommandLine.Option;
 
@@ -15,12 +17,13 @@ public abstract class AbstractApiCall implements Runnable {
     private ApiController api;
 
     public AbstractApiCall() {
+        CliProperties prop = new CliProperties();
         if (showMVerbose) {
-            api = new ApiController(ApiController.Mode.HIGH);
+            api = new ApiController(prop.getApiUrl(), LoggingMode.HIGH);
         } else if (showVerbose) {
-            api = new ApiController(ApiController.Mode.LOW);
+            api = new ApiController(prop.getApiUrl(), LoggingMode.LOW);
         } else {
-            api = new ApiController(ApiController.Mode.NONE);
+            api = new ApiController(prop.getApiUrl(), LoggingMode.OFF);
         }
     }
 

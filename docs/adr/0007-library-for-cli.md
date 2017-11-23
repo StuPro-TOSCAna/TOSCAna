@@ -1,4 +1,4 @@
-## Use of a Library for the CLI
+## Use a Library for the CLI
 To control the TOSCAna software we need a command-line-interface (CLI) which will be integrated in the program code. Therefore we could use a library.
 
 ## Considered Alternatives
@@ -22,24 +22,24 @@ To control the TOSCAna software we need a command-line-interface (CLI) which wil
 ### Commons Cli
 
 * `+` Open Source
-* `+` Costumer suggested it
-* `+` well provided Documentation
+* `+` Customer suggested it
+* `+` good Documentation
 * `-` no Subcommands supported
 
 ### JCommander
 
 * `+` Open Source
-* `+` Costumer suggested it
-* `+` well provided Documentation
+* `+` Customer suggested it
+* `+` good Documentation
 * `+` Subcommands supported
 * `-` no customized Usage messages
 
 ### Picocli
 
 * `+` Open Source
-* `+` Costumer suggested it
+* `+` Customer suggested it
 * `+` supports ANSI Colors and Styles
-* `+` well provided Documentation
+* `+` good Documentation
 * `+` support of Subcommands, nested Subcommands and positional Parameters
 * `+` customized Usage messages
 * `+` POSIX clustered short Options

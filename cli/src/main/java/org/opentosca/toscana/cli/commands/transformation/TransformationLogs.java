@@ -2,6 +2,8 @@ package org.opentosca.toscana.cli.commands.transformation;
 
 import java.io.IOException;
 
+import org.opentosca.toscana.cli.ApiController;
+
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
@@ -18,6 +20,11 @@ public class TransformationLogs extends AbstractTransformation {
      returns all logs available for the Transformation, startpoint for return is set with start
      */
     public TransformationLogs() {
+    }
+
+    @Override
+    protected String performCall(ApiController ap, String[] ent) {
+        return null;
     }
 
     @Override

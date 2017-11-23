@@ -14,4 +14,9 @@ public class CsarList extends AbstractCommand {
      */
     public CsarList() {
     }
+
+    @Override
+    public void run() {
+        System.out.println(getApi().listCsar());
+    }
 }

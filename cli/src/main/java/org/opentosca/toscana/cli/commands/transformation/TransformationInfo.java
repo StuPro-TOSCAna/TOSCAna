@@ -1,5 +1,7 @@
 package org.opentosca.toscana.cli.commands.transformation;
 
+import org.opentosca.toscana.cli.ApiController;
+
 import picocli.CommandLine.Command;
 
 @Command(name = "info",
@@ -12,5 +14,10 @@ public class TransformationInfo extends AbstractTransformation {
      shows available Information about a specified Transformations
      */
     public TransformationInfo() {
+    }
+
+    @Override
+    protected String performCall(ApiController ap, String[] ent) {
+        return ap.infoTransformation(ent[0], ent[1]);
     }
 }

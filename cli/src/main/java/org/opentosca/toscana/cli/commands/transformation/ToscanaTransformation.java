@@ -1,5 +1,7 @@
 package org.opentosca.toscana.cli.commands.transformation;
 
+import org.opentosca.toscana.cli.ApiController;
+
 import picocli.CommandLine.Command;
 
 import static picocli.CommandLine.usage;
@@ -21,6 +23,11 @@ public class ToscanaTransformation extends AbstractTransformation {
      shows the transformation usage and available subcommands
      */
     public ToscanaTransformation() {
+    }
+
+    @Override
+    protected String performCall(ApiController ap, String[] ent) {
+        return null;
     }
 
     @Override

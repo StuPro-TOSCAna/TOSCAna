@@ -24,29 +24,27 @@ public abstract class AbstractTransformation extends AbstractApiCall {
     private String transformation;
     @Option(names = {"-c", "--csar"}, paramLabel = Constants.PARAM_CSAR, description = "CSAR for Transformation")
     private String csar;
-    private Constants con;
 
     AbstractTransformation() {
         api = getApi();
-        con = new Constants();
     }
+
+    protected abstract String performCall(ApiController ap, String[] ent);
 
     @Override
     public void run() {
         try {
-            System.out.println(callApi(this.getClass()));
+            System.out.println(callApi());
         } catch (IOException e) {
             System.err.println(e.getMessage());
         }
     }
 
     /**
-     Converts the transformation string into two separate strings that are used to call
-     methods
+     Converts the transformation string into two separate strings that are used to call methods
 
      @param transformation provided Transformation String containing, CSAR and Platform
-     @return the two separated String for CSAR and Platform
-     only as separator allowed
+     @return the two separated String for CSAR and Platform only as separator allowed
      */
     private String[] inputTransformation(String transformation) throws IOException {
         String[] input;
@@ -55,7 +53,7 @@ public abstract class AbstractTransformation extends AbstractApiCall {
         } else {
             input = transformation.trim().split("/");
             if (input.length < 1) {
-                throw new IOException(con.NOT_PROVIDED);
+                throw new IllegalArgumentException(Constants.NOT_PROVIDED);
             }
         }
         return input;
@@ -72,27 +70,17 @@ public abstract class AbstractTransformation extends AbstractApiCall {
         } else if (csar != null && platform != null) {
             in = new String[]{csar, platform};
         } else {
-            throw new IOException(con.NOT_PROVIDED);
+            throw new IllegalArgumentException(Constants.NOT_PROVIDED);
         }
         return in;
     }
 
-    private String callApi(Class call) throws IOException {
+    private String callApi() throws IOException {
         final String[] entered = getInput();
         String response = "";
 
         if (entered != null) {
-            if (call == TransformationDelete.class) {
-                response = api.deleteTransformation(entered[0], entered[1]);
-            } else if (call == TransformationDownload.class) {
-                response = api.downloadTransformation(entered[0], entered[1]);
-            } else if (call == TransformationInfo.class) {
-                response = api.infoTransformation(entered[0], entered[1]);
-            } else if (call == TransformationStart.class) {
-                response = api.startTransformation(entered[0], entered[1]);
-            } else if (call == TransformationStop.class) {
-                response = api.stopTransformation(entered[0], entered[1]);
-            }
+            response = performCall(api, entered);
         }
         return response;
     }
@@ -101,7 +89,7 @@ public abstract class AbstractTransformation extends AbstractApiCall {
         if (csar != null) {
             return api.listTransformation(csar);
         } else {
-            throw new IOException(con.NOT_PROVIDED);
+            throw new IllegalArgumentException(Constants.NOT_PROVIDED);
         }
     }
 

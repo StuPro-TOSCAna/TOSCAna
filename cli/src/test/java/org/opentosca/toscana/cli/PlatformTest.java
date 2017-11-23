@@ -2,70 +2,34 @@ package org.opentosca.toscana.cli;
 
 import java.io.IOException;
 
-import org.opentosca.toscana.cli.commands.Constants;
+import org.junit.Test;
 
-import org.junit.After;
-import org.junit.Before;
-import picocli.CommandLine;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-public class PlatformTest {
+public class PlatformTest extends TestHelper {
 
-    private ApiController api = null;
-    private CommandLine cmd = null;
-    private TestHelper helper = null;
-    private Constants con = null;
-
-    @Before
-    public void setUp() throws IOException {
-        api = new ApiController(ApiController.Mode.NONE);
-        CliMain cli = new CliMain();
-        cmd = new CommandLine(cli);
-        helper = new TestHelper();
-        helper.setUp();
-        con = new Constants();
-    }
-
-    @After
-    public void tearDown() throws IOException {
-        helper.tearDown();
-    }
-/*
     @Test
-    public void testCliPlatform() {
-        final List<Object> parsed = cmd.parseWithHandler(new CommandLine.RunLast(), System.err, helper.PLATFORM_AR);
-        assertEquals(1, parsed.size());
+    public void PlatformInfo() throws IOException {
+        apiSingleInput(PLATFORM_JSON, 200);
+        assertTrue(getApi().infoPlatform(PLATFORM).contains(PLATFORM));
     }
 
     @Test
-    public void testPlatformList() throws IOException {
-        helper.setServerBody("platformlist");
-        final List<Object> parsed = cmd.parseWithHandler(new CommandLine.RunLast(), System.err, helper.PLATFORM_LIST);
-        assertEquals(1, parsed.size());
+    public void PlatformInfoError() throws IOException {
+        enqueError(400);
+        assertEquals("", getApi().infoPlatform(PLATFORM));
     }
 
     @Test
-    public void testPlatformInfo() throws IOException {
-        helper.setServerBody("platforminfo");
-        final List<Object> parsed = cmd.parseWithHandler(new CommandLine.RunLast(), System.err, helper.PLATFORM_INFO);
-        assertEquals(1, parsed.size());
+    public void PlatformList() throws IOException {
+        apiSingleInput(PLATFORMS_JSON, 200);
+        assertTrue(getApi().listPlatform().contains(PLATFORM));
     }
 
     @Test
-    public void testPlatformsList() throws IOException {
-        helper.setServerBody("platformlist");
-        assertTrue(api.listPlatform().contains(con.PLATFORM_LIST_SUCCESS));
+    public void PlatformListError() throws IOException {
+        enqueError(400);
+        assertEquals("", getApi().listPlatform());
     }
-
-    @Test
-    public void testInfoPlatform() throws IOException {
-        helper.setServerBody("platforminfo");
-        assertTrue(api.infoPlatform(helper.PLATFORM).contains(con.PLATFORM_INFO_SUCCESS));
-    }
-
-    @Test
-    public void testFail404InfoPlatform() throws IOException {
-        helper.server404Response();
-        assertEquals(con.PLATFORM_INFO_ERROR404 + "\n", api.infoPlatform(helper.PLATFORM));
-    }
-    */
 }

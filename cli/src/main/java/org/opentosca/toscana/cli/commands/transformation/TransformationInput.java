@@ -37,6 +37,11 @@ public class TransformationInput extends AbstractTransformation {
     }
 
     @Override
+    protected String performCall(ApiController ap, String[] ent) {
+        return null;
+    }
+
+    @Override
     public void run() {
         ApiController api = getApi();
 

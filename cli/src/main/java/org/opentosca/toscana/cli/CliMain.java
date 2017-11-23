@@ -19,21 +19,21 @@ import static picocli.CommandLine.usage;
     customSynopsis = "@|bold toscana|@ [@|yellow <command>|@] [@|yellow <subcommand>|@] [@|yellow -mv|@]",
     commandListHeading = "%nMost commonly used TOSCAna commands are:%n",
     footer = {"%nSee 'toscana help [@|yellow <command>|@]' or 'toscana help [@|yellow <command>|@] [@|yellow <subcommand>|@]' to read about a specific command or subcommand.",
-    "You can set the API URL which is used in the CLI, in the cli.properties file under the Toscana folder" },
+        "You can set the API URL which is used in the CLI, in the cli.properties file under the Toscana folder"},
     subcommands = {ToscanaCsar.class,
         ToscanaHelp.class,
         TransformationInput.class,
         ToscanaPlatform.class,
         ToscanaStatus.class,
         ToscanaTransformation.class})
-public class CliMain extends AbstractCommand implements Runnable {
+public class CliMain extends AbstractCommand {
 
     public static void main(String[] args) {
 
         //Activate ANSI on Windows
         AnsiConsole.systemInstall();
         System.setProperty("picocli.ansi", "true");
-        
+
         //First startup to create cli.properties
         new CliProperties();
 

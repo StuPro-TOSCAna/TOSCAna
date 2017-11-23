@@ -1,5 +1,7 @@
 package org.opentosca.toscana.cli.commands.transformation;
 
+import org.opentosca.toscana.cli.ApiController;
+
 import picocli.CommandLine.Command;
 
 @Command(name = "delete",
@@ -12,5 +14,10 @@ public class TransformationDelete extends AbstractTransformation {
      deletes the specified Transformation from the Transformator
      */
     public TransformationDelete() {
+    }
+    
+    @Override
+    protected String performCall(ApiController ap, String[] ent) {
+        return ap.deleteTransformation(ent[0], ent[1]);
     }
 }

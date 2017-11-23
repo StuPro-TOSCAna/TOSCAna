@@ -1,6 +1,5 @@
 package org.opentosca.toscana.cli;
 
-import org.junit.Before;
 import picocli.CommandLine;
 
 public class HelpTest {
@@ -28,44 +27,4 @@ public class HelpTest {
         private final TransformationsResponse tResponse = new TransformationsResponse(trans);
         */
     private CommandLine cmd = null;
-
-    @Before
-    public void setUp() {
-        CliMain cli = new CliMain();
-        cmd = new CommandLine(cli);
-    }
-    /*
-    @Test
-    public void testCliStart() {
-        CliMain.main(new String[] {""});
-    }
-
-    @Test
-    public void testToscanaHelp() {
-        final List<CommandLine> parsed = cmd.parse("help");
-        assertEquals("help", parsed.get(1).getCommandName());
-    }
-
-    @Test
-    public void testHelpPlatform() {
-        final String[] content = {"help", "platform"};
-        final List<Object> parsed = cmd.parseWithHandler(new CommandLine.RunLast(), System.err, content);
-        assertEquals(1, parsed.size());
-    }
-
-    @Test
-    public void testHelpTransformationDownload() {
-        final String[] content = {"help", "transformation", "download"};
-        final List<Object> parsed = cmd.parseWithHandler(new CommandLine.RunLast(), System.err, content);
-        assertEquals(1, parsed.size());
-    }
-
-    @Test
-    public void testFailHelpShort() {
-        final String[] content = {};
-        final List<Object> parsed = cmd.parseWithHandler(new CommandLine.RunLast(), System.err, content);
-        new ToscanaHelp().run();
-        assertEquals(1, parsed.size());
-    }
-    */
 }

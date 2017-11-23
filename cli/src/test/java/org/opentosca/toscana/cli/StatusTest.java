@@ -2,45 +2,22 @@ package org.opentosca.toscana.cli;
 
 import java.io.IOException;
 
-import org.opentosca.toscana.cli.commands.Constants;
+import org.junit.Test;
 
-import org.junit.After;
-import org.junit.Before;
-import picocli.CommandLine;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-public class StatusTest {
+public class StatusTest extends TestHelper {
 
-    private ApiController api = null;
-    private CommandLine cmd = null;
-    private TestHelper helper = null;
-    private Constants con = null;
-
-    @Before
-    public void setUp() throws IOException {
-        api = new ApiController(ApiController.Mode.NONE);
-        CliMain cli = new CliMain();
-        cmd = new CommandLine(cli);
-        helper = new TestHelper();
-        helper.setUp();
-        con = new Constants();
-    }
-
-    @After
-    public void tearDown() throws IOException {
-        helper.tearDown();
-    }
-/*
     @Test
-    public void testCliStatus() throws IOException {
-        helper.setServerBody("systemstatus");
-        final List<Object> parsed = cmd.parseWithHandler(new CommandLine.RunLast(), System.err, helper.STATUS);
-        assertEquals(1, parsed.size());
+    public void CliStatus() throws IOException {
+        apiSingleInput(STATUS_HEALTH_JSON, 200);
+        assertTrue(getApi().showStatus().contains("UP"));
     }
 
     @Test
-    public void testSystemStatus() throws IOException {
-        helper.setServerBody("systemstatus");
-        assertTrue(api.showStatus().contains(con.STATUS_SUCCESS));
+    public void CliStatusError() throws IOException {
+        enqueError(400);
+        assertEquals("", getApi().showStatus());
     }
-    */
 }

@@ -1,5 +1,7 @@
 package org.opentosca.toscana.cli.commands.transformation;
 
+import org.opentosca.toscana.cli.ApiController;
+
 import picocli.CommandLine.Command;
 
 @Command(name = "stop",
@@ -12,5 +14,10 @@ public class TransformationStop extends AbstractTransformation {
      stops the specified currently running Transformation
      */
     public TransformationStop() {
+    }
+
+    @Override
+    protected String performCall(ApiController ap, String[] ent) {
+        return ap.stopTransformation(ent[0], ent[1]);
     }
 }

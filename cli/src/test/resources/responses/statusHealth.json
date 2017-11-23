@@ -1,0 +1,29 @@
+{
+    "status": "UP",
+    "transformer": {
+        "status": "UP",
+        "installed_plugins": [
+            "kubernetes",
+            "cloud-formation",
+            "cloud-foundry"
+        ],
+        "running_transformations": [
+            {
+                "csar":"test",
+                "platform":"kubernetes"
+            }
+        ],
+        "errored_transformations": [
+            {
+                "csar":"test",
+                "platform":"cloud-foundry"
+            }
+        ]
+    },
+    "diskSpace": {
+        "status": "UP",
+        "total": 113264439296,
+        "free": 26136109056,
+        "threshold": 10485760
+    }
+}

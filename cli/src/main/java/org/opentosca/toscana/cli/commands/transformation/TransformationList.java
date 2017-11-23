@@ -2,6 +2,8 @@ package org.opentosca.toscana.cli.commands.transformation;
 
 import java.io.IOException;
 
+import org.opentosca.toscana.cli.ApiController;
+
 import picocli.CommandLine.Command;
 
 @Command(name = "list",
@@ -13,6 +15,11 @@ public class TransformationList extends AbstractTransformation {
      shows a list of available Transformations for the provided CSAR
      */
     public TransformationList() {
+    }
+
+    @Override
+    protected String performCall(ApiController ap, String[] ent) {
+        return null;
     }
 
     @Override

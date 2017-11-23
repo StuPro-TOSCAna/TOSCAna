@@ -14,4 +14,9 @@ public class PlatformList extends AbstractCommand {
      */
     public PlatformList() {
     }
+
+    @Override
+    public void run() {
+        System.out.println(getApi().listPlatform());
+    }
 }
