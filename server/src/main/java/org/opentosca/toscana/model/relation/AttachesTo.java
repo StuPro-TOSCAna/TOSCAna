@@ -6,6 +6,7 @@ import javax.validation.constraints.Size;
 
 import org.opentosca.toscana.model.capability.StorageCapability;
 import org.opentosca.toscana.model.node.Compute;
+import org.opentosca.toscana.model.visitor.Visitor;
 
 import lombok.Data;
 
@@ -56,5 +57,11 @@ public class AttachesTo extends RootRelationship {
     }
 
     public static class AttachesToBuilder extends RootRelationshipBuilder {
+    }
+
+
+    @Override
+    public void accept(Visitor v) {
+        v.visit(this);
     }
 }

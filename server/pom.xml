@@ -40,6 +40,11 @@
             <artifactId>lombok</artifactId>
             <version>1.16.18</version>
         </dependency>
+        <dependency>
+            <groupId>org.jgrapht</groupId>
+            <artifactId>jgrapht-core</artifactId>
+            <version>1.1.0</version>
+        </dependency>
         <!-- Winery -->
         <dependency>
             <groupId>com.github.stupro-toscana.winery</groupId>

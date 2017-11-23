@@ -6,6 +6,8 @@ import java.util.Set;
 import org.opentosca.toscana.model.DescribableEntity;
 import org.opentosca.toscana.model.datatype.Range;
 import org.opentosca.toscana.model.node.RootNode;
+import org.opentosca.toscana.model.visitor.Visitable;
+import org.opentosca.toscana.model.visitor.Visitor;
 
 import lombok.Builder;
 import lombok.Data;
@@ -17,7 +19,7 @@ import lombok.Singular;
  (TOSCA Simple Profile in YAML Version 1.1, p. 82)
  */
 @Data
-public class Capability extends DescribableEntity {
+public class Capability extends DescribableEntity implements Visitable {
 
     /**
      Set of Node Class Types that are valid sources of any relationship established to this capability.
@@ -41,5 +43,10 @@ public class Capability extends DescribableEntity {
         super(description);
         this.validSourceTypes = Objects.requireNonNull(validSourceTypes);
         this.occurence = (occurence != null) ? occurence : Range.AT_LEAST_ONCE;
+    }
+
+    @Override
+    public void accept(Visitor v) {
+        v.visit(this);
     }
 }
