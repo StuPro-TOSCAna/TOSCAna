@@ -3,6 +3,7 @@ package org.opentosca.toscana.model.relation;
 import java.util.Optional;
 
 import org.opentosca.toscana.model.datatype.Credential;
+import org.opentosca.toscana.model.visitor.Visitor;
 
 import lombok.Builder;
 import lombok.Data;
@@ -35,5 +36,10 @@ public class ConnectsTo extends RootRelationship {
     }
 
     public static class ConnectsToBuilder extends RootRelationshipBuilder {
+    }
+
+    @Override
+    public void accept(Visitor v) {
+        v.visit(this);
     }
 }

@@ -4,6 +4,7 @@ import java.util.Set;
 
 import org.opentosca.toscana.model.datatype.Range;
 import org.opentosca.toscana.model.node.RootNode;
+import org.opentosca.toscana.model.visitor.Visitor;
 
 import lombok.Builder;
 import lombok.Data;
@@ -24,5 +25,10 @@ public class NodeCapability extends Capability {
     }
 
     public static class NodeCapabilityBuilder extends CapabilityBuilder {
+    }
+    
+    @Override
+    public void accept(Visitor v) {
+        v.visit(this);
     }
 }
