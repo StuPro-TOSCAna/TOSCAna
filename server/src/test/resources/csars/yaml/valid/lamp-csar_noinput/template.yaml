@@ -18,7 +18,7 @@ topology_template:
           create: my_app/install_php.sh
           start:
             implementation:
-              primary: my_app/start_myphpapp.sh
+              primary: my_app/create_myphpapp.sh
               dependencies:
                 - myphpapp.php
                 - mysql-credentials.php

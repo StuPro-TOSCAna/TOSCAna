@@ -23,20 +23,19 @@ topology_template:
         - database_endpoint: my_db
       interfaces:
         Standard:
-          create: my_app/install_php.sh
+          create: 
+            implementation:
+              primary: my_app/create_myphpapp.sh
+              dependencies:
+                - my_app/myphpapp.php
+                - my_app/mysql-credentials.php
           configure:
-            implementation: my_app/configure_myphpapp.sh
+            implemenation: my_app/configure_myphpapp.sh
             inputs:
               database_host: { get_attribute: [ server, private_address ] }
               database_password: { get_property: [ my_db, password ] }
               database_name: { get_property: [ my_db, name ] }
               database_port: { get_property: [ my_db, port ] }
-          start:
-            implementation:
-              primary: my_app/start_myphpapp.sh
-              dependencies:
-                - myphpapp.php
-                - mysql-credentials.php
 
     apache_web_server:
       type: tosca.nodes.WebServer.Apache
