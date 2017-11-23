@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.opentosca.toscana.model.datatype.Range;
 import org.opentosca.toscana.model.node.RootNode;
+import org.opentosca.toscana.model.visitor.Visitor;
 
 import lombok.Builder;
 import lombok.Data;
@@ -65,4 +66,8 @@ public class ScalableCapability extends Capability {
         return Optional.ofNullable(defaultInstances);
     }
 
+    @Override
+    public void accept(Visitor v) {
+        v.visit(this);
+    }
 }

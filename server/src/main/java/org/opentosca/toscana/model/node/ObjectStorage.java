@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.opentosca.toscana.model.capability.EndpointCapability;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
+import org.opentosca.toscana.model.visitor.Visitor;
 
 import lombok.Builder;
 import lombok.Data;
@@ -84,5 +85,10 @@ public class ObjectStorage extends RootNode {
      */
     public Optional<Integer> getMaxSizeInGB() {
         return Optional.ofNullable(maxSizeInGB);
+    }
+
+    @Override
+    public void accept(Visitor v) {
+        v.visit(this);
     }
 }
