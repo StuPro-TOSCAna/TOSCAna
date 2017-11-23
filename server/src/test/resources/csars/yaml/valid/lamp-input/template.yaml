@@ -1,4 +1,4 @@
-tosca_definitions_version: tosca_simple_yaml_1_0
+tosca_definitions_version: tosca_simple_yaml_1_1
 description: Template for deploying a LAMP stack.
 metadata:
   template_name: lamp-stack-template
@@ -23,7 +23,12 @@ topology_template:
         - database_endpoint: my_db
       interfaces:
         Standard:
-          create: my_app/install_php.sh
+          create:
+            implementation:
+              primary: my_app/create_myphpapp.sh
+              dependencies:
+                - my_app/myphpapp.php
+                - my_app/mysql-credentials.php
           configure:
             implementation: my_app/configure_myphpapp.sh
             inputs:
@@ -31,12 +36,6 @@ topology_template:
               database_password: { get_property: [ my_db, password ] }
               database_name: { get_property: [ my_db, name ] }
               database_port: { get_property: [ my_db, port ] }
-          start:
-            implementation:
-              primary: my_app/start_myphpapp.sh
-              dependencies:
-                - myphpapp.php
-                - mysql-credentials.php
 
     apache_web_server:
       type: tosca.nodes.WebServer.Apache
@@ -59,15 +58,16 @@ topology_template:
     mysql_dbms:
       type: tosca.nodes.DBMS.MySQL
       properties:
-          root_password: { get_input: database_password }
-          port: { get_input: database_port }
-        requirements:
-          - host: server
-        interfaces:
-          Standard:
+        root_password: { get_input: database_password }
+        port: { get_input: database_port }
+      requirements:
+        - host: server
+      interfaces:
+        Standard:
+          configure:
+            implementation: mysql_dbms/mysql_dbms_configure.sh
             inputs:
               db_root_password: { get_property: [ SELF, root_password ] }
-            configure: mysql_dbms/mysql_dbms_configure.sh
 
     server:
       type: tosca.nodes.Compute
@@ -83,10 +83,10 @@ topology_template:
             distribution: ubuntu
             version: 16.04
 
-    outputs:
-      public_address:
-        description: Public address of the server
-        value: { get_attribute: [ server, public_address ] }
-      port:
-        description: Port of the server
-        value: { get_attribute: [ server, port ] }
+  outputs:
+    public_address:
+      description: Public address of the server
+      value: { get_attribute: [ server, public_address ] }
+    port:
+      description: Port of the server
+      value: { get_attribute: [ server, port ] }
