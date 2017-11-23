@@ -1,0 +1,99 @@
+tosca_definitions_version: tosca_simple_yaml_1_1
+description: Template for deploying the simple-task-app via docker 
+metadata:
+  template_name: simple-task-docker-template
+  template_author: stupro-toscana
+  template_version: 1.0
+
+node_types:
+  DockerEngine:
+    derived_from: tosca.nodes.Root
+    # needs capability: DockerHost or similar..
+    capabilities:
+      host: 
+        type: DockerHost
+    requirements:
+      - os:
+        type: linux
+        distribution: ubuntu
+        architecture: x86_64
+    interfaces:
+      Standard:
+        create:
+          implementation: docker/dockerengine_create.sh
+        start:
+          implementation: docker/dockerengine_start.sh
+        stop:
+          implementation: docker/dockerengine_stop.sh
+  DockerApp:
+    derived_from: tosca.nodes.Root
+    requirements:
+      - host:
+        capability: DockerHost
+        node: DockerEngine 
+        relationship: tosca.relationships.HostedOn
+      - network:
+        capability: SimplePublicWebEndpoint
+    attributes:
+      tag:
+        type: string
+        description: the tag for the docker image
+      identifier:
+        type: string
+        description: the identifier (name) for the docker container
+    interfaces:
+      Standard:
+        create:
+          implementation: docker/dockerapp_create.sh
+        start:
+          implementation: docker/dockerapp_create.sh
+        stop:
+          implementation: docker/dockerapp_stop.sh
+        delete:
+          implementation: docker/dockerapp_delete.sh 
+capability_types:
+  DockerHost:
+    derived_from: tosca.capabilities.Root
+    valid_source_types: [ DockerApp ]
+  SimplePublicWebEndpoint:
+    derived_from: tosca.capabilities.Endpoint
+    properties:
+      protocol: http
+      port: 80
+      url_path: /
+      network_name: PUBLIC
+
+topology_template:
+  node_templates:
+    myDockerEngine:
+      type: DockerEngine
+
+    simpleTaskApp:
+      type: DockerApp
+      attributes:
+        tag:
+          description: tag for docker image
+          value: simple-task-app
+        identifier:
+          description: identifier of docker container
+          value: simple-task-app-1
+        endpoint: 
+          value: { get_operation_output: [ SELF, Standard, create, endpoint ] }
+      interfaces:
+        Standard:
+          inputs:
+            tag: { get_attribute: [ SELF, tag ] }
+            identifier: { get_attribute: [ SELF, identifier ] }
+          create:
+            implementation: 
+              primary: simple-task-app/create.sh
+              # dependencies will get copied by orchestrator to the same location
+              # as create.sh, before create.sh is executed
+
+
+  outputs:
+    endpoint:
+      description: the endpoint of the simple-task-app
+      value: { get_attribute: [ simpleTaskApp, endpoint ] }
+      type: string
+
