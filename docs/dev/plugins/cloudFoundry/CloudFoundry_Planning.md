@@ -7,17 +7,17 @@ Therefore we have an "test-account" on pivotal.
 For automatical testing it is probably useful to checkout how to implement CF on vSphere.
 
 ### Tests
-To create end-to-end tests the java library [CF-JavaClient](https://github.com/cloudfoundry/cf-java-client) might be useful. Using it in the plugin-implementation it isn´t a option, because the plugin only creates the targetartifact and don`t connect to the cf instance. (But this decision isnt finally. Has to be discussed!)
+To create end-to-end tests the java library [CF-JavaClient](https://github.com/cloudfoundry/cf-java-client) might be useful. Using it in the plugin-implementation it is not a option, because the plugin only creates the target artifact and does not connect to the cf instance. (But this decision is not finally. Has to be discussed!)
 
 ## Next Steps
 
-### open issues
-- create a table with all supported node-types (normative and non-normative) and a description how to handle these within CF
+### Open Issues
+- create a table with all supported node types (normative and non-normative) and a description how to handle the deployment of them
 - create a [test-CSAR](https://github.com/StuPro-TOSCAna/TOSCAna/pull/211)
 - investigate how to write the manifest.yaml
-- determine how to handle with additional buildpacks (e.g. a LAMP app needs a additional buildpacks for supporting php-mysql)
-- determine how to handle with services
-  - e.g. suggest a service-name and the user has to create a service with this name --> write it down in the readme
+- determine how to get the information about the need of additional buildpacks (e.g. a LAMP app needs a additional buildpacks for supporting php-mysql)
+- determine how to use services
+  - e.g. suggest a service name and the user has to create a service with this name --> write it down in the readme
   - e.g. interact with user while transformation and plugin creates service by itself
 - creating a CF-transformation-flow
 - investigate how to test the CF-plugin
