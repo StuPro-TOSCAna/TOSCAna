@@ -10,6 +10,7 @@ This log lists the architectural decisions for *[project name]*.
 - [ADR-0003](0003-lombok.md) - Use lombok in order to avoid writing boilerplate code
 - [ADR-0004](0004-spring-framework.md) - Use Spring Framework for the REST-API (server component)
 - [ADR-0005](0005-springfox.md) - Use Springfox for API documentation
+- [ADR-0008](0008-kubernetes-end-to-end-tests.md) - How to perform Kubernetes end to end tests
 
 <!-- adrlogstop -->
 
