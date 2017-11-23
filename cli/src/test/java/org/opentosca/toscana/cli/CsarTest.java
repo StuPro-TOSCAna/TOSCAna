@@ -58,13 +58,13 @@ public class CsarTest {
     @Test
     public void testFail404DeleteCsar() throws IOException {
         helper.server404Response();
-        assertEquals(con.CSAR_DELETE_ERROR404M, api.deleteCsar(helper.CSAR));
+        assertEquals(con.CSAR_DELETE_ERROR404 + "\n", api.deleteCsar(helper.CSAR));
     }
 
     @Test
     public void testFail500DeleteCsar() throws IOException {
         helper.server500Response();
-        assertEquals(con.CSAR_DELETE_ERROR500M, api.deleteCsar(helper.CSAR));
+        assertEquals(con.CSAR_DELETE_ERROR500 + "\n", api.deleteCsar(helper.CSAR));
     }
 
     @Test
@@ -96,7 +96,7 @@ public class CsarTest {
     @Test
     public void testFail404InfoCsar() throws IOException {
         helper.server404Response();
-        assertEquals(con.CSAR_INFO_ERROR404M, api.infoCsar(helper.CSAR));
+        assertEquals(con.CSAR_INFO_ERROR404 + "\n", api.infoCsar(helper.CSAR));
     }
 
     @Test
@@ -110,7 +110,7 @@ public class CsarTest {
     public void testUploadCsar() throws IOException {
         ClassLoader classLoader = getClass().getClassLoader();
         File file = new File(classLoader.getResource("csar/simple-task.csar").getFile());
-        helper.serverEnqueue();
+        helper.server201Response();
         assertEquals(con.CSAR_UPLOAD_SUCCESS, api.uploadCsar(file));
     }
 

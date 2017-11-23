@@ -78,24 +78,24 @@ public class TransformationControllerTest extends BaseSpringTest {
         "\t\t\"unsigned_integer_property\": \"-1337\"\n" +
         "\t}\n" +
         "}";
-    private final static String VALID_CSAR_NAME = "k8s-cluster";
+    private final static String VALID_CSAR_NAME = "kubernetes-cluster";
     private final static String VALID_PLATFORM_NAME = "p-a";
-    private final static String START_TRANSFORMATION_VALID_URL = "/api/csars/k8s-cluster/transformations/p-a/start";
-    private final static String GET_PROPERTIES_VALID_URL = "/api/csars/k8s-cluster/transformations/p-a/properties";
+    private final static String START_TRANSFORMATION_VALID_URL = "/api/csars/kubernetes-cluster/transformations/p-a/start";
+    private final static String GET_PROPERTIES_VALID_URL = "/api/csars/kubernetes-cluster/transformations/p-a/properties";
     private final static String DEFAULT_CHARSET_HAL_JSON = "application/hal+json;charset=UTF-8";
-    private final static String ARTIFACT_RESPONSE_EXPECTED_URL = "http://localhost/api/csars/k8s-cluster/transformations/p-a/artifact";
-    private final static String GET_ARTIFACTS_VALID_URL = "/api/csars/k8s-cluster/transformations/p-a/artifact";
-    private final static String GET_LOGS_AT_START_ZERO_VALID_URL = "/api/csars/k8s-cluster/transformations/p-a/logs?start=0";
-    private final static String GET_LOGS_NEGATIVE_START_URL = "/api/csars/k8s-cluster/transformations/p-a/logs?start=-1";
-    private final static String DELETE_TRANSFORMATION_VALID_URL = "/api/csars/k8s-cluster/transformations/p-a/delete";
-    private final static String TRANSFORMATION_DETAILS_VALID_URL = "/api/csars/k8s-cluster/transformations/p-a";
+    private final static String ARTIFACT_RESPONSE_EXPECTED_URL = "http://localhost/api/csars/kubernetes-cluster/transformations/p-a/artifact";
+    private final static String GET_ARTIFACTS_VALID_URL = "/api/csars/kubernetes-cluster/transformations/p-a/artifact";
+    private final static String GET_LOGS_AT_START_ZERO_VALID_URL = "/api/csars/kubernetes-cluster/transformations/p-a/logs?start=0";
+    private final static String GET_LOGS_NEGATIVE_START_URL = "/api/csars/kubernetes-cluster/transformations/p-a/logs?start=-1";
+    private final static String DELETE_TRANSFORMATION_VALID_URL = "/api/csars/kubernetes-cluster/transformations/p-a/delete";
+    private final static String TRANSFORMATION_DETAILS_VALID_URL = "/api/csars/kubernetes-cluster/transformations/p-a";
     private final static String APPLICATION_HAL_JSON_MIME_TYPE = "application/hal+json";
-    private final static String LIST_TRANSFORMATIONS_VALID_URL = "/api/csars/k8s-cluster/transformations/";
-    private final static String LIST_TRANSFORMATIONS_EXPECTED_URL = "http://localhost/api/csars/k8s-cluster/transformations/";
-    private final static String CREATE_CSAR_VALID_URL = "/api/csars/k8s-cluster/transformations/p-a/create";
-    private final static String PLATFORM_NOT_FOUND_URL = "/api/csars/k8s-cluster/transformations/p-z";
+    private final static String LIST_TRANSFORMATIONS_VALID_URL = "/api/csars/kubernetes-cluster/transformations/";
+    private final static String LIST_TRANSFORMATIONS_EXPECTED_URL = "http://localhost/api/csars/kubernetes-cluster/transformations/";
+    private final static String CREATE_CSAR_VALID_URL = "/api/csars/kubernetes-cluster/transformations/p-a/create";
+    private final static String PLATFORM_NOT_FOUND_URL = "/api/csars/kubernetes-cluster/transformations/p-z";
     private final static String CSAR_NOT_FOUND_URL = "/api/csars/keinechtescsar/transformations";
-    private static final String[] CSAR_NAMES = new String[]{"k8s-cluster", "apache-test", "mongo-db"};
+    private static final String[] CSAR_NAMES = new String[]{"kubernetes-cluster", "apache-test", "mongo-db"};
     private static final String SECOND_VALID_PLATFORM_NAME = "p-b";
     //</editor-fold>
 
@@ -247,7 +247,7 @@ public class TransformationControllerTest extends BaseSpringTest {
             .andExpect(jsonPath("$.properties[0].value").doesNotExist()) //Check that the value is null
             .andExpect(jsonPath("$.links[0].rel").value("self"))
             .andExpect(jsonPath("$.links[0].href")
-                .value("http://localhost/api/csars/k8s-cluster/transformations/p-a/properties"))
+                .value("http://localhost/api/csars/kubernetes-cluster/transformations/p-a/properties"))
             .andReturn();
     }
 

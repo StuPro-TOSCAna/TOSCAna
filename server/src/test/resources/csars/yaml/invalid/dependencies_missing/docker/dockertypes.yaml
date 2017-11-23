@@ -1,0 +1,67 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+node_types:
+  DockerEngine:
+    derived_from: tosca.nodes.Root
+    # needs capability: DockerHost or similar..
+    capabilities:
+      host: 
+        type: DockerHost
+    requirements:
+      - os:
+        type: linux
+        distribution: ubuntu
+        architecture: x86_64
+    interfaces:
+      Standard:
+        create:
+          implementation: dockerengine_create.sh
+        start:
+          implementation: dockerengine_start.sh
+        stop:
+          implementation: dockerengine_stop.sh
+  DockerApp:
+    derived_from: tosca.nodes.Root
+    requirements:
+      - host:
+        capability: DockerHost
+        node: DockerEngine 
+        relationship: tosca.relationships.HostedOn
+      - network:
+        capability: SimplePublicWebEndpoint
+    attributes:
+      tag:
+        type: string
+        description: the tag for the docker image
+      identifier:
+        type: string
+        description: the identifier (name) for the docker container
+      endpoint: { get_operation_output: [ SELF, Standard, create, endpoint ] }
+    interfaces:
+      Standard:
+        inputs:
+          tag: { get_attribute: [ SELF, tag ] }
+          identifier: { get_attribute: [ SELF, identifier ] }
+        create:
+          implementation: dockerapp_create.sh
+        start:
+          implementation: dockerapp_create.sh
+        stop:
+          implementation: dockerapp_stop.sh
+        delete:
+          implementation: dockerapp_delete.sh 
+capability_types:
+  DockerHost:
+    derived_from: tosca.capabilities.Root
+    type: tosca.capabilities.Root
+    sources: [ DockerApp ]
+  SimplePublicWebEndpoint:
+    derived_from: tosca.capabilities.Endpoint
+    properties:
+      protocol:
+        value: http
+      port:
+        value: 80
+      url_path:
+        value: /
+      network_name:
+        value: PUBLIC

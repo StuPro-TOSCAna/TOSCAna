@@ -70,6 +70,6 @@ public class PlatformTest {
     @Test
     public void testFail404InfoPlatform() throws IOException {
         helper.server404Response();
-        assertEquals(con.PLATFORM_INFO_ERROR404M, api.infoPlatform(helper.PLATFORM));
+        assertEquals(con.PLATFORM_INFO_ERROR404 + "\n", api.infoPlatform(helper.PLATFORM));
     }
 }

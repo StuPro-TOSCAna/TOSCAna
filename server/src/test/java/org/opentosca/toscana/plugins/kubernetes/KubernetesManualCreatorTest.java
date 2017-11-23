@@ -16,7 +16,7 @@ public class KubernetesManualCreatorTest extends BaseJUnitTest {
 
     @BeforeClass
     public static void setUp() {
-        File manual = new File("src/test/resources/kubernetes/", "k8s_manual_guide_test.md");
+        File manual = new File("src/test/resources/kubernetes/", "kubernetes_manual_guide_test.md");
         testManualCorrectFile = FileHelper.readFileToString(manual);
     }
 
