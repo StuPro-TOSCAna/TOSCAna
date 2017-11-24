@@ -1,0 +1,20 @@
+# run `git shortlog -sne` to show how many commits are made by each person
+# this file fixed the authors list by mapping different names / mails to one person
+# For explanation on this file format: man git-shortlog
+
+Marvin Munoz Baron  <mmunozba@outlook.com> <mmunozba@outlook.com>
+
+Nick Fode <nickfode@posteo.de> <nickfode@posteo.de>
+
+Heiko Nickerl <dev@heiko-nickerl.com> <dev@heiko-nickerl.com>
+
+Christian Müller <cmueller.dev@gmail.com> <cmueller.dev@gmail.com>
+Christian Müller <cmueller.dev@gmail.com> <halive1996@gmail.com>
+
+Jens Müller <jmuell.dev@gmail.com> <jmuell.dev@gmail.com>
+
+Oliver Ferch <oferch@gmx.de> <oferch@gmx.de>
+
+Oliver Kopp <kopp.dev@gmail.com> <kopp.dev@gmail.com>
+
+
