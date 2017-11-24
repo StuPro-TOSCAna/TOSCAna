@@ -116,5 +116,5 @@ public abstract class LifecycleAwarePlugin<LifecycleT extends TransformationLife
      @param context The transformation context for which the Lifecycle interface should be built
      @return a newly constructed instance of the LifecycleInterface implemented by this plugin.
      */
-    protected abstract LifecycleT getInstance(TransformationContext context);
+    protected abstract LifecycleT getInstance(TransformationContext context) throws Exception;
 }
