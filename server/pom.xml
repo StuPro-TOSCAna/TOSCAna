@@ -35,6 +35,11 @@
             <artifactId>kubernetes-client</artifactId>
             <version>2.6.2</version>
         </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.16.18</version>
+        </dependency>
         <!-- Winery -->
         <dependency>
             <groupId>com.github.stupro-toscana.winery</groupId>

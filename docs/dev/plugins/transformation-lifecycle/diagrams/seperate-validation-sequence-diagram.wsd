@@ -1,0 +1,58 @@
+@startuml
+
+activate Task
+Task -> LAPlugin: transform()
+activate LAPlugin
+
+LAPlugin -> LAPlugin: checkEnvironment()
+activate LAPlugin
+LAPlugin --> LAPlugin
+deactivate LAPlugin
+
+LAPlugin -> LAPlugin: getInstance()
+activate LAPlugin
+LAPlugin --> LAPlugin
+deactivate LAPlugin
+
+alt env-check suceeded
+    LAPlugin -> TLI: validateNodeTypes()
+    activate TLI
+    TLI --> LAPlugin
+    deactivate TLI
+
+    alt node-check suceeded
+    	LAPlugin -> TLI: valdiateModel()
+    	activate TLI
+    	TLI --> LAPlugin
+    	deactivate TLI
+
+    	alt model-check suceeded
+    		LAPlugin -> TLI: prepare()
+    		activate TLI
+    		TLI --> LAPlugin
+    		deactivate TLI
+
+    		LAPlugin -> TLI: transform()
+    		activate TLI
+    		TLI --> LAPlugin
+    		deactivate TLI
+
+    		LAPlugin -> TLI: cleanup()
+    		activate TLI
+    		TLI --> LAPlugin
+    		deactivate TLI
+
+    		LAPlugin --> Task: Transformation succeded
+    	else
+    		LAPlugin --> Task: Transformation failed
+    	end
+    else
+    	LAPlugin --> Task: Transformation failed
+    end
+else
+    LAPlugin --> Task: Transformation failed
+    deactivate LAPlugin
+    deactivate Task
+end
+
+@enduml

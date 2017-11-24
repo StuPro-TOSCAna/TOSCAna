@@ -26,7 +26,7 @@ Describes the planned automated deployment of the simple application based on ou
     c) Generate Dockerfiles out of the given Nodes, then procede with **a)** and **b)**.
 
 ### Deployment [WIP, not important right now]
-Create script that applies generated Kubernetes resources file to a given kubernetes host.
+Create script that applies generated Kubernetes resources file to a given  kubernetes host.
 
 ---
 
