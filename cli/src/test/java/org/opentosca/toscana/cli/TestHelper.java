@@ -5,13 +5,14 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.opentosca.toscana.cli.commands.Constants;
+
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.apache.commons.io.FileUtils;
 
 final class TestHelper {
 
-    public static final int MOCK_SERVER_PORT = 8084;
     final String CSAR = "mongo-db";
     final String PLATFORM = "p-a";
     final String[] EMPTY = {};
@@ -71,6 +72,7 @@ final class TestHelper {
     private MockWebServer server = null;
     private MockResponse response = null;
     private Map<String, String> helpMap = null;
+    private Constants con = null;
 
     final void setUp() throws IOException {
         final String SYSTEM_STATUS = FileUtils.readFileToString(new File("src/test/resources/responses/systemStatus.txt"), "UTF-8");
@@ -102,6 +104,8 @@ final class TestHelper {
         helpMap.put("transformationartifact", TRANSFORMATION_ARTIFACT);
         helpMap.put("transformationinputs", TRANSFORMATION_INPUTS);
         helpMap.put("transformationresponse", TRANSFORMATION_RESPONSE);
+        
+        con = new Constants();
     }
 
     final void tearDown() throws IOException {
@@ -110,38 +114,44 @@ final class TestHelper {
 
     final void serverEnqueue() throws IOException {
         server.enqueue(response);
-        server.start(MOCK_SERVER_PORT);
+        server.start(con.API_PORT);
     }
 
     final void server200Response() throws IOException {
         response.setResponseCode(200);
         server.enqueue(response);
-        server.start(MOCK_SERVER_PORT);
+        server.start(con.API_PORT);
+    }
+
+    final void server201Response() throws IOException {
+        response.setResponseCode(201);
+        server.enqueue(response);
+        server.start(con.API_PORT);
     }
 
     final void server400Response() throws IOException {
         response.setResponseCode(400);
         server.enqueue(response);
-        server.start(MOCK_SERVER_PORT);
+        server.start(con.API_PORT);
     }
 
     final void server404Response() throws IOException {
         response.setResponseCode(404);
         server.enqueue(response);
-        server.start(MOCK_SERVER_PORT);
+        server.start(con.API_PORT);
     }
 
     final void server500Response() throws IOException {
         response.setResponseCode(500);
         server.enqueue(response);
-        server.start(MOCK_SERVER_PORT);
+        server.start(con.API_PORT);
     }
 
     final void setServerBody(String help) throws IOException {
         if (helpMap.containsKey(help)) {
             response.setBody(helpMap.get(help));
             server.enqueue(response);
-            server.start(MOCK_SERVER_PORT);
+            server.start(con.API_PORT);
         }
     }
 }

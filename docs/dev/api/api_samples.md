@@ -79,13 +79,13 @@
 	"_embedded": {
 		"csar": [
 			{
-				"name": "k8s-cluster",
+				"name": "kubernetes-cluster",
 				"_links": {
 					"self": {
-						"href": "http://localhost:8080/csars/k8s-cluster"
+						"href": "http://localhost:8080/csars/kubernetes-cluster"
 					},
 					"transformations": {
-						"href": "http://localhost:8080/csars/k8s-cluster/transformations/"
+						"href": "http://localhost:8080/csars/kubernetes-cluster/transformations/"
 					}
 				}
 			},

@@ -15,10 +15,11 @@ See our [contribution guidelines](CONTRIBUTING.md) for detailed information on h
 Tools that are used in this project.
 
 - IDE: [IntelliJ](https://www.jetbrains.com/idea/)
+- Code generation: [Project Lombok](https://projectlombok.org/)
 - UML Modelling: [Lucidchart](https://www.lucidchart.com/)
 - Project management: [ZenHub](https://www.zenhub.com/)
 - CI: [TravisCI](https://travis-ci.org/StuPro-TOSCAna/TOSCAna)
 - Code analysis: [Codacy](https://www.codacy.com/app/stupro-toscana/TOSCAna/dashboard)
 - Code coverage: [Codecov](https://codecov.io/gh/StuPro-TOSCAna/TOSCAna), [Get browser extension](https://github.com/codecov/browser-extension)
 ## License
-TOSCAna is under the [Apache License 2.0](LICENSE).
+TOSCAna is licenced under the [Apache License 2.0](LICENSE).

@@ -8,7 +8,6 @@ import org.opentosca.toscana.cli.restclient.model.Platform;
 import org.opentosca.toscana.cli.restclient.model.PlatformsResponse;
 import org.opentosca.toscana.cli.restclient.model.Status;
 import org.opentosca.toscana.cli.restclient.model.Transformation;
-import org.opentosca.toscana.cli.restclient.model.TransformationArtifact;
 import org.opentosca.toscana.cli.restclient.model.TransformationInputs;
 import org.opentosca.toscana.cli.restclient.model.TransformationLogs;
 import org.opentosca.toscana.cli.restclient.model.TransformationsResponse;
@@ -58,6 +57,9 @@ public interface RestService {
     @POST("api/csars/{csar}/transformations/{platform}/create")
     Call<ResponseBody> createTransformation(@Path("csar") String csar, @Path("platform") String platform);
 
+    @POST("api/csars/{csar}/transformations/{platform}/start")
+    Call<ResponseBody> startTransformation(@Path("csar") String csar, @Path("platform") String platform);
+    
     @DELETE("api/csars/{csar}/transformations/{platform}/delete")
     Call<ResponseBody> deleteTransformation(@Path("csar") String csar, @Path("platform") String platform);
 
@@ -65,7 +67,7 @@ public interface RestService {
     Call<TransformationLogs> getLogs(@Path("csar") String csar, @Path("platform") String platform, @Query("start") int start);
 
     @GET("api/csars/{csar}/transformations/{platform}/artifact")
-    Call<TransformationArtifact> getArtifact(@Path("csar") String csar, @Path("platform") String platform);
+    Call<ResponseBody> getArtifact(@Path("csar") String csar, @Path("platform") String platform);
 
     @GET("api/csars/{csar}/transformations/{platform}/properties")
     Call<TransformationInputs> getInputs(@Path("csar") String csar, @Path("platform") String platform);

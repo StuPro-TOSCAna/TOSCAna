@@ -36,7 +36,7 @@ Again replace `username` with the username you registered at the docker hub.
 
 ## Step 2: Set the correct image name
 
-Open the file `{k8s_resource_file}` with a editor of your choice.
+Open the file `{kubernetes_resource_file}` with a editor of your choice.
 Then search for the line: 
 ```yaml
 image: username/{app_name}
@@ -44,7 +44,7 @@ image: username/{app_name}
 If you found that line replace the `username` with your docker hub username.
 
 
-### Your `{k8s_resource_file}` is now ready to go.
+### Your `{kubernetes_resource_file}` is now ready to go.
 
 
 

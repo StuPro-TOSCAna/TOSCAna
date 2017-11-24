@@ -1,0 +1,74 @@
+package org.opentosca.toscana.plugins.scripts;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+import org.opentosca.toscana.core.BaseJUnitTest;
+import org.opentosca.toscana.core.plugin.PluginFileAccess;
+import org.opentosca.toscana.core.transformation.logging.Log;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle.SCRIPTS_DIR_PATH;
+import static org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle.UTIL_DIR_NAME;
+import static org.opentosca.toscana.plugins.scripts.BashScript.SHEBANG;
+
+public class BashScriptTest extends BaseJUnitTest {
+
+    private BashScript bashScript;
+    private PluginFileAccess access;
+    private File targetScriptFolder;
+    private String fileName;
+
+    @Before
+    public void setUp() {
+        bashScript = null;
+        fileName = UUID.randomUUID().toString();
+        access = new PluginFileAccess(tmpdir, tmpdir, mock(Log.class));
+        try {
+            bashScript = new BashScript(access, fileName);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        targetScriptFolder = new File(tmpdir, SCRIPTS_DIR_PATH);
+    }
+
+    @Test
+    public void createScriptTest() throws IOException {
+
+        File expectedGeneratedScript = new File(targetScriptFolder, fileName + ".sh");
+        assertTrue(expectedGeneratedScript.exists());
+        List<String> result = readFile(expectedGeneratedScript);
+        assertEquals(SHEBANG, result.get(0));
+        assertEquals("source " + UTIL_DIR_NAME + "*", result.get(1));
+    }
+
+    @Test
+    public void appendTest() throws IOException {
+        String string = UUID.randomUUID().toString();
+        bashScript.append(string);
+        File expectedGeneratedScript = new File(targetScriptFolder, fileName + ".sh");
+        List<String> result = readFile(expectedGeneratedScript);
+        assertEquals(string, result.get(result.size() - 1));
+    }
+
+    public List<String> readFile(File file) throws IOException {
+        List<String> result = new ArrayList<>();
+        BufferedReader reader = new BufferedReader(new FileReader(file));
+        String current;
+        while ((current = reader.readLine()) != null) {
+            result.add(current);
+        }
+        reader.close();
+        return result;
+    }
+}

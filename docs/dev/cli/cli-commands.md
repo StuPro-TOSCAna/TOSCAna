@@ -92,6 +92,16 @@ Options explanation:
 ![Class Diagram](img/example_usage.png)
 ***Note:*** Example usage of the CLI for Platform Informations
 
+## Change API Endpoint
+After you executed the CLI at least once, a config file named `cli.properties` can be found in the created toscana folder. There you can change the API Endpoint to fit your provided REST API Endpoint.
+
+The folder can be found for Unix Systems at:
+`$HOME/.config/toscana/`
+
+For Windows Systems at:
+`$HOME/AppData/toscana/`
+If you can't find the folder on Windows, enter `%appdata%` in the explorer directory field or `cd %appdata%` in the Command Line and move from Roaming one folder level back to AppData.
+
 ## License
 
 Copyright (c) 2017 University of Stuttgart.
