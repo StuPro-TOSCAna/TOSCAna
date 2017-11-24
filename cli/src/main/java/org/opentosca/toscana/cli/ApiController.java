@@ -84,10 +84,14 @@ public class ApiController {
             csarList = toscAnaAPI.getCsars();
             List<Csar> list = csarList.getContent();
 
-            for (Csar c : list) {
-                stringCsars.append(c.getName()).append("\n");
+            if (list != null) {
+                for (Csar c : list) {
+                    stringCsars.append(c.getName()).append("\n");
+                }
+                stringCsars.delete(stringCsars.length() - 1, stringCsars.length());
+            } else {
+                return Constants.CSAR_LIST_EMPTY;
             }
-            stringCsars.delete(stringCsars.length() - 1, stringCsars.length());
         } catch (IOException e) {
             System.err.println(String.format(SOMETHING_WRONG + Constants.CSAR_LIST_ERROR + " '%s'", e.getMessage()));
             e.printStackTrace();
@@ -214,10 +218,14 @@ public class ApiController {
             transformationList = toscAnaAPI.getTransformations(csar);
             List<Transformation> list = transformationList.getContent();
 
-            for (Transformation t : list) {
-                stringTransformations.append(t.getPlatform()).append("\n");
+            if (list != null) {
+                for (Transformation t : list) {
+                    stringTransformations.append(t.getPlatform()).append("\n");
+                }
+                stringTransformations.delete(stringTransformations.length() - 1, stringTransformations.length());
+            } else {
+                return Constants.TRANSFORMATION_LIST_EMPTY;
             }
-            stringTransformations.delete(stringTransformations.length() - 1, stringTransformations.length());
         } catch (IOException e) {
             System.err.println(String.format(SOMETHING_WRONG + Constants.TRANSFORMATION_LIST_ERROR + " '%s'", e.getMessage()));
             e.printStackTrace();
@@ -354,10 +362,14 @@ public class ApiController {
             platformList = toscAnaAPI.getPlatforms();
             List<Platform> list = platformList.getContent();
 
-            for (Platform p : list) {
-                stringPlatforms.append(p.getId()).append(", ").append(p.getName()).append("\n");
+            if (list != null) {
+                for (Platform p : list) {
+                    stringPlatforms.append(p.getId()).append(", ").append(p.getName()).append("\n");
+                }
+                stringPlatforms.delete(stringPlatforms.length() - 1, stringPlatforms.length());
+            } else {
+                return Constants.PLATFORM_LIST_EMPTY;
             }
-            stringPlatforms.delete(stringPlatforms.length() - 1, stringPlatforms.length());
         } catch (IOException e) {
             System.err.println(String.format(SOMETHING_WRONG + Constants.PLATFORM_LIST_ERROR + " '%s'", e.getMessage()));
             e.printStackTrace();
