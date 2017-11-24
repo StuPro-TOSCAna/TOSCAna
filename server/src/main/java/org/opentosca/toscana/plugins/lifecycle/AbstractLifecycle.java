@@ -54,8 +54,7 @@ public abstract class AbstractLifecycle implements TransformationLifecycle {
 
     private void setUpDirectories(PluginFileAccess access) throws IOException {
         access.createDirectories(UTIL_DIR_PATH);
-
-        //Iterate over all files in the script list
+                //Iterate over all files in the script list
         Scanner scn = new Scanner(getClass().getResourceAsStream(RESOURCE_PATH_BASE + "/script-list"));
         while (scn.hasNextLine()) {
             String line = scn.nextLine();
