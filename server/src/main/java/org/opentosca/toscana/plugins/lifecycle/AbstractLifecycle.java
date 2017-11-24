@@ -1,14 +1,17 @@
 package org.opentosca.toscana.plugins.lifecycle;
 
-import java.io.File;
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.Scanner;
 
 import javax.validation.constraints.NotNull;
 
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 
-import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 
 /**
@@ -26,6 +29,7 @@ public abstract class AbstractLifecycle implements TransformationLifecycle {
     public static final String SCRIPTS_DIR_PATH = OUTPUT_DIR_PATH + SCRIPTS_DIR_NAME;
     public static final String UTIL_DIR_NAME = "util/";
     public static final String UTIL_DIR_PATH = SCRIPTS_DIR_PATH + UTIL_DIR_NAME;
+    public static final String RESOURCE_PATH_BASE = "/plugins/scripts/util/";
 
     /**
      The transformation specific logger that can be used to log to the transformations Log Object
@@ -51,7 +55,24 @@ public abstract class AbstractLifecycle implements TransformationLifecycle {
     private void setUpDirectories(PluginFileAccess access) throws IOException {
         access.createDirectories(UTIL_DIR_PATH);
 
-        File sourceScriptUtils = new File(getClass().getResource("/plugins/scripts/util/").getFile());
-        FileUtils.copyDirectory(sourceScriptUtils, new File(access.getAbsolutePath(UTIL_DIR_PATH)));
+        //Iterate over all files in the script list
+        Scanner scn = new Scanner(getClass().getResourceAsStream(RESOURCE_PATH_BASE + "/script-list"));
+        while (scn.hasNextLine()) {
+            String line = scn.nextLine();
+            if (!line.isEmpty()) {
+                //Copy the file into the desired directory
+                InputStreamReader input = new InputStreamReader(
+                    getClass().getResourceAsStream(RESOURCE_PATH_BASE + "/" + line)
+                );
+                BufferedWriter output = access.access(UTIL_DIR_PATH + "/" + line);
+                IOUtils.copy(input, output);
+                input.close();
+                output.close();
+            }
+        }
+        scn.close();
+        // Old Code
+//        File sourceScriptUtils = new File(getClass().getResource(RESOURCE_PATH_BASE).getFile());
+//        FileUtils.copyDirectory(sourceScriptUtils, new File(access.getAbsolutePath(UTIL_DIR_PATH)));
     }
 }
