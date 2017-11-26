@@ -36,6 +36,8 @@ This section explains the transformation of normative TOSCA types to Kubernetes 
 
 #### tosca.capabilities.Container
 
+#### tosca.capabilities.OperatingSystem
+
 ## Non-Normative Types
 This section explains the transformation of non-normative TOSCA types to Kubernetes resource files.
 
