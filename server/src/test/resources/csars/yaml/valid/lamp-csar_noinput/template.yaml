@@ -23,12 +23,14 @@ topology_template:
                 - mysql-credentials.php
 
     apache_web_server:
-      type: tosca.nodes.WebServer.Apache
+      #should be tosca.nodes.WebServer.Apache
+      type: tosca.nodes.WebServer
       requirements:
         - host: server
 
     my_db:
-      type: tosca.nodes.Database.MySQL
+      #should be tosca.nodes.Database.MySQL
+      type: tosca.nodes.Database
       properties:
         name: mydb
         user: root
@@ -42,15 +44,17 @@ topology_template:
         - host: mysql_dbms
 
     mysql_dbms:
-      type: tosca.nodes.DBMS.MySQL
+      #should be tosca.nodes.DBMS.MySQL
+      type: tosca.nodes.DBMS
       properties:
-          root_password: abc
-          port: 3306
+        root_password: abc
+        port: 3306
       requirements:
         - host: server
       interfaces:
         Standard:
-          configure: mysql_dbms/mysql_dbms_configure.sh
+          configure:
+            implementation: mysql_dbms/mysql_dbms_configure.sh
 
     server:
       type: tosca.nodes.Compute
@@ -66,10 +70,10 @@ topology_template:
             distribution: ubuntu
             version: 16.04
 
-    outputs:
-      public_address:
-        description: Public address of the server
-        value: { get_attribute: [ server, public_address ] }
-      port:
-        description: Port of the server
-        value: { get_attribute: [ server, port ] }
+  outputs:
+    public_address:
+      description: Public address of the server
+      value: { get_attribute: [ server, public_address ] }
+    port:
+      description: Port of the server
+      value: { get_attribute: [ server, port ] }

@@ -30,7 +30,7 @@ topology_template:
                 - my_app/myphpapp.php
                 - my_app/mysql-credentials.php
           configure:
-            implemenation: my_app/configure_myphpapp.sh
+            implementation: my_app/configure_myphpapp.sh
             inputs:
               database_host: { get_attribute: [ server, private_address ] }
               database_password: { get_property: [ my_db, password ] }
@@ -38,12 +38,14 @@ topology_template:
               database_port: { get_property: [ my_db, port ] }
 
     apache_web_server:
-      type: tosca.nodes.WebServer.Apache
+      #should be tosca.nodes.WebServer.Apache
+      type: tosca.nodes.WebServer
       requirements:
         - host: server
 
     my_db:
-      type: tosca.nodes.Database.MySQL
+      #should be tosca.nodes.Database.MySQL
+      type: tosca.nodes.Database
       properties:
         name: { get_input: database_name }
         password: { get_input: database_password }
@@ -56,17 +58,19 @@ topology_template:
         - host: mysql_dbms
 
     mysql_dbms:
-      type: tosca.nodes.DBMS.MySQL
+      #should be tosca.nodes.DBMS.MySQL
+      type: tosca.nodes.DBMS
       properties:
-          root_password: { get_input: database_password }
-          port: { get_input: database_port }
+        root_password: { get_input: database_password }
+        port: { get_input: database_port }
       requirements:
         - host: server
       interfaces:
         Standard:
-          inputs:
-            db_root_password: { get_property: [ SELF, root_password ] }
-          configure: mysql_dbms/mysql_dbms_configure.sh
+          configure:
+            implementation: mysql_dbms/mysql_dbms_configure.sh
+            inputs:
+              db_root_password: { get_property: [ SELF, root_password ] }
 
     server:
       type: tosca.nodes.Compute
@@ -82,10 +86,10 @@ topology_template:
             distribution: ubuntu
             version: 16.04
 
-    outputs:
-      public_address:
-        description: Public address of the server
-        value: { get_attribute: [ server, public_address ] }
-      port:
-        description: Port of the server
-        value: { get_attribute: [ server, port ] }
+  outputs:
+    public_address:
+      description: Public address of the server
+      value: { get_attribute: [ server, public_address ] }
+    port:
+      description: Port of the server
+      value: { get_attribute: [ server, port ] }
