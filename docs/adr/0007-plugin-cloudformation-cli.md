@@ -27,8 +27,8 @@ For deploying a AWS CloudFormation template it has to be uploaded and stack has 
 ### *Manually with the AWS Management Console*
 
 `+` Easy to use
-`-` User hast to interact
-`-` CFN template cannot be deployed fully automated
+`-` User has to interact
+`-` CloudFormation(CFN) template cannot be deployed fully automated
 
 ### *Using API calls*
 

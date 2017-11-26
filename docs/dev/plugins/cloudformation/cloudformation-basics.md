@@ -7,6 +7,7 @@ see [this](mapping.md)
 ## Transformation Lyfecycle
 
 ### validate
+- nothing to do here so far
 
 ### prepare
 - Add missing nodes to fulfill requirements.
@@ -16,7 +17,7 @@ see [this](mapping.md)
 - transform everything into a CloudFormation JSON/YAML template
 
 ### cleanup
-
+- nothing to do here so far
 
 ## Deployment / Readme
 - target artifact should be a single template file (JSON/YAML)
