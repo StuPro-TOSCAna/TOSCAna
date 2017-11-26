@@ -31,9 +31,9 @@ public class ApiController {
     /**
      Constructor for the ApiController, parameters decide if there should be any output of information
      */
-    public ApiController(String apiUrl, LoggingMode modeName) {
+    public ApiController(String apiUrl, LoggingMode mode) {
         //starts the retrofit client with the chosen loglevel
-        toscAnaAPI = new TOSCAnaAPI(apiUrl, modeName);
+        toscAnaAPI = new TOSCAnaAPI(apiUrl, mode);
     }
 
     /**
@@ -46,10 +46,12 @@ public class ApiController {
         try {
             toscAnaAPI.uploadCsar(file.getName(), file);
         } catch (IOException e) {
-            System.err.println(String.format(SOMETHING_WRONG + Constants.CSAR_UPLOAD_IO_ERROR + " '%s'", e.getMessage()));
+            System.err.println(String.format(SOMETHING_WRONG + Constants.CSAR_UPLOAD_IO_ERROR
+                + Constants.ERROR_PLACEHOLDER, e.getMessage()));
             e.printStackTrace();
         } catch (TOSCAnaServerException e) {
-            System.err.println(String.format(SOMETHING_WRONG + Constants.CSAR_UPLOAD_RESPONSE_ERROR + " %s '%s'", e.getStatusCode(), e.getErrorResponse().getMessage()));
+            System.err.println(String.format(SOMETHING_WRONG + Constants.CSAR_UPLOAD_RESPONSE_ERROR
+                + Constants.SERVER_ERROR_PLACEHOLDER, e.getStatusCode(), e.getErrorResponse().getMessage()));
         }
         return "";
     }
@@ -64,10 +66,12 @@ public class ApiController {
         try {
             toscAnaAPI.deleteCsar(csar);
         } catch (IOException e) {
-            System.err.println(String.format(SOMETHING_WRONG + Constants.CSAR_DELETE_ERROR + " '%s'", e.getMessage()));
+            System.err.println(String.format(SOMETHING_WRONG + Constants.CSAR_DELETE_ERROR
+                + Constants.ERROR_PLACEHOLDER, e.getMessage()));
             e.printStackTrace();
         } catch (TOSCAnaServerException e) {
-            System.err.println(String.format(SOMETHING_WRONG + Constants.CSAR_DELETE_ERROR + " %s '%s'", e.getStatusCode(), e.getErrorResponse().getMessage()));
+            System.err.println(String.format(SOMETHING_WRONG + Constants.CSAR_DELETE_ERROR
+                + Constants.SERVER_ERROR_PLACEHOLDER, e.getStatusCode(), e.getErrorResponse().getMessage()));
         }
         return "";
     }
@@ -83,7 +87,6 @@ public class ApiController {
         try {
             csarList = toscAnaAPI.getCsars();
             List<Csar> list = csarList.getContent();
-
             if (list != null) {
                 for (Csar c : list) {
                     stringCsars.append(c.getName()).append("\n");
@@ -93,10 +96,12 @@ public class ApiController {
                 return Constants.CSAR_LIST_EMPTY;
             }
         } catch (IOException e) {
-            System.err.println(String.format(SOMETHING_WRONG + Constants.CSAR_LIST_ERROR + " '%s'", e.getMessage()));
+            System.err.println(String.format(SOMETHING_WRONG + Constants.CSAR_LIST_ERROR
+                + Constants.ERROR_PLACEHOLDER, e.getMessage()));
             e.printStackTrace();
         } catch (TOSCAnaServerException e) {
-            System.err.println(String.format(SOMETHING_WRONG + Constants.CSAR_LIST_ERROR + " %s '%s'", e.getStatusCode(), e.getErrorResponse().getMessage()));
+            System.err.println(String.format(SOMETHING_WRONG + Constants.CSAR_LIST_ERROR
+                + Constants.SERVER_ERROR_PLACEHOLDER, e.getStatusCode(), e.getErrorResponse().getMessage()));
         }
         return stringCsars.toString();
     }
@@ -112,12 +117,18 @@ public class ApiController {
         Csar csar;
         try {
             csar = toscAnaAPI.getCsarDetails(csarName);
-            cName = csar.getName();
+            if (csar != null) {
+                cName = csar.getName();
+            } else {
+                return Constants.CSAR_INFO_EMPTY;
+            }
         } catch (IOException e) {
-            System.err.println(String.format(SOMETHING_WRONG + Constants.CSAR_INFO_ERROR + " '%s'", e.getMessage()));
+            System.err.println(String.format(SOMETHING_WRONG + Constants.CSAR_INFO_ERROR
+                + Constants.ERROR_PLACEHOLDER, e.getMessage()));
             e.printStackTrace();
         } catch (TOSCAnaServerException e) {
-            System.err.println(String.format(SOMETHING_WRONG + Constants.CSAR_INFO_ERROR + " %s '%s'", e.getStatusCode(), e.getErrorResponse().getMessage()));
+            System.err.println(String.format(SOMETHING_WRONG + Constants.CSAR_INFO_ERROR
+                + Constants.SERVER_ERROR_PLACEHOLDER, e.getStatusCode(), e.getErrorResponse().getMessage()));
         }
         return cName;
     }
@@ -134,10 +145,12 @@ public class ApiController {
             toscAnaAPI.createTransformation(csar, plat);
             launchTransformation(csar, plat);
         } catch (IOException e) {
-            System.err.println(String.format(SOMETHING_WRONG + Constants.TRANSFORMATION_CREATE_ERROR + " '%s'", e.getMessage()));
+            System.err.println(String.format(SOMETHING_WRONG + Constants.TRANSFORMATION_CREATE_ERROR
+                + Constants.ERROR_PLACEHOLDER, e.getMessage()));
             e.printStackTrace();
         } catch (TOSCAnaServerException e) {
-            System.err.println(String.format(SOMETHING_WRONG + Constants.TRANSFORMATION_CREATE_ERROR + " %s '%s'", e.getStatusCode(), e.getErrorResponse().getMessage()));
+            System.err.println(String.format(SOMETHING_WRONG + Constants.TRANSFORMATION_CREATE_ERROR
+                + Constants.SERVER_ERROR_PLACEHOLDER, e.getStatusCode(), e.getErrorResponse().getMessage()));
         }
         return "";
     }
@@ -153,10 +166,12 @@ public class ApiController {
         try {
             toscAnaAPI.startTransformation(csar, platform);
         } catch (IOException e) {
-            System.err.println(String.format(SOMETHING_WRONG + Constants.TRANSFORMATION_START_ERROR + " '%s'", e.getMessage()));
+            System.err.println(String.format(SOMETHING_WRONG + Constants.TRANSFORMATION_START_ERROR
+                + Constants.ERROR_PLACEHOLDER, e.getMessage()));
             e.printStackTrace();
         } catch (TOSCAnaServerException e) {
-            System.err.println(String.format(SOMETHING_WRONG + Constants.TRANSFORMATION_START_ERROR + " %s '%s'", e.getStatusCode(), e.getErrorResponse().getMessage()));
+            System.err.println(String.format(SOMETHING_WRONG + Constants.TRANSFORMATION_START_ERROR
+                + Constants.SERVER_ERROR_PLACEHOLDER, e.getStatusCode(), e.getErrorResponse().getMessage()));
         }
         return "";
     }
@@ -183,10 +198,12 @@ public class ApiController {
         try {
             toscAnaAPI.deleteTransformation(csar, plat);
         } catch (IOException e) {
-            System.err.println(String.format(SOMETHING_WRONG + Constants.TRANSFORMATION_DELETE_ERROR + " '%s'", e.getMessage()));
+            System.err.println(String.format(SOMETHING_WRONG + Constants.TRANSFORMATION_DELETE_ERROR
+                + Constants.ERROR_PLACEHOLDER, e.getMessage()));
             e.printStackTrace();
         } catch (TOSCAnaServerException e) {
-            System.err.println(String.format(SOMETHING_WRONG + Constants.TRANSFORMATION_DELETE_ERROR + " %s '%s'", e.getStatusCode(), e.getErrorResponse().getMessage()));
+            System.err.println(String.format(SOMETHING_WRONG + Constants.TRANSFORMATION_DELETE_ERROR
+                + Constants.SERVER_ERROR_PLACEHOLDER, e.getStatusCode(), e.getErrorResponse().getMessage()));
         }
         return "";
     }
@@ -199,10 +216,7 @@ public class ApiController {
      @return output for the CLI
      */
     public String downloadTransformation(String csar, String plat) {
-        String downloadUrl = "";
-        downloadUrl = toscAnaAPI.getArtifactDownloadUrl(csar, plat);
-
-        return downloadUrl;
+        return toscAnaAPI.getArtifactDownloadUrl(csar, plat);
     }
 
     /**
@@ -217,7 +231,6 @@ public class ApiController {
         try {
             transformationList = toscAnaAPI.getTransformations(csar);
             List<Transformation> list = transformationList.getContent();
-
             if (list != null) {
                 for (Transformation t : list) {
                     stringTransformations.append(t.getPlatform()).append("\n");
@@ -227,10 +240,12 @@ public class ApiController {
                 return Constants.TRANSFORMATION_LIST_EMPTY;
             }
         } catch (IOException e) {
-            System.err.println(String.format(SOMETHING_WRONG + Constants.TRANSFORMATION_LIST_ERROR + " '%s'", e.getMessage()));
+            System.err.println(String.format(SOMETHING_WRONG + Constants.TRANSFORMATION_LIST_ERROR
+                + Constants.ERROR_PLACEHOLDER, e.getMessage()));
             e.printStackTrace();
         } catch (TOSCAnaServerException e) {
-            System.err.println(String.format(SOMETHING_WRONG + Constants.TRANSFORMATION_LIST_ERROR + " %s '%s'", e.getStatusCode(), e.getErrorResponse().getMessage()));
+            System.err.println(String.format(SOMETHING_WRONG + Constants.TRANSFORMATION_LIST_ERROR
+                + Constants.SERVER_ERROR_PLACEHOLDER, e.getStatusCode(), e.getErrorResponse().getMessage()));
         }
         return stringTransformations.toString();
     }
@@ -247,13 +262,20 @@ public class ApiController {
         StringBuilder stringTransformation = new StringBuilder();
         try {
             transformation = toscAnaAPI.getTransformation(csar, plat);
-
-            stringTransformation.append(transformation.getPlatform()).append(", ").append(transformation.getProgress()).append(", ").append(transformation.getStatus());
+            if (transformation != null) {
+                stringTransformation.append(transformation.getPlatform()).append(", ")
+                    .append(transformation.getProgress()).append(", ")
+                    .append(transformation.getStatus());
+            } else {
+                return Constants.TRANSFORMATION_INFO_EMPTY;
+            }
         } catch (IOException e) {
-            System.err.println(String.format(SOMETHING_WRONG + Constants.TRANSFORMATION_INFO_ERROR + " '%s'", e.getMessage()));
+            System.err.println(String.format(SOMETHING_WRONG + Constants.TRANSFORMATION_INFO_ERROR
+                + Constants.ERROR_PLACEHOLDER, e.getMessage()));
             e.printStackTrace();
         } catch (TOSCAnaServerException e) {
-            System.err.println(String.format(SOMETHING_WRONG + Constants.TRANSFORMATION_INFO_ERROR + " %s '%s'", e.getStatusCode(), e.getErrorResponse().getMessage()));
+            System.err.println(String.format(SOMETHING_WRONG + Constants.TRANSFORMATION_INFO_ERROR
+                + Constants.SERVER_ERROR_PLACEHOLDER, e.getStatusCode(), e.getErrorResponse().getMessage()));
         }
         return stringTransformation.toString();
     }
@@ -272,16 +294,23 @@ public class ApiController {
         try {
             logsList = toscAnaAPI.getLogs(csar, plat, start);
             List<LogEntry> list = logsList.getLogEntries();
-
-            for (LogEntry l : list) {
-                stringLogs.append(l.getTimestamp()).append(", ").append(l.getMessage()).append(", ").append(l.getLevel()).append(", ");
+            if (list != null) {
+                for (LogEntry l : list) {
+                    stringLogs.append(l.getTimestamp()).append(", ")
+                        .append(l.getMessage()).append(", ")
+                        .append(l.getLevel()).append(", ");
+                }
+                stringLogs.delete(stringLogs.length() - 2, stringLogs.length());
+            } else {
+                return Constants.TRANSFORMATION_LOGS_EMPTY;
             }
-            stringLogs.delete(stringLogs.length() - 2, stringLogs.length());
         } catch (IOException e) {
-            System.err.println(String.format(SOMETHING_WRONG + Constants.TRANSFORMATION_LOGS_ERROR + " '%s'", e.getMessage()));
+            System.err.println(String.format(SOMETHING_WRONG + Constants.TRANSFORMATION_LOGS_ERROR
+                + Constants.ERROR_PLACEHOLDER, e.getMessage()));
             e.printStackTrace();
         } catch (TOSCAnaServerException e) {
-            System.err.println(String.format(SOMETHING_WRONG + Constants.TRANSFORMATION_LOGS_ERROR + " %s '%s'", e.getStatusCode(), e.getErrorResponse().getMessage()));
+            System.err.println(String.format(SOMETHING_WRONG + Constants.TRANSFORMATION_LOGS_ERROR
+                + Constants.SERVER_ERROR_PLACEHOLDER, e.getStatusCode(), e.getErrorResponse().getMessage()));
         }
         return stringLogs.toString();
     }
@@ -299,16 +328,24 @@ public class ApiController {
         try {
             propertiesList = toscAnaAPI.getProperties(csar, plat);
             List<TransformationProperty> list = propertiesList.getProperties();
-
-            for (TransformationProperty p : list) {
-                stringProperties.append(p.getKey()).append(", ").append(p.getType()).append(", ")
-                    .append(p.isRequired()).append(", ").append(p.getDescription());
+            if (list != null) {
+                for (TransformationProperty p : list) {
+                    stringProperties.append(p.getKey()).append(", ")
+                        .append(p.getType()).append(", ")
+                        .append(p.isRequired()).append(", ")
+                        .append(p.getDescription()).append("\n");
+                }
+                stringProperties.delete(stringProperties.length() - 3, stringProperties.length());
+            } else {
+                return Constants.INPUT_LIST_EMPTY;
             }
         } catch (IOException e) {
-            System.err.println(String.format(SOMETHING_WRONG + Constants.INPUT_LIST_ERROR + " '%s'", e.getMessage()));
+            System.err.println(String.format(SOMETHING_WRONG + Constants.INPUT_LIST_ERROR
+                + Constants.ERROR_PLACEHOLDER, e.getMessage()));
             e.printStackTrace();
         } catch (TOSCAnaServerException e) {
-            System.err.println(String.format(SOMETHING_WRONG + Constants.INPUT_LIST_ERROR + " %s '%s'", e.getStatusCode(), e.getErrorResponse().getMessage()));
+            System.err.println(String.format(SOMETHING_WRONG + Constants.INPUT_LIST_ERROR
+                + Constants.SERVER_ERROR_PLACEHOLDER, e.getStatusCode(), e.getErrorResponse().getMessage()));
         }
         return stringProperties.toString();
     }
@@ -338,14 +375,21 @@ public class ApiController {
         StringBuilder stringProperties = new StringBuilder();
         try {
             propertiesReturn = toscAnaAPI.updateProperties(csar, plat, sendProp);
-            for (String s : propertiesReturn.keySet()) {
-                stringProperties.append("%n").append(s).append(" ").append(propertiesReturn.get(s));
+            if (propertiesReturn != null) {
+                for (String s : propertiesReturn.keySet()) {
+                    stringProperties.append(s).append(" ")
+                        .append(propertiesReturn.get(s));
+                }
+            } else {
+                return Constants.INPUT_SET_ERROR;
             }
         } catch (IOException e) {
-            System.err.println(String.format(SOMETHING_WRONG + Constants.INPUT_SET_ERROR + " '%s'", e.getMessage()));
+            System.err.println(String.format(SOMETHING_WRONG + Constants.INPUT_SET_ERROR
+                + Constants.ERROR_PLACEHOLDER, e.getMessage()));
             e.printStackTrace();
         } catch (TOSCAnaServerException e) {
-            System.err.println(String.format(SOMETHING_WRONG + Constants.INPUT_SET_ERROR + " %s '%s'", e.getStatusCode(), e.getErrorResponse().getMessage()));
+            System.err.println(String.format(SOMETHING_WRONG + Constants.INPUT_SET_ERROR
+                + Constants.SERVER_ERROR_PLACEHOLDER, e.getStatusCode(), e.getErrorResponse().getMessage()));
         }
         return stringProperties.toString();
     }
@@ -361,20 +405,22 @@ public class ApiController {
         try {
             platformList = toscAnaAPI.getPlatforms();
             List<Platform> list = platformList.getContent();
-
             if (list != null) {
                 for (Platform p : list) {
-                    stringPlatforms.append(p.getId()).append(", ").append(p.getName()).append("\n");
+                    stringPlatforms.append(p.getId()).append(", ")
+                        .append(p.getName()).append("\n");
                 }
                 stringPlatforms.delete(stringPlatforms.length() - 1, stringPlatforms.length());
             } else {
                 return Constants.PLATFORM_LIST_EMPTY;
             }
         } catch (IOException e) {
-            System.err.println(String.format(SOMETHING_WRONG + Constants.PLATFORM_LIST_ERROR + " '%s'", e.getMessage()));
+            System.err.println(String.format(SOMETHING_WRONG + Constants.PLATFORM_LIST_ERROR
+                + Constants.ERROR_PLACEHOLDER, e.getMessage()));
             e.printStackTrace();
         } catch (TOSCAnaServerException e) {
-            System.err.println(String.format(SOMETHING_WRONG + Constants.PLATFORM_LIST_ERROR + " %s '%s'", e.getStatusCode(), e.getErrorResponse().getMessage()));
+            System.err.println(String.format(SOMETHING_WRONG + Constants.PLATFORM_LIST_ERROR
+                + Constants.SERVER_ERROR_PLACEHOLDER, e.getStatusCode(), e.getErrorResponse().getMessage()));
         }
         return stringPlatforms.toString();
     }
@@ -390,12 +436,19 @@ public class ApiController {
         StringBuilder stringPlatform = new StringBuilder();
         try {
             platform = toscAnaAPI.getPlatformDetails(plat);
-            stringPlatform.append(platform.getId()).append(", ").append(platform.getName());
+            if (platform != null) {
+                stringPlatform.append(platform.getId()).append(", ")
+                    .append(platform.getName());
+            } else {
+                return Constants.PLATFORM_INFO_EMPTY;
+            }
         } catch (IOException e) {
-            System.err.println(String.format(SOMETHING_WRONG + Constants.PLATFORM_INFO_ERROR + " '%s'", e.getMessage()));
+            System.err.println(String.format(SOMETHING_WRONG + Constants.PLATFORM_INFO_ERROR
+                + Constants.ERROR_PLACEHOLDER, e.getMessage()));
             e.printStackTrace();
         } catch (TOSCAnaServerException e) {
-            System.err.println(String.format(SOMETHING_WRONG + Constants.PLATFORM_INFO_ERROR + " %s '%s'", e.getStatusCode(), e.getErrorResponse().getMessage()));
+            System.err.println(String.format(SOMETHING_WRONG + Constants.PLATFORM_INFO_ERROR
+                + Constants.SERVER_ERROR_PLACEHOLDER, e.getStatusCode(), e.getErrorResponse().getMessage()));
         }
         return stringPlatform.toString();
     }
@@ -410,30 +463,20 @@ public class ApiController {
         StringBuilder stringStatus = new StringBuilder();
         try {
             status = toscAnaAPI.getServerStatus();
-
-            stringStatus.append(status.getStatus()).append(", free: ").append(status.getFileSystemHealth().getFreeBytes());
+            if (status != null) {
+                stringStatus.append(status.getStatus()).append(", free: ")
+                    .append(status.getFileSystemHealth().getFreeBytes());
+            } else {
+                return Constants.STATUS_EMPTY;
+            }
         } catch (IOException e) {
-            System.err.println(String.format(SOMETHING_WRONG + Constants.STATUS_ERROR + " '%s'", e.getMessage()));
+            System.err.println(String.format(SOMETHING_WRONG + Constants.STATUS_ERROR
+                + Constants.ERROR_PLACEHOLDER, e.getMessage()));
             e.printStackTrace();
         } catch (TOSCAnaServerException e) {
-            System.err.println(String.format(SOMETHING_WRONG + Constants.STATUS_ERROR + " %s '%s'", e.getStatusCode(), e.getErrorResponse().getMessage()));
+            System.err.println(String.format(SOMETHING_WRONG + Constants.STATUS_ERROR
+                + Constants.SERVER_ERROR_PLACEHOLDER, e.getStatusCode(), e.getErrorResponse().getMessage()));
         }
         return stringStatus.toString();
-    }
-
-    public String showMetrics() {
-        Map<String, Object> status;
-        StringBuilder stringMetrics = new StringBuilder();
-        try {
-            status = toscAnaAPI.getTransformerMetrics();
-
-            stringMetrics.append(status.keySet());
-        } catch (IOException e) {
-            System.err.println(String.format(SOMETHING_WRONG + Constants.STATUS_METRIC_ERROR + " '%s'", e.getMessage()));
-            e.printStackTrace();
-        } catch (TOSCAnaServerException e) {
-            System.err.println(String.format(SOMETHING_WRONG + Constants.STATUS_METRIC_ERROR + " %s '%s'", e.getStatusCode(), e.getErrorResponse().getMessage()));
-        }
-        return stringMetrics.toString();
     }
 }

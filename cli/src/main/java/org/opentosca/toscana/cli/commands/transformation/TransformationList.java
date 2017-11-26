@@ -1,7 +1,5 @@
 package org.opentosca.toscana.cli.commands.transformation;
 
-import java.io.IOException;
-
 import org.opentosca.toscana.cli.ApiController;
 
 import picocli.CommandLine.Command;
@@ -19,15 +17,6 @@ public class TransformationList extends AbstractTransformation {
 
     @Override
     protected String performCall(ApiController ap, String[] ent) {
-        return null;
-    }
-
-    @Override
-    public void run() {
-        try {
-            System.out.println(callTransformationList());
-        } catch (IOException e) {
-            System.err.println(e.getMessage());
-        }
+        return ap.listTransformation(ent[0]);
     }
 }

@@ -17,7 +17,6 @@ import picocli.CommandLine.Option;
     commandListHeading = "%nCommands:%n")
 public abstract class AbstractTransformation extends AbstractApiCall {
 
-    private ApiController api;
     @Option(names = {"-p", "--platform"}, paramLabel = Constants.PARAM_PLATFORM, description = "Platform for Transformation")
     private String platform;
     @Option(names = {"-t", "--transformation"}, paramLabel = "<CSAR/Platform>", description = "CSAR and Platform for the Transformation, Slash not allowed in the inputs. Correct format: -t csar/platform")
@@ -26,7 +25,6 @@ public abstract class AbstractTransformation extends AbstractApiCall {
     private String csar;
 
     AbstractTransformation() {
-        api = getApi();
     }
 
     protected abstract String performCall(ApiController ap, String[] ent);
@@ -48,8 +46,8 @@ public abstract class AbstractTransformation extends AbstractApiCall {
      */
     private String[] inputTransformation(String transformation) throws IOException {
         String[] input;
-        if (transformation.matches(".*/.*/.*")) {
-            throw new IOException("Please recheck your provided parameters, it must not contain more than one / separator");
+        if (transformation.matches(".*\\/.*\\/.*")) {
+            throw new IllegalArgumentException("Please recheck your provided parameters, it must not contain more than one / separator");
         } else {
             input = transformation.trim().split("/");
             if (input.length < 1) {
@@ -64,40 +62,30 @@ public abstract class AbstractTransformation extends AbstractApiCall {
      */
     String[] getInput() throws IOException {
         String[] in;
-
         if (transformation != null) {
             in = inputTransformation(transformation);
         } else if (csar != null && platform != null) {
             in = new String[]{csar, platform};
+        } else if (csar != null) {
+            in = new String[]{csar};
         } else {
             throw new IllegalArgumentException(Constants.NOT_PROVIDED);
         }
         return in;
     }
 
+    /**
+     Method to call the CLI with the specified performCall methods of the calling classes
+
+     @return the output for the CLI
+     @throws IOException if something in the Input was not correct
+     */
     private String callApi() throws IOException {
         final String[] entered = getInput();
         String response = "";
 
         if (entered != null) {
             response = performCall(api, entered);
-        }
-        return response;
-    }
-
-    String callTransformationList() throws IOException {
-        if (csar != null) {
-            return api.listTransformation(csar);
-        } else {
-            throw new IllegalArgumentException(Constants.NOT_PROVIDED);
-        }
-    }
-
-    String callLogs(int start) throws IOException {
-        final String[] entered = getInput();
-        String response = "";
-        if (entered != null) {
-            response = api.logsTransformation(entered[0], entered[1], start);
         }
         return response;
     }

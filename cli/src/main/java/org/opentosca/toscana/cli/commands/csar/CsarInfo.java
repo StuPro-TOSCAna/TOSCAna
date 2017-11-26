@@ -1,5 +1,6 @@
 package org.opentosca.toscana.cli.commands.csar;
 
+import org.opentosca.toscana.cli.ApiController;
 import org.opentosca.toscana.cli.commands.AbstractCommand;
 import org.opentosca.toscana.cli.commands.Constants;
 
@@ -21,7 +22,7 @@ public class CsarInfo extends AbstractCommand {
     }
 
     @Override
-    public void run() {
-        System.out.println(getApi().infoCsar(csar));
+    protected String performCall(ApiController ap) {
+        return ap.infoCsar(csar);
     }
 }

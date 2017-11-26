@@ -57,8 +57,8 @@ abstract class TestHelper {
     final String[] INPUT_FILE_VALID = {"input", "-c", CSAR, "-p", PLATFORM, "-f", "src/test/resources/responses/test.txt"};
     final String[] INPUT_NOINPUT = {"input"};
     private final Logger logger = LoggerFactory.getLogger(getClass());
+    protected ApiController api;
     private MockWebServer server;
-    private ApiController api;
     private CommandLine cmd = null;
 
     @Before
@@ -107,9 +107,5 @@ abstract class TestHelper {
     void apiInputError(String[] cliInput, int code) throws IOException {
         enqueError(code);
         List<Object> parsed = cmd.parseWithHandler(new CommandLine.RunLast(), System.err, cliInput);
-    }
-
-    ApiController getApi() {
-        return api;
     }
 }

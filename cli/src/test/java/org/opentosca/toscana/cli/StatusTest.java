@@ -12,12 +12,12 @@ public class StatusTest extends TestHelper {
     @Test
     public void CliStatus() throws IOException {
         apiSingleInput(STATUS_HEALTH_JSON, 200);
-        assertTrue(getApi().showStatus().contains("UP"));
+        assertTrue(api.showStatus().contains("UP"));
     }
 
     @Test
     public void CliStatusError() throws IOException {
         enqueError(400);
-        assertEquals("", getApi().showStatus());
+        assertEquals("", api.showStatus());
     }
 }

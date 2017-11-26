@@ -1,5 +1,6 @@
 package org.opentosca.toscana.cli.commands.csar;
 
+import org.opentosca.toscana.cli.ApiController;
 import org.opentosca.toscana.cli.commands.AbstractCommand;
 import org.opentosca.toscana.cli.commands.Constants;
 
@@ -21,7 +22,7 @@ public class CsarDelete extends AbstractCommand {
     }
 
     @Override
-    public void run() {
-        getApi().deleteCsar(csar);
+    protected String performCall(ApiController ap) {
+        return ap.deleteCsar(csar);
     }
 }

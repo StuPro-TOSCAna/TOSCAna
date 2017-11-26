@@ -1,5 +1,7 @@
 package org.opentosca.toscana.cli.commands;
 
+import org.opentosca.toscana.cli.ApiController;
+
 import picocli.CommandLine.Command;
 
 @Command(name = "status",
@@ -14,7 +16,7 @@ public class ToscanaStatus extends AbstractCommand {
     }
 
     @Override
-    public void run() {
-        System.out.println(getApi().showStatus());
+    protected String performCall(ApiController ap) {
+        return ap.showStatus();
     }
 }

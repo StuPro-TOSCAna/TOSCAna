@@ -2,6 +2,7 @@ package org.opentosca.toscana.cli.commands.csar;
 
 import java.io.File;
 
+import org.opentosca.toscana.cli.ApiController;
 import org.opentosca.toscana.cli.commands.AbstractCommand;
 import org.opentosca.toscana.cli.commands.Constants;
 
@@ -24,7 +25,7 @@ public class CsarUpload extends AbstractCommand {
     }
 
     @Override
-    public void run() {
-        getApi().uploadCsar(csar);
+    protected String performCall(ApiController ap) {
+        return ap.uploadCsar(csar);
     }
 }

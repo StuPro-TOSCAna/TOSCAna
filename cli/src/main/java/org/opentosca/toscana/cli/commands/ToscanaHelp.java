@@ -3,6 +3,7 @@ package org.opentosca.toscana.cli.commands;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.opentosca.toscana.cli.ApiController;
 import org.opentosca.toscana.cli.commands.csar.CsarDelete;
 import org.opentosca.toscana.cli.commands.csar.CsarInfo;
 import org.opentosca.toscana.cli.commands.csar.CsarList;
@@ -79,6 +80,11 @@ public class ToscanaHelp extends AbstractCommand {
         helpMap.put("transformation logs", new TransformationLogs());
         helpMap.put("transformation start", new TransformationStart());
         helpMap.put("transformation stop", new TransformationStop());
+    }
+
+    @Override
+    protected String performCall(ApiController ap) {
+        return null;
     }
 
     @Override

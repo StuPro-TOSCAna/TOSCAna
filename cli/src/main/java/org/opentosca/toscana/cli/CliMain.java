@@ -51,6 +51,11 @@ public class CliMain extends AbstractCommand {
     }
 
     @Override
+    protected String performCall(ApiController ap) {
+        return null;
+    }
+
+    @Override
     public void run() {
         usage(this, System.out);
     }

@@ -1,5 +1,7 @@
 package org.opentosca.toscana.cli.commands;
 
+import org.opentosca.toscana.cli.ApiController;
+
 import picocli.CommandLine.Command;
 
 /**
@@ -9,4 +11,11 @@ import picocli.CommandLine.Command;
     optionListHeading = "%nOptions:%n",
     commandListHeading = "%nCommands:%n")
 public abstract class AbstractCommand extends AbstractApiCall {
+
+    protected abstract String performCall(ApiController ap);
+
+    @Override
+    public void run() {
+        System.out.println(performCall(api));
+    }
 }

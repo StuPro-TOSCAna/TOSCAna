@@ -1,5 +1,6 @@
 package org.opentosca.toscana.cli.commands.csar;
 
+import org.opentosca.toscana.cli.ApiController;
 import org.opentosca.toscana.cli.commands.AbstractCommand;
 
 import picocli.CommandLine.Command;
@@ -20,6 +21,11 @@ public class ToscanaCsar extends AbstractCommand {
      Show's the usage of the CSAR command and available subcommands
      */
     public ToscanaCsar() {
+    }
+
+    @Override
+    protected String performCall(ApiController ap) {
+        return null;
     }
 
     @Override

@@ -43,7 +43,6 @@ public class TransformationInput extends AbstractTransformation {
 
     @Override
     public void run() {
-        ApiController api = getApi();
 
         try {
             final String[] entered = getInput();
@@ -72,17 +71,16 @@ public class TransformationInput extends AbstractTransformation {
 
         for (String in : list) {
             if (in.matches(".*=.*=.*")) {
-                throw new IOException("Please recheck your provided inputs, it must not contain more than one = separator");
+                throw new IllegalArgumentException("Please recheck your provided inputs, it must not contain more than one = separator");
             } else {
                 String[] inputArray = in.split("=");
                 if (inputArray.length > 1) {
                     map.put(inputArray[0], inputArray[1]);
                 } else {
-                    throw new IOException("Please add required Inputs as key=value, = is not allowed in those Information");
+                    throw new IllegalArgumentException("Please add required Inputs as key=value, = is not allowed in those Information");
                 }
             }
         }
-
         return map;
     }
 

@@ -1,5 +1,6 @@
 package org.opentosca.toscana.cli.commands.platform;
 
+import org.opentosca.toscana.cli.ApiController;
 import org.opentosca.toscana.cli.commands.AbstractCommand;
 
 import picocli.CommandLine.Command;
@@ -16,7 +17,7 @@ public class PlatformList extends AbstractCommand {
     }
 
     @Override
-    public void run() {
-        System.out.println(getApi().listPlatform());
+    protected String performCall(ApiController ap) {
+        return api.listPlatform();
     }
 }

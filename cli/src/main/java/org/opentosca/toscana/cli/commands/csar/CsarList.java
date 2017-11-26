@@ -1,5 +1,6 @@
 package org.opentosca.toscana.cli.commands.csar;
 
+import org.opentosca.toscana.cli.ApiController;
 import org.opentosca.toscana.cli.commands.AbstractCommand;
 
 import picocli.CommandLine.Command;
@@ -16,7 +17,7 @@ public class CsarList extends AbstractCommand {
     }
 
     @Override
-    public void run() {
-        System.out.println(getApi().listCsar());
+    protected String performCall(ApiController ap) {
+        return ap.listCsar();
     }
 }

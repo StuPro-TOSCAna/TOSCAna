@@ -38,13 +38,13 @@ public class InputTest extends TestHelper {
     @Test
     public void InputList() throws IOException {
         apiDoubleInput(CSAR, PLATFORM, TRANSFORMATION_PROPERTIES_JSON, 200);
-        assertTrue(getApi().inputList(CSAR, PLATFORM).contains("text"));
+        assertTrue(api.inputList(CSAR, PLATFORM).contains("text"));
     }
 
     @Test
     public void InputListError() throws IOException {
         enqueError(400);
-        assertEquals("", getApi().inputList(CSAR, PLATFORM));
+        assertEquals("", api.inputList(CSAR, PLATFORM));
     }
 /*
     @Test
@@ -55,18 +55,18 @@ public class InputTest extends TestHelper {
         list.add("text_property=Hallo Welt");
         Map<String, String> input = in.inputManual(list);
         assertTrue(input.size() == 1);
-        assertEquals("", getApi().placeInput(CSAR, PLATFORM, input));
+        assertEquals("", api.placeInput(CSAR, PLATFORM, input));
     }
-    
-     @Test
-    public void InputPlace() throws IOException {
+
+    @Test
+    public void InputPlaceFile() throws IOException {
         apiDoubleInput(CSAR, PLATFORM, TRANSFORMATION_PROPERTIES_JSON, 200);
         TransformationInput in = new TransformationInput();
         ClassLoader classLoader = getClass().getClassLoader();
         File file = new File(classLoader.getResource("responses/test.txt").getFile());
-        Map<String, String> input = in.inputManual(list);
+        Map<String, String> input = in.inputFile(file);
         assertTrue(input.size() == 4);
-        assertEquals("", getApi().placeInput(CSAR, PLATFORM, input));
+        assertEquals("", api.placeInput(CSAR, PLATFORM, input));
     }
     */
 }

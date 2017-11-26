@@ -8,26 +8,31 @@ import picocli.CommandLine.Option;
 
 public abstract class AbstractApiCall implements Runnable {
 
+    protected ApiController api;
     @Option(names = {"-v", "--verbose"}, description = "Enable Info Level Process Output")
     private boolean showVerbose;
-
     @Option(names = {"-m", "--moreverbose"}, description = "Enable Debug Level Process Output")
     private boolean showMVerbose;
 
-    private ApiController api;
-
-    public AbstractApiCall() {
+    protected AbstractApiCall() {
         CliProperties prop = new CliProperties();
-        if (showMVerbose) {
-            api = new ApiController(prop.getApiUrl(), LoggingMode.HIGH);
-        } else if (showVerbose) {
-            api = new ApiController(prop.getApiUrl(), LoggingMode.LOW);
-        } else {
-            api = new ApiController(prop.getApiUrl(), LoggingMode.OFF);
-        }
+        api = new ApiController(prop.getApiUrl(), getLoggingMode(showVerbose, showMVerbose));
     }
 
-    public ApiController getApi() {
-        return api;
+    /**
+     Get's and returns the LoggingMode which is wanted for the CLI to output more Information
+
+     @param verbose     need for an output that is more then default
+     @param moreVerbose need for a detailed output of what is processed in the CLI
+     @return the Loggingmode for the API
+     */
+    private LoggingMode getLoggingMode(boolean verbose, boolean moreVerbose) {
+        if (verbose) {
+            return LoggingMode.LOW;
+        } else if (moreVerbose) {
+            return LoggingMode.HIGH;
+        } else {
+            return LoggingMode.OFF;
+        }
     }
 }

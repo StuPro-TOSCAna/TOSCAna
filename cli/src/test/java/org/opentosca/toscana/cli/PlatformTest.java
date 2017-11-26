@@ -12,24 +12,24 @@ public class PlatformTest extends TestHelper {
     @Test
     public void PlatformInfo() throws IOException {
         apiSingleInput(PLATFORM_JSON, 200);
-        assertTrue(getApi().infoPlatform(PLATFORM).contains(PLATFORM));
+        assertTrue(api.infoPlatform(PLATFORM).contains(PLATFORM));
     }
 
     @Test
     public void PlatformInfoError() throws IOException {
         enqueError(400);
-        assertEquals("", getApi().infoPlatform(PLATFORM));
+        assertEquals("", api.infoPlatform(PLATFORM));
     }
 
     @Test
     public void PlatformList() throws IOException {
         apiSingleInput(PLATFORMS_JSON, 200);
-        assertTrue(getApi().listPlatform().contains(PLATFORM));
+        assertTrue(api.listPlatform().contains(PLATFORM));
     }
 
     @Test
     public void PlatformListError() throws IOException {
         enqueError(400);
-        assertEquals("", getApi().listPlatform());
+        assertEquals("", api.listPlatform());
     }
 }
