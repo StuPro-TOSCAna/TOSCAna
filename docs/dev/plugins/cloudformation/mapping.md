@@ -17,7 +17,7 @@ Mapping (non-) normative Types of TOSCA to AWS Resources.
 | ObjectStorage | [Amazon S3](https://aws.amazon.com/de/s3/) |  |
 | BlockStorage | -- | Block storage isn't created on its own but is defined by the instance type chosen for the EC2. So this Node only changes the properties of the EC2 |
 | Database | [AWS RDS](https://aws.amazon.com/de/rds/) | The property `Engine` needs to be set depending on the underlying DBMS Node (e.g MySQL). Also an AWS-SecurityGroup is needed |
-| ContainerApplication | --- | see ContainerRuntime |
+| ContainerApplication | --- | has to be run on a ContainerRuntime |
 | DockerApplication | --- | see ContainerRuntime |
 | WebApplication | --- | Add scripts to the EC2 that is launched |
 | WordPress | --- | see WebApplication |

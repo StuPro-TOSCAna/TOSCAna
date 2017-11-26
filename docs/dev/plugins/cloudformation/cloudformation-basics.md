@@ -7,7 +7,11 @@ Mappings of TOSCA node types to AWS Resources are shown in [this table](mapping.
 ## Transformation Lyfecycle
 
 ### validate
-- Nothing to do here so far
+- Evironment check:
+    - AWS CLI installed
+- Return list of supported node types
+- Model check (properties):
+    - TBD
 
 ### prepare
 - Add missing nodes to the graph to fulfill the requirements.
@@ -17,7 +21,8 @@ Mappings of TOSCA node types to AWS Resources are shown in [this table](mapping.
 - Transform the graph/the combined nodes into a CloudFormation template
 
 ### cleanup
-- Nothing to do here so far
+- TBD
+
 
 ## Deployment / Readme
 - The target artifact should be a single template file (YAML)

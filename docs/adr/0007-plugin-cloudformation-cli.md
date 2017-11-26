@@ -1,6 +1,6 @@
 # Use AWS Command Line Interface for deployment
 
-For deploying a AWS CloudFormation template it has to be uploaded and stack has to be created on AWS.
+For deploying an AWS CloudFormation template it has to be uploaded to AWS and the deployment has to be started.
 
 ## Considered Alternatives
 
@@ -18,19 +18,18 @@ For deploying a AWS CloudFormation template it has to be uploaded and stack has 
 
 ### *AWS Command Line Interface*
 
-`+` Easy to use
-`+` Easy to install
-`+` Has to be configured once and then can be used without credentials
-`-` Has to be installed
+* `+` Easy to use
+* `+` Has to be configured once and then can be used without credentials
+* `-` Has to be installed and configured with credentials
 
 
 ### *Manually with the AWS Management Console*
 
-`+` Easy to use
-`-` User has to interact
-`-` CloudFormation(CFN) template cannot be deployed fully automated
+* `+` Easy to use
+* `-` User has to interact
+* `-` CloudFormation(CFN) template cannot be deployed fully automated
 
 ### *Using API calls*
 
-`+` Can be used out of the box
-`-` complex solution
+* `+` Can be used out of the box
+* `-` complex solution
