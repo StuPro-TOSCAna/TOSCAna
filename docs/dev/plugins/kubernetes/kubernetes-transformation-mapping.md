@@ -55,7 +55,13 @@ This section explains the transformation of non-normative TOSCA types to Kuberne
 In this section two full TOSCA service templates are presented and the creation their respective Kubernetes resource files is explained.
 
 ### Simple Docker App
-TODO
+This example is based on the simple-task-docker-template we use for testing our Plugins.
+It can be found under [`server/src/test/resources/csars/yaml/valid/simple-task-csar`](server/src/test/resources/csars/yaml/valid/simple-task-csar).
+
+The topology consists of simple simple PHP application represented by the DockerApp node hosted on a DockerEngine node.
 
 ### LAMP-Stack
-TODO
+This example is based on the lamp-stack-template we use for testing our Plugins.
+It can be found under [`server/src/test/resources/csars/yaml/valid/simple-task-csar`](server/src/test/resources/csars/yaml/valid/lamp-stack-csar).
+
+The topology consists of 5 different nodes that make up the LAMP-stack. These are the non-normative node types for Apache, MySQL and DBMS.MySQL representing the web server, the database and the database management system and the normative node types for WebApplication and Compute representing the PHP application and the ubuntu server.
