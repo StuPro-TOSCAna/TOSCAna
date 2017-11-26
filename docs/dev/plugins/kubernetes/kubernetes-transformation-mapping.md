@@ -19,31 +19,43 @@ First, the normative and non-normative types and capabilities supported by the K
   - [LAMP-Stack](#lamp-stack)
 
 ## Normative Types
-TODO
+This section explains the transformation of normative TOSCA types to Kubernetes resource files.
 
 ### Node Types
-TODO
+#### tosca.nodes.Compute
+
+#### tosca.nodes.WebApplication
 
 ### Relationship Types
-TODO
+#### tosca.relationships.HostedOn
 
 ### Capability types
-TODO
+#### tosca.capabilities.Endpoint
+
+#### tosca.capabilities.Endpoint.Database
+
+#### tosca.capabilities.Container
 
 ## Non-Normative Types
-TODO
+This section explains the transformation of non-normative TOSCA types to Kubernetes resource files.
 
 ### Node Types
-TODO
+#### tosca.nodes.WebServer.Apache
+
+#### tosca.nodes.Database.MySQL
+
+#### tosca.nodes.DBMS.MySQL
+
+#### tosca.nodes.Container.Application.Docker
 
 ### Relationship Types
 TODO
 
 ### Capability types
-TODO
+#### tosca.capabilities.Container.Docker
 
 ## Example Scenarios
-TODO
+In this section two full TOSCA service templates are presented and the creation their respective Kubernetes resource files is explained.
 
 ### Simple Docker App
 TODO
