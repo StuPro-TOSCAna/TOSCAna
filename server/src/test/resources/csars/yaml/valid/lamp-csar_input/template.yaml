@@ -23,7 +23,7 @@ topology_template:
         - database_endpoint: my_db
       interfaces:
         Standard:
-          create: 
+          create:
             implementation:
               primary: my_app/create_myphpapp.sh
               dependencies:
@@ -60,13 +60,13 @@ topology_template:
       properties:
           root_password: { get_input: database_password }
           port: { get_input: database_port }
-        requirements:
-          - host: server
-        interfaces:
-          Standard:
-            inputs:
-              db_root_password: { get_property: [ SELF, root_password ] }
-            configure: mysql_dbms/mysql_dbms_configure.sh
+      requirements:
+        - host: server
+      interfaces:
+        Standard:
+          inputs:
+            db_root_password: { get_property: [ SELF, root_password ] }
+          configure: mysql_dbms/mysql_dbms_configure.sh
 
     server:
       type: tosca.nodes.Compute

@@ -46,11 +46,11 @@ topology_template:
       properties:
           root_password: abc
           port: 3306
-        requirements:
-          - host: server
-        interfaces:
-          Standard:
-            configure: mysql_dbms/mysql_dbms_configure.sh
+      requirements:
+        - host: server
+      interfaces:
+        Standard:
+          configure: mysql_dbms/mysql_dbms_configure.sh
 
     server:
       type: tosca.nodes.Compute
