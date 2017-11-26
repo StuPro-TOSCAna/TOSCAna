@@ -1,33 +1,33 @@
 # AWS CloudFormation
-How to transform a TOSCA model to an Amazon Web Services CloudFormation template.
+How to transform a TOSCA model to an Amazon Web Services(AWS) CloudFormation template.
 
 ## Mapping
-see [this](mapping.md)
+Mappings of TOSCA node types to AWS Resources are shown in [this table](mapping.md).
 
 ## Transformation Lyfecycle
 
 ### validate
-- nothing to do here so far
+- Nothing to do here so far
 
 ### prepare
-- Add missing nodes to fulfill requirements.
-- Split the graph, each part representing a AWS Resource
+- Add missing nodes to the graph to fulfill the requirements.
+- Split the graph, each part should representing a AWS Resource (multiple nodes can be put together to a single AWS Resource)
 
 ### transform
-- transform everything into a CloudFormation JSON/YAML template
+- Transform the graph/the combined nodes into a CloudFormation template
 
 ### cleanup
-- nothing to do here so far
+- Nothing to do here so far
 
 ## Deployment / Readme
-- target artifact should be a single template file (JSON/YAML)
-- deployment is handled by using the AWS Command Line Interface, see [this adr](../../../adr/0007-plugin-cloudformation-cli.md)
+- The target artifact should be a single template file (YAML)
+- Deployment is handled by using the AWS Command Line Interface decided in [this adr](../../../adr/0007-plugin-cloudformation-cli.md)
 
 ## Next steps
 
-- Manually creating a template for the test LAMP-CSAR
+- Manually create a CloudFormation template for the LAMP-CSAR
 
-- Transforming the test LAMP-CSAR with following node-types and relationships:
+- Transform the LAMP-CSAR with the following node types and relationships:
     - tosca.nodes.WebApplication
     - tosca.nodes.WebServer.Apache
     - tosca.nodes.Database.MySQL

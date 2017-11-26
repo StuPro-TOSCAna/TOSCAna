@@ -23,7 +23,7 @@ public class CloudFormationPlugin extends AbstractPlugin {
     }
 
     private static Platform getPlatformDetails() {
-        String platformId = "cloud-formation";
+        String platformId = "cloudformation";
         String platformName = "AWS CloudFormation";
         Set<Property> platformProperties = new HashSet<>();
         return new Platform(platformId, platformName, platformProperties);

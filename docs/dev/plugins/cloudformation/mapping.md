@@ -2,9 +2,9 @@
 
 ## Mapping
 
-Mapping (none-) normative Types of TOSCA to AWS Resources.
+Mapping (non-) normative Types of TOSCA to AWS Resources.
 
-| (none-) normative Type | AWS Resource | Comment |
+| (non-) normative Type | AWS Resource | Comment |
 | --- | --- | --- |
 | Compute | [AWS EC2](https://aws.amazon.com/de/ec2/) | A AWS-SecurityGroup has to be created |
 | SoftwareComponent | --- | Add scripts to the EC2 that is launched |
