@@ -48,9 +48,6 @@ This section explains the transformation of non-normative TOSCA types to Kuberne
 
 #### tosca.nodes.Container.Application.Docker
 
-### Relationship Types
-TODO
-
 ### Capability types
 #### tosca.capabilities.Container.Docker
 
