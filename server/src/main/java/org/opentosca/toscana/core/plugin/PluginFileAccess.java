@@ -28,10 +28,9 @@ public class PluginFileAccess {
      After the successful call the copied files will reside in given path (relative to the transformation content dir)
 
      @param relativePath path to the source file relative to the csar content directory
-     @throws FileNotFoundException if no file or directory was found for given relativePath
-     @throws IOException           if an error occurred while copying
+     @throws IOException if an error occurred while copying
      */
-    public void copy(String relativePath) throws FileNotFoundException, IOException {
+    public void copy(String relativePath) throws IOException {
         copy(relativePath, relativePath);
     }
 
@@ -42,10 +41,9 @@ public class PluginFileAccess {
 
      @param relativeSourcePath path to the source file relative to the csar content directory
      @param relativeTargetPath target location for the copy operation, relative to the transformation content dir
-     @throws FileNotFoundException if no file or directory was found for given relativeSourcePath
-     @throws IOException           if an error occured while copying
+     @throws IOException if an error occured while copying
      */
-    public void copy(String relativeSourcePath, String relativeTargetPath) throws FileNotFoundException, IOException {
+    public void copy(String relativeSourcePath, String relativeTargetPath) throws IOException {
         File source = new File(sourceDir, relativeSourcePath);
         File target = new File(targetDir, relativeTargetPath);
         if (!source.exists()) {
@@ -123,10 +121,22 @@ public class PluginFileAccess {
 
     /**
      Deletes file or directory (recusively) denoted by given path. If target does not exists, does nothing.
+
      @param relativePath relative (to the transformation content directory) path to a file or directory.
      */
     public void delete(String relativePath) {
         File file = new File(targetDir, relativePath);
         FileUtils.deleteQuietly(file);
+    }
+
+    /**
+     Creates folders recursively in the transformation content directory. Does nothing if folder already exists.
+
+     @param relativePath relative (to the transformation content directory) path to a file or directory.
+     @return the created folder.
+     */
+    public void createDirectories(String relativePath) {
+        File targetFolder = new File(targetDir, relativePath);
+        targetFolder.mkdirs();
     }
 }

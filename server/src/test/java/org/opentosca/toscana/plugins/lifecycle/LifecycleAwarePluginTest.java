@@ -16,8 +16,6 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -71,7 +69,7 @@ public class LifecycleAwarePluginTest extends BaseJUnitTest {
         plugin.transform(context);
         verify(lifecycle).cleanup();
     }
-    
+
     private class LifecycleTestPlugin extends LifecycleAwarePlugin {
 
         //Not using mockito because it somehow did not work as expected using spy()

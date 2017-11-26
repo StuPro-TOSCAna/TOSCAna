@@ -12,6 +12,7 @@ This log lists the architectural decisions for *[project name]*.
 - [ADR-0005](0005-springfox.md) - Use Springfox for API documentation
 - [ADR-0006](0006-bash-script-generator.md) -
 - [ADR-0007](0007-plugin-cloudformation-cli.md) - Use AWS CLI to deploy generated CloudFormation templates
+- [ADR-0008](0008-kubernetes-end-to-end-tests.md) - How to perform Kubernetes end to end tests
 
 <!-- adrlogstop -->
 
