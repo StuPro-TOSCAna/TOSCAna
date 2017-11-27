@@ -10,7 +10,7 @@ import static org.junit.Assert.assertTrue;
 public class InputTest extends TestHelper {
 
     @Test
-    public void testCliInput() throws IOException {
+    public void cliInput() throws IOException {
         CliMain.main(CSAR_DELETE);
         CliMain.main(CSAR_INFO);
         CliMain.main(CSAR_LIST);
@@ -36,13 +36,13 @@ public class InputTest extends TestHelper {
     }
 
     @Test
-    public void InputList() throws IOException {
+    public void inputList() throws IOException {
         apiDoubleInput(CSAR, PLATFORM, TRANSFORMATION_PROPERTIES_JSON, 200);
         assertTrue(api.inputList(CSAR, PLATFORM).contains("text"));
     }
 
     @Test
-    public void InputListError() throws IOException {
+    public void inputListError() throws IOException {
         enqueError(400);
         assertEquals("", api.inputList(CSAR, PLATFORM));
     }

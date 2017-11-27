@@ -2,7 +2,6 @@ package org.opentosca.toscana.cli;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 
 import org.opentosca.toscana.retrofit.util.LoggingMode;
 
@@ -18,44 +17,44 @@ import picocli.CommandLine;
 abstract class TestHelper {
 
     private static final String MIME_TYPE_JSON = "application/json";
-    final String CSAR = "kubernetes-cluster";
-    final String CSAR_JSON = "responses/csarInfo.json";
-    final String CSARS_JSON = "responses/csarsList.json";
-    final String PLATFORM = "p-a";
-    final String PLATFORM_JSON = "responses/platformInfo.json";
-    final String PLATFORMS_JSON = "responses/platformsList.json";
-    final String TRANSFORMATION_JSON = "responses/transformationInfo.json";
-    final String TRANSFORMATIONS_JSON = "responses/transformationsList.json";
-    final String TRANSFORMATION_LOGS_JSON = "responses/transformationLogs.json";
-    final String TRANSFORMATION_PROPERTIES_JSON = "responses/transformationProperties.json";
-    final String LOGS_RESPONSE = "Hallo Welt";
-    final String STATUS_HEALTH_JSON = "responses/statusHealth.json";
-    final String[] CLI_HELP = {"help"};
-    final String[] CLI_HELP_STATUS = {"help", "status"};
-    final String[] CLI_CSAR_LIST = {"csar", "list"};
-    final String[] CLI_STATUS = {"status"};
-    final String[] CSAR_AR = {"csar", "-v"};
-    final String[] CSAR_DELETE = {"csar", "delete", "-c", CSAR, "-m"};
-    final String[] CSAR_INFO = {"csar", "info", "-c", CSAR};
-    final String[] CSAR_UPLOAD = {"csar", "upload", "-f", "arch.csar"};
-    final String[] CSAR_LIST = {"csar", "list"};
-    final String[] PLATFORM_AR = {"platform"};
-    final String[] PLATFORM_LIST = {"platform", "list"};
-    final String[] PLATFORM_INFO = {"platform", "info", "-p", PLATFORM};
-    final String[] TRANSFORMATION_AR = {"transformation"};
-    final String[] TRANSFORMATION_DELETE = {"transformation", "delete", "-c", CSAR, "-p", PLATFORM, "-m"};
-    final String[] TRANSFORMATION_DOWNLOAD = {"transformation", "download", "-c", CSAR, "-p", PLATFORM};
-    final String[] TRANSFORMATION_INFO = {"transformation", "info", "-c", CSAR, "-p", PLATFORM};
-    final String[] TRANSFORMATION_LIST = {"transformation", "list", "-c", CSAR};
-    final String[] TRANSFORMATION_LOGS = {"transformation", "logs", "-c", CSAR, "-p", PLATFORM, "-v"};
-    final String[] TRANSFORMATION_START = {"transformation", "start", "-c", CSAR, "-p", PLATFORM};
-    final String[] TRANSFORMATION_STOP = {"transformation", "stop", "-c", CSAR, "-p", PLATFORM};
-    final String[] INPUT_LIST = {"input", "-c", CSAR, "-p", PLATFORM};
-    final String[] INPUT_MANUAL_VALID = {"input", "-c", CSAR, "-p", PLATFORM, "test=test"};
-    final String[] INPUT_MANUAL_NOT_VALID = {"input", "-c", CSAR, "-p", PLATFORM, "test==test"};
-    final String[] INPUT_MANUAL_ERROR = {"input", "-c", CSAR, "-p", PLATFORM, "test="};
-    final String[] INPUT_FILE_VALID = {"input", "-c", CSAR, "-p", PLATFORM, "-f", "src/test/resources/responses/test.txt"};
-    final String[] INPUT_NOINPUT = {"input"};
+    protected final String CSAR_JSON = "responses/csarInfo.json";
+    protected final String CSARS_JSON = "responses/csarsList.json";
+    protected final String PLATFORM = "p-a";
+    protected final String CSAR = "kubernetes-cluster";
+    protected final String PLATFORM_JSON = "responses/platformInfo.json";
+    protected final String PLATFORMS_JSON = "responses/platformsList.json";
+    protected final String TRANSFORMATION_JSON = "responses/transformationInfo.json";
+    protected final String TRANSFORMATIONS_JSON = "responses/transformationsList.json";
+    protected final String TRANSFORMATION_LOGS_JSON = "responses/transformationLogs.json";
+    protected final String TRANSFORMATION_PROPERTIES_JSON = "responses/transformationProperties.json";
+    protected final String LOGS_RESPONSE = "Hallo Welt";
+    protected final String STATUS_HEALTH_JSON = "responses/statusHealth.json";
+    protected final String[] CLI_HELP = {"help"};
+    protected final String[] CLI_HELP_STATUS = {"help", "status"};
+    protected final String[] CLI_CSAR_LIST = {"csar", "list"};
+    protected final String[] CLI_STATUS = {"status"};
+    protected final String[] CSAR_AR = {"csar", "-v"};
+    protected final String[] CSAR_UPLOAD = {"csar", "upload", "-f", "arch.csar"};
+    protected final String[] CSAR_LIST = {"csar", "list"};
+    protected final String[] PLATFORM_AR = {"platform"};
+    protected final String[] PLATFORM_LIST = {"platform", "list"};
+    protected final String[] PLATFORM_INFO = {"platform", "info", "-p", PLATFORM};
+    protected final String[] TRANSFORMATION_AR = {"transformation"};
+    protected final String[] INPUT_NOINPUT = {"input"};
+    protected final String[] CSAR_DELETE = {"csar", "delete", "-c", CSAR, "-m"};
+    protected final String[] CSAR_INFO = {"csar", "info", "-c", CSAR};
+    protected final String[] TRANSFORMATION_DELETE = {"transformation", "delete", "-c", CSAR, "-p", PLATFORM, "-m"};
+    protected final String[] TRANSFORMATION_DOWNLOAD = {"transformation", "download", "-c", CSAR, "-p", PLATFORM};
+    protected final String[] TRANSFORMATION_INFO = {"transformation", "info", "-c", CSAR, "-p", PLATFORM};
+    protected final String[] TRANSFORMATION_LIST = {"transformation", "list", "-c", CSAR};
+    protected final String[] TRANSFORMATION_LOGS = {"transformation", "logs", "-c", CSAR, "-p", PLATFORM, "-v"};
+    protected final String[] TRANSFORMATION_START = {"transformation", "start", "-c", CSAR, "-p", PLATFORM};
+    protected final String[] TRANSFORMATION_STOP = {"transformation", "stop", "-c", CSAR, "-p", PLATFORM};
+    protected final String[] INPUT_LIST = {"input", "-c", CSAR, "-p", PLATFORM};
+    protected final String[] INPUT_MANUAL_VALID = {"input", "-c", CSAR, "-p", PLATFORM, "test=test"};
+    protected final String[] INPUT_MANUAL_NOT_VALID = {"input", "-c", CSAR, "-p", PLATFORM, "test==test"};
+    protected final String[] INPUT_MANUAL_ERROR = {"input", "-c", CSAR, "-p", PLATFORM, "test="};
+    protected final String[] INPUT_FILE_VALID = {"input", "-c", CSAR, "-p", PLATFORM, "-f", "src/test/resources/responses/test.txt"};
     private final Logger logger = LoggerFactory.getLogger(getClass());
     protected ApiController api;
     private MockWebServer server;
@@ -90,22 +89,22 @@ abstract class TestHelper {
         server.enqueue(response);
     }
 
-    void enqueError(int code) throws IOException {
+    protected void enqueError(int code) throws IOException {
         enqueResponse("responses/regularError.json", code, MIME_TYPE_JSON);
     }
 
-    void apiSingleInput(String resource, int code) throws IOException {
+    protected void apiSingleInput(String resource, int code) throws IOException {
         logger.info("Creating Response with CSAR: {} and Code: {}", CSAR, code);
         enqueResponse(resource, code, MIME_TYPE_JSON);
     }
 
-    void apiDoubleInput(String csar, String plat, String resource, int code) throws IOException {
+    protected void apiDoubleInput(String csar, String plat, String resource, int code) throws IOException {
         logger.info("Creating Response with CSAR: {}, Platform: {}, Resource: {} and Code: {}", csar, plat, resource, code);
         enqueResponse(resource, code, MIME_TYPE_JSON);
     }
-
+/*
     void apiInputError(String[] cliInput, int code) throws IOException {
         enqueError(code);
         List<Object> parsed = cmd.parseWithHandler(new CommandLine.RunLast(), System.err, cliInput);
-    }
+    } */
 }

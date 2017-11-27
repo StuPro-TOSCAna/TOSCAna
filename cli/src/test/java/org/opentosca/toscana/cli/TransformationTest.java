@@ -10,86 +10,86 @@ import static org.junit.Assert.assertTrue;
 public class TransformationTest extends TestHelper {
 
     @Test
-    public void TransformationDelete() throws IOException {
+    public void transformationDelete() throws IOException {
         apiDoubleInput(CSAR, PLATFORM, TRANSFORMATIONS_JSON, 200);
         assertEquals("", api.deleteTransformation(CSAR, PLATFORM));
     }
 
     @Test
-    public void TransformationDeleteError() throws IOException {
+    public void transformationDeleteError() throws IOException {
         enqueError(400);
         assertEquals("", api.deleteTransformation(CSAR, PLATFORM));
     }
 
     @Test
-    public void TransformationDownload() throws IOException {
+    public void transformationDownload() throws IOException {
         apiDoubleInput(CSAR, PLATFORM, TRANSFORMATION_JSON, 200);
-        assertTrue(api.downloadTransformation(CSAR, PLATFORM).contains(CSAR));
+        assertTrue(api.downloadTransformationUrl(CSAR, PLATFORM).contains(CSAR));
     }
 
     @Test
-    public void TransformationDownloadError() throws IOException {
+    public void transformationDownloadError() throws IOException {
         enqueError(400);
-        api.downloadTransformation(CSAR, PLATFORM);
+        assertTrue(api.downloadTransformationUrl(CSAR, PLATFORM).contains(CSAR));
     }
 
     @Test
-    public void TransformationInfo() throws IOException {
+    public void transformationInfo() throws IOException {
         apiDoubleInput(CSAR, PLATFORM, TRANSFORMATION_JSON, 200);
         assertTrue(api.infoTransformation(CSAR, PLATFORM).contains(PLATFORM));
     }
 
     @Test
-    public void TransformationInfoError() throws IOException {
+    public void transformationInfoError() throws IOException {
         enqueError(400);
         assertEquals("", api.infoTransformation(CSAR, PLATFORM));
     }
 
     @Test
-    public void TransformationList() throws IOException {
+    public void transformationList() throws IOException {
         apiSingleInput(TRANSFORMATIONS_JSON, 200);
         assertEquals(PLATFORM, api.listTransformation(CSAR));
     }
 
     @Test
-    public void TransformationListError() throws IOException {
+    public void transformationListError() throws IOException {
         enqueError(400);
         assertEquals("", api.listTransformation(CSAR));
     }
 
     @Test
-    public void TransformationLogs() throws IOException {
+    public void transformationLogs() throws IOException {
         apiDoubleInput(CSAR, PLATFORM, TRANSFORMATION_LOGS_JSON, 200);
         assertTrue(api.logsTransformation(CSAR, PLATFORM, 3).contains(LOGS_RESPONSE));
     }
 
     @Test
-    public void TransformationLogsError() throws IOException {
+    public void transformationLogsError() throws IOException {
         enqueError(400);
         assertEquals("", api.logsTransformation(CSAR, PLATFORM, 3));
     }
 
     @Test
-    public void TransformationStart() throws IOException {
+    public void transformationStart() throws IOException {
         apiDoubleInput(CSAR, PLATFORM, CSAR_JSON, 200);
         assertEquals("", api.startTransformation(CSAR, PLATFORM));
     }
 
     @Test
-    public void TransformationStartError() throws IOException {
+    public void transformationStartError() throws IOException {
         enqueError(400);
         assertEquals("", api.startTransformation(CSAR, PLATFORM));
     }
 
     @Test
-    public void TransformationStop() throws IOException {
+    public void transformationStop() throws IOException {
         apiDoubleInput(CSAR, PLATFORM, TRANSFORMATIONS_JSON, 200);
         assertEquals("Aborting Transformation.", api.stopTransformation(CSAR, PLATFORM));
     }
 
     @Test
-    public void TransformationStopError() throws IOException {
+    public void transformationStopError() throws IOException {
         enqueError(400);
-        api.stopTransformation(CSAR, PLATFORM);
+        assertEquals("Aborting Transformation.", api.stopTransformation(CSAR, PLATFORM));
     }
 }

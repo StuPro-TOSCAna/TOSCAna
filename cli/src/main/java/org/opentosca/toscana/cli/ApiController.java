@@ -2,6 +2,8 @@ package org.opentosca.toscana.cli;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -215,8 +217,32 @@ public class ApiController {
      @param plat Platform for which the Artifact should be downloaded
      @return output for the CLI
      */
-    public String downloadTransformation(String csar, String plat) {
+    public String downloadTransformationUrl(String csar, String plat) {
         return toscAnaAPI.getArtifactDownloadUrl(csar, plat);
+    }
+
+    /**
+     Calls the REST API to download an Artifact for the specified finished Transformation, output is stored at
+     specified location
+
+     @param csar CSAR for which to download an Artifact
+     @param plat Platform for which the Artifact should be downloaded
+     @return output for the CLI
+     */
+    public String downloadTransformationStream(String csar, String plat, File destinationFile) {
+        try {
+            InputStream input = toscAnaAPI.downloadArtifactAsStream(csar, plat);
+            java.nio.file.Files.copy(input, destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            input.close();
+        } catch (IOException e) {
+            System.err.println(String.format(SOMETHING_WRONG + Constants.TRANSFORMATION_DOWNLOAD_ERROR
+                + Constants.ERROR_PLACEHOLDER, e.getMessage()));
+            e.printStackTrace();
+        } catch (TOSCAnaServerException e) {
+            System.err.println(String.format(SOMETHING_WRONG + Constants.TRANSFORMATION_DOWNLOAD_ERROR
+                + Constants.SERVER_ERROR_PLACEHOLDER, e.getStatusCode(), e.getErrorResponse().getMessage()));
+        }
+        return "";
     }
 
     /**

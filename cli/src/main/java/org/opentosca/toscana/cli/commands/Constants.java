@@ -8,8 +8,8 @@ public final class Constants {
     public static final String PARAM_CSAR = "<CSAR>";
     public static final String PARAM_PLATFORM = "<Platform>";
     public static final String SOMETHING_WRONG = "Something went wrong while ";
-    public static final String ERROR_PLACEHOLDER = " '%s'";
-    public static final String SERVER_ERROR_PLACEHOLDER = " %s '%s'";
+    public static final String ERROR_PLACEHOLDER = " %s";
+    public static final String SERVER_ERROR_PLACEHOLDER = " %s %s";
     public static final String CSAR_UPLOAD_IO_ERROR = "loading Csar:";
     public static final String CSAR_UPLOAD_RESPONSE_ERROR = "uploading Csar:";
     public static final String CSAR_DELETE_ERROR = "deleting Csar:";

@@ -10,13 +10,13 @@ import static org.junit.Assert.assertTrue;
 public class StatusTest extends TestHelper {
 
     @Test
-    public void CliStatus() throws IOException {
+    public void cliStatus() throws IOException {
         apiSingleInput(STATUS_HEALTH_JSON, 200);
         assertTrue(api.showStatus().contains("UP"));
     }
 
     @Test
-    public void CliStatusError() throws IOException {
+    public void cliStatusError() throws IOException {
         enqueError(400);
         assertEquals("", api.showStatus());
     }

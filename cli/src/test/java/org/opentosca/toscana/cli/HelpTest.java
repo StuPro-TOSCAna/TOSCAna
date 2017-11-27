@@ -1,7 +1,5 @@
 package org.opentosca.toscana.cli;
 
-import picocli.CommandLine;
-
 public class HelpTest {
     /*
         private final List<Csar> cList = new ArrayList<>();
@@ -25,6 +23,6 @@ public class HelpTest {
         private final TransformationInput tProp2 = new TransformationInput("key", true);
         private final TransformationInputs tProps = new TransformationInputs(tProperties);
         private final TransformationsResponse tResponse = new TransformationsResponse(trans);
-        */
-    private CommandLine cmd = null;
+        
+    private CommandLine cmd = null; */
 }
