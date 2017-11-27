@@ -4,14 +4,14 @@ How to transform a TOSCA model to an Amazon Web Services(AWS) CloudFormation tem
 ## Mapping
 Mappings of TOSCA node types to AWS Resources are shown in [this table](mapping.md).
 
-## Transformation Lyfecycle
+## Transformation Lifecycle
 
 ### validate
-- Evironment check:
+- Environment check:
     - AWS CLI installed
 - Return list of supported node types
 - Model check (properties):
-    - TBD
+    - Will be addressed during implementation.
 
 ### prepare
 - Add missing nodes to the graph to fulfill the requirements.
@@ -21,7 +21,7 @@ Mappings of TOSCA node types to AWS Resources are shown in [this table](mapping.
 - Transform the graph/the combined nodes into a CloudFormation template
 
 ### cleanup
-- TBD
+- Will be addressed during implementation.
 
 
 ## Deployment / Readme
