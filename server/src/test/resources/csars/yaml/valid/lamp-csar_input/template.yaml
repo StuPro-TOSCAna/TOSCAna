@@ -38,14 +38,12 @@ topology_template:
               database_port: { get_property: [ my_db, port ] }
 
     apache_web_server:
-      #should be tosca.nodes.WebServer.Apache
-      type: tosca.nodes.WebServer
+      type: tosca.nodes.WebServer.Apache
       requirements:
         - host: server
 
     my_db:
-      #should be tosca.nodes.Database.MySQL
-      type: tosca.nodes.Database
+      type: tosca.nodes.Database.MySQL
       properties:
         name: { get_input: database_name }
         password: { get_input: database_password }
@@ -58,8 +56,7 @@ topology_template:
         - host: mysql_dbms
 
     mysql_dbms:
-      #should be tosca.nodes.DBMS.MySQL
-      type: tosca.nodes.DBMS
+      type: tosca.nodes.DBMS.MySQL
       properties:
         root_password: { get_input: database_password }
         port: { get_input: database_port }

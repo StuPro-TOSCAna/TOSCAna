@@ -23,14 +23,12 @@ topology_template:
                 - mysql-credentials.php
 
     apache_web_server:
-      #should be tosca.nodes.WebServer.Apache
-      type: tosca.nodes.WebServer
+      type: tosca.nodes.WebServer.Apache
       requirements:
         - host: server
 
     my_db:
-      #should be tosca.nodes.Database.MySQL
-      type: tosca.nodes.Database
+      type: tosca.nodes.Database.MySQL
       properties:
         name: mydb
         user: root
@@ -44,8 +42,7 @@ topology_template:
         - host: mysql_dbms
 
     mysql_dbms:
-      #should be tosca.nodes.DBMS.MySQL
-      type: tosca.nodes.DBMS
+      type: tosca.nodes.DBMS.MySQL
       properties:
         root_password: abc
         port: 3306
