@@ -1,4 +1,4 @@
-@startuml
+@beginuml
 
 activate Task
 Task -> LAPlugin: transform()
@@ -15,40 +15,31 @@ LAPlugin --> LAPlugin
 deactivate LAPlugin
 
 alt env-check suceeded
-    LAPlugin -> TLI: validateNodeTypes()
+    LAPlugin -> TLI: valdiateModel()
     activate TLI
     TLI --> LAPlugin
     deactivate TLI
 
-    alt node-check suceeded
-    	LAPlugin -> TLI: valdiateModel()
+    alt model-check suceeded
+    	LAPlugin -> TLI: prepare()
     	activate TLI
     	TLI --> LAPlugin
     	deactivate TLI
 
-    	alt model-check suceeded
-    		LAPlugin -> TLI: prepare()
-    		activate TLI
-    		TLI --> LAPlugin
-    		deactivate TLI
+    	LAPlugin -> TLI: transform()
+    	activate TLI
+    	TLI --> LAPlugin
+    	deactivate TLI
 
-    		LAPlugin -> TLI: transform()
-    		activate TLI
-    		TLI --> LAPlugin
-    		deactivate TLI
+    	LAPlugin -> TLI: cleanup()
+    	activate TLI
+    	TLI --> LAPlugin
+    	deactivate TLI
 
-    		LAPlugin -> TLI: cleanup()
-    		activate TLI
-    		TLI --> LAPlugin
-    		deactivate TLI
-
-    		LAPlugin --> Task: Transformation succeded
+    	LAPlugin --> Task: Transformation succeded
     	else
     		LAPlugin --> Task: Transformation failed
     	end
-    else
-    	LAPlugin --> Task: Transformation failed
-    end
 else
     LAPlugin --> Task: Transformation failed
     deactivate LAPlugin

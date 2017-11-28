@@ -21,28 +21,19 @@ The creation is done using a factory method that has to be implemented by all su
 
 ## Validation Phase
 
-The validation phase can be split into three different validation phases:
+The validation phase can be split into two different validation phases:
 - `environment check` - in this phase the plugin should check if it has everything available to perform the transformation. This means that all required CLI applications have been installed and are accessible. For example: The kubernetes plugin needs a connection to a running docker daemon to perform the transformation (when following the point that docker images get built automatically)
-- `supported node type check` - this represents the original `analyze` phase. The plugin will return a list of supported node types, this list then gets compared with a list conatining all node types used by this platform. If not all node types of the model are contained in the supported list the transformation will stop at this point.
-- `model check` (property check) - this phase checks the model for invalid properties. For example the kubernetes plugin will reject the transformation if a node is based on windows. 
+- `model check` (property check) - this phase checks the model for invalid properties. For example the kubernetes plugin will reject the transformation if a node is based on windows.
 
 ### Execution order
 
 The execution of these phases should look like this:
 
-`env-check -> node-type-check -> model-check`
+`env-check -> model-check`
 
-This order is chosen because the first task is probably the "simplest" one to execute and the last one (model check) is the modt complex because we have to iterate over the whole graph to look for those problems. 
+This order is chosen because the first task is probably the "simplest" one to execute and the last one (model check) is the most complex because we have to iterate over the whole graph to look for those problems.
 
-### Implementation approaches
-
-While thinking about this i came across two implementation approaches, the following part will discuss both of them. The implementation approaches only cover the node type check and the model check. The environment has to be checked anyways. With some more efforts the env check could also get done before the transformation even launches. However this will require some modifications in the `core` part of the application. 
-
-#### Seperate checks
-
-This approach clearly splits the node type check (short `type check`) and the model check into two seperate phases. 
-
-The interfaces and classes defined by using this approach will look like this (just to showcase):
+### Implementation approach
 
 TOSCAna Plugin (just for illustration purposes, class diagrams will follow):
 ```java
@@ -56,16 +47,14 @@ public abstract class LifecycleAwarePlugin<T extends TransformationLifecycle>
         //This method will implement the mechanism to execute the seperate phases
     }
 
-} 
+}
 ```
 **Method descriptions**
-- `getSupportedNodeTypes()` - Returns a set of classes for the supported node types
 - `checkEnvironment()` - Performs ths `env-check` part of the validation phase
 - `getInstance()` - Factory method, to produce a instance of the plugin specific Lifecycle interface with the given transformation Context
 
 ```java
 public interface TransformationLifecycle {
-    boolean validateNodeTypes();
     boolean validateModel();
     void prepare();
     void transform();
@@ -73,7 +62,6 @@ public interface TransformationLifecycle {
 }
 ```
 **Method descriptions**
-- `validateNodeType()` - This method will be implemented by a common base class. It gets or builds a set of all node types used in the model. and then compares them to the set of supported nodes (`LifecycleAwarePlugin.getSupportedNodeTypes()`) if all Node types of the modell are in the set of the supported ones the transformation will proceed (the method will return `true`)
 - `validateModel()` - This method should be used to check the model (probably by iterating over it). If a property is not supported (i.e. Windows on Kubernetes) the check should return false.
 - `prepare()`, `transform()` and `cleanup()` - Perform the corresponding phase described in the [Introduction](#introduction)  
 
@@ -89,4 +77,3 @@ Putting tasks in seperate methods allows a very simple, but also very inacurate 
 
 - Once a step gets completetd, the progress gets incremented by `(<Current Step Number> / <Total Step count>) * 100` per cent.
     - This option is very simple, but inacurate when looking at time based measurements. For example: If we decide to build Docker images while Transforming. This step will take way longer than just validating the Csar.
-
