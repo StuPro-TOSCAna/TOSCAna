@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CloudFoundryPlugin extends LifecycleAwarePlugin<CfLifecycle> {
+public class CloudFoundryPlugin extends LifecycleAwarePlugin<CloudFoundryLifecycle> {
     private final static Logger logger = LoggerFactory.getLogger(CloudFoundryPlugin.class);
 
     public CloudFoundryPlugin() {
@@ -22,8 +22,8 @@ public class CloudFoundryPlugin extends LifecycleAwarePlugin<CfLifecycle> {
 
 
     @Override
-    protected CfLifecycle getInstance(TransformationContext context) throws Exception {
-        return new CfLifecycle(context);
+    protected CloudFoundryLifecycle getInstance(TransformationContext context) throws Exception {
+        return new CloudFoundryLifecycle(context);
     }
 
     private static Platform getPlatformDetails() {

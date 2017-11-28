@@ -7,12 +7,12 @@ import org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle;
 
 import org.slf4j.Logger;
 
-public class CfLifecycle extends AbstractLifecycle {
+public class CloudFoundryLifecycle extends AbstractLifecycle {
 
-    private TransformationContext context;
+    private final TransformationContext context;
     private final Logger logger = super.logger;
 
-    public CfLifecycle(TransformationContext context) throws IOException{
+    public CloudFoundryLifecycle(TransformationContext context) throws IOException{
         super(context);
         this.context=context;
     }
