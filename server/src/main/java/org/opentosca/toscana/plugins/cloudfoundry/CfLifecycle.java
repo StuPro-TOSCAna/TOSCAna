@@ -24,17 +24,17 @@ public class CfLifecycle extends AbstractLifecycle {
 
     @Override
     public void prepare() {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void transform() {
-       
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void cleanup() {
-
+        throw new UnsupportedOperationException();
     }
 }
 
