@@ -16,21 +16,21 @@ public class KubernetesLifecycle extends AbstractLifecycle {
 
     @Override
     public boolean checkModel() {
-        return false;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void prepare() {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void transform() {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void cleanup() {
-
+        throw new UnsupportedOperationException();
     }
 }
