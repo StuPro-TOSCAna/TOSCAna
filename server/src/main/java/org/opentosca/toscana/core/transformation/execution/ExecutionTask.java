@@ -10,8 +10,8 @@ import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.core.transformation.TransformationState;
 import org.opentosca.toscana.core.transformation.artifacts.ArtifactService;
 import org.opentosca.toscana.core.transformation.artifacts.TargetArtifact;
+import org.opentosca.toscana.model.EffectiveModel;
 
-import org.eclipse.winery.model.tosca.yaml.TServiceTemplate;
 import org.slf4j.Logger;
 
 public class ExecutionTask implements Runnable {
@@ -73,10 +73,10 @@ public class ExecutionTask implements Runnable {
 
     private void transform() {
         try {
-            TServiceTemplate template = transformation.getCsar().getTemplate().orElseThrow(() ->
+            EffectiveModel model = transformation.getCsar().getModel().orElseThrow(() ->
                 new IllegalStateException("TServiceTemplate is null, will not start transformation."));
             plugin.transform(new TransformationContext(csarContentDir, transformationRootDir,
-                transformation.getLog(), template, transformation.getProperties()));
+                transformation.getLog(), model, transformation.getProperties()));
             transformation.setState(TransformationState.DONE);
         } catch (Exception e) {
             log.info("Transformation of {}/{} failed", csarId, platformId);

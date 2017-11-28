@@ -53,12 +53,12 @@ public class TestTransformationContext extends BaseSpringTest {
         File csarContentDir = csarDao.getContentDir(csar);
         File transformationContentDir = transformationDao.getContentDir(transformation);
         return new TransformationContext(csarContentDir, transformationContentDir, mock(Log.class),
-            csar.getTemplate().get(), transformation.getProperties());
+            csar.getModel().get(), transformation.getProperties());
     }
 
     @Test
     public void serviceTemplateOfContextNotNull() throws FileNotFoundException, InvalidCsarException, PlatformNotFoundException {
         TransformationContext context = getContext(TestCsars.CSAR_YAML_VALID_DOCKER_SIMPLETASK, TestPlugins.PLATFORM1);
-        assertNotNull(context.getServiceTemplate());
+        assertNotNull(context.getModel());
     }
 }

@@ -40,12 +40,13 @@ public class KubernetesPlugin extends AbstractPlugin {
     public void transform(TransformationContext context) throws Exception {
         logger.info("Started transformation to kubernetes artifact.");
         PluginFileAccess fileAccess = context.getPluginFileAccess();
-        DockerApp dockerApp = getDockerApp(context.getServiceTemplate());
-        String appName = dockerApp.getTag()[1];
-        generateReadme(fileAccess, appName);
-        generateResources(fileAccess, appName);
-        copyImplementationArtifacts(fileAccess, dockerApp);
-        generateBuildScript(fileAccess, dockerApp);
+        // TODO rewrite: context does no longer provide TServiceTemplate, but the EffectiveModel
+//        DockerApp dockerApp = getDockerApp(context.getModel());
+//        String appName = dockerApp.getTag()[1];
+//        generateReadme(fileAccess, appName);
+//        generateResources(fileAccess, appName);
+//        copyImplementationArtifacts(fileAccess, dockerApp);
+//        generateBuildScript(fileAccess, dockerApp);
     }
 
     private void generateBuildScript(PluginFileAccess fileAccess, DockerApp dockerApp) throws IOException, DockerImageBuildScript.DockerImageBuildScriptException {

@@ -5,8 +5,8 @@ import java.io.FileNotFoundException;
 import org.opentosca.toscana.core.BaseSpringTest;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.testdata.TestCsars;
+import org.opentosca.toscana.model.EffectiveModel;
 
-import org.eclipse.winery.model.tosca.yaml.TServiceTemplate;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -22,8 +22,8 @@ public class CsarParseServiceImplTest extends BaseSpringTest {
     @Test
     public void parseValidCsar() throws Exception {
         Csar csar = testCsars.getCsar(TestCsars.CSAR_YAML_VALID_DOCKER_SIMPLETASK);
-        TServiceTemplate serviceTemplate = csarParser.parse(csar);
-        assertNotNull(serviceTemplate);
+        EffectiveModel model = csarParser.parse(csar);
+        assertNotNull(model);
     }
 
     @Test(expected = InvalidCsarException.class)
