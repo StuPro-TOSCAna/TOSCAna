@@ -60,7 +60,7 @@ public class CsarFilesystemDaoTest extends BaseJUnitTest {
         File transformationFolder = new File(csarFolder, CsarFilesystemDao.TRANSFORMATION_DIR);
         assertTrue(contentFolder.isDirectory());
         assertTrue(transformationFolder.isDirectory());
-        assertTrue(contentFolder.list().length > 3); // not elegant but lazy..
+        assertTrue(contentFolder.list().length > 2); // not elegant but lazy..
     }
 
     @Test

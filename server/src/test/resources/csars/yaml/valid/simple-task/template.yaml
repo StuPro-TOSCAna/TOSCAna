@@ -1,4 +1,4 @@
-tosca_definitions_version: tosca_simple_yaml_1_0
+tosca_definitions_version: tosca_simple_yaml_1_1
 description: Template for deploying the simple-task-app via docker 
 metadata:
   template_name: simple-task-docker-template
@@ -58,14 +58,10 @@ capability_types:
   SimplePublicWebEndpoint:
     derived_from: tosca.capabilities.Endpoint
     properties:
-      protocol:
-        default: http
-      port:
-        default: 80
-      url_path:
-        default: /
-      network_name:
-        default: PUBLIC
+      protocol: http
+      port: 80
+      url_path: /
+      network_name: PUBLIC
 
 topology_template:
   node_templates:
@@ -104,4 +100,5 @@ topology_template:
     endpoint:
       description: the endpoint of the simple-task-app
       value: { get_attribute: [ simpleTaskApp, endpoint ] }
+      type: string
 

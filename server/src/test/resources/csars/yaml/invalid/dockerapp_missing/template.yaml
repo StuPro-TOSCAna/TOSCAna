@@ -1,0 +1,82 @@
+tosca_definitions_version: tosca_simple_yaml_1_1
+description: Template for deploying the simple-task-app via docker 
+metadata:
+  template_name: simple-task-docker-template
+  template_author: stupro-toscana
+  template_version: 1.0
+
+node_types:
+  DockerEngine:
+    derived_from: tosca.nodes.Root
+    # needs capability: DockerHost or similar..
+    capabilities:
+      host: 
+        type: DockerHost
+    requirements:
+      - os:
+        type: linux
+        distribution: ubuntu
+        architecture: x86_64
+    interfaces:
+      Standard:
+        create:
+          implementation: docker/dockerengine_create.sh
+        start:
+          implementation: docker/dockerengine_start.sh
+        stop:
+          implementation: docker/dockerengine_stop.sh
+  DockerApp:
+    derived_from: tosca.nodes.Root
+    requirements:
+      - host:
+        capability: DockerHost
+        node: DockerEngine 
+        relationship: tosca.relationships.HostedOn
+      - network:
+        capability: SimplePublicWebEndpoint
+    attributes:
+      tag:
+        type: string
+        description: the tag for the docker image
+      identifier:
+        type: string
+        description: the identifier (name) for the docker container
+    interfaces:
+      Standard:
+        create:
+          implementation: docker/dockerapp_create.sh
+        start:
+          implementation: docker/dockerapp_create.sh
+        stop:
+          implementation: docker/dockerapp_stop.sh
+        delete:
+          implementation: docker/dockerapp_delete.sh 
+capability_types:
+  DockerHost:
+    derived_from: tosca.capabilities.Root
+    valid_source_types: [ DockerApp ]
+  SimplePublicWebEndpoint:
+    derived_from: tosca.capabilities.Endpoint
+    properties:
+      protocol:
+        default: http
+      port:
+        default: 80
+      url_path:
+        default: /
+      network_name:
+        default: PUBLIC
+
+topology_template:
+  node_templates:
+    myDockerEngine:
+      type: DockerEngine
+
+
+
+
+  outputs:
+    endpoint:
+      description: the endpoint of the simple-task-app
+      value: { get_attribute: [ simpleTaskApp, endpoint ] }
+
