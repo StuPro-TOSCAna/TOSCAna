@@ -4,6 +4,7 @@ import java.io.File;
 
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarDao;
+import org.opentosca.toscana.model.EffectiveModel;
 
 import org.eclipse.winery.model.tosca.yaml.TServiceTemplate;
 import org.eclipse.winery.yaml.common.reader.yaml.Reader;
@@ -21,24 +22,23 @@ public class CsarParseServiceImpl implements CsarParseService {
     private CsarDao csarDao;
 
     @Override
-    public TServiceTemplate parse(Csar csar) throws InvalidCsarException {
+    public EffectiveModel parse(Csar csar) throws InvalidCsarException {
         Reader reader = new Reader();
         File entryPoint = findEntryPoint(csar);
         TServiceTemplate serviceTemplate;
         try {
             serviceTemplate = reader.parse(entryPoint.getParent(), entryPoint.getName());
         } catch (Exception e) {
-            // the winery parser is like TNT; we have to catch all exceptions (even better: we run)
             logger.info("An error occured while parsing csar '{}'", csar, e);
             throw new InvalidCsarException(csar.getLog());
         }
-        return serviceTemplate;
+        ModelConverter converter = new ModelConverter();
+        return converter.convert(serviceTemplate);
     }
 
     /**
      Note: Entry points are currently only top level .yaml files.
-     An entry point specified in the tosca metadata file is
-     currently ignored
+     An entry point specified in the tosca metadata file is currently ignored
 
      @param csar a csar object
      @return the entry point yaml file of given csar

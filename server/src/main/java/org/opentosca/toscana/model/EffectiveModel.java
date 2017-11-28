@@ -6,22 +6,25 @@ import org.opentosca.toscana.model.capability.Requirement;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.relation.RootRelationship;
 
+import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
 
-public class EffectiveGraph extends DefaultDirectedGraph<RootNode, RootRelationship> {
+public class EffectiveModel {
+    
+    private final Graph<RootNode, RootRelationship> topology = 
+        new DefaultDirectedGraph<RootNode, RootRelationship>(RootRelationship.class);
 
-    public EffectiveGraph(Set<RootNode> vertices) {
-        super(RootRelationship.class);
-        vertices.forEach(node -> addVertex(node));
+    public EffectiveModel(Set<RootNode> vertices) {
+        vertices.forEach(node -> topology.addVertex(node));
         initEdges();
     }
 
     private void initEdges() {
-        for (RootNode node : vertexSet()) {
+        for (RootNode node : topology.vertexSet()) {
             for (Requirement requirement : node.getRequirements()) {
                 for (Object o : requirement.getFulfillers()) {
                     RootNode fulfiller = (RootNode) o;
-                    addEdge(node, fulfiller, requirement.getRelationship());
+                    topology.addEdge(node, fulfiller, requirement.getRelationship());
                 }
             }
         }

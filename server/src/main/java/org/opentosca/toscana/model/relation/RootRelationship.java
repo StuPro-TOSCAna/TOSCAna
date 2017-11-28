@@ -1,8 +1,6 @@
 package org.opentosca.toscana.model.relation;
 
 import org.opentosca.toscana.model.DescribableEntity;
-import org.opentosca.toscana.model.visitor.NodeVisitor;
-import org.opentosca.toscana.model.visitor.RelationshipVisitor;
 import org.opentosca.toscana.model.visitor.Visitable;
 import org.opentosca.toscana.model.visitor.Visitor;
 
