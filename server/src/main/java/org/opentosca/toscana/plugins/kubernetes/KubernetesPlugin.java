@@ -28,11 +28,6 @@ public class KubernetesPlugin extends LifecycleAwarePlugin<KubernetesLifecycle> 
     }
     
     @Override
-    protected Set<Class<?>> getSupportedNodeTypes() {
-        return null;
-    }
-
-    @Override
     protected KubernetesLifecycle getInstance(TransformationContext context) throws Exception {
         return new KubernetesLifecycle(context);
     }
