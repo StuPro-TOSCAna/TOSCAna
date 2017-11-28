@@ -46,7 +46,7 @@ node_types:
         create:
           implementation: docker/dockerapp_create.sh
         start:
-          implementation: docker/dockerapp_create.sh
+          implementation: docker/dockerapp_start.sh
         stop:
           implementation: docker/dockerapp_stop.sh
         delete:
