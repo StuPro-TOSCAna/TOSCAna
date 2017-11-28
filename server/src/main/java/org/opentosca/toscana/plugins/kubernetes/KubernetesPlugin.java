@@ -26,12 +26,7 @@ public class KubernetesPlugin extends LifecycleAwarePlugin<KubernetesLifecycle> 
         Set<Property> platformProperties = new HashSet<>();
         return new Platform(platformId, platformName, platformProperties);
     }
-
-    @Override
-    public void transform(TransformationContext context) throws Exception {
-        logger.info("Started transformation to kubernetes artifact.");
-    }
-
+    
     @Override
     protected Set<Class<?>> getSupportedNodeTypes() {
         return null;
@@ -39,6 +34,6 @@ public class KubernetesPlugin extends LifecycleAwarePlugin<KubernetesLifecycle> 
 
     @Override
     protected KubernetesLifecycle getInstance(TransformationContext context) throws Exception {
-        return null;
+        return new KubernetesLifecycle(context);
     }
 }
