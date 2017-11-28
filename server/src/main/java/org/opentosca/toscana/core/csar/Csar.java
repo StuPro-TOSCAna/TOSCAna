@@ -8,8 +8,7 @@ import java.util.Set;
 import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.properties.Property;
-
-import org.eclipse.winery.model.tosca.yaml.TServiceTemplate;
+import org.opentosca.toscana.model.EffectiveModel;
 
 public interface Csar {
 
@@ -31,11 +30,11 @@ public interface Csar {
     String getIdentifier();
 
     /**
-     @return the parsed template (wrapped in Optional) of the csar.
+     @return the parsed EffectiveModel (wrapped in Optional) of the csar.
      <p>
      Empty if not parsed yet.
      */
-    Optional<TServiceTemplate> getTemplate();
+    Optional<EffectiveModel> getModel();
 
     /**
      Returns model specific properties as a set. If there are none a empty set has to be returned. this must not
@@ -43,7 +42,7 @@ public interface Csar {
      */
     Set<Property> getModelSpecificProperties();
 
-    void setTemplate(TServiceTemplate template);
+    void setModel(EffectiveModel model);
 
     /**
      @return the log of this csar, which e.g. contains information about parsing

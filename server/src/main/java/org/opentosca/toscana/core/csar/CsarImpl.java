@@ -10,9 +10,9 @@ import java.util.Set;
 import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.properties.Property;
+import org.opentosca.toscana.model.EffectiveModel;
 
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.eclipse.winery.model.tosca.yaml.TServiceTemplate;
 
 public class CsarImpl implements Csar {
 
@@ -24,7 +24,7 @@ public class CsarImpl implements Csar {
     /**
      null if not yet parsed
      */
-    private TServiceTemplate template;
+    private EffectiveModel model;
     private final Log log;
 
     public CsarImpl(String identifier, Log log) {
@@ -49,8 +49,8 @@ public class CsarImpl implements Csar {
     }
 
     @Override
-    public Optional<TServiceTemplate> getTemplate() {
-        return Optional.ofNullable(template);
+    public Optional<EffectiveModel> getModel() {
+        return Optional.ofNullable(model);
     }
 
     @Override
@@ -59,8 +59,8 @@ public class CsarImpl implements Csar {
     }
 
     @Override
-    public void setTemplate(TServiceTemplate template) {
-        this.template = template;
+    public void setModel(EffectiveModel model) {
+        this.model = model;
     }
 
     @Override

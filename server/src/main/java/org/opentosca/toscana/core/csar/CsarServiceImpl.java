@@ -6,8 +6,8 @@ import java.util.Optional;
 
 import org.opentosca.toscana.core.parse.CsarParseService;
 import org.opentosca.toscana.core.parse.InvalidCsarException;
+import org.opentosca.toscana.model.EffectiveModel;
 
-import org.eclipse.winery.model.tosca.yaml.TServiceTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,9 +42,9 @@ public class CsarServiceImpl implements CsarService {
     }
 
     private void populateWithTemplate(Csar csar) throws InvalidCsarException {
-        if (!csar.getTemplate().isPresent()) {
-            TServiceTemplate template = csarParser.parse(csar);
-            csar.setTemplate(template);
+        if (!csar.getModel().isPresent()) {
+            EffectiveModel template = csarParser.parse(csar);
+            csar.setModel(template);
         }
     }
 
