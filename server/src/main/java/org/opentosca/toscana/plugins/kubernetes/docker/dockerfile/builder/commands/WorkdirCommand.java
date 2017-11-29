@@ -10,7 +10,12 @@ public class WorkdirCommand extends DockerfileEntry {
     }
 
     @Override
-    public void appendToDockerfile(PrintWriter out, DockerfileEntry previous, DockerfileEntry next, boolean compact) {
+    public void appendToDockerfile(
+        PrintWriter out,
+        DockerfileEntry previous,
+        DockerfileEntry next,
+        boolean compact
+    ) {
         out.println("WORKDIR " + path);
     }
 }

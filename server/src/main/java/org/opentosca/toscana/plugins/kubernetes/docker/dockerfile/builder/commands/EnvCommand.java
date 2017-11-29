@@ -13,7 +13,12 @@ public class EnvCommand extends DockerfileEntry {
     }
 
     @Override
-    public void appendToDockerfile(PrintWriter out, DockerfileEntry previous, DockerfileEntry next, boolean compact) {
+    public void appendToDockerfile(
+        PrintWriter out,
+        DockerfileEntry previous,
+        DockerfileEntry next,
+        boolean compact
+    ) {
         out.println("ENV " + variableName + "=" + value);
     }
 }

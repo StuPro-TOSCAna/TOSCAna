@@ -10,10 +10,11 @@ public class RunCommand extends DockerfileEntry {
     }
 
     @Override
-    public void appendToDockerfile(PrintWriter out,
-                                   DockerfileEntry previous,
-                                   DockerfileEntry next,
-                                   boolean compact
+    public void appendToDockerfile(
+        PrintWriter out,
+        DockerfileEntry previous,
+        DockerfileEntry next,
+        boolean compact
     ) {
         if (!compact) {
             out.println("RUN " + command);

@@ -66,15 +66,15 @@ public class DockerImageBuilder implements ProgressHandler {
      */
     public void buildImage(String outputPath)
         throws IOException, DockerCertificateException, DockerException, InterruptedException {
-//        Initialize Docker Client
+        // Initialize Docker Client
         logger.debug("Attempting to get connection to the Docker Daemon");
         Path abs = Paths.get(access.getAbsolutePath(dockerWorkDir));
         DockerClient client = DefaultDockerClient.fromEnv().build();
-//        Build the image
+        // Build the image
         String result = client.build(abs, tag, this);
         logger.info("Image build was sucessful. Image ID: {}", result);
 
-//        Export the image
+        // Export the image
         logger.info("Saving image to {}", outputPath);
         OutputStream out = access.accessAsInputStream(outputPath);
 
@@ -84,7 +84,7 @@ public class DockerImageBuilder implements ProgressHandler {
         in.close();
         out.close();
 
-//        Remove image to free the used space
+        // Remove image to free the used space
         logger.info("Deleting image form local Storage");
         client.removeImage(tag);
     }

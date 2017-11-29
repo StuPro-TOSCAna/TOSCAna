@@ -20,7 +20,7 @@ import org.opentosca.toscana.plugins.kubernetes.docker.dockerfile.builder.comman
 import org.opentosca.toscana.plugins.kubernetes.docker.dockerfile.builder.commands.WorkdirCommand;
 
 /**
- This class allows the in code creation of dockerfiles.
+ This class allows the the building of a dockerfile. 
  */
 public class DockerfileBuilder {
 
@@ -39,11 +39,7 @@ public class DockerfileBuilder {
      @param workingDir the working directory (relative to transformation root)
      @param fileAccess the fileAccess to allow the writing of files
      */
-    public DockerfileBuilder(
-        String baseImage,
-        String workingDir,
-        PluginFileAccess fileAccess
-    ) {
+    public DockerfileBuilder(String baseImage, String workingDir, PluginFileAccess fileAccess) {
         this.baseImage = baseImage;
         //Strip of trailing / if it exists
         if (workingDir.endsWith("/")) {
@@ -55,16 +51,38 @@ public class DockerfileBuilder {
         entries.add(new FromCommand(baseImage));
     }
 
-    public DockerfileBuilder copyFromCsar(String inputPath, String name, String dfPath) throws IOException {
-        String dir = workingDir + "/" + name;
+    /**
+     Copies a File or directory from the Csar Directory to the Working Directory of the dockerfile builder.
+     <p>
+     After that the file gets added to the Container image using the <code>COPY</code> command.
+
+     @param inputPath     The relative input path from within the CSAR (can be a file or a directory
+     @param workdirName   The name of the folder in witch the contents should be stored
+     @param containerPath the path at witch the files should be inserted
+     in the container image (use <code>.</code> to insert at the working directory)
+     @return the object itself to allow chaining (not needed though).
+     @throws IOException gets thrown if the coping fails (passed through from the
+     <code>copy</code> method of the PluginFileAccess)
+     */
+    public DockerfileBuilder copyFromCsar(String inputPath, String workdirName, String containerPath) throws IOException {
+        String dir = workingDir + "/" + workdirName;
         fileAccess.createDirectories(dir);
         fileAccess.copy(inputPath, dir);
-        this.entries.add(new CopyCommand(name, dfPath));
+        this.entries.add(new CopyCommand(workdirName, containerPath));
         return this;
     }
 
-    public DockerfileBuilder copyFormWokringDir(String inputPath, String dfPath) {
-        entries.add(new CopyCommand(inputPath, dfPath));
+    /**
+     Adds a <code>COPY</code> command to the dockerfile that
+     should copy the input path (should be relative to the dockerfile working directory)
+     to the specified container path
+
+     @param inputPath     the input path to copy (relative to dockerfile workingdir)
+     @param containerPath the path within the container (<code>.</code> for the current directory)
+     @return the object itself to allow chaining (not needed though).
+     */
+    public DockerfileBuilder copyFromWokringDir(String inputPath, String containerPath) {
+        entries.add(new CopyCommand(inputPath, containerPath));
         return this;
     }
 
@@ -82,7 +100,8 @@ public class DockerfileBuilder {
     /**
      Adds a <code>ENTRYPOINT</code> command to the Dockerfile
 
-     @param args If only one command is given <code>ENTRYPOINT <args[0]></code> will be added to the dockerfile otherwise
+     @param args If only one command is given <code>ENTRYPOINT <args[0]></code> will
+     be added to the dockerfile otherwise
      <code>ENTRYPOINT ["<args[0]>","<args[1]>"...]</code> will be added otherwise
      @return the object itself to allow chaining (not needed though).
      */
@@ -172,7 +191,8 @@ public class DockerfileBuilder {
     /**
      Builds the dockerfile to a string
      */
-    public String buildToString() {
+    @Override
+    public String toString() {
         CharArrayWriter out = new CharArrayWriter();
         writeTo(out);
         return new String(out.toCharArray());

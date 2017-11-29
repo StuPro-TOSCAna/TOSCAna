@@ -25,7 +25,7 @@ public class DockerfileBuilderTest extends BaseDockerfileTest {
     public void testBuildCompressed() throws Exception {
         addBaseCommands();
         builder.entrypoint("java", "-jar", "server.jar");
-        String s = builder.compressRunCommands().buildToString();
+        String s = builder.compressRunCommands().toString();
         System.out.println(s);
         validate(s, COMPRESSED_PATH);
     }
@@ -34,7 +34,7 @@ public class DockerfileBuilderTest extends BaseDockerfileTest {
     public void testBuildUncompressed() throws Exception {
         addBaseCommands();
         builder.entrypoint("java", "-jar", "server.jar");
-        String s = builder.buildToString();
+        String s = builder.toString();
         System.out.println(s);
         validate(s, UNCOMPRESSED_PATH);
     }

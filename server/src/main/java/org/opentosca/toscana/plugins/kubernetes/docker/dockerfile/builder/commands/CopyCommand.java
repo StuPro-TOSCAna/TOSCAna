@@ -13,7 +13,12 @@ public class CopyCommand extends DockerfileEntry {
     }
 
     @Override
-    public void appendToDockerfile(PrintWriter out, DockerfileEntry previous, DockerfileEntry next, boolean compact) {
+    public void appendToDockerfile(
+        PrintWriter out,
+        DockerfileEntry previous,
+        DockerfileEntry next,
+        boolean compact
+    ) {
         out.println("COPY " + inputFolder + " " + imagePath);
     }
 }
