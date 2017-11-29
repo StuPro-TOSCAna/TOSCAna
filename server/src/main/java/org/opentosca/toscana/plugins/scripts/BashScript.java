@@ -46,4 +46,8 @@ public class BashScript {
         access.access(scriptPath).appendln(string).close();
     }
     
+    public void checkEnvironment (String command) throws IOException {
+        EnvironmentCheck envCheck = new EnvironmentCheck();
+        this.append(envCheck.checkEnvironment(command));
+    }
 }

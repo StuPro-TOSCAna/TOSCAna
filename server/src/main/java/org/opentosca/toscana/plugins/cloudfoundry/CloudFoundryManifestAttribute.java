@@ -11,7 +11,7 @@ public enum CloudFoundryManifestAttribute {
     ENVIRONMENT("env"),
     DOMAIN("domain"),
     MULTIPLE_DOMAINS("domains"),
-    MEMORY("memory"),
+    MEMORY("mem_size"),
     BUILDPACK("buildpack"),
     COMMAND("command"),
     DISKSIZE("disk_quota"),

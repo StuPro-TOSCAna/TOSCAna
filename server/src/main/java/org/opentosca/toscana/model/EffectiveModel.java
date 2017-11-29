@@ -29,9 +29,10 @@ public class EffectiveModel {
             }
         }
     }
-
+    
     public Set<RootNode> getNodes() {
         return topology.vertexSet();
     }
+    
 }
 
