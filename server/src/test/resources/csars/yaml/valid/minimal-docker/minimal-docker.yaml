@@ -19,8 +19,9 @@ topology_template:
       type: Container.Runtime
       capabilities:
         scalable:
-          min_instances: 1
-          max_instances: 1
+          properties:
+            min_instances: 1
+            max_instances: 1
 
   outputs:
     endpoint:
