@@ -105,11 +105,7 @@ public class ApiController {
         if (response.code() == 201) {
             return con.CSAR_UPLOAD_SUCCESS;
         } else if (response.code() == 400) {
-            if (response.errorBody().string() != null) {
-                return con.CSAR_UPLOAD_ERROR400M + response.errorBody().string();
-            } else {
-                return con.CSAR_UPLOAD_ERROR400;
-            }
+            return con.CSAR_UPLOAD_ERROR400;
         } else if (response.code() == 500) {
             return con.CSAR_UPLOAD_ERROR500;
         } else {
