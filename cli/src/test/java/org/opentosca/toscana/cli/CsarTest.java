@@ -119,7 +119,7 @@ public class CsarTest {
         helper.server400Response();
         ClassLoader classLoader = getClass().getClassLoader();
         File file = new File(classLoader.getResource("csar/simple-task.csar").getFile());
-        assertEquals(con.CSAR_UPLOAD_ERROR400M, api.uploadCsar(file));
+        assertEquals(con.CSAR_UPLOAD_ERROR400, api.uploadCsar(file));
     }
 
     @Test
