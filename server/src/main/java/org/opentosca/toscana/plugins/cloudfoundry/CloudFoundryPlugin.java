@@ -20,7 +20,6 @@ public class CloudFoundryPlugin extends LifecycleAwarePlugin<CloudFoundryLifecyc
         super(getPlatformDetails());
     }
 
-
     @Override
     protected CloudFoundryLifecycle getInstance(TransformationContext context) throws Exception {
         return new CloudFoundryLifecycle(context);
