@@ -2,6 +2,7 @@ package org.opentosca.toscana.model.node;
 
 import java.util.HashSet;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 import org.opentosca.toscana.model.capability.AdminEndpointCapability;
@@ -27,13 +28,13 @@ import lombok.Data;
 @Data
 public class Compute extends RootNode {
     /**
-     The primary private IP address assigned by the cloud provider that applications may use to access the Compute node.
+     The optional primary private IP address assigned by the cloud provider that applications may use to access the Compute node.
      (TOSCA Simple Profile in YAML Version 1.1, p. 169)
      */
     private final String privateAddress;
 
     /**
-     The primary public IP address assigned by the cloud provider that applications may use to access the Compute node.
+     The optional primary public IP address assigned by the cloud provider that applications may use to access the Compute node.
      (TOSCA Simple Profile in YAML Version 1.1, p. 169)
      */
     private final String publicAddress;
@@ -72,8 +73,8 @@ public class Compute extends RootNode {
                       StandardLifecycle standardLifecycle,
                       String description) {
         super(nodeName, standardLifecycle, description);
-        this.privateAddress = Objects.requireNonNull(privateAddress);
-        this.publicAddress = Objects.requireNonNull(publicAddress);
+        this.privateAddress = privateAddress;
+        this.publicAddress = publicAddress;
         this.host = Objects.requireNonNull(host);
         this.adminEndpoint = Objects.requireNonNull(adminEndpoint);
         this.scalable = Objects.requireNonNull(scalable);
@@ -89,24 +90,18 @@ public class Compute extends RootNode {
 
     /**
      @param nodeName       {@link #nodeName}
-     @param privateAddress {@link #privateAddress}
-     @param publicAddress  {@link #publicAddress}
      @param adminEndpoint  {@link #adminEndpoint}
      @param scalable       {@link #scalable}
      @param binding        {@link #binding}
      @param localStorage   {@link #localStorage}
      */
     public ComputeBuilder builder(String nodeName,
-                                  String privateAddress,
-                                  String publicAddress,
                                   AdminEndpointCapability adminEndpoint,
                                   ScalableCapability scalable,
                                   BindableCapability binding,
                                   Requirement<AttachmentCapability, BlockStorage, AttachesTo> localStorage) {
         return new ComputeBuilder()
             .nodeName(nodeName)
-            .privateAddress(privateAddress)
-            .publicAddress(publicAddress)
             .adminEndpoint(adminEndpoint)
             .scalable(scalable)
             .binding(binding)
@@ -116,6 +111,18 @@ public class Compute extends RootNode {
     @Override
     public void accept(Visitor v) {
         v.visit(this);
+    }
+
+    /**
+     @return {@link #privateAddress} */
+    public Optional<String> getPrivateAddress() {
+        return Optional.ofNullable(privateAddress);
+    }
+
+    /**
+     @return {@link #publicAddress} */
+    public Optional<String> getPublicAddress() {
+        return Optional.ofNullable(publicAddress);
     }
 }
 
