@@ -1,157 +1,110 @@
 package org.opentosca.toscana.cli;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.InputStream;
 
-import org.opentosca.toscana.cli.commands.Constants;
+import org.opentosca.toscana.retrofit.util.LoggingMode;
 
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
-import org.apache.commons.io.FileUtils;
+import okio.Buffer;
+import org.junit.After;
+import org.junit.Before;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import picocli.CommandLine;
 
-final class TestHelper {
+abstract class TestHelper {
 
-    final String CSAR = "mongo-db";
-    final String PLATFORM = "p-a";
-    final String[] EMPTY = {};
-    final String[] HELP = {"help"};
-    final String[] STATUS = {"status"};
-    final String[] CSAR_AR = {"csar", "-v"};
-    final String[] CSAR_DELETE = {"csar", "delete", "-c", CSAR, "-m"};
-    final String[] CSAR_INFO = {"csar", "info", "-c", CSAR};
-    final String[] CSAR_UPLOAD = {"csar", "upload", "-f", "arch.csar"};
-    final String[] CSAR_LIST = {"csar", "list"};
-    final String[] PLATFORM_AR = {"platform"};
-    final String[] PLATFORM_LIST = {"platform", "list"};
-    final String[] PLATFORM_INFO = {"platform", "info", "-p", PLATFORM};
-    final String[] PLATFORM_STATUS = {"platform", "status", "-p", PLATFORM};
-    final String[] TRANSFORMATION_AR = {"transformation"};
-    final String[] TRANSFORMATION_DELETE = {"transformation", "delete", "-c", CSAR, "-p", PLATFORM, "-m"};
-    final String[] TRANSFORMATION_DELETE_NOINPUT = {"transformation", "delete"};
-    final String[] TRANSFORMATION_DOWNLOAD = {"transformation", "download", "-c", CSAR, "-p", PLATFORM};
-    final String[] TRANSFORMATION_DOWNLOAD_NOINPUT = {"transformation", "download"};
-    final String[] TRANSFORMATION_INFO = {"transformation", "info", "-c", CSAR, "-p", PLATFORM};
-    final String[] TRANSFORMATION_INFO_NOINPUT = {"transformation", "info"};
-    final String[] TRANSFORMATION_LIST = {"transformation", "list", "-c", CSAR};
-    final String[] TRANSFORMATION_LOGS = {"transformation", "logs", "-c", CSAR, "-p", PLATFORM, "-v"};
-    final String[] TRANSFORMATION_LOGS_NOINPUT = {"transformation", "logs"};
-    final String[] TRANSFORMATION_START = {"transformation", "start", "-c", CSAR, "-p", PLATFORM};
-    final String[] TRANSFORMATION_START_NOINPUT = {"transformation", "start"};
-    final String[] TRANSFORMATION_STATUS = {"transformation", "status", "-c", CSAR, "-p", PLATFORM};
-    final String[] TRANSFORMATION_STATUS_NOINPUT = {"transformation", "status"};
-    final String[] TRANSFORMATION_STOP = {"transformation", "stop", "-c", CSAR, "-p", PLATFORM};
-    final String[] TRANSFORMATION_STOP_NOINPUT = {"transformation", "stop"};
-    final String[] INPUT_LIST = {"input", "-c", CSAR, "-p", PLATFORM};
-    final String[] INPUT_MANUAL_VALID = {"input", "-c", CSAR, "-p", PLATFORM, "test=test"};
-    final String[] INPUT_MANUAL_NOT_VALID = {"input", "-c", CSAR, "-p", PLATFORM, "test==test"};
-    final String[] INPUT_MANUAL_ERROR = {"input", "-c", CSAR, "-p", PLATFORM, "test="};
-    final String[] INPUT_FILE_VALID = {"input", "-c", CSAR, "-p", PLATFORM, "-f", "src/test/resources/responses/test.txt"};
-    final String[] INPUT_NOINPUT = {"input"};
-    private final String TRANSFORMATION_VALID = "mongo-db/p-a";
-    final String[] TRANSFORMATION_DELETE_T_VALID = {"transformation", "delete", "-t", TRANSFORMATION_VALID};
-    final String[] TRANSFORMATION_DOWNLOAD_T_VALID = {"transformation", "download", "-t", TRANSFORMATION_VALID};
-    final String[] TRANSFORMATION_INFO_T_VALID = {"transformation", "info", "-t", TRANSFORMATION_VALID};
-    final String[] TRANSFORMATION_LOGS_T_VALID = {"transformation", "logs", "-t", TRANSFORMATION_VALID};
-    final String[] TRANSFORMATION_START_T_VALID = {"transformation", "start", "-t", TRANSFORMATION_VALID};
-    final String[] TRANSFORMATION_STATUS_T_VALID = {"transformation", "status", "-t", TRANSFORMATION_VALID};
-    final String[] TRANSFORMATION_STOP_T_VALID = {"transformation", "stop", "-t", TRANSFORMATION_VALID};
-    final String[] INPUT_T_LIST = {"input", "-t", TRANSFORMATION_VALID};
-    final String[] INPUT_MANUAL_T_VALID = {"input", "-t", TRANSFORMATION_VALID, "test=test"};
-    final String[] INPUT_FILE_T_VALID = {"input", "-t", TRANSFORMATION_VALID, "-f", "src/test/resources/responses/test.txt"};
-    private final String TRANSFORMATION_NOTVALID = "mongo-db//p-a";
-    final String[] TRANSFORMATION_DELETE_T_NOTVALID = {"transformation", "delete", "-t", TRANSFORMATION_NOTVALID};
-    final String[] TRANSFORMATION_DOWNLOAD_T_NOTVALID = {"transformation", "download", "-t", TRANSFORMATION_NOTVALID};
-    final String[] TRANSFORMATION_INFO_T_NOTVALID = {"transformation", "info", "-t", TRANSFORMATION_NOTVALID};
-    final String[] TRANSFORMATION_LOGS_T_NOTVALID = {"transformation", "logs", "-t", TRANSFORMATION_NOTVALID};
-    final String[] TRANSFORMATION_START_T_NOTVALID = {"transformation", "start", "-t", TRANSFORMATION_NOTVALID};
-    final String[] TRANSFORMATION_STATUS_T_NOTVALID = {"transformation", "status", "-t", TRANSFORMATION_NOTVALID};
-    final String[] TRANSFORMATION_STOP_T_NOTVALID = {"transformation", "stop", "-t", TRANSFORMATION_NOTVALID};
-    final String[] INPUT_T_NOTVALID = {"input", "-t", TRANSFORMATION_NOTVALID};
-    private MockWebServer server = null;
-    private MockResponse response = null;
-    private Map<String, String> helpMap = null;
-    private Constants con = null;
+    private static final String MIME_TYPE_JSON = "application/json";
+    protected final String CSAR_JSON = "responses/csarInfo.json";
+    protected final String CSARS_JSON = "responses/csarsList.json";
+    protected final String PLATFORM = "p-a";
+    protected final String CSAR = "kubernetes-cluster";
+    protected final String PLATFORM_JSON = "responses/platformInfo.json";
+    protected final String PLATFORMS_JSON = "responses/platformsList.json";
+    protected final String TRANSFORMATION_JSON = "responses/transformationInfo.json";
+    protected final String TRANSFORMATIONS_JSON = "responses/transformationsList.json";
+    protected final String TRANSFORMATION_LOGS_JSON = "responses/transformationLogs.json";
+    protected final String TRANSFORMATION_PROPERTIES_JSON = "responses/transformationProperties.json";
+    protected final String LOGS_RESPONSE = "Hallo Welt";
+    protected final String STATUS_HEALTH_JSON = "responses/statusHealth.json";
+    protected final String[] CLI_HELP = {"help"};
+    protected final String[] CLI_HELP_STATUS = {"help", "status"};
+    protected final String[] CLI_CSAR_LIST = {"csar", "list"};
+    protected final String[] CLI_STATUS = {"status"};
+    protected final String[] CSAR_AR = {"csar", "-v"};
+    protected final String[] CSAR_UPLOAD = {"csar", "upload", "-f", "arch.csar"};
+    protected final String[] CSAR_LIST = {"csar", "list"};
+    protected final String[] PLATFORM_AR = {"platform"};
+    protected final String[] PLATFORM_LIST = {"platform", "list"};
+    protected final String[] PLATFORM_INFO = {"platform", "info", "-p", PLATFORM};
+    protected final String[] TRANSFORMATION_AR = {"transformation"};
+    protected final String[] INPUT_NOINPUT = {"input"};
+    protected final String[] CSAR_DELETE = {"csar", "delete", "-c", CSAR, "-m"};
+    protected final String[] CSAR_INFO = {"csar", "info", "-c", CSAR};
+    protected final String[] TRANSFORMATION_DELETE = {"transformation", "delete", "-c", CSAR, "-p", PLATFORM, "-m"};
+    protected final String[] TRANSFORMATION_DOWNLOAD = {"transformation", "download", "-c", CSAR, "-p", PLATFORM};
+    protected final String[] TRANSFORMATION_INFO = {"transformation", "info", "-c", CSAR, "-p", PLATFORM};
+    protected final String[] TRANSFORMATION_LIST = {"transformation", "list", "-c", CSAR};
+    protected final String[] TRANSFORMATION_LOGS = {"transformation", "logs", "-c", CSAR, "-p", PLATFORM, "-v"};
+    protected final String[] TRANSFORMATION_START = {"transformation", "start", "-c", CSAR, "-p", PLATFORM};
+    protected final String[] TRANSFORMATION_STOP = {"transformation", "stop", "-c", CSAR, "-p", PLATFORM};
+    protected final String[] INPUT_LIST = {"input", "-c", CSAR, "-p", PLATFORM};
+    protected final String[] INPUT_MANUAL_VALID = {"input", "-c", CSAR, "-p", PLATFORM, "test=test"};
+    protected final String[] INPUT_MANUAL_NOT_VALID = {"input", "-c", CSAR, "-p", PLATFORM, "test==test"};
+    protected final String[] INPUT_MANUAL_ERROR = {"input", "-c", CSAR, "-p", PLATFORM, "test="};
+    protected final String[] INPUT_FILE_VALID = {"input", "-c", CSAR, "-p", PLATFORM, "-f", "src/test/resources/responses/test.txt"};
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+    protected ApiController api;
+    private MockWebServer server;
+    private CommandLine cmd = null;
 
-    final void setUp() throws IOException {
-        final String SYSTEM_STATUS = FileUtils.readFileToString(new File("src/test/resources/responses/systemStatus.txt"), "UTF-8");
-        final String PLATFORM_LIST = FileUtils.readFileToString(new File("src/test/resources/responses/platformList.txt"), "UTF-8");
-        final String PLATFORM_INFO = FileUtils.readFileToString(new File("src/test/resources/responses/platformInfo.txt"), "UTF-8");
-        final String CSAR_LIST = FileUtils.readFileToString(new File("src/test/resources/responses/csarList.txt"), "UTF-8");
-        final String CSAR_INFO = FileUtils.readFileToString(new File("src/test/resources/responses/csarInfo.txt"), "UTF-8");
-        final String TRANSFORMATION_LIST = FileUtils.readFileToString(new File("src/test/resources/responses/transformationList.txt"), "UTF-8");
-        final String TRANSFORMATION_INFO = FileUtils.readFileToString(new File("src/test/resources/responses/transformationInfo.txt"), "UTF-8");
-        final String TRANSFORMATION_LOGS = FileUtils.readFileToString(new File("src/test/resources/responses/transformationLogs.txt"), "UTF-8");
-        final String TRANSFORMATION_ARTIFACT = FileUtils.readFileToString(new File("src/test/resources/responses/transformationArtifact.txt"), "UTF-8");
-        final String TRANSFORMATION_INPUTS = FileUtils.readFileToString(new File("src/test/resources/responses/transformationInputs.txt"), "UTF-8");
-        final String TRANSFORMATION_RESPONSE = FileUtils.readFileToString(new File("src/test/resources/responses/transformationResponse.txt"), "UTF-8");
-
+    @Before
+    public void setUp() throws IOException {
+        logger.info("Starting Mock Webserver");
         server = new MockWebServer();
-        response = new MockResponse()
-            .addHeader("Content-Type", "application/json; charset=utf-8")
-            .addHeader("Cache-Control", "no-cache");
-
-        helpMap = new HashMap<>();
-        helpMap.put("systemstatus", SYSTEM_STATUS);
-        helpMap.put("platformlist", PLATFORM_LIST);
-        helpMap.put("platforminfo", PLATFORM_INFO);
-        helpMap.put("csarlist", CSAR_LIST);
-        helpMap.put("csarinfo", CSAR_INFO);
-        helpMap.put("transformationlist", TRANSFORMATION_LIST);
-        helpMap.put("transformationinfo", TRANSFORMATION_INFO);
-        helpMap.put("transformationlogs", TRANSFORMATION_LOGS);
-        helpMap.put("transformationartifact", TRANSFORMATION_ARTIFACT);
-        helpMap.put("transformationinputs", TRANSFORMATION_INPUTS);
-        helpMap.put("transformationresponse", TRANSFORMATION_RESPONSE);
-        
-        con = new Constants();
+        server.start();
+        String baseURL = server.url("").toString();
+        logger.info("Server Running on {}", baseURL);
+        api = new ApiController(baseURL, LoggingMode.HIGH);
     }
 
-    final void tearDown() throws IOException {
+    @After
+    public void tearDown() throws IOException {
+        logger.info("Stopping server");
         server.shutdown();
     }
 
-    final void serverEnqueue() throws IOException {
+    private void enqueResponse(String resourcePath, int code, String mimeType) throws IOException {
+        logger.info("Loading Resource from Path {}", resourcePath);
+        InputStream in = getClass().getClassLoader().getResourceAsStream(resourcePath);
+        Buffer buffer = new Buffer();
+        buffer.readFrom(in);
+        logger.info("Mocking Response");
+        MockResponse response = new MockResponse()
+            .setResponseCode(code)
+            .setBody(buffer).
+                addHeader("Content-Type", mimeType);
         server.enqueue(response);
-        server.start(con.API_PORT);
     }
 
-    final void server200Response() throws IOException {
-        response.setResponseCode(200);
-        server.enqueue(response);
-        server.start(con.API_PORT);
+    protected void enqueError(int code) throws IOException {
+        enqueResponse("responses/regularError.json", code, MIME_TYPE_JSON);
     }
 
-    final void server201Response() throws IOException {
-        response.setResponseCode(201);
-        server.enqueue(response);
-        server.start(con.API_PORT);
+    protected void apiSingleInput(String resource, int code) throws IOException {
+        logger.info("Creating Response with CSAR: {} and Code: {}", CSAR, code);
+        enqueResponse(resource, code, MIME_TYPE_JSON);
     }
 
-    final void server400Response() throws IOException {
-        response.setResponseCode(400);
-        server.enqueue(response);
-        server.start(con.API_PORT);
+    protected void apiDoubleInput(String csar, String plat, String resource, int code) throws IOException {
+        logger.info("Creating Response with CSAR: {}, Platform: {}, Resource: {} and Code: {}", csar, plat, resource, code);
+        enqueResponse(resource, code, MIME_TYPE_JSON);
     }
-
-    final void server404Response() throws IOException {
-        response.setResponseCode(404);
-        server.enqueue(response);
-        server.start(con.API_PORT);
-    }
-
-    final void server500Response() throws IOException {
-        response.setResponseCode(500);
-        server.enqueue(response);
-        server.start(con.API_PORT);
-    }
-
-    final void setServerBody(String help) throws IOException {
-        if (helpMap.containsKey(help)) {
-            response.setBody(helpMap.get(help));
-            server.enqueue(response);
-            server.start(con.API_PORT);
-        }
-    }
+/*
+    void apiInputError(String[] cliInput, int code) throws IOException {
+        enqueError(code);
+        List<Object> parsed = cmd.parseWithHandler(new CommandLine.RunLast(), System.err, cliInput);
+    } */
 }

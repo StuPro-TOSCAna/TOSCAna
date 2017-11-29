@@ -3,6 +3,7 @@ package org.opentosca.toscana.cli.commands;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.opentosca.toscana.cli.ApiController;
 import org.opentosca.toscana.cli.commands.csar.CsarDelete;
 import org.opentosca.toscana.cli.commands.csar.CsarInfo;
 import org.opentosca.toscana.cli.commands.csar.CsarList;
@@ -49,7 +50,7 @@ import static picocli.CommandLine.usage;
         "   @|bold logs|@                       Returns logs for the specified Transformation",
         "   @|bold start|@                      Starts a Transformation",
         "   @|bold stop|@                       Stops the specified Transformation"})
-public class ToscanaHelp extends AbstractCommand implements Runnable {
+public class ToscanaHelp extends AbstractCommand {
 
     @Parameters(arity = "0..1", paramLabel = "command", description = "Shows help page for every command", hidden = true)
     private String[] helpCommand;
@@ -79,6 +80,11 @@ public class ToscanaHelp extends AbstractCommand implements Runnable {
         helpMap.put("transformation logs", new TransformationLogs());
         helpMap.put("transformation start", new TransformationStart());
         helpMap.put("transformation stop", new TransformationStop());
+    }
+
+    @Override
+    protected String performCall(ApiController ap) {
+        return null;
     }
 
     @Override
