@@ -5,6 +5,10 @@ import java.util.Map;
 
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  Creates all files which are necessary to deploy the application
  Files: manifest.yml, builpack additions, deployScript
@@ -19,7 +23,7 @@ public class CloudFoundryFileCreator {
         this.app = app;
     }
 
-    public void createFiles() throws IOException {
+    public void createFiles() throws IOException, JSONException {
         createManifest();
         createBuildpackAdditionsFile();
         createDeployScript();
@@ -56,16 +60,24 @@ public class CloudFoundryFileCreator {
     }
 
     private void createDeployScript() throws IOException {
+        String deploy = null;
+        for (String service : app.getServices()) {
+            deploy += "cf create-service {plan} {service} " + service + "\n";
+        }
+        deploy += "cf push " + app.getAppName();
+
         fileAccess.access("/deploy_" + app.getAppName() + ".sh")
-            .append("cf -push " + app.getAppName()).close();
+            .append(deploy).close();
     }
 
-    private void createBuildpackAdditionsFile() throws IOException {
-        String buildPackAdditions = "{\"PHP-EXTENSIONS\":[";
-        for (String bp : app.getBuildpackAdditions()) {
-            buildPackAdditions += "\"" + bp + "\",";
+    //only for PHP
+    private void createBuildpackAdditionsFile() throws IOException, JSONException {
+        JSONObject buildPackAdditionsJson = new JSONObject();
+        JSONArray buildPacks = new JSONArray();
+        for (String buildPack : app.getBuildpackAdditions()) {
+            buildPacks.put(buildPack);
         }
-        buildPackAdditions += "]}";
-        fileAccess.access("/.bp-config/options.json").append(buildPackAdditions).close();
+        buildPackAdditionsJson.put("PHP-EXTENSIONS", buildPacks);
+        fileAccess.access("/.bp-config/options.json").append(buildPackAdditionsJson.toString()).close();
     }
 }
