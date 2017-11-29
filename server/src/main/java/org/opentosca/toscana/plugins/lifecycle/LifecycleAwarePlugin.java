@@ -84,7 +84,7 @@ public abstract class LifecycleAwarePlugin<LifecycleT extends TransformationLife
     }
 
     /**
-     Checks if all required environment parameters like installed CLIs, running services (such as docker) are availiable
+     Checks if all required environment parameters like installed CLIs, running services (such as docker) are available
      if so the method will return true, false otherwise (results in failure of the transformation)
 
      @return true if all env parameters are set, false otherwise
