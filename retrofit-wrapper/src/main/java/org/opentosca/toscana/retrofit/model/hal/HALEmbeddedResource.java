@@ -8,11 +8,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public abstract class HALEmbeddedResource<T extends HALResource>
     extends HALResource {
-    
+
     private Map<String, List<T>> embeddedResources;
-    
+
     public abstract String getResourcesName();
-    
+
     @JsonProperty("_embedded")
     public Map<String, List<T>> getEmbeddedResources() {
         return embeddedResources;
@@ -25,6 +25,9 @@ public abstract class HALEmbeddedResource<T extends HALResource>
 
     @JsonIgnore
     public List<T> getContent() {
-        return embeddedResources.get(getResourcesName());
+        if (embeddedResources != null) {
+            return embeddedResources.get(getResourcesName());
+        }
+        return null;
     }
 }

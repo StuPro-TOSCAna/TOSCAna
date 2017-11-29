@@ -1,0 +1,44 @@
+{
+    "_embedded": {
+        "csar": [
+            {
+                "name": "kubernetes-cluster",
+                "_links": {
+                    "self": {
+                        "href": "http://localhost:8080/csars/kubernetes-cluster"
+                    },
+                    "transformations": {
+                        "href": "http://localhost:8080/csars/kubernetes-cluster/transformations/"
+                    }
+                }
+            },
+            {
+                "name": "apache-test",
+                "_links": {
+                    "self": {
+                        "href": "http://localhost:8080/csars/apache-test"
+                    },
+                    "transformations": {
+                        "href": "http://localhost:8080/csars/apache-test/transformations/"
+                    }
+                }
+            },
+            {
+                "name": "mongo-db",
+                "_links": {
+                    "self": {
+                        "href": "http://localhost:8080/csars/mongo-db"
+                    },
+                    "transformations": {
+                        "href": "http://localhost:8080/csars/mongo-db/transformations/"
+                    }
+                }
+            }
+        ]
+    },
+    "_links": {
+        "self": {
+            "href": "http://localhost:8080/csars/"
+        }
+    }
+}

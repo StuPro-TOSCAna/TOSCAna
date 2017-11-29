@@ -1,0 +1,60 @@
+{
+    "path": "/api/csars/simple-task1",
+    "timestamp": 1509419237406,
+    "status": 400,
+    "error": "Parsing error",
+    "logs": [
+        {
+            "timestamp": 1508006749680,
+            "message": "Hallo Welt-0-1508006749680",
+            "level": "DEBUG"
+        },
+        {
+            "timestamp": 1508006749680,
+            "message": "Hallo Welt-1-1508006749680",
+            "level": "DEBUG"
+        },
+        {
+            "timestamp": 1508006749680,
+            "message": "Hallo Welt-2-1508006749680",
+            "level": "DEBUG"
+        },
+        {
+            "timestamp": 1508006749680,
+            "message": "Hallo Welt-3-1508006749680",
+            "level": "DEBUG"
+        },
+        {
+            "timestamp": 1508006749680,
+            "message": "Hallo Welt-4-1508006749680",
+            "level": "DEBUG"
+        },
+        {
+            "timestamp": 1508006749680,
+            "message": "Hallo Welt-5-1508006749680",
+            "level": "DEBUG"
+        },
+        {
+            "timestamp": 1508006749680,
+            "message": "Hallo Welt-6-1508006749680",
+            "level": "DEBUG"
+        },
+        {
+            "timestamp": 1508006749680,
+            "message": "Hallo Welt-7-1508006749680",
+            "level": "DEBUG"
+        },
+        {
+            "timestamp": 1508006749680,
+            "message": "Hallo Welt-8-1508006749680",
+            "level": "DEBUG"
+        },
+        {
+            "timestamp": 1508006749680,
+            "message": "Hallo Welt-9-1508006749680",
+            "level": "DEBUG"
+        }
+    ],
+    "exception": "org.opentosca.toscana.core.parse.InvalidCsarException",
+    "message": null
+}
