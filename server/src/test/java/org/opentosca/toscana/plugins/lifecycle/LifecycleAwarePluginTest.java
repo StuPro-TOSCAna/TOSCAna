@@ -1,8 +1,5 @@
 package org.opentosca.toscana.plugins.lifecycle;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.opentosca.toscana.core.BaseJUnitTest;
 import org.opentosca.toscana.core.testdata.TestPlugins;
 import org.opentosca.toscana.core.transformation.TransformationContext;
@@ -82,11 +79,6 @@ public class LifecycleAwarePluginTest extends BaseJUnitTest {
         @Override
         protected boolean checkEnvironment() {
             return envCheckReturnValue;
-        }
-
-        @Override
-        protected Set<Class<?>> getSupportedNodeTypes() {
-            return new HashSet<>();
         }
 
         @Override

@@ -3,6 +3,13 @@
 ###############################
 server:
     port: 8084
+toscana:
+    docker:
+        base-image-mapper:
+            # This defines the Update interval of the Base Image Mapper.
+            # it will update the Base images every x Hours
+            update-interval: 24
+
 
 ################################
 ##### Spring HTTP Settings #####

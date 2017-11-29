@@ -9,6 +9,7 @@ import org.opentosca.toscana.model.capability.StorageCapability;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
 import org.opentosca.toscana.model.relation.HostedOn;
 import org.opentosca.toscana.model.relation.RootRelationship;
+import org.opentosca.toscana.model.visitor.Visitor;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -39,16 +40,18 @@ public class DockerApplication extends ContainerApplication {
      @param nodeName  {@link #nodeName}
      @param host      {@link #host}
      @param network   {@link #network}
-     @param lifecycle {@link #standardLifecycle}
      */
-    public static DockerApplicationBuilder builder(String nodeName,
-                                                   Requirement<DockerContainerCapability, ContainerRuntime, HostedOn> host,
-                                                   Requirement<EndpointCapability, RootNode, RootRelationship> network,
-                                                   StandardLifecycle lifecycle) {
+    public static DockerApplicationBuilder builder(Requirement<DockerContainerCapability, ContainerRuntime, HostedOn> host,
+                                                   String nodeName,
+                                                   Requirement<EndpointCapability, RootNode, RootRelationship> network) {
         return new DockerApplicationBuilder()
             .nodeName(nodeName)
             .host(host)
-            .standardLifecycle(lifecycle)
             .network(network);
+    }
+
+    @Override
+    public void accept(Visitor v) {
+        v.visit(this);
     }
 }

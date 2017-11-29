@@ -1,2 +1,0 @@
-#!/bin/bash  
-zip ../simple-task.csar -r *

@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.opentosca.toscana.model.datatype.Range;
 import org.opentosca.toscana.model.node.RootNode;
+import org.opentosca.toscana.model.visitor.Visitor;
 
 import lombok.Builder;
 import lombok.Data;
@@ -20,6 +21,7 @@ public class OsCapability extends Capability {
     public enum Architecture {
         x86_32,
         x86_64,
+        POWER_PC
         // might grow
     }
 
@@ -37,6 +39,10 @@ public class OsCapability extends Capability {
         FEDORA,
         RHEL,
         UBUNTU,
+        CENTOS,
+        ALPINE,
+        BUSYBOX,
+        OPEN_SUSE,
         // might grow
     }
 
@@ -108,5 +114,10 @@ public class OsCapability extends Capability {
     }
 
     public static class OsCapabilityBuilder extends CapabilityBuilder {
+    }
+    
+    @Override
+    public void accept(Visitor v) {
+        v.visit(this);
     }
 }

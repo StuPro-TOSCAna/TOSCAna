@@ -12,6 +12,7 @@ import org.opentosca.toscana.model.datatype.Range;
 import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.relation.ConnectsTo;
+import org.opentosca.toscana.model.visitor.Visitor;
 
 import lombok.Builder;
 import lombok.Data;
@@ -164,5 +165,10 @@ public class EndpointCapability extends Capability {
         SOURCE,
         TARGET,
         PEER
+    }
+    
+    @Override
+    public void accept(Visitor v) {
+        v.visit(this);
     }
 }

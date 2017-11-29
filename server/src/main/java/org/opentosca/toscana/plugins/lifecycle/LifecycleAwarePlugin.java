@@ -3,7 +3,6 @@ package org.opentosca.toscana.plugins.lifecycle;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import org.opentosca.toscana.core.plugin.AbstractPlugin;
 import org.opentosca.toscana.core.transformation.TransformationContext;
@@ -42,8 +41,6 @@ public abstract class LifecycleAwarePlugin<LifecycleT extends TransformationLife
                     " because the Environment check has failed!");
             }
         }));
-        //Node type Validation
-        executionTasks.add(new ExecutionPhase<>("check node types", this::checkNodeTypes));
         //Model validation
         executionTasks.add(new ExecutionPhase<>("check model", (e) -> {
             if (!e.checkModel()) {
@@ -60,9 +57,9 @@ public abstract class LifecycleAwarePlugin<LifecycleT extends TransformationLife
         //Make list immutable
         this.executionTasks = Collections.unmodifiableList(executionTasks);
     }
-    
+
     /**
-     Performs the executon of the phases in the order that has been defined during the construction of the object
+     Performs the execution of the phases in the order that has been defined during the construction of the object
 
      @param context context for the transformation
      */
@@ -87,17 +84,7 @@ public abstract class LifecycleAwarePlugin<LifecycleT extends TransformationLife
     }
 
     /**
-     Checks if all node types of the model are on the suppored list (returned by getSupportedNodeTypes()
-
-     @param lifecycle Probably never used, exists to use this::checkNodeTypes in a lambda expression
-     */
-    private void checkNodeTypes(LifecycleT lifecycle) {
-        Set<Class<?>> supported = getSupportedNodeTypes();
-        //TODO implement once model is done!
-    }
-
-    /**
-     Checks if all required environment parameters like installed CLIs, running services (such as docker) are availiable
+     Checks if all required environment parameters like installed CLIs, running services (such as docker) are available
      if so the method will return true, false otherwise (results in failure of the transformation)
 
      @return true if all env parameters are set, false otherwise
@@ -107,14 +94,8 @@ public abstract class LifecycleAwarePlugin<LifecycleT extends TransformationLife
     }
 
     /**
-     @return Returns a set of Classes of node types supported by this plugin. if the model contains classes that are not in
-     this set, the transformation will fail in the Node Type Validation phase
-     */
-    protected abstract Set<Class<? /* extends RootNode */>> getSupportedNodeTypes();
-
-    /**
      @param context The transformation context for which the Lifecycle interface should be built
      @return a newly constructed instance of the LifecycleInterface implemented by this plugin.
      */
-    protected abstract LifecycleT getInstance(TransformationContext context);
+    protected abstract LifecycleT getInstance(TransformationContext context) throws Exception;
 }

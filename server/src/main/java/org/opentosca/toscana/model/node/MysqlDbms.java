@@ -4,6 +4,7 @@ import org.opentosca.toscana.model.capability.ContainerCapability;
 import org.opentosca.toscana.model.capability.ContainerCapability.ContainerCapabilityBuilder;
 import org.opentosca.toscana.model.datatype.Credential;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
+import org.opentosca.toscana.model.visitor.Visitor;
 
 import lombok.Builder;
 import lombok.Data;
@@ -51,5 +52,10 @@ public class MysqlDbms extends Dbms {
     }
 
     public static class MysqlDbmsBuilder extends DbmsBuilder {
+    }
+
+    @Override
+    public void accept(Visitor v) {
+        v.visit(this);
     }
 }
