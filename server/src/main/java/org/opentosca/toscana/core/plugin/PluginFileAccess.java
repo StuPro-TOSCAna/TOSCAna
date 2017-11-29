@@ -1,8 +1,10 @@
 package org.opentosca.toscana.core.plugin;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -82,6 +84,33 @@ public class PluginFileAccess {
         target.getParentFile().mkdirs();
         try {
             return new BufferedWriter(new FileWriter(target));
+        } catch (FileNotFoundException e) {
+            logger.error("Failed to create OutputStream for file '{}'", target);
+            throw e;
+        }
+    }
+
+    /**
+     Returns a BufferedOutputStream which can write to given path.
+     <p>
+     This method is the ByteStream Counterpart to the <code>access</code> method.
+     <p>
+     Please do not use this method to write Character encoded files,
+     the regular <code>access</code> method is intended to handle Character based Streams.
+     <p>
+     If necessary, creates missing subdirectories.
+     <p>
+     Note: Close returned BufferedOutputStream after usage.
+
+     @param relativePath path to the target file, relative to the transformations root dir
+     @return BufferedOutputStream which writes to target file.
+     @throws FileNotFoundException if given relativePath points to a directory
+     */
+    public BufferedOutputStream accessAsInputStream(String relativePath) throws IOException {
+        File target = new File(targetDir, relativePath);
+        target.getParentFile().mkdirs();
+        try {
+            return new BufferedOutputStream(new FileOutputStream(target));
         } catch (FileNotFoundException e) {
             logger.error("Failed to create OutputStream for file '{}'", target);
             throw e;

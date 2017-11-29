@@ -14,6 +14,7 @@ This log lists the architectural decisions for *[project name]*.
 - [ADR-0007](0007-plugin-cloudformation-cli.md) - Use AWS CLI to deploy generated CloudFormation templates
 - [ADR-0008](0008-kubernetes-end-to-end-tests.md) - How to perform Kubernetes end to end tests
 
+- [ADR-0010](0010-use-docker-java.md) - How to perform Kubernetes end to end tests
 <!-- adrlogstop -->
 
 For new ADRs, please use [template.md](template.md) as basis.
