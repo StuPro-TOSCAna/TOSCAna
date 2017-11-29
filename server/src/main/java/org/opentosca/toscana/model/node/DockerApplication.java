@@ -40,16 +40,13 @@ public class DockerApplication extends ContainerApplication {
      @param nodeName  {@link #nodeName}
      @param host      {@link #host}
      @param network   {@link #network}
-     @param lifecycle {@link #standardLifecycle}
      */
-    public static DockerApplicationBuilder builder(String nodeName,
-                                                   Requirement<DockerContainerCapability, ContainerRuntime, HostedOn> host,
-                                                   Requirement<EndpointCapability, RootNode, RootRelationship> network,
-                                                   StandardLifecycle lifecycle) {
+    public static DockerApplicationBuilder builder(Requirement<DockerContainerCapability, ContainerRuntime, HostedOn> host,
+                                                   String nodeName,
+                                                   Requirement<EndpointCapability, RootNode, RootRelationship> network) {
         return new DockerApplicationBuilder()
             .nodeName(nodeName)
             .host(host)
-            .standardLifecycle(lifecycle)
             .network(network);
     }
 
