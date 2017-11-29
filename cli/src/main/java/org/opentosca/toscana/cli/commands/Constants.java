@@ -11,7 +11,6 @@ public final class Constants {
     public final String CSAR_UPLOAD_SUCCESS = "Upload of CSAR Archive was successful!";
     public final String CSAR_UPLOAD_ERROR = "Something went wrong while uploading the CSAR.";
     public final String CSAR_UPLOAD_ERROR400 = "Parsing of the CSAR failed.";
-    public final String CSAR_UPLOAD_ERROR400M = "A CSAR with given name already exists.\n";
     public final String CSAR_UPLOAD_ERROR500 = "Processing failed.\n";
     public final String CSAR_DELETE_SUCCESS = "Deletion of CSAR was successfull!";
     public final String CSAR_DELETE_ERROR = "Something went wrong while deleting the CSAR.";
