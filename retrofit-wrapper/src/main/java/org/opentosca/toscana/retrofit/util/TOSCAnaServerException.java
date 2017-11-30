@@ -3,8 +3,9 @@ package org.opentosca.toscana.retrofit.util;
 import org.opentosca.toscana.retrofit.model.ServerError;
 
 public class TOSCAnaServerException extends Exception {
-    private ServerError errorResponse;
-    private int statusCode;
+   
+    private final ServerError errorResponse;
+    private final int statusCode;
 
     public TOSCAnaServerException(
         String message,
@@ -22,5 +23,11 @@ public class TOSCAnaServerException extends Exception {
 
     public int getStatusCode() {
         return statusCode;
+    }
+
+    public void print() {
+        System.err.printf("%s: %s%n", getMessage(), getStatusCode());
+        System.err.printf("%s: %s%n", getErrorResponse().getException(), getErrorResponse().getMessage());
+        errorResponse.getLogs().stream().forEach(System.err::println);
     }
 }

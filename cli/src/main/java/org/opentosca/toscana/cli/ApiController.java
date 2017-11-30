@@ -52,8 +52,7 @@ public class ApiController {
                 + Constants.ERROR_PLACEHOLDER, e.getMessage()));
             e.printStackTrace();
         } catch (TOSCAnaServerException e) {
-            System.err.println(String.format(SOMETHING_WRONG + Constants.CSAR_UPLOAD_RESPONSE_ERROR
-                + Constants.SERVER_ERROR_PLACEHOLDER, e.getStatusCode(), e.getErrorResponse().getMessage()));
+            e.print();
         }
         return "";
     }
