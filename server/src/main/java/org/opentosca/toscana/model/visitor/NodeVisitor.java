@@ -19,7 +19,7 @@ import org.opentosca.toscana.model.node.WebApplication;
 import org.opentosca.toscana.model.node.WebServer;
 import org.opentosca.toscana.model.node.WordPress;
 
-public interface NodeVisitor extends Visitor {
+public interface NodeVisitor {
 
     default void visit(Apache node) {
         throw new UnsupportedTypeException(Apache.class);

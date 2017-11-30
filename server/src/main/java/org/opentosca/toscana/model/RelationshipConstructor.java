@@ -10,12 +10,13 @@ import org.opentosca.toscana.model.relation.RoutesTo;
 import org.opentosca.toscana.model.visitor.RelationshipVisitor;
 
 public class RelationshipConstructor implements RelationshipVisitor {
-    
+
     private final Requirement requirement;
-    
-    public RelationshipConstructor(Requirement requirement){
+
+    public RelationshipConstructor(Requirement requirement) {
         this.requirement = requirement;
     }
+
     @Override
     public void visit(RootRelationship relation) {
 
