@@ -2,13 +2,10 @@ package org.opentosca.toscana.plugins.kubernetes.docker.image;
 
 import java.io.File;
 
-import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.plugins.kubernetes.docker.BaseDockerfileTest;
 
 import com.spotify.docker.client.DefaultDockerClient;
-import com.spotify.docker.client.DockerClient;
-import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +20,7 @@ public class DockerImageBuilderTest extends BaseDockerfileTest {
 
     private static final Logger logger = LoggerFactory.getLogger(DockerImageBuilderTest.class);
     private static final String SHA_TEST_FILE_NAME = "sha-test.tar.gz";
-    
+
     @Test
     public void testBuildShaImage() throws Exception {
         assumeTrue(isDockerAvailable());
@@ -33,7 +30,7 @@ public class DockerImageBuilderTest extends BaseDockerfileTest {
         TransformationContext ctx = mock(TransformationContext.class);
         when(ctx.getPluginFileAccess()).thenReturn(access);
         when(ctx.getLogger((Class<?>) any(Class.class))).thenReturn(LoggerFactory.getLogger("Mock Logger"));
-        
+
         DockerImageBuilder imageBuilder = new DockerImageBuilder(
             "toscana/sha256-test:test",
             WORKING_DIR_SUBFOLDER_NAME,
@@ -50,7 +47,7 @@ public class DockerImageBuilderTest extends BaseDockerfileTest {
         //This is a Quick solution to prevent this test from beeing executed if the environment variable is not set.
         //TODO Remove if there is Proper differing between integration and unit tests.
         String env = System.getenv("TEST_DOCKER");
-        if(env == null || !env.equalsIgnoreCase("true")) {
+        if (env == null || !env.equalsIgnoreCase("true")) {
             return false;
         }
         try {

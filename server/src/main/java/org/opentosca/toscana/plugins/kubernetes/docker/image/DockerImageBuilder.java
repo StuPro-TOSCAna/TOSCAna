@@ -31,7 +31,7 @@ public class DockerImageBuilder implements ProgressHandler {
     /**
      @param tag           the tag ("name") that the resulting image should have
      @param dockerWorkDir The working directory (relative to transformation root) that contains the dockerfile
-     @param ctx The TransformationContext used to retrieve the logger and the PluginFileAccess
+     @param ctx           The TransformationContext used to retrieve the logger and the PluginFileAccess
      */
     public DockerImageBuilder(String tag, String dockerWorkDir, TransformationContext ctx) {
         this.tag = tag;
@@ -39,7 +39,7 @@ public class DockerImageBuilder implements ProgressHandler {
         this.logger = ctx.getLogger(getClass());
         this.access = ctx.getPluginFileAccess();
     }
-    
+
     /**
      @param outputPath The relative path to the file (with name and ending (should be .tar.gz))
      @throws IOException                Gets thrown if a general IO Error occurs

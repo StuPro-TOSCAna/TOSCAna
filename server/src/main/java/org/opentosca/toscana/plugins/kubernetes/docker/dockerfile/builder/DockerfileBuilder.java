@@ -20,7 +20,7 @@ import org.opentosca.toscana.plugins.kubernetes.docker.dockerfile.builder.comman
 import org.opentosca.toscana.plugins.kubernetes.docker.dockerfile.builder.commands.WorkdirCommand;
 
 /**
- Allows the building of a dockerfile. 
+ Allows the building of a dockerfile.
  */
 public class DockerfileBuilder {
 
@@ -156,7 +156,7 @@ public class DockerfileBuilder {
     }
 
     /**
-     Enables the compression of several run commands to one single run command. 
+     Enables the compression of several run commands to one single run command.
      This means that they get linked using <code>&&</code>
      <p>
      <b>Warning:</b> Using this command does not ensure the same behaviour as two separated run commands.
