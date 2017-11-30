@@ -14,6 +14,10 @@ topology_template:
           file: nfode/simpletaskapp:v1
           type: tosca.artifacts.Deployment.Image.Container.Docker
           repository: docker_hub
+      interfaces:
+        Standard:
+          create:
+            implementation: my_image
 
     dockerRuntime:
       type: Container.Runtime
