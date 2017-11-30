@@ -20,11 +20,6 @@ public class CloudFormationPlugin extends LifecycleAwarePlugin<CloudFormationLif
         super(getPlatformDetails());
     }
 
-    @Override
-    public void transform(TransformationContext context) throws Exception {
-
-    }
-
     private static Platform getPlatformDetails() {
         String platformId = "cloudformation";
         String platformName = "AWS CloudFormation";
