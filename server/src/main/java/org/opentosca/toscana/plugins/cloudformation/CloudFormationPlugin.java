@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class CloudFormationPlugin extends LifecycleAwarePlugin<CloudFormationLifecycle> {
     private final static Logger logger = LoggerFactory.getLogger(CloudFormationPlugin.class);
-    
+
     public CloudFormationPlugin() {
         super(getPlatformDetails());
     }
