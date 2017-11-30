@@ -6,7 +6,7 @@ import org.opentosca.toscana.model.capability.ContainerCapability;
 import org.opentosca.toscana.model.capability.ScalableCapability;
 import org.opentosca.toscana.model.datatype.Credential;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
-import org.opentosca.toscana.model.visitor.Visitor;
+import org.opentosca.toscana.model.visitor.NodeVisitor;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -57,7 +57,7 @@ public class ContainerRuntime extends SoftwareComponent {
     }
 
     @Override
-    public void accept(Visitor v) {
+    public void accept(NodeVisitor v) {
         v.visit(this);
     }
 }

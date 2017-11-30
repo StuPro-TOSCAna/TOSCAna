@@ -5,7 +5,7 @@ import org.opentosca.toscana.model.capability.DatabaseEndpointCapability;
 import org.opentosca.toscana.model.capability.Requirement;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
 import org.opentosca.toscana.model.relation.HostedOn;
-import org.opentosca.toscana.model.visitor.Visitor;
+import org.opentosca.toscana.model.visitor.NodeVisitor;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -52,7 +52,7 @@ public class MysqlDatabase extends Database {
     }
 
     @Override
-    public void accept(Visitor v) {
+    public void accept(NodeVisitor v) {
         v.visit(this);
     }
 }

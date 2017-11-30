@@ -11,8 +11,8 @@ import org.opentosca.toscana.model.capability.Requirement;
 import org.opentosca.toscana.model.datatype.Range;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
 import org.opentosca.toscana.model.relation.DependsOn;
-import org.opentosca.toscana.model.visitor.Visitable;
-import org.opentosca.toscana.model.visitor.Visitor;
+import org.opentosca.toscana.model.visitor.NodeVisitor;
+import org.opentosca.toscana.model.visitor.VisitableNode;
 
 import lombok.Builder;
 import lombok.Data;
@@ -21,7 +21,7 @@ import lombok.Data;
  The base node. Every other node will derive from this class.
  */
 @Data
-public class RootNode extends DescribableEntity implements Visitable {
+public class RootNode extends DescribableEntity implements VisitableNode {
 
     protected final Set<Requirement> requirements = new HashSet<>();
     protected final Set<Capability> capabilities = new HashSet<>();
@@ -66,7 +66,7 @@ public class RootNode extends DescribableEntity implements Visitable {
     }
 
     @Override
-    public void accept(Visitor v) {
+    public void accept(NodeVisitor v) {
         v.visit(this);
     }
 }

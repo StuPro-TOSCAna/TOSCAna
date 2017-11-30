@@ -1,6 +1,6 @@
 package org.opentosca.toscana.model.relation;
 
-import org.opentosca.toscana.model.visitor.Visitor;
+import org.opentosca.toscana.model.visitor.RelationshipVisitor;
 
 import lombok.Builder;
 import lombok.Data;
@@ -18,9 +18,9 @@ public class DependsOn extends RootRelationship {
 
     public static class DependsOnBuilder extends RootRelationshipBuilder {
     }
-    
+
     @Override
-    public void accept(Visitor v) {
+    public void accept(RelationshipVisitor v) {
         v.visit(this);
     }
 }
