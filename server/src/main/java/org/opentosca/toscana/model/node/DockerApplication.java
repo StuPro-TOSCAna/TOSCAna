@@ -10,7 +10,6 @@ import org.opentosca.toscana.model.operation.StandardLifecycle;
 import org.opentosca.toscana.model.relation.HostedOn;
 import org.opentosca.toscana.model.relation.RootRelationship;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
-import org.opentosca.toscana.model.visitor.Visitor;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -38,9 +37,9 @@ public class DockerApplication extends ContainerApplication {
     }
 
     /**
-     @param nodeName  {@link #nodeName}
-     @param host      {@link #host}
-     @param network   {@link #network}
+     @param nodeName {@link #nodeName}
+     @param host     {@link #host}
+     @param network  {@link #network}
      */
     public static DockerApplicationBuilder builder(Requirement<DockerContainerCapability, ContainerRuntime, HostedOn> host,
                                                    String nodeName,

@@ -10,7 +10,6 @@ import org.opentosca.toscana.model.operation.StandardLifecycle;
 import org.opentosca.toscana.model.relation.ConnectsTo;
 import org.opentosca.toscana.model.relation.HostedOn;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
-import org.opentosca.toscana.model.visitor.Visitor;
 
 import lombok.Builder;
 import lombok.Data;

@@ -4,7 +4,6 @@ import java.util.Optional;
 
 import org.opentosca.toscana.model.datatype.Credential;
 import org.opentosca.toscana.model.visitor.RelationshipVisitor;
-import org.opentosca.toscana.model.visitor.Visitor;
 
 import lombok.Builder;
 import lombok.Data;

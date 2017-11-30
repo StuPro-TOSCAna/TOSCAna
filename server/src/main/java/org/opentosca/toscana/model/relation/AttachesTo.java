@@ -7,7 +7,6 @@ import javax.validation.constraints.Size;
 import org.opentosca.toscana.model.capability.StorageCapability;
 import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.visitor.RelationshipVisitor;
-import org.opentosca.toscana.model.visitor.Visitor;
 
 import lombok.Data;
 

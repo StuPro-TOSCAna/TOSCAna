@@ -16,7 +16,6 @@ import org.opentosca.toscana.model.datatype.PortInfo;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
 import org.opentosca.toscana.model.relation.AttachesTo;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
-import org.opentosca.toscana.model.visitor.Visitor;
 
 import lombok.Builder;
 import lombok.Data;
@@ -90,11 +89,11 @@ public class Compute extends RootNode {
     }
 
     /**
-     @param nodeName       {@link #nodeName}
-     @param adminEndpoint  {@link #adminEndpoint}
-     @param scalable       {@link #scalable}
-     @param binding        {@link #binding}
-     @param localStorage   {@link #localStorage}
+     @param nodeName      {@link #nodeName}
+     @param adminEndpoint {@link #adminEndpoint}
+     @param scalable      {@link #scalable}
+     @param binding       {@link #binding}
+     @param localStorage  {@link #localStorage}
      */
     public ComputeBuilder builder(String nodeName,
                                   AdminEndpointCapability adminEndpoint,
@@ -111,17 +110,19 @@ public class Compute extends RootNode {
 
 
     /**
-     @return {@link #privateAddress} */
+     @return {@link #privateAddress}
+     */
     public Optional<String> getPrivateAddress() {
         return Optional.ofNullable(privateAddress);
     }
 
     /**
-     @return {@link #publicAddress} */
+     @return {@link #publicAddress}
+     */
     public Optional<String> getPublicAddress() {
         return Optional.ofNullable(publicAddress);
     }
-    
+
     @Override
     public void accept(NodeVisitor v) {
         v.visit(this);

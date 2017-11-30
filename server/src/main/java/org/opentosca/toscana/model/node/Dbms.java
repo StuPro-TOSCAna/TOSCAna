@@ -7,7 +7,6 @@ import org.opentosca.toscana.model.capability.ContainerCapability;
 import org.opentosca.toscana.model.datatype.Credential;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
-import org.opentosca.toscana.model.visitor.Visitor;
 
 import lombok.AccessLevel;
 import lombok.Builder;

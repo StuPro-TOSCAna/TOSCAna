@@ -6,7 +6,6 @@ import org.opentosca.toscana.model.datatype.Range;
 import org.opentosca.toscana.model.node.BlockStorage;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.visitor.CapabilityVisitor;
-import org.opentosca.toscana.model.visitor.Visitor;
 
 import lombok.Builder;
 import lombok.Data;

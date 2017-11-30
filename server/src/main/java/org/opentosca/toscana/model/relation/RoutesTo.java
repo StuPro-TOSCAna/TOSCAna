@@ -1,7 +1,6 @@
 package org.opentosca.toscana.model.relation;
 
 import org.opentosca.toscana.model.visitor.RelationshipVisitor;
-import org.opentosca.toscana.model.visitor.Visitor;
 
 import lombok.Builder;
 import lombok.Data;
