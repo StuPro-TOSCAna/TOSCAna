@@ -95,7 +95,7 @@ public class Compute extends RootNode {
      @param binding       {@link #binding}
      @param localStorage  {@link #localStorage}
      */
-    public ComputeBuilder builder(String nodeName,
+    public static ComputeBuilder builder(String nodeName,
                                   AdminEndpointCapability adminEndpoint,
                                   ScalableCapability scalable,
                                   BindableCapability binding,

@@ -8,6 +8,7 @@ import org.opentosca.toscana.model.capability.StorageCapability;
 import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.visitor.RelationshipVisitor;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -41,6 +42,7 @@ public class AttachesTo extends RootRelationship {
      */
     private final String device;
 
+    @Builder
     protected AttachesTo(String mountPoint,
                          String device,
                          String description) {
