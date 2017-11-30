@@ -93,8 +93,7 @@ public class TOSCAnaAPI {
         } else {
             logger.debug("Execution of the call was not successful");
             throwToscanaException(call, response);
-            //Dead code (used to prevent "Missing return statement" compilaton
-            //Error
+            //Dead code (used to prevent "Missing return statement" compilation error
             return null;
         }
     }
@@ -257,7 +256,7 @@ public class TOSCAnaAPI {
     ) throws TOSCAnaServerException, IOException {
         ResponseBody errorBody = response.errorBody();
         TOSCAnaServerException exception = new TOSCAnaServerException(
-            "Failed to execute HTTP Call " + call.request().url().toString(),
+            "Execution of HTTP call " + call.request().url() + " failed",
             errorBody == null || errorBody.contentLength() == 0 ?
                 null : objectMapper.readValue(errorBody.string(), ServerError.class),
             response.code()

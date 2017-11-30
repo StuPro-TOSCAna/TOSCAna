@@ -13,6 +13,7 @@ import org.junit.runners.JUnit4;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -47,7 +48,7 @@ public class ResponseTest extends BaseTOSCAnaAPITest {
         } catch (TOSCAnaServerException e) {
             assertEquals(400, ((TOSCAnaServerException) e).getStatusCode());
             ServerError error = ((TOSCAnaServerException) e).getErrorResponse();
-            assertNull(error.getMessage());
+            assertSame("", error.getMessage());
             return;
         }
         fail();

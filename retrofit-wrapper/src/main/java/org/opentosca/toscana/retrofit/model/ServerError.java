@@ -1,5 +1,6 @@
 package org.opentosca.toscana.retrofit.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -33,7 +34,7 @@ public class ServerError {
     }
 
     public String getMessage() {
-        return message;
+        return message == null ? "" : message;
     }
 
     public Long getTimestamp() {
@@ -45,6 +46,6 @@ public class ServerError {
     }
 
     public List<LogEntry> getLogs() {
-        return logs;
+        return logs == null ? new ArrayList<>() : logs;
     }
 }
