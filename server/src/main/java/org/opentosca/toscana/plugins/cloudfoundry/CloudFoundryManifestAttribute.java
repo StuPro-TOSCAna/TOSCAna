@@ -32,7 +32,7 @@ public enum CloudFoundryManifestAttribute {
 
     private final String name;
 
-    CloudFoundryManifestAttributes(String name) {
+    CloudFoundryManifestAttribute(String name) {
         this.name = name;
     }
 
