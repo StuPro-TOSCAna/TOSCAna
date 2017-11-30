@@ -8,6 +8,9 @@ import org.eclipse.winery.yaml.common.exception.MultiException;
 import org.eclipse.winery.yaml.common.reader.yaml.Reader;
 import org.junit.Test;
 
+/**
+ Contains integration tests for our yaml models used to test our application
+ */
 public class TestYamlTest extends BaseJUnitTest {
     @Test
     public void testMinimalDocker() throws MultiException {
