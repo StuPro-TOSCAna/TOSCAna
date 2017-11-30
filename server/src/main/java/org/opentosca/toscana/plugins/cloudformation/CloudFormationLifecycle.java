@@ -5,7 +5,7 @@ import java.io.IOException;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle;
 
-public class CloudFormationLifecycle extends AbstractLifecycle{
+public class CloudFormationLifecycle extends AbstractLifecycle {
 
     public CloudFormationLifecycle(TransformationContext context) throws IOException {
         super(context);
