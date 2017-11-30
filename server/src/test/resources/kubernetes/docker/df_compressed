@@ -1,0 +1,16 @@
+FROM library/ubuntu:latest
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    apt-get install -y openjdk8-jdk && \
+    apt-get install -y maven && \
+    apt-get install -y git
+WORKDIR /toscana
+RUN git clone https://github.com/StuPro-TOSCAna/TOSCAna.git && \
+    cd TOSCAna && mvn install -DskipTests
+EXPOSE 8080
+VOLUME /toscana/data
+RUN mv TOSCAna/server/target/server-1.0-SNAPSHOT.jar server.jar && \
+    apt-get autoremove -y maven git && \
+    rm -r /root/.m2 && \
+    rm -r TOSCAna
+ENTRYPOINT ["java", "-jar", "server.jar"]

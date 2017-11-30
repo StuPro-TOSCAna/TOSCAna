@@ -15,6 +15,7 @@ This log lists the architectural decisions for *[project name]*.
 - [ADR-0008](0008-kubernetes-end-to-end-tests.md) - How to perform Kubernetes end to end tests
 - [ADR-0009](0009-cloudfoundry-cli) - CloudFoundry CLI
 
+- [ADR-0010](0010-use-docker-java.md) - How to perform Kubernetes end to end tests
 <!-- adrlogstop -->
 
 For new ADRs, please use [template.md](template.md) as basis.
