@@ -106,7 +106,7 @@ public class PluginFileAccess {
      @return BufferedOutputStream which writes to target file.
      @throws FileNotFoundException if given relativePath points to a directory
      */
-    public BufferedOutputStream accessAsInputStream(String relativePath) throws IOException {
+    public BufferedOutputStream accessAsOutputStream(String relativePath) throws IOException {
         File target = new File(targetDir, relativePath);
         target.getParentFile().mkdirs();
         try {

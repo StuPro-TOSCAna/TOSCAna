@@ -172,7 +172,7 @@ public class DockerfileBuilder {
     /**
      Writes the dockerfile to the path defined in the constructor
      */
-    public void build() throws IOException {
+    public void write() throws IOException {
         BufferedWriter w = fileAccess.access(workingDir + "/Dockerfile");
         writeTo(w);
         w.close();

@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
+import org.opentosca.toscana.core.transformation.TransformationContext;
 
 import com.spotify.docker.client.DefaultDockerClient;
 import com.spotify.docker.client.DockerCertificateException;
@@ -16,7 +17,6 @@ import com.spotify.docker.client.ProgressHandler;
 import com.spotify.docker.client.messages.ProgressMessage;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  This class allows the automatic building of a dockerfile if a docker daemon is available.
@@ -31,29 +31,15 @@ public class DockerImageBuilder implements ProgressHandler {
     /**
      @param tag           the tag ("name") that the resulting image should have
      @param dockerWorkDir The working directory (relative to transformation root) that contains the dockerfile
-     @param access        the PluginFileAccess to read and write data
-     @param logger        the logger to log the Docker build responses to (their level is info)
+     @param ctx The TransformationContext used to retrieve the logger and the PluginFileAccess
      */
-    public DockerImageBuilder(String tag, String dockerWorkDir, PluginFileAccess access, Logger logger) {
-        this.logger = logger;
+    public DockerImageBuilder(String tag, String dockerWorkDir, TransformationContext ctx) {
         this.tag = tag;
         this.dockerWorkDir = dockerWorkDir;
-        this.access = access;
+        this.logger = ctx.getLogger(getClass());
+        this.access = ctx.getPluginFileAccess();
     }
-
-    /**
-     Just like the other constructor
-     but the logger gets built using <code>LoggerFactory.getLogger(DockerImageBuilder.class)</code>
-     */
-    public DockerImageBuilder(String tag, String dockerWorkDir, PluginFileAccess access) {
-        this(
-            tag,
-            dockerWorkDir,
-            access,
-            LoggerFactory.getLogger(DockerImageBuilder.class)
-        );
-    }
-
+    
     /**
      @param outputPath The relative path to the file (with name and ending (should be .tar.gz))
      @throws IOException                Gets thrown if a general IO Error occurs
@@ -74,7 +60,7 @@ public class DockerImageBuilder implements ProgressHandler {
 
         // Export the image
         logger.info("Saving image to {}", outputPath);
-        OutputStream out = access.accessAsInputStream(outputPath);
+        OutputStream out = access.accessAsOutputStream(outputPath);
 
         InputStream in = client.save(tag);
 

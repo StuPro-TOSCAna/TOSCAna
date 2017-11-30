@@ -69,7 +69,7 @@ public abstract class BaseDockerfileTest extends BaseJUnitTest {
             .compressRunCommands()
             .entrypoint("sha256sum", "test.bin");
 
-        builder.build();
+        builder.write();
         return MessageDigest.getInstance("SHA-256").digest(data);
     }
 
