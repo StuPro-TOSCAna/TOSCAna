@@ -1,0 +1,11 @@
+{
+    "name": "kubernetes-cluster",
+    "_links": {
+        "self": {
+            "href": "http://localhost:8080/csars/kubernetes-cluster"
+        },
+        "transformations": {
+            "href": "http://localhost:8080/csars/kubernetes-cluster/transformations/"
+        }
+    }
+}

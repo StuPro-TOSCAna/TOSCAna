@@ -3,9 +3,10 @@
 pushd "$(dirname "$0")" > /dev/null
 for CSAR_DIR in $(find -mindepth 3 -maxdepth 3 -type d); do
     pushd $CSAR_DIR > /dev/null
-    NAME=$(basename $CSAR_DIR)
-    zip -r ../${NAME}.csar * > /dev/null
-    echo Packaged $NAME as ${NAME}.csar
+    NAME=${CSAR_DIR##*/}
+    NAME=${NAME%.*}
+    CSAR=${NAME}.csar
+    [ ../"$NAME" -nt ../$CSAR ] && zip -r ../$CSAR > /dev/null * && echo Packaged $NAME as $CSAR
     popd > /dev/null
 done
 popd > /dev/null

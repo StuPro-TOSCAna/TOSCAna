@@ -9,27 +9,27 @@ import org.opentosca.toscana.model.EffectiveModel;
 import org.eclipse.winery.model.tosca.yaml.TServiceTemplate;
 import org.eclipse.winery.yaml.common.reader.yaml.Reader;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class CsarParseServiceImpl implements CsarParseService {
 
-    private final static Logger logger = LoggerFactory.getLogger(CsarParseServiceImpl.class);
+    private Logger logger;
 
     @Autowired
     private CsarDao csarDao;
 
     @Override
     public EffectiveModel parse(Csar csar) throws InvalidCsarException {
+        logger = csar.getLog().getLogger(getClass());
         Reader reader = new Reader();
         File entryPoint = findEntryPoint(csar);
         TServiceTemplate serviceTemplate;
         try {
             serviceTemplate = reader.parse(entryPoint.getParent(), entryPoint.getName());
         } catch (Exception e) {
-            logger.info("An error occured while parsing csar '{}'", csar, e);
+            logger.warn("An error occured while parsing csar '{}'", csar, e);
             throw new InvalidCsarException(csar.getLog());
         }
         ModelConverter converter = new ModelConverter();
@@ -49,13 +49,13 @@ public class CsarParseServiceImpl implements CsarParseService {
         File[] entryPoints = content.listFiles((file, s) -> s.matches(".*\\.ya?ml$"));
         if (entryPoints.length == 1) {
             File entryPoint = entryPoints[0].getAbsoluteFile();
-            logger.info("detected entry point of csar '{}' is '{}'", csar.getIdentifier(), entryPoint.getAbsolutePath());
+            logger.warn("detected entry point of csar '{}' is '{}'", csar.getIdentifier(), entryPoint.getAbsolutePath());
             return entryPoint;
         } else if (entryPoints.length > 1) {
-            logger.info("parsing failed: more than one top level yaml file encountered in given csar");
+            logger.warn("parsing failed: more than one top level yaml file encountered in given csar");
             throw new InvalidCsarException(csar.getLog());
         } else {
-            logger.info("parsing failed: no top level yaml file encountered in given csar");
+            logger.error("parsing failed: no top level yaml file encountered in given csar");
             throw new InvalidCsarException(csar.getLog());
         }
     }

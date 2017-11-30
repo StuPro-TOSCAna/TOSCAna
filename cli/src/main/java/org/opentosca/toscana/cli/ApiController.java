@@ -2,91 +2,40 @@ package org.opentosca.toscana.cli;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.Instant;
-import java.time.LocalDateTime;
+import java.io.InputStream;
+import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 
 import org.opentosca.toscana.cli.commands.Constants;
-import org.opentosca.toscana.cli.restclient.RestService;
-import org.opentosca.toscana.cli.restclient.model.Csar;
-import org.opentosca.toscana.cli.restclient.model.Csars;
-import org.opentosca.toscana.cli.restclient.model.CsarsResponse;
-import org.opentosca.toscana.cli.restclient.model.Platform;
-import org.opentosca.toscana.cli.restclient.model.Platforms;
-import org.opentosca.toscana.cli.restclient.model.PlatformsResponse;
-import org.opentosca.toscana.cli.restclient.model.Status;
-import org.opentosca.toscana.cli.restclient.model.Transformation;
-import org.opentosca.toscana.cli.restclient.model.TransformationInput;
-import org.opentosca.toscana.cli.restclient.model.TransformationInputs;
-import org.opentosca.toscana.cli.restclient.model.TransformationLog;
-import org.opentosca.toscana.cli.restclient.model.TransformationLogs;
-import org.opentosca.toscana.cli.restclient.model.Transformations;
-import org.opentosca.toscana.cli.restclient.model.TransformationsResponse;
+import org.opentosca.toscana.retrofit.TOSCAnaAPI;
+import org.opentosca.toscana.retrofit.model.Csar;
+import org.opentosca.toscana.retrofit.model.LogEntry;
+import org.opentosca.toscana.retrofit.model.Platform;
+import org.opentosca.toscana.retrofit.model.Transformation;
+import org.opentosca.toscana.retrofit.model.TransformationLogs;
+import org.opentosca.toscana.retrofit.model.TransformationProperties;
+import org.opentosca.toscana.retrofit.model.TransformationProperty;
+import org.opentosca.toscana.retrofit.model.TransformerStatus;
+import org.opentosca.toscana.retrofit.model.embedded.CsarResources;
+import org.opentosca.toscana.retrofit.model.embedded.PlatformResources;
+import org.opentosca.toscana.retrofit.model.embedded.TransformationResources;
+import org.opentosca.toscana.retrofit.util.LoggingMode;
+import org.opentosca.toscana.retrofit.util.TOSCAnaServerException;
 
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.OkHttpClient;
-import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
-import okhttp3.logging.HttpLoggingInterceptor;
-import retrofit2.Call;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
+import static org.opentosca.toscana.cli.commands.Constants.SOMETHING_WRONG;
 
 public class ApiController {
 
-    private RestService service;
-    private Constants con;
+    private TOSCAnaAPI toscAnaAPI;
 
     /**
      Constructor for the ApiController, parameters decide if there should be any output of information
-
-     @param moreVerbose very detailed output
-     @param verbose     some output
      */
-    public ApiController(boolean moreVerbose, boolean verbose) {
-        con = new Constants();
-        CliProperties prop = new CliProperties();
-        final String API_URL = prop.getApiUrl();
-
+    public ApiController(String apiUrl, LoggingMode mode) {
         //starts the retrofit client with the chosen loglevel
-        OkHttpClient client;
-        HttpLoggingInterceptor interceptor;
-        Retrofit retrofit = null;
-        try {
-            if (verbose) {
-                interceptor = new HttpLoggingInterceptor();
-                interceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
-                client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
-                retrofit = new Retrofit.Builder()
-                    .baseUrl(API_URL)
-                    .client(client)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
-            } else if (moreVerbose) {
-                interceptor = new HttpLoggingInterceptor();
-                interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-                client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
-                retrofit = new Retrofit.Builder()
-                    .baseUrl(API_URL)
-                    .client(client)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
-            } else {
-                retrofit = new Retrofit.Builder()
-                    .baseUrl(API_URL)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
-            }
-        } catch (IllegalArgumentException e) {
-            System.out.println(e.getMessage());
-            System.exit(1);
-        }
-
-        service = retrofit.create(RestService.class);
+        toscAnaAPI = new TOSCAnaAPI(apiUrl, mode);
     }
 
     /**
@@ -94,27 +43,18 @@ public class ApiController {
 
      @param file CSAR Archive to upload
      @return output for the CLI
-     @throws IOException if the responsebody is null
      */
-    public String uploadCsar(File file) throws IOException {
-        RequestBody reqFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
-        MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), reqFile);
-        Call<ResponseBody> uploadCsarCall = service.upCsar(file.getName(), part);
-        Response<ResponseBody> response = uploadCsarCall.execute();
-
-        if (response.code() == 201) {
-            return con.CSAR_UPLOAD_SUCCESS;
-        } else if (response.code() == 400) {
-            if (response.errorBody().string() != null) {
-                return con.CSAR_UPLOAD_ERROR400M + response.errorBody().string();
-            } else {
-                return con.CSAR_UPLOAD_ERROR400;
-            }
-        } else if (response.code() == 500) {
-            return con.CSAR_UPLOAD_ERROR500;
-        } else {
-            return con.CSAR_UPLOAD_ERROR;
+    public String uploadCsar(File file) {
+        try {
+            toscAnaAPI.uploadCsar(file.getName(), file);
+        } catch (IOException e) {
+            System.err.println(String.format(SOMETHING_WRONG + Constants.CSAR_UPLOAD_IO_ERROR
+                + Constants.ERROR_PLACEHOLDER, e.getMessage()));
+            e.printStackTrace();
+        } catch (TOSCAnaServerException e) {
+            e.print();
         }
+        return "";
     }
 
     /**
@@ -122,57 +62,49 @@ public class ApiController {
 
      @param csar CSAR to delete from the Transformator
      @return output for the CLI
-     @throws IOException if the responsebody is null
      */
-    public String deleteCsar(String csar) throws IOException {
-        Call<ResponseBody> deleteCsarCall = service.deleteCsar(csar);
-        Response<ResponseBody> response = deleteCsarCall.execute();
-
-        if (response.code() == 200) {
-            return con.CSAR_DELETE_SUCCESS;
-        } else if (response.code() == 404) {
-            if (response.errorBody().string() != null) {
-                return con.CSAR_DELETE_ERROR404 + "\n" + response.errorBody().string();
-            } else {
-                return con.CSAR_DELETE_ERROR404;
-            }
-        } else if (response.code() == 500) {
-            if (response.errorBody().string() != null) {
-                return con.CSAR_DELETE_ERROR500 + "\n" + response.errorBody().string();
-            } else {
-                return con.CSAR_DELETE_ERROR500;
-            }
-        } else {
-            return con.CSAR_DELETE_ERROR;
+    public String deleteCsar(String csar) {
+        try {
+            toscAnaAPI.deleteCsar(csar);
+        } catch (IOException e) {
+            System.err.println(String.format(SOMETHING_WRONG + Constants.CSAR_DELETE_ERROR
+                + Constants.ERROR_PLACEHOLDER, e.getMessage()));
+            e.printStackTrace();
+        } catch (TOSCAnaServerException e) {
+            System.err.println(String.format(SOMETHING_WRONG + Constants.CSAR_DELETE_ERROR
+                + Constants.SERVER_ERROR_PLACEHOLDER, e.getStatusCode(), e.getErrorResponse().getMessage()));
         }
+        return "";
     }
 
     /**
      Calls the REST API and lists all available CSARs, only handles code 200 or exception responses
 
      @return output for the CLI
-     @throws IOException if the responsebody is null
      */
-    public String listCsar() throws IOException {
+    public String listCsar() {
+        CsarResources csarList;
         StringBuilder stringCsars = new StringBuilder();
-        Call<CsarsResponse> csarsResponseCall = service.getCsars();
-        Response<CsarsResponse> response = csarsResponseCall.execute();
-
-        if (response.code() == 200) {
-            if (response.body().getAllCsars() != null) {
-                Csars aCsars = response.body().getAllCsars();
-                List<Csar> csars = aCsars.getCsar();
-
-                for (Csar c : csars) {
-                    stringCsars.append("\nName: ").append(c.getName());
+        try {
+            csarList = toscAnaAPI.getCsars();
+            List<Csar> list = csarList.getContent();
+            if (list != null) {
+                for (Csar c : list) {
+                    stringCsars.append(c.getName()).append("\n");
                 }
-                return con.CSAR_LIST_SUCCESS + stringCsars;
+                stringCsars.delete(stringCsars.length() - 1, stringCsars.length());
             } else {
-                return con.CSAR_LIST_EMPTY;
+                return Constants.CSAR_LIST_EMPTY;
             }
-        } else {
-            return con.CSAR_LIST_ERROR;
+        } catch (IOException e) {
+            System.err.println(String.format(SOMETHING_WRONG + Constants.CSAR_LIST_ERROR
+                + Constants.ERROR_PLACEHOLDER, e.getMessage()));
+            e.printStackTrace();
+        } catch (TOSCAnaServerException e) {
+            System.err.println(String.format(SOMETHING_WRONG + Constants.CSAR_LIST_ERROR
+                + Constants.SERVER_ERROR_PLACEHOLDER, e.getStatusCode(), e.getErrorResponse().getMessage()));
         }
+        return stringCsars.toString();
     }
 
     /**
@@ -180,28 +112,26 @@ public class ApiController {
 
      @param csarName Name of the CSAR which information should be shown
      @return output for the CLI
-     @throws IOException if the responsebody is null
      */
-    public String infoCsar(String csarName) throws IOException {
-        Call<Csar> csarCall = service.getCsar(csarName);
-        Response<Csar> response = csarCall.execute();
-
-        if (response.code() == 200) {
-            Csar csar = response.body();
-            if (csar.getName() != null) {
-                return con.CSAR_INFO_SUCCESS + csar.getName();
+    public String infoCsar(String csarName) {
+        String cName = "";
+        Csar csar;
+        try {
+            csar = toscAnaAPI.getCsarDetails(csarName);
+            if (csar != null) {
+                cName = csar.getName();
             } else {
-                return con.CSAR_INFO_EMPTY;
+                return Constants.CSAR_INFO_EMPTY;
             }
-        } else if (response.code() == 404) {
-            if (response.errorBody().string() != null) {
-                return con.CSAR_INFO_ERROR404 + "\n" + response.errorBody().string();
-            } else {
-                return con.CSAR_INFO_ERROR404;
-            }
-        } else {
-            return con.CSAR_INFO_ERROR;
+        } catch (IOException e) {
+            System.err.println(String.format(SOMETHING_WRONG + Constants.CSAR_INFO_ERROR
+                + Constants.ERROR_PLACEHOLDER, e.getMessage()));
+            e.printStackTrace();
+        } catch (TOSCAnaServerException e) {
+            System.err.println(String.format(SOMETHING_WRONG + Constants.CSAR_INFO_ERROR
+                + Constants.SERVER_ERROR_PLACEHOLDER, e.getStatusCode(), e.getErrorResponse().getMessage()));
         }
+        return cName;
     }
 
     /**
@@ -210,39 +140,41 @@ public class ApiController {
      @param csar CSAR for which a transformation should be started
      @param plat platform for which a transformation should be started
      @return output for the CLI
-     @throws IOException if the responsebody is null
      */
-    public String startTransformation(String csar, String plat) throws IOException {
-        Call<ResponseBody> startTransformationCall = service.createTransformation(csar, plat);
-        Response<ResponseBody> response = startTransformationCall.execute();
-
-        if (response.code() == 200) {
-            return launchTransformation(csar, plat);
-        } else if (response.code() == 400) {
-            if (response.errorBody().string() != null) {
-                return con.TRANSFORMATION_START_ERROR400 + "\n" + response.errorBody().string();
-            } else {
-                return con.TRANSFORMATION_START_ERROR400;
-            }
-        } else if (response.code() == 404) {
-            if (response.errorBody().string() != null) {
-                return con.TRANSFORMATION_START_ERROR404 + "\n" + response.errorBody().string();
-            } else {
-                return con.TRANSFORMATION_START_ERROR404;
-            }
-        } else {
-            return con.TRANSFORMATION_START_ERROR;
+    public String startTransformation(String csar, String plat) {
+        try {
+            toscAnaAPI.createTransformation(csar, plat);
+            launchTransformation(csar, plat);
+        } catch (IOException e) {
+            System.err.println(String.format(SOMETHING_WRONG + Constants.TRANSFORMATION_CREATE_ERROR
+                + Constants.ERROR_PLACEHOLDER, e.getMessage()));
+            e.printStackTrace();
+        } catch (TOSCAnaServerException e) {
+            System.err.println(String.format(SOMETHING_WRONG + Constants.TRANSFORMATION_CREATE_ERROR
+                + Constants.SERVER_ERROR_PLACEHOLDER, e.getStatusCode(), e.getErrorResponse().getMessage()));
         }
+        return "";
     }
 
-    private String launchTransformation(String csar, String platform) throws IOException {
-        int code = service.startTransformation(csar, platform).execute().code();
-        switch (code) {
-            case 200:
-                return con.TRANSFORMATION_START_SUCCESS;
-            default:
-                return con.TRANSFORMATION_START_ERROR;
+    /**
+     Calls the REST API and launches the Transformation, handles response codes
+
+     @param csar     CSAR for which a transformation should be launched
+     @param platform platform for which a transformation should be launched
+     @return output for the CLI
+     */
+    private String launchTransformation(String csar, String platform) {
+        try {
+            toscAnaAPI.startTransformation(csar, platform);
+        } catch (IOException e) {
+            System.err.println(String.format(SOMETHING_WRONG + Constants.TRANSFORMATION_START_ERROR
+                + Constants.ERROR_PLACEHOLDER, e.getMessage()));
+            e.printStackTrace();
+        } catch (TOSCAnaServerException e) {
+            System.err.println(String.format(SOMETHING_WRONG + Constants.TRANSFORMATION_START_ERROR
+                + Constants.SERVER_ERROR_PLACEHOLDER, e.getStatusCode(), e.getErrorResponse().getMessage()));
         }
+        return "";
     }
 
     /**
@@ -251,10 +183,9 @@ public class ApiController {
      @param csar CSAR to stop transformation for
      @param plat platform to stop transformation for
      @return output for the CLI
-     @throws IOException if the responsebody is null
      */
-    public String stopTransformation(String csar, String plat) throws IOException {
-        return con.TRANSFORMATION_STOP;
+    public String stopTransformation(String csar, String plat) {
+        return Constants.TRANSFORMATION_STOP;
     }
 
     /**
@@ -263,29 +194,19 @@ public class ApiController {
      @param csar CSAR for which transformation should be deleted
      @param plat platform for which the transformation should be deleted
      @return output for the CLI
-     @throws IOException if the responsebody is null
      */
-    public String deleteTransformation(String csar, String plat) throws IOException {
-        Call<ResponseBody> deleteTransformationCall = service.deleteTransformation(csar, plat);
-        Response<ResponseBody> response = deleteTransformationCall.execute();
-
-        if (response.code() == 200) {
-            return con.TRANSFORMATION_DELETE_SUCCESS;
-        } else if (response.code() == 404) {
-            if (response.errorBody().string() != null) {
-                return con.TRANSFORMATION_DELETE_ERROR404 + "\n" + response.errorBody().string();
-            } else {
-                return con.TRANSFORMATION_DELETE_ERROR404;
-            }
-        } else if (response.code() == 500) {
-            if (response.errorBody().string() != null) {
-                return con.TRANSFORMATION_DELETE_ERROR500 + "\n" + response.errorBody().string();
-            } else {
-                return con.TRANSFORMATION_DELETE_ERROR500;
-            }
-        } else {
-            return con.TRANSFORMATION_DELETE_ERROR;
+    public String deleteTransformation(String csar, String plat) {
+        try {
+            toscAnaAPI.deleteTransformation(csar, plat);
+        } catch (IOException e) {
+            System.err.println(String.format(SOMETHING_WRONG + Constants.TRANSFORMATION_DELETE_ERROR
+                + Constants.ERROR_PLACEHOLDER, e.getMessage()));
+            e.printStackTrace();
+        } catch (TOSCAnaServerException e) {
+            System.err.println(String.format(SOMETHING_WRONG + Constants.TRANSFORMATION_DELETE_ERROR
+                + Constants.SERVER_ERROR_PLACEHOLDER, e.getStatusCode(), e.getErrorResponse().getMessage()));
         }
+        return "";
     }
 
     /**
@@ -294,33 +215,33 @@ public class ApiController {
      @param csar CSAR for which to download an Artifact
      @param plat Platform for which the Artifact should be downloaded
      @return output for the CLI
-     @throws IOException if the responsebody is null
      */
-    public String downloadTransformation(String csar, String plat) throws IOException {
-        Call<ResponseBody> artifactCall = service.getArtifact(csar, plat);
-        Response<ResponseBody> response = artifactCall.execute();
+    public String downloadTransformationUrl(String csar, String plat) {
+        return toscAnaAPI.getArtifactDownloadUrl(csar, plat);
+    }
 
-        if (response.code() == 200) {
-            StringBuilder builder = new StringBuilder(response.toString());
-            int start = builder.indexOf("url=") + 4;
-            int end = builder.indexOf("}");
-            String downloadLink = builder.substring(start, end);
-            return con.TRANSFORMATION_DOWNLOAD_SUCCESS + downloadLink;
-        } else if (response.code() == 400) {
-            if (response.errorBody().string() != null) {
-                return con.TRANSFORMATION_DOWNLOAD_ERROR400 + "\n" + response.errorBody().string();
-            } else {
-                return con.TRANSFORMATION_DOWNLOAD_ERROR400;
-            }
-        } else if (response.code() == 404) {
-            if (response.errorBody().string() != null) {
-                return con.TRANSFORMATION_DOWNLOAD_ERROR404 + "\n" + response.errorBody().string();
-            } else {
-                return con.TRANSFORMATION_DOWNLOAD_ERROR404;
-            }
-        } else {
-            return con.TRANSFORMATION_DOWNLOAD_ERROR;
+    /**
+     Calls the REST API to download an Artifact for the specified finished Transformation, output is stored at
+     specified location
+
+     @param csar CSAR for which to download an Artifact
+     @param plat Platform for which the Artifact should be downloaded
+     @return output for the CLI
+     */
+    public String downloadTransformationStream(String csar, String plat, File destinationFile) {
+        try {
+            InputStream input = toscAnaAPI.downloadArtifactAsStream(csar, plat);
+            java.nio.file.Files.copy(input, destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            input.close();
+        } catch (IOException e) {
+            System.err.println(String.format(SOMETHING_WRONG + Constants.TRANSFORMATION_DOWNLOAD_ERROR
+                + Constants.ERROR_PLACEHOLDER, e.getMessage()));
+            e.printStackTrace();
+        } catch (TOSCAnaServerException e) {
+            System.err.println(String.format(SOMETHING_WRONG + Constants.TRANSFORMATION_DOWNLOAD_ERROR
+                + Constants.SERVER_ERROR_PLACEHOLDER, e.getStatusCode(), e.getErrorResponse().getMessage()));
         }
+        return "";
     }
 
     /**
@@ -328,34 +249,30 @@ public class ApiController {
 
      @param csar CSAR, for which transformations should be shown
      @return output for the CLI
-     @throws IOException if the responsebody is null
      */
-    public String listTransformation(String csar) throws IOException {
+    public String listTransformation(String csar) {
+        TransformationResources transformationList;
         StringBuilder stringTransformations = new StringBuilder();
-        Call<TransformationsResponse> transformationsResponseCall = service.getTransformations(csar);
-        Response<TransformationsResponse> response = transformationsResponseCall.execute();
-
-        if (response.code() == 200) {
-            if (response.body().getAllTransformations() != null) {
-                Transformations aTrans = response.body().getAllTransformations();
-                List<Transformation> transformations = aTrans.getTransformation();
-
-                for (Transformation t : transformations) {
-                    stringTransformations.append("\nPlatform: ").append(t.getPlatform());
+        try {
+            transformationList = toscAnaAPI.getTransformations(csar);
+            List<Transformation> list = transformationList.getContent();
+            if (list != null) {
+                for (Transformation t : list) {
+                    stringTransformations.append(t.getPlatform()).append("\n");
                 }
-                return con.TRANSFORMATION_LIST_SUCCESS + csar + ": " + stringTransformations;
+                stringTransformations.delete(stringTransformations.length() - 1, stringTransformations.length());
             } else {
-                return con.TRANSFORMATION_LIST_EMPTY + csar + " is empty.";
+                return Constants.TRANSFORMATION_LIST_EMPTY;
             }
-        } else if (response.code() == 404) {
-            if (response.errorBody().string() != null) {
-                return con.TRANSFORMATION_LIST_ERROR404 + "\n" + response.errorBody().string();
-            } else {
-                return con.TRANSFORMATION_LIST_ERROR404;
-            }
-        } else {
-            return con.TRANSFORMATION_LIST_ERROR;
+        } catch (IOException e) {
+            System.err.println(String.format(SOMETHING_WRONG + Constants.TRANSFORMATION_LIST_ERROR
+                + Constants.ERROR_PLACEHOLDER, e.getMessage()));
+            e.printStackTrace();
+        } catch (TOSCAnaServerException e) {
+            System.err.println(String.format(SOMETHING_WRONG + Constants.TRANSFORMATION_LIST_ERROR
+                + Constants.SERVER_ERROR_PLACEHOLDER, e.getStatusCode(), e.getErrorResponse().getMessage()));
         }
+        return stringTransformations.toString();
     }
 
     /**
@@ -364,30 +281,28 @@ public class ApiController {
      @param csar CSAR, for which Transformation Info should be shown
      @param plat Platform, for which Information should be shown
      @return output for the CLI
-     @throws IOException if the responsebody is null
      */
-    public String infoTransformation(String csar, String plat) throws IOException {
-        Call<Transformation> transformationCall = service.getTransformation(csar, plat);
-        Response<Transformation> response = transformationCall.execute();
-
-        if (response.code() == 200) {
-            Transformation transformation = response.body();
-            if (transformation.getPlatform() != null) {
-                return con.TRANSFORMATION_INFO_SUCCESS + csar + " on Platform: "
-                    + plat + "\nPlatform: " + transformation.getPlatform()
-                    + "\nProgress: " + transformation.getProgress() + "\nStatus: " + transformation.getStatus();
+    public String infoTransformation(String csar, String plat) {
+        Transformation transformation;
+        StringBuilder stringTransformation = new StringBuilder();
+        try {
+            transformation = toscAnaAPI.getTransformation(csar, plat);
+            if (transformation != null) {
+                stringTransformation.append(transformation.getPlatform()).append(", ")
+                    .append(transformation.getProgress()).append(", ")
+                    .append(transformation.getStatus());
             } else {
-                return con.TRANSFORMATION_INFO_EMPTY;
+                return Constants.TRANSFORMATION_INFO_EMPTY;
             }
-        } else if (response.code() == 404) {
-            if (response.errorBody().string() != null) {
-                return con.TRANSFORMATION_INFO_ERROR404 + "\n" + response.errorBody().string();
-            } else {
-                return con.TRANSFORMATION_INFO_ERROR404;
-            }
-        } else {
-            return con.TRANSFORMATION_INFO_ERROR;
+        } catch (IOException e) {
+            System.err.println(String.format(SOMETHING_WRONG + Constants.TRANSFORMATION_INFO_ERROR
+                + Constants.ERROR_PLACEHOLDER, e.getMessage()));
+            e.printStackTrace();
+        } catch (TOSCAnaServerException e) {
+            System.err.println(String.format(SOMETHING_WRONG + Constants.TRANSFORMATION_INFO_ERROR
+                + Constants.SERVER_ERROR_PLACEHOLDER, e.getStatusCode(), e.getErrorResponse().getMessage()));
         }
+        return stringTransformation.toString();
     }
 
     /**
@@ -397,42 +312,32 @@ public class ApiController {
      @param plat  Platform for which a transformation is available
      @param start where to start with log output, default is start position 0
      @return output for the CLI
-     @throws IOException if the responsebody is null
      */
-    public String logsTransformation(String csar, String plat, int start) throws IOException {
+    public String logsTransformation(String csar, String plat, int start) {
+        TransformationLogs logsList;
         StringBuilder stringLogs = new StringBuilder();
-        Call<TransformationLogs> logsCall = service.getLogs(csar, plat, start);
-        Response<TransformationLogs> response = logsCall.execute();
-
-        if (response.code() == 200) {
-            List<TransformationLog> transLogs;
-            if (response.body().getLogs() != null) {
-                transLogs = response.body().getLogs();
-                if (transLogs.size() > 1) {
-                    for (int i = start; i < transLogs.size(); i++) {
-                        long time = transLogs.get(i).getTimestamp();
-                        LocalDateTime timeStamp =
-                            LocalDateTime.ofInstant(Instant.ofEpochMilli(time),
-                                TimeZone.getDefault().toZoneId());
-
-                        stringLogs.append("\nTimestamp: ").append(timeStamp).append(", Message: ").append(transLogs.get(i).getMessage());
-                    }
-                    return con.TRANSFORMATION_LOGS_SUCCESS + stringLogs;
-                } else {
-                    return con.TRANSFORMATION_LOGS_EMPTY;
+        try {
+            logsList = toscAnaAPI.getLogs(csar, plat, start);
+            List<LogEntry> list = logsList.getLogEntries();
+            if (list != null) {
+                for (LogEntry l : list) {
+                    stringLogs.append(l.getTimestamp()).append(", ")
+                        .append(l.getMessage()).append(", ")
+                        .append(l.getLevel()).append(", ");
                 }
+                stringLogs.delete(stringLogs.length() - 2, stringLogs.length());
             } else {
-                return con.TRANSFORMATION_LOGS_EMPTY;
+                return Constants.TRANSFORMATION_LOGS_EMPTY;
             }
-        } else if (response.code() == 404) {
-            if (response.errorBody().string() != null) {
-                return con.TRANSFORMATION_LOGS_ERROR404 + "\n" + response.errorBody().string();
-            } else {
-                return con.TRANSFORMATION_LOGS_ERROR404;
-            }
-        } else {
-            return con.TRANSFORMATION_LOGS_ERROR;
+        } catch (IOException e) {
+            System.err.println(String.format(SOMETHING_WRONG + Constants.TRANSFORMATION_LOGS_ERROR
+                + Constants.ERROR_PLACEHOLDER, e.getMessage()));
+            e.printStackTrace();
+        } catch (TOSCAnaServerException e) {
+            System.err.println(String.format(SOMETHING_WRONG + Constants.TRANSFORMATION_LOGS_ERROR
+                + Constants.SERVER_ERROR_PLACEHOLDER, e.getStatusCode(), e.getErrorResponse().getMessage()));
         }
+        return stringLogs.toString();
     }
 
     /**
@@ -441,39 +346,33 @@ public class ApiController {
      @param csar CSAR for which required inputs should be shown
      @param plat Platform for which required inputs should be shown
      @return output for the CLI
-     @throws IOException if the responsebody is null
      */
-    public String inputList(String csar, String plat) throws IOException {
-        StringBuilder stringInputs = new StringBuilder();
-        Call<TransformationInputs> inputsCall = service.getInputs(csar, plat);
-        Response<TransformationInputs> response = inputsCall.execute();
-
-        if (response.code() == 200) {
-            if (response.body().getProperties() != null) {
-                List<TransformationInput> transProperty = response.body().getProperties();
-
-                for (TransformationInput p : transProperty) {
-                    stringInputs.append("\nKey: ").append(p.getKey()).append(" Type: ").append(p.getType());
+    public String inputList(String csar, String plat) {
+        TransformationProperties propertiesList;
+        StringBuilder stringProperties = new StringBuilder();
+        try {
+            propertiesList = toscAnaAPI.getProperties(csar, plat);
+            List<TransformationProperty> list = propertiesList.getProperties();
+            if (list != null) {
+                for (TransformationProperty p : list) {
+                    stringProperties.append(p.getKey()).append(", ")
+                        .append(p.getType()).append(", ")
+                        .append(p.isRequired()).append(", ")
+                        .append(p.getDescription()).append("\n");
                 }
-                return con.INPUT_LIST_SUCCESS + stringInputs;
+                stringProperties.delete(stringProperties.length() - 3, stringProperties.length());
             } else {
-                return con.INPUT_LIST_EMPTY;
+                return Constants.INPUT_LIST_EMPTY;
             }
-        } else if (response.code() == 400) {
-            if (response.errorBody().string() != null) {
-                return con.INPUT_LIST_ERROR400 + "\n" + response.errorBody().string();
-            } else {
-                return con.INPUT_LIST_ERROR400;
-            }
-        } else if (response.code() == 404) {
-            if (response.errorBody().string() != null) {
-                return con.INPUT_LIST_ERROR404 + "\n" + response.errorBody().string();
-            } else {
-                return con.INPUT_LIST_ERROR404;
-            }
-        } else {
-            return con.INPUT_LIST_ERROR;
+        } catch (IOException e) {
+            System.err.println(String.format(SOMETHING_WRONG + Constants.INPUT_LIST_ERROR
+                + Constants.ERROR_PLACEHOLDER, e.getMessage()));
+            e.printStackTrace();
+        } catch (TOSCAnaServerException e) {
+            System.err.println(String.format(SOMETHING_WRONG + Constants.INPUT_LIST_ERROR
+                + Constants.SERVER_ERROR_PLACEHOLDER, e.getStatusCode(), e.getErrorResponse().getMessage()));
         }
+        return stringProperties.toString();
     }
 
     /**
@@ -484,109 +383,125 @@ public class ApiController {
      @param plat   Platform for which to set Inputs
      @param inputs the required inputs, format is key=value, = is not allowed as an identifier
      @return output for the CLI
-     @throws IOException if the responsebody is null
      */
-    public String placeInput(String csar, String plat, Map<String, String> inputs) throws IOException {
-        Call<ResponseBody> inputsCall = service.setInputs(csar, plat, inputs);
-        Response<ResponseBody> response = inputsCall.execute();
-
-        if (response.code() == 200) {
-            return con.INPUT_SET_SUCCESS;
-        } else if (response.code() == 400) {
-            if (response.errorBody().string() != null) {
-                return con.INPUT_SET_ERROR400 + "\n" + response.errorBody().string();
-            } else {
-                return con.INPUT_SET_ERROR400;
-            }
-        } else if (response.code() == 404) {
-            if (response.errorBody().string() != null) {
-                return con.INPUT_SET_ERROR404 + "\n" + response.errorBody().string();
-            } else {
-                return con.INPUT_SET_ERROR404;
-            }
-        } else {
-            return con.INPUT_SET_ERROR;
+    public String placeInput(String csar, String plat, Map<String, String> inputs) {
+        //prepare Inputs which should be updated
+        List<TransformationProperty> properties = new ArrayList<>();
+        for (Map.Entry<String, String> mapEntry : inputs.entrySet()) {
+            TransformationProperty p = new TransformationProperty();
+            p.setKey(mapEntry.getKey());
+            p.setValue(mapEntry.getValue());
+            properties.add(p);
         }
+        TransformationProperties sendProp = new TransformationProperties(properties);
+
+        //get Return of the update if it was successfull
+        Map<String, Boolean> propertiesReturn;
+        StringBuilder stringProperties = new StringBuilder();
+        try {
+            propertiesReturn = toscAnaAPI.updateProperties(csar, plat, sendProp);
+            if (propertiesReturn != null) {
+                for (String s : propertiesReturn.keySet()) {
+                    stringProperties.append(s).append(" ")
+                        .append(propertiesReturn.get(s));
+                }
+            } else {
+                return Constants.INPUT_SET_ERROR;
+            }
+        } catch (IOException e) {
+            System.err.println(String.format(SOMETHING_WRONG + Constants.INPUT_SET_ERROR
+                + Constants.ERROR_PLACEHOLDER, e.getMessage()));
+            e.printStackTrace();
+        } catch (TOSCAnaServerException e) {
+            System.err.println(String.format(SOMETHING_WRONG + Constants.INPUT_SET_ERROR
+                + Constants.SERVER_ERROR_PLACEHOLDER, e.getStatusCode(), e.getErrorResponse().getMessage()));
+        }
+        return stringProperties.toString();
     }
 
     /**
      Calls the REST API and returns all Platforms, that are available for a transformation
 
      @return output for the CLI
-     @throws IOException if the responsebody is null
      */
-    public String listPlatform() throws IOException {
+    public String listPlatform() {
+        PlatformResources platformList;
         StringBuilder stringPlatforms = new StringBuilder();
-        Call<PlatformsResponse> platformsResponseCall = service.getPlatforms();
-        Response<PlatformsResponse> response = platformsResponseCall.execute();
-
-        if (response.code() == 200) {
-            if (response.body().getAllPlatforms() != null) {
-                Platforms plat = response.body().getAllPlatforms();
-                List<Platform> platforms = plat.getPlatform();
-
-                for (Platform p : platforms) {
-                    stringPlatforms.append("\nID: ").append(p.getId()).append(" Name: ").append(p.getName());
+        try {
+            platformList = toscAnaAPI.getPlatforms();
+            List<Platform> list = platformList.getContent();
+            if (list != null) {
+                for (Platform p : list) {
+                    stringPlatforms.append(p.getId()).append(", ")
+                        .append(p.getName()).append("\n");
                 }
-                return con.PLATFORM_LIST_SUCCESS + stringPlatforms;
+                stringPlatforms.delete(stringPlatforms.length() - 1, stringPlatforms.length());
             } else {
-                return con.PLATFORM_LIST_EMPTY;
+                return Constants.PLATFORM_LIST_EMPTY;
             }
-        } else {
-            return con.PLATFORM_LIST_ERROR;
+        } catch (IOException e) {
+            System.err.println(String.format(SOMETHING_WRONG + Constants.PLATFORM_LIST_ERROR
+                + Constants.ERROR_PLACEHOLDER, e.getMessage()));
+            e.printStackTrace();
+        } catch (TOSCAnaServerException e) {
+            System.err.println(String.format(SOMETHING_WRONG + Constants.PLATFORM_LIST_ERROR
+                + Constants.SERVER_ERROR_PLACEHOLDER, e.getStatusCode(), e.getErrorResponse().getMessage()));
         }
+        return stringPlatforms.toString();
     }
 
     /**
      Calls the REST API and returns all Information about the Platform
 
-     @param platform Platform for which all it's information should be shown
+     @param plat Platform for which all it's information should be shown
      @return output for the CLI
-     @throws IOException if the responsebody is null
      */
-    public String infoPlatform(String platform) throws IOException {
-        Call<Platform> platformCall = service.getPlatform(platform);
-        Response<Platform> response = platformCall.execute();
-        Platform plat = response.body();
-
-        if (response.code() == 200) {
-            if (plat.getId() != null) {
-                return con.PLATFORM_INFO_SUCCESS + plat.getId() + "\nName: " + plat.getName();
+    public String infoPlatform(String plat) {
+        Platform platform;
+        StringBuilder stringPlatform = new StringBuilder();
+        try {
+            platform = toscAnaAPI.getPlatformDetails(plat);
+            if (platform != null) {
+                stringPlatform.append(platform.getId()).append(", ")
+                    .append(platform.getName());
             } else {
-                return con.PLATFORM_INFO_EMPTY;
+                return Constants.PLATFORM_INFO_EMPTY;
             }
-        } else if (response.code() == 404) {
-            if (response.errorBody().string() != null) {
-                return con.PLATFORM_INFO_ERROR404 + "\n" + response.errorBody().string();
-            } else {
-                return con.PLATFORM_INFO_ERROR404;
-            }
-        } else {
-            return con.PLATFORM_INFO_ERROR;
+        } catch (IOException e) {
+            System.err.println(String.format(SOMETHING_WRONG + Constants.PLATFORM_INFO_ERROR
+                + Constants.ERROR_PLACEHOLDER, e.getMessage()));
+            e.printStackTrace();
+        } catch (TOSCAnaServerException e) {
+            System.err.println(String.format(SOMETHING_WRONG + Constants.PLATFORM_INFO_ERROR
+                + Constants.SERVER_ERROR_PLACEHOLDER, e.getStatusCode(), e.getErrorResponse().getMessage()));
         }
+        return stringPlatform.toString();
     }
 
     /**
      Calls the REST API and returns the current state of the system
 
      @return output for the CLI
-     @throws IOException if the responsebody is null
      */
-    public String showStatus() throws IOException {
-        Call<Status> statusCall = service.getSystemStatus();
-        Response<Status> response = statusCall.execute();
-        Status status = response.body();
-
-        if (response.code() == 200) {
-            if (status.getStatus() != null) {
-                return con.STATUS_SUCCESS + "\nStatus: " + status.getStatus()
-                    + "\nAvailable Storage: " + status.getAvailableStorage()
-                    + "\nTotal Storage: " + status.getTotalStorage();
+    public String showStatus() {
+        TransformerStatus status;
+        StringBuilder stringStatus = new StringBuilder();
+        try {
+            status = toscAnaAPI.getServerStatus();
+            if (status != null) {
+                stringStatus.append(status.getStatus()).append(", free: ")
+                    .append(status.getFileSystemHealth().getFreeBytes());
             } else {
-                return con.STATUS_EMPTY;
+                return Constants.STATUS_EMPTY;
             }
-        } else {
-            return con.STATUS_ERROR;
+        } catch (IOException e) {
+            System.err.println(String.format(SOMETHING_WRONG + Constants.STATUS_ERROR
+                + Constants.ERROR_PLACEHOLDER, e.getMessage()));
+            e.printStackTrace();
+        } catch (TOSCAnaServerException e) {
+            System.err.println(String.format(SOMETHING_WRONG + Constants.STATUS_ERROR
+                + Constants.SERVER_ERROR_PLACEHOLDER, e.getStatusCode(), e.getErrorResponse().getMessage()));
         }
+        return stringStatus.toString();
     }
 }

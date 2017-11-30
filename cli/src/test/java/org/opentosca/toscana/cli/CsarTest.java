@@ -2,131 +2,63 @@ package org.opentosca.toscana.cli;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
-import org.opentosca.toscana.cli.commands.Constants;
-
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-import picocli.CommandLine;
 
-import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-public class CsarTest {
+public class CsarTest extends TestHelper {
 
-    private ApiController api = null;
-    private CommandLine cmd = null;
-    private TestHelper helper = null;
-    private Constants con = null;
-
-    @Before
-    public void setUp() throws IOException {
-        api = new ApiController(false, false);
-        CliMain cli = new CliMain();
-        cmd = new CommandLine(cli);
-        helper = new TestHelper();
-        helper.setUp();
-        con = new Constants();
-    }
-
-    @After
-    public void tearDown() throws IOException {
-        helper.tearDown();
+    @Test
+    public void csarDelete() throws IOException {
+        apiSingleInput(CSAR_JSON, 200);
+        assertEquals("", api.deleteCsar(CSAR));
     }
 
     @Test
-    public void testCsar() {
-        final List<Object> parsed = cmd.parseWithHandler(new CommandLine.RunLast(), System.err, helper.CSAR_AR);
-        assertEquals(1, parsed.size());
+    public void csarDeleteError() throws IOException {
+        enqueError(404);
+        assertEquals("", api.deleteCsar(CSAR));
     }
 
     @Test
-    public void testCsarDelete() throws IOException {
-        helper.setServerBody("csarlist");
-        final List<Object> parsed = cmd.parseWithHandler(new CommandLine.RunLast(), System.err, helper.CSAR_DELETE);
-        assertEquals(1, parsed.size());
+    public void csarInfo() throws IOException {
+        apiSingleInput(CSAR_JSON, 200);
+        assertEquals(CSAR, api.infoCsar(CSAR));
     }
 
     @Test
-    public void testDeleteCsar() throws IOException {
-        helper.server200Response();
-        assertEquals(con.CSAR_DELETE_SUCCESS, api.deleteCsar(helper.CSAR));
+    public void csarInfoError() throws IOException {
+        enqueError(404);
+        assertEquals("", api.infoCsar(CSAR));
     }
 
     @Test
-    public void testFail404DeleteCsar() throws IOException {
-        helper.server404Response();
-        assertEquals(con.CSAR_DELETE_ERROR404 + "\n", api.deleteCsar(helper.CSAR));
+    public void csarList() throws IOException {
+        apiSingleInput(CSARS_JSON, 200);
+        assertTrue(api.listCsar().contains(CSAR));
     }
 
     @Test
-    public void testFail500DeleteCsar() throws IOException {
-        helper.server500Response();
-        assertEquals(con.CSAR_DELETE_ERROR500 + "\n", api.deleteCsar(helper.CSAR));
+    public void csarListError() throws IOException {
+        enqueError(404);
+        assertEquals("", api.listCsar());
     }
 
     @Test
-    public void testCsarInfo() throws IOException {
-        helper.setServerBody("csarinfo");
-        final List<Object> parsed = cmd.parseWithHandler(new CommandLine.RunLast(), System.err, helper.CSAR_INFO);
-        assertEquals(1, parsed.size());
-    }
-
-    @Test
-    public void testCsarList() throws IOException {
-        helper.setServerBody("csarlist");
-        final List<Object> parsed = cmd.parseWithHandler(new CommandLine.RunLast(), System.err, helper.CSAR_LIST);
-        assertEquals(1, parsed.size());
-    }
-
-    @Test
-    public void testCsarsList() throws IOException {
-        helper.setServerBody("csarlist");
-        assertTrue(api.listCsar().contains(con.CSAR_LIST_SUCCESS));
-    }
-
-    @Test
-    public void testInfoCsar() throws IOException {
-        helper.setServerBody("csarinfo");
-        assertTrue(api.infoCsar(helper.CSAR).contains(con.CSAR_INFO_SUCCESS));
-    }
-
-    @Test
-    public void testFail404InfoCsar() throws IOException {
-        helper.server404Response();
-        assertEquals(con.CSAR_INFO_ERROR404 + "\n", api.infoCsar(helper.CSAR));
-    }
-
-    @Test
-    public void testCsarUpload() throws IOException {
-        helper.setServerBody("csarlist");
-        final List<Object> parsed = cmd.parseWithHandler(new CommandLine.RunLast(), System.err, helper.CSAR_UPLOAD);
-        assertEquals(1, parsed.size());
-    }
-
-    @Test
-    public void testUploadCsar() throws IOException {
+    public void csarUpload() throws IOException {
+        apiSingleInput(CSAR_JSON, 200);
         ClassLoader classLoader = getClass().getClassLoader();
         File file = new File(classLoader.getResource("csar/simple-task.csar").getFile());
-        helper.server201Response();
-        assertEquals(con.CSAR_UPLOAD_SUCCESS, api.uploadCsar(file));
+        assertEquals("", api.uploadCsar(file));
     }
 
     @Test
-    public void testFail400UploadCsar() throws IOException {
-        helper.server400Response();
+    public void csarUploadError() throws IOException {
+        enqueError(404);
         ClassLoader classLoader = getClass().getClassLoader();
         File file = new File(classLoader.getResource("csar/simple-task.csar").getFile());
-        assertEquals(con.CSAR_UPLOAD_ERROR400M, api.uploadCsar(file));
-    }
-
-    @Test
-    public void testFail500UploadCsar() throws IOException {
-        helper.server500Response();
-        ClassLoader classLoader = getClass().getClassLoader();
-        File file = new File(classLoader.getResource("csar/simple-task.csar").getFile());
-        assertEquals(con.CSAR_UPLOAD_ERROR500, api.uploadCsar(file));
+        assertEquals("", api.uploadCsar(file));
     }
 }
