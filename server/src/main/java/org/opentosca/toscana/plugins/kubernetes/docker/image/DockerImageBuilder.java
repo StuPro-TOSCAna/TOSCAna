@@ -19,9 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- This class allows the automatic building of a dockerfile
- <p>
- if a docker daemon is available.
+ This class allows the automatic building of a dockerfile if a docker daemon is available.
  */
 public class DockerImageBuilder implements ProgressHandler {
 
@@ -58,11 +56,11 @@ public class DockerImageBuilder implements ProgressHandler {
 
     /**
      @param outputPath The relative path to the file (with name and ending (should be .tar.gz))
-     @throws IOException                Gets thrown if a general IO Error occures
-     @throws DockerCertificateException gets thrown if there is a cretificate Issue when connecting to the Docker
+     @throws IOException                Gets thrown if a general IO Error occurs
+     @throws DockerCertificateException gets thrown if there is a certificate issue when connecting to the Docker
      daemon
      @throws DockerException            Gets thrown if something goes wrong while executing a docker command
-     @throws InterruptedException       Gets thrown if a awating process gets interrupted
+     @throws InterruptedException       Gets thrown if a awaiting process gets interrupted
      */
     public void buildImage(String outputPath)
         throws IOException, DockerCertificateException, DockerException, InterruptedException {
@@ -72,7 +70,7 @@ public class DockerImageBuilder implements ProgressHandler {
         DockerClient client = DefaultDockerClient.fromEnv().build();
         // Build the image
         String result = client.build(abs, tag, this);
-        logger.info("Image build was sucessful. Image ID: {}", result);
+        logger.info("Image build was successful. Image ID: {}", result);
 
         // Export the image
         logger.info("Saving image to {}", outputPath);
@@ -85,7 +83,7 @@ public class DockerImageBuilder implements ProgressHandler {
         out.close();
 
         // Remove image to free the used space
-        logger.info("Deleting image form local Storage");
+        logger.info("Deleting image from local Storage");
         client.removeImage(tag);
     }
 
