@@ -7,7 +7,7 @@ import org.opentosca.toscana.model.relation.HostedOn;
 import org.opentosca.toscana.model.relation.RootRelationship;
 import org.opentosca.toscana.model.relation.RoutesTo;
 
-public interface RelationshipVisitor extends Visitor {
+public interface RelationshipVisitor {
 
     default void visit(RootRelationship relation) {
         throw new UnsupportedTypeException(RootRelationship.class);

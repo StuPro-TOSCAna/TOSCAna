@@ -16,7 +16,7 @@ import org.opentosca.toscana.model.capability.PublicEndpointCapability;
 import org.opentosca.toscana.model.capability.ScalableCapability;
 import org.opentosca.toscana.model.capability.StorageCapability;
 
-public interface CapabilityVisitor extends Visitor {
+public interface CapabilityVisitor {
 
     default void visit(AdminEndpointCapability capability) {
         throw new UnsupportedTypeException(AdminEndpointCapability.class);
