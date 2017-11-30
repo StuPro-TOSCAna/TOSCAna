@@ -222,12 +222,7 @@ public class BaseImageMapper {
      Downloads the tags for a given base image
      */
     private List<ImageTags> fetchImageTags(DockerBaseImages image) {
-        String registryUrl = image.getRegistry();
-        Retrofit retrofit = new Retrofit.Builder()
-            .baseUrl(registryUrl)
-            .addConverterFactory(JacksonConverterFactory.create())
-            .build();
-        DockerRegistry registry = new DockerRegistry(registryUrl, retrofit);
+        DockerRegistry registry = new DockerRegistry(image.getRegistry());
         return registry.getTagsForRepository(image.getUsername(), image.getRepository());
     }
 
