@@ -1,5 +1,6 @@
 package org.opentosca.toscana.plugins.cloudfoundry.visitors;
 
+import org.opentosca.toscana.model.node.Apache;
 import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.MysqlDatabase;
 import org.opentosca.toscana.model.node.MysqlDbms;
@@ -41,6 +42,11 @@ public class CloudFoundryNodeVisitor implements NodeVisitor {
         ignore password and port
          */
         myApp.addService(node.getNodeName());
+    }
+
+    @Override
+    public void visit(Apache node) {
+        // nothing to do so far?
     }
 
     @Override
