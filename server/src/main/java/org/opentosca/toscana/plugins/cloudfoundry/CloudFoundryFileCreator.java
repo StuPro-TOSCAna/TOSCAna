@@ -27,6 +27,7 @@ public class CloudFoundryFileCreator {
         createManifest();
         createBuildpackAdditionsFile();
         createDeployScript();
+        insertFiles();
     }
 
     private void createManifest() throws IOException {
@@ -89,6 +90,13 @@ public class CloudFoundryFileCreator {
             attributes += "  " + attribute.getKey() + ": " + attribute.getValue() + "\n";
         }
         return attributes;
+    }
+    
+    private void insertFiles() throws IOException {
+        for (String filePath: app.getFilePaths()
+             ) {
+            fileAccess.copy(filePath);
+        }
     }
 
 }
