@@ -5,11 +5,8 @@ for CSAR_DIR in $(find -mindepth 3 -maxdepth 3 -type d); do
     pushd $CSAR_DIR > /dev/null
     NAME=${CSAR_DIR##*/}
     NAME=${NAME%.*}
-    CHANGED_FILES=( $(find . -newer "../${NAME}.csar") ) 
-    if [[ "${#CHANGED_FILES[@]}" > 0 ]]; then
-        zip -r ../${NAME}.csar * > /dev/null
-        echo Packaged $NAME as ${NAME}.csar
-    fi
+    CSAR=${NAME}.csar
+    [ ../"$NAME" -nt ../$CSAR ] && zip -r ../$CSAR > /dev/null * && echo Packaged $NAME as $CSAR
     popd > /dev/null
 done
 popd > /dev/null
