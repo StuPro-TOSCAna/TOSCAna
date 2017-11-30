@@ -70,12 +70,12 @@ public class MapperTest extends BaseJUnitTest {
         IOUtils.copy(in, out);
         Preferences preferences = mock(Preferences.class);
         when(preferences.getDataDir()).thenReturn(staticTmpDir);
-        TagBase tagBase = new TagBase(preferences);
+        TagStorage tagStorage = new TagStorage(preferences);
         BaseImageMapper baseImageMapper = new BaseImageMapper(new DockerBaseImages[] {
             ALPINE,
             DEBIAN,
             UBUNTU
-        }, tagBase);
+        }, tagStorage);
         DataContainer data = mapper.readValue(new String(out.toByteArray()), DataContainer.class);
 
         baseImageMapper.setImageMap(data.data);

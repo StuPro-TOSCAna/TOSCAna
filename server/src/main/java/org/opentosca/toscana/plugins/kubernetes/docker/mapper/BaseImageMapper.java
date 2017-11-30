@@ -28,7 +28,7 @@ import org.springframework.stereotype.Service;
  This class allows the mapping of OsCapabilities (from a tosca model) to a docker base image.
  When initialized with Spring this class will automatically download the latest tags from the base images
  defined in the <code>DockerBaseImages</code> every 24 hours (by default).
- To update this value please modify the <code>toscana.docker.base-image-mapper.update-interval</code> property (value in
+ To persist this value please modify the <code>toscana.docker.base-image-mapper.persist-interval</code> property (value in
  hours)
  */
 @Service
@@ -40,7 +40,7 @@ public class BaseImageMapper {
     /**
      Administrates the "raw" tag data collected from docker-hub
      */
-    private TagBase tagBase;
+    private TagStorage tagStorage;
 
     /**
      An array containing the base images that this Base Image Mapper tries to map to
@@ -51,14 +51,14 @@ public class BaseImageMapper {
     private MapperEngine engine;
     
     @Autowired
-    public BaseImageMapper(DockerBaseImages[] dockerBaseImages, TagBase tagBase) {
+    public BaseImageMapper(DockerBaseImages[] dockerBaseImages, TagStorage tagStorage) {
         this.baseImages = dockerBaseImages;
-        this.tagBase = tagBase;
-        engine = new MapperEngine(tagBase);
+        this.tagStorage = tagStorage;
+        engine = new MapperEngine(tagStorage);
     }
 
     /**
-     Toggles the first update of the mappings during initialisation in spring
+     Toggles the first persist of the mappings during initialisation in spring
      */
     @PostConstruct
     private void postConstruct() {
@@ -66,10 +66,10 @@ public class BaseImageMapper {
     }
 
     /**
-     Performs the Update of each image and sets the "last update" timestamp at the end
+     Performs the Update of each image and sets the "last persist" timestamp at the end
      */
     private void updateBaseImageMap() {
-        if (tagBase.needsUpdate()) {
+        if (tagStorage.needsUpdate()) {
             logger.info("Updating docker base tags");
             for (DockerBaseImages baseImage : baseImages) {
                 logger.debug("Fetching tags for base image {}", baseImage.name());
@@ -77,16 +77,16 @@ public class BaseImageMapper {
                 logger.debug("Remapping Tags for Base image {}", baseImage.name());
                 addImagesForType(baseImage, imageTags);
             }
-            tagBase.update();
+            tagStorage.persist();
         } else {
-            logger.debug("Not updating docker base tags: Using local data (next update: {})", tagBase.getNextUpdate());
+            logger.debug("Not updating docker base tags: Using local data (next persist: {})", tagStorage.getNextUpdate());
         }
     }
 
     /**
      This is the spring scheduled job used to perform the updates on a regular basis
      <p>
-     it triggers a update of the mapping tables (which gets executed, if an update is needed)
+     it triggers a persist of the mapping tables (which gets executed, if an persist is needed)
      */
     @Scheduled(fixedRate = 600000, initialDelay = 600000)
     private void updateCronjob() {
@@ -116,16 +116,16 @@ public class BaseImageMapper {
                 tagList.add(tag);
             }
         }
-        tagBase.put(baseImage.name().toLowerCase(), new DockerImage(baseImage, tagList));
+        tagStorage.put(baseImage.name().toLowerCase(), new DockerImage(baseImage, tagList));
     }
 
     protected void setImageMap(Map<String, DockerImage> imageMap) {
-        tagBase.putAll(imageMap);
-        this.engine = new MapperEngine(tagBase);
+        tagStorage.putAll(imageMap);
+        this.engine = new MapperEngine(tagStorage);
     }
 
-    protected TagBase getTagBase() {
-        return tagBase;
+    protected TagStorage getTagStorage() {
+        return tagStorage;
     }
 
     /**

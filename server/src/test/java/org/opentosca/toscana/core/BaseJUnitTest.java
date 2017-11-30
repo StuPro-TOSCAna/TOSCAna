@@ -25,13 +25,13 @@ public abstract class BaseJUnitTest extends BaseTest {
      */
     @Rule
     public final TemporaryFolder temporaryFolder = new TemporaryFolder(PROJECT_ROOT);
-    private static final String STASIC_TMPDIR = "testsuite-tmpdir-static";
+    private static final String STATIC_TMPDIR = "testsuite-tmpdir-static";
     protected File tmpdir;
     protected static File staticTmpDir;
     
     @BeforeClass
     public final static void offerStaticTmpDir() throws IOException {
-        staticTmpDir = new File(PROJECT_ROOT, STASIC_TMPDIR);
+        staticTmpDir = new File(PROJECT_ROOT, STATIC_TMPDIR);
         FileUtils.deleteDirectory(staticTmpDir);
         staticTmpDir.mkdir();
     }

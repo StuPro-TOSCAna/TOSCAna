@@ -7,6 +7,7 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.opentosca.toscana.core.Profiles;
 import org.opentosca.toscana.core.util.Preferences;
 import org.opentosca.toscana.plugins.kubernetes.docker.mapper.model.DockerImage;
 
@@ -15,30 +16,32 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Repository;
 
-@Component
-public class TagBase {
+@Repository
+@Profile("!" + Profiles.EXCLUDE_BASE_IMAGE_MAPPER)
+public class TagStorage {
 
-    private static final Logger logger = LoggerFactory.getLogger(TagBase.class);
+    private static final Logger logger = LoggerFactory.getLogger(TagStorage.class);
 
     private static final String DOCKER_IMAGE_TAGS = "misc/docker-tagbase.json";
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
 
     private final File file;
-    
+
     private TagBaseData data = new TagBaseData();
-    
+
     /**
-     Stores the update interval for the base Image mappings (in hours)
+     Stores the persist interval for the base Image mappings (in hours)
      Taken from the property value:
-     <code>toscana.docker.base-image-mapper.update-interval</code>
+     <code>toscana.docker.base-image-mapper.persist-interval</code>
      */
-    @Value("${toscana.docker.base-image-mapper.update-interval}")
+    @Value("${toscana.docker.base-image-mapper.persist-interval}")
     private int updateInterval;
 
-    public TagBase(@Autowired Preferences preferences) {
+    public TagStorage(@Autowired Preferences preferences) {
         this.file = new File(preferences.getDataDir(), DOCKER_IMAGE_TAGS);
         file.getParentFile().mkdirs();
         if (file.exists()) {
@@ -56,17 +59,13 @@ public class TagBase {
         }
     }
 
-    void update() {
-        data.lastUpdateTime = System.currentTimeMillis();
-        persist();
-        logger.info("Mappings saved to disk. Next update in approx. {} hours", updateInterval);
-    }
-
-    private void persist() {
+    void persist() {
         try {
+            data.lastUpdateTime = System.currentTimeMillis();
             MAPPER.writeValue(file, data);
+            logger.info("Docker mappings saved to disk. Next persist in approx. {} hours", updateInterval);
         } catch (IOException e) {
-            logger.error("Failed to serialize docker tag base to file '{}'", file, e);
+            logger.error("Failed to save docker mappings to file '{}'", file, e);
         }
     }
 
@@ -77,7 +76,7 @@ public class TagBase {
     }
 
     /**
-     Returns a point in time when the next update is due.
+     Returns a point in time when the next persist is due.
      */
     Instant getNextUpdate() {
         Duration updateIntervalDuration = Duration.ofHours(updateInterval);
@@ -87,7 +86,7 @@ public class TagBase {
     public DockerImage get(String distro) {
         return data.map.get(distro);
     }
-   
+
     public DockerImage put(String distro, DockerImage image) {
         return data.map.put(distro, image);
     }
@@ -99,9 +98,9 @@ public class TagBase {
     public void putAll(Map<String, DockerImage> imageMap) {
         data.map.putAll(imageMap);
     }
-    
+
     private static class TagBaseData {
-        
+
         public long lastUpdateTime = 0;
         public final Map<String, DockerImage> map = new HashMap<>();
     }
