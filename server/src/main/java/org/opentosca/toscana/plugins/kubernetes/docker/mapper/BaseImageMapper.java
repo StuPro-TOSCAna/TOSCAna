@@ -32,8 +32,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import retrofit2.Retrofit;
-import retrofit2.converter.jackson.JacksonConverterFactory;
 
 /**
  This class allows the mapping of OsCapabilities (from a tosca model) to a docker base image.
@@ -103,6 +101,7 @@ public class BaseImageMapper {
                     imageTags = (List<ImageTags>) o;
                 } else {
                     logger.warn("File '{}' contained wrong data. Deleting file", imageTagsFile);
+                    imageTagsFile.delete();
                 }
             }
             if (lastUpdateFile.exists()) {
