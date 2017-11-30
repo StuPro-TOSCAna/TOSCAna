@@ -86,5 +86,10 @@ public class CsarImpl implements Csar {
             this.transformations.put(transformation.getPlatform().id, transformation);
         }
     }
+
+    @Override
+    public String toString() {
+        return String.format("Csar [id: %s]", getIdentifier());
+    }
 }
 
