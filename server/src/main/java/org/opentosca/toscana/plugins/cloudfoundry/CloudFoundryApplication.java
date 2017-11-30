@@ -9,13 +9,23 @@ import java.util.Map;
  This class should describe a CloudFoundryApplication with all needed information to deploy it
  */
 public class CloudFoundryApplication {
-    
+
     private String appName;
+    private final ArrayList<String> filePaths = new ArrayList<>();
     private final Map<String, String> environmentVariables = new HashMap<>();
+    private final Map<String, String> attributes = new HashMap<>();
     private final ArrayList<String> services = new ArrayList<>();
-    private final ArrayList<String> bpAdditions = new ArrayList<>();
+    private final ArrayList<String> buildpackAdditions = new ArrayList<>();
 
     public CloudFoundryApplication(String appName) {
+        this.appName = appName;
+    }
+
+    public CloudFoundryApplication() {
+
+    }
+
+    public void setAppName(String appName) {
         this.appName = appName;
     }
 
@@ -31,6 +41,10 @@ public class CloudFoundryApplication {
         this.environmentVariables.put(environmentVariableName, value);
     }
 
+    public void addEnvironmentVariables(String environmentVariableName) {
+        this.environmentVariables.put(environmentVariableName, "");
+    }
+
     public List<String> getServices() {
         return services;
     }
@@ -40,10 +54,26 @@ public class CloudFoundryApplication {
     }
 
     public List<String> getBuildpackAdditions() {
-        return bpAdditions;
+        return buildpackAdditions;
     }
 
     public void addBuildpack(String buildPack) {
-        this.bpAdditions.add(buildPack);
+        this.buildpackAdditions.add(buildPack);
+    }
+
+    public void addAttribute(String attributeName, String attributeValue) {
+        attributes.put(attributeName, attributeValue);
+    }
+
+    public Map<String, String> getAttributes() {
+        return attributes;
+    }
+    
+    public void addFilePath(String filePath) {
+        filePaths.add(filePath);
+    }
+
+    public List<String> getFilePaths() {
+        return filePaths;
     }
 }

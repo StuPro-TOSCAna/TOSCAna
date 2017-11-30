@@ -27,11 +27,13 @@ public class CloudFoundryFileCreator {
         createManifest();
         createBuildpackAdditionsFile();
         createDeployScript();
+        insertFiles();
     }
 
     private void createManifest() throws IOException {
         String manifestContent;
         manifestContent = createManifestHead();
+        manifestContent += createAttributes();
         manifestContent += createEnvironmentVariables();
         manifestContent += createService();
         fileAccess.access("/manifest.yml").append(manifestContent).close();
@@ -80,4 +82,21 @@ public class CloudFoundryFileCreator {
         buildPackAdditionsJson.put("PHP-EXTENSIONS", buildPacks);
         fileAccess.access("/.bp-config/options.json").append(buildPackAdditionsJson.toString()).close();
     }
+
+    private String createAttributes() {
+        String attributes = "\n";
+
+        for (Map.Entry<String, String> attribute : app.getAttributes().entrySet()) {
+            attributes += "  " + attribute.getKey() + ": " + attribute.getValue() + "\n";
+        }
+        return attributes;
+    }
+    
+    private void insertFiles() throws IOException {
+        for (String filePath: app.getFilePaths()
+             ) {
+            fileAccess.copy(filePath);
+        }
+    }
+
 }
