@@ -8,6 +8,7 @@ import org.opentosca.toscana.model.capability.EndpointCapability;
 import org.opentosca.toscana.model.capability.Requirement;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
 import org.opentosca.toscana.model.relation.HostedOn;
+import org.opentosca.toscana.model.visitor.NodeVisitor;
 import org.opentosca.toscana.model.visitor.Visitor;
 
 import lombok.Builder;
@@ -75,7 +76,7 @@ public class WebApplication extends RootNode {
     }
 
     @Override
-    public void accept(Visitor v) {
+    public void accept(NodeVisitor v) {
         v.visit(this);
     }
 }

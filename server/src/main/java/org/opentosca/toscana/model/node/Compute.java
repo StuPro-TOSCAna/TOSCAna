@@ -15,6 +15,7 @@ import org.opentosca.toscana.model.datatype.NetworkInfo;
 import org.opentosca.toscana.model.datatype.PortInfo;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
 import org.opentosca.toscana.model.relation.AttachesTo;
+import org.opentosca.toscana.model.visitor.NodeVisitor;
 import org.opentosca.toscana.model.visitor.Visitor;
 
 import lombok.Builder;
@@ -108,10 +109,6 @@ public class Compute extends RootNode {
             .localStorage(localStorage);
     }
 
-    @Override
-    public void accept(Visitor v) {
-        v.visit(this);
-    }
 
     /**
      @return {@link #privateAddress} */
@@ -123,6 +120,11 @@ public class Compute extends RootNode {
      @return {@link #publicAddress} */
     public Optional<String> getPublicAddress() {
         return Optional.ofNullable(publicAddress);
+    }
+    
+    @Override
+    public void accept(NodeVisitor v) {
+        v.visit(this);
     }
 }
 
