@@ -19,7 +19,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  Only the needed fields get stored in a attribute. the rest is put into the AdditionalProperties map
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ImageTag implements Serializable {
+public class ImageTag {
 
     @JsonProperty("name")
     private String name;
