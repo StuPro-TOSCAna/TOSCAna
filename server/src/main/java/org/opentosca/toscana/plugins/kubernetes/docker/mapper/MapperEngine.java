@@ -1,7 +1,6 @@
 package org.opentosca.toscana.plugins.kubernetes.docker.mapper;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -24,10 +23,10 @@ import static org.opentosca.toscana.plugins.kubernetes.docker.mapper.MapperUtils
  */
 class MapperEngine {
 
-    private final Map<String, DockerImage> imageMap;
+    TagBase tagBase;
 
-    public MapperEngine(Map<String, DockerImage> imageMap) {
-        this.imageMap = imageMap;
+    public MapperEngine(TagBase tagBase) {
+        this.tagBase = tagBase;
     }
 
     /**
@@ -64,7 +63,7 @@ class MapperEngine {
                 tag = "latest";
             } else {
                 String version = capability.getVersion().get();
-                DockerImage img = imageMap.get(distro);
+                DockerImage img = tagBase.get(distro);
                 Optional<DockerImageTag> imgTag = img.findTagByName(version);
                 if (imgTag.isPresent()) {
                     tag = imgTag.get().getName();
@@ -167,7 +166,7 @@ class MapperEngine {
      Perfoms the mapping to the base image
      */
     private String performMapping(OsCapability capability, String tag, String distro) {
-        DockerImage img = imageMap.get(distro);
+        DockerImage img = tagBase.get(distro);
         String architecture = getCapabilityArchitecture(capability)
             .orElseThrow(() -> new UnsupportedOperationException("Architecture not supported!"));
 
@@ -191,7 +190,7 @@ class MapperEngine {
     private boolean hasKnownDistributionName(OsCapability capability) {
         if (capability.getDistribution().isPresent()) {
             String distroName = convertDistributionName(capability);
-            DockerImage image = imageMap.get(distroName);
+            DockerImage image = tagBase.get(distroName);
             return image != null;
         }
         return false;

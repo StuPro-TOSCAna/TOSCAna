@@ -35,7 +35,7 @@ public class MapperLoaderTest extends BaseIntegrationTest {
             builder().distribution(DEBIAN).build()
         );
         logger.info("Performed a mapping to {}", image);
-        Map data = mapper.getImageMap();
+        TagBase data = mapper.getTagBase();
         assertEquals(DockerBaseImages.values().length, data.size());
     }
 
@@ -51,7 +51,7 @@ public class MapperLoaderTest extends BaseIntegrationTest {
 
         @Bean
         public BaseImageMapper getBaseImageMapper(@Autowired DockerBaseImages[] img, @Autowired Preferences preferences) {
-            return new BaseImageMapper(img, preferences);
+            return new BaseImageMapper(img, new TagBase(preferences));
         }
     }
 }

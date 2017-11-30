@@ -1,13 +1,6 @@
 package org.opentosca.toscana.plugins.kubernetes.docker.mapper;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +9,6 @@ import java.util.Set;
 import javax.annotation.PostConstruct;
 
 import org.opentosca.toscana.core.Profiles;
-import org.opentosca.toscana.core.util.Preferences;
 import org.opentosca.toscana.model.capability.OsCapability;
 import org.opentosca.toscana.plugins.kubernetes.docker.mapper.api.DockerRegistry;
 import org.opentosca.toscana.plugins.kubernetes.docker.mapper.api.model.Image;
@@ -28,7 +20,6 @@ import org.opentosca.toscana.plugins.kubernetes.docker.mapper.model.DockerImageT
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -42,78 +33,28 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @Profile("!" + Profiles.EXCLUDE_BASE_IMAGE_MAPPER)
-@SuppressWarnings("ConstantConditions")
 public class BaseImageMapper {
 
-    public static final String DOCKER_IMAGE_DIR = "misc/docker-imagetags";
     private static final Logger logger = LoggerFactory.getLogger(BaseImageMapper.class);
 
-    private final File dataDir;
-    private final File imageTagsFile;
-    private final File lastUpdateFile;
-
-    private List<ImageTags> imageTags;
-
     /**
-     Stores the update interval for the base Image mappings (in hours)
-     Taken from the property value:
-     <code>toscana.docker.base-image-mapper.update-interval</code>
+     Administrates the "raw" tag data collected from docker-hub
      */
-    @Value("${toscana.docker.base-image-mapper.update-interval}")
-    private int updateInterval;
+    private TagBase tagBase;
 
     /**
-     This field is used to check the last update timestamp
-     */
-    private long lastUpdate;
-    /**
-     The map containing the "raw" tag data collected from dockerhub
-     */
-    private Map<String, DockerImage> imageMap = new HashMap<>();
-
-    /**
-     A array conatinig the base images that this Base Image Mapper tries to map to
+     An array containing the base images that this Base Image Mapper tries to map to
      this usually is <code>DockerBaseImages.values()</code>
      */
     private final DockerBaseImages[] baseImages;
 
     private MapperEngine engine;
-
+    
     @Autowired
-    public BaseImageMapper(DockerBaseImages[] dockerBaseImages, Preferences preferences) {
+    public BaseImageMapper(DockerBaseImages[] dockerBaseImages, TagBase tagBase) {
         this.baseImages = dockerBaseImages;
-        engine = new MapperEngine(imageMap);
-        dataDir = new File(preferences.getDataDir(), DOCKER_IMAGE_DIR);
-        dataDir.mkdirs();
-        imageTagsFile = new File(dataDir, "image_tags");
-        lastUpdateFile = new File(dataDir, "last_update");
-        deserializeTags();
-
-    }
-
-    private void deserializeTags() {
-        try {
-            if (imageTagsFile.exists()) {
-                ObjectInputStream ois = new ObjectInputStream(new FileInputStream(imageTagsFile));
-                Object o = ois.readObject();
-                ois.close();
-                if (o instanceof List) {
-                    imageTags = (List<ImageTags>) o;
-                } else {
-                    logger.warn("File '{}' contained wrong data. Deleting file", imageTagsFile);
-                    imageTagsFile.delete();
-                }
-            }
-            if (lastUpdateFile.exists()) {
-                ObjectInputStream ois = new ObjectInputStream(new FileInputStream(lastUpdateFile));
-                lastUpdate = ois.readLong();
-                ois.close();
-            }
-        } catch (IOException | ClassNotFoundException e) {
-            logger.warn("Failed to deserialize docker tag information from disk. Removing files", e);
-            imageTagsFile.delete();
-            lastUpdateFile.delete();
-        }
+        this.tagBase = tagBase;
+        engine = new MapperEngine(tagBase);
     }
 
     /**
@@ -128,65 +69,35 @@ public class BaseImageMapper {
      Performs the Update of each image and sets the "last update" timestamp at the end
      */
     private void updateBaseImageMap() {
-        logger.info("Updating BaseImage Mappings");
-        for (DockerBaseImages baseImage : baseImages) {
-            logger.debug("Fetching tags for base image {}", baseImage.name());
-            if (imageTags == null) {
-                imageTags = fetchImageTags(baseImage);
-                persistTags(imageTags);
-            }
-            if (imageTags != null) {
+        if (tagBase.needsUpdate()) {
+            logger.info("Updating docker base tags");
+            for (DockerBaseImages baseImage : baseImages) {
+                logger.debug("Fetching tags for base image {}", baseImage.name());
+                List<ImageTags> imageTags = fetchImageTags(baseImage);
                 logger.debug("Remapping Tags for Base image {}", baseImage.name());
                 addImagesForType(baseImage, imageTags);
             }
-        }
-        setLastUpdateNow();
-        logger.info("Mappings have been updated. The next update will be executed in approx. {} hours", updateInterval);
-    }
-
-    private void persistTags(List<ImageTags> tags) {
-        try {
-            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(imageTagsFile));
-            oos.writeObject(tags);
-            oos.close();
-        } catch (IOException e) {
-            logger.warn("Failed to write most recent docker image tags to file '{}", imageTagsFile, e);
-        }
-
-    }
-
-    private void setLastUpdateNow() {
-        lastUpdate = System.currentTimeMillis();
-        try {
-            lastUpdateFile.delete();
-            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(lastUpdateFile));
-            oos.writeLong(lastUpdate);
-            oos.close();
-        } catch (IOException e) {
-            logger.warn("Failed to write most recent update time of docker image tags to file '{}", lastUpdateFile, e);
+            tagBase.update();
+        } else {
+            logger.debug("Not updating docker base tags: Using local data (next update: {})", tagBase.getNextUpdate());
         }
     }
-
 
     /**
      This is the spring scheduled job used to perform the updates on a regular basis
      <p>
-     This method gets called every 10 minutes and if the Current timestamp is larger than the old one plus the time
-     period
-     it triggers a update of the mapping tables
+     it triggers a update of the mapping tables (which gets executed, if an update is needed)
      */
-    @Scheduled(fixedRate = 600000)
+    @Scheduled(fixedRate = 600000, initialDelay = 600000)
     private void updateCronjob() {
-        long time = System.currentTimeMillis();
-        if (time >= (lastUpdate + updateInterval * 3600 * 1000)) {
-            updateBaseImageMap();
-        }
+        updateBaseImageMap();
     }
 
     /**
      Internal method used for converting the Data received from docker to the data model described
      in the <code>model</code> package
      */
+
     private void addImagesForType(DockerBaseImages baseImage, List<ImageTags> pages) {
         List<DockerImageTag> tagList = new ArrayList<>();
         for (ImageTags page : pages) {
@@ -205,16 +116,16 @@ public class BaseImageMapper {
                 tagList.add(tag);
             }
         }
-        imageMap.put(baseImage.name().toLowerCase(), new DockerImage(baseImage, tagList));
+        tagBase.put(baseImage.name().toLowerCase(), new DockerImage(baseImage, tagList));
     }
 
     protected void setImageMap(Map<String, DockerImage> imageMap) {
-        this.imageMap = imageMap;
-        this.engine = new MapperEngine(imageMap);
+        tagBase.putAll(imageMap);
+        this.engine = new MapperEngine(tagBase);
     }
 
-    protected Map<String, DockerImage> getImageMap() {
-        return imageMap;
+    protected TagBase getTagBase() {
+        return tagBase;
     }
 
     /**

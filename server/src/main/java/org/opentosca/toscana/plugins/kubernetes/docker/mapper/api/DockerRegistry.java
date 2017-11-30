@@ -34,7 +34,7 @@ public class DockerRegistry {
      Helper method to initilialize retrofit
      */
     private void initRetrofit(String url) {
-        logger.debug("Initializing Retrofit for Registry {}", url);
+        logger.trace("Initializing Retrofit for Registry {}", url);
         Retrofit retrofit = new Retrofit.Builder()
             .baseUrl(url)
             .addConverterFactory(JacksonConverterFactory.create())
@@ -70,7 +70,7 @@ public class DockerRegistry {
                     logger.error("Printing error response failed.", ex);
                     ex.printStackTrace();
                 }
-                return null;
+                return imageTags;
             }
         } while (next != null);
         return imageTags;
