@@ -10,6 +10,8 @@
     <!--set individual log levels for individual namespaces here -->
     <logger name="org.springframework" level="WARN"/>
     <logger name="org.hibernate" level="WARN"/>
+    <logger name="org.apache.http.wire" level="WARN"/>
+    <logger name="org.apache.http.headers" level="WARN"/>
     <logger name="org.apache.catalina.core" level="WARN"/>
     <logger name="org.jboss.logging" level="WARN"/>
     <logger name="org.apache.coyote.http11" level="WARN"/>

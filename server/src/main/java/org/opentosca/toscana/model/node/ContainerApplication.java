@@ -9,7 +9,7 @@ import org.opentosca.toscana.model.capability.StorageCapability;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
 import org.opentosca.toscana.model.relation.HostedOn;
 import org.opentosca.toscana.model.relation.RootRelationship;
-import org.opentosca.toscana.model.visitor.Visitor;
+import org.opentosca.toscana.model.visitor.NodeVisitor;
 
 import lombok.Builder;
 import lombok.Data;
@@ -80,7 +80,7 @@ public class ContainerApplication extends RootNode {
     }
 
     @Override
-    public void accept(Visitor v) {
+    public void accept(NodeVisitor v) {
         v.visit(this);
     }
 }

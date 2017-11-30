@@ -10,8 +10,8 @@ import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
 
 public class EffectiveModel {
-    
-    private final Graph<RootNode, RootRelationship> topology = 
+
+    private final Graph<RootNode, RootRelationship> topology =
         new DefaultDirectedGraph<RootNode, RootRelationship>(RootRelationship.class);
 
     public EffectiveModel(Set<RootNode> vertices) {

@@ -9,7 +9,7 @@ import org.opentosca.toscana.model.datatype.Port;
 import org.opentosca.toscana.model.datatype.PortSpec;
 import org.opentosca.toscana.model.datatype.Range;
 import org.opentosca.toscana.model.node.RootNode;
-import org.opentosca.toscana.model.visitor.Visitor;
+import org.opentosca.toscana.model.visitor.CapabilityVisitor;
 
 import lombok.Builder;
 import lombok.Data;
@@ -90,9 +90,9 @@ public class PublicEndpointCapability extends EndpointCapability {
 
     public static class PublicEndpointCapabilityBuilder extends EndpointCapabilityBuilder {
     }
-    
+
     @Override
-    public void accept(Visitor v) {
+    public void accept(CapabilityVisitor v) {
         v.visit(this);
     }
 }
