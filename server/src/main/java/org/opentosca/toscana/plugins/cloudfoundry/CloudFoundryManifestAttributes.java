@@ -3,7 +3,7 @@ package org.opentosca.toscana.plugins.cloudfoundry;
 /**
  provides attribute-names for the cloud foundry manifest
  */
-public enum CloudFoundryManifestAttributes {
+public enum CloudFoundryManifestAttribute {
     APPLICATIONS_SECTION("applications"),
     SERVICE("services"),
     INSTANCES("instances"),
