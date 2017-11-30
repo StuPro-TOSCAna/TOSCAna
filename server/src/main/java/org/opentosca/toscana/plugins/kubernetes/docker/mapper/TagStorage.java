@@ -38,7 +38,7 @@ public class TagStorage {
      Taken from the property value:
      <code>toscana.docker.base-image-mapper.persist-interval</code>
      */
-    @Value("${toscana.docker.base-image-mapper.persist-interval}")
+    @Value("${toscana.docker.base-image-mapper.update-interval}")
     private int updateInterval;
 
     public TagStorage(@Autowired Preferences preferences) {
