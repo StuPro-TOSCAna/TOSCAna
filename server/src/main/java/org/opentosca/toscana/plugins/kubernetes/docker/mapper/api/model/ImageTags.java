@@ -1,5 +1,6 @@
 package org.opentosca.toscana.plugins.kubernetes.docker.mapper.api.model;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +19,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  Only the needed fields get stored in a attribute. the rest is put into the AdditionalProperties map
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ImageTags {
+public class ImageTags implements Serializable {
 
     @JsonProperty("next")
     private Object next;

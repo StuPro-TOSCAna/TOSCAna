@@ -8,6 +8,7 @@ import org.opentosca.toscana.core.testutils.CategoryAwareJUnitRunner;
 import org.apache.commons.io.FileUtils;
 import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
@@ -18,15 +19,22 @@ import org.junit.runner.RunWith;
 @RunWith(CategoryAwareJUnitRunner.class)
 public abstract class BaseJUnitTest extends BaseTest {
 
-    public static final File PROJECT_ROOT = new File(System.getProperty("user.dir"));
 
     /**
      Grants disk access. Is reset before every test method.
      */
     @Rule
     public final TemporaryFolder temporaryFolder = new TemporaryFolder(PROJECT_ROOT);
-    // "user.dir" is module root
-    public File tmpdir;
+    private static final String STASIC_TMPDIR = "testsuite-tmpdir-static";
+    protected File tmpdir;
+    protected static File staticTmpDir;
+    
+    @BeforeClass
+    public final static void offerStaticTmpDir() throws IOException {
+        staticTmpDir = new File(PROJECT_ROOT, STASIC_TMPDIR);
+        FileUtils.deleteDirectory(staticTmpDir);
+        staticTmpDir.mkdir();
+    }
 
     @Before
     public final void initTmpdir() throws IOException {
@@ -39,5 +47,10 @@ public abstract class BaseJUnitTest extends BaseTest {
         for (File file : files) {
             FileUtils.deleteDirectory(file);
         }
+    }
+    
+    @AfterClass
+    public final static void cleanupStaticTmpDir() throws IOException {
+        FileUtils.deleteDirectory(staticTmpDir);
     }
 }

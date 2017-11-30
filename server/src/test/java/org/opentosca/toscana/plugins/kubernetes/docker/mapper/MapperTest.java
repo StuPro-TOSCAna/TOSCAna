@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import org.opentosca.toscana.core.BaseJUnitTest;
+import org.opentosca.toscana.core.util.Preferences;
 import org.opentosca.toscana.model.capability.OsCapability;
 import org.opentosca.toscana.model.capability.OsCapability.Distribution;
 import org.opentosca.toscana.plugins.kubernetes.docker.mapper.util.DataContainer;
@@ -20,6 +21,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.opentosca.toscana.model.capability.OsCapability.Architecture.x86_64;
 import static org.opentosca.toscana.model.capability.OsCapability.Type.LINUX;
 import static org.opentosca.toscana.model.capability.OsCapability.builder;
@@ -65,11 +68,13 @@ public class MapperTest extends BaseJUnitTest {
             .getResourceAsStream("kubernetes/base-image-mapper/image-map.json");
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         IOUtils.copy(in, out);
+        Preferences preferences = mock(Preferences.class);
+        when(preferences.getDataDir()).thenReturn(staticTmpDir);
         BaseImageMapper baseImageMapper = new BaseImageMapper(new DockerBaseImages[] {
             ALPINE,
             DEBIAN,
             UBUNTU
-        });
+        }, preferences);
         DataContainer data = mapper.readValue(new String(out.toByteArray()), DataContainer.class);
 
         baseImageMapper.setImageMap(data.data);

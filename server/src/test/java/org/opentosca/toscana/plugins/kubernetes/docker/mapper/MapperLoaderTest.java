@@ -3,6 +3,7 @@ package org.opentosca.toscana.plugins.kubernetes.docker.mapper;
 import java.util.Map;
 
 import org.opentosca.toscana.core.integration.BaseIntegrationTest;
+import org.opentosca.toscana.core.util.Preferences;
 
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -49,8 +50,8 @@ public class MapperLoaderTest extends BaseIntegrationTest {
         }
 
         @Bean
-        public BaseImageMapper getBaseImageMapper(@Autowired DockerBaseImages[] img) {
-            return new BaseImageMapper(img);
+        public BaseImageMapper getBaseImageMapper(@Autowired DockerBaseImages[] img, @Autowired Preferences preferences) {
+            return new BaseImageMapper(img, preferences);
         }
     }
 }

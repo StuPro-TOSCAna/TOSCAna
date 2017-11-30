@@ -30,6 +30,10 @@ import org.springframework.stereotype.Repository;
 public class CsarFilesystemDao implements CsarDao {
 
     /**
+     The name of the directory which contains all csars
+     */
+    public final static String CSARS_DIR = "csars";
+    /**
      the name of the directory which contains the transformations
      */
     public final static String TRANSFORMATION_DIR = "transformations";
@@ -48,7 +52,7 @@ public class CsarFilesystemDao implements CsarDao {
 
     @Autowired
     public CsarFilesystemDao(Preferences preferences, @Lazy TransformationDao transformationDao) {
-        this.dataDir = preferences.getDataDir();
+        this.dataDir = new File(preferences.getDataDir(), CSARS_DIR);
         this.transformationDao = transformationDao;
 
         if (!dataDir.exists()) {
