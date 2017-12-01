@@ -1,0 +1,303 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: AWSCloudFormation Template for an LAMP stack that is distributed between an EC2 and an AWS RDS
+Parameters:
+  KeyName:
+     Description: Name of an existing EC2 KeyPair to enable SSH access to the instances
+     Type: 'AWS::EC2::KeyPair::KeyName'
+     ConstraintDescription: must be the name of an existing EC2 KeyPair.
+Resources:
+  WebServerInstance:
+    Type: 'AWS::EC2::Instance'
+    Metadata:
+      'AWS::CloudFormation::Init':
+        configSets:
+          InstallAndRun:
+            - Install
+            - Configure
+        Install:
+          packages:
+            apt:
+              apache2: []
+              php: []
+              php-mysql: []
+              libapache2-mod-php7.0: []
+              mysql-client: []
+          files:
+            /var/www/html/myphpapp.php:
+              content: !Sub |
+                <?php
+                // include the credentials to connect to the db
+                include_once "mysql-credentials.php";
+
+                // get task from post after task was entered in form
+                $post = $_POST['task'];
+                if ($post != "") {
+                    saveToDb($post);
+                }
+                /**
+                * saved task to db
+                */
+                function saveToDb($task)
+                {
+                    $conn = newDbConnection();
+                    $task = htmlspecialchars($task);
+                    if (!$conn->query("INSERT INTO tasks(task) VALUES('".$task."')")) {
+                        echo("Creating task failed");
+                    }
+                    $conn->close();
+                }
+                /**
+                * reads from db and prints it in html
+                */
+                function readFromDb()
+                {
+                    $sql = "select * from tasks";
+                    $conn = newDbConnection();
+                    $result = $conn->query($sql);
+                    $conn->close();
+                    if ($result->num_rows > 0) {
+                    // output data for each row
+                    while ($row = $result->fetch_assoc()) {
+                        echo htmlspecialchars("id: " . $row['id']. " - Task: " . $row['task'])."<br>";
+                    }
+                    return;
+                    }
+                    echo "0 results";
+                }
+                /**
+                * generates new DB connection with given credentials
+                */
+                function newDbConnection()
+                {
+                    extract($GLOBALS);
+                   $conn = new mysqli($db_host, $db_user, $db_password, $db_name, $db_port);
+                    if ($conn->connect_error) {
+                        die("Connection failed: " . $conn->connect_error);
+                    }
+                    return $conn;
+                }
+                ?>
+                <!DOCTYPE html>
+                <html>
+                   <head>
+                      <meta charset="utf-8">
+                      <title>SimpleTaskApp</title>
+                      <style>
+                      body {
+                         font-family: sans-serif;
+                      }
+                      </style>
+                   </head>
+                   <body>
+                      <h1>SimpleTaskApp</h1>
+                      <!-- form to enter tasks -->
+                      <form class="insertTask" action="myphpapp.php" method="post">
+                         <input type="text" name="task" />
+                         <button type="submit" name="button">submit</button>
+                      </form>
+                      <?php
+                      //print tasks out of the db
+                      readFromDb();
+                       ?>
+                   </body>
+                </html>
+              mode: '000600'
+              owner: www-data
+              group: www-data
+            /var/www/html/mysql-credentials.php:
+              content: !Sub |
+                <?php
+                $db_host = "DATABASE_HOST";
+                $db_user = "root";
+                $db_password = "DATABASE_PASSWORD";
+                $db_name = "DATABASE_NAME";
+                $db_port = DATABASE_PORT;
+                ?>
+              mode: '000400'
+              owner: www-data
+              group: www-data
+            /etc/cfn/cfn-hup.conf:
+              content: !Join
+                - ''
+                - - |
+                    [main]
+                  - stack=
+                  - !Ref 'AWS::StackId'
+                  - |+
+
+                  - region=
+                  - !Ref 'AWS::Region'
+                  - |+
+
+              mode: '000400'
+              owner: root
+              group: root
+            /etc/cfn/hooks.d/cfn-auto-reloader.conf:
+              content: !Join
+                - ''
+                - - |
+                    [cfn-auto-reloader-hook]
+                  - |
+                    triggers=post.update
+                  - >
+                    path=Resources.WebServerInstance.Metadata.AWS::CloudFormation::Init
+                  - 'action=/usr/local/bin/cfn-init -v '
+                  - '         --stack '
+                  - !Ref 'AWS::StackName'
+                  - '         --resource WebServerInstance '
+                  - '         --configsets InstallAndRun '
+                  - '         --region '
+                  - !Ref 'AWS::Region'
+                  - |+
+
+                  - |
+                    runas=root
+              mode: '000400'
+              owner: root
+              group: root
+            /tmp/configure_myphpapp.sh:
+              content:  |
+                CREDENTIALS="/var/www/html/mysql-credentials.php"
+
+                sed -i "s:DATABASE_HOST:${database_host}:g" $CREDENTIALS
+                sed -i "s:DATABASE_PASSWORD:${database_password}:g" $CREDENTIALS
+                sed -i "s:DATABASE_NAME:${database_name}:g" $CREDENTIALS
+                sed -i "s:DATABASE_PORT:${database_port}:g" $CREDENTIALS
+              mode: '000500'
+              owner: root
+              group: root
+            /tmp/mysql_dbms_configure.sh:
+              content: |
+                #!/bin/bash
+                cat << EOF | mysql -h ${database_host} -P ${database_port} -u root --password=${database_password}
+                USE ${database_name};
+                create table tasks (id INT not null auto_increment,task varchar(255), primary key(id));
+                EXIT
+                EOF
+              mode: '000500'
+              owner: root
+              group: root
+          services:
+            sysvinit:
+              apache2:
+                enabled: 'true'
+                ensureRunning: 'true'
+                packages:
+                  apt:
+                    - "libapache2-mod-php7.0"
+              cfn-hup:
+                enabled: 'true'
+                ensureRunning: 'true'
+                files:
+                  - /etc/cfn/cfn-hup.conf
+                  - /etc/cfn/hooks.d/cfn-auto-reloader.conf
+        Configure:
+          commands:
+            configure_myphpapp:
+              command: '/bin/sh /tmp/configure_myphpapp.sh'
+              env:
+                database_host: !GetAtt MySQLDatabase.Endpoint.Address
+                database_port: !GetAtt MySQLDatabase.Endpoint.Port
+                database_name: mydatabase
+                database_password: abcd1234
+            dbms_configure:
+              command: '/bin/sh /tmp/mysql_dbms_configure.sh'
+              env:
+                database_host: !GetAtt MySQLDatabase.Endpoint.Address
+                database_port: !GetAtt MySQLDatabase.Endpoint.Port
+                database_name: mydatabase
+                database_password: abcd1234
+    Properties:
+      ImageId: 'ami-0def3275'
+      InstanceType: 't2.micro'
+      SecurityGroups:
+        - !Ref WebServerSecurityGroup
+      KeyName: !Ref KeyName
+      UserData: !Base64
+        'Fn::Join':
+          - ''
+          - - |
+              #!/bin/bash -xe
+            - |
+              mkdir -p /tmp/aws-cfn-bootstrap-latest
+            - |
+              curl https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz | tar xz -C /tmp/aws-cfn-bootstrap-latest --strip-components 1
+            - |
+              apt-get update
+            - |
+              apt-get -y install python-setuptools
+            - |
+              easy_install /tmp/aws-cfn-bootstrap-latest
+            - |
+              cp /tmp/aws-cfn-bootstrap-latest/init/ubuntu/cfn-hup /etc/init.d/cfn-hup
+            - |
+              chmod 755 /etc/init.d/cfn-hup
+            - |
+              update-rc.d cfn-hup defaults
+            - |+
+            - |
+              # Install the files and packages from the metadata
+            - '/usr/local/bin/cfn-init -v '
+            - '         --stack '
+            - !Ref 'AWS::StackName'
+            - '         --resource WebServerInstance '
+            - '         --configsets InstallAndRun '
+            - '         --region '
+            - !Ref 'AWS::Region'
+            - |+
+
+            - |
+              # Signal the status from cfn-init
+            - '/usr/local/bin/cfn-signal -e $? '
+            - '         --stack '
+            - !Ref 'AWS::StackName'
+            - '         --resource WebServerInstance '
+            - '         --region '
+            - !Ref 'AWS::Region'
+            - |+
+
+  WebServerSecurityGroup:
+     Type: 'AWS::EC2::SecurityGroup'
+     Properties:
+       GroupDescription: Enable HTTP access via port 80 and SSH via port 22
+       SecurityGroupIngress:
+         - IpProtocol: tcp
+           FromPort: '80'
+           ToPort: '80'
+           CidrIp: 0.0.0.0/0
+         - IpProtocol: tcp
+           FromPort: '22'
+           ToPort: '22'
+           CidrIp: 0.0.0.0/0
+
+  MySQLDatabase:
+     Type: 'AWS::RDS::DBInstance'
+     Properties:
+       Engine: MySQL
+       DBName: 'mydatabase'
+       MasterUsername: 'root'
+       MasterUserPassword: 'abcd1234'
+       DBInstanceClass: db.t2.micro
+       AllocatedStorage: '20'
+       StorageType: gp2
+       VPCSecurityGroups:
+       - !GetAtt DBEC2SecurityGroup.GroupId
+
+  DBEC2SecurityGroup:
+     Type: 'AWS::EC2::SecurityGroup'
+     Properties:
+       GroupDescription: Open database for access
+       SecurityGroupIngress:
+         - IpProtocol: tcp
+           FromPort: '3306'
+           ToPort: '3306'
+           SourceSecurityGroupName: !Ref WebServerSecurityGroup
+Outputs:
+  WebsiteURL:
+    Description: URL for newly created LAMP stack
+    Value: !Join
+      - ''
+      - - 'http://'
+        - !GetAtt
+          - WebServerInstance
+          - PublicDnsName
