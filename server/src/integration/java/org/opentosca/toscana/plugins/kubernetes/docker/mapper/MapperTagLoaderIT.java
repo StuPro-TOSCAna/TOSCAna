@@ -1,9 +1,11 @@
 package org.opentosca.toscana.plugins.kubernetes.docker.mapper;
 
-import org.opentosca.toscana.core.integration.BaseIntegrationTest;
+import org.opentosca.toscana.IntegrationTest;
+import org.opentosca.toscana.core.BaseSpringIntegrationTest;
 import org.opentosca.toscana.core.util.Preferences;
 
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +21,11 @@ import static org.opentosca.toscana.model.capability.OsCapability.Distribution.D
 import static org.opentosca.toscana.model.capability.OsCapability.builder;
 
 @ActiveProfiles( {"bimloader"})
-@ContextConfiguration(classes = {MapperLoaderTest.BIMTestConfiguration.class})
-public class MapperLoaderTest extends BaseIntegrationTest {
+@ContextConfiguration(classes = {MapperTagLoaderIT.BIMTestConfiguration.class})
+@Category(IntegrationTest.class)
+public class MapperTagLoaderIT extends BaseSpringIntegrationTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(MapperLoaderTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(MapperTagLoaderIT.class);
 
     @Autowired
     private BaseImageMapper mapper;

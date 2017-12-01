@@ -1,9 +1,7 @@
-package org.opentosca.toscana.core.integration.upload;
+package org.opentosca.toscana.core.api.upload;
 
-import org.opentosca.toscana.core.integration.BaseIntegrationTest;
+import org.opentosca.toscana.core.BaseSpringIntegrationTest;
 import org.opentosca.toscana.core.testdata.TestCsars;
-import org.opentosca.toscana.core.testutils.TestCategories;
-import org.opentosca.toscana.core.testutils.TestCategory;
 import org.opentosca.toscana.retrofit.TOSCAnaAPI;
 import org.opentosca.toscana.retrofit.util.TOSCAnaServerException;
 
@@ -15,9 +13,9 @@ import org.slf4j.LoggerFactory;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-public class UploadTest extends BaseIntegrationTest {
+public class CsarUploadIT extends BaseSpringIntegrationTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(UploadTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(CsarUploadIT.class);
 
     private TOSCAnaAPI toscanaAPI;
 
@@ -26,7 +24,6 @@ public class UploadTest extends BaseIntegrationTest {
         toscanaAPI = new TOSCAnaAPI(getHttpUrl());
     }
 
-    @TestCategory(TestCategories.FAST)
     @Test(timeout = 30000)
     public void testFileUpload() throws Exception {
         System.err.println("Server started!");
@@ -34,7 +31,6 @@ public class UploadTest extends BaseIntegrationTest {
         toscanaAPI.uploadCsar("test", TestCsars.CSAR_YAML_VALID_MINIMAL_DOCKER);
     }
 
-    @TestCategory(TestCategories.FAST)
     @Test(timeout = 30000)
     public void testFileUploadFail() throws Exception {
         System.err.println("Server started");

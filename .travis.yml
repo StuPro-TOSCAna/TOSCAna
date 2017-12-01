@@ -7,6 +7,9 @@ before_install:
 - sudo apt-get install -y jq
 - wget -O ~/codacy-coverage-reporter-assembly-latest.jar $(curl https://api.github.com/repos/codacy/codacy-coverage-reporter/releases/latest
   | jq -r .assets[0].browser_download_url)
+script:
+# Use verify on the Profile all to execute unit and integration tests.
+- mvn verify -P all
 after_success:
 - bash <(curl -s https://codecov.io/bash)
 - java -cp ~/codacy-coverage-reporter-assembly-latest.jar com.codacy.CodacyCoverageReporter

@@ -4,7 +4,6 @@ import java.util.Optional;
 
 import org.opentosca.toscana.core.BaseTest;
 import org.opentosca.toscana.core.plugin.PluginService;
-import org.opentosca.toscana.core.testutils.CategoryAwareSpringRunner;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 
 import org.junit.Before;
@@ -16,6 +15,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -27,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@RunWith(CategoryAwareSpringRunner.class)
+@RunWith(SpringRunner.class)
 @WebMvcTest(value = PlatformController.class)
 @ActiveProfiles(INTEGRATION_TEST_PROFILE)
 @DirtiesContext(
