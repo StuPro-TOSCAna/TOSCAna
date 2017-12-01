@@ -15,13 +15,10 @@ public class RootTemplate {
     @JsonProperty("Description")
     private String description = "";
     
-    @JsonProperty()
     private Map<String, Parameters> parameters = new HashMap<>();
     
-    @JsonProperty
-    private Map<String, Resource> resources = new HashMap<>();
+    private Map<String, Resources> resources = new HashMap<>();
     
-    @JsonProperty
     private Map<String, Outputs> outputs = new HashMap<>();
     
     
