@@ -10,7 +10,9 @@ import org.opentosca.toscana.core.util.Preferences;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +32,7 @@ import org.springframework.test.context.TestPropertySource;
 @TestPropertySource("classpath:test-properties.yml")
 public abstract class BaseSpringTest extends BaseTest {
 
-    private final static Logger logger = LoggerFactory.getLogger(BaseSpringTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(BaseSpringTest.class);
 
     protected File tmpdir;
     @Autowired
@@ -46,6 +48,7 @@ public abstract class BaseSpringTest extends BaseTest {
         tmpdir = preferences.getDataDir();
     }
 
+    
     @Before
     public final void startupPrepareDisk() throws IOException {
         FileUtils.deleteDirectory(tmpdir);
@@ -58,4 +61,5 @@ public abstract class BaseSpringTest extends BaseTest {
         FileUtils.deleteDirectory(tmpdir);
         logger.info("Cleaned up disk");
     }
+    
 }

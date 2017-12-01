@@ -39,6 +39,7 @@ public class CsarFilesystemDaoTest extends BaseJUnitTest {
     private Preferences preferences;
     @Mock
     private Log fakeLog;
+    private File generalCsarsDir;
 
     @Before
     public void setUp() {
@@ -47,6 +48,7 @@ public class CsarFilesystemDaoTest extends BaseJUnitTest {
         transformationDao = mock(TransformationDao.class);
         csarDao = new CsarFilesystemDao(preferences, transformationDao);
         csarDao.init();
+        generalCsarsDir = new File(tmpdir, CsarFilesystemDao.CSARS_DIR);
     }
 
     @Test
@@ -55,7 +57,7 @@ public class CsarFilesystemDaoTest extends BaseJUnitTest {
         File csarFile = TestCsars.CSAR_YAML_VALID_DOCKER_SIMPLETASK;
         InputStream csarStream = new FileInputStream(csarFile);
         csarDao.create(identifier, csarStream);
-        File csarFolder = new File(tmpdir, identifier);
+        File csarFolder = new File(generalCsarsDir, identifier);
         File contentFolder = new File(csarFolder, CsarFilesystemDao.CONTENT_DIR);
         File transformationFolder = new File(csarFolder, CsarFilesystemDao.TRANSFORMATION_DIR);
         assertTrue(contentFolder.isDirectory());
@@ -67,7 +69,7 @@ public class CsarFilesystemDaoTest extends BaseJUnitTest {
     public void deleteCsarRemovesDataOnDisk() throws Exception {
         String identifier = createFakeCsarDirectories(1)[0];
         csarDao.delete(identifier);
-        File csarDir = new File(tmpdir, identifier);
+        File csarDir = new File(generalCsarsDir, identifier);
         assertFalse(csarDir.exists());
     }
     
@@ -127,7 +129,7 @@ public class CsarFilesystemDaoTest extends BaseJUnitTest {
         String[] identifiers = new String[10];
         for (int i = 0; i < numberOfCsars; i++) {
             identifiers[i] = "test" + i;
-            File fakeApp = new File(tmpdir, identifiers[i]);
+            File fakeApp = new File(generalCsarsDir, identifiers[i]);
             fakeApp.mkdir();
             File fakeContentDir = new File(fakeApp, CsarFilesystemDao.CONTENT_DIR);
             fakeContentDir.mkdir();
@@ -146,7 +148,7 @@ public class CsarFilesystemDaoTest extends BaseJUnitTest {
         createFakeCsarDirectories(numberOfCsars);
         // create some random file in data_dir
         String simpleFileName = "randomFile";
-        File randomFile = new File(tmpdir, simpleFileName);
+        File randomFile = new File(generalCsarsDir, simpleFileName);
         randomFile.createNewFile();
 
         csarDao = new CsarFilesystemDao(preferences, transformationDao);

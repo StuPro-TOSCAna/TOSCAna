@@ -1,7 +1,6 @@
 package org.opentosca.toscana.plugins.kubernetes.docker.mapper;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +20,6 @@ import org.opentosca.toscana.plugins.kubernetes.docker.mapper.model.DockerImageT
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -30,49 +28,37 @@ import org.springframework.stereotype.Service;
  This class allows the mapping of OsCapabilities (from a tosca model) to a docker base image.
  When initialized with Spring this class will automatically download the latest tags from the base images
  defined in the <code>DockerBaseImages</code> every 24 hours (by default).
- To update this value please modify the <code>toscana.docker.base-image-mapper.update-interval</code> property (value in
+ To persist this value please modify the <code>toscana.docker.base-image-mapper.persist-interval</code> property (value in
  hours)
  */
 @Service
 @Profile("!" + Profiles.EXCLUDE_BASE_IMAGE_MAPPER)
-@SuppressWarnings("ConstantConditions")
 public class BaseImageMapper {
 
     private static final Logger logger = LoggerFactory.getLogger(BaseImageMapper.class);
 
     /**
-     Stores the update intervall for the base Image mappings (in hours)
-     Taken from the property value:
-     <code>toscana.docker.base-image-mapper.update-interval</code>
+     Administrates the "raw" tag data collected from docker-hub
      */
-    @Value("${toscana.docker.base-image-mapper.update-interval}")
-    private int updateInterval;
+    private TagStorage tagStorage;
 
     /**
-     This field is used to check the last update timestamp
-     */
-    private long lastUpdate;
-    /**
-     The map containing the "raw" tag data collected from dockerhub
-     */
-    private Map<String, DockerImage> imageMap = new HashMap<>();
-
-    /**
-     A array conatinig the base images that this Base Image Mapper tries to map to
+     An array containing the base images that this Base Image Mapper tries to map to
      this usually is <code>DockerBaseImages.values()</code>
      */
     private final DockerBaseImages[] baseImages;
 
     private MapperEngine engine;
-
+    
     @Autowired
-    public BaseImageMapper(DockerBaseImages[] dockerBaseImages) {
+    public BaseImageMapper(DockerBaseImages[] dockerBaseImages, TagStorage tagStorage) {
         this.baseImages = dockerBaseImages;
-        engine = new MapperEngine(imageMap);
+        this.tagStorage = tagStorage;
+        engine = new MapperEngine(tagStorage);
     }
 
     /**
-     Toggles the first update of the mappings during initialisation in spring
+     Toggles the first persist of the mappings during initialisation in spring
      */
     @PostConstruct
     private void postConstruct() {
@@ -80,42 +66,39 @@ public class BaseImageMapper {
     }
 
     /**
-     Performs the Update of each image and sets the "last update" timestamp at the end
+     Performs the Update of each image and sets the "last persist" timestamp at the end
      */
     private void updateBaseImageMap() {
-        logger.info("Updating BaseImage Mappings");
-        for (DockerBaseImages baseImage : baseImages) {
-            logger.debug("Fetching tags for base image {}", baseImage.name());
-            List<ImageTags> tags = fetchImageTags(baseImage);
-            if (tags != null) {
-                addImagesForType(baseImage, tags);
+        if (tagStorage.needsUpdate()) {
+            logger.info("Updating docker base tags");
+            for (DockerBaseImages baseImage : baseImages) {
+                logger.debug("Fetching tags for base image {}", baseImage.name());
+                List<ImageTags> imageTags = fetchImageTags(baseImage);
+                logger.debug("Remapping Tags for Base image {}", baseImage.name());
+                addImagesForType(baseImage, imageTags);
             }
+            tagStorage.persist();
+        } else {
+            logger.debug("Not updating docker base tags: Using local data (next persist: {})", tagStorage.getNextUpdate());
         }
-        lastUpdate = System.currentTimeMillis();
-        logger.info("Mappings have been updated. The next update will be executed in approx. {} hours", updateInterval);
     }
 
     /**
-     This is the spring scheduled job used to perform the updates after the frist one
+     This is the spring scheduled job used to perform the updates on a regular basis
      <p>
-     This method gets called every 10 minutes and if the Current timestamp is larger than the old one plus the time
-     perion
-     it triggers a update of the mapping tables
+     it triggers a persist of the mapping tables (which gets executed, if an persist is needed)
      */
-    @Scheduled(fixedRate = 600000)
+    @Scheduled(fixedRate = 600000, initialDelay = 600000)
     private void updateCronjob() {
-        long time = System.currentTimeMillis();
-        if (time >= (lastUpdate + updateInterval * 3600 * 1000)) {
-            updateBaseImageMap();
-        }
+        updateBaseImageMap();
     }
 
     /**
      Internal method used for converting the Data received from docker to the data model described
      in the <code>model</code> package
      */
+
     private void addImagesForType(DockerBaseImages baseImage, List<ImageTags> pages) {
-        logger.debug("Remapping Tags for Base image {}", baseImage.name());
         List<DockerImageTag> tagList = new ArrayList<>();
         for (ImageTags page : pages) {
             for (ImageTag imageTag : page.getImageTags()) {
@@ -133,16 +116,16 @@ public class BaseImageMapper {
                 tagList.add(tag);
             }
         }
-        imageMap.put(baseImage.name().toLowerCase(), new DockerImage(baseImage, tagList));
+        tagStorage.put(baseImage.name().toLowerCase(), new DockerImage(baseImage, tagList));
     }
 
     protected void setImageMap(Map<String, DockerImage> imageMap) {
-        this.imageMap = imageMap;
-        this.engine = new MapperEngine(imageMap);
+        tagStorage.putAll(imageMap);
+        this.engine = new MapperEngine(tagStorage);
     }
 
-    protected Map<String, DockerImage> getImageMap() {
-        return imageMap;
+    protected TagStorage getTagStorage() {
+        return tagStorage;
     }
 
     /**
@@ -155,7 +138,7 @@ public class BaseImageMapper {
 
     /**
      This method attempts to map a OsCapability to a docker base image.
-     If the mapping fails a UnsopportedOperationException is thrown. Reasons for failiure are: Invalid Architecture,
+     If the mapping fails a UnsupportedOperationException is thrown. Reasons for failure are: Invalid Architecture,
      Unsupported type, Unknown version...
      */
     public String mapToBaseImage(OsCapability capability) {
