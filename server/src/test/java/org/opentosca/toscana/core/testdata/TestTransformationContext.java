@@ -58,7 +58,7 @@ public class TestTransformationContext extends BaseSpringTest {
 
     @Test
     public void serviceTemplateOfContextNotNull() throws FileNotFoundException, InvalidCsarException, PlatformNotFoundException {
-        TransformationContext context = getContext(TestCsars.CSAR_YAML_VALID_DOCKER_SIMPLETASK, TestPlugins.PLATFORM1);
+        TransformationContext context = getContext(TestCsars.CSAR_YAML_VALID_MINIMAL_DOCKER, TestPlugins.PLATFORM1);
         assertNotNull(context.getModel());
     }
 }

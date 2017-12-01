@@ -54,7 +54,7 @@ public class CsarFilesystemDaoTest extends BaseJUnitTest {
     @Test
     public void create() throws Exception {
         String identifier = "my-csar-checkStateNoPropsSet";
-        File csarFile = TestCsars.CSAR_YAML_VALID_DOCKER_SIMPLETASK;
+        File csarFile = TestCsars.CSAR_YAML_VALID_MINIMAL_DOCKER;
         InputStream csarStream = new FileInputStream(csarFile);
         csarDao.create(identifier, csarStream);
         File csarFolder = new File(generalCsarsDir, identifier);
@@ -62,7 +62,7 @@ public class CsarFilesystemDaoTest extends BaseJUnitTest {
         File transformationFolder = new File(csarFolder, CsarFilesystemDao.TRANSFORMATION_DIR);
         assertTrue(contentFolder.isDirectory());
         assertTrue(transformationFolder.isDirectory());
-        assertTrue(contentFolder.list().length > 2); // not elegant but lazy..
+        assertTrue(contentFolder.list().length == 1); // not elegant but lazy..
     }
 
     @Test

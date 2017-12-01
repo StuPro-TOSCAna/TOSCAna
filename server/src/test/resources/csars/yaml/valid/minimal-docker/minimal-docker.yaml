@@ -1,0 +1,33 @@
+tosca_definitions_version: tosca_simple_yaml_1_1
+
+repositories:
+  docker_hub: https://registry.hub.docker.com/
+
+topology_template:
+  node_templates:
+    simpleTaskApp:
+      type: Application.Docker
+      requirements:
+        - host: dockerRuntime
+      artifacts:
+        my_image:
+          file: nfode/simpletaskapp:v1
+          type: tosca.artifacts.Deployment.Image.Container.Docker
+          repository: docker_hub
+      interfaces:
+        Standard:
+          create:
+            implementation: my_image
+
+    dockerRuntime:
+      type: Container.Runtime
+      capabilities:
+        scalable:
+          properties:
+            min_instances: 1
+            max_instances: 1
+
+  outputs:
+    endpoint:
+      value: { get_attribute: [ simpleTaskApp, endpoint ] }
+      type: string

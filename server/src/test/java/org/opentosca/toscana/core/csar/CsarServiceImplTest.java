@@ -37,7 +37,7 @@ public class CsarServiceImplTest extends BaseJUnitTest {
 
     @Test
     public void submitCsar() throws Exception {
-        File file = TestCsars.CSAR_YAML_VALID_DOCKER_SIMPLETASK;
+        File file = TestCsars.CSAR_YAML_VALID_MINIMAL_DOCKER;
         InputStream stream = new FileInputStream(file);
         when(csarDao.create(identifier, stream)).thenReturn(csar);
 

@@ -31,7 +31,7 @@ public class UploadTest extends BaseIntegrationTest {
     public void testFileUpload() throws Exception {
         System.err.println("Server started!");
 
-        toscanaAPI.uploadCsar("test", TestCsars.CSAR_YAML_VALID_DOCKER_SIMPLETASK);
+        toscanaAPI.uploadCsar("test", TestCsars.CSAR_YAML_VALID_MINIMAL_DOCKER);
     }
 
     @TestCategory(TestCategories.FAST)
