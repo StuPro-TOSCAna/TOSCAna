@@ -16,6 +16,9 @@ import org.opentosca.toscana.model.capability.PublicEndpointCapability;
 import org.opentosca.toscana.model.capability.ScalableCapability;
 import org.opentosca.toscana.model.capability.StorageCapability;
 
+/**
+ Unimplemented methods throw an {@link UnsupportedTypeException} when invoked.
+ */
 public interface StrictCapabilityVisitor extends CapabilityVisitor {
     
     @Override

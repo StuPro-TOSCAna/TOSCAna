@@ -18,73 +18,93 @@ import org.opentosca.toscana.model.node.WebApplication;
 import org.opentosca.toscana.model.node.WebServer;
 import org.opentosca.toscana.model.node.WordPress;
 
-public interface NodeVisitor {
+/**
+ Unimplemented methods throw an {@link UnsupportedTypeException} when invoked.
+ */
+public interface StrictNodeVisitor extends NodeVisitor {
 
+    @Override
     default void visit(Apache node) {
-        // noop
+        throw new UnsupportedTypeException(Apache.class);
     }
 
+    @Override
     default void visit(BlockStorage node) {
-        // noop
+        throw new UnsupportedTypeException(BlockStorage.class);
     }
 
+    @Override
     default void visit(Compute node) {
-        // noop
+        throw new UnsupportedTypeException(Compute.class);
     }
 
+    @Override
     default void visit(ContainerApplication node) {
-        // noop
+        throw new UnsupportedTypeException(ContainerApplication.class);
     }
 
+    @Override
     default void visit(ContainerRuntime node) {
-        // noop
+        throw new UnsupportedTypeException(ContainerRuntime.class);
     }
 
+    @Override
     default void visit(Database node) {
-        // noop
+        throw new UnsupportedTypeException(Database.class);
     }
 
+    @Override
     default void visit(Dbms node) {
-        // noop
+        throw new UnsupportedTypeException(Dbms.class);
     }
 
+    @Override
     default void visit(DockerApplication node) {
-        // noop
+        throw new UnsupportedTypeException(DockerApplication.class);
     }
 
+    @Override
     default void visit(LoadBalancer node) {
-        // noop
+        throw new UnsupportedTypeException(LoadBalancer.class);
     }
 
+    @Override
     default void visit(MysqlDatabase node) {
-        // noop
+        throw new UnsupportedTypeException(MysqlDatabase.class);
     }
 
+    @Override
     default void visit(MysqlDbms node) {
-        // noop
+        throw new UnsupportedTypeException(MysqlDbms.class);
     }
 
+    @Override
     default void visit(Nodejs node) {
-        // noop
+        throw new UnsupportedTypeException(Nodejs.class);
     }
 
+    @Override
     default void visit(ObjectStorage node) {
-        // noop
+        throw new UnsupportedTypeException(ObjectStorage.class);
     }
 
+    @Override
     default void visit(SoftwareComponent node) {
-        // noop
+        throw new UnsupportedTypeException(SoftwareComponent.class);
     }
 
+    @Override
     default void visit(WebApplication node) {
-        // noop
+        throw new UnsupportedTypeException(WebApplication.class);
     }
 
+    @Override
     default void visit(WebServer node) {
-        // noop
+        throw new UnsupportedTypeException(WebServer.class);
     }
 
+    @Override
     default void visit(WordPress node) {
-        // noop
+        throw new UnsupportedTypeException(WordPress.class);
     }
 }

@@ -7,29 +7,38 @@ import org.opentosca.toscana.model.relation.HostedOn;
 import org.opentosca.toscana.model.relation.RootRelationship;
 import org.opentosca.toscana.model.relation.RoutesTo;
 
-public interface RelationshipVisitor {
+/**
+ Unimplemented methods throw an {@link UnsupportedTypeException} when invoked.
+ */
+public interface StrictRelationshipVisitor extends RelationshipVisitor {
 
+    @Override
     default void visit(RootRelationship relation) {
-        // noop
+        throw new UnsupportedTypeException(RootRelationship.class);
     }
 
+    @Override
     default void visit(AttachesTo relation) {
-        // noop
+        throw new UnsupportedTypeException(AttachesTo.class);
     }
 
+    @Override
     default void visit(ConnectsTo relation) {
-        // noop
+        throw new UnsupportedTypeException(ConnectsTo.class);
     }
 
+    @Override
     default void visit(DependsOn relation) {
-        // noop
+        throw new UnsupportedTypeException(DependsOn.class);
     }
 
+    @Override
     default void visit(HostedOn relation) {
-        // noop
+        throw new UnsupportedTypeException(HostedOn.class);
     }
 
+    @Override
     default void visit(RoutesTo relation) {
-        // noop
+        throw new UnsupportedTypeException(RoutesTo.class);
     }
 }
