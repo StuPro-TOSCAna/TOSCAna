@@ -46,10 +46,8 @@ public class TestEffectiveModels {
             .port(new Port(80)).build();
         ScalableCapability scalableCapability = ScalableCapability.builder(Range.EXACTLY_ONCE).build();
         BindableCapability bindableCapability = BindableCapability.builder().build();
-        //HostedOn hostedOnCompute = HostedOn.builder().build();
         AttachesTo attachesTo = AttachesTo.builder("mount").build();
         AttachmentCapability attachmentCapability = AttachmentCapability.builder().build();
-        //BlockStorage blockStorage = BlockStorage.builder("storage", "1", attachmentCapability).build();
 
         Requirement<AttachmentCapability, BlockStorage, AttachesTo> computeRequirement =
             Requirement.<AttachmentCapability, BlockStorage, AttachesTo>builder(attachmentCapability, attachesTo)

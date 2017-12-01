@@ -11,6 +11,7 @@ import org.opentosca.toscana.model.capability.OsCapability;
 import org.opentosca.toscana.model.capability.ScalableCapability;
 import org.opentosca.toscana.model.capability.StorageCapability;
 import org.opentosca.toscana.model.visitor.CapabilityVisitor;
+import org.opentosca.toscana.plugins.kubernetes.exceptions.UnsupportedOsTypeException;
 import org.opentosca.toscana.plugins.kubernetes.visitor.policies.CapabilityPolicy;
 import org.opentosca.toscana.plugins.kubernetes.visitor.policies.OsPolicy;
 
@@ -54,7 +55,7 @@ public class KubernetesCapabilityVisitor implements CapabilityVisitor {
 
     @Override
     public void visit(BindableCapability capability) {
-        
+
     }
 
     @Override
@@ -65,7 +66,7 @@ public class KubernetesCapabilityVisitor implements CapabilityVisitor {
             if (policy instanceof OsPolicy) {
                 List<OsCapability.Type> policyArchitecture = ((OsPolicy) policy).getUnsupportedTypes();
                 if (policyArchitecture.contains(capabilityType)) {
-                    logger.warn("Unsupported OS Type: " + capabilityType.name());
+                    throw new UnsupportedOsTypeException("Kubernetes does not support " + capabilityType);
                 } else {
                     logger.info("Everything ok");
                 }
