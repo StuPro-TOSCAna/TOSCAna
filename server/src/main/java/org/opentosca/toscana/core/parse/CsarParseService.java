@@ -1,5 +1,7 @@
 package org.opentosca.toscana.core.parse;
 
+import java.io.File;
+
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.model.EffectiveModel;
 
@@ -17,4 +19,13 @@ public interface CsarParseService {
      somehow
      */
     EffectiveModel parse(Csar csar) throws InvalidCsarException;
+
+    /**
+     Parses given service template.
+
+     @param template the TOSCA service template yaml file
+     @return the corresponding effective model
+     @throws Exception
+     */
+    EffectiveModel parse(File template) throws Exception;
 }

@@ -1,6 +1,8 @@
 package org.opentosca.toscana.core.parse;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarDao;
@@ -23,15 +25,23 @@ public class CsarParseServiceImpl implements CsarParseService {
     @Override
     public EffectiveModel parse(Csar csar) throws InvalidCsarException {
         logger = csar.getLog().getLogger(getClass());
-        Reader reader = new Reader();
         File entryPoint = findEntryPoint(csar);
-        TServiceTemplate serviceTemplate;
         try {
-            serviceTemplate = reader.parse(entryPoint.getParent(), entryPoint.getName());
+            EffectiveModel model = parse(entryPoint);
+            return model;
         } catch (Exception e) {
             logger.warn("An error occured while parsing csar '{}'", csar, e);
             throw new InvalidCsarException(csar.getLog());
         }
+    }
+
+    @Override
+    public EffectiveModel parse(File template) throws Exception {
+        Reader reader = Reader.getReader();
+        TServiceTemplate serviceTemplate;
+        Path parent = template.getParentFile().toPath();
+        Path file = Paths.get(template.getName());
+        serviceTemplate = reader.parse(parent, file);
         ModelConverter converter = new ModelConverter();
         return converter.convert(serviceTemplate);
     }

@@ -36,7 +36,7 @@
             <artifactId>jgrapht-core</artifactId>
             <version>1.1.0</version>
         </dependency>
-        
+
         <!--Kubernetes Plugin-->
         <dependency>
             <groupId>io.fabric8</groupId>
@@ -71,12 +71,12 @@
             <artifactId>semver4j</artifactId>
             <version>2.1.0</version>
         </dependency>
-        
+
         <!-- Winery -->
         <dependency>
             <groupId>com.github.stupro-toscana.winery</groupId>
             <artifactId>org.eclipse.winery.yaml.common</artifactId>
-            <version>ec4564b4be29916f19647acd82d83e87a8d27ad3</version>
+            <version>3ea0caa53b40c5e885b904ffb52ce68f67aa1ef0</version>
         </dependency>
         <!--<dependency>-->
         <!--<groupId>com.github.eclipse.winery</groupId>-->
