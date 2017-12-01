@@ -3,7 +3,6 @@ package org.opentosca.toscana.model.visitor;
 import org.opentosca.toscana.model.capability.AdminEndpointCapability;
 import org.opentosca.toscana.model.capability.AttachmentCapability;
 import org.opentosca.toscana.model.capability.BindableCapability;
-import org.opentosca.toscana.model.capability.Capability;
 import org.opentosca.toscana.model.capability.ComputeCapability;
 import org.opentosca.toscana.model.capability.ContainerCapability;
 import org.opentosca.toscana.model.capability.DatabaseEndpointCapability;
@@ -26,10 +25,6 @@ public interface CapabilityVisitor {
     }
 
     default void visit(BindableCapability capability) {
-        // noop
-    }
-
-    default void visit(Capability capability) {
         // noop
     }
 
@@ -76,5 +71,5 @@ public interface CapabilityVisitor {
     default void visit(StorageCapability capability) {
         // noop
     }
-    
+
 }

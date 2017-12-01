@@ -24,9 +24,6 @@ public class NodeCapability extends Capability {
         super(validSourceTypes, occurence, description);
     }
 
-    public static class NodeCapabilityBuilder extends CapabilityBuilder {
-    }
-
     @Override
     public void accept(CapabilityVisitor v) {
         v.visit(this);

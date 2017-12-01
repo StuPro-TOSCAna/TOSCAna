@@ -16,9 +16,6 @@ public class DependsOn extends RootRelationship {
         super(description);
     }
 
-    public static class DependsOnBuilder extends RootRelationshipBuilder {
-    }
-
     @Override
     public void accept(RelationshipVisitor v) {
         v.visit(this);
