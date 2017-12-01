@@ -22,10 +22,10 @@ public class Apache extends WebServer {
                      ContainerCapability host,
                      EndpointCapability databaseEndpoint,
                      AdminEndpointCapability adminEndpoint,
-                     String NodeName,
+                     String nodeName,
                      StandardLifecycle lifecycle,
                      String description) {
-        super(componentVersion, adminCredential, host, databaseEndpoint, adminEndpoint, NodeName, lifecycle, description);
+        super(componentVersion, adminCredential, host, databaseEndpoint, adminEndpoint, nodeName, lifecycle, description);
     }
 
     /**

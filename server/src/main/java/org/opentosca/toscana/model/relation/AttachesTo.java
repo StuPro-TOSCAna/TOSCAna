@@ -8,6 +8,7 @@ import org.opentosca.toscana.model.capability.StorageCapability;
 import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.visitor.RelationshipVisitor;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -33,7 +34,8 @@ public class AttachesTo extends RootRelationship {
     private final String mountPoint;
 
     /**
-     The optional logical device name which for the attached device (which is represented by the target node in the model).
+     The optional logical device name which for the attached device (which is represented by the target node in the
+     model).
      <p>
      e.g., ‘/dev/hda1’
      <p>
@@ -41,6 +43,7 @@ public class AttachesTo extends RootRelationship {
      */
     private final String device;
 
+    @Builder
     protected AttachesTo(String mountPoint,
                          String device,
                          String description) {
@@ -53,12 +56,11 @@ public class AttachesTo extends RootRelationship {
      @param mountPoint {@link #mountPoint}
      */
     public static AttachesToBuilder builder(String mountPoint) {
-        return new AttachesToBuilder();
+        return new AttachesToBuilder().mountPoint(mountPoint);
     }
 
     public static class AttachesToBuilder extends RootRelationshipBuilder {
     }
-
 
     @Override
     public void accept(RelationshipVisitor v) {
