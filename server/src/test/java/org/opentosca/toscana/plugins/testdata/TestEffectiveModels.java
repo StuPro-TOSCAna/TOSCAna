@@ -32,7 +32,8 @@ public class TestEffectiveModels {
         Requirement<EndpointCapability, RootNode, RootRelationship> network
             = Requirement.<EndpointCapability, RootNode, RootRelationship>builder(endpointCapability, hostedOn).build();
         StorageCapability storageCapability = StorageCapability.builder().build();
-        Requirement<StorageCapability, RootNode, RootRelationship> storage = Requirement.<StorageCapability, RootNode, RootRelationship>builder(storageCapability, hostedOn).build();
+        Requirement<StorageCapability, RootNode, RootRelationship> storage
+            = Requirement.<StorageCapability, RootNode, RootRelationship>builder(storageCapability, hostedOn).build();
         DockerApplication simpleTaskApp
             = DockerApplication.builder(host, "simpleTaskApp", network, storage).build();
 
