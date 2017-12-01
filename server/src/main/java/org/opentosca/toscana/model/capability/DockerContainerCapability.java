@@ -91,10 +91,6 @@ public class DockerContainerCapability extends ContainerCapability {
         this.volumeId = volumeId;
     }
     
-    public static DockerContainerCapabilityBuilder builder() {
-        return new DockerContainerCapabilityBuilder();
-    }
-
     /**
      @return {@link #hostId}
      */
