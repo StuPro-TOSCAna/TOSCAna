@@ -11,17 +11,15 @@ import org.opentosca.toscana.model.capability.Requirement;
 import org.opentosca.toscana.model.datatype.Range;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
 import org.opentosca.toscana.model.relation.DependsOn;
-import org.opentosca.toscana.model.visitor.NodeVisitor;
 import org.opentosca.toscana.model.visitor.VisitableNode;
 
-import lombok.Builder;
 import lombok.Data;
 
 /**
  The base node. Every other node will derive from this class.
  */
 @Data
-public class RootNode extends DescribableEntity implements VisitableNode {
+public abstract class RootNode extends DescribableEntity implements VisitableNode {
 
     protected final Set<Requirement> requirements = new HashSet<>();
     protected final Set<Capability> capabilities = new HashSet<>();
@@ -46,8 +44,6 @@ public class RootNode extends DescribableEntity implements VisitableNode {
 
     private final StandardLifecycle standardLifecycle;
 
-
-    @Builder
     protected RootNode(String nodeName,
                        StandardLifecycle standardLifecycle,
                        String description) {
@@ -59,14 +55,5 @@ public class RootNode extends DescribableEntity implements VisitableNode {
         this.standardLifecycle = (standardLifecycle == null) ? StandardLifecycle.builder().build() : standardLifecycle;
         capabilities.add(feature);
         requirements.addAll(dependencies);
-    }
-
-    public static RootNodeBuilder builder(String nodeName) {
-        return new RootNodeBuilder().nodeName(nodeName);
-    }
-
-    @Override
-    public void accept(NodeVisitor v) {
-        v.visit(this);
     }
 }
