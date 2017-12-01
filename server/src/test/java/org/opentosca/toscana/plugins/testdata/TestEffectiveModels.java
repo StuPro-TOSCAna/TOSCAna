@@ -40,4 +40,8 @@ public class TestEffectiveModels {
             = DockerApplication.builder(host, "simpleTaskApp", network, storage).build();
         return new EffectiveModel(Sets.newHashSet(simpleTaskApp, dockerRuntime));
     }
+
+    public static EffectiveModel getLampModel() {
+        return new EffectiveModel(new LampApp().getLampApp());
+    }
 }
