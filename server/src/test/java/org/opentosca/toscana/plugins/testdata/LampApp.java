@@ -38,24 +38,16 @@ public class LampApp {
     }
 
     private void createLampModel() {
-        //Test model
-        
-        /*
-        ------------------------compute------------------------------------
-         */
-        Set<Class<? extends RootNode>> validSourceTypes = new HashSet<>();
-        validSourceTypes.add(Compute.class);
-        validSourceTypes.add(MysqlDbms.class);
 
-        ContainerCapability.ContainerCapabilityBuilder containerCapabilityBuilder = ContainerCapability.builder()
-            .memSizeInMB(1024)
-            .diskSizeInMB(2000)
-            .numCpus(1)
-            .name("host")
-            .validSourceTypes(validSourceTypes);
+        testNodes.add(createComputeNode());
+        testNodes.add(createMysqlDbms());
+        testNodes.add(createMsqlDatabase());
+        testNodes.add(createApache());
+        testNodes.add(createWebApplication());
+    }
 
-        ContainerCapability containerCapability = containerCapabilityBuilder.build();
-
+    private Compute createComputeNode() {
+        ContainerCapability containerCapability = createContainerCapabilityBuilder().build();
         AdminEndpointCapability computeAdminEndpointCap = AdminEndpointCapability
             .builder("127.0.0.1")
             .port(new Port(80)).build();
@@ -72,10 +64,27 @@ public class LampApp {
 
         Compute computeNode = Compute.builder("server", osCapability, computeAdminEndpointCap, scalableCapability,
             bindableCapability, computeRequirement).host(containerCapability).build();
-        
-        /*
-                ------------------------mysql dbms------------------------------------
-         */
+        return computeNode;
+    }
+
+    private ContainerCapability.ContainerCapabilityBuilder createContainerCapabilityBuilder() {
+        Set<Class<? extends RootNode>> validSourceTypes = new HashSet<>();
+        validSourceTypes.add(Compute.class);
+        validSourceTypes.add(MysqlDbms.class);
+
+        ContainerCapability.ContainerCapabilityBuilder containerCapabilityBuilder = ContainerCapability.builder()
+            .memSizeInMB(1024)
+            .diskSizeInMB(2000)
+            .numCpus(1)
+            .name("host")
+            .validSourceTypes(validSourceTypes);
+
+        return containerCapabilityBuilder;
+    }
+
+    private MysqlDbms createMysqlDbms() {
+        ContainerCapability.ContainerCapabilityBuilder containerCapabilityBuilder = createContainerCapabilityBuilder();
+        ContainerCapability containerCapability = containerCapabilityBuilder.build();
         Operation dbmsOperation = Operation.builder()
             .implementationArtifact("mysql_dbms/mysql_dbms_configure.sh")
             .input(new OperationVariable("db_root_password")).build();
@@ -89,10 +98,11 @@ public class LampApp {
             .port(3306)
             .hostBuilder(containerCapabilityBuilder)
             .build();
-        
-        /*
-        ------------------------mysql database------------------------------------
-         */
+
+        return mysqlDbms;
+    }
+
+    private MysqlDatabase createMsqlDatabase() {
         DatabaseEndpointCapability dbEndpointCapability = DatabaseEndpointCapability.builder("127.0.0.1")
             .port(new Port(3306))
             .build();
@@ -106,9 +116,11 @@ public class LampApp {
             requirement)
             .build();
 
-        /*
-        ------------------------apache web server------------------------------------
-         */
+        return mydb;
+    }
+
+    private Apache createApache() {
+        ContainerCapability containerCapability = createContainerCapabilityBuilder().build();
         DatabaseEndpointCapability apacheEndpoint = DatabaseEndpointCapability.builder("127.0.0.1")
             .port(new Port(3306)).build();
         AdminEndpointCapability adminEndpointCapability = AdminEndpointCapability.builder("127.0.0.1")
@@ -119,9 +131,10 @@ public class LampApp {
             .databaseEndpoint(endpointCapabilityApache)
             .build();
 
-        /*
-        ------------------------web application------------------------------------
-         */
+        return webServer;
+    }
+
+    private WebApplication createWebApplication() {
         EndpointCapability endpointCapability = EndpointCapability.builder("127.0.0.1", new Port(80)).build();
         Set<String> appDependencies = new HashSet<>();
         appDependencies.add("my_app/myphpapp.php");
@@ -146,14 +159,7 @@ public class LampApp {
         WebApplication webApplication = WebApplication.builder("my_app", endpointCapability)
             .standardLifecycle(webAppLifecycle)
             .build();
-        /*
-        ---------------------------------------------------------------------
-         */
 
-        testNodes.add(computeNode);
-        testNodes.add(mysqlDbms);
-        testNodes.add(mydb);
-        testNodes.add(webServer);
-        testNodes.add(webApplication);
+        return webApplication;
     }
 }
