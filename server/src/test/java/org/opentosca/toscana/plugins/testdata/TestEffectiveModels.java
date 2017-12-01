@@ -38,7 +38,6 @@ public class TestEffectiveModels {
             = Requirement.<StorageCapability, RootNode, RootRelationship>builder(storageCapability, attachesTo).build();
         DockerApplication simpleTaskApp
             = DockerApplication.builder(host, "simpleTaskApp", network, storage).build();
-
         return new EffectiveModel(Sets.newHashSet(simpleTaskApp, dockerRuntime));
     }
 }

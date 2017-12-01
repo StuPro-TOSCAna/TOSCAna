@@ -102,11 +102,13 @@ public class Compute extends RootNode {
      @param localStorage  {@link #localStorage}
      */
     public static ComputeBuilder builder(String nodeName,
+                                         OsCapability os,
                                          AdminEndpointCapability adminEndpoint,
                                          ScalableCapability scalable,
                                          BindableCapability binding,
                                          Requirement<AttachmentCapability, BlockStorage, AttachesTo> localStorage) {
         return new ComputeBuilder()
+            .os(os)
             .nodeName(nodeName)
             .adminEndpoint(adminEndpoint)
             .scalable(scalable)
