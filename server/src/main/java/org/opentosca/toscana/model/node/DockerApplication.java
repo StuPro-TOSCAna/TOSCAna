@@ -40,14 +40,17 @@ public class DockerApplication extends ContainerApplication {
      @param nodeName {@link #nodeName}
      @param host     {@link #host}
      @param network  {@link #network}
+     @param storage  {@link #storage}
      */
     public static DockerApplicationBuilder builder(Requirement<DockerContainerCapability, ContainerRuntime, HostedOn> host,
                                                    String nodeName,
-                                                   Requirement<EndpointCapability, RootNode, RootRelationship> network) {
+                                                   Requirement<EndpointCapability, RootNode, RootRelationship> network,
+                                                   Requirement<StorageCapability, RootNode, RootRelationship> storage) {
         return new DockerApplicationBuilder()
             .nodeName(nodeName)
             .host(host)
-            .network(network);
+            .network(network)
+            .storage(storage);
     }
 
     @Override

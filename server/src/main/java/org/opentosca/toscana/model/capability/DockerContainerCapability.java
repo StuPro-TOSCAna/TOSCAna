@@ -70,7 +70,7 @@ public class DockerContainerCapability extends ContainerCapability {
                                         boolean publishAll,
                                         @Singular Set<PortSpec> publishPorts,
                                         @Singular Set<PortSpec> exposePorts,
-                                        Set<String> volumes,
+                                        @Singular Set<String> volumes,
                                         String hostId,
                                         String volumeId,
                                         String name,
@@ -89,6 +89,10 @@ public class DockerContainerCapability extends ContainerCapability {
         this.volumes = Objects.requireNonNull(volumes);
         this.hostId = hostId;
         this.volumeId = volumeId;
+    }
+    
+    public static DockerContainerCapabilityBuilder builder() {
+        return new DockerContainerCapabilityBuilder();
     }
 
     /**

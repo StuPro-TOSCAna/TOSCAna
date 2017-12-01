@@ -65,15 +65,17 @@ public class ContainerApplication extends RootNode {
      @param nodeName {@link #nodeName}
      @param host     {@link #host}
      @param network  {@link #network}
+     @param network  {@link #storage}
      */
     public static ContainerApplicationBuilder builder(String nodeName,
                                                       Requirement<ContainerCapability, ContainerRuntime, HostedOn> host,
-                                                      Requirement<EndpointCapability, RootNode, RootRelationship> network) {
-
+                                                      Requirement<EndpointCapability, RootNode, RootRelationship> network,
+                                                      Requirement<StorageCapability, RootNode, RootRelationship> storage) {
         return new ContainerApplicationBuilder()
             .nodeName(nodeName)
             .host(host)
-            .network(network);
+            .network(network)
+            .storage(storage);
     }
 
     public static class ContainerApplicationBuilder extends RootNodeBuilder {
