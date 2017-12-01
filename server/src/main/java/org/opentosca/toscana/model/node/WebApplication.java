@@ -71,9 +71,6 @@ public class WebApplication extends RootNode {
         return Optional.ofNullable(contextRoot);
     }
 
-    public static class WebApplicationBuilder extends RootNodeBuilder {
-    }
-
     @Override
     public void accept(NodeVisitor v) {
         v.visit(this);

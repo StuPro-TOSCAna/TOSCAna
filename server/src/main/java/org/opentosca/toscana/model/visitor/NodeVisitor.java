@@ -13,7 +13,6 @@ import org.opentosca.toscana.model.node.MysqlDatabase;
 import org.opentosca.toscana.model.node.MysqlDbms;
 import org.opentosca.toscana.model.node.Nodejs;
 import org.opentosca.toscana.model.node.ObjectStorage;
-import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.node.SoftwareComponent;
 import org.opentosca.toscana.model.node.WebApplication;
 import org.opentosca.toscana.model.node.WebServer;
@@ -71,10 +70,6 @@ public interface NodeVisitor {
 
     default void visit(ObjectStorage node) {
         throw new UnsupportedTypeException(ObjectStorage.class);
-    }
-
-    default void visit(RootNode node) {
-        throw new UnsupportedTypeException(RootNode.class);
     }
 
     default void visit(SoftwareComponent node) {

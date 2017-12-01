@@ -65,9 +65,6 @@ public class LoadBalancer extends RootNode {
         return Optional.ofNullable(algorithm);
     }
 
-    public static class LoadBalancerBuilder extends RootNodeBuilder {
-    }
-
     @Override
     public void accept(NodeVisitor v) {
         v.visit(this);

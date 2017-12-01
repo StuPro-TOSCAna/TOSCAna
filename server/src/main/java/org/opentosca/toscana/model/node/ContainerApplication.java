@@ -78,9 +78,6 @@ public class ContainerApplication extends RootNode {
             .storage(storage);
     }
 
-    public static class ContainerApplicationBuilder extends RootNodeBuilder {
-    }
-
     @Override
     public void accept(NodeVisitor v) {
         v.visit(this);
