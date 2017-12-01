@@ -11,6 +11,7 @@ import org.opentosca.toscana.model.datatype.Range;
 import org.opentosca.toscana.model.node.ContainerRuntime;
 import org.opentosca.toscana.model.node.DockerApplication;
 import org.opentosca.toscana.model.node.RootNode;
+import org.opentosca.toscana.model.relation.AttachesTo;
 import org.opentosca.toscana.model.relation.HostedOn;
 import org.opentosca.toscana.model.relation.RootRelationship;
 
@@ -32,8 +33,9 @@ public class TestEffectiveModels {
         Requirement<EndpointCapability, RootNode, RootRelationship> network
             = Requirement.<EndpointCapability, RootNode, RootRelationship>builder(endpointCapability, hostedOn).build();
         StorageCapability storageCapability = StorageCapability.builder().build();
+        AttachesTo attachesTo = AttachesTo.builder("/").build();
         Requirement<StorageCapability, RootNode, RootRelationship> storage
-            = Requirement.<StorageCapability, RootNode, RootRelationship>builder(storageCapability, hostedOn).build();
+            = Requirement.<StorageCapability, RootNode, RootRelationship>builder(storageCapability, attachesTo).build();
         DockerApplication simpleTaskApp
             = DockerApplication.builder(host, "simpleTaskApp", network, storage).build();
 
