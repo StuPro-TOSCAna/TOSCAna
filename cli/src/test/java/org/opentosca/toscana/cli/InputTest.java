@@ -9,6 +9,7 @@ import static org.junit.Assert.assertTrue;
 
 public class InputTest extends TestHelper {
 
+    /*
     @Test
     public void cliInput() throws IOException {
         CliMain.main(CSAR_DELETE);
@@ -46,7 +47,6 @@ public class InputTest extends TestHelper {
         enqueError(400);
         assertEquals("", api.inputList(CSAR, PLATFORM));
     }
-/*
     @Test
     public void InputPlace() throws IOException {
         apiDoubleInput(CSAR, PLATFORM, TRANSFORMATION_PROPERTIES_JSON, 200);

@@ -72,6 +72,7 @@ public class TransformationTest extends TestHelper {
     @Test
     public void transformationStart() throws IOException {
         apiDoubleInput(CSAR, PLATFORM, CSAR_JSON, 200);
+        apiDoubleInput(CSAR, PLATFORM, CSAR_JSON, 200);
         assertEquals("", api.startTransformation(CSAR, PLATFORM));
     }
 

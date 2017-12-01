@@ -27,6 +27,7 @@ abstract class TestHelper {
     protected final String TRANSFORMATIONS_JSON = "responses/transformationsList.json";
     protected final String TRANSFORMATION_LOGS_JSON = "responses/transformationLogs.json";
     protected final String TRANSFORMATION_PROPERTIES_JSON = "responses/transformationProperties.json";
+    protected final String TRANSFORMATION_START_JSON = "responses/transformationStart.json";
     protected final String LOGS_RESPONSE = "Hallo Welt";
     protected final String STATUS_HEALTH_JSON = "responses/statusHealth.json";
     protected final String[] CLI_HELP = {"help"};
