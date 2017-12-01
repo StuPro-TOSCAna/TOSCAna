@@ -16,65 +16,80 @@ import org.opentosca.toscana.model.capability.PublicEndpointCapability;
 import org.opentosca.toscana.model.capability.ScalableCapability;
 import org.opentosca.toscana.model.capability.StorageCapability;
 
-public interface CapabilityVisitor {
-    default void visit(AdminEndpointCapability capability) {
-        // noop
-    }
-
-    default void visit(AttachmentCapability capability) {
-        // noop
-    }
-
-    default void visit(BindableCapability capability) {
-        // noop
-    }
-
-    default void visit(Capability capability) {
-        // noop
-    }
-
-    default void visit(ComputeCapability capability) {
-        // noop
-    }
-
-    default void visit(ContainerCapability capability) {
-        // noop
-    }
-
-    default void visit(DatabaseEndpointCapability capability) {
-        // noop
-    }
-
-    default void visit(DockerContainerCapability capability) {
-        // noop
-    }
-
-    default void visit(EndpointCapability capability) {
-        // noop
-    }
-
-    default void visit(NetworkCapability capability) {
-        // noop
-    }
-
-    default void visit(NodeCapability capability) {
-        // noop
-    }
-
-    default void visit(OsCapability capability) {
-        // noop
-    }
-
-    default void visit(PublicEndpointCapability capability) {
-        // noop
-    }
-
-    default void visit(ScalableCapability capability) {
-        // noop
-    }
-
-    default void visit(StorageCapability capability) {
-        // noop
-    }
+public interface StrictCapabilityVisitor extends CapabilityVisitor {
     
+    @Override
+    default void visit(AdminEndpointCapability capability) {
+        throw new UnsupportedTypeException(AdminEndpointCapability.class);
+    }
+
+    @Override
+    default void visit(AttachmentCapability capability) {
+        throw new UnsupportedTypeException(AttachmentCapability.class);
+    }
+
+    @Override
+    default void visit(BindableCapability capability) {
+        throw new UnsupportedTypeException(BindableCapability.class);
+    }
+
+    @Override
+    default void visit(Capability capability) {
+        throw new UnsupportedTypeException(Capability.class);
+    }
+
+    @Override
+    default void visit(ComputeCapability capability) {
+        throw new UnsupportedTypeException(ComputeCapability.class);
+    }
+
+    @Override
+    default void visit(ContainerCapability capability) {
+        throw new UnsupportedTypeException(ContainerCapability.class);
+    }
+
+    @Override
+    default void visit(DatabaseEndpointCapability capability) {
+        throw new UnsupportedTypeException(DatabaseEndpointCapability.class);
+    }
+
+    @Override
+    default void visit(DockerContainerCapability capability) {
+        throw new UnsupportedTypeException(DockerContainerCapability.class);
+    }
+
+    @Override
+    default void visit(EndpointCapability capability) {
+        throw new UnsupportedTypeException(EndpointCapability.class);
+    }
+
+    @Override
+    default void visit(NetworkCapability capability) {
+        throw new UnsupportedTypeException(NetworkCapability.class);
+    }
+
+    @Override
+    default void visit(NodeCapability capability) {
+        throw new UnsupportedTypeException(NodeCapability.class);
+    }
+
+    @Override
+    default void visit(OsCapability capability) {
+        throw new UnsupportedTypeException(OsCapability.class);
+    }
+
+    @Override
+    default void visit(PublicEndpointCapability capability) {
+        throw new UnsupportedTypeException(PublicEndpointCapability.class);
+    }
+
+    @Override
+    default void visit(ScalableCapability capability) {
+        throw new UnsupportedTypeException(ScalableCapability.class);
+    }
+
+    @Override
+    default void visit(StorageCapability capability) {
+        throw new UnsupportedTypeException(StorageCapability.class);
+    }
 }
