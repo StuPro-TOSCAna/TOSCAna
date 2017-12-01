@@ -18,52 +18,21 @@ import lombok.Singular;
 @Data
 public class OsCapability extends Capability {
 
-    public enum Architecture {
-        x86_32,
-        x86_64,
-        POWER_PC
-        // might grow
-    }
-
-    public enum Type {
-        AIX,
-        LINUX,
-        MAC,
-        WINDOWS,
-        // might grow
-    }
-
-    public enum Distribution {
-        ARCH,
-        DEBIAN,
-        FEDORA,
-        RHEL,
-        UBUNTU,
-        CENTOS,
-        ALPINE,
-        BUSYBOX,
-        OPEN_SUSE,
-        // might grow
-    }
-
     /**
      The Operating System architecture.
      (TOSCA Simple Profile in YAML Version 1.1, p. 157)
      */
     private final Architecture architecture;
-
     /**
      The Operating System type.
      (TOSCA Simple Profile in YAML Version 1.1, p. 157)
      */
     private final Type type;
-
     /**
      The Operating System distribution.
      (TOSCA Simple Profile in YAML Version 1.1, p. 157)
      */
     private final Distribution distribution;
-
     /**
      The Operating System version.
      (TOSCA Simple Profile in YAML Version 1.1, p. 157)
@@ -116,5 +85,36 @@ public class OsCapability extends Capability {
     @Override
     public void accept(CapabilityVisitor v) {
         v.visit(this);
+    }
+
+    public enum Architecture {
+        x86_32,
+        x86_64,
+        POWER_PC
+        // might grow
+    }
+
+    public enum Type {
+        AIX,
+        LINUX,
+        MAC,
+        WINDOWS,
+        // might grow
+    }
+
+    public enum Distribution {
+        ARCH,
+        DEBIAN,
+        FEDORA,
+        RHEL,
+        UBUNTU,
+        CENTOS,
+        ALPINE,
+        BUSYBOX,
+        OPEN_SUSE,
+        // might grow
+    }
+
+    public static class OsCapabilityBuilder extends CapabilityBuilder {
     }
 }
