@@ -1,3 +1,5 @@
+# NodeType roadmap
+
 | Node Type         | Planned  | Supported | Docker Image                                                                      |
 | ----------------- | -------- | --------- | --------------------------------------------------------------------------------- |
 | ContainerRuntime  | Sprint 6 | yes       | out of the box                                                                    |
