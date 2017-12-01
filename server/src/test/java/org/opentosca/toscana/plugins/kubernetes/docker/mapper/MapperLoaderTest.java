@@ -1,8 +1,7 @@
 package org.opentosca.toscana.plugins.kubernetes.docker.mapper;
 
-import java.util.Map;
-
 import org.opentosca.toscana.core.integration.BaseIntegrationTest;
+import org.opentosca.toscana.core.util.Preferences;
 
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -34,7 +33,7 @@ public class MapperLoaderTest extends BaseIntegrationTest {
             builder().distribution(DEBIAN).build()
         );
         logger.info("Performed a mapping to {}", image);
-        Map data = mapper.getImageMap();
+        TagStorage data = mapper.getTagStorage();
         assertEquals(DockerBaseImages.values().length, data.size());
     }
 
@@ -49,8 +48,8 @@ public class MapperLoaderTest extends BaseIntegrationTest {
         }
 
         @Bean
-        public BaseImageMapper getBaseImageMapper(@Autowired DockerBaseImages[] img) {
-            return new BaseImageMapper(img);
+        public BaseImageMapper getBaseImageMapper(@Autowired DockerBaseImages[] img, @Autowired Preferences preferences) {
+            return new BaseImageMapper(img, new TagStorage(preferences));
         }
     }
 }
