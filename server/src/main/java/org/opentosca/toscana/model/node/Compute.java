@@ -9,6 +9,7 @@ import org.opentosca.toscana.model.capability.AdminEndpointCapability;
 import org.opentosca.toscana.model.capability.AttachmentCapability;
 import org.opentosca.toscana.model.capability.BindableCapability;
 import org.opentosca.toscana.model.capability.ContainerCapability;
+import org.opentosca.toscana.model.capability.OsCapability;
 import org.opentosca.toscana.model.capability.Requirement;
 import org.opentosca.toscana.model.capability.ScalableCapability;
 import org.opentosca.toscana.model.datatype.NetworkInfo;
@@ -53,6 +54,8 @@ public class Compute extends RootNode {
 
     private final ContainerCapability host;
 
+    private final OsCapability os;
+
     private final AdminEndpointCapability adminEndpoint;
 
     private final ScalableCapability scalable;
@@ -65,6 +68,7 @@ public class Compute extends RootNode {
     protected Compute(String privateAddress,
                       String publicAddress,
                       ContainerCapability host,
+                      OsCapability os,
                       AdminEndpointCapability adminEndpoint,
                       ScalableCapability scalable,
                       BindableCapability binding,
@@ -76,12 +80,14 @@ public class Compute extends RootNode {
         this.privateAddress = privateAddress;
         this.publicAddress = publicAddress;
         this.host = Objects.requireNonNull(host);
+        this.os = Objects.requireNonNull(os);
         this.adminEndpoint = Objects.requireNonNull(adminEndpoint);
         this.scalable = Objects.requireNonNull(scalable);
         this.binding = Objects.requireNonNull(binding);
         this.localStorage = Objects.requireNonNull(localStorage);
 
         capabilities.add(host);
+        capabilities.add(os);
         capabilities.add(adminEndpoint);
         capabilities.add(scalable);
         capabilities.add(binding);
@@ -96,18 +102,19 @@ public class Compute extends RootNode {
      @param localStorage  {@link #localStorage}
      */
     public static ComputeBuilder builder(String nodeName,
-                                  AdminEndpointCapability adminEndpoint,
-                                  ScalableCapability scalable,
-                                  BindableCapability binding,
-                                  Requirement<AttachmentCapability, BlockStorage, AttachesTo> localStorage) {
+                                         OsCapability os,
+                                         AdminEndpointCapability adminEndpoint,
+                                         ScalableCapability scalable,
+                                         BindableCapability binding,
+                                         Requirement<AttachmentCapability, BlockStorage, AttachesTo> localStorage) {
         return new ComputeBuilder()
+            .os(os)
             .nodeName(nodeName)
             .adminEndpoint(adminEndpoint)
             .scalable(scalable)
             .binding(binding)
             .localStorage(localStorage);
     }
-
 
     /**
      @return {@link #privateAddress}
