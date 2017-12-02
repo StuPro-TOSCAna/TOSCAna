@@ -26,6 +26,9 @@ import org.opentosca.toscana.model.node.WordPress;
 import com.google.common.collect.Sets;
 import org.eclipse.winery.model.tosca.yaml.TNodeTemplate;
 
+/**
+ Contains logic to convert TOSCA node templates into nodes of the EffectiveModel
+ */
 class NodeConverter {
 
     static final String TOSCA_PREFIX = "tosca.nodes.";
@@ -52,13 +55,13 @@ class NodeConverter {
         addRule("Nodejs", "WebServer", this::toNodejs);
     }
 
+    private void addRule(String simpleType, BiFunction<String, TNodeTemplate, RootNode> conversion) {
+        addRule(simpleType, null, conversion);
+    }
+
     private void addRule(String simpleType, String typePrefix, BiFunction<String, TNodeTemplate, RootNode> conversion) {
         Set<String> typeSet = getTypes(simpleType, typePrefix);
         typeSet.forEach(typeName -> conversionMap.put(typeName, conversion));
-    }
-
-    private void addRule(String simpleType, BiFunction<String, TNodeTemplate, RootNode> conversion) {
-        addRule(simpleType, null, conversion);
     }
 
     private Set<String> getTypes(String simpleName, String prefix) {
