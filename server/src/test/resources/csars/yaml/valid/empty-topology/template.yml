@@ -1,0 +1,7 @@
+tosca_definitions_version: tosca_simple_yaml_1_1
+
+description: a simple template without any node templates
+metadata:
+  template_name: empty-topology
+  template_author: stupro-toscana
+  template_version: 1.0

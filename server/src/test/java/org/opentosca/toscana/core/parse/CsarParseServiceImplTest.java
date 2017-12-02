@@ -21,7 +21,7 @@ public class CsarParseServiceImplTest extends BaseSpringTest {
 
     @Test
     public void parseValidCsar() throws Exception {
-        Csar csar = testCsars.getCsar(TestCsars.CSAR_YAML_VALID_MINIMAL_DOCKER);
+        Csar csar = testCsars.getCsar(TestCsars.EMPTY_TOPOLOGY);
         EffectiveModel model = csarParser.parse(csar);
         assertNotNull(model);
     }

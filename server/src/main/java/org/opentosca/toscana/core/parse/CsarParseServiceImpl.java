@@ -12,13 +12,14 @@ import org.opentosca.toscana.model.EffectiveModel;
 import org.eclipse.winery.model.tosca.yaml.TServiceTemplate;
 import org.eclipse.winery.yaml.common.reader.yaml.Reader;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class CsarParseServiceImpl implements CsarParseService {
 
-    private Logger logger;
+    private Logger logger = LoggerFactory.getLogger(CsarParseService.class);
 
     @Autowired
     private CsarDao csarDao;
@@ -42,7 +43,7 @@ public class CsarParseServiceImpl implements CsarParseService {
         Path parent = template.getParentFile().toPath();
         Path file = Paths.get(template.getName());
         serviceTemplate = reader.parse(parent, file);
-        ModelConverter converter = new ModelConverter();
+        ModelConverter converter = new ModelConverter(logger);
         return converter.convert(serviceTemplate);
     }
 

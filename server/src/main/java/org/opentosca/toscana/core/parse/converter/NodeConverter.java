@@ -56,7 +56,7 @@ public class NodeConverter {
         Set<String> typeSet = getTypes(simpleType, typePrefix);
         typeSet.stream().forEach(typeName -> conversionMap.put(typeName, conversion));
     }
-    
+
     private void addRule(String simpleType, BiFunction<String, TNodeTemplate, RootNode> conversion) {
         addRule(simpleType, null, conversion);
     }
@@ -73,7 +73,14 @@ public class NodeConverter {
             throw new UnknownNodeTypeException(String.format(
                 "Node type '%s' is not supported by the internal model", template.getType()));
         }
-        return conversion.apply(name, template);
+        try {
+            RootNode node = conversion.apply(name, template);
+            return node;
+        } catch (UnsupportedOperationException e) {
+            throw new UnsupportedOperationException(
+                String.format("Converting node templates of type '%s' not yet supported",
+                    template.getType()));
+        }
     }
 
     private Apache toApache(String name, TNodeTemplate template) {
