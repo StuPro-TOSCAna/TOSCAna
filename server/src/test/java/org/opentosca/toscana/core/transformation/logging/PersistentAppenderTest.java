@@ -3,7 +3,7 @@ package org.opentosca.toscana.core.transformation.logging;
 import java.io.File;
 import java.io.IOException;
 
-import org.opentosca.toscana.core.BaseJUnitTest;
+import org.opentosca.toscana.core.BaseUnitTest;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
@@ -12,7 +12,7 @@ import org.slf4j.Logger;
 
 import static org.junit.Assert.assertTrue;
 
-public class PersistentAppenderTest extends BaseJUnitTest {
+public class PersistentAppenderTest extends BaseUnitTest {
 
     private File logfile;
     private Log log;

@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 
-import org.opentosca.toscana.core.BaseJUnitTest;
+import org.opentosca.toscana.core.BaseUnitTest;
 
 import ch.qos.logback.classic.Level;
 import org.junit.Before;
@@ -20,7 +20,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
-public class LogImplTest extends BaseJUnitTest {
+public class LogImplTest extends BaseUnitTest {
 
     private final Logger logger = LoggerFactory.getLogger(LogImplTest.class);
     private Log log;

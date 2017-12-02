@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
-import org.opentosca.toscana.core.BaseJUnitTest;
+import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.core.parse.CsarParseService;
 import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.transformation.logging.Log;
@@ -18,7 +18,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class CsarServiceImplTest extends BaseJUnitTest {
+public class CsarServiceImplTest extends BaseUnitTest {
 
     private final String identifier = "my-awesome-csar";
 

@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.opentosca.toscana.core.BaseJUnitTest;
+import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarDao;
 import org.opentosca.toscana.core.csar.CsarImpl;
@@ -38,7 +38,7 @@ import static org.opentosca.toscana.core.testdata.TestPlugins.PLATFORMS;
 import static org.opentosca.toscana.core.transformation.TransformationState.ERROR;
 import static org.opentosca.toscana.core.transformation.TransformationState.TRANSFORMING;
 
-public class TransformerHealthIndicatorTest extends BaseJUnitTest {
+public class TransformerHealthIndicatorTest extends BaseUnitTest {
 
     //Name of the mocked csar
     private static final String MOCK_CSAR_NAME = "test";

@@ -8,11 +8,11 @@ pipeline {
                 archiveArtifacts(onlyIfSuccessful: true, artifacts: '**/target/*.jar')
             }
         }
-        stage('Test') {
+        stage('Run Unit Tests') {
             parallel {
-              stage('Test Server') {
+              stage('Server') {
                   steps {
-                      sh 'mvn test -B -pl server'
+                      sh 'mvn test -B -pl server || exit 0'
                       sh 'mvn jacoco:report -pl server'
                   }
                   post {
@@ -21,9 +21,9 @@ pipeline {
                       }
                   }
               }
-              stage('Test Retrofit Wrapper') {
+              stage('Retrofit Wrapper') {
                   steps {
-                      sh 'mvn test -B -pl retrofit-wrapper'
+                      sh 'mvn test -B -pl retrofit-wrapper || exit 0'
                       sh 'mvn jacoco:report -pl retrofit-wrapper'
                   }
                   post {
@@ -32,7 +32,7 @@ pipeline {
                       }
                   }
               }
-              stage('Test CLI') {
+              stage('CLI') {
                   steps {
                       sh 'mvn test -B -pl cli || exit 0'
                       sh 'mvn jacoco:report -pl cli'
@@ -46,6 +46,19 @@ pipeline {
             }
             post {
                 always {
+                    junit(testResults: '**/target/surefire-reports/*.xml', allowEmptyResults: true)
+                    archiveArtifacts allowEmptyArchive: true, artifacts: '**/target/site/*.zip'
+                }
+            }
+        }
+        stage('Integration Test (Server)') {
+            steps {
+                sh 'mvn integration-test -P integration-test -pl server || exit 0'
+                sh 'mvn jacoco:report -pl server'
+            }
+            post {
+                always {
+                    sh '[ -d server/target/site ] && cd server/target/site && zip -r coverage-server-integration.zip jacoco-it && cd -; exit 0'
                     junit(testResults: '**/target/surefire-reports/*.xml', allowEmptyResults: true)
                     archiveArtifacts allowEmptyArchive: true, artifacts: '**/target/site/*.zip'
                 }

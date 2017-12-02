@@ -3,7 +3,7 @@ package org.opentosca.toscana.plugins.lifecycle;
 import java.io.File;
 import java.io.IOException;
 
-import org.opentosca.toscana.core.BaseJUnitTest;
+import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.core.transformation.logging.Log;
@@ -18,7 +18,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle.UTIL_DIR_PATH;
 
-public class AbstractLifeCycleTest extends BaseJUnitTest {
+public class AbstractLifeCycleTest extends BaseUnitTest {
 
     @Before
     public void setUp() throws IOException {

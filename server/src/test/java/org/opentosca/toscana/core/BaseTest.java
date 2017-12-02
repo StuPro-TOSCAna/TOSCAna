@@ -2,16 +2,16 @@ package org.opentosca.toscana.core;
 
 import java.io.File;
 
-import org.opentosca.toscana.core.testutils.TestCategories;
-import org.opentosca.toscana.core.testutils.TestCategory;
+import org.opentosca.toscana.UnitTest;
 
 import org.junit.Rule;
+import org.junit.experimental.categories.Category;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles( {Profiles.EXCLUDE_BASE_IMAGE_MAPPER})
-@TestCategory(value = TestCategories.FAST)
+@Category(UnitTest.class)
 public abstract class BaseTest {
 
     // "user.dir" is module root

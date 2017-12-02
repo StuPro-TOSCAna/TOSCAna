@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collection;
 
-import org.opentosca.toscana.core.BaseJUnitTest;
+import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.core.util.Preferences;
 import org.opentosca.toscana.model.capability.OsCapability;
 import org.opentosca.toscana.model.capability.OsCapability.Distribution;
@@ -32,7 +32,7 @@ import static org.opentosca.toscana.plugins.kubernetes.docker.mapper.DockerBaseI
 import static org.opentosca.toscana.plugins.kubernetes.docker.mapper.MapperConstants.DEFAULT_IMAGE_PATH;
 
 @RunWith(Parameterized.class)
-public class MapperTest extends BaseJUnitTest {
+public class MapperTest extends BaseUnitTest {
 
     private static final Logger logger = LoggerFactory.getLogger(MapperTest.class);
     private static BaseImageMapper baseImageMapper;

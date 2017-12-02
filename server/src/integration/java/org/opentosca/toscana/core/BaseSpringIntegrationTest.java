@@ -1,9 +1,11 @@
-package org.opentosca.toscana.core.integration;
+package org.opentosca.toscana.core;
 
+import org.opentosca.toscana.IntegrationTest;
 import org.opentosca.toscana.core.BaseSpringTest;
 import org.opentosca.toscana.core.CoreConfiguration;
 import org.opentosca.toscana.core.Main;
 
+import org.junit.experimental.categories.Category;
 import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -20,7 +22,8 @@ import static org.opentosca.toscana.core.testdata.TestProfiles.INTEGRATION_TEST_
 )
 @ContextConfiguration(classes = {Main.class, CoreConfiguration.class})
 @ActiveProfiles(INTEGRATION_TEST_PROFILE)
-public abstract class BaseIntegrationTest extends BaseSpringTest {
+@Category(IntegrationTest.class)
+public abstract class BaseSpringIntegrationTest extends BaseSpringTest {
 
     /**
      The port the server is bound to.

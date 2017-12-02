@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.opentosca.toscana.core.BaseJUnitTest;
+import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarDao;
 import org.opentosca.toscana.core.csar.CsarFilesystemDao;
@@ -30,7 +30,7 @@ import static org.opentosca.toscana.core.testdata.TestPlugins.PLATFORM2;
 import static org.opentosca.toscana.core.testdata.TestPlugins.PLATFORM3;
 import static org.opentosca.toscana.core.testdata.TestPlugins.PLATFORM_NOT_SUPPORTED;
 
-public class TransformationFilesystemDaoTest extends BaseJUnitTest {
+public class TransformationFilesystemDaoTest extends BaseUnitTest {
 
     private TransformationDao transformationDao;
     @Mock

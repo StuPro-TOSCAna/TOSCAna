@@ -2,11 +2,13 @@ package org.opentosca.toscana.plugins.kubernetes.docker.image;
 
 import java.io.File;
 
+import org.opentosca.toscana.IntegrationTest;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.plugins.kubernetes.docker.BaseDockerfileTest;
 
 import com.spotify.docker.client.DefaultDockerClient;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,9 +18,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class DockerImageBuilderTest extends BaseDockerfileTest {
+@Category(IntegrationTest.class)
+public class DockerImageBuilderIT extends BaseDockerfileTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(DockerImageBuilderTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(DockerImageBuilderIT.class);
     private static final String SHA_TEST_FILE_NAME = "sha-test.tar.gz";
 
     @Test
@@ -44,12 +47,12 @@ public class DockerImageBuilderTest extends BaseDockerfileTest {
     }
 
     private boolean isDockerAvailable() {
-        //This is a Quick solution to prevent this test from beeing executed if the environment variable is not set.
-        //TODO Remove if there is Proper differing between integration and unit tests.
-        String env = System.getenv("TEST_DOCKER");
-        if (env == null || !env.equalsIgnoreCase("true")) {
-            return false;
-        }
+//        //This is a Quick solution to prevent this test from beeing executed if the environment variable is not set.
+//        //TODO Remove if there is Proper differing between integration and unit tests.
+//        String env = System.getenv("TEST_DOCKER");
+//        if (env == null || !env.equalsIgnoreCase("true")) {
+//            return false;
+//        }
         try {
             if (DefaultDockerClient.fromEnv().build() == null) {
                 return false;

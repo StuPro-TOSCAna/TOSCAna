@@ -1,8 +1,8 @@
-package org.opentosca.toscana.core.integration.docs;
+package org.opentosca.toscana.core.api.docs;
 
 import java.io.File;
 
-import org.opentosca.toscana.core.integration.BaseIntegrationTest;
+import org.opentosca.toscana.core.BaseSpringIntegrationTest;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -12,7 +12,7 @@ import org.junit.Test;
 /**
  Just for testing now, might be useful once we generate some markdown based documentation.
  */
-public class SwaggerAPIDownloadTest extends BaseIntegrationTest {
+public class SwaggerAPIDownloadIT extends BaseSpringIntegrationTest {
 
     private static final String SWAGGER_OUTPUT_DIR = "target/swagger.json";
 

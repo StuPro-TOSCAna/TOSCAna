@@ -60,6 +60,11 @@ Lombok generates code from annotations during compile time.
 For further explananation, visit [setup for intellij](https://projectlombok.org/setup/intellij) or [setup for eclipse](https://projectlombok.org/setup/eclipse).
 - 2. (only intellij) `Settings` &rarr; `Build, Execution, Deployment `&rarr; `Compiler` &rarr; `Annotation Processors` &rarr; tick `Enable annotation processing`
 
+
+#### Integration Test Source and Resource folders
+
+Please consider reading [this](/docs/dev/server-testing.md) to properly setup the IDE for developing in the server module.
+
 ## Commit messages
 
 To contribute to our project please read and follow this [How to Write a Git Commit Message](https://chris.beams.io/posts/git-commit/) - Guide.
