@@ -102,8 +102,8 @@ public class PluginFileAccessTest extends BaseUnitTest {
     @Test
     public void write() throws Exception {
         String secondString = "second_test_string";
-        access.access(targetFileName).append(fileContent).close();
-        access.access(targetFileName).append("\n" + secondString).close();
+        access.access(targetFileName).appendln(fileContent).close();
+        access.access(targetFileName).append(secondString).close();
         assertTrue(targetFile.isFile());
         List<String> result = IOUtils.readLines(new FileInputStream(targetFile));
         assertEquals(fileContent, result.get(result.size() - 2));
@@ -158,7 +158,7 @@ public class PluginFileAccessTest extends BaseUnitTest {
     public void getAbsolutePathNoSuchFile() throws FileNotFoundException {
         String filename = "nonexistent-file";
         access.getAbsolutePath(filename);
-        fail("getAbsoultePath() should have raised FileNotFoundException.");
+        fail("getAbsolutePath() should have raised FileNotFoundException.");
     }
 
     @Test

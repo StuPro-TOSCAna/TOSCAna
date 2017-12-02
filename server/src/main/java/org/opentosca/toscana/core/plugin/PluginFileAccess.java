@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 
 import org.opentosca.toscana.core.transformation.logging.Log;
 
@@ -79,11 +80,11 @@ public class PluginFileAccess {
      @return BufferedWriter which writes to target file.
      @throws FileNotFoundException if given relativePath points to a directory
      */
-    public BufferedWriter access(String relativePath) throws IOException {
+    public BufferedLineWriter access(String relativePath) throws IOException {
         File target = new File(targetDir, relativePath);
         target.getParentFile().mkdirs();
         try {
-            return new BufferedWriter(new FileWriter(target, true));
+            return new BufferedLineWriter(new FileWriter(target, true));
         } catch (FileNotFoundException e) {
             logger.error("Failed to create OutputStream for file '{}'", target);
             throw e;
@@ -167,5 +168,20 @@ public class PluginFileAccess {
     public void createDirectories(String relativePath) {
         File targetFolder = new File(targetDir, relativePath);
         targetFolder.mkdirs();
+    }
+
+    public static class BufferedLineWriter extends BufferedWriter {
+
+        BufferedLineWriter(FileWriter fw) {
+            super(fw);
+        }
+
+        /**
+         Same as {@link #append}, but terminates line with a linebreak.
+         */
+        public Writer appendln(String string) throws IOException {
+            append(string + "\n");
+            return this;
+        }
     }
 }
