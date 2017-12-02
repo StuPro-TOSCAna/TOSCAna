@@ -1,10 +1,8 @@
 package org.opentosca.toscana.plugins.scripts;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -12,6 +10,7 @@ import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.core.transformation.logging.Log;
 
+import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -44,10 +43,9 @@ public class BashScriptTest extends BaseUnitTest {
 
     @Test
     public void createScriptTest() throws IOException {
-
         File expectedGeneratedScript = new File(targetScriptFolder, fileName + ".sh");
         assertTrue(expectedGeneratedScript.exists());
-        List<String> result = readFile(expectedGeneratedScript);
+        List<String> result = IOUtils.readLines(new FileInputStream(expectedGeneratedScript));
         assertEquals(SHEBANG, result.get(0));
         assertEquals("source " + UTIL_DIR_NAME + "*", result.get(1));
     }
@@ -57,18 +55,7 @@ public class BashScriptTest extends BaseUnitTest {
         String string = UUID.randomUUID().toString();
         bashScript.append(string);
         File expectedGeneratedScript = new File(targetScriptFolder, fileName + ".sh");
-        List<String> result = readFile(expectedGeneratedScript);
+        List<String> result = IOUtils.readLines(new FileInputStream(expectedGeneratedScript));
         assertEquals(string, result.get(result.size() - 1));
-    }
-
-    public List<String> readFile(File file) throws IOException {
-        List<String> result = new ArrayList<>();
-        BufferedReader reader = new BufferedReader(new FileReader(file));
-        String current;
-        while ((current = reader.readLine()) != null) {
-            result.add(current);
-        }
-        reader.close();
-        return result;
     }
 }
