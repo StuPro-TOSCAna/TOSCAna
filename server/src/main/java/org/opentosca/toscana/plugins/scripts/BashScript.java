@@ -45,4 +45,10 @@ public class BashScript {
         logger.debug("Appending {} to {}.sh", string, name);
         access.access(scriptPath).append(string + "\n").close();
     }
+    
+    public void checkEnvironment (String command) throws IOException {
+        EnvirnonmentCheck envCheck = new EnvirnonmentCheck();
+        this.append(envCheck.checkEnvironment(command));
+    }
+    
 }
