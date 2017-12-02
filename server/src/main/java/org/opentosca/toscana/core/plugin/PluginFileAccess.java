@@ -83,7 +83,7 @@ public class PluginFileAccess {
         File target = new File(targetDir, relativePath);
         target.getParentFile().mkdirs();
         try {
-            return new BufferedWriter(new FileWriter(target));
+            return new BufferedWriter(new FileWriter(target, true));
         } catch (FileNotFoundException e) {
             logger.error("Failed to create OutputStream for file '{}'", target);
             throw e;
