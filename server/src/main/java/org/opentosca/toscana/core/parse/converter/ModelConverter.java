@@ -1,4 +1,4 @@
-package org.opentosca.toscana.core.parse;
+package org.opentosca.toscana.core.parse.converter;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -16,26 +16,20 @@ import org.eclipse.winery.model.tosca.yaml.TTopologyTemplateDefinition;
  */
 public class ModelConverter {
 
-    public EffectiveModel convert(TServiceTemplate serviceTemplate) {
+    public EffectiveModel convert(TServiceTemplate serviceTemplate) throws UnknownNodeTypeException {
         Set<RootNode> nodes = convertNodeTemplates(serviceTemplate.getTopologyTemplate());
         EffectiveModel model = new EffectiveModel(nodes);
         return model;
     }
 
-    private Set<RootNode> convertNodeTemplates(TTopologyTemplateDefinition topology) {
+    private Set<RootNode> convertNodeTemplates(TTopologyTemplateDefinition topology) throws UnknownNodeTypeException {
         Set<RootNode> nodes = new HashSet<>();
-        Map<String, TNodeTemplate> nodeMap = topology.getNodeTemplates();
-        nodeMap.forEach((nodeName, node) -> nodes.add(convertNodeTemplate(nodeName, node)));
+        Map<String, TNodeTemplate> templateMap = topology.getNodeTemplates();
+        NodeConverter nodeConverter = new NodeConverter();
+        for (Map.Entry<String, TNodeTemplate> entry : templateMap.entrySet()) {
+            RootNode node = nodeConverter.convert(entry.getKey(), entry.getValue());
+            nodes.add(node);
+        }
         return nodes;
     }
-
-    private RootNode convertNodeTemplate(String nodeName, TNodeTemplate node) {
-        switch (node.getType().getLocalPart()) {
-            case(""):
-                // TODO
-                break;
-        }
-        return null;
-    }
-
 }

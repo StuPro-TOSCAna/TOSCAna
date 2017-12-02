@@ -6,6 +6,7 @@ import java.nio.file.Paths;
 
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarDao;
+import org.opentosca.toscana.core.parse.converter.ModelConverter;
 import org.opentosca.toscana.model.EffectiveModel;
 
 import org.eclipse.winery.model.tosca.yaml.TServiceTemplate;
@@ -27,8 +28,7 @@ public class CsarParseServiceImpl implements CsarParseService {
         logger = csar.getLog().getLogger(getClass());
         File entryPoint = findEntryPoint(csar);
         try {
-            EffectiveModel model = parse(entryPoint);
-            return model;
+            return parse(entryPoint);
         } catch (Exception e) {
             logger.warn("An error occured while parsing csar '{}'", csar, e);
             throw new InvalidCsarException(csar.getLog());
