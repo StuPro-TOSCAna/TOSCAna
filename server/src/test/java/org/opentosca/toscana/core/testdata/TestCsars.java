@@ -23,7 +23,7 @@ public class TestCsars {
     final static File YAML_DIR = new File(CSAR_DIR, "yaml");
 
     // yaml csars
-    public final static File EMPTY_TOPOLOGY = new File(YAML_DIR, "valid/empty-topology.csar");
+    public final static File VALID_EMPTY_TOPOLOGY = new File(YAML_DIR, "valid/empty-topology.csar");
     public final static File CSAR_YAML_VALID_MINIMAL_DOCKER = new File(YAML_DIR, "valid/minimal-docker.csar");
     public final static File CSAR_YAML_INVALID_DEPENDENCIES_MISSING = new File(YAML_DIR, "invalid/dependencies_missing.csar");
     public final static File CSAR_YAML_INVALID_DOCKERAPP_MISSING = new File(YAML_DIR, "invalid/dockerapp_missing.csar");

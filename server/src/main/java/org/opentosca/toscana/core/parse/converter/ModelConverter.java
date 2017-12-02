@@ -34,7 +34,7 @@ public class ModelConverter {
         if (topology != null) {
             templateMap = topology.getNodeTemplates();
         } else {
-            logger.warn("Topology template of service template is empty");
+            logger.warn("Topology template of service template does not contain any node templates");
             templateMap = new HashMap<>();
         }
 

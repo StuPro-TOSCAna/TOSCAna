@@ -28,7 +28,7 @@ public class CsarUploadIT extends BaseSpringIntegrationTest {
     public void testFileUpload() throws Exception {
         System.err.println("Server started!");
 
-        toscanaAPI.uploadCsar("test", TestCsars.EMPTY_TOPOLOGY);
+        toscanaAPI.uploadCsar("test", TestCsars.VALID_EMPTY_TOPOLOGY);
     }
 
     @Test(timeout = 30000)

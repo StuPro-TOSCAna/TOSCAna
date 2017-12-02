@@ -55,10 +55,21 @@ class NodeConverter {
         addRule("Nodejs", "WebServer", this::toNodejs);
     }
 
+    /**
+     Establishes a correlation between a node type (string) and its construction method.
+     @param simpleType the shorthand type of a node (e.g.: "Compute")
+     @param conversion the conversion method which is used to construct an (EffectiveModel) node
+     */
     private void addRule(String simpleType, BiFunction<String, TNodeTemplate, RootNode> conversion) {
         addRule(simpleType, null, conversion);
     }
 
+    /**
+     Overloading {@link #addRule}
+     @param simpleType {@link #addRule}
+     @param typePrefix the prefix needed to construct the full type name: {@code tosca.nodes.<typePrefix>.<simpleType>}
+     @param conversion {@link #addRule}
+     */
     private void addRule(String simpleType, String typePrefix, BiFunction<String, TNodeTemplate, RootNode> conversion) {
         Set<String> typeSet = getTypes(simpleType, typePrefix);
         typeSet.forEach(typeName -> conversionMap.put(typeName, conversion));
