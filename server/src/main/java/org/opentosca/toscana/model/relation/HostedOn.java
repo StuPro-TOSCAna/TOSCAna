@@ -17,9 +17,6 @@ public class HostedOn extends RootRelationship {
         super(description);
     }
 
-    public static class HostedOnBuilder extends RootRelationshipBuilder {
-    }
-
     @Override
     public void accept(RelationshipVisitor v) {
         v.visit(this);

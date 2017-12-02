@@ -1,15 +1,17 @@
 package org.opentosca.toscana.core.plugin;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.core.transformation.logging.Log;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.tika.io.IOUtils;
+import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -99,9 +101,13 @@ public class PluginFileAccessTest extends BaseUnitTest {
 
     @Test
     public void write() throws Exception {
-        access.access(targetFileName).append(fileContent).close();
+        String secondString = "second_test_string";
+        access.access(targetFileName).appendln(fileContent).close();
+        access.access(targetFileName).append(secondString).close();
         assertTrue(targetFile.isFile());
-        assertEquals(fileContent, FileUtils.readFileToString(targetFile));
+        List<String> result = IOUtils.readLines(new FileInputStream(targetFile));
+        assertEquals(fileContent, result.get(result.size() - 2));
+        assertEquals(secondString, result.get(result.size() - 1));
     }
 
     @Test(expected = IOException.class)
@@ -152,7 +158,7 @@ public class PluginFileAccessTest extends BaseUnitTest {
     public void getAbsolutePathNoSuchFile() throws FileNotFoundException {
         String filename = "nonexistent-file";
         access.getAbsolutePath(filename);
-        fail("getAbsoultePath() should have raised FileNotFoundException.");
+        fail("getAbsolutePath() should have raised FileNotFoundException.");
     }
 
     @Test

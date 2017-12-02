@@ -68,7 +68,7 @@ abstract class TestHelper {
         server.start();
         String baseURL = server.url("").toString();
         logger.info("Server Running on {}", baseURL);
-        api = new ApiController(baseURL, LoggingMode.HIGH);
+        api = new ApiController(baseURL, LoggingMode.MEDIUM);
     }
 
     @After

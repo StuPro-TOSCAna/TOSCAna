@@ -43,7 +43,7 @@ public class BashScript {
 
     public void append(String string) throws IOException {
         logger.debug("Appending {} to {}.sh", string, name);
-        access.access(scriptPath).append(string + "\n").close();
+        access.access(scriptPath).appendln(string).close();
     }
     
 }

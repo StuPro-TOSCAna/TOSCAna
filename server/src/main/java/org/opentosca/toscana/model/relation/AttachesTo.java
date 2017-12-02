@@ -59,9 +59,6 @@ public class AttachesTo extends RootRelationship {
         return new AttachesToBuilder().mountPoint(mountPoint);
     }
 
-    public static class AttachesToBuilder extends RootRelationshipBuilder {
-    }
-
     @Override
     public void accept(RelationshipVisitor v) {
         v.visit(this);

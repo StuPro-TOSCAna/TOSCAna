@@ -90,7 +90,7 @@ public class DockerContainerCapability extends ContainerCapability {
         this.hostId = hostId;
         this.volumeId = volumeId;
     }
-    
+
     /**
      @return {@link #hostId}
      */
