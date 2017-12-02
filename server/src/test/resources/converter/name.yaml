@@ -1,0 +1,6 @@
+tosca_definitions_version: tosca_simple_yaml_1_1
+topology_template:
+  node_templates:
+    testname:
+      type: tosca.nodes.Database.MySQL
+   

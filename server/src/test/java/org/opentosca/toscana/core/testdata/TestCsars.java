@@ -19,10 +19,11 @@ import static org.mockito.Mockito.mock;
  */
 public class TestCsars {
 
-    public final static File CSAR_DIR = new File("src/test/resources/csars");
-    public final static File YAML_DIR = new File(CSAR_DIR, "yaml");
+    final static File CSAR_DIR = new File("src/test/resources/csars");
+    final static File YAML_DIR = new File(CSAR_DIR, "yaml");
 
     // yaml csars
+    public final static File VALID_EMPTY_TOPOLOGY = new File(YAML_DIR, "valid/empty-topology.csar");
     public final static File CSAR_YAML_VALID_MINIMAL_DOCKER = new File(YAML_DIR, "valid/minimal-docker.csar");
     public final static File CSAR_YAML_INVALID_DEPENDENCIES_MISSING = new File(YAML_DIR, "invalid/dependencies_missing.csar");
     public final static File CSAR_YAML_INVALID_DOCKERAPP_MISSING = new File(YAML_DIR, "invalid/dockerapp_missing.csar");
@@ -31,15 +32,6 @@ public class TestCsars {
 
     @Autowired
     private CsarDao csarDao;
-
-    //TODO move somewhere else
-    public static byte[] getFFBytes() {
-        byte[] data = new byte[10000];
-        for (int i = 0; i < data.length; i++) {
-            data[i] = (byte) 0xFF;
-        }
-        return data;
-    }
 
     /**
      Creates given file as csar. Caution: Uses CsarDao internally
