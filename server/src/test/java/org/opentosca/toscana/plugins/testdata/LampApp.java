@@ -32,11 +32,15 @@ public class LampApp {
 
     private final Set<RootNode> testNodes = new HashSet<>();
 
-    protected Set<RootNode> getLampApp() {
+    public Set<RootNode> getLampApp() {
         createLampModel();
         return testNodes;
     }
 
+    public static Set<RootNode> getLampModel() {
+        return new LampApp().getLampApp();
+    }
+    
     private void createLampModel() {
 
         testNodes.add(createComputeNode());
