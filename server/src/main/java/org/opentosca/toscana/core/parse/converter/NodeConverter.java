@@ -26,9 +26,9 @@ import org.opentosca.toscana.model.node.WordPress;
 import com.google.common.collect.Sets;
 import org.eclipse.winery.model.tosca.yaml.TNodeTemplate;
 
-public class NodeConverter {
+class NodeConverter {
 
-    public static final String TOSCA_PREFIX = "tosca.nodes.";
+    static final String TOSCA_PREFIX = "tosca.nodes.";
 
     private Map<String, BiFunction<String, TNodeTemplate, RootNode>> conversionMap = new HashMap<>();
 
@@ -54,7 +54,7 @@ public class NodeConverter {
 
     private void addRule(String simpleType, String typePrefix, BiFunction<String, TNodeTemplate, RootNode> conversion) {
         Set<String> typeSet = getTypes(simpleType, typePrefix);
-        typeSet.stream().forEach(typeName -> conversionMap.put(typeName, conversion));
+        typeSet.forEach(typeName -> conversionMap.put(typeName, conversion));
     }
 
     private void addRule(String simpleType, BiFunction<String, TNodeTemplate, RootNode> conversion) {
@@ -74,8 +74,7 @@ public class NodeConverter {
                 "Node type '%s' is not supported by the internal model", template.getType()));
         }
         try {
-            RootNode node = conversion.apply(name, template);
-            return node;
+            return conversion.apply(name, template);
         } catch (UnsupportedOperationException e) {
             throw new UnsupportedOperationException(
                 String.format("Converting node templates of type '%s' not yet supported",

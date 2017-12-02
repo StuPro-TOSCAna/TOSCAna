@@ -15,8 +15,6 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.Assert.assertEquals;
-
 /**
  Does not run completely decoupled: Uses the winery parser internally.
  In case of failure, make sure the parser works as expected.

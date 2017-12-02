@@ -37,7 +37,7 @@ public class ModelConverter {
             logger.warn("Topology template of service template is empty");
             templateMap = new HashMap<>();
         }
-       
+
         Set<RootNode> nodes = new HashSet<>();
         NodeConverter nodeConverter = new NodeConverter();
         for (Map.Entry<String, TNodeTemplate> entry : templateMap.entrySet()) {
