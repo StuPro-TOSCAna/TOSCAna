@@ -2,7 +2,7 @@ package org.opentosca.toscana.plugins.kubernetes;
 
 import java.io.File;
 
-import org.opentosca.toscana.core.BaseJUnitTest;
+import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.core.util.FileHelper;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -11,7 +11,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class KubernetesResourceFileCreatorTest extends BaseJUnitTest {
+public class KubernetesResourceFileCreatorTest extends BaseUnitTest {
     private static KubernetesResourceFileCreator creator;
     private static String correctResourceFile;
 

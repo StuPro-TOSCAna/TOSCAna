@@ -3,7 +3,7 @@ package org.opentosca.toscana.plugins.kubernetes;
 import java.io.File;
 import java.io.IOException;
 
-import org.opentosca.toscana.core.BaseJUnitTest;
+import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.core.util.FileHelper;
 
 import org.junit.BeforeClass;
@@ -11,7 +11,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class KubernetesManualCreatorTest extends BaseJUnitTest {
+public class KubernetesManualCreatorTest extends BaseUnitTest {
     private static String testManualCorrectFile;
 
     @BeforeClass

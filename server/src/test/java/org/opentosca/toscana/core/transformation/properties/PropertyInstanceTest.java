@@ -2,7 +2,7 @@ package org.opentosca.toscana.core.transformation.properties;
 
 import java.util.HashSet;
 
-import org.opentosca.toscana.core.BaseJUnitTest;
+import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.core.csar.CsarImpl;
 import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.TransformationImpl;
@@ -19,7 +19,7 @@ import static org.mockito.Mockito.mock;
 import static org.opentosca.toscana.core.transformation.TransformationState.INPUT_REQUIRED;
 import static org.opentosca.toscana.core.transformation.TransformationState.READY;
 
-public class PropertyInstanceTest extends BaseJUnitTest {
+public class PropertyInstanceTest extends BaseUnitTest {
 
     private PropertyInstance instance;
     private Transformation transformation;

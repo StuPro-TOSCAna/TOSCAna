@@ -19,12 +19,14 @@ import org.springframework.test.context.ContextConfiguration;
 import static org.junit.Assert.assertEquals;
 import static org.opentosca.toscana.model.capability.OsCapability.Distribution.DEBIAN;
 import static org.opentosca.toscana.model.capability.OsCapability.builder;
+import static org.opentosca.toscana.plugins.kubernetes.docker.mapper.MapperTagLoaderIT.LOADER_TEST_PROFILE;
 
-@ActiveProfiles( {"bimloader"})
+@ActiveProfiles( {LOADER_TEST_PROFILE})
 @ContextConfiguration(classes = {MapperTagLoaderIT.BIMTestConfiguration.class})
 @Category(IntegrationTest.class)
 public class MapperTagLoaderIT extends BaseSpringIntegrationTest {
-
+    
+    static final String LOADER_TEST_PROFILE = "base-image-mapper-loader-test";
     private static final Logger logger = LoggerFactory.getLogger(MapperTagLoaderIT.class);
 
     @Autowired
@@ -40,7 +42,7 @@ public class MapperTagLoaderIT extends BaseSpringIntegrationTest {
         assertEquals(DockerBaseImages.values().length, data.size());
     }
 
-    @Profile("bimloader")
+    @Profile(LOADER_TEST_PROFILE)
     @Configuration
     @EnableScheduling
     public static class BIMTestConfiguration {

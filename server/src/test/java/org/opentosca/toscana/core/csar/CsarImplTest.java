@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.opentosca.toscana.core.BaseJUnitTest;
+import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.logging.Log;
 
@@ -19,7 +19,7 @@ import static org.mockito.Mockito.when;
 import static org.opentosca.toscana.core.testdata.TestPlugins.PLATFORM1;
 import static org.opentosca.toscana.core.testdata.TestPlugins.PLATFORM2;
 
-public class CsarImplTest extends BaseJUnitTest {
+public class CsarImplTest extends BaseUnitTest {
 
     private Csar csar;
     @Mock

@@ -1,6 +1,6 @@
 package org.opentosca.toscana.plugins.lifecycle;
 
-import org.opentosca.toscana.core.BaseJUnitTest;
+import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.core.testdata.TestPlugins;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.core.transformation.platform.Platform;
@@ -17,7 +17,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class LifecycleAwarePluginTest extends BaseJUnitTest {
+public class LifecycleAwarePluginTest extends BaseUnitTest {
 
     private static final Logger logger = LoggerFactory.getLogger(LifecycleAwarePluginTest.class);
 

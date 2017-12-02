@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
 
-import org.opentosca.toscana.core.BaseJUnitTest;
+import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarDao;
 import org.opentosca.toscana.core.csar.CsarImpl;
@@ -22,7 +22,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.opentosca.toscana.core.testdata.TestPlugins.PLATFORM1;
 
-public class TransformationDaoUnitTest extends BaseJUnitTest {
+public class TransformationDaoUnitTest extends BaseUnitTest {
 
     @Mock
     private Preferences preferences;

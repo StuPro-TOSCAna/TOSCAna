@@ -3,7 +3,7 @@ package org.opentosca.toscana.plugins.kubernetes.docker.mapper;
 import java.util.Arrays;
 import java.util.Collection;
 
-import org.opentosca.toscana.core.BaseJUnitTest;
+import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.model.capability.OsCapability;
 
 import org.junit.BeforeClass;
@@ -24,7 +24,7 @@ import static org.opentosca.toscana.model.capability.OsCapability.Type.WINDOWS;
 import static org.opentosca.toscana.model.capability.OsCapability.builder;
 
 @RunWith(Parameterized.class)
-public class MapperErrorTest extends BaseJUnitTest {
+public class MapperErrorTest extends BaseUnitTest {
 
     private static final Logger logger = LoggerFactory.getLogger(MapperErrorTest.class);
     private static BaseImageMapper baseImageMapper;

@@ -5,7 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.opentosca.toscana.core.BaseJUnitTest;
+import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.core.transformation.logging.Log;
 
 import org.apache.commons.io.FileUtils;
@@ -24,7 +24,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class PluginFileAccessTest extends BaseJUnitTest {
+public class PluginFileAccessTest extends BaseUnitTest {
 
     private PluginFileAccess access;
     @Mock

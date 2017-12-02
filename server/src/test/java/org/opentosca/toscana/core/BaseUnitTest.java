@@ -16,7 +16,7 @@ import org.junit.runners.JUnit4;
  If files need to get written on disk during tests, use {@link #temporaryFolder}
  */
 @RunWith(JUnit4.class)
-public abstract class BaseJUnitTest extends BaseTest {
+public abstract class BaseUnitTest extends BaseTest {
 
     /**
      Grants disk access. Is reset before every test method.

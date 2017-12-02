@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import org.opentosca.toscana.core.BaseJUnitTest;
+import org.opentosca.toscana.core.BaseUnitTest;
 
 import ch.qos.logback.classic.Logger;
 import org.junit.Before;
@@ -15,7 +15,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
-public class MemoryAppenderTest extends BaseJUnitTest {
+public class MemoryAppenderTest extends BaseUnitTest {
 
     private final Logger logger = (Logger) LoggerFactory.getLogger(getClass());
 

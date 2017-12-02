@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import org.opentosca.toscana.core.BaseJUnitTest;
+import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.core.transformation.logging.Log;
 
@@ -22,7 +22,7 @@ import static org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle.SCRIPTS_
 import static org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle.UTIL_DIR_NAME;
 import static org.opentosca.toscana.plugins.scripts.BashScript.SHEBANG;
 
-public class BashScriptTest extends BaseJUnitTest {
+public class BashScriptTest extends BaseUnitTest {
 
     private BashScript bashScript;
     private PluginFileAccess access;

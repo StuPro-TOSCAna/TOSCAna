@@ -3,7 +3,7 @@ package org.opentosca.toscana.core.transformation;
 import java.util.HashSet;
 import java.util.Map;
 
-import org.opentosca.toscana.core.BaseJUnitTest;
+import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarImpl;
 import org.opentosca.toscana.core.transformation.logging.Log;
@@ -20,7 +20,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
-public class TransformationPropertyHandlingTest extends BaseJUnitTest {
+public class TransformationPropertyHandlingTest extends BaseUnitTest {
     private static final String MOCK_CSAR_NAME = "test";
 
     private TransformationImpl transformation;

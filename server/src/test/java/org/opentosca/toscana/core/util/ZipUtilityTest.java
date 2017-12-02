@@ -9,7 +9,7 @@ import java.nio.file.Files;
 import java.util.Random;
 import java.util.zip.ZipInputStream;
 
-import org.opentosca.toscana.core.BaseJUnitTest;
+import org.opentosca.toscana.core.BaseUnitTest;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertTrue;
 
-public class ZipUtilityTest extends BaseJUnitTest {
+public class ZipUtilityTest extends BaseUnitTest {
 
     private static final Logger log = LoggerFactory.getLogger(ZipUtilityTest.class);
 

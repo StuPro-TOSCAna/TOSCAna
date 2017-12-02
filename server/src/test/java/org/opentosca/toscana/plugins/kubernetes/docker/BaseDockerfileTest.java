@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-import org.opentosca.toscana.core.BaseJUnitTest;
+import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.core.testutils.TestUtils;
 import org.opentosca.toscana.core.transformation.logging.Log;
@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 
-public abstract class BaseDockerfileTest extends BaseJUnitTest {
+public abstract class BaseDockerfileTest extends BaseUnitTest {
 
     protected static final String INPUT_DIR_NAME = "image-input";
     protected static final String WORKING_DIR_NAME = "test-image";
