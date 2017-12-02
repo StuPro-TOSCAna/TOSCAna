@@ -45,4 +45,5 @@ public class BashScript {
         logger.debug("Appending {} to {}.sh", string, name);
         access.access(scriptPath).appendln(string).close();
     }
+    
 }
