@@ -3,7 +3,6 @@ package org.opentosca.toscana.plugins.testdata;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.model.capability.AdminEndpointCapability;
 import org.opentosca.toscana.model.capability.AttachmentCapability;
 import org.opentosca.toscana.model.capability.BindableCapability;
@@ -40,7 +39,7 @@ public class LampApp {
     public static Set<RootNode> getLampModel() {
         return new LampApp().getLampApp();
     }
-    
+
     private void createLampModel() {
 
         testNodes.add(createComputeNode());

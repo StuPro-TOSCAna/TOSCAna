@@ -4,14 +4,14 @@ import java.util.Objects;
 import java.util.Optional;
 
 import org.opentosca.toscana.model.capability.ContainerCapability;
+import org.opentosca.toscana.model.capability.Requirement;
 import org.opentosca.toscana.model.datatype.Credential;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
+import org.opentosca.toscana.model.relation.HostedOn;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
 
 /**
  Represents a typical relational, SQL Database Management System software component or service.
@@ -19,9 +19,6 @@ import lombok.Getter;
  */
 @Data
 public class Dbms extends SoftwareComponent {
-
-    @Getter(AccessLevel.NONE)
-    public final ContainerCapability host;
 
     /**
      The optional root password for the Dbms server.
@@ -35,8 +32,11 @@ public class Dbms extends SoftwareComponent {
      */
     private final Integer port;
 
+    private final ContainerCapability containerHost;
+
     @Builder
-    protected Dbms(ContainerCapability host,
+    protected Dbms(Requirement<ContainerCapability, Compute, HostedOn> host,
+                   ContainerCapability containerHost,
                    String rootPassword,
                    Integer port,
                    String componentVersion,
@@ -44,24 +44,26 @@ public class Dbms extends SoftwareComponent {
                    String nodeName,
                    StandardLifecycle standardLifecycle,
                    String description) {
-        super(componentVersion, adminCredential, nodeName, standardLifecycle, description);
-        this.host = Objects.requireNonNull(host);
+        super(componentVersion, adminCredential, host, nodeName, standardLifecycle, description);
+        this.containerHost = Objects.requireNonNull(containerHost);
         this.port = port;
         this.rootPassword = rootPassword;
 
-        capabilities.add(host);
+        capabilities.add(containerHost);
     }
 
-
     /**
-     @param nodeName {@link #nodeName}
-     @param host     {@link #host}
+     @param nodeName      {@link #nodeName}
+     @param host          {@link #host}
+     @param containerHost {@link #containerHost}
      */
     public static DbmsBuilder builder(String nodeName,
-                                      ContainerCapability host) {
+                                      Requirement<ContainerCapability, Compute, HostedOn> host,
+                                      ContainerCapability containerHost) {
         return new DbmsBuilder()
             .nodeName(nodeName)
-            .host(host);
+            .host(host)
+            .containerHost(containerHost);
     }
 
     /**

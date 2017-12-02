@@ -20,8 +20,6 @@ import lombok.Data;
 @Data
 public class SoftwareComponent extends RootNode {
 
-    public final Requirement<ContainerCapability, Compute, HostedOn> host;
-
     /**
      The optional software component’s version.
      (TOSCA Simple Profile in YAML Version 1.1, p.170)
@@ -33,6 +31,8 @@ public class SoftwareComponent extends RootNode {
      (TOSCA Simple Profile in YAML Version 1.1, p.170)
      */
     private final Credential adminCredential;
+
+    private final Requirement<ContainerCapability, Compute, HostedOn> host;
 
     @Builder
     protected SoftwareComponent(String componentVersion,
@@ -47,20 +47,6 @@ public class SoftwareComponent extends RootNode {
         this.host = Objects.requireNonNull(host);
 
         requirements.add(host);
-    }
-
-    /**
-     Only use when subclass is shadowing the `host` field.
-     */
-    protected SoftwareComponent(String componentVersion,
-                                Credential adminCredential,
-                                String nodeName,
-                                StandardLifecycle standardLifecycle,
-                                String description) {
-        super(nodeName, standardLifecycle, description);
-        this.componentVersion = componentVersion;
-        this.adminCredential = adminCredential;
-        this.host = null; // this is a workaround. field shall not be used because its shadowed by the subclass
     }
 
     /**

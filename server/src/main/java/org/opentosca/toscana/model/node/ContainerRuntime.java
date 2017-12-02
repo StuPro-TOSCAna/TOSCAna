@@ -3,15 +3,15 @@ package org.opentosca.toscana.model.node;
 import java.util.Objects;
 
 import org.opentosca.toscana.model.capability.ContainerCapability;
+import org.opentosca.toscana.model.capability.Requirement;
 import org.opentosca.toscana.model.capability.ScalableCapability;
 import org.opentosca.toscana.model.datatype.Credential;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
+import org.opentosca.toscana.model.relation.HostedOn;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
 
 /**
  Represents operating system-level virtualization technology used to run
@@ -21,39 +21,42 @@ import lombok.Getter;
 @Data
 public class ContainerRuntime extends SoftwareComponent {
 
-    @Getter(AccessLevel.NONE)
-    public final ContainerCapability host;
+    private final ContainerCapability containerHost;
 
     private final ScalableCapability scalable;
 
     @Builder
-    private ContainerRuntime(ContainerCapability host,
+    private ContainerRuntime(Requirement<ContainerCapability, Compute, HostedOn> host,
+                             ContainerCapability containerHost,
                              ScalableCapability scalable,
                              String componentVersion,
                              Credential adminCredential,
                              String nodeName,
                              StandardLifecycle standardLifecycle,
                              String description) {
-        super(componentVersion, adminCredential, nodeName, standardLifecycle, description);
-        this.host = Objects.requireNonNull(host);
+        super(componentVersion, adminCredential, host, nodeName, standardLifecycle, description);
+        this.containerHost = Objects.requireNonNull(containerHost);
         this.scalable = Objects.requireNonNull(scalable);
 
-        capabilities.add(host);
+        capabilities.add(containerHost);
         capabilities.add(scalable);
     }
 
     /**
-     @param nodeName {@link #nodeName}
-     @param host     {@link #host}
-     @param scalable {@link #scalable}
+     @param nodeName      {@link #nodeName}
+     @param host          {@link #host}
+     @param containerHost {@link #containerHost}
+     @param scalable      {@link #scalable}
      */
     public static ContainerRuntimeBuilder builder(String nodeName,
-                                                  ContainerCapability host,
+                                                  Requirement<ContainerCapability, Compute, HostedOn> host,
+                                                  ContainerCapability containerHost,
                                                   ScalableCapability scalable) {
         return new ContainerRuntimeBuilder()
             .nodeName(nodeName)
             .scalable(scalable)
-            .host(host);
+            .host(host)
+            .containerHost(containerHost);
     }
 
     @Override

@@ -5,14 +5,14 @@ import java.util.Objects;
 import org.opentosca.toscana.model.capability.AdminEndpointCapability;
 import org.opentosca.toscana.model.capability.ContainerCapability;
 import org.opentosca.toscana.model.capability.EndpointCapability;
+import org.opentosca.toscana.model.capability.Requirement;
 import org.opentosca.toscana.model.datatype.Credential;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
+import org.opentosca.toscana.model.relation.HostedOn;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
 
 /**
  Represents an abstract software component or service that is capable of hosting and providing management operations
@@ -25,46 +25,47 @@ import lombok.Getter;
 @Data
 public class WebServer extends SoftwareComponent {
 
-    // public by design (is hiding parent field of different type -> getter conflict)
-    @Getter(AccessLevel.NONE)
-    public final ContainerCapability host;
-
     private final EndpointCapability dataEndpoint;
 
     private final AdminEndpointCapability adminEndpoint;
 
+    private final ContainerCapability containerHost;
+
     @Builder
     protected WebServer(String componentVersion,
                         Credential adminCredential,
-                        ContainerCapability host,
+                        Requirement<ContainerCapability, Compute, HostedOn> host,
+                        ContainerCapability containerHost,
                         EndpointCapability dataEndpoint,
                         AdminEndpointCapability adminEndpoint,
                         String nodeName,
                         StandardLifecycle standardLifecycle,
                         String description) {
-        super(componentVersion, adminCredential, nodeName, standardLifecycle, description);
-        this.host = Objects.requireNonNull(host);
+        super(componentVersion, adminCredential, host, nodeName, standardLifecycle, description);
+        this.containerHost = Objects.requireNonNull(containerHost);
         this.dataEndpoint = Objects.requireNonNull(dataEndpoint);
         this.adminEndpoint = Objects.requireNonNull(adminEndpoint);
 
-        capabilities.add(host);
+        capabilities.add(containerHost);
         capabilities.add(dataEndpoint);
         capabilities.add(adminEndpoint);
     }
 
-
     /**
      @param nodeName      {@link #nodeName}
+     @param containerHost {@link #containerHost}
      @param host          {@link #host}
      @param dataEndpoint  {@link #dataEndpoint}
      @param adminEndpoint {@link #adminEndpoint}
      */
     public static WebServerBuilder builder(String nodeName,
-                                           ContainerCapability host,
+                                           ContainerCapability containerHost,
+                                           Requirement<ContainerCapability, Compute, HostedOn> host,
                                            EndpointCapability dataEndpoint,
                                            AdminEndpointCapability adminEndpoint) {
         return new WebServerBuilder()
             .nodeName(nodeName)
+            .containerHost(containerHost)
             .host(host)
             .dataEndpoint(dataEndpoint)
             .adminEndpoint(adminEndpoint);

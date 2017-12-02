@@ -2,8 +2,10 @@ package org.opentosca.toscana.model.node;
 
 import org.opentosca.toscana.model.capability.ContainerCapability;
 import org.opentosca.toscana.model.capability.ContainerCapability.ContainerCapabilityBuilder;
+import org.opentosca.toscana.model.capability.Requirement;
 import org.opentosca.toscana.model.datatype.Credential;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
+import org.opentosca.toscana.model.relation.HostedOn;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 
 import lombok.Builder;
@@ -17,7 +19,8 @@ import lombok.Data;
 public class MysqlDbms extends Dbms {
 
     @Builder
-    private MysqlDbms(ContainerCapabilityBuilder hostBuilder,
+    private MysqlDbms(Requirement<ContainerCapability, Compute, HostedOn> host,
+                      ContainerCapabilityBuilder containerHostBuilder,
                       String rootPassword,
                       Integer port,
                       String componentVersion,
@@ -25,25 +28,28 @@ public class MysqlDbms extends Dbms {
                       String nodeName,
                       StandardLifecycle lifecycle,
                       String description) {
-        super(makeValidHost(hostBuilder), rootPassword, fallbackPort(port),
+        super(host, makeValidContainerHost(containerHostBuilder), rootPassword, fallbackPort(port),
             componentVersion, adminCredential, nodeName, lifecycle, description);
     }
 
     /**
-     @param nodeName     {@link #nodeName}
-     @param rootPassword {@link #rootPassword}
-     @param host         {@link #host}
+     @param nodeName             {@link #nodeName}
+     @param rootPassword         {@link #rootPassword}
+     @param host                 {@link #host}
+     @param containerHostBuilder {@link #containerHost}
      */
     public static MysqlDbmsBuilder builder(String nodeName,
                                            String rootPassword,
-                                           ContainerCapability host) {
+                                           Requirement<ContainerCapability, Compute, HostedOn> host,
+                                           ContainerCapabilityBuilder containerHostBuilder) {
         return (MysqlDbmsBuilder) new MysqlDbmsBuilder()
             .nodeName(nodeName)
             .rootPassword(rootPassword)
-            .host(host);
+            .host(host)
+            .containerHostBuilder(containerHostBuilder);
     }
 
-    private static ContainerCapability makeValidHost(ContainerCapabilityBuilder hostBuilder) {
+    private static ContainerCapability makeValidContainerHost(ContainerCapabilityBuilder hostBuilder) {
         return hostBuilder.clearValidSourceTypes().validSourceType(MysqlDatabase.class).build();
     }
 
