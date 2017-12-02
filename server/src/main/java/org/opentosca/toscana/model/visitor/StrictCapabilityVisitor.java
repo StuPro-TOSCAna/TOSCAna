@@ -3,7 +3,6 @@ package org.opentosca.toscana.model.visitor;
 import org.opentosca.toscana.model.capability.AdminEndpointCapability;
 import org.opentosca.toscana.model.capability.AttachmentCapability;
 import org.opentosca.toscana.model.capability.BindableCapability;
-import org.opentosca.toscana.model.capability.Capability;
 import org.opentosca.toscana.model.capability.ComputeCapability;
 import org.opentosca.toscana.model.capability.ContainerCapability;
 import org.opentosca.toscana.model.capability.DatabaseEndpointCapability;
@@ -20,7 +19,7 @@ import org.opentosca.toscana.model.capability.StorageCapability;
  Unimplemented methods throw an {@link UnsupportedTypeException} when invoked.
  */
 public interface StrictCapabilityVisitor extends CapabilityVisitor {
-    
+
     @Override
     default void visit(AdminEndpointCapability capability) {
         throw new UnsupportedTypeException(AdminEndpointCapability.class);
@@ -34,11 +33,6 @@ public interface StrictCapabilityVisitor extends CapabilityVisitor {
     @Override
     default void visit(BindableCapability capability) {
         throw new UnsupportedTypeException(BindableCapability.class);
-    }
-
-    @Override
-    default void visit(Capability capability) {
-        throw new UnsupportedTypeException(Capability.class);
     }
 
     @Override

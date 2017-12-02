@@ -113,9 +113,6 @@ public class OsCapability extends Capability {
         return Optional.ofNullable(version);
     }
 
-    public static class OsCapabilityBuilder extends CapabilityBuilder {
-    }
-
     @Override
     public void accept(CapabilityVisitor v) {
         v.visit(this);

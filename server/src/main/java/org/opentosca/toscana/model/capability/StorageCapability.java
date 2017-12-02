@@ -40,9 +40,6 @@ public class StorageCapability extends Capability {
         return Optional.ofNullable(name);
     }
 
-    public static class StorageCapabilityBuilder extends CapabilityBuilder {
-    }
-
     @Override
     public void accept(CapabilityVisitor v) {
         v.visit(this);

@@ -126,9 +126,6 @@ public class ComputeCapability extends Capability {
         return Optional.ofNullable(memSizeInMB);
     }
 
-    public static class ComputeCapabilityBuilder extends CapabilityBuilder {
-    }
-
     @Override
     public void accept(CapabilityVisitor v) {
         v.visit(this);

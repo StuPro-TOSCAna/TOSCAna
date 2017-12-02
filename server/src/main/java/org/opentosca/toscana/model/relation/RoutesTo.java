@@ -18,9 +18,6 @@ public class RoutesTo extends RootRelationship {
         super(description);
     }
 
-    public static class RoutesToBuilder extends RootRelationshipBuilder {
-    }
-
     @Override
     public void accept(RelationshipVisitor v) {
         v.visit(this);

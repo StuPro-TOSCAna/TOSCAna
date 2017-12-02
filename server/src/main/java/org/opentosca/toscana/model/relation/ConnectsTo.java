@@ -35,9 +35,6 @@ public class ConnectsTo extends RootRelationship {
         return Optional.ofNullable(credential);
     }
 
-    public static class ConnectsToBuilder extends RootRelationshipBuilder {
-    }
-
     @Override
     public void accept(RelationshipVisitor v) {
         v.visit(this);

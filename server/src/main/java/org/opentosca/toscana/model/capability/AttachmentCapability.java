@@ -25,9 +25,6 @@ public class AttachmentCapability extends Capability {
         super(validSourceTypes, occurence, description);
     }
 
-    public static class AttachmentCapabilityBuilder extends CapabilityBuilder {
-    }
-
     @Override
     public void accept(CapabilityVisitor v) {
         v.visit(this);
