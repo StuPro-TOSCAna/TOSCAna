@@ -86,8 +86,6 @@ public class LampApp {
     }
 
     private MysqlDbms createMysqlDbms() {
-        ContainerCapability.ContainerCapabilityBuilder containerCapabilityBuilder = createContainerCapabilityBuilder();
-        ContainerCapability containerCapability = containerCapabilityBuilder.build();
         Operation dbmsOperation = Operation.builder()
             .implementationArtifact("mysql_dbms/mysql_dbms_configure.sh")
             .input(new OperationVariable("db_root_password")).build();
@@ -96,11 +94,16 @@ public class LampApp {
             .configure(dbmsOperation)
             .build();
 
-        MysqlDbms mysqlDbms = MysqlDbms.builder("mysql_dbms", "geheim", containerCapability)
-            .lifecycle(lifecycle)
-            .port(3306)
-            .hostBuilder(containerCapabilityBuilder)
-            .build();
+        Requirement<ContainerCapability, Compute, HostedOn> hostedOnRequirement = getHostedOnServerRequirement();
+
+        ContainerCapability.ContainerCapabilityBuilder capabilityBuilder = ContainerCapability.builder();
+        
+        MysqlDbms mysqlDbms = MysqlDbms.builder(
+            "mysql_dbms",
+            "geheim",
+            hostedOnRequirement,
+            capabilityBuilder
+        ).port(3306).lifecycle(lifecycle).build();
 
         return mysqlDbms;
     }
@@ -129,12 +132,27 @@ public class LampApp {
         AdminEndpointCapability adminEndpointCapability = AdminEndpointCapability.builder("127.0.0.1")
             .port(new Port(80)).build();
         EndpointCapability endpointCapabilityApache = EndpointCapability.builder("127.0.0.1", new Port(80)).build();
-        Apache webServer = Apache.builder("apache_web_server", containerCapability,
-            apacheEndpoint, adminEndpointCapability)
-            .databaseEndpoint(endpointCapabilityApache)
-            .build();
+
+        Requirement<ContainerCapability, Compute, HostedOn> hostedOnRequirement = getHostedOnServerRequirement();
+
+        Apache webServer = Apache.builder(
+            "apache_web_server",
+            hostedOnRequirement,
+            containerCapability,
+            apacheEndpoint,
+            adminEndpointCapability
+        ).build();
 
         return webServer;
+    }
+
+    private Requirement<ContainerCapability, Compute, HostedOn> getHostedOnServerRequirement() {
+        ContainerCapability hostCapability = ContainerCapability.builder().name("server").build();
+
+        return Requirement.<ContainerCapability, Compute, HostedOn>builder(
+            hostCapability,
+            HostedOn.builder().build()
+        ).build();
     }
 
     private WebApplication createWebApplication() {
