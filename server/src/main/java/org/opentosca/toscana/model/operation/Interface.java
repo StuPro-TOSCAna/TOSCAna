@@ -32,9 +32,6 @@ public class Interface {
     protected Interface(@Singular Set<OperationVariable> inputs,
                         @Singular Set<Operation> operations) {
         this.inputs = Objects.requireNonNull(inputs);
-        this.operations = Objects.requireNonNull(operations);
-        this.operations.stream().filter(Objects::nonNull).collect(Collectors.toSet());
-
+        this.operations = operations.stream().filter(Objects::nonNull).collect(Collectors.toSet());
     }
-
 }
