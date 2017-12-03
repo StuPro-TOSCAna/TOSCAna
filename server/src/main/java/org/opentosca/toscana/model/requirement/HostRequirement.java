@@ -9,12 +9,16 @@ import org.opentosca.toscana.model.relation.HostedOn;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.Singular;
 
 @Data
 public class HostRequirement extends Requirement<ContainerCapability, Compute, HostedOn> {
 
     @Builder
-    protected HostRequirement(ContainerCapability capability, Range occurrence, Set<Compute> fulfillers, HostedOn relationship) {
+    protected HostRequirement(ContainerCapability capability, 
+                              Range occurrence, 
+                              @Singular Set<Compute> fulfillers, 
+                              HostedOn relationship) {
         super(capability, occurrence, fulfillers, relationship);
     }
     
@@ -23,8 +27,5 @@ public class HostRequirement extends Requirement<ContainerCapability, Compute, H
             .capability(capability)
             .relationship(relationship);
         
-    }
-
-    public static class HostRequirementBuilder extends RequirementBuilder<ContainerCapability, Compute, HostedOn> {
     }
 }

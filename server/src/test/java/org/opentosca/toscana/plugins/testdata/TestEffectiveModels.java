@@ -13,6 +13,7 @@ import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.relation.AttachesTo;
 import org.opentosca.toscana.model.relation.HostedOn;
 import org.opentosca.toscana.model.relation.RootRelationship;
+import org.opentosca.toscana.model.requirement.DockerHostRequirement;
 import org.opentosca.toscana.model.requirement.EndpointRequirement;
 import org.opentosca.toscana.model.requirement.HostRequirement;
 import org.opentosca.toscana.model.requirement.Requirement;
@@ -29,8 +30,7 @@ public class TestEffectiveModels {
             = ContainerRuntime.builder("dockerRuntime", requirement,
             containerCapability, scalableCapability).build();
         HostedOn hostedOn = HostedOn.builder().build();
-        Requirement<DockerContainerCapability, ContainerRuntime, HostedOn> host
-            = Requirement.<DockerContainerCapability, ContainerRuntime, HostedOn>builder(containerCapability, hostedOn)
+        DockerHostRequirement host = DockerHostRequirement.builder(containerCapability, hostedOn)
             .fulfiller(dockerRuntime)
             .build();
         EndpointCapability endpointCapability = EndpointCapability.builder("127.0.0.1", new Port(80)).build();

@@ -13,13 +13,16 @@ import org.opentosca.toscana.model.relation.RootRelationship;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.Singular;
 
 @Data
 public class EndpointRequirement extends Requirement<EndpointCapability, RootNode, RootRelationship> {
 
     @Builder
-    protected EndpointRequirement(EndpointCapability capability, Range occurrence, 
-                                  Set<RootNode> fulfillers, RootRelationship relationship) {
+    protected EndpointRequirement(EndpointCapability capability, 
+                                  Range occurrence, 
+                                  @Singular Set<RootNode> fulfillers, 
+                                  RootRelationship relationship) {
         super(capability, occurrence, fulfillers, relationship);
     }
     
@@ -28,8 +31,5 @@ public class EndpointRequirement extends Requirement<EndpointCapability, RootNod
         return new EndpointRequirementBuilder()
             .capability(capability)
             .relationship(relationship);
-    }
-
-    public static class EndpointRequirementBuilder extends RequirementBuilder<EndpointCapability, RootNode, RootRelationship> {
     }
 }
