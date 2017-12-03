@@ -2,14 +2,10 @@ package org.opentosca.toscana.model.node;
 
 import java.util.Objects;
 
-import org.opentosca.toscana.model.capability.ContainerCapability;
-import org.opentosca.toscana.model.capability.DatabaseEndpointCapability;
 import org.opentosca.toscana.model.capability.EndpointCapability;
-import org.opentosca.toscana.model.requirement.DatabaseEndpointRequirement;
-import org.opentosca.toscana.model.requirement.Requirement;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
-import org.opentosca.toscana.model.relation.ConnectsTo;
-import org.opentosca.toscana.model.relation.HostedOn;
+import org.opentosca.toscana.model.requirement.DatabaseEndpointRequirement;
+import org.opentosca.toscana.model.requirement.WebServerRequirement;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 
 import lombok.Builder;
@@ -36,7 +32,7 @@ public class WordPress extends WebApplication {
                         DatabaseEndpointRequirement databaseEndpoint,
                         String contextRoot,
                         EndpointCapability endpoint,
-                        Requirement<ContainerCapability, WebServer, HostedOn> host,
+                        WebServerRequirement host,
                         String nodeName,
                         StandardLifecycle standardLifecycle,
                         String description) {
@@ -64,7 +60,7 @@ public class WordPress extends WebApplication {
                                            String dbHost,
                                            DatabaseEndpointRequirement databaseEndpoint,
                                            EndpointCapability endpoint,
-                                           Requirement<ContainerCapability, WebServer, HostedOn> host) {
+                                           WebServerRequirement host) {
         return (WordPressBuilder) new WordPressBuilder()
             .nodeName(nodeName)
             .host(host)

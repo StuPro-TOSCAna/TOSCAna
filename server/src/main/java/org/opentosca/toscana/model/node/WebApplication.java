@@ -8,6 +8,7 @@ import org.opentosca.toscana.model.capability.EndpointCapability;
 import org.opentosca.toscana.model.requirement.Requirement;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
 import org.opentosca.toscana.model.relation.HostedOn;
+import org.opentosca.toscana.model.requirement.WebServerRequirement;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 
 import lombok.Builder;
@@ -30,12 +31,12 @@ public class WebApplication extends RootNode {
 
     private final EndpointCapability appEndpoint;
 
-    private final Requirement<ContainerCapability, WebServer, HostedOn> host;
+    private final WebServerRequirement host;
 
     @Builder
     protected WebApplication(String contextRoot,
                              EndpointCapability endpoint,
-                             Requirement<ContainerCapability, WebServer, HostedOn> host,
+                             WebServerRequirement host,
                              String nodeName,
                              StandardLifecycle standardLifecycle,
                              String description) {
