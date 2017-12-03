@@ -11,13 +11,12 @@ import org.opentosca.toscana.model.capability.DatabaseEndpointCapability;
 import org.opentosca.toscana.model.capability.EndpointCapability;
 import org.opentosca.toscana.model.capability.OsCapability;
 import org.opentosca.toscana.model.requirement.HostRequirement;
+import org.opentosca.toscana.model.requirement.BlockStorageRequirement;
 import org.opentosca.toscana.model.requirement.MysqlDbmsRequirement;
-import org.opentosca.toscana.model.requirement.Requirement;
 import org.opentosca.toscana.model.capability.ScalableCapability;
 import org.opentosca.toscana.model.datatype.Port;
 import org.opentosca.toscana.model.datatype.Range;
 import org.opentosca.toscana.model.node.Apache;
-import org.opentosca.toscana.model.node.BlockStorage;
 import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.MysqlDatabase;
 import org.opentosca.toscana.model.node.MysqlDbms;
@@ -61,14 +60,17 @@ public class LampApp {
         AttachesTo attachesTo = AttachesTo.builder("mount").build();
         AttachmentCapability attachmentCapability = AttachmentCapability.builder().build();
 
-        Requirement<AttachmentCapability, BlockStorage, AttachesTo> computeRequirement =
-            Requirement.<AttachmentCapability, BlockStorage, AttachesTo>builder(attachmentCapability, attachesTo)
-                .build();
+        BlockStorageRequirement localStorage = 
+            BlockStorageRequirement.builder(attachmentCapability, attachesTo) .build();
 
-        OsCapability osCapability = OsCapability.builder().distribution(OsCapability.Distribution.UBUNTU).type(OsCapability.Type.LINUX).version("16.04").build();
+        OsCapability osCapability = OsCapability.builder()
+            .distribution(OsCapability.Distribution.UBUNTU)
+            .type(OsCapability.Type.LINUX)
+            .version("16.04")
+            .build();
 
         Compute computeNode = Compute.builder("server", osCapability, computeAdminEndpointCap, scalableCapability,
-            bindableCapability, computeRequirement).host(containerCapability).build();
+            bindableCapability, localStorage).host(containerCapability).build();
         return computeNode;
     }
 

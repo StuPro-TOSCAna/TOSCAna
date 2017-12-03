@@ -22,7 +22,8 @@ public class DockerHostRequirement extends Requirement<DockerContainerCapability
         super(capability, occurrence, fulfillers, relationship);
     }
 
-    public static DockerHostRequirementBuilder builder(DockerContainerCapability capability, HostedOn relationship) {
+    public static DockerHostRequirementBuilder builder(DockerContainerCapability capability, 
+                                                       HostedOn relationship) {
         return new DockerHostRequirementBuilder()
             .capability(capability)
             .relationship(relationship);
