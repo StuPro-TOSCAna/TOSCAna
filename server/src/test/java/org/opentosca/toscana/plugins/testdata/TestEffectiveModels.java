@@ -13,6 +13,7 @@ import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.relation.AttachesTo;
 import org.opentosca.toscana.model.relation.HostedOn;
 import org.opentosca.toscana.model.relation.RootRelationship;
+import org.opentosca.toscana.model.requirement.EndpointRequirement;
 import org.opentosca.toscana.model.requirement.HostRequirement;
 import org.opentosca.toscana.model.requirement.Requirement;
 
@@ -33,8 +34,7 @@ public class TestEffectiveModels {
             .fulfiller(dockerRuntime)
             .build();
         EndpointCapability endpointCapability = EndpointCapability.builder("127.0.0.1", new Port(80)).build();
-        Requirement<EndpointCapability, RootNode, RootRelationship> network
-            = Requirement.<EndpointCapability, RootNode, RootRelationship>builder(endpointCapability, hostedOn).build();
+        EndpointRequirement network = EndpointRequirement.builder(endpointCapability, hostedOn).build();
         StorageCapability storageCapability = StorageCapability.builder().build();
         AttachesTo attachesTo = AttachesTo.builder("/").build();
         Requirement<StorageCapability, RootNode, RootRelationship> storage

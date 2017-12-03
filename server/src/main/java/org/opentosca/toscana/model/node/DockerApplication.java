@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import org.opentosca.toscana.model.capability.DockerContainerCapability;
 import org.opentosca.toscana.model.capability.EndpointCapability;
+import org.opentosca.toscana.model.requirement.EndpointRequirement;
 import org.opentosca.toscana.model.requirement.Requirement;
 import org.opentosca.toscana.model.capability.StorageCapability;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
@@ -26,7 +27,7 @@ public class DockerApplication extends ContainerApplication {
     @Builder
     private DockerApplication(Requirement<DockerContainerCapability, ContainerRuntime, HostedOn> host,
                               Requirement<StorageCapability, RootNode, RootRelationship> storage,
-                              Requirement<EndpointCapability, RootNode, RootRelationship> network,
+                              EndpointRequirement network,
                               String nodeName,
                               StandardLifecycle standardLifecycle,
                               String description) {
@@ -44,7 +45,7 @@ public class DockerApplication extends ContainerApplication {
      */
     public static DockerApplicationBuilder builder(Requirement<DockerContainerCapability, ContainerRuntime, HostedOn> host,
                                                    String nodeName,
-                                                   Requirement<EndpointCapability, RootNode, RootRelationship> network,
+                                                   EndpointRequirement network,
                                                    Requirement<StorageCapability, RootNode, RootRelationship> storage) {
         return new DockerApplicationBuilder()
             .nodeName(nodeName)

@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import org.opentosca.toscana.model.capability.ContainerCapability;
 import org.opentosca.toscana.model.capability.EndpointCapability;
+import org.opentosca.toscana.model.requirement.EndpointRequirement;
 import org.opentosca.toscana.model.requirement.Requirement;
 import org.opentosca.toscana.model.capability.StorageCapability;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
@@ -25,12 +26,12 @@ public class ContainerApplication extends RootNode {
     // here, getters can't be overridden. 
     public final Requirement<ContainerCapability, ContainerRuntime, HostedOn> host;
     private final Requirement<StorageCapability, RootNode, RootRelationship> storage;
-    private final Requirement<EndpointCapability, RootNode, RootRelationship> network;
+    private final EndpointRequirement network;
 
     @Builder
     protected ContainerApplication(Requirement<ContainerCapability, ContainerRuntime, HostedOn> host,
                                    Requirement<StorageCapability, RootNode, RootRelationship> storage,
-                                   Requirement<EndpointCapability, RootNode, RootRelationship> network,
+                                   EndpointRequirement network,
                                    String nodeName,
                                    StandardLifecycle standardLifecycle,
                                    String description) {
@@ -48,7 +49,7 @@ public class ContainerApplication extends RootNode {
      Only use when subclass is shadowing the `host` field.
      */
     protected ContainerApplication(Requirement<StorageCapability, RootNode, RootRelationship> storage,
-                                   Requirement<EndpointCapability, RootNode, RootRelationship> network,
+                                   EndpointRequirement network,
                                    String nodeName,
                                    StandardLifecycle standardLifecycle,
                                    String description) {
@@ -69,7 +70,7 @@ public class ContainerApplication extends RootNode {
      */
     public static ContainerApplicationBuilder builder(String nodeName,
                                                       Requirement<ContainerCapability, ContainerRuntime, HostedOn> host,
-                                                      Requirement<EndpointCapability, RootNode, RootRelationship> network,
+                                                      EndpointRequirement network,
                                                       Requirement<StorageCapability, RootNode, RootRelationship> storage) {
         return new ContainerApplicationBuilder()
             .nodeName(nodeName)
