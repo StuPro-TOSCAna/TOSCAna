@@ -5,8 +5,10 @@ import java.util.Optional;
 import org.opentosca.toscana.model.capability.AdminEndpointCapability;
 import org.opentosca.toscana.model.capability.ContainerCapability;
 import org.opentosca.toscana.model.capability.EndpointCapability;
+import org.opentosca.toscana.model.capability.Requirement;
 import org.opentosca.toscana.model.datatype.Credential;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
+import org.opentosca.toscana.model.relation.HostedOn;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 
 import lombok.Builder;
@@ -21,13 +23,14 @@ public class Nodejs extends WebServer {
     protected Nodejs(String githubUrl,
                      String componentVersion,
                      Credential adminCredential,
-                     ContainerCapability host,
+                     Requirement<ContainerCapability, Compute, HostedOn> host,
+                     ContainerCapability containerHost,
                      EndpointCapability dataEndpoint,
                      AdminEndpointCapability adminEndpoint,
                      String nodeName,
                      StandardLifecycle standardLifecycle,
                      String description) {
-        super(componentVersion, adminCredential, host, dataEndpoint,
+        super(componentVersion, adminCredential, host, containerHost, dataEndpoint,
             adminEndpoint, nodeName, standardLifecycle, description);
         this.githubUrl = (githubUrl == null || githubUrl.isEmpty()) ?
             "https://github.com/mmm/testnode.git" : githubUrl;
@@ -36,16 +39,19 @@ public class Nodejs extends WebServer {
     /**
      @param nodeName      {@link #nodeName}
      @param host          {@link #host}
+     @param containerHost {@link #containerHost}
      @param dataEndpoint  {@link #dataEndpoint}
      @param adminEndpoint {@link #adminEndpoint}
      */
     public static NodejsBuilder builder(String nodeName,
-                                        ContainerCapability host,
+                                        Requirement<ContainerCapability, Compute, HostedOn> host,
+                                        ContainerCapability containerHost,
                                         EndpointCapability dataEndpoint,
                                         AdminEndpointCapability adminEndpoint) {
         return new NodejsBuilder()
             .nodeName(nodeName)
             .host(host)
+            .containerHost(containerHost)
             .dataEndpoint(dataEndpoint)
             .adminEndpoint(adminEndpoint);
     }

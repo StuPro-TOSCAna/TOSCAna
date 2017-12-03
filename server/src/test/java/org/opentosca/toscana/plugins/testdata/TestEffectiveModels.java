@@ -1,6 +1,7 @@
 package org.opentosca.toscana.plugins.testdata;
 
 import org.opentosca.toscana.model.EffectiveModel;
+import org.opentosca.toscana.model.capability.ContainerCapability;
 import org.opentosca.toscana.model.capability.DockerContainerCapability;
 import org.opentosca.toscana.model.capability.EndpointCapability;
 import org.opentosca.toscana.model.capability.Requirement;
@@ -8,6 +9,7 @@ import org.opentosca.toscana.model.capability.ScalableCapability;
 import org.opentosca.toscana.model.capability.StorageCapability;
 import org.opentosca.toscana.model.datatype.Port;
 import org.opentosca.toscana.model.datatype.Range;
+import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.ContainerRuntime;
 import org.opentosca.toscana.model.node.DockerApplication;
 import org.opentosca.toscana.model.node.RootNode;
@@ -22,8 +24,11 @@ public class TestEffectiveModels {
     public static EffectiveModel getMinimalDockerModel() {
         DockerContainerCapability containerCapability = DockerContainerCapability.builder().name("host").build();
         ScalableCapability scalableCapability = ScalableCapability.builder(Range.EXACTLY_ONCE).build();
+        Requirement<ContainerCapability, Compute, HostedOn> requirement = Requirement.<ContainerCapability, Compute, 
+            HostedOn>builder(containerCapability, HostedOn.builder().build()).build();
         ContainerRuntime dockerRuntime
-            = ContainerRuntime.builder("dockerRuntime", containerCapability, scalableCapability).build();
+            = ContainerRuntime.builder("dockerRuntime", requirement ,
+            containerCapability, scalableCapability).build();
         HostedOn hostedOn = HostedOn.builder().build();
         Requirement<DockerContainerCapability, ContainerRuntime, HostedOn> host
             = Requirement.<DockerContainerCapability, ContainerRuntime, HostedOn>builder(containerCapability, hostedOn)
