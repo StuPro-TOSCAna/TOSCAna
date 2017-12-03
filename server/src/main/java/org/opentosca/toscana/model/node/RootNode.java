@@ -7,6 +7,7 @@ import java.util.Set;
 import org.opentosca.toscana.model.DescribableEntity;
 import org.opentosca.toscana.model.capability.Capability;
 import org.opentosca.toscana.model.capability.NodeCapability;
+import org.opentosca.toscana.model.requirement.Dependency;
 import org.opentosca.toscana.model.requirement.Requirement;
 import org.opentosca.toscana.model.datatype.Range;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
@@ -40,7 +41,7 @@ public abstract class RootNode extends DescribableEntity implements VisitableNod
      Dependencies are generic requirements that can be used to express timing dependencies between nodes.
      (TOSCA Simple Profile in YAML Version 1.1, p. 23)
      */
-    private Set<Requirement<NodeCapability, RootNode, DependsOn>> dependencies = new HashSet<>();
+    private Set<Dependency> dependencies = new HashSet<>();
 
     private final StandardLifecycle standardLifecycle;
 
