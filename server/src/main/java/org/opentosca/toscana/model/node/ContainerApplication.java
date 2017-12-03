@@ -10,6 +10,7 @@ import org.opentosca.toscana.model.capability.StorageCapability;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
 import org.opentosca.toscana.model.relation.HostedOn;
 import org.opentosca.toscana.model.relation.RootRelationship;
+import org.opentosca.toscana.model.requirement.StorageRequirement;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 
 import lombok.Builder;
@@ -25,12 +26,12 @@ public class ContainerApplication extends RootNode {
     // public access due to hiding of field in subclasses (with different type):
     // here, getters can't be overridden. 
     public final Requirement<ContainerCapability, ContainerRuntime, HostedOn> host;
-    private final Requirement<StorageCapability, RootNode, RootRelationship> storage;
+    private final StorageRequirement storage;
     private final EndpointRequirement network;
 
     @Builder
     protected ContainerApplication(Requirement<ContainerCapability, ContainerRuntime, HostedOn> host,
-                                   Requirement<StorageCapability, RootNode, RootRelationship> storage,
+                                   StorageRequirement storage,
                                    EndpointRequirement network,
                                    String nodeName,
                                    StandardLifecycle standardLifecycle,
@@ -48,7 +49,7 @@ public class ContainerApplication extends RootNode {
     /**
      Only use when subclass is shadowing the `host` field.
      */
-    protected ContainerApplication(Requirement<StorageCapability, RootNode, RootRelationship> storage,
+    protected ContainerApplication(StorageRequirement storage,
                                    EndpointRequirement network,
                                    String nodeName,
                                    StandardLifecycle standardLifecycle,
@@ -71,7 +72,7 @@ public class ContainerApplication extends RootNode {
     public static ContainerApplicationBuilder builder(String nodeName,
                                                       Requirement<ContainerCapability, ContainerRuntime, HostedOn> host,
                                                       EndpointRequirement network,
-                                                      Requirement<StorageCapability, RootNode, RootRelationship> storage) {
+                                                      StorageRequirement storage) {
         return new ContainerApplicationBuilder()
             .nodeName(nodeName)
             .host(host)

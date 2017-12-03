@@ -11,6 +11,7 @@ import org.opentosca.toscana.model.capability.StorageCapability;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
 import org.opentosca.toscana.model.relation.HostedOn;
 import org.opentosca.toscana.model.relation.RootRelationship;
+import org.opentosca.toscana.model.requirement.StorageRequirement;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 
 import com.spotify.docker.client.DockerHost;
@@ -28,7 +29,7 @@ public class DockerApplication extends ContainerApplication {
 
     @Builder
     private DockerApplication(DockerHostRequirement host,
-                              Requirement<StorageCapability, RootNode, RootRelationship> storage,
+                              StorageRequirement storage,
                               EndpointRequirement network,
                               String nodeName,
                               StandardLifecycle standardLifecycle,
@@ -48,7 +49,7 @@ public class DockerApplication extends ContainerApplication {
     public static DockerApplicationBuilder builder(DockerHostRequirement host,
                                                    String nodeName,
                                                    EndpointRequirement network,
-                                                   Requirement<StorageCapability, RootNode, RootRelationship> storage) {
+                                                   StorageRequirement storage) {
         return new DockerApplicationBuilder()
             .nodeName(nodeName)
             .host(host)
