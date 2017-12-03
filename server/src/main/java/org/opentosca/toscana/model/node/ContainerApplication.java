@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import org.opentosca.toscana.model.capability.ContainerCapability;
 import org.opentosca.toscana.model.capability.EndpointCapability;
+import org.opentosca.toscana.model.requirement.ContainerHostRequirement;
 import org.opentosca.toscana.model.requirement.EndpointRequirement;
 import org.opentosca.toscana.model.requirement.Requirement;
 import org.opentosca.toscana.model.capability.StorageCapability;
@@ -25,12 +26,12 @@ public class ContainerApplication extends RootNode {
 
     // public access due to hiding of field in subclasses (with different type):
     // here, getters can't be overridden. 
-    public final Requirement<ContainerCapability, ContainerRuntime, HostedOn> host;
+    public final ContainerHostRequirement host;
     private final StorageRequirement storage;
     private final EndpointRequirement network;
 
     @Builder
-    protected ContainerApplication(Requirement<ContainerCapability, ContainerRuntime, HostedOn> host,
+    protected ContainerApplication(ContainerHostRequirement host,
                                    StorageRequirement storage,
                                    EndpointRequirement network,
                                    String nodeName,
@@ -70,7 +71,7 @@ public class ContainerApplication extends RootNode {
      @param network  {@link #storage}
      */
     public static ContainerApplicationBuilder builder(String nodeName,
-                                                      Requirement<ContainerCapability, ContainerRuntime, HostedOn> host,
+                                                      ContainerHostRequirement host,
                                                       EndpointRequirement network,
                                                       StorageRequirement storage) {
         return new ContainerApplicationBuilder()
