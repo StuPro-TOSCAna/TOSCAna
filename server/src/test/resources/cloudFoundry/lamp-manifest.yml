@@ -1,0 +1,13 @@
+---
+applications:
+- name: my_app
+  disk_quota: 2000 MB
+  mem_size: 1024 MB
+  env:
+    db_root_password: 
+    database_name: 
+    database_host: 
+    database_port: 
+    database_password: 
+  services:
+    - my_db
