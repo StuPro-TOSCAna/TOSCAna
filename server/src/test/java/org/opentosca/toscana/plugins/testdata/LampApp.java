@@ -97,7 +97,7 @@ public class LampApp {
         Requirement<ContainerCapability, Compute, HostedOn> hostedOnRequirement = getHostedOnServerRequirement();
 
         ContainerCapability.ContainerCapabilityBuilder capabilityBuilder = ContainerCapability.builder();
-        
+
         MysqlDbms mysqlDbms = MysqlDbms.builder(
             "mysql_dbms",
             "geheim",
@@ -131,7 +131,6 @@ public class LampApp {
             .port(new Port(3306)).build();
         AdminEndpointCapability adminEndpointCapability = AdminEndpointCapability.builder("127.0.0.1")
             .port(new Port(80)).build();
-        EndpointCapability endpointCapabilityApache = EndpointCapability.builder("127.0.0.1", new Port(80)).build();
 
         Requirement<ContainerCapability, Compute, HostedOn> hostedOnRequirement = getHostedOnServerRequirement();
 
@@ -141,7 +140,7 @@ public class LampApp {
             containerCapability,
             apacheEndpoint,
             adminEndpointCapability
-        ).build();
+        ).databaseEndpoint(apacheEndpoint).build();
 
         return webServer;
     }
