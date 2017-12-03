@@ -11,6 +11,7 @@ import org.opentosca.toscana.model.capability.DatabaseEndpointCapability;
 import org.opentosca.toscana.model.capability.EndpointCapability;
 import org.opentosca.toscana.model.capability.OsCapability;
 import org.opentosca.toscana.model.requirement.HostRequirement;
+import org.opentosca.toscana.model.requirement.MysqlDbmsRequirement;
 import org.opentosca.toscana.model.requirement.Requirement;
 import org.opentosca.toscana.model.capability.ScalableCapability;
 import org.opentosca.toscana.model.datatype.Port;
@@ -115,8 +116,7 @@ public class LampApp {
             .build();
         ContainerCapability dbContainerCapability = ContainerCapability.builder().build();
         HostedOn hostedOn = HostedOn.builder().build();
-        Requirement<ContainerCapability, MysqlDbms, HostedOn> requirement = Requirement.
-            <ContainerCapability, MysqlDbms, HostedOn>builder(dbContainerCapability, hostedOn)
+        MysqlDbmsRequirement requirement = MysqlDbmsRequirement.builder(dbContainerCapability, hostedOn)
             .build();
 
         MysqlDatabase mydb = MysqlDatabase.builder("my_db", "DBNAME", dbEndpointCapability,
