@@ -5,7 +5,6 @@ import java.util.Optional;
 
 import org.opentosca.toscana.model.capability.ContainerCapability;
 import org.opentosca.toscana.model.capability.EndpointCapability;
-import org.opentosca.toscana.model.requirement.Requirement;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
 import org.opentosca.toscana.model.relation.HostedOn;
 import org.opentosca.toscana.model.requirement.WebServerRequirement;
@@ -13,7 +12,6 @@ import org.opentosca.toscana.model.visitor.NodeVisitor;
 
 import lombok.Builder;
 import lombok.Data;
-
 
 /**
  Represents a software application that can be managed and run by a {@link WebServer} node.
@@ -47,7 +45,7 @@ public class WebApplication extends RootNode {
             this.host = host;
         } else {
             ContainerCapability containerCapability = ContainerCapability.builder().build();
-            this.host = Requirement.<ContainerCapability, WebServer, HostedOn>builder(
+            this.host = WebServerRequirement.builder(
                 containerCapability, HostedOn.builder().build()).build();
         }
 
