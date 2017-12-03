@@ -1,8 +1,9 @@
-package org.opentosca.toscana.model.capability;
+package org.opentosca.toscana.model.requirement;
 
 import java.util.Objects;
 import java.util.Set;
 
+import org.opentosca.toscana.model.capability.Capability;
 import org.opentosca.toscana.model.datatype.Range;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.relation.RootRelationship;

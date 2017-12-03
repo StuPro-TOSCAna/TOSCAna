@@ -10,7 +10,8 @@ import org.opentosca.toscana.model.capability.ContainerCapability;
 import org.opentosca.toscana.model.capability.DatabaseEndpointCapability;
 import org.opentosca.toscana.model.capability.EndpointCapability;
 import org.opentosca.toscana.model.capability.OsCapability;
-import org.opentosca.toscana.model.capability.Requirement;
+import org.opentosca.toscana.model.requirement.HostRequirement;
+import org.opentosca.toscana.model.requirement.Requirement;
 import org.opentosca.toscana.model.capability.ScalableCapability;
 import org.opentosca.toscana.model.datatype.Port;
 import org.opentosca.toscana.model.datatype.Range;
@@ -94,7 +95,7 @@ public class LampApp {
             .configure(dbmsOperation)
             .build();
 
-        Requirement<ContainerCapability, Compute, HostedOn> hostedOnRequirement = getHostedOnServerRequirement();
+        HostRequirement hostedOnRequirement = getHostedOnServerRequirement();
 
         ContainerCapability.ContainerCapabilityBuilder capabilityBuilder = ContainerCapability.builder();
 
@@ -132,7 +133,7 @@ public class LampApp {
         AdminEndpointCapability adminEndpointCapability = AdminEndpointCapability.builder("127.0.0.1")
             .port(new Port(80)).build();
 
-        Requirement<ContainerCapability, Compute, HostedOn> hostedOnRequirement = getHostedOnServerRequirement();
+        HostRequirement hostedOnRequirement = getHostedOnServerRequirement();
 
         Apache webServer = Apache.builder(
             "apache_web_server",
@@ -145,10 +146,10 @@ public class LampApp {
         return webServer;
     }
 
-    private Requirement<ContainerCapability, Compute, HostedOn> getHostedOnServerRequirement() {
+    private HostRequirement getHostedOnServerRequirement() {
         ContainerCapability hostCapability = ContainerCapability.builder().name("server").build();
 
-        return Requirement.<ContainerCapability, Compute, HostedOn>builder(
+        return HostRequirement.builder(
             hostCapability,
             HostedOn.builder().build()
         ).build();
