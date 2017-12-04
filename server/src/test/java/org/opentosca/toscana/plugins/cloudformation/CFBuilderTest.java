@@ -1,22 +1,12 @@
 package org.opentosca.toscana.plugins.cloudformation;
 
-import javax.xml.crypto.dsig.keyinfo.KeyName;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
-import com.scaleset.cfbuilder.core.CloudFormationJsonModule;
 import com.scaleset.cfbuilder.core.Module;
-import com.scaleset.cfbuilder.core.Ref;
-import com.scaleset.cfbuilder.core.Tag;
 import com.scaleset.cfbuilder.core.Template;
-import com.scaleset.cfbuilder.core.Resource;
 import com.scaleset.cfbuilder.ec2.Instance;
 import com.scaleset.cfbuilder.ec2.SecurityGroup;
 import com.scaleset.cfbuilder.ec2.SecurityGroupIngress;
 import org.junit.Test;
 
-import static com.scaleset.cfbuilder.ec2.SecurityGroup.PortRange.range;
 import static org.junit.Assert.assertNotNull;
 
 public class CFBuilderTest extends Module {
