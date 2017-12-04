@@ -41,6 +41,7 @@ public class KubernetesLifecycle extends AbstractLifecycle {
             try {
                 node.accept(nodeVisitor);
             } catch (UnsupportedOsTypeException e) {
+                logger.warn(e.getMessage());
                 return false;
             }
         }

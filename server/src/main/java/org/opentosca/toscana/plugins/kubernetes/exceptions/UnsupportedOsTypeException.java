@@ -1,7 +1,9 @@
 package org.opentosca.toscana.plugins.kubernetes.exceptions;
 
-public class UnsupportedOsTypeException extends RuntimeException {
-    public UnsupportedOsTypeException(String s) {
-        super(s);
+import org.opentosca.toscana.model.visitor.UnsupportedTypeException;
+
+public class UnsupportedOsTypeException extends UnsupportedTypeException {
+    public UnsupportedOsTypeException(Class type) {
+        super(type);
     }
 }

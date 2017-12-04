@@ -18,7 +18,7 @@ public class OsCheckCapabilityVisitor implements CapabilityVisitor {
         logger.info("Visiting the OS capability.");
         OsCapability.Type capabilityType = capability.getType().get();
         if (unsupportedTypes.contains(capabilityType)) {
-            throw new UnsupportedOsTypeException("Kubernetes does not support " + capabilityType);
+            throw new UnsupportedOsTypeException(OsCapability.class);
         } else {
             logger.info("Everything ok");
         }
