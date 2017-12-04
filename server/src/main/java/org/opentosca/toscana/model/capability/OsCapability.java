@@ -114,7 +114,4 @@ public class OsCapability extends Capability {
         OPEN_SUSE,
         // might grow
     }
-
-    public static class OsCapabilityBuilder extends CapabilityBuilder {
-    }
 }

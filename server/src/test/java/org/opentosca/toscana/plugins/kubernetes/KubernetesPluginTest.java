@@ -1,6 +1,5 @@
 package org.opentosca.toscana.plugins.kubernetes;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
 
 import org.opentosca.toscana.core.BaseSpringTest;
@@ -9,6 +8,7 @@ import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.model.EffectiveModel;
+import org.opentosca.toscana.plugins.lifecycle.ValidationFailureException;
 import org.opentosca.toscana.plugins.testdata.TestEffectiveModels;
 
 import org.junit.Before;
@@ -39,7 +39,7 @@ public class KubernetesPluginTest extends BaseSpringTest {
         plugin.transform(context);
     }
 
-    @Test
+    @Test(expected = ValidationFailureException.class)
     public void modelCheckTest() throws Exception {
         TransformationContext context = setUpMockTransformationContext(TestEffectiveModels.getSingleComputeNodeModel());
         plugin.transform(context);
@@ -51,7 +51,7 @@ public class KubernetesPluginTest extends BaseSpringTest {
         when(context.getPluginFileAccess()).thenReturn(pluginFileAccess);
         when(context.getModel()).thenReturn(model);
         when(context.getLogger((Class<?>) any(Class.class))).thenReturn(LoggerFactory.getLogger("Dummy Logger"));
-        BufferedWriter mock = mock(BufferedWriter.class);
+        PluginFileAccess.BufferedLineWriter mock = mock(PluginFileAccess.BufferedLineWriter.class);
         when(pluginFileAccess.access(any(String.class))).thenReturn(mock);
         when(mock.append(any(String.class))).thenReturn(mock);
         return context;

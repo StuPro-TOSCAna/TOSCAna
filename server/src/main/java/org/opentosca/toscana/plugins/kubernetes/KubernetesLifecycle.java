@@ -6,8 +6,9 @@ import java.util.Set;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.model.node.RootNode;
-import org.opentosca.toscana.plugins.kubernetes.visitor.KubernetesNodeVisitor;
-import org.opentosca.toscana.plugins.kubernetes.visitor.KubernetesVisitorPolicy;
+import org.opentosca.toscana.plugins.kubernetes.exceptions.UnsupportedOsTypeException;
+import org.opentosca.toscana.plugins.kubernetes.visitor.NodeTypeCheckVisitor;
+import org.opentosca.toscana.plugins.kubernetes.visitor.OsCheckNodeVisitor;
 import org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle;
 
 public class KubernetesLifecycle extends AbstractLifecycle {
@@ -26,9 +27,36 @@ public class KubernetesLifecycle extends AbstractLifecycle {
     @Override
     public boolean checkModel() {
         Set<RootNode> nodes = model.getNodes();
-        KubernetesNodeVisitor nodeVisitor = new KubernetesNodeVisitor();
-        nodeVisitor.setPolicy(KubernetesVisitorPolicy.MODEL_CHECK);
-        nodes.forEach(rootNode -> rootNode.accept(nodeVisitor));
+        boolean nodeTypeCheck = checkNodeTypes(nodes);
+        boolean osTypeCheck = checkOsType(nodes);
+        return nodeTypeCheck && osTypeCheck;
+    }
+
+    /**
+     Checks if the model contains a unsupported os
+     */
+    private boolean checkOsType(Set<RootNode> nodes) {
+        OsCheckNodeVisitor nodeVisitor = new OsCheckNodeVisitor();
+        for (RootNode node : nodes) {
+            try {
+                node.accept(nodeVisitor);
+            } catch (UnsupportedOsTypeException e) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     Checks if there are any unsupported node types
+     */
+    private boolean checkNodeTypes(Set<RootNode> nodes) {
+        for (RootNode node : nodes)
+            try {
+                node.accept(new NodeTypeCheckVisitor());
+            } catch (UnsupportedOperationException e) {
+                return false;
+            }
         return true;
     }
 
