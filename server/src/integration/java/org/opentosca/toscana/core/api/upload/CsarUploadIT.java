@@ -35,7 +35,7 @@ public class CsarUploadIT extends BaseSpringIntegrationTest {
     public void testFileUploadFail() throws Exception {
         System.err.println("Server started");
         try {
-            toscanaAPI.uploadCsar("test", TestCsars.CSAR_YAML_INVALID_ENTRYPOINT_AMBIGUOUS);
+            toscanaAPI.uploadCsar("test", TestCsars.INVALID_ENTRYPOINT_AMBIGUOUS);
         } catch (TOSCAnaServerException e) {
             e.getErrorResponse().getLogs().forEach(c -> logger.info(c.getMessage()));
             assertEquals(400, e.getStatusCode());

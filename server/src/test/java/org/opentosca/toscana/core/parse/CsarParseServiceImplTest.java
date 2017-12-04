@@ -28,13 +28,13 @@ public class CsarParseServiceImplTest extends BaseSpringTest {
 
     @Test(expected = InvalidCsarException.class)
     public void parseEntrypointMissing() throws FileNotFoundException, InvalidCsarException {
-        Csar csar = testCsars.getCsar(TestCsars.CSAR_YAML_INVALID_ENTRYPOINT_MISSING);
+        Csar csar = testCsars.getCsar(TestCsars.INVALID_ENTRYPOINT_MISSING);
         csarParser.parse(csar);
     }
 
     @Test(expected = InvalidCsarException.class)
     public void parseEntrypointAmbiguous() throws FileNotFoundException, InvalidCsarException {
-        Csar csar = testCsars.getCsar(TestCsars.CSAR_YAML_INVALID_ENTRYPOINT_AMBIGUOUS);
+        Csar csar = testCsars.getCsar(TestCsars.INVALID_ENTRYPOINT_AMBIGUOUS);
         csarParser.parse(csar);
     }
 }

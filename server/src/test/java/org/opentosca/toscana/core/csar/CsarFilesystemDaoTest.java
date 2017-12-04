@@ -54,7 +54,7 @@ public class CsarFilesystemDaoTest extends BaseUnitTest {
     @Test
     public void create() throws Exception {
         String identifier = "my-csar-checkStateNoPropsSet";
-        File csarFile = TestCsars.CSAR_YAML_VALID_MINIMAL_DOCKER;
+        File csarFile = TestCsars.VALID_MINIMAL_DOCKER;
         InputStream csarStream = new FileInputStream(csarFile);
         csarDao.create(identifier, csarStream);
         File csarFolder = new File(generalCsarsDir, identifier);
@@ -72,13 +72,13 @@ public class CsarFilesystemDaoTest extends BaseUnitTest {
         File csarDir = new File(generalCsarsDir, identifier);
         assertFalse(csarDir.exists());
     }
-    
+
     @Test
     public void deleteCsarRemovesCsarFromCache() {
         String identifier = createFakeCsarDirectories(1)[0];
         csarDao = new CsarFilesystemDao(preferences, transformationDao);
         csarDao.init(); // reads from filesystem
-        Optional<Csar> csar = csarDao.find(identifier);        
+        Optional<Csar> csar = csarDao.find(identifier);
         assertTrue(csar.isPresent());
         csarDao.delete(identifier);
         csar = csarDao.find(identifier);
