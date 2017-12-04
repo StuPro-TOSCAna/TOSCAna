@@ -1,11 +1,16 @@
 # Deploying CloudFoundry using BOSH-Lite
 
+One of the options to deploy CF locally is using BOSH-Lite (running inside a virtual machine)
+
+**IMPORTANT NOTE**: Currently deployment of CF using this method did not work. After ~3 Hours the deployment fails. Consider using [PCF Dev](deploy-cf-pcf-dev.md) instead!
+
 ## Setup
 
 This guide assumes the following Prerequisites:
 - VT-x or AMD-v virtualization enabled
 - At least 16 GB of RAM
 - Ubuntu 16.04 as the Host OS
+- More than 100GB of free disk space
 
 ### Deploying BOSH-Lite
 
@@ -19,11 +24,11 @@ sudo apt-get update
 sudo apt-get install virtualbox-5.2 dkms -y
 ```
 
-#### Intalling the VBox Extension Pack (Optional)
+#### Installing the VBox Extension Pack (Optional)
 
 ```bash
 wget http://download.virtualbox.org/virtualbox/5.2.2/Oracle_VM_VirtualBox_Extension_Pack-5.2.2-119230.vbox-extpack
-sudo vboxmanage extpack install Oracle_VM_VirtualBox_Extension_Pack-5.2.2-119230.vbox-extpack
+echo y | sudo vboxmanage extpack install Oracle_VM_VirtualBox_Extension_Pack-5.2.2-119230.vbox-extpack
 rm Oracle_VM_VirtualBox_Extension_Pack-5.2.2-119230.vbox-extpack
 ```
 
@@ -68,7 +73,7 @@ bosh create-env ~/workspace/bosh-deployment/bosh.yml \
 ### Setup BOSH-CLI environment alias
 
 ```bash
-osh alias-env vbox -e 192.168.50.6 --ca-cert <(bosh int ./creds.yml --path /director_ssl/ca)
+bosh alias-env vbox -e 192.168.50.6 --ca-cert <(bosh int ./creds.yml --path /director_ssl/ca)
 export BOSH_CLIENT=admin
 export BOSH_CLIENT_SECRET=`bosh int ./creds.yml --path /admin_password`
 ```
@@ -82,15 +87,15 @@ It should return this (with a different UUID):
 ```
 Using environment '192.168.50.6' as client 'admin'
 
-Name      Bosh Lite Director  
-UUID      7dfc1985-06a5-4fa8-aaef-1c049bad5b03  
-Version   264.3.0 (00000000)  
-CPI       warden_cpi  
-Features  compiled_package_cache: disabled  
-          config_server: disabled  
-          dns: disabled  
-          snapshots: disabled  
-User      admin  
+Name      Bosh Lite Director
+UUID      7dfc1985-06a5-4fa8-aaef-1c049bad5b03
+Version   264.3.0 (00000000)
+CPI       warden_cpi
+Features  compiled_package_cache: disabled
+          config_server: disabled
+          dns: disabled
+          snapshots: disabled
+User      admin
 
 Succeeded
 ```
@@ -101,13 +106,13 @@ Succeeded
 sudo ip route add   10.244.0.0/16 via 192.168.50.6
 ```
 
-## Deploing CloudFoundry
+## Deploying CloudFoundry
 
 ### Clone the CF-Deployment Repository
 
 ```bash
 cd ~
-git clone https://github.com/cloudfoundry/cf-deployment  
+git clone https://github.com/cloudfoundry/cf-deployment
 cd cf-deployment
 ```
 
@@ -147,6 +152,30 @@ echo "deb http://packages.cloudfoundry.org/debian stable main" | sudo tee /etc/a
 sudo apt-get update
 sudo apt-get install -y cf-cli
 ```
+
+## Continue after VM Restart
+
+```bash
+cd ~/deployments/vbox
+```
+Remove `current_manifest_sha` line from `state.json` to force a redeploy.
+```bash
+bosh create-env ~/workspace/bosh-deployment/bosh.yml \
+  --state ./state.json \
+  -o ~/workspace/bosh-deployment/virtualbox/cpi.yml \
+  -o ~/workspace/bosh-deployment/virtualbox/outbound-network.yml \
+  -o ~/workspace/bosh-deployment/bosh-lite.yml \
+  -o ~/workspace/bosh-deployment/bosh-lite-runc.yml \
+  -o ~/workspace/bosh-deployment/jumpbox-user.yml \
+  --vars-store ./creds.yml \
+  -v director_name="Bosh Lite Director" \
+  -v internal_ip=192.168.50.6 \
+  -v internal_gw=192.168.50.1 \
+  -v internal_cidr=192.168.50.0/24 \
+  -v outbound_network_name=NatNetwork
+bosh cck -e vbox -d DeploymentName
+```
+
 
 ## Sources
 
