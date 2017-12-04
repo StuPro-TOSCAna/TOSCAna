@@ -24,6 +24,12 @@
     </repositories>
 
     <dependencies>
+        <!--CloudFormation-Builder-->
+        <dependency>
+            <groupId>com.scaleset</groupId>
+            <artifactId>cloudformation-builder</artifactId>
+            <version>0.2.0</version>
+        </dependency>
         <!--Project Lombok-->
         <dependency>
             <groupId>org.projectlombok</groupId>
