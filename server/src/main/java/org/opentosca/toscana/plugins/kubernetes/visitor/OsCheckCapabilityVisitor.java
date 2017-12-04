@@ -8,6 +8,9 @@ import org.opentosca.toscana.plugins.kubernetes.exceptions.UnsupportedOsTypeExce
 
 import org.slf4j.Logger;
 
+/**
+ Visitor to check if there is a OsCapability with a unsupported OsType
+ */
 public class OsCheckCapabilityVisitor implements CapabilityVisitor {
     private final Logger logger;
     private final List<OsCapability.Type> unsupportedTypes;

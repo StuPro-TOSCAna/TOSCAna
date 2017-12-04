@@ -11,6 +11,9 @@ import org.opentosca.toscana.model.visitor.NodeVisitor;
 
 import org.slf4j.Logger;
 
+/**
+ Visitor to check the ComputeNode for unsupported OsCapabilities
+ */
 public class OsCheckNodeVisitor implements NodeVisitor {
     private final Logger logger;
 

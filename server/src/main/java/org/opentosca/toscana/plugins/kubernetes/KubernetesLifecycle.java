@@ -38,6 +38,9 @@ public class KubernetesLifecycle extends AbstractLifecycle {
 
     /**
      Checks if the model contains a unsupported os
+
+     @param nodes - Nodes to be checked
+     @return boolean - true if successful, false otherwise
      */
     private boolean checkOsType(Set<RootNode> nodes) {
         OsCheckNodeVisitor nodeVisitor = new OsCheckNodeVisitor(logger);
@@ -54,6 +57,9 @@ public class KubernetesLifecycle extends AbstractLifecycle {
 
     /**
      Checks if there are any unsupported node types
+
+     @param nodes - Nodes to be checked
+     @return boolean - true if successful, false otherwise
      */
     private boolean checkNodeTypes(Set<RootNode> nodes) {
         for (RootNode node : nodes)
