@@ -5,11 +5,11 @@ import java.util.Optional;
 import org.opentosca.toscana.model.capability.EndpointCapability;
 import org.opentosca.toscana.model.capability.PublicEndpointCapability;
 import org.opentosca.toscana.model.capability.PublicEndpointCapability.PublicEndpointCapabilityBuilder;
-import org.opentosca.toscana.model.capability.Requirement;
-import org.opentosca.toscana.model.capability.Requirement.RequirementBuilder;
 import org.opentosca.toscana.model.datatype.Range;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
 import org.opentosca.toscana.model.relation.RoutesTo;
+import org.opentosca.toscana.model.requirement.Requirement;
+import org.opentosca.toscana.model.requirement.Requirement.RequirementBuilder;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 
 import lombok.Builder;
@@ -45,7 +45,6 @@ public class LoadBalancer extends RootNode {
         capabilities.add(client);
         requirements.add(application);
     }
-
 
     /**
      @param nodeName {@link #nodeName}

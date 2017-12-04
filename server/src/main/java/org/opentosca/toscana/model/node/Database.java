@@ -3,11 +3,9 @@ package org.opentosca.toscana.model.node;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.opentosca.toscana.model.capability.ContainerCapability;
 import org.opentosca.toscana.model.capability.DatabaseEndpointCapability;
-import org.opentosca.toscana.model.capability.Requirement;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
-import org.opentosca.toscana.model.relation.HostedOn;
+import org.opentosca.toscana.model.requirement.DbmsRequirement;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 
 import lombok.Builder;
@@ -20,7 +18,7 @@ import lombok.Data;
 @Data
 public class Database extends RootNode {
 
-    public final Requirement<ContainerCapability, Dbms, HostedOn> host;
+    public final DbmsRequirement host;
 
     /**
      The logical database databaseName.
@@ -46,7 +44,6 @@ public class Database extends RootNode {
      */
     private final String password;
 
-
     private final DatabaseEndpointCapability databaseEndpoint;
 
     @Builder
@@ -54,7 +51,7 @@ public class Database extends RootNode {
                      Integer port,
                      String user,
                      String password,
-                     Requirement<ContainerCapability, Dbms, HostedOn> host,
+                     DbmsRequirement host,
                      DatabaseEndpointCapability databaseEndpoint,
                      String nodeName,
                      StandardLifecycle standardLifecycle,
@@ -99,7 +96,7 @@ public class Database extends RootNode {
      */
     public static DatabaseBuilder builder(String nodeName,
                                           String databaseName,
-                                          Requirement<ContainerCapability, Dbms, HostedOn> host,
+                                          DbmsRequirement host,
                                           DatabaseEndpointCapability databaseEndpoint) {
         return new DatabaseBuilder()
             .nodeName(nodeName)
@@ -107,7 +104,6 @@ public class Database extends RootNode {
             .host(host)
             .databaseEndpoint(databaseEndpoint);
     }
-
 
     /**
      @return {@link #port}

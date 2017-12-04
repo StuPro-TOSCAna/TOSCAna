@@ -2,13 +2,10 @@ package org.opentosca.toscana.model.node;
 
 import java.util.Objects;
 
-import org.opentosca.toscana.model.capability.ContainerCapability;
-import org.opentosca.toscana.model.capability.DatabaseEndpointCapability;
 import org.opentosca.toscana.model.capability.EndpointCapability;
-import org.opentosca.toscana.model.capability.Requirement;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
-import org.opentosca.toscana.model.relation.ConnectsTo;
-import org.opentosca.toscana.model.relation.HostedOn;
+import org.opentosca.toscana.model.requirement.DatabaseEndpointRequirement;
+import org.opentosca.toscana.model.requirement.WebServerRequirement;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 
 import lombok.Builder;
@@ -26,16 +23,16 @@ public class WordPress extends WebApplication {
 
     private final String dbHost;
 
-    private final Requirement<DatabaseEndpointCapability, Database, ConnectsTo> databaseEndpoint;
+    private final DatabaseEndpointRequirement databaseEndpoint;
 
     @Builder
     protected WordPress(String adminUser,
                         String adminPassword,
                         String dbHost,
-                        Requirement<DatabaseEndpointCapability, Database, ConnectsTo> databaseEndpoint,
+                        DatabaseEndpointRequirement databaseEndpoint,
                         String contextRoot,
                         EndpointCapability endpoint,
-                        Requirement<ContainerCapability, WebServer, HostedOn> host,
+                        WebServerRequirement host,
                         String nodeName,
                         StandardLifecycle standardLifecycle,
                         String description) {
@@ -61,9 +58,9 @@ public class WordPress extends WebApplication {
                                            String adminUser,
                                            String adminPassword,
                                            String dbHost,
-                                           Requirement<DatabaseEndpointCapability, Database, ConnectsTo> databaseEndpoint,
+                                           DatabaseEndpointRequirement databaseEndpoint,
                                            EndpointCapability endpoint,
-                                           Requirement<ContainerCapability, WebServer, HostedOn> host) {
+                                           WebServerRequirement host) {
         return (WordPressBuilder) new WordPressBuilder()
             .nodeName(nodeName)
             .host(host)

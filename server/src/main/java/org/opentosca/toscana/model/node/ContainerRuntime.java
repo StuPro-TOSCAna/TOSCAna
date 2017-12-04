@@ -3,7 +3,8 @@ package org.opentosca.toscana.model.node;
 import java.util.Objects;
 
 import org.opentosca.toscana.model.capability.ContainerCapability;
-import org.opentosca.toscana.model.capability.Requirement;
+import org.opentosca.toscana.model.requirement.HostRequirement;
+import org.opentosca.toscana.model.requirement.Requirement;
 import org.opentosca.toscana.model.capability.ScalableCapability;
 import org.opentosca.toscana.model.datatype.Credential;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
@@ -26,7 +27,7 @@ public class ContainerRuntime extends SoftwareComponent {
     private final ScalableCapability scalable;
 
     @Builder
-    private ContainerRuntime(Requirement<ContainerCapability, Compute, HostedOn> host,
+    private ContainerRuntime(HostRequirement host,
                              ContainerCapability containerHost,
                              ScalableCapability scalable,
                              String componentVersion,
@@ -49,7 +50,7 @@ public class ContainerRuntime extends SoftwareComponent {
      @param scalable      {@link #scalable}
      */
     public static ContainerRuntimeBuilder builder(String nodeName,
-                                                  Requirement<ContainerCapability, Compute, HostedOn> host,
+                                                  HostRequirement host,
                                                   ContainerCapability containerHost,
                                                   ScalableCapability scalable) {
         return new ContainerRuntimeBuilder()
