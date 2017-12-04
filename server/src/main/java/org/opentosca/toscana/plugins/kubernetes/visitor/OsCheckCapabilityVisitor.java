@@ -7,24 +7,24 @@ import org.opentosca.toscana.model.visitor.CapabilityVisitor;
 import org.opentosca.toscana.plugins.kubernetes.exceptions.UnsupportedOsTypeException;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class OsCheckCapabilityVisitor implements CapabilityVisitor {
-    private final static Logger logger = LoggerFactory.getLogger(OsCheckCapabilityVisitor.class.getName());
-    private List<OsCapability.Type> unsupportedTypes;
+    private final Logger logger;
+    private final List<OsCapability.Type> unsupportedTypes;
+
+    public OsCheckCapabilityVisitor(List<OsCapability.Type> unsupportedTypes, Logger logger) {
+        this.unsupportedTypes = unsupportedTypes;
+        this.logger = logger;
+    }
 
     @Override
     public void visit(OsCapability capability) {
-        logger.info("Visiting the OS capability.");
+        logger.debug("Checking the operating system type.");
         OsCapability.Type capabilityType = capability.getType().get();
         if (unsupportedTypes.contains(capabilityType)) {
             throw new UnsupportedOsTypeException(OsCapability.class);
         } else {
-            logger.info("Everything ok");
+            logger.debug("Checking was successful.");
         }
-    }
-
-    public void setUnsupportedTypes(List<OsCapability.Type> unsupportedTypes) {
-        this.unsupportedTypes = unsupportedTypes;
     }
 }
