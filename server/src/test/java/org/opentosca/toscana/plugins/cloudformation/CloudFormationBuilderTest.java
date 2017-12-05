@@ -10,13 +10,13 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertNotNull;
 
-public class CFBuilderTest extends Module {
+public class CloudFormationBuilderTest extends Module {
     
     @Test
     public void simpleTest() throws Exception {
         Template lampTemplate = new Template();
         
-        new CFBuilderTest.TestModule().id("").template(lampTemplate).build();
+        new CloudFormationBuilderTest.TestModule().id("").template(lampTemplate).build();
 
         assertNotNull(lampTemplate);
         System.err.println(lampTemplate.toString());
