@@ -76,7 +76,13 @@ public class CloudFoundryNodeVisitor implements StrictNodeVisitor {
         handleStandardLifecycle(node);
     }
 
-    public void handleStandardLifecycle(RootNode node) {
+    private void handleStandardLifecycle(RootNode node) {
+        // get StandardLifecycle inputs
+        for (OperationVariable lifecycleInput : node.getStandardLifecycle().getInputs()) {
+           addEnvironmentVariable(lifecycleInput);
+        }
+
+        // get operation inputs
         for (Operation operation : node.getStandardLifecycle().getOperations()) {
             // artifact path
             if (operation.getArtifact().isPresent()) {
@@ -95,10 +101,17 @@ public class CloudFoundryNodeVisitor implements StrictNodeVisitor {
 
             // add inputs to environment list
             for (OperationVariable input : operation.getInputs()) {
-                myApp.addEnvironmentVariables(input.getKey());
+                addEnvironmentVariable(input);
             }
-
             // TODO: investigate what to do with outputs?
+        }
+    }
+    
+    private void addEnvironmentVariable(OperationVariable input) {
+        if (input.getValue().isPresent()) {
+            myApp.addEnvironmentVariables(input.getKey(), input.getValue().get());
+        } else {
+            myApp.addEnvironmentVariables(input.getKey());
         }
     }
 }

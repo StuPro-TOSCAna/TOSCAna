@@ -60,8 +60,8 @@ public class LampApp {
         AttachesTo attachesTo = AttachesTo.builder("mount").build();
         AttachmentCapability attachmentCapability = AttachmentCapability.builder().build();
 
-        BlockStorageRequirement localStorage = 
-            BlockStorageRequirement.builder(attachmentCapability, attachesTo) .build();
+        BlockStorageRequirement localStorage =
+            BlockStorageRequirement.builder(attachmentCapability, attachesTo).build();
 
         OsCapability osCapability = OsCapability.builder()
             .distribution(OsCapability.Distribution.UBUNTU)
@@ -170,7 +170,11 @@ public class LampApp {
         appInputs.add(new OperationVariable("database_host"));
         appInputs.add(new OperationVariable("database_password"));
         appInputs.add(new OperationVariable("database_name"));
-        appInputs.add(new OperationVariable("database_port"));
+        appInputs.add(new OperationVariable("database_user"));
+        OperationVariable dbPort = new OperationVariable("database_port");
+        dbPort.setValue("3306");
+        appInputs.add(dbPort);
+
         Operation appConfigure = Operation.builder().implementationArtifact("my_app/configure_myphpapp.sh")
             .inputs(appInputs)
             .build();
