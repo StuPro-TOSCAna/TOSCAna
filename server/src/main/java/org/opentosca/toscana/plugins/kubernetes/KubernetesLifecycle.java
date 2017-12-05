@@ -11,12 +11,9 @@ import org.opentosca.toscana.plugins.kubernetes.visitor.NodeTypeCheckVisitor;
 import org.opentosca.toscana.plugins.kubernetes.visitor.OsCheckNodeVisitor;
 import org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle;
 
-import org.slf4j.Logger;
-
 public class KubernetesLifecycle extends AbstractLifecycle {
 
     private final EffectiveModel model;
-    private final Logger logger;
 
     /**
      @param context because the context is always needed this should never be null
@@ -25,7 +22,6 @@ public class KubernetesLifecycle extends AbstractLifecycle {
     public KubernetesLifecycle(TransformationContext context) throws IOException {
         super(context);
         model = context.getModel();
-        logger = context.getLogger(KubernetesLifecycle.class);
     }
 
     @Override
@@ -48,7 +44,7 @@ public class KubernetesLifecycle extends AbstractLifecycle {
             try {
                 node.accept(nodeVisitor);
             } catch (UnsupportedOsTypeException e) {
-                logger.debug(e.getMessage());
+                logger.warn(e.getMessage());
                 return false;
             }
         }

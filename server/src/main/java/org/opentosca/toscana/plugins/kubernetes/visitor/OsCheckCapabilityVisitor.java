@@ -23,13 +23,13 @@ public class OsCheckCapabilityVisitor implements CapabilityVisitor {
 
     @Override
     public void visit(OsCapability capability) {
-        logger.debug("Checking the operating system type.");
+        logger.debug("Running the OsTypeCheck");
         Optional<OsCapability.Type> capabilityType = capability.getType();
         if (capability.getType().isPresent()) {
             if (unsupportedTypes.contains(capabilityType.get())) {
                 throw new UnsupportedOsTypeException(capabilityType.get());
             } else {
-                logger.debug("Checking was successful.");
+                logger.debug("OsTypeCheck was successful");
             }
         }
     }
