@@ -13,7 +13,7 @@ import static org.junit.Assert.assertNotNull;
 public class CloudFormationBuilderTest extends Module {
     
     @Test
-    public void simpleTest() throws Exception {
+    public void testTemplateBuilding() throws Exception {
         Template lampTemplate = new Template();
         
         new CloudFormationBuilderTest.TestModule().id("").template(lampTemplate).build();
