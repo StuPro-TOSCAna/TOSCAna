@@ -24,7 +24,8 @@ public class CloudFoundryFileCreator {
     public static final String MANIFEST = "manifest.yml";
     public static final String MANIFESTHEAD = "---\napplications:\n";
     public static final String NAMEBLOCK = "name";
-    public static final String CLI_CREATE_SERVICE = "cf create-service {plan} {service} ";
+    public static final String CLI_CREATE_SERVICE_DEFAULT = "cf create-service {plan} {service} ";
+    public static final String CLI_CREATE_SERVICE = "cf create-service ";
     public static final String CLI_PUSH = "cf push ";
     public static final String FILEPRAEFIX_DEPLOY = "deploy_";
     public static final String FILESUFFIX_DEPLOY = ".sh";
@@ -69,6 +70,11 @@ public class CloudFoundryFileCreator {
         }
     }
 
+    /**
+     creates a service which depends on the template
+     add it to the manifest
+     @throws IOException
+     */
     private void createService() throws IOException {
         ArrayList<String> services = new ArrayList<>();
         services.add(String.format("  %s:", SERVICE.getName()));
@@ -80,12 +86,16 @@ public class CloudFoundryFileCreator {
         }
     }
 
+    /**
+     creates a deploy shell script
+     @throws IOException
+     */
     private void createDeployScript() throws IOException {
 
         BashScript deployScript = new BashScript(fileAccess, FILEPRAEFIX_DEPLOY + app.getName());
         deployScript.append(EnvironmentCheck.checkEnvironment("cf"));
         for (String service : app.getServices()) {
-            deployScript.append(CLI_CREATE_SERVICE + service);
+            deployScript.append(CLI_CREATE_SERVICE_DEFAULT + service);
         }
         deployScript.append(CLI_PUSH + app.getName());
     }

@@ -13,10 +13,14 @@ public class CloudFoundryProvider {
         PIVOTAL;
     }
     
-    private Map<String, List<String>> offeredServices;
+    private List<CloudFoundryService> offeredService;
     private CloudFoundryProviderType name;
     
     public CloudFoundryProvider(CloudFoundryProviderType name) {
         this.name = name;
+    }
+    
+    public void setOfferedService(List<CloudFoundryService> offeredService) {
+        this.offeredService = offeredService;
     }
 }

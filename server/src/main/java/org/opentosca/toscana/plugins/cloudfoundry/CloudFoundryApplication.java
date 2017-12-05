@@ -18,13 +18,13 @@ public class CloudFoundryApplication {
     private final Map<String, String> attributes = new HashMap<>();
     private final Set<String> services = new HashSet<>();
     private final ArrayList<String> buildpackAdditions = new ArrayList<>();
+    private CloudFoundryProvider provider;
 
     public CloudFoundryApplication(String name) {
         this.name = name;
     }
 
     public CloudFoundryApplication() {
-
     }
 
     public void setName(String name) {
@@ -78,4 +78,13 @@ public class CloudFoundryApplication {
     public List<String> getFilePaths() {
         return filePaths;
     }
+
+    public CloudFoundryProvider getProvider() {
+        return provider;
+    }
+
+    public void setProvider(CloudFoundryProvider provider) {
+        this.provider = provider;
+    }
+    
 }

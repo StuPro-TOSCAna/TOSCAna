@@ -20,7 +20,7 @@ import org.mockito.Mock;
 import org.slf4j.LoggerFactory;
 
 import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.MANIFEST;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.CLI_CREATE_SERVICE;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.CLI_CREATE_SERVICE_DEFAULT;
 import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.CLI_PUSH;
 import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.FILESUFFIX_DEPLOY;
 import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.FILEPRAEFIX_DEPLOY;
@@ -95,8 +95,8 @@ public class CloudFoundryPluginTest extends BaseUnitTest {
         File targetFile = new File(targetDir + "/output/scripts/",FILEPRAEFIX_DEPLOY + appName + 
             FILESUFFIX_DEPLOY);
         String deployScript = FileUtils.readFileToString(targetFile);
-        String expectedOutput = String.format("#!/bin/sh\nsource util/*\ncheck \"cf\"\n%smy_db\n%s%s\n", 
-            CLI_CREATE_SERVICE, CLI_PUSH, appName);
+        String expectedOutput = String.format("#!/bin/sh\nsource util/*\ncheck \"cf\"\n%smy_db\n%s%s\n",
+            CLI_CREATE_SERVICE_DEFAULT, CLI_PUSH, appName);
 
         assertEquals(expectedOutput, deployScript);
     }

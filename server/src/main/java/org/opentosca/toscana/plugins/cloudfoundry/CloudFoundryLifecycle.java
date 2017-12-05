@@ -1,6 +1,7 @@
 package org.opentosca.toscana.plugins.cloudfoundry;
 
 import java.io.IOException;
+import java.security.Provider;
 import java.util.Map;
 import java.util.Set;
 
@@ -15,6 +16,8 @@ import org.json.JSONException;
 
 public class CloudFoundryLifecycle extends AbstractLifecycle {
 
+    private CloudFoundryProvider provider;
+    
     public CloudFoundryLifecycle(TransformationContext context) throws IOException {
         super(context);
     }
@@ -29,24 +32,28 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
     public void prepare() {
         //throw new UnsupportedOperationException();
 
-        //TODO: check if properties are filled
         Map<String, String> properties = context.getProperties().getPropertyValues();
-        String username = properties.get("username");
-        String password = properties.get("password");
-        String organization = properties.get("organization");
-        String space = properties.get("space");
-        String apiHost = properties.get("apihost");
+        
+        if (!properties.isEmpty()) {
+            String username = properties.get("username");
+            String password = properties.get("password");
+            String organization = properties.get("organization");
+            String space = properties.get("space");
+            String apiHost = properties.get("apihost");
 
-        CloudFoundryConnection cloudFoundryConnection = new CloudFoundryConnection(username, password,
-            apiHost, organization, space);
+            CloudFoundryConnection cloudFoundryConnection = new CloudFoundryConnection(username, password,
+                apiHost, organization, space);
 
-        //TODO: Do something with connection
-
+            //TODO: check how to get used provider or figure out whether it is necessary to know it?
+            provider = new CloudFoundryProvider(CloudFoundryProvider.CloudFoundryProviderType.PIVOTAL);
+            provider.setOfferedService(cloudFoundryConnection.getServices());
+        }
     }
 
     @Override
     public void transform() {
         CloudFoundryApplication myApp = new CloudFoundryApplication();
+        myApp.setProvider(provider);
         CloudFoundryNodeVisitor visitor = new CloudFoundryNodeVisitor(myApp);
         Set<RootNode> nodes = context.getModel().getNodes();
 
