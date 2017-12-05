@@ -15,33 +15,15 @@ public class CFBuilderTest extends Module {
     @Test
     public void simpleTest() throws Exception {
         Template lampTemplate = new Template();
-//        Module testModule = new Module();
-        
-        // Build Resources
-//        testModule.resource(WebServerInstance.class, "WebServerInstance")
-//            .name
-//        testModule.resource(WebServerInstance.class, "WebServerInstance").na;
-        // Set Parameters
-//        lampTemplate.strParam("KeyName").description("Name of an existing EC2 KeyPair to enable SSH access to the instances").type("AWS::EC2::KeyPair::KeyName").constraintDescription("must be the name of an existing EC2 KeyPair.");
-//        // Set Resources
-//        lampTemplate.resource(WebServerInstance.class, ns("WebServerInstance"));
-        
         
         new CFBuilderTest.TestModule().id("").template(lampTemplate).build();
 
         assertNotNull(lampTemplate);
         System.err.println(lampTemplate.toString());
-        
-//        ObjectMapper mapper = new ObjectMapper().registerModule(new CloudFormationJsonModule().scanTypes());
-//        mapper.setPropertyNamingStrategy(PropertyNamingStrategy.UPPER_CAMEL_CASE);
-//
-//        Template template = mapper.readValue(lampTemplate.toString(), Template.class);
-//        assertNotNull(template);
-//        System.err.println(template.toString());
     }
 
     class TestModule extends Module {
-
+        
         public void build() throws Exception {
             
             Object keyName = option("KeyName").orElseGet(
