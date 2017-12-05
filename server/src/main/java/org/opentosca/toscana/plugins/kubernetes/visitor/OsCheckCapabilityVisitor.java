@@ -1,6 +1,7 @@
 package org.opentosca.toscana.plugins.kubernetes.visitor;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.opentosca.toscana.model.capability.OsCapability;
 import org.opentosca.toscana.model.visitor.CapabilityVisitor;
@@ -23,11 +24,13 @@ public class OsCheckCapabilityVisitor implements CapabilityVisitor {
     @Override
     public void visit(OsCapability capability) {
         logger.debug("Checking the operating system type.");
-        OsCapability.Type capabilityType = capability.getType().get();
-        if (unsupportedTypes.contains(capabilityType)) {
-            throw new UnsupportedOsTypeException(OsCapability.class);
-        } else {
-            logger.debug("Checking was successful.");
+        Optional<OsCapability.Type> capabilityType = capability.getType();
+        if (capability.getType().isPresent()) {
+            if (unsupportedTypes.contains(capabilityType.get())) {
+                throw new UnsupportedOsTypeException(capabilityType.get());
+            } else {
+                logger.debug("Checking was successful.");
+            }
         }
     }
 }
