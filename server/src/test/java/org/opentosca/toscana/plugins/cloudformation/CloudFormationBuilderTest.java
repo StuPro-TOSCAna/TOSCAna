@@ -23,13 +23,23 @@ public class CloudFormationBuilderTest extends Module {
     }
 
     class TestModule extends Module {
+        private static final String KEYNAME_DESCRIPTION = "Name of an existing EC2 KeyPair to enable SSH access to the instances";
+        private static final String KEYNAME_TYPE = "AWS::EC2::KeyPair::KeyName";
+        private static final String KEYNAME_CONSTRAINTDESCRIPTION = "must be the name of an existing EC2 KeyPair.";
+        private static final String IMAGEID_DESCRIPTION = "An existing ImageId";
         
         public void build() throws Exception {
             
-            Object keyName = option("KeyName").orElseGet(
-                () -> strParam("KeyName").type("AWS::EC2::KeyPair::KeyName").description("Name of an existing EC2 KeyPair to enable SSH access to the instances").constraintDescription("must be the name of an existing EC2 KeyPair."));
+            Parameter keyName = (Parameter) option("KeyName").orElseGet(
+                () -> strParam("KeyName")
+                    .type(KEYNAME_TYPE)
+                    .description(KEYNAME_DESCRIPTION)
+                    .constraintDescription(KEYNAME_CONSTRAINTDESCRIPTION));
 
-            Parameter imageId = (Parameter) option("ImageId").orElseGet(() -> strParam("ImageId").description("An existing ImageId"));
+            Parameter imageId = (Parameter) option("ImageId").orElseGet(
+                () -> strParam("ImageId")
+                    .description(IMAGEID_DESCRIPTION));
+            
             Object clusterName = option("clusterName").orElse("elasticsearch");
             Object cidrIp = "0.0.0.0/0";
             Object keyNameVar = template.ref("KeyName");
