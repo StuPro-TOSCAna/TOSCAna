@@ -1,8 +1,9 @@
-package org.opentosca.toscana.model.capability;
+package org.opentosca.toscana.model.requirement;
 
 import java.util.Objects;
 import java.util.Set;
 
+import org.opentosca.toscana.model.capability.Capability;
 import org.opentosca.toscana.model.datatype.Range;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.relation.RootRelationship;
@@ -29,7 +30,7 @@ public class Requirement<CapabilityT extends Capability, NodeT extends RootNode,
      Capability that can fulfill this requirement.
      (TOSCA Simple Profile in YAML Version 1.1, p. 85)
      */
-    private final CapabilityT capability;
+    protected final CapabilityT capability;
 
     /**
      The optional minimum and maximum occurrences for the requirement.
@@ -37,20 +38,19 @@ public class Requirement<CapabilityT extends Capability, NodeT extends RootNode,
      <p>
      Note: Defaults to {@link Range#EXACTLY_ONCE}
      */
-    private final Range occurrence;
+    protected final Range occurrence;
 
     /**
      The optional Nodes that have the required capability and shall be used to fulfill this requirement.
      (TOSCA Simple Profile in YAML Version 1.1, p. 85)
      */
-    private Set<NodeT> fulfillers;
+    protected Set<NodeT> fulfillers;
 
     /**
      The Relationship to construct when fulfilling the requirement.
      (TOSCA Simple Profile in YAML Version 1.1, p. 85)
      */
-    private final RelationshipT relationship;
-
+    protected final RelationshipT relationship;
 
     @Builder
     protected Requirement(CapabilityT capability,

@@ -2,9 +2,9 @@ package org.opentosca.toscana.model;
 
 import java.util.Set;
 
-import org.opentosca.toscana.model.capability.Requirement;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.relation.RootRelationship;
+import org.opentosca.toscana.model.requirement.Requirement;
 
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
@@ -29,10 +29,9 @@ public class EffectiveModel {
             }
         }
     }
-    
+
     public Set<RootNode> getNodes() {
         return topology.vertexSet();
     }
-    
 }
 

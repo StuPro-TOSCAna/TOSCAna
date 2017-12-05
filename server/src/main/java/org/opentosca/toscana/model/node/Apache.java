@@ -3,7 +3,8 @@ package org.opentosca.toscana.model.node;
 import org.opentosca.toscana.model.capability.AdminEndpointCapability;
 import org.opentosca.toscana.model.capability.ContainerCapability;
 import org.opentosca.toscana.model.capability.EndpointCapability;
-import org.opentosca.toscana.model.capability.Requirement;
+import org.opentosca.toscana.model.requirement.HostRequirement;
+import org.opentosca.toscana.model.requirement.Requirement;
 import org.opentosca.toscana.model.datatype.Credential;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
 import org.opentosca.toscana.model.relation.HostedOn;
@@ -21,7 +22,7 @@ public class Apache extends WebServer {
     @Builder
     protected Apache(String componentVersion,
                      Credential adminCredential,
-                     Requirement<ContainerCapability, Compute, HostedOn> host,
+                     HostRequirement host,
                      ContainerCapability containerHost,
                      EndpointCapability databaseEndpoint,
                      AdminEndpointCapability adminEndpoint,
@@ -40,7 +41,7 @@ public class Apache extends WebServer {
      @param adminEndpoint {@link #adminEndpoint}
      */
     public static ApacheBuilder builder(String nodeName,
-                                        Requirement<ContainerCapability, Compute, HostedOn> host,
+                                        HostRequirement host,
                                         ContainerCapability containerHost,
                                         EndpointCapability dataEndpoint,
                                         AdminEndpointCapability adminEndpoint) {

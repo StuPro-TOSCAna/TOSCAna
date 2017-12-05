@@ -2,7 +2,8 @@ package org.opentosca.toscana.model.node;
 
 import org.opentosca.toscana.model.capability.ContainerCapability;
 import org.opentosca.toscana.model.capability.ContainerCapability.ContainerCapabilityBuilder;
-import org.opentosca.toscana.model.capability.Requirement;
+import org.opentosca.toscana.model.requirement.HostRequirement;
+import org.opentosca.toscana.model.requirement.Requirement;
 import org.opentosca.toscana.model.datatype.Credential;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
 import org.opentosca.toscana.model.relation.HostedOn;
@@ -19,7 +20,7 @@ import lombok.Data;
 public class MysqlDbms extends Dbms {
 
     @Builder
-    private MysqlDbms(Requirement<ContainerCapability, Compute, HostedOn> host,
+    private MysqlDbms(HostRequirement host,
                       ContainerCapabilityBuilder containerHostBuilder,
                       String rootPassword,
                       Integer port,
@@ -40,7 +41,7 @@ public class MysqlDbms extends Dbms {
      */
     public static MysqlDbmsBuilder builder(String nodeName,
                                            String rootPassword,
-                                           Requirement<ContainerCapability, Compute, HostedOn> host,
+                                           HostRequirement host,
                                            ContainerCapabilityBuilder containerHostBuilder) {
         return (MysqlDbmsBuilder) new MysqlDbmsBuilder()
             .nodeName(nodeName)
