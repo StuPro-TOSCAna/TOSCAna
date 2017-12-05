@@ -1,6 +1,7 @@
 package org.opentosca.toscana.plugins.cloudformation;
 
 import com.scaleset.cfbuilder.core.Module;
+import com.scaleset.cfbuilder.core.Parameter;
 import com.scaleset.cfbuilder.core.Template;
 import com.scaleset.cfbuilder.ec2.Instance;
 import com.scaleset.cfbuilder.ec2.SecurityGroup;
@@ -45,11 +46,12 @@ public class CFBuilderTest extends Module {
             
             Object keyName = option("KeyName").orElseGet(
                 () -> strParam("KeyName").type("AWS::EC2::KeyPair::KeyName").description("Name of an existing EC2 KeyPair to enable SSH access to the instances").constraintDescription("must be the name of an existing EC2 KeyPair."));
-            
+
+            Parameter imageId = (Parameter) option("ImageId").orElseGet(() -> strParam("ImageId").description("An existing ImageId"));
             Object clusterName = option("clusterName").orElse("elasticsearch");
             Object cidrIp = "0.0.0.0/0";
             Object keyNameVar = template.ref("KeyName");
-            Object imageId = template.ref("ImageId");
+            Object imageIdVar = template.ref("ImageId");
             Object az = template.ref("MyAZ");
             Object instanceProfile = ref("InstanceProfile");
             Object vpcId = template.ref("VpcId");
@@ -69,7 +71,7 @@ public class CFBuilderTest extends Module {
                 .name(ns("Instance"))
                 .availabilityZone(az)
                 .keyName(keyNameVar)
-                .imageId(imageId)
+                .imageId(imageIdVar)
                 .instanceProfile(instanceProfile)
                 .instanceType(keyName)
                 .securityGroupIds(webServerSecurityGroup);
