@@ -29,7 +29,6 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
     public void prepare() {
         //throw new UnsupportedOperationException();
 
-        //TODO: check if cf cli is installed
         //TODO: check if properties are filled
         Map<String, String> properties = context.getProperties().getPropertyValues();
         String username = properties.get("username");
