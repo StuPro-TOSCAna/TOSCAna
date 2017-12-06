@@ -30,7 +30,7 @@ echo "Building Docker image"
 docker build . -t toscana/toscana:alpine-build
 
 echo "Running Docker image"
-docker run -d -p 9001:8080 -v toscana_data:/toscana/data --restart=unless-stopped --name=toscana toscana/toscana:alpine-build
+docker run -d -p 127.0.0.1:9001:8080 -v toscana_data:/toscana/data --restart=unless-stopped --name=toscana toscana/toscana:alpine-build
 
 cd ..
 
