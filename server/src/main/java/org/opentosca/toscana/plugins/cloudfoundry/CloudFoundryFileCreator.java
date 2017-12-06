@@ -24,7 +24,7 @@ public class CloudFoundryFileCreator {
     public static final String MANIFEST = "manifest.yml";
     public static final String MANIFESTHEAD = "---\napplications:\n";
     public static final String NAMEBLOCK = "name";
-    public static final String CLI_CREATE_SERVICE = "cf create-service {plan} {service} ";
+    public static final String CLI_CREATE_SERVICE = "cf create-service cleardb spark ";
     public static final String CLI_PUSH = "cf push ";
     public static final String FILEPRAEFIX_DEPLOY = "deploy_";
     public static final String FILESUFFIX_DEPLOY = ".sh";
@@ -62,7 +62,12 @@ public class CloudFoundryFileCreator {
         ArrayList<String> environmentVariables = new ArrayList<>();
         environmentVariables.add(String.format("  %s:", ENVIRONMENT.getName()));
         for (Map.Entry<String, String> entry : app.getEnvironmentVariables().entrySet()) {
-            environmentVariables.add(String.format("    %s: %s", entry.getKey(), entry.getValue()));
+            if (entry.getValue().isEmpty()) {
+                environmentVariables.add(String.format("    %s: %s", entry.getKey(), "TODO"));
+            } else {
+                environmentVariables.add(String.format("    %s: %s", entry.getKey(), entry.getValue()));
+            }
+            
         }
         for (String env : environmentVariables) {
             fileAccess.access(MANIFEST).appendln(env).close();
@@ -87,18 +92,26 @@ public class CloudFoundryFileCreator {
         for (String service : app.getServices()) {
             deployScript.append(CLI_CREATE_SERVICE + service);
         }
-        deployScript.append(CLI_PUSH + app.getName());
+        deployScript.append(CLI_PUSH + app.getName() + " --random-route");
     }
 
     //only for PHP
     private void createBuildpackAdditionsFile() throws IOException, JSONException {
+        /*
         JSONObject buildPackAdditionsJson = new JSONObject();
         JSONArray buildPacks = new JSONArray();
         for (String buildPack : app.getBuildpackAdditions()) {
             buildPacks.put(buildPack);
         }
         buildPackAdditionsJson.put(BUILDPACK_OBJECT_PHP, buildPacks);
-        fileAccess.access(BUILDPACK_FILEPATH_PHP).append(buildPackAdditionsJson.toString()).close();
+        fileAccess.access(app.getName()+ "/" + BUILDPACK_FILEPATH_PHP).append(buildPackAdditionsJson.toString()).close();
+        */
+        String phpBuildpacks = "{\n" +
+            "  \"PHP_EXTENSIONS\": [\"mysql\", \"mysqli\"]\n" +
+            "}";
+
+        fileAccess.access(app.getName()+ "/" + BUILDPACK_FILEPATH_PHP).append(phpBuildpacks).close();
+        
     }
 
     private void createAttributes() throws IOException {
