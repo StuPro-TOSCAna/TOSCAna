@@ -1,0 +1,15 @@
+version: '2'
+
+# Compose file used to test the Image creation
+
+services:
+  my-app-service:
+    build: my-app 
+    ports:
+      - "8080:80"
+    depends_on:
+      - my-db-service
+  my-db-service:
+    build: my-db
+    ports:
+      - "3306:3306"

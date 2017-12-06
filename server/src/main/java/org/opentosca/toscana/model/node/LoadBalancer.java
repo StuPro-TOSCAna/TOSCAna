@@ -42,8 +42,8 @@ public class LoadBalancer extends RootNode {
         this.application = applicationBuilder.occurrence(Range.ANY).build();
         this.algorithm = algorithm;
 
-        capabilities.add(client);
-        requirements.add(application);
+        capabilities.add(this.client);
+        requirements.add(this.application);
     }
 
     /**
@@ -67,5 +67,8 @@ public class LoadBalancer extends RootNode {
     @Override
     public void accept(NodeVisitor v) {
         v.visit(this);
+    }
+
+    public static class LoadBalancerBuilder extends RootNodeBuilder {
     }
 }

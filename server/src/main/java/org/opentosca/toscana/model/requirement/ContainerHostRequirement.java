@@ -4,7 +4,6 @@ import java.util.Set;
 
 import org.opentosca.toscana.model.capability.ContainerCapability;
 import org.opentosca.toscana.model.datatype.Range;
-import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.ContainerRuntime;
 import org.opentosca.toscana.model.relation.HostedOn;
 
@@ -20,13 +19,11 @@ public class ContainerHostRequirement extends Requirement<ContainerCapability, C
                                        Range occurrence,
                                        @Singular Set<ContainerRuntime> fulfillers,
                                        HostedOn relationship) {
-        super(capability, occurrence, fulfillers, relationship);
+        super(ContainerCapability.getFallback(capability), occurrence,
+            fulfillers, HostedOn.getFallback(relationship));
     }
 
-    public static ContainerHostRequirementBuilder builder(ContainerCapability capability, 
-                                                         HostedOn relationship) {
-        return new ContainerHostRequirementBuilder()
-            .capability(capability)
-            .relationship(relationship);
+    public static ContainerHostRequirement getFallback(ContainerHostRequirement r) {
+        return (r == null) ? builder().build() : r;
     }
 }

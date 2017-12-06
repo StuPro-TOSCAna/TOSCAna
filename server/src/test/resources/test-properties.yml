@@ -1,1 +1,2 @@
 datadir: testsuite-spring-tmpdir/
+toscana.docker.base-image-mapper.update-interval: 3600

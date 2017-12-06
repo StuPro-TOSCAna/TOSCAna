@@ -1,4 +1,4 @@
-package org.opentosca.toscana.plugins.kubernetes.visitor;
+package org.opentosca.toscana.plugins.kubernetes.visitor.check;
 
 import java.util.Arrays;
 import java.util.List;
