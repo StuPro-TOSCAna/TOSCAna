@@ -10,7 +10,8 @@ import org.opentosca.toscana.model.capability.AttachmentCapability;
 import org.opentosca.toscana.model.capability.BindableCapability;
 import org.opentosca.toscana.model.capability.ContainerCapability;
 import org.opentosca.toscana.model.capability.OsCapability;
-import org.opentosca.toscana.model.capability.Requirement;
+import org.opentosca.toscana.model.requirement.BlockStorageRequirement;
+import org.opentosca.toscana.model.requirement.Requirement;
 import org.opentosca.toscana.model.capability.ScalableCapability;
 import org.opentosca.toscana.model.datatype.NetworkInfo;
 import org.opentosca.toscana.model.datatype.PortInfo;
@@ -62,7 +63,7 @@ public class Compute extends RootNode {
 
     private final BindableCapability binding;
 
-    private final Requirement<AttachmentCapability, BlockStorage, AttachesTo> localStorage;
+    private final BlockStorageRequirement localStorage;
 
     @Builder
     protected Compute(String privateAddress,
@@ -72,7 +73,7 @@ public class Compute extends RootNode {
                       AdminEndpointCapability adminEndpoint,
                       ScalableCapability scalable,
                       BindableCapability binding,
-                      Requirement<AttachmentCapability, BlockStorage, AttachesTo> localStorage,
+                      BlockStorageRequirement localStorage,
                       String nodeName,
                       StandardLifecycle standardLifecycle,
                       String description) {
@@ -106,7 +107,7 @@ public class Compute extends RootNode {
                                          AdminEndpointCapability adminEndpoint,
                                          ScalableCapability scalable,
                                          BindableCapability binding,
-                                         Requirement<AttachmentCapability, BlockStorage, AttachesTo> localStorage) {
+                                         BlockStorageRequirement localStorage) {
         return new ComputeBuilder()
             .os(os)
             .nodeName(nodeName)

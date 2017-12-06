@@ -10,12 +10,13 @@ import org.opentosca.toscana.model.capability.ContainerCapability;
 import org.opentosca.toscana.model.capability.DatabaseEndpointCapability;
 import org.opentosca.toscana.model.capability.EndpointCapability;
 import org.opentosca.toscana.model.capability.OsCapability;
-import org.opentosca.toscana.model.capability.Requirement;
+import org.opentosca.toscana.model.requirement.HostRequirement;
+import org.opentosca.toscana.model.requirement.BlockStorageRequirement;
+import org.opentosca.toscana.model.requirement.MysqlDbmsRequirement;
 import org.opentosca.toscana.model.capability.ScalableCapability;
 import org.opentosca.toscana.model.datatype.Port;
 import org.opentosca.toscana.model.datatype.Range;
 import org.opentosca.toscana.model.node.Apache;
-import org.opentosca.toscana.model.node.BlockStorage;
 import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.MysqlDatabase;
 import org.opentosca.toscana.model.node.MysqlDbms;
@@ -59,14 +60,17 @@ public class LampApp {
         AttachesTo attachesTo = AttachesTo.builder("mount").build();
         AttachmentCapability attachmentCapability = AttachmentCapability.builder().build();
 
-        Requirement<AttachmentCapability, BlockStorage, AttachesTo> computeRequirement =
-            Requirement.<AttachmentCapability, BlockStorage, AttachesTo>builder(attachmentCapability, attachesTo)
-                .build();
+        BlockStorageRequirement localStorage =
+            BlockStorageRequirement.builder(attachmentCapability, attachesTo).build();
 
-        OsCapability osCapability = OsCapability.builder().distribution(OsCapability.Distribution.UBUNTU).type(OsCapability.Type.LINUX).version("16.04").build();
+        OsCapability osCapability = OsCapability.builder()
+            .distribution(OsCapability.Distribution.UBUNTU)
+            .type(OsCapability.Type.LINUX)
+            .version("16.04")
+            .build();
 
         Compute computeNode = Compute.builder("server", osCapability, computeAdminEndpointCap, scalableCapability,
-            bindableCapability, computeRequirement).host(containerCapability).build();
+            bindableCapability, localStorage).host(containerCapability).build();
         return computeNode;
     }
 
@@ -94,7 +98,7 @@ public class LampApp {
             .configure(dbmsOperation)
             .build();
 
-        Requirement<ContainerCapability, Compute, HostedOn> hostedOnRequirement = getHostedOnServerRequirement();
+        HostRequirement hostedOnRequirement = getHostedOnServerRequirement();
 
         ContainerCapability.ContainerCapabilityBuilder capabilityBuilder = ContainerCapability.builder();
 
@@ -114,8 +118,7 @@ public class LampApp {
             .build();
         ContainerCapability dbContainerCapability = ContainerCapability.builder().build();
         HostedOn hostedOn = HostedOn.builder().build();
-        Requirement<ContainerCapability, MysqlDbms, HostedOn> requirement = Requirement.
-            <ContainerCapability, MysqlDbms, HostedOn>builder(dbContainerCapability, hostedOn)
+        MysqlDbmsRequirement requirement = MysqlDbmsRequirement.builder(dbContainerCapability, hostedOn)
             .build();
 
         MysqlDatabase mydb = MysqlDatabase.builder("my_db", "DBNAME", dbEndpointCapability,
@@ -132,7 +135,7 @@ public class LampApp {
         AdminEndpointCapability adminEndpointCapability = AdminEndpointCapability.builder("127.0.0.1")
             .port(new Port(80)).build();
 
-        Requirement<ContainerCapability, Compute, HostedOn> hostedOnRequirement = getHostedOnServerRequirement();
+        HostRequirement hostedOnRequirement = getHostedOnServerRequirement();
 
         Apache webServer = Apache.builder(
             "apache_web_server",
@@ -145,10 +148,10 @@ public class LampApp {
         return webServer;
     }
 
-    private Requirement<ContainerCapability, Compute, HostedOn> getHostedOnServerRequirement() {
+    private HostRequirement getHostedOnServerRequirement() {
         ContainerCapability hostCapability = ContainerCapability.builder().name("server").build();
 
-        return Requirement.<ContainerCapability, Compute, HostedOn>builder(
+        return HostRequirement.builder(
             hostCapability,
             HostedOn.builder().build()
         ).build();
@@ -167,7 +170,11 @@ public class LampApp {
         appInputs.add(new OperationVariable("database_host"));
         appInputs.add(new OperationVariable("database_password"));
         appInputs.add(new OperationVariable("database_name"));
-        appInputs.add(new OperationVariable("database_port"));
+        appInputs.add(new OperationVariable("database_user"));
+        OperationVariable dbPort = new OperationVariable("database_port");
+        dbPort.setValue("3306");
+        appInputs.add(dbPort);
+
         Operation appConfigure = Operation.builder().implementationArtifact("my_app/configure_myphpapp.sh")
             .inputs(appInputs)
             .build();

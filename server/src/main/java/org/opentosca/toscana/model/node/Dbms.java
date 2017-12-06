@@ -4,7 +4,8 @@ import java.util.Objects;
 import java.util.Optional;
 
 import org.opentosca.toscana.model.capability.ContainerCapability;
-import org.opentosca.toscana.model.capability.Requirement;
+import org.opentosca.toscana.model.requirement.HostRequirement;
+import org.opentosca.toscana.model.requirement.Requirement;
 import org.opentosca.toscana.model.datatype.Credential;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
 import org.opentosca.toscana.model.relation.HostedOn;
@@ -35,7 +36,7 @@ public class Dbms extends SoftwareComponent {
     private final ContainerCapability containerHost;
 
     @Builder
-    protected Dbms(Requirement<ContainerCapability, Compute, HostedOn> host,
+    protected Dbms(HostRequirement host,
                    ContainerCapability containerHost,
                    String rootPassword,
                    Integer port,
@@ -58,7 +59,7 @@ public class Dbms extends SoftwareComponent {
      @param containerHost {@link #containerHost}
      */
     public static DbmsBuilder builder(String nodeName,
-                                      Requirement<ContainerCapability, Compute, HostedOn> host,
+                                      HostRequirement host,
                                       ContainerCapability containerHost) {
         return new DbmsBuilder()
             .nodeName(nodeName)
