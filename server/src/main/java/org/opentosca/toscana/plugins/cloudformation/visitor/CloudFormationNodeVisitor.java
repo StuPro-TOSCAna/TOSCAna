@@ -6,6 +6,7 @@ import org.opentosca.toscana.model.node.MysqlDatabase;
 import org.opentosca.toscana.model.node.MysqlDbms;
 import org.opentosca.toscana.model.node.WebApplication;
 import org.opentosca.toscana.model.visitor.StrictNodeVisitor;
+
 import org.opentosca.toscana.plugins.cloudformation.CloudFormationModule;
 
 import com.scaleset.cfbuilder.ec2.Instance;
@@ -40,24 +41,24 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             e.printStackTrace();
         }
     }
+    
+    @Override
+    public void visit(MysqlDatabase node) {
+        //noop
+    }
+    
+    @Override
+    public void visit(MysqlDbms node) {
+        //noop
+    }
 
     @Override
     public void visit(Apache node) {
-        
+        // noop
     }
 
     @Override
     public void visit(WebApplication node) {
-        
-    }
-
-    @Override
-    public void visit(MysqlDatabase node) {
-        
-    }
-
-    @Override
-    public void visit(MysqlDbms node) {
-        
+        //noop
     }
 }
