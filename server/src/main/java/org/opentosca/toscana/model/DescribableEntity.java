@@ -26,22 +26,8 @@ public class DescribableEntity implements Serializable {
     }
 
     public static class DescribableEntityBuilder implements Serializable {
-        private String description;
 
         public DescribableEntityBuilder() {
-        }
-
-        public DescribableEntityBuilder description(String description) {
-            this.description = description;
-            return this;
-        }
-
-        public DescribableEntity build() {
-            return new DescribableEntity(description);
-        }
-
-        public String toString() {
-            return "DescribableEntity.DescribableEntityBuilder(description=" + this.description + ")";
         }
     }
 }
