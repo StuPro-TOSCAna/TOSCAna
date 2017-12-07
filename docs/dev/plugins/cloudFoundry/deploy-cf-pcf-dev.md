@@ -6,6 +6,7 @@ This guide assumes the following Prerequisites:
 - VT-x or AMD-v virtualization enabled
 - At least 3 GB of RAM and 50 GB of Space
 - Ubuntu 16.04 as the Host OS
+- SSH access to Host
 
 ### Prerequisites PCF Dev
 
@@ -53,6 +54,9 @@ unzip pcfdev-VERSION-linux.zip
 cf dev start
 ```
 - after the Banner appears, login with Username: `admin`, Password: `admin`
+```bash
+cf login -a https://api.local.pcfdev.io --skip-ssl-validation
+```
 - upload your Application, navigate into the Directory and deploy:
 ```bash
 cf push application_name
@@ -61,6 +65,25 @@ cf push application_name
 ```bash
 cf dev stop
 ```
+
+### Use of PCF Dev on Vsphere
+If you are using PCF Dev on an environment like Vsphere without Root access, here is a workaround to get it displayed:
+
+- Install lightweight LXDE Desktop on the Host
+```bash
+sudo apt install lxde
+```
+- Install Chromium Browser on the Host
+```bash
+sudo apt install chromium-browser
+```
+- If you use Linux, make sure XServer is installed, on Windows MobaXterm or on Mac x11.
+- Connect to the Host and use the local Chromium Browser
+```bash
+ssh -X YOUR_USER@HOST_IP chromium-browser
+```
+- The local browser should be displayed now. Open https://api.local.pcfdev.io and login with Username: `admin`, Password: `admin`
+- Your pushed Apps should be available under their own specific URLs
 
 ## Sources
 
