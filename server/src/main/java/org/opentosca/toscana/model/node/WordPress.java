@@ -75,11 +75,11 @@ public class WordPress extends WebApplication {
         return new WordPressBuilder();
     }
 
-    public static class WordPressBuilder extends WebApplicationBuilder {
-    }
-
     @Override
     public void accept(NodeVisitor v) {
         v.visit(this);
+    }
+
+    public static class WordPressBuilder extends WebApplicationBuilder {
     }
 }

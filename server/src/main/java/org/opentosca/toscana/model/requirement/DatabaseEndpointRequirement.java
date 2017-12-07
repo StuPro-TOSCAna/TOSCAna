@@ -2,12 +2,10 @@ package org.opentosca.toscana.model.requirement;
 
 import java.util.Set;
 
-import org.opentosca.toscana.model.capability.ContainerCapability;
 import org.opentosca.toscana.model.capability.DatabaseEndpointCapability;
 import org.opentosca.toscana.model.datatype.Range;
 import org.opentosca.toscana.model.node.Database;
 import org.opentosca.toscana.model.relation.ConnectsTo;
-import org.opentosca.toscana.model.relation.HostedOn;
 
 import lombok.Builder;
 import lombok.Data;
