@@ -9,7 +9,6 @@ import org.opentosca.toscana.model.visitor.CapabilityVisitor;
 
 import lombok.Builder;
 import lombok.Data;
-import lombok.Singular;
 
 /**
  The NetworkCapability indicates that the node can provide addressability for the resource within a network.
@@ -44,7 +43,7 @@ public class NetworkCapability extends Capability {
     public void accept(CapabilityVisitor v) {
         v.visit(this);
     }
-    
+
     public static class NetworkCapabilityBuilder extends CapabilityBuilder {
     }
 }

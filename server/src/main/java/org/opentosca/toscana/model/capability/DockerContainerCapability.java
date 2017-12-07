@@ -90,10 +90,9 @@ public class DockerContainerCapability extends ContainerCapability {
         this.hostId = hostId;
         this.volumeId = volumeId;
     }
-    
-    public static DockerContainerCapability getFallback(DockerContainerCapability c){
+
+    public static DockerContainerCapability getFallback(DockerContainerCapability c) {
         return (c == null) ? DockerContainerCapability.builder().build() : c;
-        
     }
 
     /**
@@ -114,7 +113,7 @@ public class DockerContainerCapability extends ContainerCapability {
     public void accept(CapabilityVisitor v) {
         v.visit(this);
     }
-   
+
     public static class DockerContainerCapabilityBuilder extends ContainerCapabilityBuilder {
     }
 }

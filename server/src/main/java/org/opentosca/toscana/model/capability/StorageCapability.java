@@ -9,7 +9,6 @@ import org.opentosca.toscana.model.visitor.CapabilityVisitor;
 
 import lombok.Builder;
 import lombok.Data;
-import lombok.Singular;
 
 /**
  The StorageCapability indicates that the node can provide a named storage location with specified size range.
@@ -33,6 +32,10 @@ public class StorageCapability extends Capability {
         this.name = name;
     }
 
+    public static StorageCapability getFallback(StorageCapability c) {
+        return (c == null) ? StorageCapability.builder().build() : c;
+    }
+
     /**
      @return {@link #name}
      */
@@ -43,10 +46,6 @@ public class StorageCapability extends Capability {
     @Override
     public void accept(CapabilityVisitor v) {
         v.visit(this);
-    }
-
-    public static StorageCapability getFallback(StorageCapability c) {
-        return (c == null) ? StorageCapability.builder().build() : c;
     }
 
     public static class StorageCapabilityBuilder extends CapabilityBuilder {

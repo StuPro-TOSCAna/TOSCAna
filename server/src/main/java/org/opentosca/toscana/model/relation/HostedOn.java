@@ -15,7 +15,7 @@ public class HostedOn extends RootRelationship {
     public HostedOn() {
         super(null);
     }
-   
+
     @Builder
     protected HostedOn(String description) {
         super(description);

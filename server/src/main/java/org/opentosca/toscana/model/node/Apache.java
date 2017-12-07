@@ -52,7 +52,7 @@ public class Apache extends WebServer {
     public void accept(NodeVisitor v) {
         v.visit(this);
     }
-   
+
     public static class ApacheBuilder extends WebServerBuilder {
     }
 }

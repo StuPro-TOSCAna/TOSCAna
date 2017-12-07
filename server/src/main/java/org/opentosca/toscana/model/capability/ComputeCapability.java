@@ -13,7 +13,6 @@ import org.opentosca.toscana.model.visitor.CapabilityVisitor;
 
 import lombok.Builder;
 import lombok.Data;
-import lombok.Singular;
 
 /**
  Indicates that the node can provide hosting on a named compute resource.
@@ -130,7 +129,7 @@ public class ComputeCapability extends Capability {
     public void accept(CapabilityVisitor v) {
         v.visit(this);
     }
-    
+
     public static class ComputeCapabilityBuilder extends CapabilityBuilder {
     }
 }

@@ -161,15 +161,15 @@ public class EndpointCapability extends Capability {
         return Optional.ofNullable(initiator);
     }
 
+    @Override
+    public void accept(CapabilityVisitor v) {
+        v.visit(this);
+    }
+
     public enum Initiator {
         SOURCE,
         TARGET,
         PEER
-    }
-
-    @Override
-    public void accept(CapabilityVisitor v) {
-        v.visit(this);
     }
 
     public static class EndpointCapabilityBuilder extends CapabilityBuilder {

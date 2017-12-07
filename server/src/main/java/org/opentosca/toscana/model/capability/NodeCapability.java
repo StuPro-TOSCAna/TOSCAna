@@ -8,7 +8,6 @@ import org.opentosca.toscana.model.visitor.CapabilityVisitor;
 
 import lombok.Builder;
 import lombok.Data;
-import lombok.Singular;
 
 /**
  The NodeCapability indicates the base capabilities of a TOSCA Node Type.
@@ -28,7 +27,7 @@ public class NodeCapability extends Capability {
     public void accept(CapabilityVisitor v) {
         v.visit(this);
     }
-    
+
     public static class NodeCapabilityBuilder extends CapabilityBuilder {
     }
 }

@@ -22,7 +22,7 @@ public class RoutesTo extends RootRelationship {
     public void accept(RelationshipVisitor v) {
         v.visit(this);
     }
-    
+
     public static class RoutesToBuilder extends DescribableEntityBuilder {
     }
 }

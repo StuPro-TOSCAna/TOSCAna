@@ -74,13 +74,6 @@ public class PublicEndpointCapability extends EndpointCapability {
     }
 
     /**
-     @return {@link #dnsName}
-     */
-    public Optional<String> getDnsName() {
-        return Optional.ofNullable(dnsName);
-    }
-
-    /**
      @param ipAddress {@link #ipAddress}
      @param port      {@link #port}
      */
@@ -100,6 +93,13 @@ public class PublicEndpointCapability extends EndpointCapability {
         return new PublicEndpointCapabilityBuilder()
             .ipAddress(ipAddress)
             .supportedPort(supportedPort);
+    }
+
+    /**
+     @return {@link #dnsName}
+     */
+    public Optional<String> getDnsName() {
+        return Optional.ofNullable(dnsName);
     }
 
     @Override

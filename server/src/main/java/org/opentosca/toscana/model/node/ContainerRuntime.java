@@ -1,7 +1,5 @@
 package org.opentosca.toscana.model.node;
 
-import java.util.Objects;
-
 import org.opentosca.toscana.model.capability.ContainerCapability;
 import org.opentosca.toscana.model.capability.ScalableCapability;
 import org.opentosca.toscana.model.datatype.Credential;
@@ -42,7 +40,7 @@ public class ContainerRuntime extends SoftwareComponent {
     }
 
     /**
-     @param nodeName      {@link #nodeName}
+     @param nodeName {@link #nodeName}
      */
     public static ContainerRuntimeBuilder builder(String nodeName) {
         return new ContainerRuntimeBuilder()

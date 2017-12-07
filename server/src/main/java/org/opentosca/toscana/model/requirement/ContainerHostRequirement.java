@@ -19,7 +19,7 @@ public class ContainerHostRequirement extends Requirement<ContainerCapability, C
                                        Range occurrence,
                                        @Singular Set<ContainerRuntime> fulfillers,
                                        HostedOn relationship) {
-        super(ContainerCapability.getFallback(capability), occurrence, 
+        super(ContainerCapability.getFallback(capability), occurrence,
             fulfillers, HostedOn.getFallback(relationship));
     }
 

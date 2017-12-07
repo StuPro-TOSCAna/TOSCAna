@@ -68,6 +68,57 @@ public class SoftwareComponent extends RootNode {
     }
 
     public static class SoftwareComponentBuilder extends RootNodeBuilder {
+        private String componentVersion;
+        private Credential adminCredential;
+        private HostRequirement host;
+        private String nodeName;
+        private StandardLifecycle standardLifecycle;
+        private String description;
+
+        SoftwareComponentBuilder() {
+        }
+
+        public SoftwareComponentBuilder componentVersion(String componentVersion) {
+            this.componentVersion = componentVersion;
+            return this;
+        }
+
+        public SoftwareComponentBuilder adminCredential(Credential adminCredential) {
+            this.adminCredential = adminCredential;
+            return this;
+        }
+
+        public SoftwareComponentBuilder host(HostRequirement host) {
+            this.host = host;
+            return this;
+        }
+
+        @Override
+        public SoftwareComponentBuilder nodeName(String nodeName) {
+            this.nodeName = nodeName;
+            return this;
+        }
+
+        @Override
+        public SoftwareComponentBuilder standardLifecycle(StandardLifecycle standardLifecycle) {
+            this.standardLifecycle = standardLifecycle;
+            return this;
+        }
+
+        @Override
+        public SoftwareComponentBuilder description(String description) {
+            this.description = description;
+            return this;
+        }
+
+        @Override
+        public SoftwareComponent build() {
+            return new SoftwareComponent(componentVersion, adminCredential, host, nodeName, standardLifecycle, description);
+        }
+
+        public String toString() {
+            return "SoftwareComponent.SoftwareComponentBuilder(componentVersion=" + this.componentVersion + ", adminCredential=" + this.adminCredential + ", host=" + this.host + ", nodeName=" + this.nodeName + ", standardLifecycle=" + this.standardLifecycle + ", description=" + this.description + ")";
+        }
     }
 }
 

@@ -31,8 +31,8 @@ public class MysqlDbms extends Dbms {
     }
 
     /**
-     @param nodeName      {@link #nodeName}
-     @param rootPassword  {@link #rootPassword}
+     @param nodeName     {@link #nodeName}
+     @param rootPassword {@link #rootPassword}
      */
     public static MysqlDbmsBuilder builder(String nodeName,
                                            String rootPassword) {

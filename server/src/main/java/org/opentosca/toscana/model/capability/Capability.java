@@ -46,7 +46,7 @@ public abstract class Capability extends DescribableEntity implements VisitableC
     public static class CapabilityBuilder extends DescribableEntityBuilder {
 
         private Set<Class<? extends RootNode>> validSourceTypes = new HashSet<>();
-        
+
         @Override
         public Capability build() {
             // should never be called (RootNode is abstract)

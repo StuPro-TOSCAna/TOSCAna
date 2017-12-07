@@ -62,6 +62,7 @@ public class LampApp {
             .build();
         Compute computeNode = Compute
             .builder("server", osCapability, computeAdminEndpointCap, localStorage)
+            .host(createContainerCapability())
             .build();
         return computeNode;
     }

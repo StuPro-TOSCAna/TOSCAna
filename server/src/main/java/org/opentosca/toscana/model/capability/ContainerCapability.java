@@ -8,7 +8,6 @@ import org.opentosca.toscana.model.visitor.CapabilityVisitor;
 
 import lombok.Builder;
 import lombok.Data;
-import lombok.Singular;
 
 /**
  The ContainerCapability indicates that the node can act as a container (or a host) for one or more other declared Node Types.
@@ -31,7 +30,7 @@ public class ContainerCapability extends ComputeCapability {
     public static ContainerCapability getFallback(ContainerCapability c) {
         return (c == null) ? ContainerCapability.builder().build() : c;
     }
-    
+
     @Override
     public void accept(CapabilityVisitor v) {
         v.visit(this);

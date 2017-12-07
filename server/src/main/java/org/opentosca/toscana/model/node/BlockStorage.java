@@ -79,7 +79,6 @@ public class BlockStorage extends RootNode {
         capabilities.add(this.attachment);
     }
 
-
     /**
      @param attachment {@link #attachment}
      @param lifecycle  {@link #standardLifecycle}
@@ -108,7 +107,6 @@ public class BlockStorage extends RootNode {
             .attachment(attachment);
     }
 
-
     /**
      @return the optional size of this block storage (in MB)
      */
@@ -134,7 +132,7 @@ public class BlockStorage extends RootNode {
     public void accept(NodeVisitor v) {
         v.visit(this);
     }
-    
+
     public static class BlockStorageBuilder extends RootNodeBuilder {
     }
 }

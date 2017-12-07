@@ -130,7 +130,7 @@ public class Database extends RootNode {
     public void accept(NodeVisitor v) {
         v.visit(this);
     }
-    
+
     public static class DatabaseBuilder extends RootNodeBuilder {
     }
 }

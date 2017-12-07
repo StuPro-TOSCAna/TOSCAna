@@ -27,7 +27,7 @@ public class MysqlDatabase extends Database {
                          StandardLifecycle standardLifecycle,
                          String description) {
         super(databaseName, port, user, password, databaseEndpoint, nodeName, standardLifecycle, description);
-        
+
         this.host = (host == null) ? MysqlDbmsRequirement.builder().build() : host;
 
         requirements.add(this.host);
