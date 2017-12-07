@@ -13,11 +13,11 @@ import com.scaleset.cfbuilder.ec2.Instance;
 import com.scaleset.cfbuilder.ec2.SecurityGroup;
 import org.slf4j.Logger;
 
-public class NodeTypeVisitor implements StrictNodeVisitor {
+public class CloudFormationNodeVisitor implements StrictNodeVisitor {
     
     private final Logger logger;
     
-    public NodeTypeVisitor(Logger logger) throws Exception {
+    public CloudFormationNodeVisitor(Logger logger) throws Exception {
         this.logger = logger;
     }
     
