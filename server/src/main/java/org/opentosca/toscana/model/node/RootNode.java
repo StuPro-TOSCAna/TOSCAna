@@ -7,13 +7,13 @@ import java.util.Set;
 import org.opentosca.toscana.model.DescribableEntity;
 import org.opentosca.toscana.model.capability.Capability;
 import org.opentosca.toscana.model.capability.NodeCapability;
-import org.opentosca.toscana.model.requirement.Dependency;
-import org.opentosca.toscana.model.requirement.Requirement;
 import org.opentosca.toscana.model.datatype.Range;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
-import org.opentosca.toscana.model.relation.DependsOn;
+import org.opentosca.toscana.model.requirement.Dependency;
+import org.opentosca.toscana.model.requirement.Requirement;
 import org.opentosca.toscana.model.visitor.VisitableNode;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -36,7 +36,6 @@ public abstract class RootNode extends DescribableEntity implements VisitableNod
      */
     private final NodeCapability feature = NodeCapability.builder().occurence(Range.EXACTLY_ONCE).build();
 
-
     /**
      Dependencies are generic requirements that can be used to express timing dependencies between nodes.
      (TOSCA Simple Profile in YAML Version 1.1, p. 23)
@@ -45,6 +44,7 @@ public abstract class RootNode extends DescribableEntity implements VisitableNod
 
     private final StandardLifecycle standardLifecycle;
 
+    @Builder
     protected RootNode(String nodeName,
                        StandardLifecycle standardLifecycle,
                        String description) {
@@ -54,7 +54,23 @@ public abstract class RootNode extends DescribableEntity implements VisitableNod
             throw new IllegalArgumentException("name must not be empty");
         }
         this.standardLifecycle = (standardLifecycle == null) ? StandardLifecycle.builder().build() : standardLifecycle;
-        capabilities.add(feature);
-        requirements.addAll(dependencies);
+        capabilities.add(this.feature);
+        requirements.addAll(this.dependencies);
+    }
+
+    /**
+     @param nodeName {@link #nodeName}
+     */
+    public static RootNodeBuilder builder(String nodeName) {
+        return new RootNodeBuilder().nodeName(nodeName);
+    }
+
+    public static class RootNodeBuilder extends DescribableEntityBuilder {
+
+        @Override
+        public RootNode build() {
+            // should never be called (RootNode is abstract)
+            throw new UnsupportedOperationException();
+        }
     }
 }

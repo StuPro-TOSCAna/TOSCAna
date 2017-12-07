@@ -26,7 +26,7 @@ public class NetworkCapability extends Capability {
 
     @Builder
     protected NetworkCapability(String name,
-                                @Singular Set<Class<? extends RootNode>> validSourceTypes,
+                                Set<Class<? extends RootNode>> validSourceTypes,
                                 Range occurence,
                                 String description) {
         super(validSourceTypes, occurence, description);
@@ -43,5 +43,8 @@ public class NetworkCapability extends Capability {
     @Override
     public void accept(CapabilityVisitor v) {
         v.visit(this);
+    }
+    
+    public static class NetworkCapabilityBuilder extends CapabilityBuilder {
     }
 }

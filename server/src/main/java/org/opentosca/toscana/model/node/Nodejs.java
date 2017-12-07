@@ -64,11 +64,11 @@ public class Nodejs extends WebServer {
         return Optional.ofNullable(githubUrl);
     }
 
-    public static class NodejsBuilder extends WebServerBuilder {
-    }
-
     @Override
     public void accept(NodeVisitor v) {
         v.visit(this);
+    }
+    
+    public static class NodejsBuilder extends WebServerBuilder {
     }
 }

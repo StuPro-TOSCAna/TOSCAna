@@ -18,7 +18,7 @@ import lombok.Singular;
 public class NodeCapability extends Capability {
 
     @Builder
-    protected NodeCapability(@Singular Set<Class<? extends RootNode>> validSourceTypes,
+    protected NodeCapability(Set<Class<? extends RootNode>> validSourceTypes,
                              Range occurence,
                              String description) {
         super(validSourceTypes, occurence, description);
@@ -27,5 +27,8 @@ public class NodeCapability extends Capability {
     @Override
     public void accept(CapabilityVisitor v) {
         v.visit(this);
+    }
+    
+    public static class NodeCapabilityBuilder extends CapabilityBuilder {
     }
 }

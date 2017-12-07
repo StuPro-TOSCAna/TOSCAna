@@ -44,7 +44,7 @@ public class OsCapability extends Capability {
                            Type type,
                            Distribution distribution,
                            String version,
-                           @Singular Set<Class<? extends RootNode>> validSourceTypes,
+                           Set<Class<? extends RootNode>> validSourceTypes,
                            Range occurence,
                            String description) {
         super(validSourceTypes, occurence, description);
@@ -113,5 +113,8 @@ public class OsCapability extends Capability {
         BUSYBOX,
         OPEN_SUSE,
         // might grow
+    }
+    
+    public static class OsCapabilityBuilder extends CapabilityBuilder {
     }
 }

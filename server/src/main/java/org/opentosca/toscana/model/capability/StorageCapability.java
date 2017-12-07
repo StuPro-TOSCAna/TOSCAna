@@ -26,7 +26,7 @@ public class StorageCapability extends Capability {
 
     @Builder
     protected StorageCapability(String name,
-                                @Singular Set<Class<? extends RootNode>> validSourceTypes,
+                                Set<Class<? extends RootNode>> validSourceTypes,
                                 Range occurence,
                                 String description) {
         super(validSourceTypes, occurence, description);
@@ -43,5 +43,12 @@ public class StorageCapability extends Capability {
     @Override
     public void accept(CapabilityVisitor v) {
         v.visit(this);
+    }
+
+    public static StorageCapability getFallback(StorageCapability c) {
+        return (c == null) ? StorageCapability.builder().build() : c;
+    }
+
+    public static class StorageCapabilityBuilder extends CapabilityBuilder {
     }
 }

@@ -18,17 +18,18 @@ import lombok.Singular;
 public class BindableCapability extends NodeCapability {
 
     @Builder
-    protected BindableCapability(@Singular Set<Class<? extends RootNode>> validSourceTypes,
+    protected BindableCapability(Set<Class<? extends RootNode>> validSourceTypes,
                                  Range occurence,
                                  String description) {
         super(validSourceTypes, occurence, description);
     }
 
-    public static class BindableCapabilityBuilder extends NodeCapabilityBuilder {
-    }
 
     @Override
     public void accept(CapabilityVisitor v) {
         v.visit(this);
+    }
+    
+    public static class BindableCapabilityBuilder extends NodeCapabilityBuilder {
     }
 }

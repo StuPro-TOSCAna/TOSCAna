@@ -76,7 +76,7 @@ public class BlockStorage extends RootNode {
         this.snapshotId = snapshotId;
         this.attachment = Objects.requireNonNull(attachment);
 
-        capabilities.add(attachment);
+        capabilities.add(this.attachment);
     }
 
 
@@ -133,5 +133,8 @@ public class BlockStorage extends RootNode {
     @Override
     public void accept(NodeVisitor v) {
         v.visit(this);
+    }
+    
+    public static class BlockStorageBuilder extends RootNodeBuilder {
     }
 }

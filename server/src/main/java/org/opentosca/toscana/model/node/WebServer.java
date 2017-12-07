@@ -47,9 +47,9 @@ public class WebServer extends SoftwareComponent {
         this.dataEndpoint = Objects.requireNonNull(dataEndpoint);
         this.adminEndpoint = Objects.requireNonNull(adminEndpoint);
 
-        capabilities.add(containerHost);
-        capabilities.add(dataEndpoint);
-        capabilities.add(adminEndpoint);
+        capabilities.add(this.containerHost);
+        capabilities.add(this.dataEndpoint);
+        capabilities.add(this.adminEndpoint);
     }
 
     /**
@@ -75,5 +75,8 @@ public class WebServer extends SoftwareComponent {
     @Override
     public void accept(NodeVisitor v) {
         v.visit(this);
+    }
+    
+    public static class WebServerBuilder extends SoftwareComponentBuilder {
     }
 }

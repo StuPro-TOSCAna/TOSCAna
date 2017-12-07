@@ -18,7 +18,7 @@ import lombok.Singular;
 public class AttachmentCapability extends Capability {
 
     @Builder
-    protected AttachmentCapability(@Singular Set<Class<? extends RootNode>> validSourceTypes,
+    protected AttachmentCapability(Set<Class<? extends RootNode>> validSourceTypes,
                                    Range occurence,
                                    String description) {
         super(validSourceTypes, occurence, description);
@@ -27,5 +27,12 @@ public class AttachmentCapability extends Capability {
     @Override
     public void accept(CapabilityVisitor v) {
         v.visit(this);
+    }
+
+    public static AttachmentCapability getFallback(AttachmentCapability c) {
+        return (c == null) ? AttachmentCapability.builder().build() : c;
+    }
+
+    public static class AttachmentCapabilityBuilder extends CapabilityBuilder {
     }
 }

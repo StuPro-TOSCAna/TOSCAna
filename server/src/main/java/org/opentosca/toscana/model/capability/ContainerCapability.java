@@ -17,22 +17,26 @@ import lombok.Singular;
 public class ContainerCapability extends ComputeCapability {
 
     @Builder
-    protected ContainerCapability(String name,
+    protected ContainerCapability(String resourceName,
                                   Integer numCpus,
                                   Double cpuFrequencyInGhz,
                                   Integer diskSizeInMB,
                                   Integer memSizeInMB,
-                                  @Singular Set<Class<? extends RootNode>> validSourceTypes,
+                                  Set<Class<? extends RootNode>> validSourceTypes,
                                   Range occurence,
                                   String description) {
-        super(name, numCpus, cpuFrequencyInGhz, diskSizeInMB, memSizeInMB, validSourceTypes, occurence, description);
+        super(resourceName, numCpus, cpuFrequencyInGhz, diskSizeInMB, memSizeInMB, validSourceTypes, occurence, description);
     }
 
-    public static class ContainerCapabilityBuilder extends ComputeCapabilityBuilder {
+    public static ContainerCapability getFallback(ContainerCapability c) {
+        return (c == null) ? ContainerCapability.builder().build() : c;
     }
-
+    
     @Override
     public void accept(CapabilityVisitor v) {
         v.visit(this);
+    }
+
+    public static class ContainerCapabilityBuilder extends ComputeCapabilityBuilder {
     }
 }

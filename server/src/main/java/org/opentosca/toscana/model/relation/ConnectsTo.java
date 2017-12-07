@@ -39,4 +39,7 @@ public class ConnectsTo extends RootRelationship {
     public void accept(RelationshipVisitor v) {
         v.visit(this);
     }
+    
+    public static class ConnectsToBuilder extends DescribableEntityBuilder {
+    }
 }

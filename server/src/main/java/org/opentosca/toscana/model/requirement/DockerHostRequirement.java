@@ -19,13 +19,11 @@ public class DockerHostRequirement extends Requirement<DockerContainerCapability
                                     Range occurrence,
                                     @Singular Set<ContainerRuntime> fulfillers,
                                     HostedOn relationship) {
-        super(capability, occurrence, fulfillers, relationship);
+        super(DockerContainerCapability.getFallback(capability), occurrence,
+            fulfillers, HostedOn.getFallback(relationship));
     }
 
-    public static DockerHostRequirementBuilder builder(DockerContainerCapability capability, 
-                                                       HostedOn relationship) {
-        return new DockerHostRequirementBuilder()
-            .capability(capability)
-            .relationship(relationship);
+    public static DockerHostRequirement getFallback(DockerHostRequirement r) {
+        return (r == null) ? builder().build() : r;
     }
 }

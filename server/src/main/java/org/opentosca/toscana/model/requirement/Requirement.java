@@ -58,7 +58,7 @@ public class Requirement<CapabilityT extends Capability, NodeT extends RootNode,
                           @Singular Set<NodeT> fulfillers,
                           RelationshipT relationship) {
         this.capability = Objects.requireNonNull(capability);
-        this.occurrence = (occurrence != null) ? occurrence : Range.EXACTLY_ONCE;
+        this.occurrence = (occurrence == null) ? Range.EXACTLY_ONCE : occurrence;
         this.fulfillers = Objects.requireNonNull(fulfillers);
         this.relationship = Objects.requireNonNull(relationship);
     }
