@@ -1,9 +1,13 @@
 package org.opentosca.toscana.plugins.testdata;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.opentosca.toscana.model.EffectiveModel;
+import org.opentosca.toscana.model.artifact.Artifact;
+import org.opentosca.toscana.model.artifact.Repository;
 import org.opentosca.toscana.model.capability.AdminEndpointCapability;
 import org.opentosca.toscana.model.capability.AttachmentCapability;
 import org.opentosca.toscana.model.capability.BindableCapability;
@@ -19,6 +23,8 @@ import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.ContainerRuntime;
 import org.opentosca.toscana.model.node.DockerApplication;
 import org.opentosca.toscana.model.node.RootNode;
+import org.opentosca.toscana.model.operation.Operation;
+import org.opentosca.toscana.model.operation.StandardLifecycle;
 import org.opentosca.toscana.model.relation.AttachesTo;
 import org.opentosca.toscana.model.relation.HostedOn;
 import org.opentosca.toscana.model.requirement.BlockStorageRequirement;
@@ -58,7 +64,7 @@ public class TestEffectiveModels {
         return new EffectiveModel(Sets.newHashSet(computeNode));
     }
 
-    public static EffectiveModel getMinimalDockerModel() {
+    public static EffectiveModel getMinimalDockerModel() throws MalformedURLException {
         DockerContainerCapability containerCapability = DockerContainerCapability.builder().name("host").build();
         ScalableCapability scalableCapability = ScalableCapability.builder(Range.EXACTLY_ONCE).build();
         HostRequirement requirement = HostRequirement.builder(containerCapability, HostedOn.builder().build()).build();
@@ -74,8 +80,14 @@ public class TestEffectiveModels {
         StorageCapability storageCapability = StorageCapability.builder().build();
         AttachesTo attachesTo = AttachesTo.builder("/").build();
         StorageRequirement storage = StorageRequirement.builder(storageCapability, attachesTo).build();
+        Repository repository = Repository.builder(new URL("https://registry.hub.docker.com/")).build();
+        Artifact artifact = Artifact.builder("nfode/simpletaskapp:v1").repository(repository).build();
+        Operation create = Operation.builder().artifact(artifact).build();
+        StandardLifecycle standardLifecycle = StandardLifecycle.builder().create(create).build();
         DockerApplication simpleTaskApp
-            = DockerApplication.builder(host, "simpleTaskApp", network, storage).build();
+            = DockerApplication.builder(host, "simpleTaskApp", network, storage)
+            .standardLifecycle(standardLifecycle)
+            .build();
         return new EffectiveModel(Sets.newHashSet(simpleTaskApp, dockerRuntime));
     }
 
