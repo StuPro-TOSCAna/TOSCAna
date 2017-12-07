@@ -27,16 +27,16 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
     @Override
     public void visit(Compute node) {
         try {
-        //default security group for all EC2 Instances opens for port 80 and 22 to the whole internet
-        Object cidrIp = "0.0.0.0/0";
-        SecurityGroup webServerSecurityGroup = cfnModule.resource(SecurityGroup.class, "WebServerSecurityGroup")
-            .groupDescription("Enable ports 80 and 22")
-            .ingress(ingress -> ingress.cidrIp(cidrIp), "tcp", 80, 22);
-        
+            //default security group for all EC2 Instances opens for port 80 and 22 to the whole internet
+            Object cidrIp = "0.0.0.0/0";
+            SecurityGroup webServerSecurityGroup = cfnModule.resource(SecurityGroup.class, "WebServerSecurityGroup")
+                .groupDescription("Enable ports 80 and 22")
+                .ingress(ingress -> ingress.cidrIp(cidrIp), "tcp", 80, 22);
+
             cfnModule.resource(Instance.class, node.getNodeName())
                 .keyName(cfnModule.getKeyNameVar())
                 .securityGroupIds(webServerSecurityGroup);
-        } catch (Exception e){
+        } catch (Exception e) {
             logger.error("Error while creating Instance resource");
             e.printStackTrace();
         }
