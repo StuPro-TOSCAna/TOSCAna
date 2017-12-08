@@ -38,4 +38,15 @@ public class DockerfileBuilderTest extends BaseDockerfileTest {
         System.out.println(s);
         validate(s, UNCOMPRESSED_PATH);
     }
+
+    @Test
+    public void orderedCopyTest() {
+        builder.env("test", "taser");
+        builder.copyFromWorkingDir("testfasdf", "gasdasdg");
+        builder.run("testcommand");
+        builder.workdir("/");
+        builder.copyFromWorkingDir("testasdf", "testasdfasdf");
+        builder.run("testcommand-der-zwote");
+        System.out.println(builder.toString());
+    }
 }
