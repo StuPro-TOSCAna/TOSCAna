@@ -147,13 +147,14 @@ public class DockerfileBuilder {
         addCopyCommandsToEntry();
         copyCommands = new ArrayList<>();
         entries.add(new WorkdirCommand(directory));
-        lastWorkdirCommand = entries.size();
+        System.out.println(entries.size());
+        lastWorkdirCommand = entries.size() - 1;
         return this;
     }
 
     private void addCopyCommandsToEntry() {
         int index = (lastWorkdirCommand == 0) ? 1 : lastWorkdirCommand;
-        index++;
+        index = index + 1;
         System.out.println(index);
         for (CopyCommand copyCommand : copyCommands) {
             entries.add(index, copyCommand);
@@ -197,10 +198,10 @@ public class DockerfileBuilder {
     }
 
     private void writeTo(Writer out) {
+        addCopyCommandsToEntry();
         for (EnvCommand envCommand : envCommands) {
             entries.add(1, envCommand);
         }
-        addCopyCommandsToEntry();
         PrintWriter pw = new PrintWriter(out);
         for (int i = 0; i < entries.size(); i++) {
             DockerfileEntry prev = i > 0 && entries.size() > 1 ? entries.get(i - 1) : null;
