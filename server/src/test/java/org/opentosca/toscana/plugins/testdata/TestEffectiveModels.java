@@ -64,7 +64,7 @@ public class TestEffectiveModels {
         return new EffectiveModel(Sets.newHashSet(computeNode));
     }
 
-    public static EffectiveModel getMinimalDockerModel() throws MalformedURLException {
+    public static DockerApplication getMinimalDockerApplication() throws MalformedURLException {
         DockerContainerCapability containerCapability = DockerContainerCapability.builder().name("host").build();
         ScalableCapability scalableCapability = ScalableCapability.builder(Range.EXACTLY_ONCE).build();
         HostRequirement requirement = HostRequirement.builder(containerCapability, HostedOn.builder().build()).build();
@@ -88,7 +88,11 @@ public class TestEffectiveModels {
             = DockerApplication.builder(host, "simpleTaskApp", network, storage)
             .standardLifecycle(standardLifecycle)
             .build();
-        return new EffectiveModel(Sets.newHashSet(simpleTaskApp, dockerRuntime));
+        return simpleTaskApp;
+    }
+
+    public static EffectiveModel getMinimalDockerModel() throws MalformedURLException {
+        return new EffectiveModel(Sets.newHashSet(getMinimalDockerApplication()));
     }
 
     public static EffectiveModel getLampModel() {

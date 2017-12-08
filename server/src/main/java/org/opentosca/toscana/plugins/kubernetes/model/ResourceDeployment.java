@@ -11,21 +11,21 @@ import org.opentosca.toscana.model.operation.Operation;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.fabric8.kubernetes.api.model.Container;
 import io.fabric8.kubernetes.api.model.ContainerBuilder;
-import io.fabric8.kubernetes.api.model.ReplicationController;
-import io.fabric8.kubernetes.api.model.ReplicationControllerBuilder;
+import io.fabric8.kubernetes.api.model.extensions.Deployment;
+import io.fabric8.kubernetes.api.model.extensions.DeploymentBuilder;
 import io.fabric8.kubernetes.client.internal.SerializationUtils;
 
-public class ResourceReplicationController {
+public class ResourceDeployment {
     private final String name;
     private List<DockerApplication> stack;
-    private ReplicationController replicationController;
+    private Deployment deployment;
 
-    public ResourceReplicationController(String name, List<DockerApplication> stack) {
+    public ResourceDeployment(String name, List<DockerApplication> stack) {
         this.stack = stack;
         this.name = name;
     }
 
-    public ResourceReplicationController build() {
+    public ResourceDeployment build() {
         ArrayList<Container> containers = new ArrayList<>();
         for (DockerApplication app : stack) {
             String imagePath = "";
@@ -49,12 +49,20 @@ public class ResourceReplicationController {
             containers.add(container);
         }
 
-        replicationController = new ReplicationControllerBuilder()
+        deployment = new DeploymentBuilder()
             .withNewMetadata()
-            .addToLabels("replication-controller", name)
+            .withName(name + "-deployment")
+            .addToLabels("app", name)
             .endMetadata()
             .withNewSpec()
+            .withNewSelector()
+            .addToMatchLabels("app", name)
+            .endSelector()
             .withNewTemplate()
+            .withNewMetadata()
+            .withName(name)
+            .addToLabels("app", name)
+            .endMetadata()
             .withNewSpec()
             .addAllToContainers(containers)
             .endSpec()
@@ -64,6 +72,6 @@ public class ResourceReplicationController {
     }
 
     public String toYaml() throws JsonProcessingException {
-        return SerializationUtils.dumpAsYaml(replicationController);
+        return SerializationUtils.dumpAsYaml(deployment);
     }
 }

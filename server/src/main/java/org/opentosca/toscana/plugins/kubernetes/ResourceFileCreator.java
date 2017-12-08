@@ -4,7 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.opentosca.toscana.model.node.DockerApplication;
-import org.opentosca.toscana.plugins.kubernetes.model.ResourceReplicationController;
+import org.opentosca.toscana.plugins.kubernetes.model.ResourceDeployment;
+import org.opentosca.toscana.plugins.kubernetes.model.ResourceService;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.slf4j.Logger;
@@ -23,9 +24,11 @@ public class ResourceFileCreator {
         result = new HashMap<>();
         for (List<DockerApplication> stack : stacks) {
             // TODO add dynamic naming
-            ResourceReplicationController replicationController
-                = new ResourceReplicationController("test", stack);
-            result.put("test-replication-controller", replicationController.build().toYaml());
+            ResourceDeployment replicationController
+                = new ResourceDeployment("test", stack);
+            ResourceService service = new ResourceService("test-service", "test");
+            result.put("test-service", service.build().toYaml());
+            result.put("test-deployment", replicationController.build().toYaml());
         }
         return result;
     }

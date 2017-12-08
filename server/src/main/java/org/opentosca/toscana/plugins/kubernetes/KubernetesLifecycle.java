@@ -1,9 +1,6 @@
 package org.opentosca.toscana.plugins.kubernetes;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
@@ -11,12 +8,9 @@ import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.plugins.kubernetes.exceptions.UnsupportedOsTypeException;
-import org.opentosca.toscana.plugins.kubernetes.visitor.DockerApplicationVisitor;
 import org.opentosca.toscana.plugins.kubernetes.visitor.NodeTypeCheckVisitor;
 import org.opentosca.toscana.plugins.kubernetes.visitor.OsCheckNodeVisitor;
 import org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 public class KubernetesLifecycle extends AbstractLifecycle {
 
@@ -27,6 +21,7 @@ public class KubernetesLifecycle extends AbstractLifecycle {
      @param context because the context is always needed this should never be null
      It probably gets called by the <code>getInstance</code> method of the LifecycleAwarePlugin
      */
+    
     public KubernetesLifecycle(TransformationContext context) throws IOException {
         super(context);
         model = context.getModel();
@@ -83,27 +78,6 @@ public class KubernetesLifecycle extends AbstractLifecycle {
 
     @Override
     public void transform() {
-        Set<RootNode> nodes = model.getNodes();
-        DockerApplicationVisitor dockerApplicationVisitor = new DockerApplicationVisitor();
-        nodes.forEach(rootNode -> rootNode.accept(dockerApplicationVisitor));
-        ResourceFileCreator resourceFileCreator
-            = new ResourceFileCreator(Arrays.asList(dockerApplicationVisitor.getStack()));
-        HashMap<String, String> result = null;
-        try {
-            result = resourceFileCreator.create();
-        } catch (JsonProcessingException e) {
-        }
-
-        for (Map.Entry<String, String> entry : result.entrySet()) {
-            String fileName = entry.getKey();
-            String fileContent = entry.getValue();
-            logger.info(fileContent);
-            try {
-                access.access("output/" + fileName + ".yaml").append(fileContent);
-            } catch (IOException e) {
-
-            }
-        }
         //throw new UnsupportedOperationException();
     }
 
