@@ -40,7 +40,7 @@
         <dependency>
             <groupId>com.github.StuPro-TOSCAna</groupId>
             <artifactId>cloudformation-builder</artifactId>
-            <version>master-SNAPSHOT</version>
+            <version>c4cf3a85f8b5b18e5d177c60d0b993c60f6b2120</version>
         </dependency>
         <!--Kubernetes Plugin-->
         <dependency>
