@@ -1,6 +1,7 @@
 package org.opentosca.toscana.plugins.cloudformation.visitor;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 import org.opentosca.toscana.model.capability.ComputeCapability;
 import org.opentosca.toscana.model.capability.ContainerCapability;
@@ -23,6 +24,7 @@ import com.scaleset.cfbuilder.ec2.UserData;
 import com.scaleset.cfbuilder.ec2.metadata.CFNInit;
 import com.scaleset.cfbuilder.ec2.metadata.CFNPackage;
 import com.scaleset.cfbuilder.ec2.metadata.Config;
+import com.scaleset.cfbuilder.rds.DBInstance;
 import org.slf4j.Logger;
 
 public class CloudFormationNodeVisitor implements StrictNodeVisitor {
@@ -41,9 +43,11 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
     @Override
     public void visit(Compute node) {
         try {
+            logger.debug("Visit compute node " + node.getNodeName());
+            String nodeName = node.getNodeName();
             //default security group the EC2 Instance opens for port 80 and 22 to the whole internet
             Object cidrIp = "0.0.0.0/0";
-            SecurityGroup webServerSecurityGroup = cfnModule.resource(SecurityGroup.class, "WebServerSecurityGroup")
+            SecurityGroup webServerSecurityGroup = cfnModule.resource(SecurityGroup.class, nodeName + "SecurityGroup")
                 .groupDescription("Enable ports 80 and 22")
                 .ingress(ingress -> ingress.cidrIp(cidrIp), "tcp", 80, 22);
 
@@ -71,29 +75,65 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             } else {
                 throw new UnsupportedTypeException("Only 1 Cpu and 1024Mb memory supported");
             }
-            cfnModule.resource(Instance.class, node.getNodeName())
+            //takes default 8GB storage but volume
+            cfnModule.resource(Instance.class, nodeName)
                 .keyName(cfnModule.getKeyNameVar())
                 .securityGroupIds(webServerSecurityGroup)
                 .imageId(imageId)
                 .instanceType(instanceType);
         } catch (Exception e) {
-            logger.error("Error while creating Instance resource");
+            logger.error("Error while creating EC2Instance resource");
             e.printStackTrace();
         }
     }
 
     @Override
     public void visit(MysqlDatabase node) {
-        //noop
+        try {
+            logger.debug("Visit MysqlDatabase node " + node.getNodeName());
+            String nodeName = node.getNodeName();
+            //build security groupe based on 
+            
+            //TODO adapt description and take port, also where to take security group reference from
+            cfnModule.resource(SecurityGroup.class, nodeName + "SecurityGroup")
+                .groupDescription("Open database for access")
+                .ingress(ingress -> ingress.sourceSecurityGroupName("serverSecurityGroup"), "tcp", 3306);
+            
+            String dbName = node.getDatabaseName();
+
+            String masterUser = checkOrDefault(node.getUser(), "root");
+            //throw error, take default or generate random?
+            String masterPassword = checkOrDefault(node.getPassword(), "abcd1234");
+
+            //check downwards to compute and take its values
+            String dBInstanceClass = "db.t2.micro";
+            Integer allocatedStorage = 20;
+            String storageType = "gp2"; //SSD
+
+            cfnModule.resource(DBInstance.class, nodeName)
+                .engine("MySQL")
+                .dBName(dbName)
+                .masterUsername(masterUser)
+                .masterUserPassword(masterPassword)
+                .dBInstanceClass(dBInstanceClass)
+                .allocatedStorage(allocatedStorage)
+                .storageType(storageType)
+                .vPCSecurityGroups();
+        } catch (Exception e) {
+            logger.error("Error while creating DBInstance resource");
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void visit(MysqlDbms node) {
-        //noop
+        //skip for now but
+        //TODO check host, what to do if there is a configure script
     }
 
     @Override
     public void visit(Apache node) {
+        logger.debug("Visit apache node " + node.getNodeName());
         // check if host is available
         ComputeCapability computeCapability = node.getHost().getCapability();
         if (computeCapability.getName().isPresent()) {
@@ -113,7 +153,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                                         .addPackage("apache2"))));
                 hostInstance.userData(new UserData(cfnModule.getUserDataFn(host, CONFIG_SETS)));
             } else {
-                throw new IllegalStateException("Resource" + host + " this Apache is hosted on doesn't exist or isn't a Instance");
+                throw new IllegalStateException("The resource: \"" + host + "\" this Apache is hosted on doesn't exist or isn't a Instance");
             }
         }
     }
@@ -121,5 +161,13 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
     @Override
     public void visit(WebApplication node) {
         //noop
+    }
+
+    private String checkOrDefault(Optional<String> optional, String def) {
+        if (optional.isPresent()) {
+            return optional.get();
+        } else {
+            return def;
+        }
     }
 }
