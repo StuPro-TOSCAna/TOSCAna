@@ -59,18 +59,40 @@ public class PublicEndpointCapability extends EndpointCapability {
                                        String portName,
                                        String networkName,
                                        Initiator initiator,
-                                       @Singular Set<PortSpec> ports,
+                                       @Singular Set<PortSpec> supportedPorts,
                                        String ipAddress,
-                                       @Singular Set<Class<? extends RootNode>> validSourceTypes,
+                                       Set<Class<? extends RootNode>> validSourceTypes,
                                        Range occurence,
                                        String description) {
         super(protocol, port, secure, urlPath, portName, (networkName != null ? networkName : "PUBLIC"),
-            initiator, ports, ipAddress, validSourceTypes, occurence, description);
+            initiator, supportedPorts, ipAddress, validSourceTypes, occurence, description);
         if (networkName.equalsIgnoreCase("private")) {
             throw new IllegalArgumentException("Constraint violation: network name must not equal 'private'");
         }
         this.floating = floating;
         this.dnsName = dnsName;
+    }
+
+    /**
+     @param ipAddress {@link #ipAddress}
+     @param port      {@link #port}
+     */
+    public static PublicEndpointCapabilityBuilder builder(String ipAddress,
+                                                          Port port) {
+        return new PublicEndpointCapabilityBuilder()
+            .ipAddress(ipAddress)
+            .port(port);
+    }
+
+    /**
+     @param ipAddress     {@link #ipAddress}
+     @param supportedPort {@link #supportedPorts}
+     */
+    public static PublicEndpointCapabilityBuilder builder(String ipAddress,
+                                                          PortSpec supportedPort) {
+        return new PublicEndpointCapabilityBuilder()
+            .ipAddress(ipAddress)
+            .supportedPort(supportedPort);
     }
 
     /**
@@ -80,19 +102,11 @@ public class PublicEndpointCapability extends EndpointCapability {
         return Optional.ofNullable(dnsName);
     }
 
-
-    /**
-     @param ipAddress {@link #ipAddress}
-     */
-    public static PublicEndpointCapabilityBuilder builder(String ipAddress) {
-        return new PublicEndpointCapabilityBuilder().ipAddress(ipAddress);
-    }
-
-    public static class PublicEndpointCapabilityBuilder extends EndpointCapabilityBuilder {
-    }
-
     @Override
     public void accept(CapabilityVisitor v) {
         v.visit(this);
+    }
+
+    public static class PublicEndpointCapabilityBuilder extends EndpointCapabilityBuilder {
     }
 }

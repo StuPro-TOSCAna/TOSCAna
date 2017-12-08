@@ -31,7 +31,7 @@ public class Operation extends DescribableEntity {
      several dependent or secondary implementation artifact names which
      are referenced by the primary implementation artifact
      (e.g., a library the script installs or a secondary script).
-     Might be empty.
+     Might be empty
      */
     private final Set<String> dependencies;
 
@@ -46,7 +46,6 @@ public class Operation extends DescribableEntity {
      Might be empty.
      */
     private final Set<OperationVariable> outputs;
-
 
     @Builder
     protected Operation(String implementationArtifact,
@@ -77,4 +76,6 @@ public class Operation extends DescribableEntity {
         return Optional.ofNullable(artifact);
     }
 
+    public static class OperationBuilder extends DescribableEntityBuilder {
+    }
 }

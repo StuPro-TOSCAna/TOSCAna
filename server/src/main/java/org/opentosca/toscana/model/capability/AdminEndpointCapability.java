@@ -32,27 +32,42 @@ public class AdminEndpointCapability extends EndpointCapability {
                                       String portName,
                                       String networkName,
                                       Initiator initiator,
-                                      @Singular Set<PortSpec> ports,
+                                      @Singular Set<PortSpec> supportedPorts,
                                       String ipAddress,
-                                      @Singular Set<Class<? extends RootNode>> validSourceTypes,
+                                      Set<Class<? extends RootNode>> validSourceTypes,
                                       Range occurence,
                                       String description) {
         super(protocol, port, true, urlPath, portName, networkName, initiator,
-            ports, ipAddress, validSourceTypes, occurence, description);
+            supportedPorts, ipAddress, validSourceTypes, occurence, description);
     }
 
     /**
      @param ipAddress {@link #ipAddress}
+     @param port      {@link #port}
      */
-    public static AdminEndpointCapabilityBuilder builder(String ipAddress) {
-        return new AdminEndpointCapabilityBuilder().ipAddress(ipAddress);
+    public static AdminEndpointCapabilityBuilder builder(String ipAddress,
+                                                         Port port) {
+        return new AdminEndpointCapabilityBuilder()
+            .ipAddress(ipAddress)
+            .port(port);
     }
 
-    public static class AdminEndpointCapabilityBuilder extends EndpointCapabilityBuilder {
+    /**
+     @param ipAddress     {@link #ipAddress}
+     @param supportedPort {@link #supportedPorts}
+     */
+    public static AdminEndpointCapabilityBuilder builder(String ipAddress,
+                                                         PortSpec supportedPort) {
+        return new AdminEndpointCapabilityBuilder()
+            .ipAddress(ipAddress)
+            .supportedPort(supportedPort);
     }
 
     @Override
     public void accept(CapabilityVisitor v) {
         v.visit(this);
+    }
+
+    public static class AdminEndpointCapabilityBuilder extends EndpointCapabilityBuilder {
     }
 }

@@ -29,26 +29,42 @@ public class DatabaseEndpointCapability extends EndpointCapability {
                                          String portName,
                                          String networkName,
                                          Initiator initiator,
-                                         @Singular Set<PortSpec> ports,
+                                         @Singular Set<PortSpec> supportedPorts,
                                          String ipAddress,
-                                         @Singular Set<Class<? extends RootNode>> validSourceTypes,
+                                         Set<Class<? extends RootNode>> validSourceTypes,
                                          Range occurence,
                                          String description) {
-        super(protocol, port, secure, urlPath, portName, networkName, initiator, ports, ipAddress, validSourceTypes, occurence, description);
+        super(protocol, port, secure, urlPath, portName, networkName, initiator,
+            supportedPorts, ipAddress, validSourceTypes, occurence, description);
     }
 
     /**
      @param ipAddress {@link #ipAddress}
+     @param port      {@link #port}
      */
-    public static DatabaseEndpointCapabilityBuilder builder(String ipAddress) {
-        return new DatabaseEndpointCapabilityBuilder().ipAddress(ipAddress);
+    public static DatabaseEndpointCapabilityBuilder builder(String ipAddress,
+                                                            Port port) {
+        return new DatabaseEndpointCapabilityBuilder()
+            .ipAddress(ipAddress)
+            .port(port);
     }
 
-    public static class DatabaseEndpointCapabilityBuilder extends EndpointCapabilityBuilder {
+    /**
+     @param ipAddress     {@link #ipAddress}
+     @param supportedPort {@link #supportedPorts}
+     */
+    public static DatabaseEndpointCapabilityBuilder builder(String ipAddress,
+                                                            PortSpec supportedPort) {
+        return new DatabaseEndpointCapabilityBuilder()
+            .ipAddress(ipAddress)
+            .supportedPort(supportedPort);
     }
 
     @Override
     public void accept(CapabilityVisitor v) {
         v.visit(this);
+    }
+
+    public static class DatabaseEndpointCapabilityBuilder extends EndpointCapabilityBuilder {
     }
 }

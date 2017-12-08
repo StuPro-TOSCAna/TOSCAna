@@ -3,10 +3,8 @@ package org.opentosca.toscana.model.node;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.opentosca.toscana.model.capability.ContainerCapability;
 import org.opentosca.toscana.model.capability.EndpointCapability;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
-import org.opentosca.toscana.model.relation.HostedOn;
 import org.opentosca.toscana.model.requirement.WebServerRequirement;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 
@@ -41,15 +39,9 @@ public class WebApplication extends RootNode {
         super(nodeName, standardLifecycle, description);
         this.contextRoot = contextRoot;
         this.appEndpoint = Objects.requireNonNull(endpoint);
-        if (host != null) {
-            this.host = host;
-        } else {
-            ContainerCapability containerCapability = ContainerCapability.builder().build();
-            this.host = WebServerRequirement.builder(
-                containerCapability, HostedOn.builder().build()).build();
-        }
+        this.host = (host == null) ? WebServerRequirement.builder().build() : host;
 
-        capabilities.add(appEndpoint);
+        capabilities.add(this.appEndpoint);
         requirements.add(this.host);
     }
 
@@ -73,5 +65,8 @@ public class WebApplication extends RootNode {
     @Override
     public void accept(NodeVisitor v) {
         v.visit(this);
+    }
+
+    public static class WebApplicationBuilder extends RootNodeBuilder {
     }
 }

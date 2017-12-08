@@ -47,7 +47,6 @@ public class PortSpec {
      */
     public final Range targetRange;
 
-
     @Builder
     private PortSpec(PortProtocol protocol,
                      Port source,

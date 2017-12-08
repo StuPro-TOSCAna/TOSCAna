@@ -36,10 +36,8 @@ public class ResourceDeployment {
                     Artifact artifact = artifactOptional.get();
                     // TODO use repository, currently defaults to docker hub
                     imagePath = artifact.getFilePath();
-                    System.out.println(imagePath);
                 }
             }
-            System.out.println(app.getNodeName());
             Container container = new ContainerBuilder()
                 .withName(app.getNodeName().toLowerCase())
                 .withImage(imagePath)

@@ -15,5 +15,4 @@ public abstract class RootRelationship extends DescribableEntity implements Visi
     protected RootRelationship(String description) {
         super(description);
     }
-
 }

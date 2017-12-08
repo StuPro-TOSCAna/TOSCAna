@@ -85,7 +85,7 @@ public class Database extends RootNode {
         this.host = null;
         this.databaseEndpoint = Objects.requireNonNull(databaseEndpoint);
 
-        capabilities.add(databaseEndpoint);
+        capabilities.add(this.databaseEndpoint);
     }
 
     /**
@@ -129,5 +129,8 @@ public class Database extends RootNode {
     @Override
     public void accept(NodeVisitor v) {
         v.visit(this);
+    }
+
+    public static class DatabaseBuilder extends RootNodeBuilder {
     }
 }
