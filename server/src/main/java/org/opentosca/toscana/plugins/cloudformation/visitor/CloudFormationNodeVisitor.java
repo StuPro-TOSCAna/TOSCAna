@@ -41,7 +41,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
     public void visit(Compute node) {
         try {
             logger.debug("Visit compute node " + node.getNodeName());
-            String nodeName = node.getNodeName();
+            String nodeName = toAlphanumerical(node.getNodeName());
             //default security group the EC2 Instance opens for port 80 and 22 to the whole internet
             Object cidrIp = "0.0.0.0/0";
             SecurityGroup webServerSecurityGroup = cfnModule.resource(SecurityGroup.class, nodeName + SECURITY_GROUP)
@@ -88,26 +88,26 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
     public void visit(MysqlDatabase node) {
         try {
             logger.debug("Visit MysqlDatabase node " + node.getNodeName());
-            String nodeName = node.getNodeName();
+            String nodeName = toAlphanumerical(node.getNodeName());
 
+            //get the name of the server where the dbms this node is hosted on, is hosted on
             String serverName;
             if (node.host.getFulfillers().size() == 1) {
                 MysqlDbms mysqlDbms = node.host.getFulfillers().toArray(new MysqlDbms[1])[0];
-                serverName = mysqlDbms.getHost().getCapability().getName().get();
+                serverName = toAlphanumerical(mysqlDbms.getHost().getCapability().getName().get());
             } else {
                 throw new IllegalStateException("More than one fulfiller");
             }
             String dbName = node.getDatabaseName();
-            String masterUser = checkOrDefault(node.getUser(), "root");
             //throw error, take default or generate random?
+            String masterUser = checkOrDefault(node.getUser(), "root");
             String masterPassword = checkOrDefault(node.getPassword(), "abcd1234");
             Integer port = checkOrDefault(node.getPort(), 3306);
             //TODO check downwards to compute and take its values
             String dBInstanceClass = "db.t2.micro";
             Integer allocatedStorage = 20;
             String storageType = "gp2"; //SSD
-
-            //TODO adapt description and take port, also where to take security group reference from
+            
             String securityGroupName = nodeName + SECURITY_GROUP;
             cfnModule.resource(SecurityGroup.class, securityGroupName)
                 .groupDescription("Open database " + dbName + " for access to group " + serverName + SECURITY_GROUP)
@@ -142,7 +142,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
         ComputeCapability computeCapability = node.getHost().getCapability();
         if (computeCapability.getName().isPresent()) {
             //Hosted on name
-            String host = computeCapability.getName().get();
+            String host = toAlphanumerical(computeCapability.getName().get());
             //check if resource already exists and is a EC2 instance
             Resource hostRes = cfnModule.getResource(host);
             if (hostRes != null && hostRes instanceof Instance) {
@@ -152,7 +152,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                         .addConfig(CONFIG_SETS,
                             new Config(CONFIG_INSTALL)
                                 .putPackage(
-                                    //apt only if linux(needsfix)
+                                    //TODO apt only if linux
                                     new CFNPackage("apt")
                                         .addPackage("apache2"))));
                 hostInstance.userData(new UserData(cfnModule.getUserDataFn(host, CONFIG_SETS)));
@@ -173,5 +173,9 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
 
     private Integer checkOrDefault(Optional<Integer> optional, Integer def) {
         return optional.isPresent() ? optional.get() : def;
+    }
+    
+    private String toAlphanumerical(String inp){
+        return inp.replaceAll("[^A-Za-z0-9]", "");
     }
 }
