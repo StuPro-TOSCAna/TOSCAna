@@ -28,7 +28,7 @@ public class CloudFormationModule extends Module {
     }
     
     public Fn getUserDataFn(String resource, String configsets){
-        return new Fn("Join", "", 
+        return Fn.fnDelimiter("Join", "", 
             "#!/bin/bash -xe\n", 
             "mkdir -p /tmp/aws-cfn-bootstrap-latest\n",
             "curl https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz | tar xz -C /tmp/aws-cfn-bootstrap-latest --strip-components 1\n", 
