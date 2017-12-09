@@ -6,6 +6,7 @@ import org.opentosca.toscana.plugins.kubernetes.docker.BaseDockerfileTest;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class DockerfileBuilderTest extends BaseDockerfileTest {
@@ -40,13 +41,21 @@ public class DockerfileBuilderTest extends BaseDockerfileTest {
     }
 
     @Test
-    public void orderedCopyTest() {
-        builder.env("test", "taser");
-        builder.copyFromWorkingDir("testfasdf", "gasdasdg");
-        builder.run("testcommand");
-        builder.workdir("/");
-        builder.copyFromWorkingDir("testasdf", "testasdfasdf");
-        builder.run("testcommand-der-zwote");
-        System.out.println(builder.toString());
+    public void orderedCopyAndEnvTest() {
+        String testString1 = "teststringdererste";
+        String testString2 = "teststringderzweite";
+        builder.env(testString1, testString2);
+        builder.copyFromWorkingDir(testString1, testString2);
+        builder.run(testString1);
+        builder.workdir(testString1);
+        builder.copyFromWorkingDir(testString2, testString1);
+        builder.run(testString2);
+        String[] lines = (builder.toString()).split("\n");
+        assertEquals(String.format("ENV %s=%s", testString1, testString2), lines[1]);
+        assertEquals(String.format("RUN %s", testString1), lines[2]);
+        assertEquals(String.format("COPY %s %s", testString1, testString2), lines[3]);
+        assertEquals(String.format("WORKDIR %s", testString1), lines[4]);
+        assertEquals(String.format("COPY %s %s", testString2, testString1), lines[5]);
+        assertEquals(String.format("RUN %s", testString2), lines[6]);
     }
 }
