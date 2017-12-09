@@ -1,9 +1,11 @@
 package org.opentosca.toscana.plugins.cloudformation;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.model.EffectiveModel;
+import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.visitor.VisitableNode;
 import org.opentosca.toscana.plugins.cloudformation.visitor.CloudFormationNodeVisitor;
@@ -28,8 +30,16 @@ public class CloudFormationPluginTest extends BaseUnitTest {
     @Test
     public void testLamp(){
         Set<RootNode> nodes = lamp.getNodes();
+        //visit compute nodes first
         for (VisitableNode node : nodes) {
-            node.accept(cfnNodeVisitor);
+            if (node instanceof Compute){
+                node.accept(cfnNodeVisitor);
+            }
+        }
+        for (VisitableNode node : nodes) {
+            if (!(node instanceof Compute)){
+                node.accept(cfnNodeVisitor);
+            }
         }
         System.err.println(cfnModule.toString());
     }
