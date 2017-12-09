@@ -27,18 +27,19 @@ import org.opentosca.toscana.model.operation.OperationVariable;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
 import org.opentosca.toscana.model.relation.AttachesTo;
 import org.opentosca.toscana.model.relation.HostedOn;
+import org.opentosca.toscana.model.requirement.WebServerRequirement;
 
 public class LampApp {
 
     private final Set<RootNode> testNodes = new HashSet<>();
 
+    public static Set<RootNode> getLampModel() {
+        return new LampApp().getLampApp();
+    }
+
     public Set<RootNode> getLampApp() {
         createLampModel();
         return testNodes;
-    }
-
-    public static Set<RootNode> getLampModel() {
-        return new LampApp().getLampApp();
     }
 
     private void createLampModel() {
@@ -118,7 +119,8 @@ public class LampApp {
             .build();
         ContainerCapability dbContainerCapability = ContainerCapability.builder().name("mysql_dbms").build();
         HostedOn hostedOn = HostedOn.builder().build();
-        MysqlDbmsRequirement requirement = MysqlDbmsRequirement.builder(dbContainerCapability, hostedOn).fulfiller(createMysqlDbms())
+        MysqlDbmsRequirement requirement = MysqlDbmsRequirement.builder(dbContainerCapability, hostedOn)
+            .fulfiller(createMysqlDbms())
             .build();
 
         MysqlDatabase mydb = MysqlDatabase.builder("my_db", "DBNAME", dbEndpointCapability,
@@ -183,8 +185,13 @@ public class LampApp {
             .create(appCreate)
             .configure(appConfigure)
             .build();
+        WebServerRequirement webServerRequirement = WebServerRequirement.builder(ContainerCapability.builder()
+            .name("apache_web_server").build(), HostedOn.builder().build())
+            .fulfiller(createApache())
+            .build();
         WebApplication webApplication = WebApplication.builder("my_app", endpointCapability)
             .standardLifecycle(webAppLifecycle)
+            .host(webServerRequirement)
             .build();
 
         return webApplication;

@@ -9,26 +9,26 @@ import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.MysqlDatabase;
 import org.opentosca.toscana.model.node.MysqlDbms;
 import org.opentosca.toscana.model.node.WebApplication;
+import org.opentosca.toscana.model.node.WebServer;
 import org.opentosca.toscana.model.visitor.StrictNodeVisitor;
 import org.opentosca.toscana.model.visitor.UnsupportedTypeException;
 import org.opentosca.toscana.plugins.cloudformation.CloudFormationModule;
 
-import com.scaleset.cfbuilder.core.Resource;
 import com.scaleset.cfbuilder.ec2.Instance;
 import com.scaleset.cfbuilder.ec2.SecurityGroup;
-import com.scaleset.cfbuilder.ec2.UserData;
 import com.scaleset.cfbuilder.ec2.metadata.CFNInit;
 import com.scaleset.cfbuilder.ec2.metadata.CFNPackage;
 import com.scaleset.cfbuilder.ec2.metadata.Config;
 import com.scaleset.cfbuilder.rds.DBInstance;
 import org.slf4j.Logger;
 
+import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.CONFIG_CONFIGURE;
+import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.CONFIG_INSTALL;
+import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.CONFIG_SETS;
+import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.SECURITY_GROUP;
+
 public class CloudFormationNodeVisitor implements StrictNodeVisitor {
 
-    private final static String CONFIG_SETS = "InstallAndConfigure";
-    private final static String CONFIG_INSTALL = "Install";
-    private final static String CONFIG_CONFIGURE = "Configure";
-    private final static String SECURITY_GROUP = "SecurityGroup";
     private final Logger logger;
     private CloudFormationModule cfnModule;
 
@@ -72,6 +72,9 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             } else {
                 throw new UnsupportedTypeException("Only 1 Cpu and 1024Mb memory supported");
             }
+            //create CFN init and store it
+            CFNInit init = new CFNInit(CONFIG_SETS);
+            cfnModule.putCFNInit(nodeName, init);
             //takes default 8GB storage but volume
             cfnModule.resource(Instance.class, nodeName)
                 .keyName(cfnModule.getKeyNameVar())
@@ -107,7 +110,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             String dBInstanceClass = "db.t2.micro";
             Integer allocatedStorage = 20;
             String storageType = "gp2"; //SSD
-            
+
             String securityGroupName = nodeName + SECURITY_GROUP;
             cfnModule.resource(SecurityGroup.class, securityGroupName)
                 .groupDescription("Open database " + dbName + " for access to group " + serverName + SECURITY_GROUP)
@@ -143,28 +146,30 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
         if (computeCapability.getName().isPresent()) {
             //Hosted on name
             String host = toAlphanumerical(computeCapability.getName().get());
-            //check if resource already exists and is a EC2 instance
-            Resource hostRes = cfnModule.getResource(host);
-            if (hostRes != null && hostRes instanceof Instance) {
-                Instance hostInstance = (Instance) hostRes;
-                hostInstance
-                    .addCFNInit(new CFNInit(CONFIG_SETS)
-                        .addConfig(CONFIG_SETS,
-                            new Config(CONFIG_INSTALL)
-                                .putPackage(
-                                    //TODO apt only if linux
-                                    new CFNPackage("apt")
-                                        .addPackage("apache2"))));
-                hostInstance.userData(new UserData(cfnModule.getUserDataFn(host, CONFIG_SETS)));
-            } else {
-                throw new IllegalStateException("The resource: \"" + host + "\" this Apache is hosted on doesn't exist or isn't a Instance");
-            }
+            cfnModule.getCFNInit(host)
+                .addConfig(CONFIG_SETS,
+                    new Config(CONFIG_INSTALL)
+                        .putPackage(
+                            //TODO apt only if linux
+                            new CFNPackage("apt")
+                                .addPackage("apache2")));
         }
     }
 
     @Override
     public void visit(WebApplication node) {
-        //noop
+        logger.debug("Visit WebApplication node " + node.getNodeName());
+        //get the name of the server where the dbms this node is hosted on, is hosted on
+        String serverName;
+        if (node.getHost().getFulfillers().size() == 1) {
+            WebServer webServer = node.getHost().getFulfillers().toArray(new WebServer[1])[0];
+            serverName = toAlphanumerical(webServer.getHost().getCapability().getName().get());
+        } else {
+            throw new IllegalStateException("More than one or no fulfiller");
+        }
+        cfnModule.getCFNInit(serverName)
+            .addConfig(CONFIG_SETS,
+                new Config(CONFIG_CONFIGURE)); //put files, commands, 
     }
 
     private String checkOrDefault(Optional<String> optional, String def) {
@@ -174,8 +179,8 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
     private Integer checkOrDefault(Optional<Integer> optional, Integer def) {
         return optional.isPresent() ? optional.get() : def;
     }
-    
-    private String toAlphanumerical(String inp){
+
+    private String toAlphanumerical(String inp) {
         return inp.replaceAll("[^A-Za-z0-9]", "");
     }
 }
