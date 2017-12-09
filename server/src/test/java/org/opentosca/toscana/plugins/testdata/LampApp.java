@@ -116,9 +116,9 @@ public class LampApp {
         DatabaseEndpointCapability dbEndpointCapability = DatabaseEndpointCapability.builder("127.0.0.1")
             .port(new Port(3306))
             .build();
-        ContainerCapability dbContainerCapability = ContainerCapability.builder().build();
+        ContainerCapability dbContainerCapability = ContainerCapability.builder().name("mysql_dbms").build();
         HostedOn hostedOn = HostedOn.builder().build();
-        MysqlDbmsRequirement requirement = MysqlDbmsRequirement.builder(dbContainerCapability, hostedOn)
+        MysqlDbmsRequirement requirement = MysqlDbmsRequirement.builder(dbContainerCapability, hostedOn).fulfiller(createMysqlDbms())
             .build();
 
         MysqlDatabase mydb = MysqlDatabase.builder("my_db", "DBNAME", dbEndpointCapability,

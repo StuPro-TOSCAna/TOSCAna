@@ -1,10 +1,8 @@
 package org.opentosca.toscana.plugins.cloudformation.visitor;
 
-import java.util.ArrayList;
 import java.util.Optional;
 
 import org.opentosca.toscana.model.capability.ComputeCapability;
-import org.opentosca.toscana.model.capability.ContainerCapability;
 import org.opentosca.toscana.model.capability.OsCapability;
 import org.opentosca.toscana.model.node.Apache;
 import org.opentosca.toscana.model.node.Compute;
@@ -12,13 +10,11 @@ import org.opentosca.toscana.model.node.MysqlDatabase;
 import org.opentosca.toscana.model.node.MysqlDbms;
 import org.opentosca.toscana.model.node.WebApplication;
 import org.opentosca.toscana.model.visitor.StrictNodeVisitor;
-
 import org.opentosca.toscana.model.visitor.UnsupportedTypeException;
 import org.opentosca.toscana.plugins.cloudformation.CloudFormationModule;
 
 import com.scaleset.cfbuilder.core.Resource;
 import com.scaleset.cfbuilder.ec2.Instance;
-
 import com.scaleset.cfbuilder.ec2.SecurityGroup;
 import com.scaleset.cfbuilder.ec2.UserData;
 import com.scaleset.cfbuilder.ec2.metadata.CFNInit;
@@ -29,11 +25,12 @@ import org.slf4j.Logger;
 
 public class CloudFormationNodeVisitor implements StrictNodeVisitor {
 
-    private final Logger logger;
-    private CloudFormationModule cfnModule;
     private final static String CONFIG_SETS = "InstallAndConfigure";
     private final static String CONFIG_INSTALL = "Install";
     private final static String CONFIG_CONFIGURE = "Configure";
+    private final static String SECURITY_GROUP = "SecurityGroup";
+    private final Logger logger;
+    private CloudFormationModule cfnModule;
 
     public CloudFormationNodeVisitor(Logger logger, CloudFormationModule cfnModule) throws Exception {
         this.logger = logger;
@@ -47,7 +44,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             String nodeName = node.getNodeName();
             //default security group the EC2 Instance opens for port 80 and 22 to the whole internet
             Object cidrIp = "0.0.0.0/0";
-            SecurityGroup webServerSecurityGroup = cfnModule.resource(SecurityGroup.class, nodeName + "SecurityGroup")
+            SecurityGroup webServerSecurityGroup = cfnModule.resource(SecurityGroup.class, nodeName + SECURITY_GROUP)
                 .groupDescription("Enable ports 80 and 22")
                 .ingress(ingress -> ingress.cidrIp(cidrIp), "tcp", 80, 22);
 
@@ -92,23 +89,29 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
         try {
             logger.debug("Visit MysqlDatabase node " + node.getNodeName());
             String nodeName = node.getNodeName();
-            //build security groupe based on 
-            
-            //TODO adapt description and take port, also where to take security group reference from
-            cfnModule.resource(SecurityGroup.class, nodeName + "SecurityGroup")
-                .groupDescription("Open database for access")
-                .ingress(ingress -> ingress.sourceSecurityGroupName("serverSecurityGroup"), "tcp", 3306);
-            
-            String dbName = node.getDatabaseName();
 
+            String serverName;
+            if (node.host.getFulfillers().size() == 1) {
+                MysqlDbms mysqlDbms = node.host.getFulfillers().toArray(new MysqlDbms[1])[0];
+                serverName = mysqlDbms.getHost().getCapability().getName().get();
+            } else {
+                throw new IllegalStateException("More than one fulfiller");
+            }
+            String dbName = node.getDatabaseName();
             String masterUser = checkOrDefault(node.getUser(), "root");
             //throw error, take default or generate random?
             String masterPassword = checkOrDefault(node.getPassword(), "abcd1234");
-
-            //check downwards to compute and take its values
+            Integer port = checkOrDefault(node.getPort(), 3306);
+            //TODO check downwards to compute and take its values
             String dBInstanceClass = "db.t2.micro";
             Integer allocatedStorage = 20;
             String storageType = "gp2"; //SSD
+
+            //TODO adapt description and take port, also where to take security group reference from
+            String securityGroupName = nodeName + SECURITY_GROUP;
+            cfnModule.resource(SecurityGroup.class, securityGroupName)
+                .groupDescription("Open database " + dbName + " for access to group " + serverName + SECURITY_GROUP)
+                .ingress(ingress -> ingress.sourceSecurityGroupName(cfnModule.ref(serverName + SECURITY_GROUP)), "tcp", port);
 
             cfnModule.resource(DBInstance.class, nodeName)
                 .engine("MySQL")
@@ -118,7 +121,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                 .dBInstanceClass(dBInstanceClass)
                 .allocatedStorage(allocatedStorage)
                 .storageType(storageType)
-                .vPCSecurityGroups();
+                .vPCSecurityGroups(cfnModule.fnGetAtt(securityGroupName, "GroupId"));
         } catch (Exception e) {
             logger.error("Error while creating DBInstance resource");
             e.printStackTrace();
@@ -127,6 +130,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
 
     @Override
     public void visit(MysqlDbms node) {
+        logger.debug("Visit MysqlDbms node " + node.getNodeName());
         //skip for now but
         //TODO check host, what to do if there is a configure script
     }
@@ -164,10 +168,10 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
     }
 
     private String checkOrDefault(Optional<String> optional, String def) {
-        if (optional.isPresent()) {
-            return optional.get();
-        } else {
-            return def;
-        }
+        return optional.isPresent() ? optional.get() : def;
+    }
+
+    private Integer checkOrDefault(Optional<Integer> optional, Integer def) {
+        return optional.isPresent() ? optional.get() : def;
     }
 }
