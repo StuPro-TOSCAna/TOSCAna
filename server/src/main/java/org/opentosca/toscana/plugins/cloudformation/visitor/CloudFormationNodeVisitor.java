@@ -10,12 +10,16 @@ import org.opentosca.toscana.model.node.MysqlDatabase;
 import org.opentosca.toscana.model.node.MysqlDbms;
 import org.opentosca.toscana.model.node.WebApplication;
 import org.opentosca.toscana.model.node.WebServer;
+import org.opentosca.toscana.model.operation.Operation;
+import org.opentosca.toscana.model.operation.OperationVariable;
 import org.opentosca.toscana.model.visitor.StrictNodeVisitor;
 import org.opentosca.toscana.model.visitor.UnsupportedTypeException;
 import org.opentosca.toscana.plugins.cloudformation.CloudFormationModule;
 
 import com.scaleset.cfbuilder.ec2.Instance;
 import com.scaleset.cfbuilder.ec2.SecurityGroup;
+import com.scaleset.cfbuilder.ec2.metadata.CFNCommand;
+import com.scaleset.cfbuilder.ec2.metadata.CFNFile;
 import com.scaleset.cfbuilder.ec2.metadata.CFNInit;
 import com.scaleset.cfbuilder.ec2.metadata.CFNPackage;
 import com.scaleset.cfbuilder.ec2.metadata.Config;
@@ -28,8 +32,8 @@ import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.SECURITY_GROUP;
 
 /**
- * Class for building a CloudFormation template from an effective model instance via the visitor pattern.
- * Currently only supports LAMP-stacks built with Compute, WebApplication, Apache, MySQL, MySQL nodes.
+ * Class for building a CloudFormation template from an effective model instance via the visitor pattern. Currently only
+ * supports LAMP-stacks built with Compute, WebApplication, Apache, MySQL, MySQL nodes.
  */
 public class CloudFormationNodeVisitor implements StrictNodeVisitor {
 
@@ -37,9 +41,10 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
     private CloudFormationModule cfnModule;
 
     /**
-     * Creates a <tt>CloudFormationNodeVisitor<tt> in order to build a template with the given <tt>CloudFormationModule<tt>.
-     * 
-     * @param logger Logger for logging visitor behaviour
+     * Creates a <tt>CloudFormationNodeVisitor<tt> in order to build a template with the given
+     * <tt>CloudFormationModule<tt>.
+     *
+     * @param logger    Logger for logging visitor behaviour
      * @param cfnModule Module to build the template model
      */
     public CloudFormationNodeVisitor(Logger logger, CloudFormationModule cfnModule) throws Exception {
@@ -54,7 +59,8 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             String nodeName = toAlphanumerical(node.getNodeName());
             //default security group the EC2 Instance opens for port 80 and 22 to the whole internet
             Object cidrIp = "0.0.0.0/0";
-            SecurityGroup webServerSecurityGroup = cfnModule.resource(SecurityGroup.class, nodeName + SECURITY_GROUP)
+            SecurityGroup webServerSecurityGroup = cfnModule.resource(SecurityGroup.class,
+                nodeName + SECURITY_GROUP)
                 .groupDescription("Enable ports 80 and 22")
                 .ingress(ingress -> ingress.cidrIp(cidrIp), "tcp", 80, 22);
 
@@ -100,7 +106,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
     @Override
     public void visit(MysqlDatabase node) {
         try {
-            logger.debug("Visit MysqlDatabase node " + node.getNodeName()+ ".");
+            logger.debug("Visit MysqlDatabase node " + node.getNodeName() + ".");
             String nodeName = toAlphanumerical(node.getNodeName());
 
             //get the name of the server where the dbms this node is hosted on, is hosted on
@@ -124,7 +130,8 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             String securityGroupName = nodeName + SECURITY_GROUP;
             cfnModule.resource(SecurityGroup.class, securityGroupName)
                 .groupDescription("Open database " + dbName + " for access to group " + serverName + SECURITY_GROUP)
-                .ingress(ingress -> ingress.sourceSecurityGroupName(cfnModule.ref(serverName + SECURITY_GROUP)), "tcp", port);
+                .ingress(ingress -> ingress.sourceSecurityGroupName(cfnModule.ref(serverName + SECURITY_GROUP)),
+                    "tcp", port);
 
             cfnModule.resource(DBInstance.class, nodeName)
                 .engine("MySQL")
@@ -136,26 +143,28 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                 .storageType(storageType)
                 .vPCSecurityGroups(cfnModule.fnGetAtt(securityGroupName, "GroupId"));
         } catch (Exception e) {
-            logger.error("Error while creating DBInstance resource");
+            logger.error("Error while creating DBInstance resource.");
             e.printStackTrace();
         }
     }
 
     @Override
     public void visit(MysqlDbms node) {
-        logger.debug("Visit MysqlDbms node " + node.getNodeName()+ ".");
-        //skip for now but
-        //TODO check host, what to do if there is a configure script
+        logger.debug("Visit MysqlDbms node " + node.getNodeName() + ".");
+        // Get the host of this DBMS node
+        String host = toAlphanumerical(node.getHost().getCapability().getName().get());
+        // TODO what to do if there is a configure script
     }
 
     @Override
     public void visit(Apache node) {
-        logger.debug("Visit Apache node " + node.getNodeName()+ ".");
+        logger.debug("Visit Apache node " + node.getNodeName() + ".");
         // check if host is available
         ComputeCapability computeCapability = node.getHost().getCapability();
         if (computeCapability.getName().isPresent()) {
             //Hosted on name
             String host = toAlphanumerical(computeCapability.getName().get());
+
             cfnModule.getCFNInit(host)
                 .addConfig(CONFIG_SETS,
                     new Config(CONFIG_INSTALL)
@@ -168,8 +177,9 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
 
     @Override
     public void visit(WebApplication node) {
-        logger.debug("Visit WebApplication node " + node.getNodeName()+ ".");
-        //get the name of the server where the dbms this node is hosted on, is hosted on
+        logger.debug("Visit WebApplication node " + node.getNodeName() + ".");
+
+        //get the name of the server where the dbms this node is hosted on
         String serverName;
         if (node.getHost().getFulfillers().size() == 1) {
             WebServer webServer = node.getHost().getFulfillers().toArray(new WebServer[1])[0];
@@ -177,9 +187,101 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
         } else {
             throw new IllegalStateException("More than one or no fulfiller");
         }
-        cfnModule.getCFNInit(serverName)
-            .addConfig(CONFIG_SETS,
-                new Config(CONFIG_CONFIGURE)); //put files, commands, 
+
+        if (node.getStandardLifecycle().getCreate().isPresent()) {
+            Operation create = node.getStandardLifecycle().getCreate().get();
+
+            // add dependencies
+            for (String dependency : create.getDependencies()) {
+                String cfnFilePath = "/var/www/html/"; // TODO Check what path is needed
+                // dumping content from file
+                String cfnFileContent = "!Sub |\n"; //TODO Check when this is needed
+                cfnFileContent += "<html>\n" +
+                    " <head>\n" +
+                    "  <title>Hello World</title>\n" +
+                    " </head>\n" +
+                    " <body>\n" +
+                    " <?php echo '<p>Hello World</p>'; ?>\n" +
+                    " </body>\n" +
+                    "</html>"; //TODO add content, currently just adds a "Hello World" php app as content.
+                String cfnFileMode = "000600"; //TODO Check what mode is needed
+                String cfnFileOwner = "www-data"; //TODO Check what Owner is needed
+                String cfnFileGroup = "www-data"; //TODO Check what Group is needed
+
+                CFNFile cfnFile = new CFNFile(cfnFilePath + dependency)// remove beginning of dependency?
+                    .setContent(cfnFileContent)
+                    .setMode(cfnFileMode)
+                    .setOwner(cfnFileOwner)
+                    .setGroup(cfnFileGroup);
+                /*
+                 Adds install 2 more times to InstallAndRun, but doesn't actually add all files.
+                 TODO Should check in model when using addConfig?
+                  */
+                cfnModule.getCFNInit(serverName)
+                    .addConfig(CONFIG_SETS,
+                        new Config(CONFIG_INSTALL)
+                            .putFile(cfnFile)); //put commands, files
+            }
+
+            //Add ImplementationArtifact
+            String implementationArtifact = create.getImplementationArtifact().get();
+            String cfnFilePath = "/var/www/html/"; // TODO Check what path is needed from Implementationartifact?
+            CFNCommand cfnCommand = new CFNCommand(implementationArtifact,
+                "/bin/sh " + cfnFilePath + implementationArtifact); //TODO remove beginning of dependency?
+            // add inputs to environment, but where to get other needed variables?
+            for (OperationVariable input : create.getInputs()) {
+                cfnCommand.addEnv(input.getKey(), checkOrDefault(input.getValue(), "")); //TODO add default
+            }
+            cfnModule.getCFNInit(serverName)
+                .addConfig(CONFIG_SETS,
+                    new Config(CONFIG_INSTALL)
+                        .putCommand(cfnCommand)); //put commands
+        }
+
+        if (node.getStandardLifecycle().getConfigure().isPresent()) {
+            Operation configure = node.getStandardLifecycle().getConfigure().get();
+
+            // add dependencies
+            for (String dependency : configure.getDependencies()) {
+                String cfnFilePath = "tmp/"; // TODO Check what path is needed
+                // dumping content from file
+                String cfnFileContent = "|\n"; //TODO Check when this is needed
+                cfnFileContent += "<html>\n" +
+                    "#!/bin/bash"; //TODO add content, currently does nothing.
+                String cfnFileMode = "000500"; //TODO Check what mode is needed
+                String cfnFileOwner = "root"; //TODO Check what Owner is needed
+                String cfnFileGroup = "root"; //TODO Check what Group is needed
+
+                CFNFile cfnFile = new CFNFile(cfnFilePath + dependency) // remove beginning of dependency?
+                    .setContent(cfnFileContent)
+                    .setMode(cfnFileMode)
+                    .setOwner(cfnFileOwner)
+                    .setGroup(cfnFileGroup);
+                
+                /*
+                 Adds install 2 more times to InstallAndRun, but doesn't actually add all files.
+                 TODO Should check in model when using addConfig?
+                  */
+                cfnModule.getCFNInit(serverName)
+                    .addConfig(CONFIG_SETS,
+                        new Config(CONFIG_CONFIGURE)
+                            .putFile(cfnFile)); //put commands, files
+            }
+
+            //Add ImplementationArtifact
+            String implementationArtifact = configure.getImplementationArtifact().get();
+            String cfnFilePath = "/var/www/html/"; // TODO Check what path is needed from Implementationartifact?
+            CFNCommand cfnCommand = new CFNCommand(implementationArtifact,
+                "/bin/sh " + cfnFilePath + implementationArtifact); // remove beginning of dependency?
+            // add inputs to environment, but where to get other needed variables?
+            for (OperationVariable input : configure.getInputs()) {
+                cfnCommand.addEnv(input.getKey(), checkOrDefault(input.getValue(), ""));
+            }
+            cfnModule.getCFNInit(serverName)
+                .addConfig(CONFIG_SETS,
+                    new Config(CONFIG_CONFIGURE)
+                        .putCommand(cfnCommand)); //put commands
+        }
     }
 
     private String checkOrDefault(Optional<String> optional, String def) {
