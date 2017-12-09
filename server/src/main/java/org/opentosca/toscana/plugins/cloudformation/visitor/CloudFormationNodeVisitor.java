@@ -27,11 +27,21 @@ import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.CONFIG_SETS;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.SECURITY_GROUP;
 
+/**
+ * Class for building a CloudFormation template from an effective model instance via the visitor pattern.
+ * Currently only supports LAMP-stacks built with Compute, WebApplication, Apache, MySQL, MySQL nodes.
+ */
 public class CloudFormationNodeVisitor implements StrictNodeVisitor {
 
     private final Logger logger;
     private CloudFormationModule cfnModule;
 
+    /**
+     * Creates a <tt>CloudFormationNodeVisitor<tt> in order to build a template with the given <tt>CloudFormationModule<tt>.
+     * 
+     * @param logger Logger for logging visitor behaviour
+     * @param cfnModule Module to build the template model
+     */
     public CloudFormationNodeVisitor(Logger logger, CloudFormationModule cfnModule) throws Exception {
         this.logger = logger;
         this.cfnModule = cfnModule;
@@ -40,7 +50,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
     @Override
     public void visit(Compute node) {
         try {
-            logger.debug("Visit compute node " + node.getNodeName());
+            logger.debug("Visit Compute node " + node.getNodeName() + ".");
             String nodeName = toAlphanumerical(node.getNodeName());
             //default security group the EC2 Instance opens for port 80 and 22 to the whole internet
             Object cidrIp = "0.0.0.0/0";
@@ -59,7 +69,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                 computeOs.getVersion().get().equals("16.04")) {
                 imageId = "ami-0def3275";
             } else {
-                throw new UnsupportedTypeException("Only Linux, Ubuntu, 16.04 supported");
+                throw new UnsupportedTypeException("Only Linux, Ubuntu 16.04 supported.");
             }
             //check what host should be taken
             // we only support t2.micro atm since its free for student accounts
@@ -70,7 +80,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                 computeCompute.getMemSizeInMB().get().equals(1024)) {
                 instanceType = "t2.micro";
             } else {
-                throw new UnsupportedTypeException("Only 1 Cpu and 1024Mb memory supported");
+                throw new UnsupportedTypeException("Only 1 CPU and 1024 MB memory supported.");
             }
             //create CFN init and store it
             CFNInit init = new CFNInit(CONFIG_SETS);
@@ -82,7 +92,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                 .imageId(imageId)
                 .instanceType(instanceType);
         } catch (Exception e) {
-            logger.error("Error while creating EC2Instance resource");
+            logger.error("Error while creating EC2Instance resource.");
             e.printStackTrace();
         }
     }
@@ -90,7 +100,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
     @Override
     public void visit(MysqlDatabase node) {
         try {
-            logger.debug("Visit MysqlDatabase node " + node.getNodeName());
+            logger.debug("Visit MysqlDatabase node " + node.getNodeName()+ ".");
             String nodeName = toAlphanumerical(node.getNodeName());
 
             //get the name of the server where the dbms this node is hosted on, is hosted on
@@ -133,14 +143,14 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
 
     @Override
     public void visit(MysqlDbms node) {
-        logger.debug("Visit MysqlDbms node " + node.getNodeName());
+        logger.debug("Visit MysqlDbms node " + node.getNodeName()+ ".");
         //skip for now but
         //TODO check host, what to do if there is a configure script
     }
 
     @Override
     public void visit(Apache node) {
-        logger.debug("Visit apache node " + node.getNodeName());
+        logger.debug("Visit Apache node " + node.getNodeName()+ ".");
         // check if host is available
         ComputeCapability computeCapability = node.getHost().getCapability();
         if (computeCapability.getName().isPresent()) {
@@ -158,7 +168,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
 
     @Override
     public void visit(WebApplication node) {
-        logger.debug("Visit WebApplication node " + node.getNodeName());
+        logger.debug("Visit WebApplication node " + node.getNodeName()+ ".");
         //get the name of the server where the dbms this node is hosted on, is hosted on
         String serverName;
         if (node.getHost().getFulfillers().size() == 1) {
