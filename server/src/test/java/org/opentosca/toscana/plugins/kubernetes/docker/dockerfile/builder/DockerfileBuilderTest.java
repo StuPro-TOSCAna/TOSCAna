@@ -42,20 +42,25 @@ public class DockerfileBuilderTest extends BaseDockerfileTest {
 
     @Test
     public void orderedCopyAndEnvTest() {
-        String testString1 = "teststringdererste";
-        String testString2 = "teststringderzweite";
+        String testString1 = "teststringthefirs";
+        String testString2 = "teststringthesecond";
+        String testString3 = "teststringthethird";
         builder.env(testString1, testString2);
         builder.copyFromWorkingDir(testString1, testString2);
         builder.run(testString1);
         builder.workdir(testString1);
         builder.copyFromWorkingDir(testString2, testString1);
         builder.run(testString2);
+        builder.env(testString2, testString1);
+        builder.copyFromWorkingDir(testString3, testString1);
         String[] lines = (builder.toString()).split("\n");
         assertEquals(String.format("ENV %s=%s", testString1, testString2), lines[1]);
-        assertEquals(String.format("RUN %s", testString1), lines[2]);
-        assertEquals(String.format("COPY %s %s", testString1, testString2), lines[3]);
-        assertEquals(String.format("WORKDIR %s", testString1), lines[4]);
-        assertEquals(String.format("COPY %s %s", testString2, testString1), lines[5]);
-        assertEquals(String.format("RUN %s", testString2), lines[6]);
+        assertEquals(String.format("ENV %s=%s", testString2, testString1), lines[2]);
+        assertEquals(String.format("RUN %s", testString1), lines[3]);
+        assertEquals(String.format("COPY %s %s", testString1, testString2), lines[4]);
+        assertEquals(String.format("WORKDIR %s", testString1), lines[5]);
+        assertEquals(String.format("COPY %s %s", testString2, testString1), lines[6]);
+        assertEquals(String.format("COPY %s %s", testString3, testString1), lines[7]);
+        assertEquals(String.format("RUN %s", testString2), lines[8]);
     }
 }

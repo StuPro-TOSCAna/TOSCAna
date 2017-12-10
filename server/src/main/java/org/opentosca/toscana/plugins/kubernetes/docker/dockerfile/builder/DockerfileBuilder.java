@@ -156,11 +156,8 @@ public class DockerfileBuilder {
      */
     private void addCopyCommandsToEntries() {
         int index = (lastWorkdirCommand == 0) ? 1 : lastWorkdirCommand;
-        index = index + 1;
-        for (CopyCommand copyCommand : copyCommands) {
-            entries.add(index, copyCommand);
-            index++;
-        }
+        index++;
+        entries.addAll(index, copyCommands);
         copyCommands.clear();
     }
 
@@ -216,9 +213,7 @@ public class DockerfileBuilder {
      Add all EnvCommands at the beginning of the entries list
      */
     private void addEnvCommandsToEntries() {
-        for (EnvCommand envCommand : envCommands) {
-            entries.add(1, envCommand);
-        }
+        entries.addAll(1, envCommands);
         envCommands.clear();
     }
 
