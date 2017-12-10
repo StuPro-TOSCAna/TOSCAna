@@ -125,6 +125,7 @@ public class LampApp {
 
         MysqlDatabase mydb = MysqlDatabase.builder("my_db", "DBNAME", dbEndpointCapability,
             requirement)
+            .password("geheim")
             .build();
 
         return mydb;

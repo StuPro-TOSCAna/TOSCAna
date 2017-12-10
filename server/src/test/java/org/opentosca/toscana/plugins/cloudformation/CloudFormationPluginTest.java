@@ -34,7 +34,7 @@ public class CloudFormationPluginTest extends BaseUnitTest {
     @Before
     public void setUp() throws Exception {
         when(log.getLogger(any(Class.class))).thenReturn(LoggerFactory.getLogger("Test logger"));
-        fileAccess = new PluginFileAccess(new File("src/test/resources/csars/yaml/valid/lamp-input/"), tmpdir, log);
+        fileAccess = new PluginFileAccess(new File("src/test/resources/csars/yaml/valid/lamp-input-aws/"), tmpdir, log);
         cfnModule = new CloudFormationModule(fileAccess);
         cfnNodeVisitor = new CloudFormationNodeVisitor(logger, cfnModule);
     }

@@ -26,6 +26,8 @@ import com.scaleset.cfbuilder.ec2.metadata.CFNCommand;
 import com.scaleset.cfbuilder.ec2.metadata.CFNFile;
 import com.scaleset.cfbuilder.ec2.metadata.CFNInit;
 import com.scaleset.cfbuilder.ec2.metadata.CFNPackage;
+import com.scaleset.cfbuilder.ec2.metadata.CFNService;
+import com.scaleset.cfbuilder.ec2.metadata.SimpleService;
 import com.scaleset.cfbuilder.rds.DBInstance;
 import org.slf4j.Logger;
 
@@ -294,7 +296,6 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                 // add inputs to environment, but where to get other needed variables?
                 for (OperationVariable input : configure.getInputs()) {
                     Object value = checkOrDefault(input.getValue(), "");
-                    System.out.println(input.getKey());
                     if (value == "" && input.getKey().contains("host")) {
                         value = cfnModule.fnGetAtt("mydb", "Endpoint.Address");
                     }
@@ -303,7 +304,8 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                 cfnModule.getCFNInit(serverName)
                     .getOrAddConfig(CONFIG_SETS, CONFIG_CONFIGURE)
                     .putFile(cfnFile)
-                    .putCommand(cfnCommand); //put commands
+                    .putCommand(cfnCommand)
+                    .putCommand(new CFNCommand("restart apache2", "service apache2 restart")); //put commands
             } catch (IOException e) {
                 logger.error("Problem with " + implementationArtifact);
                 e.printStackTrace();
