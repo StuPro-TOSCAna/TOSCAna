@@ -170,9 +170,12 @@ public class LampApp {
 
         Set<OperationVariable> appInputs = new HashSet<>();
         appInputs.add(new OperationVariable("database_host"));
-        appInputs.add(new OperationVariable("database_password"));
-        appInputs.add(new OperationVariable("database_name"));
-        appInputs.add(new OperationVariable("database_user"));
+        OperationVariable dbPassword = new OperationVariable("database_password");
+        dbPassword.setValue("geheim");
+        appInputs.add(dbPassword);
+        OperationVariable dbName = new OperationVariable("database_name");
+        dbName.setValue("DBNAME");
+        appInputs.add(dbName);
         OperationVariable dbPort = new OperationVariable("database_port");
         dbPort.setValue("3306");
         appInputs.add(dbPort);

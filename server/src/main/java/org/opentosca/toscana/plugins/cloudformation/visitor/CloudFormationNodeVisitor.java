@@ -2,6 +2,8 @@ package org.opentosca.toscana.plugins.cloudformation.visitor;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.opentosca.toscana.model.capability.ComputeCapability;
@@ -194,29 +196,24 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             // add dependencies
             for (String dependency : create.getDependencies()) {
                 String cfnFilePath = "/home/ubuntu/"; // TODO Check what path is needed
-                // dumping content from file
-                String cfnFileContent = "!Sub |\n"; //TODO Check when this is needed
-                cfnFileContent += "<html>\n" +
-                    " <head>\n" +
-                    "  <title>Hello World</title>\n" +
-                    " </head>\n" +
-                    " <body>\n" +
-                    " <?php echo '<p>Hello World</p>'; ?>\n" +
-                    " </body>\n" +
-                    "</html>"; //TODO add content, currently just adds a "Hello World" php app as content.
-                String cfnFileMode = "000600"; //TODO Check what mode is needed
-                String cfnFileOwner = "www-data"; //TODO Check what Owner is needed
-                String cfnFileGroup = "www-data"; //TODO Check what Group is needed
+                try {
+                    String cfnFileMode = "000600"; //TODO Check what mode is needed
+                    String cfnFileOwner = "www-data"; //TODO Check what Owner is needed
+                    String cfnFileGroup = "www-data"; //TODO Check what Group is needed
 
-                CFNFile cfnFile = new CFNFile(cfnFilePath + dependency)// remove beginning of dependency?
-                    .setContent(cfnFileContent)
-                    .setMode(cfnFileMode)
-                    .setOwner(cfnFileOwner)
-                    .setGroup(cfnFileGroup);
+                    CFNFile cfnFile = new CFNFile(cfnFilePath + dependency)// remove beginning of dependency?
+                        .setContent(cfnModule.fileAccess.read(dependency))
+                        .setMode(cfnFileMode)
+                        .setOwner(cfnFileOwner)
+                        .setGroup(cfnFileGroup);
 
-                cfnModule.getCFNInit(serverName)
-                    .getOrAddConfig(CONFIG_SETS, CONFIG_INSTALL)
-                    .putFile(cfnFile); //put commands, files
+                    cfnModule.getCFNInit(serverName)
+                        .getOrAddConfig(CONFIG_SETS, CONFIG_INSTALL)
+                        .putFile(cfnFile); //put commands, files
+                } catch (IOException e){
+                    logger.error("Problem with file " + dependency);
+                    e.printStackTrace();
+                }
             }
 
             //Add ImplementationArtifact
@@ -246,7 +243,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                     .putFile(cfnFile)
                     .putCommand(cfnCommand); //put commands
             } catch (IOException e) {
-                logger.error("File not found " + implementationArtifact);
+                logger.error("Problem with file " + implementationArtifact);
                 e.printStackTrace();
             }
         }
@@ -296,14 +293,19 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                     .setCwd(cfnFilePath + new File(implementationArtifact).getParent()); // remove beginning of dependency?
                 // add inputs to environment, but where to get other needed variables?
                 for (OperationVariable input : configure.getInputs()) {
-                    cfnCommand.addEnv(input.getKey(), checkOrDefault(input.getValue(), ""));
+                    Object value = checkOrDefault(input.getValue(), "");
+                    System.out.println(input.getKey());
+                    if (value == "" && input.getKey().contains("host")) {
+                        value = cfnModule.fnGetAtt("mydb", "Endpoint.Address");
+                    }
+                    cfnCommand.addEnv(input.getKey(), value); //TODO add default
                 }
                 cfnModule.getCFNInit(serverName)
                     .getOrAddConfig(CONFIG_SETS, CONFIG_CONFIGURE)
                     .putFile(cfnFile)
                     .putCommand(cfnCommand); //put commands
             } catch (IOException e) {
-                logger.error("File not found " + implementationArtifact);
+                logger.error("Problem with " + implementationArtifact);
                 e.printStackTrace();
             }
         }
@@ -319,5 +321,9 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
 
     private String toAlphanumerical(String inp) {
         return inp.replaceAll("[^A-Za-z0-9]", "");
+    }
+    
+    private void handleStandardLifecycle(){
+        
     }
 }
