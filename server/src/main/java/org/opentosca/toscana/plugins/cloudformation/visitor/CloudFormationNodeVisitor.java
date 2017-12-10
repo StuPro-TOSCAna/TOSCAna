@@ -1,5 +1,7 @@
 package org.opentosca.toscana.plugins.cloudformation.visitor;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Optional;
 
 import org.opentosca.toscana.model.capability.ComputeCapability;
@@ -32,8 +34,8 @@ import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.SECURITY_GROUP;
 
 /**
- * Class for building a CloudFormation template from an effective model instance via the visitor pattern. Currently only
- * supports LAMP-stacks built with Compute, WebApplication, Apache, MySQL, MySQL nodes.
+ Class for building a CloudFormation template from an effective model instance via the visitor pattern. Currently only
+ supports LAMP-stacks built with Compute, WebApplication, Apache, MySQL, MySQL nodes.
  */
 public class CloudFormationNodeVisitor implements StrictNodeVisitor {
 
@@ -41,11 +43,11 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
     private CloudFormationModule cfnModule;
 
     /**
-     * Creates a <tt>CloudFormationNodeVisitor<tt> in order to build a template with the given
-     * <tt>CloudFormationModule<tt>.
-     *
-     * @param logger    Logger for logging visitor behaviour
-     * @param cfnModule Module to build the template model
+     Creates a <tt>CloudFormationNodeVisitor<tt> in order to build a template with the given
+     <tt>CloudFormationModule<tt>.
+
+     @param logger    Logger for logging visitor behaviour
+     @param cfnModule Module to build the template model
      */
     public CloudFormationNodeVisitor(Logger logger, CloudFormationModule cfnModule) throws Exception {
         this.logger = logger;
@@ -166,12 +168,11 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             String host = toAlphanumerical(computeCapability.getName().get());
 
             cfnModule.getCFNInit(host)
-                .addConfig(CONFIG_SETS,
-                    new Config(CONFIG_INSTALL)
-                        .putPackage(
-                            //TODO apt only if linux
-                            new CFNPackage("apt")
-                                .addPackage("apache2")));
+                .getOrAddConfig(CONFIG_SETS, CONFIG_INSTALL)
+                .putPackage(
+                    //TODO apt only if linux
+                    new CFNPackage("apt")
+                        .addPackage("apache2"));
         }
     }
 
@@ -179,7 +180,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
     public void visit(WebApplication node) {
         logger.debug("Visit WebApplication node " + node.getNodeName() + ".");
 
-        //get the name of the server where the dbms this node is hosted on
+        //get the name of the server where this node is hosted on
         String serverName;
         if (node.getHost().getFulfillers().size() == 1) {
             WebServer webServer = node.getHost().getFulfillers().toArray(new WebServer[1])[0];
@@ -193,7 +194,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
 
             // add dependencies
             for (String dependency : create.getDependencies()) {
-                String cfnFilePath = "/var/www/html/"; // TODO Check what path is needed
+                String cfnFilePath = "/home/ubuntu/"; // TODO Check what path is needed
                 // dumping content from file
                 String cfnFileContent = "!Sub |\n"; //TODO Check when this is needed
                 cfnFileContent += "<html>\n" +
@@ -213,19 +214,27 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                     .setMode(cfnFileMode)
                     .setOwner(cfnFileOwner)
                     .setGroup(cfnFileGroup);
-                /*
-                 Adds install 2 more times to InstallAndRun, but doesn't actually add all files.
-                 TODO Should check in model when using addConfig?
-                  */
+
                 cfnModule.getCFNInit(serverName)
-                    .addConfig(CONFIG_SETS,
-                        new Config(CONFIG_INSTALL)
-                            .putFile(cfnFile)); //put commands, files
+                    .getOrAddConfig(CONFIG_SETS, CONFIG_INSTALL)
+                    .putFile(cfnFile); //put commands, files
             }
 
             //Add ImplementationArtifact
             String implementationArtifact = create.getImplementationArtifact().get();
-            String cfnFilePath = "/var/www/html/"; // TODO Check what path is needed from Implementationartifact?
+            String cfnFilePath = "/home/ubuntu/"; // TODO Check what path is needed from Implementationartifact?
+
+            String cfnFileMode = "000500"; //TODO Check what mode is needed
+            String cfnFileOwner = "root"; //TODO Check what Owner is needed
+            String cfnFileGroup = "root"; //TODO Check what Group is needed
+
+            try {
+                CFNFile cfnFile = new CFNFile(cfnFilePath + implementationArtifact)
+                    .setContent(cfnModule.fileAccess.read(implementationArtifact))
+                    .setMode(cfnFileMode)
+                    .setOwner(cfnFileOwner)
+                    .setGroup(cfnFileGroup);
+            
             CFNCommand cfnCommand = new CFNCommand(implementationArtifact,
                 "/bin/sh " + cfnFilePath + implementationArtifact); //TODO remove beginning of dependency?
             // add inputs to environment, but where to get other needed variables?
@@ -233,9 +242,14 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                 cfnCommand.addEnv(input.getKey(), checkOrDefault(input.getValue(), "")); //TODO add default
             }
             cfnModule.getCFNInit(serverName)
-                .addConfig(CONFIG_SETS,
-                    new Config(CONFIG_INSTALL)
-                        .putCommand(cfnCommand)); //put commands
+                .getOrAddConfig(CONFIG_SETS, CONFIG_INSTALL)
+                .putFile(cfnFile)
+                .putCommand(cfnCommand); //put commands
+
+            } catch (IOException e) {
+                logger.error("File not found " + implementationArtifact);
+                e.printStackTrace();
+            }
         }
 
         if (node.getStandardLifecycle().getConfigure().isPresent()) {
@@ -258,19 +272,26 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                     .setOwner(cfnFileOwner)
                     .setGroup(cfnFileGroup);
                 
-                /*
-                 Adds install 2 more times to InstallAndRun, but doesn't actually add all files.
-                 TODO Should check in model when using addConfig?
-                  */
                 cfnModule.getCFNInit(serverName)
-                    .addConfig(CONFIG_SETS,
-                        new Config(CONFIG_CONFIGURE)
-                            .putFile(cfnFile)); //put commands, files
+                    .getOrAddConfig(CONFIG_SETS, CONFIG_INSTALL)
+                    .putFile(cfnFile); //put commands, files
             }
 
             //Add ImplementationArtifact
             String implementationArtifact = configure.getImplementationArtifact().get();
-            String cfnFilePath = "/var/www/html/"; // TODO Check what path is needed from Implementationartifact?
+            String cfnFilePath = "/home/ubuntu/"; // TODO Check what path is needed from Implementationartifact?
+
+            String cfnFileMode = "000500"; //TODO Check what mode is needed
+            String cfnFileOwner = "root"; //TODO Check what Owner is needed
+            String cfnFileGroup = "root"; //TODO Check what Group is needed
+
+            try {
+                CFNFile cfnFile = new CFNFile(cfnFilePath + implementationArtifact)
+                    .setContent(cfnModule.fileAccess.read(implementationArtifact))
+                    .setMode(cfnFileMode)
+                    .setOwner(cfnFileOwner)
+                    .setGroup(cfnFileGroup);
+                
             CFNCommand cfnCommand = new CFNCommand(implementationArtifact,
                 "/bin/sh " + cfnFilePath + implementationArtifact); // remove beginning of dependency?
             // add inputs to environment, but where to get other needed variables?
@@ -278,9 +299,14 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                 cfnCommand.addEnv(input.getKey(), checkOrDefault(input.getValue(), ""));
             }
             cfnModule.getCFNInit(serverName)
-                .addConfig(CONFIG_SETS,
-                    new Config(CONFIG_CONFIGURE)
-                        .putCommand(cfnCommand)); //put commands
+                .getOrAddConfig(CONFIG_SETS, CONFIG_INSTALL)
+                .putFile(cfnFile)
+                .putCommand(cfnCommand); //put commands
+
+            } catch (IOException e) {
+                logger.error("File not found " + implementationArtifact);
+                e.printStackTrace();
+            }
         }
     }
 

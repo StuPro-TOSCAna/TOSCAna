@@ -3,6 +3,8 @@ package org.opentosca.toscana.plugins.cloudformation;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.opentosca.toscana.core.plugin.PluginFileAccess;
+
 import com.scaleset.cfbuilder.core.Fn;
 import com.scaleset.cfbuilder.core.Module;
 import com.scaleset.cfbuilder.core.Resource;
@@ -28,11 +30,14 @@ public class CloudFormationModule extends Module {
 
     private Map<String, CFNInit> cfnInitMap;
 
-    public CloudFormationModule() {
+    public PluginFileAccess fileAccess;
+
+    public CloudFormationModule(PluginFileAccess fileAccess) {
         this.id("").template(new Template());
         keyName = strParam(KEYNAME).type(KEYNAME_TYPE).description(KEYNAME_DESCRIPTION).constraintDescription(KEYNAME_CONSTRAINT_DESCRIPTION);
         keyNameVar = template.ref(KEYNAME);
         cfnInitMap = new HashMap<>();
+        this.fileAccess = fileAccess;
     }
 
     public void putCFNInit(String resource, CFNInit init) {
