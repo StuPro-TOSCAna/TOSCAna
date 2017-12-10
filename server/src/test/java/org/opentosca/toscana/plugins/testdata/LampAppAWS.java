@@ -27,18 +27,19 @@ import org.opentosca.toscana.model.operation.OperationVariable;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
 import org.opentosca.toscana.model.relation.AttachesTo;
 import org.opentosca.toscana.model.relation.HostedOn;
+import org.opentosca.toscana.model.requirement.WebServerRequirement;
 
-public class LampApp {
+public class LampAppAWS {
 
     private final Set<RootNode> testNodes = new HashSet<>();
+
+    public static Set<RootNode> getLampModel() {
+        return new LampAppAWS().getLampApp();
+    }
 
     public Set<RootNode> getLampApp() {
         createLampModel();
         return testNodes;
-    }
-
-    public static Set<RootNode> getLampModel() {
-        return new LampApp().getLampApp();
     }
 
     private void createLampModel() {
@@ -104,7 +105,7 @@ public class LampApp {
 
         MysqlDbms mysqlDbms = MysqlDbms.builder(
             "mysql_dbms",
-            "geheim",
+            "geheim12",
             hostedOnRequirement,
             capabilityBuilder
         ).port(3306).lifecycle(lifecycle).build();
@@ -116,13 +117,15 @@ public class LampApp {
         DatabaseEndpointCapability dbEndpointCapability = DatabaseEndpointCapability.builder("127.0.0.1")
             .port(new Port(3306))
             .build();
-        ContainerCapability dbContainerCapability = ContainerCapability.builder().build();
+        ContainerCapability dbContainerCapability = ContainerCapability.builder().name("mysql_dbms").build();
         HostedOn hostedOn = HostedOn.builder().build();
         MysqlDbmsRequirement requirement = MysqlDbmsRequirement.builder(dbContainerCapability, hostedOn)
+            .fulfiller(createMysqlDbms())
             .build();
 
         MysqlDatabase mydb = MysqlDatabase.builder("my_db", "DBNAME", dbEndpointCapability,
             requirement)
+            .password("geheim12")
             .build();
 
         return mydb;
@@ -168,9 +171,12 @@ public class LampApp {
 
         Set<OperationVariable> appInputs = new HashSet<>();
         appInputs.add(new OperationVariable("database_host"));
-        appInputs.add(new OperationVariable("database_password"));
-        appInputs.add(new OperationVariable("database_name"));
-        appInputs.add(new OperationVariable("database_user"));
+        OperationVariable dbPassword = new OperationVariable("database_password");
+        dbPassword.setValue("geheim12");
+        appInputs.add(dbPassword);
+        OperationVariable dbName = new OperationVariable("database_name");
+        dbName.setValue("DBNAME");
+        appInputs.add(dbName);
         OperationVariable dbPort = new OperationVariable("database_port");
         dbPort.setValue("3306");
         appInputs.add(dbPort);
@@ -183,8 +189,13 @@ public class LampApp {
             .create(appCreate)
             .configure(appConfigure)
             .build();
+        WebServerRequirement webServerRequirement = WebServerRequirement.builder(ContainerCapability.builder()
+            .name("apache_web_server").build(), HostedOn.builder().build())
+            .fulfiller(createApache())
+            .build();
         WebApplication webApplication = WebApplication.builder("my_app", endpointCapability)
             .standardLifecycle(webAppLifecycle)
+            .host(webServerRequirement)
             .build();
 
         return webApplication;

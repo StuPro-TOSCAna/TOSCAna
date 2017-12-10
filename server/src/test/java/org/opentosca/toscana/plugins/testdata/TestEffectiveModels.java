@@ -82,4 +82,8 @@ public class TestEffectiveModels {
     public static EffectiveModel getLampModel() {
         return new EffectiveModel(new LampApp().getLampApp());
     }
+    
+    public static EffectiveModel getLampAWSModel(){
+        return new EffectiveModel(new LampAppAWS().getLampApp());
+    }
 }

@@ -24,7 +24,7 @@ import static org.mockito.Mockito.when;
 
 public class CloudFormationPluginTest extends BaseUnitTest {
     private final static Logger logger = LoggerFactory.getLogger(CloudFormationPluginTest.class);
-    private final static EffectiveModel lamp = new TestEffectiveModels().getLampModel();
+    private final static EffectiveModel lamp = new TestEffectiveModels().getLampAWSModel();
     private static CloudFormationNodeVisitor cfnNodeVisitor;
     private static CloudFormationModule cfnModule;
     private static PluginFileAccess fileAccess;
