@@ -29,12 +29,12 @@ import org.opentosca.toscana.model.requirement.HostRequirement;
 import org.opentosca.toscana.model.requirement.MysqlDbmsRequirement;
 import org.opentosca.toscana.model.requirement.WebServerRequirement;
 
-public class LampApp {
+public class LampAppAWS {
 
     private final Set<RootNode> testNodes = new HashSet<>();
 
     public static Set<RootNode> getLampModel() {
-        return new LampApp().getLampApp();
+        return new LampAppAWS().getLampApp();
     }
 
     public Set<RootNode> getLampApp() {
@@ -105,7 +105,7 @@ public class LampApp {
 
         MysqlDbms mysqlDbms = MysqlDbms.builder(
             "mysql_dbms",
-            "geheim",
+            "geheim12",
             hostedOnRequirement,
             capabilityBuilder
         ).port(3306).lifecycle(lifecycle).build();
@@ -125,6 +125,7 @@ public class LampApp {
 
         MysqlDatabase mydb = MysqlDatabase.builder("my_db", "DBNAME", dbEndpointCapability,
             requirement)
+            .password("geheim12")
             .build();
 
         return mydb;
@@ -170,9 +171,12 @@ public class LampApp {
 
         Set<OperationVariable> appInputs = new HashSet<>();
         appInputs.add(new OperationVariable("database_host"));
-        appInputs.add(new OperationVariable("database_password"));
-        appInputs.add(new OperationVariable("database_name"));
-        appInputs.add(new OperationVariable("database_user"));
+        OperationVariable dbPassword = new OperationVariable("database_password");
+        dbPassword.setValue("geheim12");
+        appInputs.add(dbPassword);
+        OperationVariable dbName = new OperationVariable("database_name");
+        dbName.setValue("DBNAME");
+        appInputs.add(dbName);
         OperationVariable dbPort = new OperationVariable("database_port");
         dbPort.setValue("3306");
         appInputs.add(dbPort);

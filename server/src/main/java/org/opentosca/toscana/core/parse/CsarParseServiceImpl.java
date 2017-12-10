@@ -8,7 +8,7 @@ import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarDao;
 import org.opentosca.toscana.core.parse.converter.ModelConverter;
 import org.opentosca.toscana.model.EffectiveModel;
-import org.opentosca.toscana.plugins.cloudformation.LampApp;
+import org.opentosca.toscana.plugins.cloudformation.LampAppAWS;
 
 import org.eclipse.winery.model.tosca.yaml.TServiceTemplate;
 import org.eclipse.winery.yaml.common.reader.yaml.Reader;
@@ -48,7 +48,7 @@ public class CsarParseServiceImpl implements CsarParseService {
         ModelConverter converter = new ModelConverter(logger);
         return converter.convert(serviceTemplate);
         */
-        return new EffectiveModel(new LampApp().getLampApp());
+        return new EffectiveModel(new LampAppAWS().getLampApp());
     }
 
     /**

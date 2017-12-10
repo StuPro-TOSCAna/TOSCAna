@@ -1,4 +1,4 @@
-package org.opentosca.toscana.plugins.testdata;
+package org.opentosca.toscana.plugins.cloudformation;
 
 import java.util.HashSet;
 import java.util.Set;
