@@ -8,15 +8,19 @@ You are now ready to start the TOSCAna CLI and run the AWS CloudFormation Plugin
 
 ## Demo
 1. Run the TOSCAna CLI with
+
 `doskey toscana=java -jar cli-1.0-SNAPSHOT-jar-with-dependencies.jar $*`
 
 2. Upload the CSAR With
+
 `toscana csar upload -f=lamp-demo-aws.csar`
 
 3. Start the transformation to AWS CloudFormation with
+
 `toscana transformation start -c=lamp-demo-aws -p=cloudformation`
 
 4. Download the target artifact with
+
 `toscana transformation download -c=lamp-demo-aws -p=cloudformation -o=target-artifact.zip`
 
 5. Unpack the `target-artifact.zip` and deploy the `output/template.yaml` on AWS.
