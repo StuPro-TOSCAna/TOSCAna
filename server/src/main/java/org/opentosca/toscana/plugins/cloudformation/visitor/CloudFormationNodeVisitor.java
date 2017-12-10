@@ -24,7 +24,6 @@ import com.scaleset.cfbuilder.ec2.metadata.CFNCommand;
 import com.scaleset.cfbuilder.ec2.metadata.CFNFile;
 import com.scaleset.cfbuilder.ec2.metadata.CFNInit;
 import com.scaleset.cfbuilder.ec2.metadata.CFNPackage;
-import com.scaleset.cfbuilder.ec2.metadata.Config;
 import com.scaleset.cfbuilder.rds.DBInstance;
 import org.slf4j.Logger;
 
@@ -234,18 +233,18 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                     .setMode(cfnFileMode)
                     .setOwner(cfnFileOwner)
                     .setGroup(cfnFileGroup);
-            
-            CFNCommand cfnCommand = new CFNCommand(implementationArtifact,
-                "/bin/sh " + cfnFilePath + implementationArtifact); //TODO remove beginning of dependency?
-            // add inputs to environment, but where to get other needed variables?
-            for (OperationVariable input : create.getInputs()) {
-                cfnCommand.addEnv(input.getKey(), checkOrDefault(input.getValue(), "")); //TODO add default
-            }
-            cfnModule.getCFNInit(serverName)
-                .getOrAddConfig(CONFIG_SETS, CONFIG_INSTALL)
-                .putFile(cfnFile)
-                .putCommand(cfnCommand); //put commands
 
+                CFNCommand cfnCommand = new CFNCommand(implementationArtifact,
+                    "/bin/sh " + cfnFilePath + implementationArtifact)
+                    .setCwd(cfnFilePath + new File(implementationArtifact).getParent()); //TODO remove beginning of dependency?
+                // add inputs to environment, but where to get other needed variables?
+                for (OperationVariable input : create.getInputs()) {
+                    cfnCommand.addEnv(input.getKey(), checkOrDefault(input.getValue(), "")); //TODO add default
+                }
+                cfnModule.getCFNInit(serverName)
+                    .getOrAddConfig(CONFIG_SETS, CONFIG_INSTALL)
+                    .putFile(cfnFile)
+                    .putCommand(cfnCommand); //put commands
             } catch (IOException e) {
                 logger.error("File not found " + implementationArtifact);
                 e.printStackTrace();
@@ -271,9 +270,9 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                     .setMode(cfnFileMode)
                     .setOwner(cfnFileOwner)
                     .setGroup(cfnFileGroup);
-                
+
                 cfnModule.getCFNInit(serverName)
-                    .getOrAddConfig(CONFIG_SETS, CONFIG_INSTALL)
+                    .getOrAddConfig(CONFIG_SETS, CONFIG_CONFIGURE)
                     .putFile(cfnFile); //put commands, files
             }
 
@@ -291,18 +290,18 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                     .setMode(cfnFileMode)
                     .setOwner(cfnFileOwner)
                     .setGroup(cfnFileGroup);
-                
-            CFNCommand cfnCommand = new CFNCommand(implementationArtifact,
-                "/bin/sh " + cfnFilePath + implementationArtifact); // remove beginning of dependency?
-            // add inputs to environment, but where to get other needed variables?
-            for (OperationVariable input : configure.getInputs()) {
-                cfnCommand.addEnv(input.getKey(), checkOrDefault(input.getValue(), ""));
-            }
-            cfnModule.getCFNInit(serverName)
-                .getOrAddConfig(CONFIG_SETS, CONFIG_INSTALL)
-                .putFile(cfnFile)
-                .putCommand(cfnCommand); //put commands
 
+                CFNCommand cfnCommand = new CFNCommand(implementationArtifact,
+                    "/bin/sh " + cfnFilePath + implementationArtifact)
+                    .setCwd(cfnFilePath + new File(implementationArtifact).getParent()); // remove beginning of dependency?
+                // add inputs to environment, but where to get other needed variables?
+                for (OperationVariable input : configure.getInputs()) {
+                    cfnCommand.addEnv(input.getKey(), checkOrDefault(input.getValue(), ""));
+                }
+                cfnModule.getCFNInit(serverName)
+                    .getOrAddConfig(CONFIG_SETS, CONFIG_CONFIGURE)
+                    .putFile(cfnFile)
+                    .putCommand(cfnCommand); //put commands
             } catch (IOException e) {
                 logger.error("File not found " + implementationArtifact);
                 e.printStackTrace();
