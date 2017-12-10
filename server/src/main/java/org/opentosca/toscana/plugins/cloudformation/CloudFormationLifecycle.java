@@ -16,7 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class CloudFormationLifecycle extends AbstractLifecycle {
-    private final static Logger logger = LoggerFactory.getLogger(CloudFormationLifecycle.class);
     private final EffectiveModel model;
 
     public CloudFormationLifecycle(TransformationContext context) throws IOException {
