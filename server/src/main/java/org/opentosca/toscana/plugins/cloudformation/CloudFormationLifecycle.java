@@ -53,7 +53,7 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
                 }
             }
             PluginFileAccess fileAccess = context.getPluginFileAccess();
-            fileAccess.access("template.yml").write(cfnModule.toString());
+            fileAccess.access("output/template.yaml").appendln(cfnModule.toString()).close();
             logger.debug("Transformation to CloudFormation successful.");
         } catch (Exception e) {
             logger.debug("Transformation to CloudFormation unsuccessful. Please check the StackTrace for more Info.");
