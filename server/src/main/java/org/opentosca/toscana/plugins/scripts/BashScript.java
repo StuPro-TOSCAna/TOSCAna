@@ -31,13 +31,13 @@ public class BashScript {
     }
 
     private void setUpScript() throws IOException {
-        scriptPath = SCRIPTS_DIR_PATH + name + ".sh";
+        scriptPath = name + ".sh";
 
         logger.info("Creating new bash scriptPath: " + this.scriptPath);
         access.delete(scriptPath);
 
         access.access(scriptPath).append(SHEBANG + "\n")
-            .append("source " + UTIL_DIR_NAME + "*\n")
+            .append("source ./output/scripts/" + UTIL_DIR_NAME + "*\n")
             .close();
     }
 

@@ -14,6 +14,7 @@ import org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryApplication;
 import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryManifestAttribute.DISKSIZE;
 import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryManifestAttribute.DOMAIN;
 import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryManifestAttribute.MEMORY;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryManifestAttribute.PATH;
 
 public class CloudFoundryNodeVisitor implements StrictNodeVisitor {
 
@@ -42,11 +43,11 @@ public class CloudFoundryNodeVisitor implements StrictNodeVisitor {
         }
 
         if (node.getHost().getDiskSizeInMB().isPresent()) {
-            myApp.addAttribute(DISKSIZE.getName(), node.getHost().getDiskSizeInMB().get() + " MB");
+            myApp.addAttribute(DISKSIZE.getName(), node.getHost().getDiskSizeInMB().get() + "MB");
         }
 
         if (node.getHost().getMemSizeInMB().isPresent()) {
-            myApp.addAttribute(MEMORY.getName(), node.getHost().getMemSizeInMB().get() + " MB");
+            myApp.addAttribute(MEMORY.getName(), node.getHost().getMemSizeInMB().get() + "MB");
         }
     }
 
@@ -63,6 +64,10 @@ public class CloudFoundryNodeVisitor implements StrictNodeVisitor {
     public void visit(MysqlDbms node) {
         // TODO: check how to configure database
         handleStandardLifecycle(node);
+        
+        //extensions for php
+        myApp.addBuildpack("mysql");
+        myApp.addBuildpack("mysqli");
     }
 
     @Override
@@ -73,6 +78,7 @@ public class CloudFoundryNodeVisitor implements StrictNodeVisitor {
     @Override
     public void visit(WebApplication node) {
         myApp.setName(node.getNodeName());
+        myApp.addAttribute(PATH.getName(), "./my_app/");
         handleStandardLifecycle(node);
     }
 

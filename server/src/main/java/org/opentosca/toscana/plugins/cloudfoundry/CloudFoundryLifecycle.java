@@ -33,6 +33,7 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
 
         CloudFoundryApplication myApp = new CloudFoundryApplication();
         CloudFoundryNodeVisitor visitor = new CloudFoundryNodeVisitor(myApp);
+        //Set<RootNode> nodes = context.getModel().getNodes();
         Set<RootNode> nodes = context.getModel().getNodes();
 
         for (VisitableNode node : nodes) {
