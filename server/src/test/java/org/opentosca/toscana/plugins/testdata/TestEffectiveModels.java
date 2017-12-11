@@ -19,6 +19,7 @@ import org.opentosca.toscana.model.requirement.BlockStorageRequirement;
 import org.opentosca.toscana.model.requirement.DockerHostRequirement;
 import org.opentosca.toscana.model.requirement.EndpointRequirement;
 import org.opentosca.toscana.model.requirement.StorageRequirement;
+import org.opentosca.toscana.plugins.cloudformation.LampAppAWS;
 
 import com.google.common.collect.Sets;
 
@@ -84,5 +85,9 @@ public class TestEffectiveModels {
 
     public static EffectiveModel getLampModel() {
         return new EffectiveModel(new LampApp().getLampApp());
+    }
+    
+    public static EffectiveModel getLampAWSModel(){
+        return new EffectiveModel(new LampAppAWS().getLampApp());
     }
 }
