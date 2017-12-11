@@ -26,6 +26,7 @@ import org.opentosca.toscana.model.requirement.DockerHostRequirement;
 import org.opentosca.toscana.model.requirement.EndpointRequirement;
 import org.opentosca.toscana.model.requirement.HostRequirement;
 import org.opentosca.toscana.model.requirement.StorageRequirement;
+import org.opentosca.toscana.plugins.cloudformation.LampAppAWS;
 
 import com.google.common.collect.Sets;
 
