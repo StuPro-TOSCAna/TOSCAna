@@ -128,7 +128,7 @@ public class CloudFoundryFileCreator {
             }
         } else {
             for (Map.Entry<String, String> service : app.getServices().entrySet()) {
-                deployScript.append(CLI_CREATE_SERVICE_DEFAULT + service);
+                deployScript.append(CLI_CREATE_SERVICE_DEFAULT + service.getKey());
             }
         }
         
