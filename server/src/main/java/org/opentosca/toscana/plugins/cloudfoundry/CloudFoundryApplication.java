@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- This class should describe a CloudFoundryApplication with all needed information to deploy it
+ * This class should describe a CloudFoundryApplication with all needed information to deploy it
  */
 public class CloudFoundryApplication {
 
@@ -16,7 +16,7 @@ public class CloudFoundryApplication {
     private final ArrayList<String> filePaths = new ArrayList<>();
     private final Map<String, String> environmentVariables = new HashMap<>();
     private final Map<String, String> attributes = new HashMap<>();
-    private final Set<String> services = new HashSet<>();
+    private final Map<String, String> services = new HashMap<>();
     private final ArrayList<String> buildpackAdditions = new ArrayList<>();
     private CloudFoundryProvider provider;
 
@@ -47,12 +47,12 @@ public class CloudFoundryApplication {
         this.environmentVariables.put(environmentVariableName, "");
     }
 
-    public Set<String> getServices() {
+    public Map<String, String> getServices() {
         return services;
     }
 
-    public void addService(String serviceName) {
-        this.services.add(serviceName);
+    public void addService(String serviceName, String typeDescription) {
+        this.services.put(serviceName, typeDescription);
     }
 
     public List<String> getBuildpackAdditions() {
@@ -70,7 +70,7 @@ public class CloudFoundryApplication {
     public Map<String, String> getAttributes() {
         return attributes;
     }
-    
+
     public void addFilePath(String filePath) {
         filePaths.add(filePath);
     }
@@ -86,5 +86,5 @@ public class CloudFoundryApplication {
     public void setProvider(CloudFoundryProvider provider) {
         this.provider = provider;
     }
-    
+
 }

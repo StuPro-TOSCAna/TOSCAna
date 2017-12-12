@@ -42,11 +42,11 @@ public class CloudFoundryNodeVisitor implements StrictNodeVisitor {
         }
 
         if (node.getHost().getDiskSizeInMB().isPresent()) {
-            myApp.addAttribute(DISKSIZE.getName(), node.getHost().getDiskSizeInMB().get() + " MB");
+            myApp.addAttribute(DISKSIZE.getName(), node.getHost().getDiskSizeInMB().get() + "MB");
         }
 
         if (node.getHost().getMemSizeInMB().isPresent()) {
-            myApp.addAttribute(MEMORY.getName(), node.getHost().getMemSizeInMB().get() + " MB");
+            myApp.addAttribute(MEMORY.getName(), node.getHost().getMemSizeInMB().get() + "MB");
         }
     }
 
@@ -56,7 +56,7 @@ public class CloudFoundryNodeVisitor implements StrictNodeVisitor {
         create service
         ignore password and port
          */
-        myApp.addService(node.getNodeName());
+        myApp.addService(node.getNodeName(), "mysql");
     }
 
     @Override
@@ -79,7 +79,7 @@ public class CloudFoundryNodeVisitor implements StrictNodeVisitor {
     private void handleStandardLifecycle(RootNode node) {
         // get StandardLifecycle inputs
         for (OperationVariable lifecycleInput : node.getStandardLifecycle().getInputs()) {
-           addEnvironmentVariable(lifecycleInput);
+            addEnvironmentVariable(lifecycleInput);
         }
 
         // get operation inputs
@@ -106,7 +106,7 @@ public class CloudFoundryNodeVisitor implements StrictNodeVisitor {
             // TODO: investigate what to do with outputs?
         }
     }
-    
+
     private void addEnvironmentVariable(OperationVariable input) {
         if (input.getValue().isPresent()) {
             myApp.addEnvironmentVariables(input.getKey(), input.getValue().get());

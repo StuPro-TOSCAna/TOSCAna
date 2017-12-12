@@ -39,6 +39,8 @@ public class CloudFoundryFileCreatorTest extends BaseUnitTest {
         appName = "testApp";
         testApp = new CloudFoundryApplication();
         testApp.setName(appName);
+        testApp.addBuildpack("mysql");
+        testApp.addBuildpack("mysqli");
         File sourceDir = new File(tmpdir, "sourceDir");
         targetDir = new File(tmpdir, "targetDir");
         sourceDir.mkdir();
@@ -78,5 +80,19 @@ public class CloudFoundryFileCreatorTest extends BaseUnitTest {
         String expectedDeployContent = "#!/bin/sh\n" +
             "source util/*\ncheck \"cf\"\ncf push " + appName + "\n";
         assertEquals(expectedDeployContent, manifestContent);
+    }
+
+    @Test
+    public void buildpackAdditons() throws Exception {
+        fileCreator.createFiles();
+        File targetFile = new File(targetDir, BUILDPACK_FILEPATH_PHP);
+        String buildpackContent = FileUtils.readFileToString(targetFile);
+        String expectedBuildpackcontent = "{\n" +
+            "    \"PHP-EXTENSIONS\": [\n" +
+            "        \"mysql\",\n" +
+            "        \"mysqli\"\n" +
+            "    ]\n" +
+            "}";
+        assertEquals(expectedBuildpackcontent, buildpackContent);
     }
 }

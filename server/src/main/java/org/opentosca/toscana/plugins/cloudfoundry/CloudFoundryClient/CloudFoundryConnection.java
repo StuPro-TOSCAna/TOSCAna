@@ -1,23 +1,19 @@
 package org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryClient;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.cloudfoundry.client.v2.serviceplans.ServicePlans;
 import org.cloudfoundry.operations.CloudFoundryOperations;
 import org.cloudfoundry.operations.DefaultCloudFoundryOperations;
 import org.cloudfoundry.operations.services.ListServiceOfferingsRequest;
 import org.cloudfoundry.operations.services.ServiceOffering;
-import org.cloudfoundry.operations.services.ServicePlan;
 import org.cloudfoundry.reactor.DefaultConnectionContext;
 import org.cloudfoundry.reactor.TokenProvider;
 import org.cloudfoundry.reactor.client.ReactorCloudFoundryClient;
 import org.cloudfoundry.reactor.tokenprovider.PasswordGrantTokenProvider;
-import org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryService;
 
 /**
- implements java-cf-client
- create a connection to the cf provider
+ * implements java-cf-client
+ * create a connection to the cf provider
  */
 public class CloudFoundryConnection {
 
@@ -65,17 +61,9 @@ public class CloudFoundryConnection {
         return cloudFoundryOperations;
     }
 
-    public List<CloudFoundryService> getServices() {
+    public List<ServiceOffering> getServices() {
         ListServiceOfferingsRequest serviceOfferingsRequest = ListServiceOfferingsRequest.builder().build();
-        List<ServiceOffering> list = cloudFoundryOperations.services().listServiceOfferings(serviceOfferingsRequest).collectList().block();
-        ArrayList<CloudFoundryService> services = new ArrayList<>();
-        for (ServiceOffering service : list) {
-            ArrayList<ServicePlan> plans = new ArrayList<>();
-            for (ServicePlan plan : service.getServicePlans()) {
-                plans.add(plan);
-            }
-            services.add(new CloudFoundryService(service.getLabel(), service.getDescription(), plans));
-        }
-        return services;
+        List<ServiceOffering> listServiceOfferings = cloudFoundryOperations.services().listServiceOfferings(serviceOfferingsRequest).collectList().block();
+        return listServiceOfferings;
     }
 }
