@@ -6,6 +6,8 @@ import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.model.EffectiveModel;
+import org.opentosca.toscana.plugins.kubernetes.docker.mapper.BaseImageMapper;
+import org.opentosca.toscana.plugins.kubernetes.docker.mapper.MapperTest;
 import org.opentosca.toscana.plugins.lifecycle.ValidationFailureException;
 import org.opentosca.toscana.plugins.testdata.TestEffectiveModels;
 
@@ -20,9 +22,19 @@ import static org.mockito.Mockito.when;
 public class KubernetesPluginTest extends BaseUnitTest {
     private static KubernetesPlugin plugin;
 
+    private static BaseImageMapper mapper;
+
+    static {
+        try {
+            mapper = MapperTest.init();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     @Before
     public void setUp() {
-        plugin = new KubernetesPlugin();
+        plugin = new KubernetesPlugin(mapper);
     }
 
     @Test(expected = ValidationFailureException.class)

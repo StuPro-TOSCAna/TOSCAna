@@ -1,8 +1,15 @@
 package org.opentosca.toscana.plugins.kubernetes.docker.mapper.util;
 
-import org.opentosca.toscana.plugins.kubernetes.docker.mapper.BaseImageMapper;
-import org.opentosca.toscana.plugins.kubernetes.docker.mapper.MapperTest;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 
+import org.opentosca.toscana.core.util.Preferences;
+import org.opentosca.toscana.plugins.kubernetes.docker.mapper.BaseImageMapper;
+import org.opentosca.toscana.plugins.kubernetes.docker.mapper.DockerBaseImages;
+import org.opentosca.toscana.plugins.kubernetes.docker.mapper.TagStorage;
+
+import org.apache.commons.io.IOUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -16,11 +23,27 @@ import org.springframework.context.annotation.Profile;
  and
  <code>@ActiveProfiles({"base-image-mapper"})</code>
  */
+@SuppressWarnings("Duplicates")
 @Profile("base-image-mapper")
 @Configuration
 public class MapperTestConfiguration {
+
     @Bean
-    public BaseImageMapper mapper() throws Exception {
-        return MapperTest.init();
+    public TagStorage tagStorage(Preferences preferences) throws Exception {
+        new File(preferences.getDataDir(), "misc").mkdirs();
+        File file = new File(preferences.getDataDir(), TagStorage.DOCKER_IMAGE_TAGS);
+        InputStream input = getClass().getResourceAsStream("/kubernetes/base-image-mapper/docker-tagbase.json");
+        FileOutputStream out = new FileOutputStream(file);
+
+        IOUtils.copy(input, out);
+        input.close();
+        out.close();
+
+        return new TagStorage(preferences);
+    }
+
+    @Bean
+    public BaseImageMapper mapper(TagStorage storage) {
+        return new BaseImageMapper(DockerBaseImages.values(), storage);
     }
 }

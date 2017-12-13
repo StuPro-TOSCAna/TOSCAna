@@ -81,6 +81,7 @@ public class TestEffectiveModels {
             .build();
         return new EffectiveModel(Sets.newHashSet(simpleTaskApp, dockerRuntime));
     }
+    
 
     public static EffectiveModel getLampModel() {
         return new EffectiveModel(new LampApp().getLampApp());
