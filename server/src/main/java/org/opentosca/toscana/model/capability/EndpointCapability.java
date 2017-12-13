@@ -85,7 +85,7 @@ public class EndpointCapability extends Capability {
                                  Initiator initiator,
                                  @Singular Set<PortSpec> supportedPorts,
                                  String ipAddress,
-                                 Set<Class<? extends RootNode>> validSourceTypes,
+                                 @Singular Set<Class<? extends RootNode>> validSourceTypes,
                                  Range occurence,
                                  String description) {
         super(validSourceTypes, occurence, description);
@@ -161,17 +161,14 @@ public class EndpointCapability extends Capability {
         return Optional.ofNullable(initiator);
     }
 
-    @Override
-    public void accept(CapabilityVisitor v) {
-        v.visit(this);
-    }
-
     public enum Initiator {
         SOURCE,
         TARGET,
         PEER
     }
 
-    public static class EndpointCapabilityBuilder extends CapabilityBuilder {
+    @Override
+    public void accept(CapabilityVisitor v) {
+        v.visit(this);
     }
 }

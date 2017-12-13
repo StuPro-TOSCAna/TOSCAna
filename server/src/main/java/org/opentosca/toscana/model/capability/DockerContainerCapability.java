@@ -73,15 +73,15 @@ public class DockerContainerCapability extends ContainerCapability {
                                         @Singular Set<String> volumes,
                                         String hostId,
                                         String volumeId,
-                                        String resourceName,
+                                        String name,
                                         Integer numCpus,
                                         Double cpuFrequencyInGhz,
                                         Integer diskSizeInMB,
                                         Integer memSizeInMB,
-                                        Set<Class<? extends RootNode>> validSourceTypes,
+                                        @Singular Set<Class<? extends RootNode>> validSourceTypes,
                                         Range occurence,
                                         String description) {
-        super(resourceName, numCpus, cpuFrequencyInGhz, diskSizeInMB, memSizeInMB, validSourceTypes, occurence, description);
+        super(name, numCpus, cpuFrequencyInGhz, diskSizeInMB, memSizeInMB, validSourceTypes, occurence, description);
         this.versions = Objects.requireNonNull(versions);
         this.publishAll = publishAll;
         this.publishPorts = Objects.requireNonNull(publishPorts);
@@ -89,10 +89,6 @@ public class DockerContainerCapability extends ContainerCapability {
         this.volumes = Objects.requireNonNull(volumes);
         this.hostId = hostId;
         this.volumeId = volumeId;
-    }
-
-    public static DockerContainerCapability getFallback(DockerContainerCapability c) {
-        return (c == null) ? DockerContainerCapability.builder().build() : c;
     }
 
     /**
@@ -109,11 +105,11 @@ public class DockerContainerCapability extends ContainerCapability {
         return Optional.ofNullable(volumeId);
     }
 
+    public static class DockerContainerCapabilityBuilder extends ContainerCapabilityBuilder {
+    }
+
     @Override
     public void accept(CapabilityVisitor v) {
         v.visit(this);
-    }
-
-    public static class DockerContainerCapabilityBuilder extends ContainerCapabilityBuilder {
     }
 }

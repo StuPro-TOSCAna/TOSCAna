@@ -1,10 +1,14 @@
 package org.opentosca.toscana.model.node;
 
+import java.util.Objects;
+
 import org.opentosca.toscana.model.capability.ContainerCapability;
+import org.opentosca.toscana.model.requirement.HostRequirement;
+import org.opentosca.toscana.model.requirement.Requirement;
 import org.opentosca.toscana.model.capability.ScalableCapability;
 import org.opentosca.toscana.model.datatype.Credential;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
-import org.opentosca.toscana.model.requirement.HostRequirement;
+import org.opentosca.toscana.model.relation.HostedOn;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 
 import lombok.Builder;
@@ -32,26 +36,32 @@ public class ContainerRuntime extends SoftwareComponent {
                              StandardLifecycle standardLifecycle,
                              String description) {
         super(componentVersion, adminCredential, host, nodeName, standardLifecycle, description);
-        this.containerHost = (containerHost == null) ? ContainerCapability.builder().build() : containerHost;
-        this.scalable = (scalable == null) ? ScalableCapability.builder().build() : scalable;
+        this.containerHost = Objects.requireNonNull(containerHost);
+        this.scalable = Objects.requireNonNull(scalable);
 
         capabilities.add(containerHost);
         capabilities.add(scalable);
     }
 
     /**
-     @param nodeName {@link #nodeName}
+     @param nodeName      {@link #nodeName}
+     @param host          {@link #host}
+     @param containerHost {@link #containerHost}
+     @param scalable      {@link #scalable}
      */
-    public static ContainerRuntimeBuilder builder(String nodeName) {
+    public static ContainerRuntimeBuilder builder(String nodeName,
+                                                  HostRequirement host,
+                                                  ContainerCapability containerHost,
+                                                  ScalableCapability scalable) {
         return new ContainerRuntimeBuilder()
-            .nodeName(nodeName);
+            .nodeName(nodeName)
+            .scalable(scalable)
+            .host(host)
+            .containerHost(containerHost);
     }
 
     @Override
     public void accept(NodeVisitor v) {
         v.visit(this);
-    }
-
-    public static class ContainerRuntimeBuilder extends SoftwareComponentBuilder {
     }
 }

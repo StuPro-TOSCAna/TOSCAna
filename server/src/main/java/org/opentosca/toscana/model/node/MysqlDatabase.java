@@ -1,8 +1,11 @@
 package org.opentosca.toscana.model.node;
 
+import org.opentosca.toscana.model.capability.ContainerCapability;
 import org.opentosca.toscana.model.capability.DatabaseEndpointCapability;
-import org.opentosca.toscana.model.operation.StandardLifecycle;
 import org.opentosca.toscana.model.requirement.MysqlDbmsRequirement;
+import org.opentosca.toscana.model.requirement.Requirement;
+import org.opentosca.toscana.model.operation.StandardLifecycle;
+import org.opentosca.toscana.model.relation.HostedOn;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 
 import lombok.AccessLevel;
@@ -27,22 +30,24 @@ public class MysqlDatabase extends Database {
                          StandardLifecycle standardLifecycle,
                          String description) {
         super(databaseName, port, user, password, databaseEndpoint, nodeName, standardLifecycle, description);
+        this.host = host;
 
-        this.host = (host == null) ? MysqlDbmsRequirement.builder().build() : host;
-
-        requirements.add(this.host);
+        requirements.add(host);
     }
 
     /**
      @param nodeName         {@link #nodeName}
      @param databaseName     {@link #databaseEndpoint}
+     @param host             {@link #host}
      @param databaseEndpoint {@link #databaseEndpoint}
      */
     public static MysqlDatabaseBuilder builder(String nodeName,
                                                String databaseName,
-                                               DatabaseEndpointCapability databaseEndpoint) {
+                                               DatabaseEndpointCapability databaseEndpoint,
+                                               MysqlDbmsRequirement host) {
         return (MysqlDatabaseBuilder) new MysqlDatabaseBuilder()
             .nodeName(nodeName)
+            .host(host)
             .databaseName(databaseName)
             .databaseEndpoint(databaseEndpoint);
     }
@@ -50,8 +55,5 @@ public class MysqlDatabase extends Database {
     @Override
     public void accept(NodeVisitor v) {
         v.visit(this);
-    }
-
-    public static class MysqlDatabaseBuilder extends DatabaseBuilder {
     }
 }

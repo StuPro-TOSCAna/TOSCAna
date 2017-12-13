@@ -8,6 +8,7 @@ import org.opentosca.toscana.model.visitor.CapabilityVisitor;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.Singular;
 
 /**
  A node that has the BindableCapability indicates that it can be bound to a logical network association via a network port.
@@ -17,17 +18,17 @@ import lombok.Data;
 public class BindableCapability extends NodeCapability {
 
     @Builder
-    protected BindableCapability(Set<Class<? extends RootNode>> validSourceTypes,
+    protected BindableCapability(@Singular Set<Class<? extends RootNode>> validSourceTypes,
                                  Range occurence,
                                  String description) {
         super(validSourceTypes, occurence, description);
     }
 
+    public static class BindableCapabilityBuilder extends NodeCapabilityBuilder {
+    }
+
     @Override
     public void accept(CapabilityVisitor v) {
         v.visit(this);
-    }
-
-    public static class BindableCapabilityBuilder extends NodeCapabilityBuilder {
     }
 }

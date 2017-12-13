@@ -1,11 +1,20 @@
 package org.opentosca.toscana.model.node;
 
-import org.opentosca.toscana.model.operation.StandardLifecycle;
+import java.util.Objects;
+
+import org.opentosca.toscana.model.capability.DockerContainerCapability;
+import org.opentosca.toscana.model.capability.EndpointCapability;
 import org.opentosca.toscana.model.requirement.DockerHostRequirement;
 import org.opentosca.toscana.model.requirement.EndpointRequirement;
+import org.opentosca.toscana.model.requirement.Requirement;
+import org.opentosca.toscana.model.capability.StorageCapability;
+import org.opentosca.toscana.model.operation.StandardLifecycle;
+import org.opentosca.toscana.model.relation.HostedOn;
+import org.opentosca.toscana.model.relation.RootRelationship;
 import org.opentosca.toscana.model.requirement.StorageRequirement;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 
+import com.spotify.docker.client.DockerHost;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
@@ -26,26 +35,30 @@ public class DockerApplication extends ContainerApplication {
                               StandardLifecycle standardLifecycle,
                               String description) {
         super(storage, network, nodeName, standardLifecycle, description);
-        this.host = DockerHostRequirement.getFallback(host);
-        requirements.add(this.host);
+        this.host = Objects.requireNonNull(host);
+
+        requirements.add(host);
     }
 
     /**
      @param nodeName {@link #nodeName}
+     @param host     {@link #host}
      @param network  {@link #network}
+     @param storage  {@link #storage}
      */
-    public static DockerApplicationBuilder builder(String nodeName,
-                                                   EndpointRequirement network) {
+    public static DockerApplicationBuilder builder(DockerHostRequirement host,
+                                                   String nodeName,
+                                                   EndpointRequirement network,
+                                                   StorageRequirement storage) {
         return new DockerApplicationBuilder()
             .nodeName(nodeName)
-            .network(network);
+            .host(host)
+            .network(network)
+            .storage(storage);
     }
 
     @Override
     public void accept(NodeVisitor v) {
         v.visit(this);
-    }
-
-    public static class DockerApplicationBuilder extends ContainerApplicationBuilder {
     }
 }

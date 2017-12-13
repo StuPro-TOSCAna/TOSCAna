@@ -19,6 +19,13 @@ public class WebServerRequirement extends Requirement<ContainerCapability, WebSe
                                    Range occurrence,
                                    @Singular Set<WebServer> fulfillers,
                                    HostedOn relationship) {
-        super(ContainerCapability.getFallback(capability), occurrence, fulfillers, HostedOn.getFallback(relationship));
+        super(capability, occurrence, fulfillers, relationship);
+    }
+
+    public static WebServerRequirementBuilder builder(ContainerCapability capability,
+                                                      HostedOn relationship) {
+        return new WebServerRequirementBuilder()
+            .capability(capability)
+            .relationship(relationship);
     }
 }

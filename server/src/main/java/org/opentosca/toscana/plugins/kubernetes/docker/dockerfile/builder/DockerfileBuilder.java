@@ -31,9 +31,6 @@ public class DockerfileBuilder {
     private final List<DockerfileEntry> entries = new ArrayList<>();
 
     private boolean compress = false;
-    private List<CopyCommand> copyCommands;
-    private List<EnvCommand> envCommands;
-    private int lastWorkdirCommand = 0;
 
     /**
      Create a new instance of the DockerfileBuilder
@@ -43,8 +40,6 @@ public class DockerfileBuilder {
      @param fileAccess the fileAccess to allow the writing of files
      */
     public DockerfileBuilder(String baseImage, String workingDir, PluginFileAccess fileAccess) {
-        copyCommands = new ArrayList<>();
-        envCommands = new ArrayList<>();
         this.baseImage = baseImage;
         //Strip off trailing / if it exists
         if (workingDir.endsWith("/")) {
@@ -73,7 +68,7 @@ public class DockerfileBuilder {
         String dir = workingDir + "/" + workdirName;
         fileAccess.createDirectories(dir);
         fileAccess.copy(inputPath, dir);
-        copyCommands.add(new CopyCommand(workdirName, containerPath));
+        this.entries.add(new CopyCommand(workdirName, containerPath));
         return this;
     }
 
@@ -86,8 +81,8 @@ public class DockerfileBuilder {
      @param containerPath the path within the container (<code>.</code> for the current directory)
      @return the object itself to allow chaining (not needed though).
      */
-    public DockerfileBuilder copyFromWorkingDir(String inputPath, String containerPath) {
-        copyCommands.add(new CopyCommand(inputPath, containerPath));
+    public DockerfileBuilder copyFromWokringDir(String inputPath, String containerPath) {
+        entries.add(new CopyCommand(inputPath, containerPath));
         return this;
     }
 
@@ -144,21 +139,8 @@ public class DockerfileBuilder {
      @return the object itself to allow chaining (not needed though).
      */
     public DockerfileBuilder workdir(String directory) {
-        addCopyCommandsToEntries();
         entries.add(new WorkdirCommand(directory));
-        lastWorkdirCommand = entries.size() - 1;
         return this;
-    }
-
-    /**
-     Adds all collected copy commands at the beginning of the entries list
-     or after a workdir command
-     */
-    private void addCopyCommandsToEntries() {
-        int index = (lastWorkdirCommand == 0) ? 1 : lastWorkdirCommand;
-        index++;
-        entries.addAll(index, copyCommands);
-        copyCommands.clear();
     }
 
     /**
@@ -169,7 +151,7 @@ public class DockerfileBuilder {
      @return the object itself to allow chaining (not needed though).
      */
     public DockerfileBuilder env(String variableName, String value) {
-        envCommands.add(new EnvCommand(variableName, value));
+        entries.add(new EnvCommand(variableName, value));
         return this;
     }
 
@@ -197,8 +179,6 @@ public class DockerfileBuilder {
     }
 
     private void writeTo(Writer out) {
-        addCopyCommandsToEntries();
-        addEnvCommandsToEntries();
         PrintWriter pw = new PrintWriter(out);
         for (int i = 0; i < entries.size(); i++) {
             DockerfileEntry prev = i > 0 && entries.size() > 1 ? entries.get(i - 1) : null;
@@ -207,14 +187,6 @@ public class DockerfileBuilder {
 
             current.appendToDockerfile(pw, prev, next, compress);
         }
-    }
-
-    /**
-     Add all EnvCommands at the beginning of the entries list
-     */
-    private void addEnvCommandsToEntries() {
-        entries.addAll(1, envCommands);
-        envCommands.clear();
     }
 
     /**

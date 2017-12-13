@@ -71,4 +71,5 @@ public interface CapabilityVisitor {
     default void visit(StorageCapability capability) {
         // noop
     }
+
 }

@@ -10,6 +10,7 @@ import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.visitor.VisitableNode;
+import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryApplication;
 import org.opentosca.toscana.plugins.cloudfoundry.visitors.CloudFoundryNodeVisitor;
 import org.opentosca.toscana.plugins.testdata.TestEffectiveModels;
 
@@ -19,15 +20,16 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.slf4j.LoggerFactory;
 
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.MANIFEST;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.CLI_CREATE_SERVICE_DEFAULT;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.CLI_PUSH;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.FILESUFFIX_DEPLOY;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.FILEPRAEFIX_DEPLOY;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.CLI_CREATE_SERVICE;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.CLI_PUSH;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.FILEPRAEFIX_DEPLOY;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.FILESUFFIX_DEPLOY;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.MANIFEST;
 
 public class CloudFoundryPluginTest extends BaseUnitTest {
 
@@ -95,7 +97,7 @@ public class CloudFoundryPluginTest extends BaseUnitTest {
             FILESUFFIX_DEPLOY);
         String deployScript = FileUtils.readFileToString(targetFile);
         String expectedOutput = String.format("#!/bin/sh\nsource util/*\ncheck \"cf\"\n%smy_db\n%s%s\n",
-            CLI_CREATE_SERVICE, CLI_PUSH, appName);
+            CLI_CREATE_SERVICE_DEFAULT, CLI_PUSH, appName);
 
         assertEquals(expectedOutput, deployScript);
     }

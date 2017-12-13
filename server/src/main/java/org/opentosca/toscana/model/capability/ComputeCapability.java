@@ -13,6 +13,7 @@ import org.opentosca.toscana.model.visitor.CapabilityVisitor;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.Singular;
 
 /**
  Indicates that the node can provide hosting on a named compute resource.
@@ -26,7 +27,7 @@ public class ComputeCapability extends Capability {
      Optional name (or identifier) of a specific compute resource for hosting.
      (TOSCA Simple Profile in YAML Version 1.1, p. 150)
      */
-    private final String resourceName;
+    private final String name;
 
     /**
      Optional number of (actual or virtual) CPUs associated with the {@link Compute} node.
@@ -58,12 +59,12 @@ public class ComputeCapability extends Capability {
     private final Integer memSizeInMB;
 
     @Builder
-    protected ComputeCapability(String resourceName,
+    protected ComputeCapability(String name,
                                 Integer numCpus,
                                 Double cpuFrequencyInGhz,
                                 Integer diskSizeInMB,
                                 Integer memSizeInMB,
-                                Set<Class<? extends RootNode>> validSourceTypes,
+                                @Singular Set<Class<? extends RootNode>> validSourceTypes,
                                 Range occurence,
                                 String description) {
         super(validSourceTypes, occurence, description);
@@ -83,7 +84,7 @@ public class ComputeCapability extends Capability {
             throw new IllegalArgumentException(String.format(
                 "memSize min value is 0, but was %d", memSizeInMB));
         }
-        this.resourceName = resourceName;
+        this.name = name;
         this.numCpus = numCpus;
         this.cpuFrequencyInGhz = cpuFrequencyInGhz;
         this.diskSizeInMB = diskSizeInMB;
@@ -91,10 +92,10 @@ public class ComputeCapability extends Capability {
     }
 
     /**
-     @return {@link #resourceName}
+     @return {@link #name}
      */
-    public Optional<String> getResourceName() {
-        return Optional.ofNullable(resourceName);
+    public Optional<String> getName() {
+        return Optional.ofNullable(name);
     }
 
     /**
@@ -128,8 +129,5 @@ public class ComputeCapability extends Capability {
     @Override
     public void accept(CapabilityVisitor v) {
         v.visit(this);
-    }
-
-    public static class ComputeCapabilityBuilder extends CapabilityBuilder {
     }
 }

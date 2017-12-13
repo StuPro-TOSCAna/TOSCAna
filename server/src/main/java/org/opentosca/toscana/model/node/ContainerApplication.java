@@ -2,9 +2,15 @@ package org.opentosca.toscana.model.node;
 
 import java.util.Objects;
 
-import org.opentosca.toscana.model.operation.StandardLifecycle;
+import org.opentosca.toscana.model.capability.ContainerCapability;
+import org.opentosca.toscana.model.capability.EndpointCapability;
 import org.opentosca.toscana.model.requirement.ContainerHostRequirement;
 import org.opentosca.toscana.model.requirement.EndpointRequirement;
+import org.opentosca.toscana.model.requirement.Requirement;
+import org.opentosca.toscana.model.capability.StorageCapability;
+import org.opentosca.toscana.model.operation.StandardLifecycle;
+import org.opentosca.toscana.model.relation.HostedOn;
+import org.opentosca.toscana.model.relation.RootRelationship;
 import org.opentosca.toscana.model.requirement.StorageRequirement;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 
@@ -32,13 +38,13 @@ public class ContainerApplication extends RootNode {
                                    StandardLifecycle standardLifecycle,
                                    String description) {
         super(nodeName, standardLifecycle, description);
-        this.storage = StorageRequirement.getFallback(storage);
-        this.host = ContainerHostRequirement.getFallback(host);
+        this.host = Objects.requireNonNull(host);
+        this.storage = Objects.requireNonNull(storage);
         this.network = Objects.requireNonNull(network);
 
         requirements.add(host);
-        requirements.add(this.storage);
-        requirements.add(this.network);
+        requirements.add(storage);
+        requirements.add(network);
     }
 
     /**
@@ -51,29 +57,32 @@ public class ContainerApplication extends RootNode {
                                    String description) {
         super(nodeName, standardLifecycle, description);
         this.host = null; // this is a hack. field shall not be used because its shadowed by the subclass
-        this.storage = StorageRequirement.getFallback(storage);
+        this.storage = Objects.requireNonNull(storage);
         this.network = Objects.requireNonNull(network);
 
-        requirements.add(this.storage);
-        requirements.add(this.network);
+        requirements.add(storage);
+        requirements.add(network);
     }
 
     /**
      @param nodeName {@link #nodeName}
+     @param host     {@link #host}
      @param network  {@link #network}
+     @param network  {@link #storage}
      */
     public static ContainerApplicationBuilder builder(String nodeName,
-                                                      EndpointRequirement network) {
+                                                      ContainerHostRequirement host,
+                                                      EndpointRequirement network,
+                                                      StorageRequirement storage) {
         return new ContainerApplicationBuilder()
             .nodeName(nodeName)
-            .network(network);
+            .host(host)
+            .network(network)
+            .storage(storage);
     }
 
     @Override
     public void accept(NodeVisitor v) {
         v.visit(this);
-    }
-
-    public static class ContainerApplicationBuilder extends RootNodeBuilder {
     }
 }

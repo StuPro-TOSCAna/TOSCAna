@@ -39,16 +39,18 @@ public class Requirement<CapabilityT extends Capability, NodeT extends RootNode,
      Note: Defaults to {@link Range#EXACTLY_ONCE}
      */
     protected final Range occurrence;
-    /**
-     The Relationship to construct when fulfilling the requirement.
-     (TOSCA Simple Profile in YAML Version 1.1, p. 85)
-     */
-    protected final RelationshipT relationship;
+
     /**
      The optional Nodes that have the required capability and shall be used to fulfill this requirement.
      (TOSCA Simple Profile in YAML Version 1.1, p. 85)
      */
     protected Set<NodeT> fulfillers;
+
+    /**
+     The Relationship to construct when fulfilling the requirement.
+     (TOSCA Simple Profile in YAML Version 1.1, p. 85)
+     */
+    protected final RelationshipT relationship;
 
     @Builder
     protected Requirement(CapabilityT capability,
@@ -56,7 +58,7 @@ public class Requirement<CapabilityT extends Capability, NodeT extends RootNode,
                           @Singular Set<NodeT> fulfillers,
                           RelationshipT relationship) {
         this.capability = Objects.requireNonNull(capability);
-        this.occurrence = (occurrence == null) ? Range.EXACTLY_ONCE : occurrence;
+        this.occurrence = (occurrence != null) ? occurrence : Range.EXACTLY_ONCE;
         this.fulfillers = Objects.requireNonNull(fulfillers);
         this.relationship = Objects.requireNonNull(relationship);
     }
