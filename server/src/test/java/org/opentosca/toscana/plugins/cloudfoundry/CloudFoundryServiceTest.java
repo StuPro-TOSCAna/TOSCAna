@@ -1,4 +1,3 @@
-/* TODO:
 package org.opentosca.toscana.plugins.cloudfoundry;
 
 import java.io.File;
@@ -18,7 +17,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assume.assumeTrue;
 import static org.junit.Assert.assertThat;
 import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.FILEPRAEFIX_DEPLOY;
 import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.FILESUFFIX_DEPLOY;
@@ -30,6 +29,12 @@ public class CloudFoundryServiceTest extends BaseUnitTest{
     private CloudFoundryProvider provider;
     private CloudFoundryFileCreator fileCreator;
 
+    private String envUser;
+    private String envPw;
+    private String envHost;
+    private String envOrga;
+    private String envSpace;
+
     @Mock
     private Log log;
     private File targetDir;
@@ -38,17 +43,37 @@ public class CloudFoundryServiceTest extends BaseUnitTest{
     
     @Before
     public void setUp() {
+        envUser = System.getenv("TEST_CF_USER");
+        envPw = System.getenv("TEST_CF_PW");
+        envHost = System.getenv("TEST_CF_HOST");
+        envOrga = System.getenv("TEST_CF_ORGA");
+        envSpace = System.getenv("TEST_CF_SPACE");
+
         appName = "testapp";
         app =new CloudFoundryApplication(appName);
-        app.addService("my_db", CloudFoundryServiceType.MYSQL);
-        cloudFoundryConnection = new CloudFoundryConnection("jmuell.dev@gmail.com",
-            "",
-            "api.run.pivotal.io",
-            "stupro.toscana",
-            "development");
+    }
+    
+    @Test
+    public void checkService() throws Exception {
+        assumeTrue(checkEnv());
         
-        provider = new CloudFoundryProvider(CloudFoundryProvider.CloudFoundryProviderType.PIVOTAL);
-        provider.setOfferedService(cloudFoundryConnection.getServices());
+        app.addService("my_db", CloudFoundryServiceType.MYSQL);
+    
+        try{
+            cloudFoundryConnection = new CloudFoundryConnection(envUser,
+                envPw,
+                envHost,
+                envOrga,
+                envSpace);
+
+            provider = new CloudFoundryProvider(CloudFoundryProvider.CloudFoundryProviderType.PIVOTAL);
+            provider.setOfferedService(cloudFoundryConnection.getServices());
+            
+        } catch (Exception e){
+            assumeTrue(false);
+        }
+        
+        
         app.setProvider(provider);
 
         File sourceDir = new File(tmpdir, "sourceDir");
@@ -57,18 +82,28 @@ public class CloudFoundryServiceTest extends BaseUnitTest{
         targetDir.mkdir();
         PluginFileAccess fileAccess = new PluginFileAccess(sourceDir, targetDir, log);
         fileCreator = new CloudFoundryFileCreator(fileAccess, app);
-    }
-    
-    @Test
-    public void checkSerice() throws Exception {
+        
         fileCreator.createFiles();
         File targetFile = new File(targetDir, outputPath + FILEPRAEFIX_DEPLOY + appName + FILESUFFIX_DEPLOY);
         String deployContent = FileUtils.readFileToString(targetFile);
-        String expectedDeployContent = "cleardb";
-        //assertEquals(expectedDeployContent, deployContent);
+        String expectedDeployContent = "cf create-service cleardb spark my_db";
         assertThat(deployContent, CoreMatchers.containsString(expectedDeployContent));
         
     }
+    
+    private Boolean checkEnv() {
+        if (!(envUser==null 
+            || envHost==null 
+            || envOrga==null 
+            || envPw==null 
+            || envSpace==null)) {
+            
+            return true;
+        } else {
+            return false;
+        }
+      
+    }
 }
 
-*/
+
