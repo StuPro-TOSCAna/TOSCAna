@@ -10,19 +10,16 @@ import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.node.WebApplication;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 import org.opentosca.toscana.plugins.kubernetes.docker.mapper.BaseImageMapper;
-import org.opentosca.toscana.plugins.kubernetes.util.NodeStack;
 
 public class ImageMappingVisitor implements NodeVisitor {
 
     private final BaseImageMapper mapper;
-    private final NodeStack stack;
 
     private String baseImage = null;
     private boolean hasInstallScripts = false;
 
-    public ImageMappingVisitor(BaseImageMapper mapper, NodeStack stack) {
+    public ImageMappingVisitor(BaseImageMapper mapper) {
         this.mapper = mapper;
-        this.stack = stack;
     }
 
     @Override

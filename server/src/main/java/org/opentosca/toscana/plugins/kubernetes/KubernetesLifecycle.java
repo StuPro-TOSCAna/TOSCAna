@@ -22,6 +22,7 @@ import org.opentosca.toscana.plugins.kubernetes.visitor.check.NodeTypeCheckVisit
 import org.opentosca.toscana.plugins.kubernetes.visitor.check.OsCheckNodeVisitor;
 import org.opentosca.toscana.plugins.kubernetes.visitor.util.ComputeNodeFindingVisitor;
 import org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle;
+import org.opentosca.toscana.plugins.util.TransformationFailureException;
 
 import io.fabric8.kubernetes.api.model.HasMetadata;
 import io.fabric8.kubernetes.api.model.ServiceBuilder;
@@ -138,7 +139,7 @@ public class KubernetesLifecycle extends AbstractLifecycle {
                 builder.buildImage("output/docker/" + e.getStackName() + ".tar.gz");
             } catch (Exception ex) {
                 ex.printStackTrace();
-                throw new RuntimeException("Transformation Failed", ex);
+                throw new TransformationFailureException("Transformation Failed", ex);
             }
         });
     }
@@ -153,7 +154,7 @@ public class KubernetesLifecycle extends AbstractLifecycle {
                 e.buildToDockerfile(context, baseImageMapper);
             } catch (IOException ex) {
                 ex.printStackTrace();
-                throw new RuntimeException("Transformation Failed", ex);
+                throw new TransformationFailureException("Transformation Failed", ex);
             }
         });
     }
