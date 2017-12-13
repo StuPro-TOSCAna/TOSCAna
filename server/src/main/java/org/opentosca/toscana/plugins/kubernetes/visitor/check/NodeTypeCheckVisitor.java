@@ -1,9 +1,13 @@
-package org.opentosca.toscana.plugins.kubernetes.visitor;
+package org.opentosca.toscana.plugins.kubernetes.visitor.check;
 
+import org.opentosca.toscana.model.node.Apache;
 import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.ContainerApplication;
 import org.opentosca.toscana.model.node.ContainerRuntime;
 import org.opentosca.toscana.model.node.DockerApplication;
+import org.opentosca.toscana.model.node.MysqlDatabase;
+import org.opentosca.toscana.model.node.MysqlDbms;
+import org.opentosca.toscana.model.node.WebApplication;
 import org.opentosca.toscana.model.visitor.StrictNodeVisitor;
 
 /**
@@ -14,6 +18,26 @@ public class NodeTypeCheckVisitor implements StrictNodeVisitor {
     @Override
     public void visit(Compute node) {
         //noop
+    }
+
+    @Override
+    public void visit(WebApplication node) {
+        //noop 
+    }
+
+    @Override
+    public void visit(Apache node) {
+        //noop 
+    }
+
+    @Override
+    public void visit(MysqlDbms node) {
+        //noop 
+    }
+
+    @Override
+    public void visit(MysqlDatabase node) {
+        //noop 
     }
 
     @Override

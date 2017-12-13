@@ -61,19 +61,19 @@ public class DockerfileBuilder {
      <p>
      After that the file gets added to the Container image using the <code>COPY</code> command.
 
-     @param inputPath     The relative input path from within the CSAR (can be a file or a directory
-     @param workdirName   The name of the folder in witch the contents should be stored
-     @param containerPath the path at witch the files should be inserted
+     @param inputPath   The relative input path from within the CSAR (can be a file or a directory
+     @param workdirName The name of the folder in witch the contents should be stored
+     @param fileName    the path at witch the files should be inserted
      in the container image (use <code>.</code> to insert at the working directory)
      @return the object itself to allow chaining (not needed though).
      @throws IOException gets thrown if the coping fails (passed through from the
      <code>copy</code> method of the PluginFileAccess)
      */
-    public DockerfileBuilder copyFromCsar(String inputPath, String workdirName, String containerPath) throws IOException {
+    public DockerfileBuilder copyFromCsar(String inputPath, String workdirName, String fileName) throws IOException {
         String dir = workingDir + "/" + workdirName;
         fileAccess.createDirectories(dir);
-        fileAccess.copy(inputPath, dir);
-        copyCommands.add(new CopyCommand(workdirName, containerPath));
+        fileAccess.copy(inputPath, dir + "/" + fileName);
+        copyCommands.add(new CopyCommand(workdirName + "/" + fileName, fileName));
         return this;
     }
 
@@ -155,6 +155,9 @@ public class DockerfileBuilder {
      or after a workdir command
      */
     private void addCopyCommandsToEntries() {
+        if (entries.size() <= 1) {
+            return;
+        }
         int index = (lastWorkdirCommand == 0) ? 1 : lastWorkdirCommand;
         index++;
         entries.addAll(index, copyCommands);
