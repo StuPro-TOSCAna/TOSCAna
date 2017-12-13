@@ -10,6 +10,7 @@ import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.visitor.VisitableNode;
+import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryApplication;
 import org.opentosca.toscana.plugins.cloudfoundry.visitors.CloudFoundryNodeVisitor;
 import org.opentosca.toscana.plugins.testdata.TestEffectiveModels;
 

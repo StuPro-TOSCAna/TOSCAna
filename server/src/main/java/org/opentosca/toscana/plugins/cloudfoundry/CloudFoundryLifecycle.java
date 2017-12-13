@@ -1,7 +1,6 @@
 package org.opentosca.toscana.plugins.cloudfoundry;
 
 import java.io.IOException;
-import java.security.Provider;
 import java.util.Map;
 import java.util.Set;
 
@@ -9,6 +8,8 @@ import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.visitor.VisitableNode;
 import org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryClient.CloudFoundryConnection;
+import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryApplication;
+import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryProvider;
 import org.opentosca.toscana.plugins.cloudfoundry.visitors.CloudFoundryNodeVisitor;
 import org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle;
 

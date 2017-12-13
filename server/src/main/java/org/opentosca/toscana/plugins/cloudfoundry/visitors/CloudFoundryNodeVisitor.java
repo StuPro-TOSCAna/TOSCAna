@@ -9,11 +9,12 @@ import org.opentosca.toscana.model.node.WebApplication;
 import org.opentosca.toscana.model.operation.Operation;
 import org.opentosca.toscana.model.operation.OperationVariable;
 import org.opentosca.toscana.model.visitor.StrictNodeVisitor;
-import org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryApplication;
+import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryApplication;
+import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryServiceType;
 
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryManifestAttribute.DISKSIZE;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryManifestAttribute.DOMAIN;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryManifestAttribute.MEMORY;
+import static org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryManifestAttribute.DISKSIZE;
+import static org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryManifestAttribute.DOMAIN;
+import static org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryManifestAttribute.MEMORY;
 
 public class CloudFoundryNodeVisitor implements StrictNodeVisitor {
 
@@ -56,7 +57,7 @@ public class CloudFoundryNodeVisitor implements StrictNodeVisitor {
         create service
         ignore password and port
          */
-        myApp.addService(node.getNodeName(), "mysql");
+        myApp.addService(node.getNodeName(), CloudFoundryServiceType.MYSQL);
     }
 
     @Override

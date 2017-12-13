@@ -7,7 +7,11 @@ import java.util.Map;
 
 import org.cloudfoundry.operations.services.ServiceOffering;
 import org.cloudfoundry.operations.services.ServicePlan;
+
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
+import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryApplication;
+import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryProvider;
+import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryServiceType;
 import org.opentosca.toscana.plugins.scripts.BashScript;
 import org.opentosca.toscana.plugins.scripts.EnvironmentCheck;
 
@@ -15,12 +19,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryManifestAttribute.ENVIRONMENT;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryManifestAttribute.SERVICE;
+import static org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryManifestAttribute.ENVIRONMENT;
+import static org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryManifestAttribute.SERVICE;
 
 /**
- * Creates all files which are necessary to deploy the application
- * Files: manifest.yml, builpack additions, deployScript
+ Creates all files which are necessary to deploy the application
+ Files: manifest.yml, builpack additions, deployScript
  */
 public class CloudFoundryFileCreator {
 
@@ -74,15 +78,13 @@ public class CloudFoundryFileCreator {
     }
 
     /**
-     * creates a service which depends on the template
-     * add it to the manifest
-     *
-     * @throws IOException
+     creates a service which depends on the template
+     add it to the manifest
      */
     private void createService() throws IOException {
         ArrayList<String> services = new ArrayList<>();
         services.add(String.format("  %s:", SERVICE.getName()));
-        for (Map.Entry<String, String> service : app.getServices().entrySet()) {
+        for (Map.Entry<String, CloudFoundryServiceType> service : app.getServices().entrySet()) {
             services.add(String.format("    - %s", service.getKey()));
         }
         for (String service : services) {
@@ -91,18 +93,16 @@ public class CloudFoundryFileCreator {
     }
 
     /**
-     * creates a deploy shell script
-     *
-     * @throws IOException
+     creates a deploy shell script
      */
     private void createDeployScript() throws IOException {
         BashScript deployScript = new BashScript(fileAccess, FILEPRAEFIX_DEPLOY + app.getName());
         deployScript.append(EnvironmentCheck.checkEnvironment("cf"));
 
-        if (app.getProvider() != null) {
+        if (app.getProvider() != null && !app.getServices().isEmpty()) {
             addProviderServiceOfferings(deployScript);
-            for (Map.Entry<String, String> service : app.getServices().entrySet()) {
-                String description = service.getValue();
+            for (Map.Entry<String, CloudFoundryServiceType> service : app.getServices().entrySet()) {
+                String description = service.getValue().getName();
                 CloudFoundryProvider provider = app.getProvider();
                 List<ServiceOffering> services = provider.getOfferedService();
                 Boolean isSet = false;
@@ -113,7 +113,7 @@ public class CloudFoundryFileCreator {
                     if (offeredService.getDescription().toLowerCase().indexOf(description.toLowerCase()) != -1) {
                         for (ServicePlan plan : offeredService.getServicePlans()) {
                             if (plan.getFree()) {
-                                deployScript.append(String.format("%s %s %s %s", CLI_CREATE_SERVICE,
+                                deployScript.append(String.format("%s%s %s %s", CLI_CREATE_SERVICE,
                                     offeredService.getLabel(), plan.getName(), service.getKey()));
                                 isSet = true;
                                 break;
@@ -127,11 +127,11 @@ public class CloudFoundryFileCreator {
                 }
             }
         } else {
-            for (Map.Entry<String, String> service : app.getServices().entrySet()) {
+            for (Map.Entry<String, CloudFoundryServiceType> service : app.getServices().entrySet()) {
                 deployScript.append(CLI_CREATE_SERVICE_DEFAULT + service.getKey());
             }
         }
-        
+
         deployScript.append(CLI_PUSH + app.getName());
     }
 
@@ -170,6 +170,8 @@ public class CloudFoundryFileCreator {
         List<ServiceOffering> services = provider.getOfferedService();
 
         deployScript.append("# following services you could choose:");
+        deployScript.append(String.format("# %-20s %-40s %-50s\n", "Name", " Plans", "Description"));
+
         for (ServiceOffering service : services) {
             String plans = "";
             for (ServicePlan plan : service.getServicePlans()) {
@@ -180,11 +182,10 @@ public class CloudFoundryFileCreator {
                     currentPlan = plan.getName() + "*";
                 }
 
-                plans = String.format("%s, %s, ", plans, currentPlan);
+                plans = String.format("%s %s ", plans, currentPlan);
             }
-            deployScript.append(String.format("# %s \t %s \t %s ", service.getLabel(), plans, service.getDescription()));
+            deployScript.append(String.format("# %-20s %-40s %-50s ", service.getLabel(), plans, service.getDescription()));
         }
         deployScript.append("\n* These service plans have an associated cost. Creating a service instance will incur this cost.");
     }
-
 }

@@ -5,6 +5,7 @@ import java.io.File;
 import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.core.transformation.logging.Log;
+import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryApplication;
 import org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle;
 
 import org.apache.commons.io.FileUtils;
@@ -17,12 +18,12 @@ import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator
 import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.FILESUFFIX_DEPLOY;
 import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.BUILDPACK_FILEPATH_PHP;
 import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.NAMEBLOCK;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryManifestAttribute.APPLICATIONS_SECTION;
+import static org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryManifestAttribute.APPLICATIONS_SECTION;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryManifestAttribute.ENVIRONMENT;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryManifestAttribute.SERVICE;
+import static org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryManifestAttribute.ENVIRONMENT;
+import static org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryManifestAttribute.SERVICE;
 
 public class CloudFoundryFileCreatorTest extends BaseUnitTest {
     private static CloudFoundryFileCreator fileCreator;

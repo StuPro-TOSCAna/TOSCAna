@@ -1,10 +1,10 @@
-package org.opentosca.toscana.plugins.cloudfoundry;
+package org.opentosca.toscana.plugins.cloudfoundry.application;
+
+import java.util.List;
 
 import org.cloudfoundry.operations.services.ServiceOffering;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+
 
 /**
  * Created by jensmuller on 05.12.17.
