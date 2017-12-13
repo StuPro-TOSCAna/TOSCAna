@@ -1,5 +1,6 @@
 package org.opentosca.toscana.plugins.kubernetes.util;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -42,7 +43,7 @@ public class NodeStack {
         return stackNodes.get(stackNodes.size() - 1);
     }
 
-    public void buildToDockerfile(TransformationContext context, BaseImageMapper mapper) {
+    public void buildToDockerfile(TransformationContext context, BaseImageMapper mapper) throws IOException {
         Logger logger = context.getLogger(NodeStack.class);
         ImageMappingVisitor mappingVisitor = new ImageMappingVisitor(mapper);
         for (int i = stackNodes.size() - 1; i >= 0; i--) {
