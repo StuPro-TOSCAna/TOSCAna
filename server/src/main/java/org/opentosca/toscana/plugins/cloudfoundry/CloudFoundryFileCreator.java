@@ -5,9 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.cloudfoundry.operations.services.ServiceOffering;
-import org.cloudfoundry.operations.services.ServicePlan;
-
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryApplication;
 import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryProvider;
@@ -15,6 +12,8 @@ import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryServic
 import org.opentosca.toscana.plugins.scripts.BashScript;
 import org.opentosca.toscana.plugins.scripts.EnvironmentCheck;
 
+import org.cloudfoundry.operations.services.ServiceOffering;
+import org.cloudfoundry.operations.services.ServicePlan;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

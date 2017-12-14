@@ -7,9 +7,9 @@ import java.util.Set;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.visitor.VisitableNode;
-import org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryClient.CloudFoundryConnection;
 import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryApplication;
 import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryProvider;
+import org.opentosca.toscana.plugins.cloudfoundry.cloudFoundryClient.CloudFoundryConnection;
 import org.opentosca.toscana.plugins.cloudfoundry.visitors.CloudFoundryNodeVisitor;
 import org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle;
 
@@ -18,7 +18,7 @@ import org.json.JSONException;
 public class CloudFoundryLifecycle extends AbstractLifecycle {
 
     private CloudFoundryProvider provider;
-    
+
     public CloudFoundryLifecycle(TransformationContext context) throws IOException {
         super(context);
     }
@@ -34,7 +34,7 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
         //throw new UnsupportedOperationException();
 
         Map<String, String> properties = context.getProperties().getPropertyValues();
-        
+
         if (!properties.isEmpty()) {
             String username = properties.get("username");
             String password = properties.get("password");

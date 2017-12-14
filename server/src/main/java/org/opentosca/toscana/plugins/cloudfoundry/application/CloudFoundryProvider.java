@@ -4,13 +4,12 @@ import java.util.List;
 
 import org.cloudfoundry.operations.services.ServiceOffering;
 
-
-
 /**
- * Created by jensmuller on 05.12.17.
+ Created by jensmuller on 05.12.17.
  */
 public class CloudFoundryProvider {
 
+    // will be expanded with several cloud Providers
     public enum CloudFoundryProviderType {
         PIVOTAL;
     }
@@ -28,5 +27,9 @@ public class CloudFoundryProvider {
 
     public List<ServiceOffering> getOfferedService() {
         return offeredService;
+    }
+
+    public CloudFoundryProviderType getName() {
+        return name;
     }
 }

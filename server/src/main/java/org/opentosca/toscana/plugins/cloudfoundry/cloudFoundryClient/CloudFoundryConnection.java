@@ -1,4 +1,4 @@
-package org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryClient;
+package org.opentosca.toscana.plugins.cloudfoundry.cloudFoundryClient;
 
 import java.util.List;
 
@@ -12,8 +12,8 @@ import org.cloudfoundry.reactor.client.ReactorCloudFoundryClient;
 import org.cloudfoundry.reactor.tokenprovider.PasswordGrantTokenProvider;
 
 /**
- * implements java-cf-client
- * create a connection to the cf provider
+ implements java-cf-client
+ create a connection to the cf provider
  */
 public class CloudFoundryConnection {
 
