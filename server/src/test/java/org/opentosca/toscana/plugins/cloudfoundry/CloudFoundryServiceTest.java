@@ -5,10 +5,10 @@ import java.io.File;
 import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.core.transformation.logging.Log;
-import org.opentosca.toscana.plugins.cloudfoundry.cloudFoundryClient.CloudFoundryConnection;
 import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryApplication;
 import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryProvider;
 import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryServiceType;
+import org.opentosca.toscana.plugins.cloudfoundry.client.CloudFoundryConnection;
 import org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle;
 
 import org.apache.commons.io.FileUtils;
@@ -17,8 +17,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 
-import static org.junit.Assume.assumeTrue;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assume.assumeTrue;
 import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.FILEPRAEFIX_DEPLOY;
 import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.FILESUFFIX_DEPLOY;
 

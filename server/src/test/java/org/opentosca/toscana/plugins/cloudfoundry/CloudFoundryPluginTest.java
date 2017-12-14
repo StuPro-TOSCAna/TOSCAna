@@ -20,16 +20,15 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.slf4j.LoggerFactory;
 
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.MANIFEST;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.CLI_CREATE_SERVICE_DEFAULT;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.CLI_PUSH;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.FILESUFFIX_DEPLOY;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.FILEPRAEFIX_DEPLOY;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.CLI_CREATE_SERVICE_DEFAULT;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.CLI_PUSH;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.FILEPRAEFIX_DEPLOY;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.FILESUFFIX_DEPLOY;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.MANIFEST;
 
 public class CloudFoundryPluginTest extends BaseUnitTest {
 

@@ -9,7 +9,7 @@ import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.visitor.VisitableNode;
 import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryApplication;
 import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryProvider;
-import org.opentosca.toscana.plugins.cloudfoundry.cloudFoundryClient.CloudFoundryConnection;
+import org.opentosca.toscana.plugins.cloudfoundry.client.CloudFoundryConnection;
 import org.opentosca.toscana.plugins.cloudfoundry.visitors.CloudFoundryNodeVisitor;
 import org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle;
 

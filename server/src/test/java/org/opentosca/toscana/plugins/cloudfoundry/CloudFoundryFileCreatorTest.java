@@ -13,15 +13,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.MANIFEST;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.FILEPRAEFIX_DEPLOY;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.FILESUFFIX_DEPLOY;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.BUILDPACK_FILEPATH_PHP;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.NAMEBLOCK;
-import static org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryManifestAttribute.APPLICATIONS_SECTION;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.BUILDPACK_FILEPATH_PHP;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.FILEPRAEFIX_DEPLOY;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.FILESUFFIX_DEPLOY;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.MANIFEST;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.NAMEBLOCK;
+import static org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryManifestAttribute.APPLICATIONS_SECTION;
 import static org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryManifestAttribute.ENVIRONMENT;
 import static org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryManifestAttribute.SERVICE;
 
@@ -67,7 +66,7 @@ public class CloudFoundryFileCreatorTest extends BaseUnitTest {
         fileCreator.createFiles();
         File targetFile = new File(targetDir, MANIFEST);
         String manifestContent = FileUtils.readFileToString(targetFile);
-        String expectedManifestContent = String.format("---\n%s:\n- %s: %s\n  %s:\n  %s:\n", 
+        String expectedManifestContent = String.format("---\n%s:\n- %s: %s\n  %s:\n  %s:\n",
             APPLICATIONS_SECTION.getName(), NAMEBLOCK, appName, ENVIRONMENT.getName(), SERVICE.getName());
 
         assertEquals(expectedManifestContent, manifestContent);

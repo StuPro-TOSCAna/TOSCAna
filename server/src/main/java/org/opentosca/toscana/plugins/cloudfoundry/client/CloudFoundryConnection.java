@@ -1,4 +1,4 @@
-package org.opentosca.toscana.plugins.cloudfoundry.cloudFoundryClient;
+package org.opentosca.toscana.plugins.cloudfoundry.client;
 
 import java.util.List;
 
