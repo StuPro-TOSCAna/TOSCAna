@@ -35,7 +35,7 @@ public class LampAppAWS {
     }
 
     public static Set<RootNode> getLampModel() {
-        return new LampApp().getLampApp();
+        return new LampAppAWS().getLampApp();
     }
 
     private void createLampModel() {
