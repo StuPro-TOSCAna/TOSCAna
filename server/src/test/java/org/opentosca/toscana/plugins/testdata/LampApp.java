@@ -21,6 +21,9 @@ import org.opentosca.toscana.model.operation.OperationVariable;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
 import org.opentosca.toscana.model.relation.AttachesTo;
 import org.opentosca.toscana.model.requirement.BlockStorageRequirement;
+import org.opentosca.toscana.model.requirement.HostRequirement;
+import org.opentosca.toscana.model.requirement.MysqlDbmsRequirement;
+import org.opentosca.toscana.model.requirement.WebServerRequirement;
 
 public class LampApp {
 
@@ -37,11 +40,17 @@ public class LampApp {
 
     private void createLampModel() {
 
-        testNodes.add(createComputeNode());
-        testNodes.add(createMysqlDbms());
-        testNodes.add(createMysqlDatabase());
-        testNodes.add(createApache());
-        testNodes.add(createWebApplication());
+        Compute compute = createComputeNode();
+        Apache webserver = createApache(compute);
+        MysqlDbms dbms = createMysqlDbms(compute);
+        MysqlDatabase database = createMysqlDatabase(dbms);
+        WebApplication webApplication = createWebApplication(webserver, database);
+
+        testNodes.add(compute);
+        testNodes.add(webserver);
+        testNodes.add(dbms);
+        testNodes.add(database);
+        testNodes.add(webApplication);
     }
 
     private Compute createComputeNode() {
@@ -81,38 +90,41 @@ public class LampApp {
         return containerCapabilityBuilder.build();
     }
 
-    private MysqlDbms createMysqlDbms() {
-        Operation dbmsOperation = Operation.builder()
-            .implementationArtifact("mysql_dbms/mysql_dbms_configure.sh")
-            .input(new OperationVariable("db_root_password"))
-            .build();
-
-        StandardLifecycle lifecycle = StandardLifecycle.builder()
-            .configure(dbmsOperation)
-            .build();
+    private MysqlDbms createMysqlDbms(Compute compute) {
 
         MysqlDbms mysqlDbms = MysqlDbms.builder(
             "mysql_dbms",
-            "geheim")
+            "geheim12")
+            .host(HostRequirement.builder().fulfiller(compute).build()) //TODO Relationship?
             .port(3306)
-            .lifecycle(lifecycle)
             .build();
 
         return mysqlDbms;
     }
 
-    private MysqlDatabase createMysqlDatabase() {
+    private MysqlDatabase createMysqlDatabase(MysqlDbms dbms) {
+        Operation databaseConfigureOperation = Operation.builder()
+            .implementationArtifact("mysql/createtable.sql")
+            .build();
+
+        StandardLifecycle lifecycle = StandardLifecycle.builder()
+            .configure(databaseConfigureOperation)
+            .build();
+
         DatabaseEndpointCapability dbEndpointCapability = DatabaseEndpointCapability
             .builder("127.0.0.1", new Port(3306))
             .build();
+
         MysqlDatabase mydb = MysqlDatabase
             .builder("my_db", "DBNAME", dbEndpointCapability)
+            .standardLifecycle(lifecycle)
+            .host(MysqlDbmsRequirement.builder().fulfiller(dbms).build()) //TODO Relationship?
             .build();
 
         return mydb;
     }
 
-    private Apache createApache() {
+    private Apache createApache(Compute compute) {
         ContainerCapability containerCapability = createContainerCapability();
         DatabaseEndpointCapability apacheEndpoint = DatabaseEndpointCapability
             .builder("127.0.0.1", new Port(3306))
@@ -126,13 +138,14 @@ public class LampApp {
             containerCapability,
             apacheEndpoint,
             adminEndpointCapability)
+            .host(HostRequirement.builder().fulfiller(compute).build()) //TODO Relationship
             .databaseEndpoint(apacheEndpoint)
             .build();
 
         return webServer;
     }
 
-    private WebApplication createWebApplication() {
+    private WebApplication createWebApplication(Apache webserver, MysqlDatabase database) {
         EndpointCapability endpointCapability = EndpointCapability
             .builder("127.0.0.1", new Port(80))
             .build();
@@ -145,13 +158,11 @@ public class LampApp {
             .build();
 
         Set<OperationVariable> appInputs = new HashSet<>();
-        appInputs.add(new OperationVariable("database_host"));
-        appInputs.add(new OperationVariable("database_password"));
-        appInputs.add(new OperationVariable("database_name"));
-        appInputs.add(new OperationVariable("database_user"));
-        OperationVariable dbPort = new OperationVariable("database_port");
-        dbPort.setValue("3306");
-        appInputs.add(dbPort);
+        appInputs.add(new OperationVariable("database_host")); //TODO what to put in here?
+        appInputs.add(new OperationVariable("database_password", database.getPassword().get()));
+        appInputs.add(new OperationVariable("database_name", database.getDatabaseName()));
+        appInputs.add(new OperationVariable("database_user", database.getUser().get()));
+        appInputs.add(new OperationVariable("database_port", database.getPort().get().toString()));
 
         Operation appConfigure = Operation.builder()
             .implementationArtifact("my_app/configure_myphpapp.sh")
@@ -162,8 +173,10 @@ public class LampApp {
             .create(appCreate)
             .configure(appConfigure)
             .build();
+
         WebApplication webApplication = WebApplication
             .builder("my_app", endpointCapability)
+            .host(WebServerRequirement.builder().fulfiller(webserver).build()) //TODO Relationship
             .standardLifecycle(webAppLifecycle)
             .build();
 

@@ -54,6 +54,10 @@ topology_template:
             port: { get_property: [ SELF, port ] }
       requirements:
         - host: mysql_dbms
+      interfaces:
+        Standard:
+          configure:
+            implementation: mysql/createtable.sql
 
     mysql_dbms:
       type: tosca.nodes.DBMS.MySQL
@@ -62,12 +66,6 @@ topology_template:
         port: { get_input: database_port }
       requirements:
         - host: server
-      interfaces:
-        Standard:
-          configure:
-            implementation: mysql_dbms/mysql_dbms_configure.sh
-            inputs:
-              db_root_password: { get_property: [ SELF, root_password ] }
 
     server:
       type: tosca.nodes.Compute
