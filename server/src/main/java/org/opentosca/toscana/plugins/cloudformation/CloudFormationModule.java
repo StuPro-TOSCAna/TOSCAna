@@ -1,6 +1,9 @@
 package org.opentosca.toscana.plugins.cloudformation;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
@@ -19,11 +22,26 @@ public class CloudFormationModule extends Module {
     public final static String CONFIG_INSTALL = "Install";
     public final static String CONFIG_CONFIGURE = "Configure";
     public final static String SECURITY_GROUP = "SecurityGroup";
-    // KeyName is an default input value
+    // KeyName is a default input value
     private static final String KEYNAME_DESCRIPTION = "Name of an existing EC2 KeyPair to enable SSH access to the instances";
     private static final String KEYNAME_TYPE = "AWS::EC2::KeyPair::KeyName";
     private static final String KEYNAME_CONSTRAINT_DESCRIPTION = "must be the name of an existing EC2 KeyPair.";
     private static final String KEYNAME = "KeyName";
+    private static final String USERDATA_NAME = "Join";
+    private static final String USERDATA_DELIMITER = "";
+    private static final String[] USERDATA_CONSTANT_PARAMS = {
+        "#!/bin/bash -xe\n",
+        "mkdir -p /tmp/aws-cfn-bootstrap-latest\n",
+        "curl https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz | tar xz -C /tmp/aws-cfn-bootstrap-latest --strip-components 1\n",
+        "apt-get update\n",
+        "apt-get -y install python-setuptools\n",
+        "easy_install /tmp/aws-cfn-bootstrap-latest\n",
+        "cp /tmp/aws-cfn-bootstrap-latest/init/ubuntu/cfn-hup /etc/init.d/cfn-hup\n",
+        "chmod 755 /etc/init.d/cfn-hup\n",
+        "update-rc.d cfn-hup defaults\n",
+        "# Install the files and packages from the metadata\n",
+        "/usr/local/bin/cfn-init -v ",
+        "         --stack "};
     
     private Object keyNameVar;
 
@@ -70,19 +88,8 @@ public class CloudFormationModule extends Module {
     }
 
     private Fn getUserDataFn(String resource, String configsets) {
-        return Fn.fnDelimiter("Join", "",
-            "#!/bin/bash -xe\n",
-            "mkdir -p /tmp/aws-cfn-bootstrap-latest\n",
-            "curl https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz | tar xz -C /tmp/aws-cfn-bootstrap-latest --strip-components 1\n",
-            "apt-get update\n",
-            "apt-get -y install python-setuptools\n",
-            "easy_install /tmp/aws-cfn-bootstrap-latest\n",
-            "cp /tmp/aws-cfn-bootstrap-latest/init/ubuntu/cfn-hup /etc/init.d/cfn-hup\n",
-            "chmod 755 /etc/init.d/cfn-hup\n",
-            "update-rc.d cfn-hup defaults\n",
-            "# Install the files and packages from the metadata\n",
-            "/usr/local/bin/cfn-init -v ",
-            "         --stack ",
+        // Initialise params that need refs
+        Object[] userdataRefParams = {
             template.ref("AWS::StackName"),
             "         --resource " + resource + " ",
             "         --configsets " + configsets + " ",
@@ -96,7 +103,14 @@ public class CloudFormationModule extends Module {
             "         --resource " + resource + " ",
             "         --region ",
             template.ref("AWS::Region"),
-            "\n");
+            "\n"};
+        
+        // Combine constant params with ref params
+        List params = new ArrayList<Object>();
+        Collections.addAll(params, USERDATA_CONSTANT_PARAMS);
+        Collections.addAll(params, userdataRefParams);
+
+        return Fn.fnDelimiter(USERDATA_NAME, USERDATA_DELIMITER, params.toArray());
     }
 
     @Override
