@@ -55,7 +55,7 @@ public class NodeStack {
             throw new UnsupportedOperationException("Transformation of the Stack " + this + " is not possible!");
         }
         String baseImage = mappingVisitor.getBaseImage().get();
-        logger.debug("Determined Base Image {} for stack {}", baseImage, this);
+        logger.info("Determined Base Image {} for stack {}", baseImage, this);
 
         DockerfileBuildingVisitor visitor = new DockerfileBuildingVisitor(baseImage, this, context);
         visitor.buildAndWriteDockerfile();
