@@ -13,8 +13,8 @@ import org.apache.commons.io.FileUtils;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 
-public class CloudFormationLampIT extends BaseTransformTest{
-    public CloudFormationLampIT() throws Exception{
+public class CloudFormationLampIT extends BaseTransformTest {
+    public CloudFormationLampIT() throws Exception {
         super(new CloudFormationPlugin());
     }
     @Override

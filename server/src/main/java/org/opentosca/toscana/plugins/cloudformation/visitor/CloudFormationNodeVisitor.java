@@ -2,7 +2,6 @@ package org.opentosca.toscana.plugins.cloudformation.visitor;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Optional;
 
 import org.opentosca.toscana.model.capability.ComputeCapability;
 import org.opentosca.toscana.model.capability.OsCapability;
