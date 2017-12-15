@@ -6,6 +6,10 @@ metadata:
   template_version: 1.0
 
 
+artifact_types:
+  SQL:
+    derived_from: tosca.artifacts.Implementation
+
 topology_template:
   inputs:
     database_name:
@@ -54,6 +58,10 @@ topology_template:
             port: { get_property: [ SELF, port ] }
       requirements:
         - host: mysql_dbms
+      artifacts:
+        my_sql_table:
+          file: mysql/createtable.sql
+          type: SQL
 
     mysql_dbms:
       type: tosca.nodes.DBMS.MySQL
@@ -62,12 +70,6 @@ topology_template:
         port: { get_input: database_port }
       requirements:
         - host: server
-      interfaces:
-        Standard:
-          configure:
-            implementation: mysql_dbms/mysql_dbms_configure.sh
-            inputs:
-              db_root_password: { get_property: [ SELF, root_password ] }
 
     server:
       type: tosca.nodes.Compute
@@ -85,8 +87,10 @@ topology_template:
 
   outputs:
     public_address:
+      type: string
       description: Public address of the server
       value: { get_attribute: [ server, public_address ] }
     port:
       description: Port of the server
+      type: string
       value: { get_attribute: [ server, port ] }
