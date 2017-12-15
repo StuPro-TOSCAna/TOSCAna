@@ -152,9 +152,9 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
     @Override
     public void visit(MysqlDbms node) {
         logger.debug("Visit MysqlDbms node " + node.getNodeName() + ".");
-        // Get the host of this DBMS node
-        String host = toAlphanumerical(node.getHost().getCapability().getResourceName().get());
         // TODO what to do if there is a configure script
+        // Get the host of this DBMS node
+        // String host = toAlphanumerical(node.getHost().getCapability().getResourceName().get());
     }
 
     @Override
@@ -258,7 +258,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                 // add inputs to environment, but where to get other needed variables?
                 for (OperationVariable input : operation.getInputs()) {
                     Object value = checkOrDefault(input.getValue(), "");
-                    if (value == "" && input.getKey().contains("host")) {
+                    if (value.equals("") && input.getKey().contains("host")) {
                         value = cfnModule.fnGetAtt("mydb", "Endpoint.Address");
                     }
                     cfnCommand.addEnv(input.getKey(), value); //TODO add default
