@@ -111,7 +111,7 @@ public class KubernetesLifecycle extends AbstractLifecycle {
         );
 
         logger.debug("Building complete Topology stacks");
-        buildTopologyStacks(model, topLevelNodes, nodes);
+        this.stacks.addAll(buildTopologyStacks(model, topLevelNodes, nodes));
     }
 
     @Override
@@ -134,7 +134,7 @@ public class KubernetesLifecycle extends AbstractLifecycle {
         logger.info("Building Docker images");
         stacks.forEach(e -> {
             logger.info("Building {}", e);
-            DockerImageBuilder builder = new DockerImageBuilder(e.getStackName(), "output/docker/" + e.getDockerfilePath().get(), context);
+            DockerImageBuilder builder = new DockerImageBuilder(e.getStackName(), e.getDockerfilePath().get(), context);
             try {
                 builder.buildImage("output/docker/" + e.getStackName() + ".tar.gz");
             } catch (Exception ex) {
