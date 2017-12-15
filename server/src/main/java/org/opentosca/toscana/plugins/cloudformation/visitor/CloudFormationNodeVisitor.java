@@ -2,8 +2,6 @@ package org.opentosca.toscana.plugins.cloudformation.visitor;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import org.opentosca.toscana.model.capability.ComputeCapability;
@@ -26,8 +24,6 @@ import com.scaleset.cfbuilder.ec2.metadata.CFNCommand;
 import com.scaleset.cfbuilder.ec2.metadata.CFNFile;
 import com.scaleset.cfbuilder.ec2.metadata.CFNInit;
 import com.scaleset.cfbuilder.ec2.metadata.CFNPackage;
-import com.scaleset.cfbuilder.ec2.metadata.CFNService;
-import com.scaleset.cfbuilder.ec2.metadata.SimpleService;
 import com.scaleset.cfbuilder.rds.DBInstance;
 import org.slf4j.Logger;
 
@@ -194,122 +190,12 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
 
         if (node.getStandardLifecycle().getCreate().isPresent()) {
             Operation create = node.getStandardLifecycle().getCreate().get();
-
-            // add dependencies
-            for (String dependency : create.getDependencies()) {
-                String cfnFilePath = "/home/ubuntu/"; // TODO Check what path is needed
-                try {
-                    String cfnFileMode = "000600"; //TODO Check what mode is needed
-                    String cfnFileOwner = "www-data"; //TODO Check what Owner is needed
-                    String cfnFileGroup = "www-data"; //TODO Check what Group is needed
-
-                    CFNFile cfnFile = new CFNFile(cfnFilePath + dependency)// remove beginning of dependency?
-                        .setContent(cfnModule.fileAccess.read(dependency))
-                        .setMode(cfnFileMode)
-                        .setOwner(cfnFileOwner)
-                        .setGroup(cfnFileGroup);
-
-                    cfnModule.getCFNInit(serverName)
-                        .getOrAddConfig(CONFIG_SETS, CONFIG_INSTALL)
-                        .putFile(cfnFile); //put commands, files
-                } catch (IOException e){
-                    logger.error("Problem with file " + dependency);
-                    e.printStackTrace();
-                }
-            }
-
-            //Add ImplementationArtifact
-            String implementationArtifact = create.getImplementationArtifact().get();
-            String cfnFilePath = "/home/ubuntu/"; // TODO Check what path is needed from Implementationartifact?
-
-            String cfnFileMode = "000500"; //TODO Check what mode is needed
-            String cfnFileOwner = "root"; //TODO Check what Owner is needed
-            String cfnFileGroup = "root"; //TODO Check what Group is needed
-
-            try {
-                CFNFile cfnFile = new CFNFile(cfnFilePath + implementationArtifact)
-                    .setContent(cfnModule.fileAccess.read(implementationArtifact))
-                    .setMode(cfnFileMode)
-                    .setOwner(cfnFileOwner)
-                    .setGroup(cfnFileGroup);
-
-                CFNCommand cfnCommand = new CFNCommand(implementationArtifact,
-                    "/bin/sh " + cfnFilePath + implementationArtifact)
-                    .setCwd(cfnFilePath + new File(implementationArtifact).getParent()); //TODO remove beginning of dependency?
-                // add inputs to environment, but where to get other needed variables?
-                for (OperationVariable input : create.getInputs()) {
-                    cfnCommand.addEnv(input.getKey(), checkOrDefault(input.getValue(), "")); //TODO add default
-                }
-                cfnModule.getCFNInit(serverName)
-                    .getOrAddConfig(CONFIG_SETS, CONFIG_INSTALL)
-                    .putFile(cfnFile)
-                    .putCommand(cfnCommand); //put commands
-            } catch (IOException e) {
-                logger.error("Problem with file " + implementationArtifact);
-                e.printStackTrace();
-            }
+            handleOperation(create, serverName, CONFIG_INSTALL);
         }
 
         if (node.getStandardLifecycle().getConfigure().isPresent()) {
             Operation configure = node.getStandardLifecycle().getConfigure().get();
-
-            // add dependencies
-            for (String dependency : configure.getDependencies()) {
-                String cfnFilePath = "tmp/"; // TODO Check what path is needed
-                // dumping content from file
-                String cfnFileContent = "|\n"; //TODO Check when this is needed
-                cfnFileContent += "<html>\n" +
-                    "#!/bin/bash"; //TODO add content, currently does nothing.
-                String cfnFileMode = "000500"; //TODO Check what mode is needed
-                String cfnFileOwner = "root"; //TODO Check what Owner is needed
-                String cfnFileGroup = "root"; //TODO Check what Group is needed
-
-                CFNFile cfnFile = new CFNFile(cfnFilePath + dependency) // remove beginning of dependency?
-                    .setContent(cfnFileContent)
-                    .setMode(cfnFileMode)
-                    .setOwner(cfnFileOwner)
-                    .setGroup(cfnFileGroup);
-
-                cfnModule.getCFNInit(serverName)
-                    .getOrAddConfig(CONFIG_SETS, CONFIG_CONFIGURE)
-                    .putFile(cfnFile); //put commands, files
-            }
-
-            //Add ImplementationArtifact
-            String implementationArtifact = configure.getImplementationArtifact().get();
-            String cfnFilePath = "/home/ubuntu/"; // TODO Check what path is needed from Implementationartifact?
-
-            String cfnFileMode = "000500"; //TODO Check what mode is needed
-            String cfnFileOwner = "root"; //TODO Check what Owner is needed
-            String cfnFileGroup = "root"; //TODO Check what Group is needed
-
-            try {
-                CFNFile cfnFile = new CFNFile(cfnFilePath + implementationArtifact)
-                    .setContent(cfnModule.fileAccess.read(implementationArtifact))
-                    .setMode(cfnFileMode)
-                    .setOwner(cfnFileOwner)
-                    .setGroup(cfnFileGroup);
-
-                CFNCommand cfnCommand = new CFNCommand(implementationArtifact,
-                    "/bin/sh " + cfnFilePath + implementationArtifact)
-                    .setCwd(cfnFilePath + new File(implementationArtifact).getParent()); // remove beginning of dependency?
-                // add inputs to environment, but where to get other needed variables?
-                for (OperationVariable input : configure.getInputs()) {
-                    Object value = checkOrDefault(input.getValue(), "");
-                    if (value == "" && input.getKey().contains("host")) {
-                        value = cfnModule.fnGetAtt("mydb", "Endpoint.Address");
-                    }
-                    cfnCommand.addEnv(input.getKey(), value); //TODO add default
-                }
-                cfnModule.getCFNInit(serverName)
-                    .getOrAddConfig(CONFIG_SETS, CONFIG_CONFIGURE)
-                    .putFile(cfnFile)
-                    .putCommand(cfnCommand)
-                    .putCommand(new CFNCommand("restart apache2", "service apache2 restart")); //put commands
-            } catch (IOException e) {
-                logger.error("Problem with " + implementationArtifact);
-                e.printStackTrace();
-            }
+            handleOperation(configure, serverName, CONFIG_CONFIGURE);
         }
     }
 
@@ -324,8 +210,68 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
     private String toAlphanumerical(String inp) {
         return inp.replaceAll("[^A-Za-z0-9]", "");
     }
-    
-    private void handleStandardLifecycle(){
-        
+
+    private void handleOperation(Operation operation, String serverName, String config) {
+        String cfnFilePath = "/home/ubuntu/"; // TODO Check what path is needed
+
+        //Add dependencies
+        for (String dependency : operation.getDependencies()) {
+            try {
+                String cfnFileMode = "000400"; //TODO Check what mode is needed (only read?)
+                String cfnFileOwner = "root"; //TODO Check what Owner is needed
+                String cfnFileGroup = "root"; //TODO Check what Group is needed
+
+                CFNFile cfnFile = new CFNFile(cfnFilePath + dependency)
+                    .setContent(cfnModule.getFileAccess().read(dependency))
+                    .setMode(cfnFileMode)
+                    .setOwner(cfnFileOwner)
+                    .setGroup(cfnFileGroup);
+
+                // Add file to install
+                cfnModule.getCFNInit(serverName)
+                    .getOrAddConfig(CONFIG_SETS, config)
+                    .putFile(cfnFile);
+            } catch (IOException e) {
+                logger.error("Problem with reading file " + dependency);
+                e.printStackTrace();
+            }
+        }
+
+        //Add ImplementationArtifact
+        if (operation.getImplementationArtifact().isPresent()) {
+            String implementationArtifact = operation.getImplementationArtifact().get();
+
+            String cfnFileMode = "000500"; //TODO Check what mode is needed (read? + execute?)
+            String cfnFileOwner = "root"; //TODO Check what Owner is needed
+            String cfnFileGroup = "root"; //TODO Check what Group is needed
+
+            try {
+                CFNFile cfnFile = new CFNFile(cfnFilePath + implementationArtifact)
+                    .setContent(cfnModule.getFileAccess().read(implementationArtifact))
+                    .setMode(cfnFileMode)
+                    .setOwner(cfnFileOwner)
+                    .setGroup(cfnFileGroup);
+
+                CFNCommand cfnCommand = new CFNCommand(implementationArtifact,
+                    "./" + cfnFilePath + implementationArtifact)
+                    .setCwd(cfnFilePath + new File(implementationArtifact).getParent());
+                // add inputs to environment, but where to get other needed variables?
+                for (OperationVariable input : operation.getInputs()) {
+                    Object value = checkOrDefault(input.getValue(), "");
+                    if (value == "" && input.getKey().contains("host")) {
+                        value = cfnModule.fnGetAtt("mydb", "Endpoint.Address");
+                    }
+                    cfnCommand.addEnv(input.getKey(), value); //TODO add default
+                }
+                cfnModule.getCFNInit(serverName)
+                    .getOrAddConfig(CONFIG_SETS, config)
+                    .putFile(cfnFile)
+                    .putCommand(cfnCommand)
+                    .putCommand(new CFNCommand("restart apache2", "service apache2 restart")); //put commands
+            } catch (IOException e) {
+                logger.error("Problem with reading file " + implementationArtifact);
+                e.printStackTrace();
+            }
+        }
     }
 }
