@@ -61,6 +61,6 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
 
     @Override
     public void cleanup() {
-//        TODO implement cleanup
+        //noop
     }
 }
