@@ -24,14 +24,20 @@ public class CloudFormationModule extends Module {
     private static final String KEYNAME_TYPE = "AWS::EC2::KeyPair::KeyName";
     private static final String KEYNAME_CONSTRAINT_DESCRIPTION = "must be the name of an existing EC2 KeyPair.";
     private static final String KEYNAME = "KeyName";
+
     private Object keyName;
 
     private Object keyNameVar;
 
     private Map<String, CFNInit> cfnInitMap;
 
-    public PluginFileAccess fileAccess;
+    private PluginFileAccess fileAccess;
 
+    /**
+     Create a Module which uses the cloudformation-builder to build an AWS CloudFormation template
+
+     @param fileAccess fileAccess to append the content of files to the template
+     */
     public CloudFormationModule(PluginFileAccess fileAccess) {
         this.id("").template(new Template());
         keyName = strParam(KEYNAME).type(KEYNAME_TYPE).description(KEYNAME_DESCRIPTION).constraintDescription(KEYNAME_CONSTRAINT_DESCRIPTION);
@@ -40,14 +46,27 @@ public class CloudFormationModule extends Module {
         this.fileAccess = fileAccess;
     }
 
+    /**
+     Put a CFNInit into a map which will be added to the resource at build time
+     @param resource resource to add CFNInit to
+     @param init CNFInit to add
+     */
     public void putCFNInit(String resource, CFNInit init) {
         cfnInitMap.put(resource, init);
     }
 
+    /**
+     Get the CFNInit which belongs to a specific resource
+
+     @param resource String id of a resource
+     */
     public CFNInit getCFNInit(String resource) {
         return this.cfnInitMap.get(resource);
     }
 
+    /**
+     Get a ref to the KeyName of this template
+     */
     public Object getKeyNameVar() {
         return this.keyNameVar;
     }
@@ -93,6 +112,18 @@ public class CloudFormationModule extends Module {
         return "";
     }
 
+    /**
+     Get the fileAccess of this module
+     @return
+     */
+    public PluginFileAccess getFileAccess() {
+        return fileAccess;
+    }
+
+    /**
+     Build the template
+     1. Add CFNInit to corresponding instance resource
+     */
     public void build() {
         for (Map.Entry<String, CFNInit> pair : cfnInitMap.entrySet()) {
             Resource res = this.getResource(pair.getKey());

@@ -33,10 +33,10 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
     public void prepare() {
 //        TODO implement preparation
     }
-
+    
     @Override
     public void transform() {
-        logger.debug("Begin transformation to CloudFormation.");
+        logger.info("Begin transformation to CloudFormation.");
         PluginFileAccess fileAccess = context.getPluginFileAccess();
         CloudFormationModule cfnModule = new CloudFormationModule(fileAccess);
         Set<RootNode> nodes = model.getNodes();
@@ -55,9 +55,9 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
             }
             
             fileAccess.access("output/template.yaml").appendln(cfnModule.toString()).close();
-            logger.debug("Transformation to CloudFormation successful.");
+            logger.info("Transformation to CloudFormation successful.");
         } catch (Exception e) {
-            logger.debug("Transformation to CloudFormation unsuccessful. Please check the StackTrace for more Info.");
+            logger.error("Transformation to CloudFormation unsuccessful. Please check the StackTrace for more Info.");
             e.printStackTrace();
         }
     }
