@@ -12,9 +12,6 @@ import org.opentosca.toscana.model.visitor.VisitableNode;
 import org.opentosca.toscana.plugins.cloudformation.visitor.CloudFormationNodeVisitor;
 import org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class CloudFormationLifecycle extends AbstractLifecycle {
     private final EffectiveModel model;
 

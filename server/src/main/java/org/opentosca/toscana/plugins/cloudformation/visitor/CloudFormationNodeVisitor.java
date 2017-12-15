@@ -258,7 +258,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                 // add inputs to environment, but where to get other needed variables?
                 for (OperationVariable input : operation.getInputs()) {
                     Object value = checkOrDefault(input.getValue(), "");
-                    if (value.equals("") && input.getKey().contains("host")) {
+                    if ("".equals(value) && input.getKey().contains("host")) {
                         value = cfnModule.fnGetAtt("mydb", "Endpoint.Address");
                     }
                     cfnCommand.addEnv(input.getKey(), value); //TODO add default
