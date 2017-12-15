@@ -114,7 +114,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             String serverName;
             if (node.host.getFulfillers().size() == 1) {
                 MysqlDbms mysqlDbms = node.host.getFulfillers().toArray(new MysqlDbms[1])[0];
-                serverName = toAlphanumerical(mysqlDbms.getHost().getCapability().getName().get());
+                serverName = toAlphanumerical(mysqlDbms.getHost().getCapability().getResourceName().get());
             } else {
                 throw new IllegalStateException("More than one fulfiller");
             }
@@ -153,7 +153,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
     public void visit(MysqlDbms node) {
         logger.debug("Visit MysqlDbms node " + node.getNodeName() + ".");
         // Get the host of this DBMS node
-        String host = toAlphanumerical(node.getHost().getCapability().getName().get());
+        String host = toAlphanumerical(node.getHost().getCapability().getResourceName().get());
         // TODO what to do if there is a configure script
     }
 
@@ -162,9 +162,9 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
         logger.debug("Visit Apache node " + node.getNodeName() + ".");
         // check if host is available
         ComputeCapability computeCapability = node.getHost().getCapability();
-        if (computeCapability.getName().isPresent()) {
+        if (computeCapability.getResourceName().isPresent()) {
             //Hosted on name
-            String host = toAlphanumerical(computeCapability.getName().get());
+            String host = toAlphanumerical(computeCapability.getResourceName().get());
 
             cfnModule.getCFNInit(host)
                 .getOrAddConfig(CONFIG_SETS, CONFIG_INSTALL)
@@ -183,7 +183,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
         String serverName;
         if (node.getHost().getFulfillers().size() == 1) {
             WebServer webServer = node.getHost().getFulfillers().toArray(new WebServer[1])[0];
-            serverName = toAlphanumerical(webServer.getHost().getCapability().getName().get());
+            serverName = toAlphanumerical(webServer.getHost().getCapability().getResourceName().get());
         } else {
             throw new IllegalStateException("More than one or no fulfiller");
         }
