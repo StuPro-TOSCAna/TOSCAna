@@ -33,14 +33,14 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
     public void prepare() {
 //        TODO implement preparation
     }
-    
+
     @Override
     public void transform() {
         logger.info("Begin transformation to CloudFormation.");
         PluginFileAccess fileAccess = context.getPluginFileAccess();
         CloudFormationModule cfnModule = new CloudFormationModule(fileAccess);
         Set<RootNode> nodes = model.getNodes();
-        
+
         try {
             CloudFormationNodeVisitor cfnNodeVisitor = new CloudFormationNodeVisitor(logger, cfnModule);
             for (VisitableNode node : nodes) {
@@ -53,7 +53,7 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
                     node.accept(cfnNodeVisitor);
                 }
             }
-            
+
             fileAccess.access("output/template.yaml").appendln(cfnModule.toString()).close();
             logger.info("Transformation to CloudFormation successful.");
         } catch (Exception e) {

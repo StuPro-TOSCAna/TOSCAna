@@ -33,8 +33,8 @@ import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.SECURITY_GROUP;
 
 /**
- Class for building a CloudFormation template from an effective model instance via the visitor pattern. Currently only
- supports LAMP-stacks built with Compute, WebApplication, Apache, MySQL, MySQL nodes.
+ * Class for building a CloudFormation template from an effective model instance via the visitor pattern. Currently only
+ * supports LAMP-stacks built with Compute, WebApplication, Apache, MySQL, MySQL nodes.
  */
 public class CloudFormationNodeVisitor implements StrictNodeVisitor {
 
@@ -42,11 +42,11 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
     private CloudFormationModule cfnModule;
 
     /**
-     Creates a <tt>CloudFormationNodeVisitor<tt> in order to build a template with the given
-     <tt>CloudFormationModule<tt>.
-
-     @param logger    Logger for logging visitor behaviour
-     @param cfnModule Module to build the template model
+     * Creates a <tt>CloudFormationNodeVisitor<tt> in order to build a template with the given
+     * <tt>CloudFormationModule<tt>.
+     *
+     * @param logger    Logger for logging visitor behaviour
+     * @param cfnModule Module to build the template model
      */
     public CloudFormationNodeVisitor(Logger logger, CloudFormationModule cfnModule) throws Exception {
         this.logger = logger;
