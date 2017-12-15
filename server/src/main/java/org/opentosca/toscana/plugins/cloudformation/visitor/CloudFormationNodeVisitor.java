@@ -120,9 +120,9 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             }
             String dbName = node.getDatabaseName();
             //throw error, take default or generate random?
-            String masterUser = checkOrDefault(node.getUser(), "root");
-            String masterPassword = checkOrDefault(node.getPassword(), "abcd1234");
-            Integer port = checkOrDefault(node.getPort(), 3306);
+            String masterUser = node.getUser().orElseThrow(() -> new IllegalArgumentException("Database user not set"));
+            String masterPassword = node.getPassword().orElseThrow(() -> new IllegalArgumentException("Database password not set"));
+            Integer port = node.getPort().orElse(3306);
             //TODO check downwards to compute and take its values
             String dBInstanceClass = "db.t2.micro";
             Integer allocatedStorage = 20;
@@ -199,14 +199,6 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
         }
     }
 
-    private String checkOrDefault(Optional<String> optional, String def) {
-        return optional.isPresent() ? optional.get() : def;
-    }
-
-    private Integer checkOrDefault(Optional<Integer> optional, Integer def) {
-        return optional.isPresent() ? optional.get() : def;
-    }
-
     private String toAlphanumerical(String inp) {
         return inp.replaceAll("[^A-Za-z0-9]", "");
     }
@@ -253,11 +245,11 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                     .setGroup(cfnFileGroup);
 
                 CFNCommand cfnCommand = new CFNCommand(implementationArtifact,
-                    "./" + cfnFilePath + implementationArtifact)
+                    cfnFilePath + implementationArtifact) //file is the full path, so need for "./"
                     .setCwd(cfnFilePath + new File(implementationArtifact).getParent());
                 // add inputs to environment, but where to get other needed variables?
                 for (OperationVariable input : operation.getInputs()) {
-                    Object value = checkOrDefault(input.getValue(), "");
+                    Object value = input.getValue().orElse("");
                     if ("".equals(value) && input.getKey().contains("host")) {
                         value = cfnModule.fnGetAtt("mydb", "Endpoint.Address");
                     }

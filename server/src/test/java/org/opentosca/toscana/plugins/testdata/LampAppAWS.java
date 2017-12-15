@@ -99,7 +99,7 @@ public class LampAppAWS {
 
         MysqlDbms mysqlDbms = MysqlDbms.builder(
             "mysql_dbms",
-            "geheim")
+            "geheim12")
             .port(3306)
             .lifecycle(lifecycle)
             .host(getHostedOnServerRequirement())
@@ -115,6 +115,9 @@ public class LampAppAWS {
         MysqlDatabase mydb = MysqlDatabase
             .builder("my_db", "DBNAME", dbEndpointCapability)
             .host(MysqlDbmsRequirement.builder().fulfiller(mysqlDbms).build())
+            .user("root")
+            .password("geheim12")
+            .databaseName("DBNAME")
             .build();
 
         return mydb;
@@ -155,9 +158,8 @@ public class LampAppAWS {
 
         Set<OperationVariable> appInputs = new HashSet<>();
         appInputs.add(new OperationVariable("database_host"));
-        appInputs.add(new OperationVariable("database_password"));
-        appInputs.add(new OperationVariable("database_name"));
-        appInputs.add(new OperationVariable("database_user"));
+        appInputs.add(new OperationVariable("database_password", "geheim12"));
+        appInputs.add(new OperationVariable("database_name", "DBNAME"));
         OperationVariable dbPort = new OperationVariable("database_port");
         dbPort.setValue("3306");
         appInputs.add(dbPort);
