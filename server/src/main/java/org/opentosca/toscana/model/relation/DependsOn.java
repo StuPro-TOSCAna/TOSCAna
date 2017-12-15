@@ -11,13 +11,24 @@ import lombok.Data;
 @Data
 public class DependsOn extends RootRelationship {
 
+    public DependsOn() {
+        super(null);
+    }
+
     @Builder
     protected DependsOn(String description) {
         super(description);
     }
 
+    public static RootRelationship getFallback(RootRelationship rel) {
+        return (rel == null) ? builder().build() : rel;
+    }
+
     @Override
     public void accept(RelationshipVisitor v) {
         v.visit(this);
+    }
+
+    public static class DependsOnBuilder extends DescribableEntityBuilder {
     }
 }

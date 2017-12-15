@@ -23,9 +23,9 @@ import org.springframework.stereotype.Repository;
 @Profile("!" + Profiles.EXCLUDE_BASE_IMAGE_MAPPER)
 public class TagStorage {
 
-    private static final Logger logger = LoggerFactory.getLogger(TagStorage.class);
+    public static final String DOCKER_IMAGE_TAGS = "misc/docker-tagbase.json";
 
-    private static final String DOCKER_IMAGE_TAGS = "misc/docker-tagbase.json";
+    private static final Logger logger = LoggerFactory.getLogger(TagStorage.class);
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
 

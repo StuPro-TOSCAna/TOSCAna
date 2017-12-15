@@ -1,9 +1,6 @@
 package org.opentosca.toscana.core;
 
 import org.opentosca.toscana.IntegrationTest;
-import org.opentosca.toscana.core.BaseSpringTest;
-import org.opentosca.toscana.core.CoreConfiguration;
-import org.opentosca.toscana.core.Main;
 
 import org.junit.experimental.categories.Category;
 import org.springframework.boot.context.embedded.LocalServerPort;
@@ -21,7 +18,7 @@ import static org.opentosca.toscana.core.testdata.TestProfiles.INTEGRATION_TEST_
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
 @ContextConfiguration(classes = {Main.class, CoreConfiguration.class})
-@ActiveProfiles(INTEGRATION_TEST_PROFILE)
+@ActiveProfiles( {INTEGRATION_TEST_PROFILE, "base-image-mapper"})
 @Category(IntegrationTest.class)
 public abstract class BaseSpringIntegrationTest extends BaseSpringTest {
 

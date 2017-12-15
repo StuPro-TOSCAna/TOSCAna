@@ -9,7 +9,6 @@ import org.opentosca.toscana.model.visitor.CapabilityVisitor;
 
 import lombok.Builder;
 import lombok.Data;
-import lombok.Singular;
 
 /**
  The default TOSCA type to express an Operating System capability for a node.
@@ -44,7 +43,7 @@ public class OsCapability extends Capability {
                            Type type,
                            Distribution distribution,
                            String version,
-                           @Singular Set<Class<? extends RootNode>> validSourceTypes,
+                           Set<Class<? extends RootNode>> validSourceTypes,
                            Range occurence,
                            String description) {
         super(validSourceTypes, occurence, description);
@@ -113,5 +112,8 @@ public class OsCapability extends Capability {
         BUSYBOX,
         OPEN_SUSE,
         // might grow
+    }
+
+    public static class OsCapabilityBuilder extends CapabilityBuilder {
     }
 }

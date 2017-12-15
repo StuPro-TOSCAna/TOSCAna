@@ -15,17 +15,15 @@ import lombok.Singular;
 public class HostRequirement extends Requirement<ContainerCapability, Compute, HostedOn> {
 
     @Builder
-    protected HostRequirement(ContainerCapability capability, 
-                              Range occurrence, 
-                              @Singular Set<Compute> fulfillers, 
+    protected HostRequirement(ContainerCapability capability,
+                              Range occurrence,
+                              @Singular Set<Compute> fulfillers,
                               HostedOn relationship) {
-        super(capability, occurrence, fulfillers, relationship);
+        super(ContainerCapability.getFallback(capability), occurrence,
+            fulfillers, HostedOn.getFallback(relationship));
     }
-    
-    public static HostRequirementBuilder builder(ContainerCapability capability, HostedOn relationship){
-        return new HostRequirementBuilder()
-            .capability(capability)
-            .relationship(relationship);
-        
+
+    public static HostRequirement getFallback(HostRequirement host) {
+        return (host == null) ? HostRequirement.builder().build() : host;
     }
 }

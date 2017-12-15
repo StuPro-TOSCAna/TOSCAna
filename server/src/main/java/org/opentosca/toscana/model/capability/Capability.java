@@ -1,6 +1,6 @@
 package org.opentosca.toscana.model.capability;
 
-import java.util.Objects;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.opentosca.toscana.model.DescribableEntity;
@@ -8,9 +8,9 @@ import org.opentosca.toscana.model.datatype.Range;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.visitor.VisitableCapability;
 
+import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
-import lombok.Singular;
 
 /**
  Defines a set of data that can be associated with a {@link RootNode} to describe its capability or feature.
@@ -34,11 +34,28 @@ public abstract class Capability extends DescribableEntity implements VisitableC
     @NonNull
     private final Range occurence;
 
-    protected Capability(@Singular Set<Class<? extends RootNode>> validSourceTypes,
+    @Builder
+    protected Capability(Set<Class<? extends RootNode>> validSourceTypes,
                          Range occurence,
                          String description) {
         super(description);
-        this.validSourceTypes = Objects.requireNonNull(validSourceTypes);
+        this.validSourceTypes = (validSourceTypes == null) ? new HashSet<>() : validSourceTypes;
         this.occurence = (occurence != null) ? occurence : Range.AT_LEAST_ONCE;
+    }
+
+    public static class CapabilityBuilder extends DescribableEntityBuilder {
+
+        private Set<Class<? extends RootNode>> validSourceTypes = new HashSet<>();
+
+        @Override
+        public Capability build() {
+            // should never be called (RootNode is abstract)
+            throw new UnsupportedOperationException();
+        }
+
+        public CapabilityBuilder validSourceType(Class<? extends RootNode> sourceType) {
+            validSourceTypes.add(sourceType);
+            return this;
+        }
     }
 }

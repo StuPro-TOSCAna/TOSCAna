@@ -1,5 +1,8 @@
 package org.opentosca.toscana.model;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import org.opentosca.toscana.model.node.RootNode;
@@ -12,11 +15,15 @@ import org.jgrapht.graph.DefaultDirectedGraph;
 public class EffectiveModel {
 
     private final Graph<RootNode, RootRelationship> topology =
-        new DefaultDirectedGraph<RootNode, RootRelationship>(RootRelationship.class);
+        new DefaultDirectedGraph<>(RootRelationship.class);
+
+    private final Map<String, RootNode> nodeMap;
 
     public EffectiveModel(Set<RootNode> vertices) {
-        vertices.forEach(node -> topology.addVertex(node));
+        vertices.forEach(topology::addVertex);
         initEdges();
+        nodeMap = new HashMap<>();
+        vertices.forEach(e -> nodeMap.put(e.getNodeName(), e));
     }
 
     private void initEdges() {
@@ -24,6 +31,7 @@ public class EffectiveModel {
             for (Requirement requirement : node.getRequirements()) {
                 for (Object o : requirement.getFulfillers()) {
                     RootNode fulfiller = (RootNode) o;
+
                     topology.addEdge(node, fulfiller, requirement.getRelationship());
                 }
             }
@@ -32,6 +40,14 @@ public class EffectiveModel {
 
     public Set<RootNode> getNodes() {
         return topology.vertexSet();
+    }
+
+    public Map<String, RootNode> getNodeMap() {
+        return Collections.unmodifiableMap(nodeMap);
+    }
+
+    public Graph<RootNode, RootRelationship> getTopology() {
+        return topology;
     }
 }
 

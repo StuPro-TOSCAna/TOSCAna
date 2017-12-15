@@ -19,16 +19,15 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.slf4j.LoggerFactory;
 
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.MANIFEST;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.CLI_CREATE_SERVICE;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.CLI_PUSH;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.FILESUFFIX_DEPLOY;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.FILEPRAEFIX_DEPLOY;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.CLI_CREATE_SERVICE;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.CLI_PUSH;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.FILEPRAEFIX_DEPLOY;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.FILESUFFIX_DEPLOY;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.MANIFEST;
 
 public class CloudFoundryPluginTest extends BaseUnitTest {
 
@@ -92,10 +91,10 @@ public class CloudFoundryPluginTest extends BaseUnitTest {
 
     @Test
     public void getDeployScript() throws Exception {
-        File targetFile = new File(targetDir + "/output/scripts/",FILEPRAEFIX_DEPLOY + appName + 
+        File targetFile = new File(targetDir + "/output/scripts/", FILEPRAEFIX_DEPLOY + appName +
             FILESUFFIX_DEPLOY);
         String deployScript = FileUtils.readFileToString(targetFile);
-        String expectedOutput = String.format("#!/bin/sh\nsource util/*\ncheck \"cf\"\n%smy_db\n%s%s\n", 
+        String expectedOutput = String.format("#!/bin/sh\nsource util/*\ncheck \"cf\"\n%smy_db\n%s%s\n",
             CLI_CREATE_SERVICE, CLI_PUSH, appName);
 
         assertEquals(expectedOutput, deployScript);
