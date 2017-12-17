@@ -24,7 +24,7 @@ import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator
 
 public class CloudFoundryServiceTest extends BaseUnitTest {
 
-    private static CloudFoundryConnection cloudFoundryConnection;
+    private CloudFoundryConnection cloudFoundryConnection;
     private CloudFoundryApplication app;
     private CloudFoundryProvider provider;
     private CloudFoundryFileCreator fileCreator;
@@ -38,7 +38,8 @@ public class CloudFoundryServiceTest extends BaseUnitTest {
     @Mock
     private Log log;
     private File targetDir;
-    private String appName;
+    private final String appName = "testapp";
+    private final String expectedDeployContent = "cf create-service cleardb spark my_db";
     private final String outputPath = AbstractLifecycle.SCRIPTS_DIR_PATH;
 
     @Before
@@ -49,7 +50,6 @@ public class CloudFoundryServiceTest extends BaseUnitTest {
         envOrga = System.getenv("TEST_CF_ORGA");
         envSpace = System.getenv("TEST_CF_SPACE");
 
-        appName = "testapp";
         app = new CloudFoundryApplication(appName);
     }
 
@@ -84,7 +84,6 @@ public class CloudFoundryServiceTest extends BaseUnitTest {
         fileCreator.createFiles();
         File targetFile = new File(targetDir, outputPath + FILEPRAEFIX_DEPLOY + appName + FILESUFFIX_DEPLOY);
         String deployContent = FileUtils.readFileToString(targetFile);
-        String expectedDeployContent = "cf create-service cleardb spark my_db";
         assertThat(deployContent, CoreMatchers.containsString(expectedDeployContent));
     }
 }

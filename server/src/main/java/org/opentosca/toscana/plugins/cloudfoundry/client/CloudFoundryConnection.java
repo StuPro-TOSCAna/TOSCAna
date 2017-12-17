@@ -1,7 +1,5 @@
 package org.opentosca.toscana.plugins.cloudfoundry.client;
 
-import java.util.List;
-
 import org.cloudfoundry.operations.CloudFoundryOperations;
 import org.cloudfoundry.operations.DefaultCloudFoundryOperations;
 import org.cloudfoundry.operations.services.ListServiceOfferingsRequest;
@@ -11,9 +9,11 @@ import org.cloudfoundry.reactor.TokenProvider;
 import org.cloudfoundry.reactor.client.ReactorCloudFoundryClient;
 import org.cloudfoundry.reactor.tokenprovider.PasswordGrantTokenProvider;
 
+import java.util.List;
+
 /**
- implements java-cf-client
- create a connection to the cf provider
+ * implements java-cf-client
+ * create a connection to the cf provider
  */
 public class CloudFoundryConnection {
 
@@ -39,12 +39,12 @@ public class CloudFoundryConnection {
 
     private CloudFoundryOperations createCloudFoundryOperations() {
         DefaultConnectionContext connectionContext = DefaultConnectionContext.builder()
-            .apiHost(apiHost) //"api.run.pivotal.io"
+            .apiHost(apiHost)
             .build();
 
         TokenProvider tokenProvider = PasswordGrantTokenProvider.builder()
-            .password(password) //secret
-            .username(userName) //jmuell.dev@gmail.com
+            .password(password)
+            .username(userName)
             .build();
 
         ReactorCloudFoundryClient reactorClient = ReactorCloudFoundryClient.builder()
@@ -54,8 +54,8 @@ public class CloudFoundryConnection {
 
         CloudFoundryOperations cloudFoundryOperations = DefaultCloudFoundryOperations.builder()
             .cloudFoundryClient(reactorClient)
-            .organization(organization) // "stupro.toscana"
-            .space(space) // "development"
+            .organization(organization)
+            .space(space)
             .build();
 
         return cloudFoundryOperations;
