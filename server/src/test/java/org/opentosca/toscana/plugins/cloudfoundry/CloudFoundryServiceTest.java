@@ -1,7 +1,10 @@
 package org.opentosca.toscana.plugins.cloudfoundry;
 
-import java.io.File;
-
+import org.apache.commons.io.FileUtils;
+import org.hamcrest.CoreMatchers;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mock;
 import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.core.transformation.logging.Log;
@@ -11,13 +14,10 @@ import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryServic
 import org.opentosca.toscana.plugins.cloudfoundry.client.CloudFoundryConnection;
 import org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle;
 
-import org.apache.commons.io.FileUtils;
-import org.hamcrest.CoreMatchers;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mock;
+import java.io.File;
 
 import static org.junit.Assert.assertThat;
+import static org.junit.Assume.assumeNotNull;
 import static org.junit.Assume.assumeTrue;
 import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.FILEPRAEFIX_DEPLOY;
 import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.FILESUFFIX_DEPLOY;
@@ -55,7 +55,7 @@ public class CloudFoundryServiceTest extends BaseUnitTest {
 
     @Test
     public void checkService() throws Exception {
-        assumeTrue(checkEnv());
+        assumeNotNull(envUser, envHost, envOrga, envPw, envSpace);
 
         app.addService("my_db", CloudFoundryServiceType.MYSQL);
 
@@ -86,19 +86,6 @@ public class CloudFoundryServiceTest extends BaseUnitTest {
         String deployContent = FileUtils.readFileToString(targetFile);
         String expectedDeployContent = "cf create-service cleardb spark my_db";
         assertThat(deployContent, CoreMatchers.containsString(expectedDeployContent));
-    }
-
-    private Boolean checkEnv() {
-        if (!(envUser == null
-            || envHost == null
-            || envOrga == null
-            || envPw == null
-            || envSpace == null)) {
-
-            return true;
-        } else {
-            return false;
-        }
     }
 }
 
