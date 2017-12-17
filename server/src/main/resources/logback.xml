@@ -18,6 +18,7 @@
     <logger name="org.apache.tomcat.util.net.NioSelectorPool" level="WARN"/>
     <logger name="springfox.documentation" level="WARN"/>
     <logger name="com.jayway.jsonpath" level="WARN"/>
+    <logger name="reactor.ipc.netty" level="WARN"/>
 
 
     <root level="DEBUG">
