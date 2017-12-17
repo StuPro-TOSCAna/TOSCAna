@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.opentosca.toscana.model.artifact.Artifact;
 import org.opentosca.toscana.model.node.DockerApplication;
 import org.opentosca.toscana.model.operation.Operation;
+import org.opentosca.toscana.plugins.kubernetes.util.NodeStack;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.fabric8.kubernetes.api.model.Container;
@@ -17,35 +18,22 @@ import io.fabric8.kubernetes.client.internal.SerializationUtils;
 
 public class ResourceDeployment {
     private final String name;
-    private List<DockerApplication> stack;
+    private NodeStack stack;
     private Deployment deployment;
 
-    public ResourceDeployment(String name, List<DockerApplication> stack) {
+    public ResourceDeployment(NodeStack stack) {
         this.stack = stack;
-        this.name = name;
+        this.name = stack.getStackName();
     }
 
     public ResourceDeployment build() {
         ArrayList<Container> containers = new ArrayList<>();
-        for (DockerApplication app : stack) {
-            String imagePath = "";
-            Optional<Operation> createOperation = app.getStandardLifecycle().getCreate();
-            if (createOperation.isPresent()) {
-                Optional<Artifact> artifactOptional = createOperation.get().getArtifact();
-                if (artifactOptional.isPresent()) {
-                    Artifact artifact = artifactOptional.get();
-                    // TODO use repository, currently defaults to docker hub
-                    imagePath = artifact.getFilePath();
-                }
-            }
-            Container container = new ContainerBuilder()
-                .withName(app.getNodeName().toLowerCase())
-                .withImage(imagePath)
-                .addNewPort()
-                .withContainerPort(80)
-                .endPort().build();
-            containers.add(container);
-        }
+
+        Container container = new ContainerBuilder()
+            .withName(name)
+            .withImage(stack.getStackName())
+            .addAllToPorts(stack.getOpenContainerPorts()).build();
+        containers.add(container);
 
         deployment = new DeploymentBuilder()
             .withNewMetadata()
