@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(value = PlatformController.class)
-@ActiveProfiles(INTEGRATION_TEST_PROFILE)
+@ActiveProfiles( {INTEGRATION_TEST_PROFILE, "base-image-mapper"})
 @DirtiesContext(
     classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD
 )
@@ -42,7 +42,7 @@ public class PlatformControllerTest extends BaseTest {
     private PluginService prov;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         Mockito.when(prov.getSupportedPlatforms()).thenReturn(PLATFORMS);
         Mockito.when(prov.findPlatformById(Mockito.anyString())).thenReturn(Optional.empty());
         PLATFORMS.forEach(e -> Mockito.when(prov.findPlatformById(e.id)).thenReturn(Optional.of(e)));

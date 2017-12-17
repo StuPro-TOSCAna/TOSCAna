@@ -90,6 +90,7 @@ public class TestEffectiveModels {
     public static EffectiveModel getMinimalDockerModel() throws MalformedURLException {
         return new EffectiveModel(Sets.newHashSet(getMinimalDockerApplication()));
     }
+    
 
     public static EffectiveModel getLampModel() {
         return new EffectiveModel(new LampApp().getLampApp());

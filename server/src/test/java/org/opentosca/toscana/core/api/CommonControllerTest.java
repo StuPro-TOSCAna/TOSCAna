@@ -22,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DirtiesContext(
     classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD
 )
-@ActiveProfiles(INTEGRATION_TEST_PROFILE)
+@ActiveProfiles( {INTEGRATION_TEST_PROFILE, "base-image-mapper"})
 public class CommonControllerTest extends BaseTest {
 
     @Autowired

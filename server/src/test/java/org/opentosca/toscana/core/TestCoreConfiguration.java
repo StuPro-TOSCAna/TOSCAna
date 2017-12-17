@@ -1,5 +1,9 @@
 package org.opentosca.toscana.core;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+
 import org.opentosca.toscana.core.csar.CsarDao;
 import org.opentosca.toscana.core.csar.CsarFilesystemDao;
 import org.opentosca.toscana.core.csar.CsarService;
@@ -19,7 +23,11 @@ import org.opentosca.toscana.core.transformation.artifacts.ArtifactService;
 import org.opentosca.toscana.core.transformation.artifacts.ArtifactServiceImpl;
 import org.opentosca.toscana.core.transformation.platform.PlatformService;
 import org.opentosca.toscana.core.util.Preferences;
+import org.opentosca.toscana.plugins.kubernetes.docker.mapper.BaseImageMapper;
+import org.opentosca.toscana.plugins.kubernetes.docker.mapper.DockerBaseImages;
+import org.opentosca.toscana.plugins.kubernetes.docker.mapper.TagStorage;
 
+import org.apache.commons.io.IOUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -29,7 +37,7 @@ import org.springframework.context.annotation.PropertySource;
 
 import static org.opentosca.toscana.core.testdata.TestProfiles.INTEGRATION_TEST_PROFILE;
 
-@SuppressWarnings("UnnecessaryLocalVariable")
+@SuppressWarnings( {"UnnecessaryLocalVariable", "Duplicates"})
 @Configuration
 @PropertySource("classpath:application.yml")
 //Exclude Controller test profile and the integration test profile, 
@@ -98,5 +106,24 @@ public class TestCoreConfiguration extends CoreConfiguration {
     public TestTransformationContext testContext() {
         TestTransformationContext bean = new TestTransformationContext();
         return bean;
+    }
+
+    @Bean
+    public TagStorage tagStorage(Preferences preferences) throws Exception {
+        new File(preferences.getDataDir(), "misc").mkdirs();
+        File file = new File(preferences.getDataDir(), TagStorage.DOCKER_IMAGE_TAGS);
+        InputStream input = getClass().getResourceAsStream("/kubernetes/base-image-mapper/docker-tagbase.json");
+        FileOutputStream out = new FileOutputStream(file);
+
+        IOUtils.copy(input, out);
+        input.close();
+        out.close();
+
+        return new TagStorage(preferences);
+    }
+
+    @Bean
+    public BaseImageMapper mapper(TagStorage storage) {
+        return new BaseImageMapper(DockerBaseImages.values(), storage);
     }
 }

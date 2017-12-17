@@ -56,10 +56,10 @@ public class PluginFileAccess {
         try {
             if (source.isDirectory()) {
                 FileUtils.copyDirectory(source, target);
-                logger.info("Copied directory '{}' and its content to '{}'", sourceDir, targetDir);
+                logger.info("Copied directory '{}' and its content to '{}'", source, target);
             } else if (source.isFile()) {
                 FileUtils.copyFile(source, target);
-                logger.info("Copied file '{}' to '{}'", sourceDir, targetDir);
+                logger.info("Copied file '{}' to '{}'", source, target);
             }
         } catch (IOException e) {
             logger.error("Failed to copy from '{}' to '{}'", source, target, e);
