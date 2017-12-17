@@ -1,10 +1,7 @@
 package org.opentosca.toscana.plugins.cloudfoundry;
 
-import org.apache.commons.io.FileUtils;
-import org.hamcrest.CoreMatchers;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mock;
+import java.io.File;
+
 import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.core.transformation.logging.Log;
@@ -14,7 +11,11 @@ import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryServic
 import org.opentosca.toscana.plugins.cloudfoundry.client.CloudFoundryConnection;
 import org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle;
 
-import java.io.File;
+import org.apache.commons.io.FileUtils;
+import org.hamcrest.CoreMatchers;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mock;
 
 import static org.junit.Assert.assertThat;
 import static org.junit.Assume.assumeNotNull;
