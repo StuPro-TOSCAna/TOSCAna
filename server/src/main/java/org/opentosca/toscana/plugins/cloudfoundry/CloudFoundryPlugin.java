@@ -6,6 +6,7 @@ import java.util.Set;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.Property;
+import org.opentosca.toscana.core.transformation.properties.PropertyType;
 import org.opentosca.toscana.plugins.lifecycle.LifecycleAwarePlugin;
 
 import org.slf4j.Logger;
@@ -29,6 +30,29 @@ public class CloudFoundryPlugin extends LifecycleAwarePlugin<CloudFoundryLifecyc
         String platformId = "cloud-foundry";
         String platformName = "CloudFoundry";
         Set<Property> platformProperties = new HashSet<>();
+
+        Property cfUserName = new Property("username", PropertyType.NAME,
+            "Username of CloudFoundry provideraccount",
+            false);
+        Property cfUserPw = new Property("password", PropertyType.SECRET,
+            "Password of CloudFoundry provideraccount",
+            false);
+        Property cfEndpoint = new Property("apihost", PropertyType.TEXT,
+            "The endpoint of the provider",
+            false);
+        Property cfSpace = new Property("space", PropertyType.TEXT,
+            "The space of the useraccount which should be used to deploy",
+            false);
+        Property cfOrganization = new Property("organization", PropertyType.TEXT,
+            "The space of the useraccount which should be used to deploy",
+            false);
+
+        platformProperties.add(cfUserName);
+        platformProperties.add(cfUserPw);
+        platformProperties.add(cfEndpoint);
+        platformProperties.add(cfSpace);
+        platformProperties.add(cfOrganization);
+
         return new Platform(platformId, platformName, platformProperties);
     }
 }
