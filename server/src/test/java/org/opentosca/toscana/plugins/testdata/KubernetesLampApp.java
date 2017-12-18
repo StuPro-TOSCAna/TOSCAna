@@ -136,8 +136,13 @@ public class KubernetesLampApp {
             .builder("127.0.0.1", new Port(3306))
             .build();
 
+        Operation configure = Operation.builder().dependency("mysql_dbms/schema.sql").build();
+        
+        StandardLifecycle lifecycle = StandardLifecycle.builder().configure(configure).build();
+        
         MysqlDatabase mydb = MysqlDatabase
             .builder("my-db", "DBNAME", dbEndpointCapability)
+            .standardLifecycle(lifecycle)
             .host(MysqlDbmsRequirement.builder().fulfiller(dbms).build())
             .build();
 

@@ -73,7 +73,7 @@ public class DockerfileBuilder {
         String dir = workingDir + "/" + workdirName;
         fileAccess.createDirectories(dir);
         fileAccess.copy(inputPath, dir + "/" + fileName);
-        copyCommands.add(new CopyCommand(workdirName + "/" + fileName, fileName));
+        copyCommands.add(new CopyCommand((workdirName.isEmpty() ? "" : workdirName + "/") + fileName, fileName));
         return this;
     }
 
