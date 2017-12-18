@@ -26,7 +26,7 @@ public class KubernetesLampIT extends BaseTransformTest {
     }
 
     @Override
-    protected void onSuccess(File outputDir) throws Exception{
+    protected void onSuccess(File outputDir) throws Exception {
         //Do Nothing
     }
 

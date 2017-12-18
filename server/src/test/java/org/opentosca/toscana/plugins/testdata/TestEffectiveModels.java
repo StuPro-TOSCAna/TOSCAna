@@ -1,9 +1,13 @@
 package org.opentosca.toscana.plugins.testdata;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.opentosca.toscana.model.EffectiveModel;
+import org.opentosca.toscana.model.artifact.Artifact;
+import org.opentosca.toscana.model.artifact.Repository;
 import org.opentosca.toscana.model.capability.AdminEndpointCapability;
 import org.opentosca.toscana.model.capability.ContainerCapability;
 import org.opentosca.toscana.model.capability.DockerContainerCapability;
@@ -14,11 +18,12 @@ import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.ContainerRuntime;
 import org.opentosca.toscana.model.node.DockerApplication;
 import org.opentosca.toscana.model.node.RootNode;
+import org.opentosca.toscana.model.operation.Operation;
+import org.opentosca.toscana.model.operation.StandardLifecycle;
 import org.opentosca.toscana.model.relation.AttachesTo;
 import org.opentosca.toscana.model.requirement.BlockStorageRequirement;
 import org.opentosca.toscana.model.requirement.DockerHostRequirement;
 import org.opentosca.toscana.model.requirement.EndpointRequirement;
-import org.opentosca.toscana.model.requirement.StorageRequirement;
 
 import com.google.common.collect.Sets;
 
@@ -53,7 +58,7 @@ public class TestEffectiveModels {
         return new EffectiveModel(Sets.newHashSet(computeNode));
     }
 
-    public static EffectiveModel getMinimalDockerModel() {
+    public static DockerApplication getMinimalDockerApplication() throws MalformedURLException {
         DockerContainerCapability containerCapability = DockerContainerCapability.builder().build();
         ContainerRuntime dockerRuntime = ContainerRuntime
             .builder("dockerRuntime").
@@ -69,17 +74,21 @@ public class TestEffectiveModels {
         EndpointRequirement network = EndpointRequirement.
             builder(endpointCapability)
             .build();
-        AttachesTo attachesTo = AttachesTo
-            .builder("/")
-            .build();
-        StorageRequirement storage = StorageRequirement
-            .builder(attachesTo)
-            .build();
+        Repository repository = Repository.builder(new URL("https://registry.hub.docker.com/")).build();
+        Artifact artifact = Artifact.builder("nfode/simpletaskapp:v1").repository(repository).build();
+        Operation create = Operation.builder().artifact(artifact).build();
+        StandardLifecycle standardLifecycle = StandardLifecycle.builder().create(create).build();
+
         DockerApplication simpleTaskApp = DockerApplication
             .builder("simpleTaskApp", network)
+            .standardLifecycle(standardLifecycle)
             .host(host)
             .build();
-        return new EffectiveModel(Sets.newHashSet(simpleTaskApp, dockerRuntime));
+        return simpleTaskApp;
+    }
+
+    public static EffectiveModel getMinimalDockerModel() throws MalformedURLException {
+        return new EffectiveModel(Sets.newHashSet(getMinimalDockerApplication()));
     }
     
 
