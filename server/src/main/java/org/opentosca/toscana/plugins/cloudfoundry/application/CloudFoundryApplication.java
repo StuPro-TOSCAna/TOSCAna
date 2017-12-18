@@ -17,6 +17,7 @@ public class CloudFoundryApplication {
     private final Map<String, CloudFoundryServiceType> services = new HashMap<>();
     private final ArrayList<String> buildpackAdditions = new ArrayList<>();
     private CloudFoundryProvider provider;
+    private String mainApplicationPath;
 
     public CloudFoundryApplication(String name) {
         this.name = name;
@@ -83,5 +84,17 @@ public class CloudFoundryApplication {
 
     public void setProvider(CloudFoundryProvider provider) {
         this.provider = provider;
+    }
+
+    public void setMainApplicationPath(String mainApplicationPath) {
+        int lastOccurenceOfBackslash = mainApplicationPath.lastIndexOf("/");
+
+        if (lastOccurenceOfBackslash != -1) {
+            this.mainApplicationPath = "/" + mainApplicationPath.substring(0, lastOccurenceOfBackslash);
+        }
+    }
+
+    public String getMainApplicationPath() {
+        return mainApplicationPath;
     }
 }

@@ -19,6 +19,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import static org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryManifestAttribute.ENVIRONMENT;
+import static org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryManifestAttribute.PATH;
 import static org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryManifestAttribute.SERVICE;
 
 /**
@@ -55,6 +56,7 @@ public class CloudFoundryFileCreator {
 
     private void createManifest() throws IOException {
         createManifestHead();
+        addPathToMainApplication();
         createAttributes();
         createEnvironmentVariables();
         createService();
@@ -65,9 +67,17 @@ public class CloudFoundryFileCreator {
         fileAccess.access(MANIFEST).appendln(manifestHead).close();
     }
 
+    private void addPathToMainApplication() throws IOException {
+        String mainApplicationPath = app.getMainApplicationPath();
+        if (mainApplicationPath != null) {
+            String pathAddition = String.format("  %s: %s", PATH.getName(), app.getMainApplicationPath());
+            fileAccess.access(MANIFEST).appendln(pathAddition).close();
+        }
+    }
+
     private void createEnvironmentVariables() throws IOException {
         Map<String, String> envVariables = app.getEnvironmentVariables();
-        if (!envVariables.isEmpty() ) {
+        if (!envVariables.isEmpty()) {
             ArrayList<String> environmentVariables = new ArrayList<>();
             environmentVariables.add(String.format("  %s:", ENVIRONMENT.getName()));
             for (Map.Entry<String, String> entry : envVariables.entrySet()) {
@@ -85,7 +95,7 @@ public class CloudFoundryFileCreator {
      */
     private void createService() throws IOException {
         Map<String, CloudFoundryServiceType> appServices = app.getServices();
-        if (!appServices.isEmpty() ) {
+        if (!appServices.isEmpty()) {
             ArrayList<String> services = new ArrayList<>();
             services.add(String.format("  %s:", SERVICE.getName()));
             for (Map.Entry<String, CloudFoundryServiceType> service : appServices.entrySet()) {
@@ -140,7 +150,8 @@ public class CloudFoundryFileCreator {
         deployScript.append(CLI_PUSH + app.getName());
     }
 
-    //only for PHP
+    //only for PHP 
+    //TODO: check if PHP and mysql then add "mysql" & "mysqli"
     private void createBuildpackAdditionsFile() throws IOException, JSONException {
         JSONObject buildPackAdditionsJson = new JSONObject();
         JSONArray buildPacks = new JSONArray();

@@ -16,9 +16,15 @@ import org.mockito.Mock;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.*;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.BUILDPACK_FILEPATH_PHP;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.BUILDPACK_OBJECT_PHP;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.FILEPRAEFIX_DEPLOY;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.FILESUFFIX_DEPLOY;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.MANIFEST;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.NAMEBLOCK;
 import static org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryManifestAttribute.APPLICATIONS_SECTION;
 import static org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryManifestAttribute.ENVIRONMENT;
+import static org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryManifestAttribute.PATH;
 import static org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryManifestAttribute.SERVICE;
 
 public class CloudFoundryFileCreatorTest extends BaseUnitTest {
@@ -65,11 +71,14 @@ public class CloudFoundryFileCreatorTest extends BaseUnitTest {
 
     @Test
     public void contentManifest() throws Exception {
+        String mainApplicationPath = "myapp/main/myphpapp.php";
+        String expectedPath = "/myapp/main";
+        testApp.setMainApplicationPath(mainApplicationPath);
         fileCreator.createFiles();
         File targetFile = new File(targetDir, MANIFEST);
         String manifestContent = FileUtils.readFileToString(targetFile);
-        String expectedManifestContent = String.format("---\n%s:\n- %s: %s\n",
-            APPLICATIONS_SECTION.getName(), NAMEBLOCK, appName);
+        String expectedManifestContent = String.format("---\n%s:\n- %s: %s\n  %s: %s\n",
+            APPLICATIONS_SECTION.getName(), NAMEBLOCK, appName, PATH.getName(), expectedPath);
 
         assertEquals(expectedManifestContent, manifestContent);
     }
@@ -82,14 +91,13 @@ public class CloudFoundryFileCreatorTest extends BaseUnitTest {
         File targetFile = new File(targetDir, MANIFEST);
         String manifestContent = FileUtils.readFileToString(targetFile);
         String expectedManifestContent = String.format("---\n%s:\n- %s: %s\n  %s:\n    %s: %s\n    %s: %s\n",
-            APPLICATIONS_SECTION.getName(), NAMEBLOCK, appName, 
-            ENVIRONMENT.getName(), 
+            APPLICATIONS_SECTION.getName(), NAMEBLOCK, appName,
+            ENVIRONMENT.getName(),
             envVariable1, "TODO",
             envVariable2, envValue);
 
         assertEquals(expectedManifestContent, manifestContent);
     }
-    
 
     @Test
     public void contentDeploy() throws Exception {
@@ -106,12 +114,12 @@ public class CloudFoundryFileCreatorTest extends BaseUnitTest {
         testApp.addBuildpack(buildPack1);
         testApp.addBuildpack(buildPack2);
         String expectedBuildpackcontent = "{\n" +
-            "    \""+ BUILDPACK_OBJECT_PHP+"\": [\n" +
+            "    \"" + BUILDPACK_OBJECT_PHP + "\": [\n" +
             "        \"" + buildPack1 + "\",\n" +
             "        \"" + buildPack2 + "\"\n" +
             "    ]\n" +
             "}";
-        
+
         fileCreator.createFiles();
         File targetFile = new File(targetDir, BUILDPACK_FILEPATH_PHP);
         String buildpackContent = FileUtils.readFileToString(targetFile);

@@ -63,7 +63,7 @@ public class CloudFoundryNodeVisitor implements StrictNodeVisitor {
     @Override
     public void visit(MysqlDbms node) {
         // TODO: check how to configure database
-        handleStandardLifecycle(node);
+        handleStandardLifecycle(node, false);
     }
 
     @Override
@@ -74,10 +74,10 @@ public class CloudFoundryNodeVisitor implements StrictNodeVisitor {
     @Override
     public void visit(WebApplication node) {
         myApp.setName(node.getNodeName());
-        handleStandardLifecycle(node);
+        handleStandardLifecycle(node, true);
     }
 
-    private void handleStandardLifecycle(RootNode node) {
+    private void handleStandardLifecycle(RootNode node, Boolean isTopNode) {
         // get StandardLifecycle inputs
         for (OperationVariable lifecycleInput : node.getStandardLifecycle().getInputs()) {
             addEnvironmentVariable(lifecycleInput);
@@ -87,12 +87,16 @@ public class CloudFoundryNodeVisitor implements StrictNodeVisitor {
         for (Operation operation : node.getStandardLifecycle().getOperations()) {
             // artifact path
             if (operation.getArtifact().isPresent()) {
-                myApp.addFilePath(operation.getArtifact().get().getFilePath());
+                String path = operation.getArtifact().get().getFilePath();
+                myApp.addFilePath(path);
+                setMainApplicationPath(path, isTopNode);
             }
 
             // add implementationArtifact path if not null
             if (operation.getImplementationArtifact().isPresent()) {
-                myApp.addFilePath(operation.getImplementationArtifact().get());
+                String path = operation.getImplementationArtifact().get();
+                myApp.addFilePath(path);
+                setMainApplicationPath(path, isTopNode);
             }
 
             // add dependencies paths
@@ -113,6 +117,12 @@ public class CloudFoundryNodeVisitor implements StrictNodeVisitor {
             myApp.addEnvironmentVariables(input.getKey(), input.getValue().get());
         } else {
             myApp.addEnvironmentVariables(input.getKey());
+        }
+    }
+
+    private void setMainApplicationPath(String path, Boolean isTopNode) {
+        if (myApp.getMainApplicationPath() == null && isTopNode) {
+            myApp.setMainApplicationPath(path);
         }
     }
 }
