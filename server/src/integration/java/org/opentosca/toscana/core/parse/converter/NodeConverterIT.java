@@ -48,7 +48,7 @@ public class NodeConverterIT extends BaseIntegrationTest {
     private Set<String> getWineryNodeTypes() {
         Set<String> knownNodeTypes = new HashSet<>();
         Set<List<String>> typeLists = Sets.newHashSet(
-            Defaults.TOSCA_NORMATIVE_NAMES, Defaults.TOSCA_NON_NORMATIVE_NAMES);
+            Defaults.TOSCA_NORMATIVE_NAMES, Defaults.TOSCA_NONNORMATIVE_NAMES);
 
         for (List<String> typeList : typeLists) {
             knownNodeTypes.addAll(typeList.stream()
