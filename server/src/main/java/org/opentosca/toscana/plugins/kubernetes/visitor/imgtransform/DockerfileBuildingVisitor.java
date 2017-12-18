@@ -98,13 +98,10 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
             Operation operation = optionalOperation.get();
             for (String e : operation.getDependencies()) {
                 String filename = determineFilename(e);
-                System.out.println(e);
-                System.out.println(filename);
                 builder.copyFromCsar(e, nodeName, filename);
             }
             if (operation.getImplementationArtifact().isPresent()) {
                 String path = operation.getImplementationArtifact().get();
-                System.out.println(path);
                 builder.copyFromCsar(path, nodeName, nodeName + "-" + opName);
                 builder.run("sh " + nodeName + "-" + opName);
             }
@@ -120,11 +117,12 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
         return name[name.length - 1];
     }
 
-    public void buildAndWriteDockerfile() {
+    public void buildAndWriteDockerfile() throws IOException{
         logger.debug("Visiting nodes");
         stack.forEachNode(node -> {
             logger.debug("Visitng node: {}", node.getNode().getNodeName());
             node.getNode().accept(this);
         });
+        builder.write();
     }
 }

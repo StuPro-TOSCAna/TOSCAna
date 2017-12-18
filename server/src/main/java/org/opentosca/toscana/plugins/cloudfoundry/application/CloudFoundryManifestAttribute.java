@@ -1,4 +1,4 @@
-package org.opentosca.toscana.plugins.cloudfoundry;
+package org.opentosca.toscana.plugins.cloudfoundry.application;
 
 /**
  provides attribute-names for the cloud foundry manifest

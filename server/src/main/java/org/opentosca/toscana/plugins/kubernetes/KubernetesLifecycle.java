@@ -24,6 +24,7 @@ import org.opentosca.toscana.plugins.kubernetes.visitor.util.ComputeNodeFindingV
 import org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle;
 import org.opentosca.toscana.plugins.util.TransformationFailureException;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.fabric8.kubernetes.api.model.HasMetadata;
 import io.fabric8.kubernetes.api.model.ServiceBuilder;
 import io.fabric8.kubernetes.api.model.extensions.DeploymentBuilder;
@@ -111,7 +112,7 @@ public class KubernetesLifecycle extends AbstractLifecycle {
         );
 
         logger.debug("Building complete Topology stacks");
-        buildTopologyStacks(model, topLevelNodes, nodes);
+        this.stacks.addAll(buildTopologyStacks(model, topLevelNodes, nodes));
     }
 
     @Override
@@ -134,7 +135,7 @@ public class KubernetesLifecycle extends AbstractLifecycle {
         logger.info("Building Docker images");
         stacks.forEach(e -> {
             logger.info("Building {}", e);
-            DockerImageBuilder builder = new DockerImageBuilder(e.getStackName(), "output/docker/" + e.getDockerfilePath().get(), context);
+            DockerImageBuilder builder = new DockerImageBuilder(e.getStackName(), e.getDockerfilePath().get(), context);
             try {
                 builder.buildImage("output/docker/" + e.getStackName() + ".tar.gz");
             } catch (Exception ex) {
@@ -164,77 +165,22 @@ public class KubernetesLifecycle extends AbstractLifecycle {
      */
     private void createKubernetesResources() {
         logger.info("Creating Kubernetes Resource Descriptions");
-        List<String> results = new ArrayList<>();
-        stacks.forEach(e -> {
-            logger.info("Creating deployment for {}", e);
-            writeDeployment(results, e);
-            writeService(results, e);
-        });
+        
+        ResourceFileCreator creator = new ResourceFileCreator(this.stacks);
 
         StringBuilder complete = new StringBuilder();
-        results.forEach(e -> {
-            complete.append(e);
-        });
+        try {
+            creator.create().forEach((k, resource) -> {
+                complete.append(resource);
+            });
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
 
         try {
             context.getPluginFileAccess().access("output/kubernetes-resources/complete.yml").append(complete.toString()).close();
         } catch (IOException e) {
             e.printStackTrace();
-        }
-    }
-
-    private void writeService(List<String> results, NodeStack e) {
-        ServiceBuilder serviceBuilder = new ServiceBuilder();
-        serviceBuilder.withNewMetadata()
-            .withName(e.getStackName() + "-service")
-            .addToLabels("app", e.getStackName())
-            .endMetadata()
-            .withNewSpec()
-            .addAllToPorts(e.getOpenServicePorts())
-            .addToSelector("app", e.getStackName())
-            .withType("NodePort")
-            .endSpec();
-        serializeKubernetesResource(
-            results,
-            serviceBuilder.build(),
-            "output/kubernetes-resources/" + e.getStackName() + "-service.yml"
-        );
-    }
-
-    private void writeDeployment(List<String> results, NodeStack e) {
-        DeploymentBuilder deploymentBuilder = new DeploymentBuilder();
-        deploymentBuilder = deploymentBuilder.withNewMetadata()
-            .withName(e.getStackName())
-            .endMetadata()
-            .withNewSpec()
-            .withReplicas(1)
-            .withNewTemplate()
-            .withNewMetadata()
-            .addToLabels("app", e.getStackName())
-            .endMetadata()
-            .withNewSpec()
-            .addNewContainer()
-            .withName(e.getStackName())
-            .withImage(e.getStackName())
-            .addAllToPorts(e.getOpenContainerPorts())
-            .endContainer()
-            .endSpec()
-            .endTemplate()
-            .endSpec();
-        serializeKubernetesResource(
-            results,
-            deploymentBuilder.build(),
-            "output/kubernetes-resources/" + e.getStackName() + "-deployment.yml"
-        );
-    }
-
-    private void serializeKubernetesResource(List<String> results, HasMetadata deployment, String filename) {
-        try {
-            String result = SerializationUtils.dumpAsYaml(deployment);
-            results.add(result);
-            context.getPluginFileAccess().access(filename).append(result).close();
-        } catch (Exception e1) {
-            e1.printStackTrace();
         }
     }
 }
