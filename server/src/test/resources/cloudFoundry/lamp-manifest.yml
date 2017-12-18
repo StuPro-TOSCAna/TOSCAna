@@ -1,8 +1,8 @@
 ---
 applications:
 - name: my_app
-  disk_quota: 2000 MB
-  mem_size: 1024 MB
+  disk_quota: 2000MB
+  mem_size: 1024MB
   env:
     database_user: 
     db_root_password: 

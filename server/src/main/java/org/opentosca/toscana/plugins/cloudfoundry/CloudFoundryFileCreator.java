@@ -2,18 +2,24 @@ package org.opentosca.toscana.plugins.cloudfoundry;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
+import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryApplication;
+import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryProvider;
+import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryServiceType;
 import org.opentosca.toscana.plugins.scripts.BashScript;
 import org.opentosca.toscana.plugins.scripts.EnvironmentCheck;
 
+import org.cloudfoundry.operations.services.ServiceOffering;
+import org.cloudfoundry.operations.services.ServicePlan;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryManifestAttribute.ENVIRONMENT;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryManifestAttribute.SERVICE;
+import static org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryManifestAttribute.ENVIRONMENT;
+import static org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryManifestAttribute.SERVICE;
 
 /**
  Creates all files which are necessary to deploy the application
@@ -24,7 +30,8 @@ public class CloudFoundryFileCreator {
     public static final String MANIFEST = "manifest.yml";
     public static final String MANIFESTHEAD = "---\napplications:\n";
     public static final String NAMEBLOCK = "name";
-    public static final String CLI_CREATE_SERVICE = "cf create-service {plan} {service} ";
+    public static final String CLI_CREATE_SERVICE_DEFAULT = "cf create-service {plan} {service} ";
+    public static final String CLI_CREATE_SERVICE = "cf create-service ";
     public static final String CLI_PUSH = "cf push ";
     public static final String FILEPRAEFIX_DEPLOY = "deploy_";
     public static final String FILESUFFIX_DEPLOY = ".sh";
@@ -69,24 +76,61 @@ public class CloudFoundryFileCreator {
         }
     }
 
+    /**
+     creates a service which depends on the template
+     add it to the manifest
+     */
     private void createService() throws IOException {
         ArrayList<String> services = new ArrayList<>();
         services.add(String.format("  %s:", SERVICE.getName()));
-        for (String service : app.getServices()) {
-            services.add(String.format("    - %s", service));
+        for (Map.Entry<String, CloudFoundryServiceType> service : app.getServices().entrySet()) {
+            services.add(String.format("    - %s", service.getKey()));
         }
         for (String service : services) {
             fileAccess.access(MANIFEST).appendln(service).close();
         }
     }
 
+    /**
+     creates a deploy shell script
+     */
     private void createDeployScript() throws IOException {
-
         BashScript deployScript = new BashScript(fileAccess, FILEPRAEFIX_DEPLOY + app.getName());
         deployScript.append(EnvironmentCheck.checkEnvironment("cf"));
-        for (String service : app.getServices()) {
-            deployScript.append(CLI_CREATE_SERVICE + service);
+
+        if (app.getProvider() != null && !app.getServices().isEmpty()) {
+            addProviderServiceOfferings(deployScript);
+            for (Map.Entry<String, CloudFoundryServiceType> service : app.getServices().entrySet()) {
+                String description = service.getValue().getName();
+                CloudFoundryProvider provider = app.getProvider();
+                List<ServiceOffering> services = provider.getOfferedService();
+                Boolean isSet = false;
+
+                //checks if a offered service of the provider contains the description of the needed service
+                //if yes then add the service to the script with a free plan
+                for (ServiceOffering offeredService : services) {
+                    if (offeredService.getDescription().toLowerCase().indexOf(description.toLowerCase()) != -1) {
+                        for (ServicePlan plan : offeredService.getServicePlans()) {
+                            if (plan.getFree()) {
+                                deployScript.append(String.format("%s%s %s %s", CLI_CREATE_SERVICE,
+                                    offeredService.getLabel(), plan.getName(), service.getKey()));
+                                isSet = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if (!isSet) {
+                    deployScript.append(CLI_CREATE_SERVICE_DEFAULT + service);
+                }
+            }
+        } else {
+            for (Map.Entry<String, CloudFoundryServiceType> service : app.getServices().entrySet()) {
+                deployScript.append(CLI_CREATE_SERVICE_DEFAULT + service.getKey());
+            }
         }
+
         deployScript.append(CLI_PUSH + app.getName());
     }
 
@@ -98,7 +142,7 @@ public class CloudFoundryFileCreator {
             buildPacks.put(buildPack);
         }
         buildPackAdditionsJson.put(BUILDPACK_OBJECT_PHP, buildPacks);
-        fileAccess.access(BUILDPACK_FILEPATH_PHP).append(buildPackAdditionsJson.toString()).close();
+        fileAccess.access(BUILDPACK_FILEPATH_PHP).append(buildPackAdditionsJson.toString(4)).close();
     }
 
     private void createAttributes() throws IOException {
@@ -118,5 +162,29 @@ public class CloudFoundryFileCreator {
         for (String filePath : app.getFilePaths()) {
             fileAccess.copy(filePath);
         }
+    }
+
+    private void addProviderServiceOfferings(BashScript deployScript) throws IOException {
+        CloudFoundryProvider provider = app.getProvider();
+        List<ServiceOffering> services = provider.getOfferedService();
+
+        deployScript.append("# following services you could choose:");
+        deployScript.append(String.format("# %-20s %-40s %-50s\n", "Name", " Plans", "Description"));
+
+        for (ServiceOffering service : services) {
+            String plans = "";
+            for (ServicePlan plan : service.getServicePlans()) {
+                String currentPlan;
+                if (plan.getFree()) {
+                    currentPlan = plan.getName();
+                } else {
+                    currentPlan = plan.getName() + "*";
+                }
+
+                plans = String.format("%s %s ", plans, currentPlan);
+            }
+            deployScript.append(String.format("# %-20s %-40s %-50s ", service.getLabel(), plans, service.getDescription()));
+        }
+        deployScript.append("\n* These service plans have an associated cost. Creating a service instance will incur this cost.");
     }
 }

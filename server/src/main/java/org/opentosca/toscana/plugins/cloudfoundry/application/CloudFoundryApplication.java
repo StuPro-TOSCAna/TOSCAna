@@ -1,11 +1,9 @@
-package org.opentosca.toscana.plugins.cloudfoundry;
+package org.opentosca.toscana.plugins.cloudfoundry.application;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  This class should describe a CloudFoundryApplication with all needed information to deploy it
@@ -16,15 +14,15 @@ public class CloudFoundryApplication {
     private final ArrayList<String> filePaths = new ArrayList<>();
     private final Map<String, String> environmentVariables = new HashMap<>();
     private final Map<String, String> attributes = new HashMap<>();
-    private final Set<String> services = new HashSet<>();
+    private final Map<String, CloudFoundryServiceType> services = new HashMap<>();
     private final ArrayList<String> buildpackAdditions = new ArrayList<>();
+    private CloudFoundryProvider provider;
 
     public CloudFoundryApplication(String name) {
         this.name = name;
     }
 
     public CloudFoundryApplication() {
-
     }
 
     public void setName(String name) {
@@ -47,12 +45,12 @@ public class CloudFoundryApplication {
         this.environmentVariables.put(environmentVariableName, "");
     }
 
-    public Set<String> getServices() {
+    public Map<String, CloudFoundryServiceType> getServices() {
         return services;
     }
 
-    public void addService(String serviceName) {
-        this.services.add(serviceName);
+    public void addService(String serviceName, CloudFoundryServiceType serviceType) {
+        this.services.put(serviceName, serviceType);
     }
 
     public List<String> getBuildpackAdditions() {
@@ -70,12 +68,20 @@ public class CloudFoundryApplication {
     public Map<String, String> getAttributes() {
         return attributes;
     }
-    
+
     public void addFilePath(String filePath) {
         filePaths.add(filePath);
     }
 
     public List<String> getFilePaths() {
         return filePaths;
+    }
+
+    public CloudFoundryProvider getProvider() {
+        return provider;
+    }
+
+    public void setProvider(CloudFoundryProvider provider) {
+        this.provider = provider;
     }
 }
