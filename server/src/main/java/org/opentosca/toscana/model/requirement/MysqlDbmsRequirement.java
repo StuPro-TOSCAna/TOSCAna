@@ -19,7 +19,10 @@ public class MysqlDbmsRequirement extends Requirement<ContainerCapability, Mysql
                                    Range occurrence,
                                    @Singular Set<MysqlDbms> fulfillers,
                                    HostedOn relationship) {
-        super(ContainerCapability.getFallback(capability), occurrence,
+        super(capability, occurrence,
             fulfillers, HostedOn.getFallback(relationship));
+    }
+
+    public static class MysqlDbmsRequirementBuilder extends RequirementBuilder<ContainerCapability, MysqlDbms, HostedOn> {
     }
 }

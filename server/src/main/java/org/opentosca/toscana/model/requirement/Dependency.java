@@ -22,10 +22,11 @@ public class Dependency extends Requirement<Capability, RootNode, DependsOn> {
         super(capability, occurrence, fulfillers, relationship);
     }
 
-    public static DependencyBuilder builder(Capability capability,
-                                            DependsOn relationship) {
+    public static DependencyBuilder builder(DependsOn relationship) {
         return new DependencyBuilder()
-            .capability(capability)
             .relationship(relationship);
+    }
+
+    public static class DependencyBuilder extends RequirementBuilder<Capability, RootNode, DependsOn> {
     }
 }

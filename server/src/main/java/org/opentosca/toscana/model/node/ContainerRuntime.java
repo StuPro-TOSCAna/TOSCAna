@@ -1,10 +1,14 @@
 package org.opentosca.toscana.model.node;
 
+import java.util.Set;
+
+import org.opentosca.toscana.model.capability.Capability;
 import org.opentosca.toscana.model.capability.ContainerCapability;
 import org.opentosca.toscana.model.capability.ScalableCapability;
 import org.opentosca.toscana.model.datatype.Credential;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
-import org.opentosca.toscana.model.requirement.HostRequirement;
+import org.opentosca.toscana.model.relation.HostedOn;
+import org.opentosca.toscana.model.requirement.Requirement;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 
 import lombok.Builder;
@@ -23,20 +27,22 @@ public class ContainerRuntime extends SoftwareComponent {
     private final ScalableCapability scalable;
 
     @Builder
-    private ContainerRuntime(HostRequirement host,
+    private ContainerRuntime(Requirement<ContainerCapability, Compute, HostedOn> host,
                              ContainerCapability containerHost,
                              ScalableCapability scalable,
                              String componentVersion,
                              Credential adminCredential,
                              String nodeName,
                              StandardLifecycle standardLifecycle,
+                             Set<Requirement> requirements,
+                             Set<Capability> capabilities,
                              String description) {
-        super(componentVersion, adminCredential, host, nodeName, standardLifecycle, description);
+        super(componentVersion, adminCredential, host, nodeName, standardLifecycle, requirements, capabilities, description);
         this.containerHost = (containerHost == null) ? ContainerCapability.builder().build() : containerHost;
         this.scalable = (scalable == null) ? ScalableCapability.builder().build() : scalable;
 
-        capabilities.add(containerHost);
-        capabilities.add(scalable);
+        this.capabilities.add(containerHost);
+        this.capabilities.add(scalable);
     }
 
     /**
@@ -53,5 +59,7 @@ public class ContainerRuntime extends SoftwareComponent {
     }
 
     public static class ContainerRuntimeBuilder extends SoftwareComponentBuilder {
+        protected Set<Requirement> requirements = super.requirements;
+        protected Set<Capability> capabilities = super.capabilities;
     }
 }

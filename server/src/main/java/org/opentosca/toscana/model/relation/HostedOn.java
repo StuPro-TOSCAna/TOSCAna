@@ -30,6 +30,6 @@ public class HostedOn extends RootRelationship {
         v.visit(this);
     }
 
-    public static class HostedOnBuilder extends DescribableEntityBuilder {
+    public static class HostedOnBuilder extends RootRelationshipBuilder {
     }
 }

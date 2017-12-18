@@ -3,13 +3,10 @@ package org.opentosca.toscana.plugins.testdata;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.opentosca.toscana.model.capability.AdminEndpointCapability;
+import org.opentosca.toscana.model.artifact.Artifact;
 import org.opentosca.toscana.model.capability.ContainerCapability;
 import org.opentosca.toscana.model.capability.ContainerCapability.ContainerCapabilityBuilder;
-import org.opentosca.toscana.model.capability.DatabaseEndpointCapability;
-import org.opentosca.toscana.model.capability.EndpointCapability;
 import org.opentosca.toscana.model.capability.OsCapability;
-import org.opentosca.toscana.model.datatype.Port;
 import org.opentosca.toscana.model.node.Apache;
 import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.MysqlDatabase;
@@ -19,8 +16,6 @@ import org.opentosca.toscana.model.node.WebApplication;
 import org.opentosca.toscana.model.operation.Operation;
 import org.opentosca.toscana.model.operation.OperationVariable;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
-import org.opentosca.toscana.model.relation.AttachesTo;
-import org.opentosca.toscana.model.requirement.BlockStorageRequirement;
 
 public class LampApp {
 
@@ -45,15 +40,6 @@ public class LampApp {
     }
 
     private Compute createComputeNode() {
-        AdminEndpointCapability computeAdminEndpointCap = AdminEndpointCapability
-            .builder("127.0.0.1", new Port(80))
-            .build();
-        AttachesTo attachesTo = AttachesTo
-            .builder("mount")
-            .build();
-        BlockStorageRequirement localStorage = BlockStorageRequirement
-            .builder(attachesTo)
-            .build();
         OsCapability osCapability = OsCapability
             .builder()
             .distribution(OsCapability.Distribution.UBUNTU)
@@ -61,7 +47,8 @@ public class LampApp {
             .version("16.04")
             .build();
         Compute computeNode = Compute
-            .builder("server", osCapability, computeAdminEndpointCap, localStorage)
+            .builder("server")
+            .os(osCapability)
             .host(createContainerCapability())
             .build();
         return computeNode;
@@ -83,7 +70,7 @@ public class LampApp {
 
     private MysqlDbms createMysqlDbms() {
         Operation dbmsOperation = Operation.builder()
-            .implementationArtifact("mysql_dbms/mysql_dbms_configure.sh")
+            .artifact(Artifact.builder("artifact", "mysql_dbms/mysql_dbms_configure.sh").build())
             .input(new OperationVariable("db_root_password"))
             .build();
 
@@ -91,56 +78,34 @@ public class LampApp {
             .configure(dbmsOperation)
             .build();
 
-        MysqlDbms mysqlDbms = MysqlDbms.builder(
+        return MysqlDbms.builder(
             "mysql_dbms",
             "geheim")
             .port(3306)
-            .lifecycle(lifecycle)
+            .standardLifecycle(lifecycle)
             .build();
-
-        return mysqlDbms;
     }
 
     private MysqlDatabase createMysqlDatabase() {
-        DatabaseEndpointCapability dbEndpointCapability = DatabaseEndpointCapability
-            .builder("127.0.0.1", new Port(3306))
+        return MysqlDatabase
+            .builder("my_db", "DBNAME")
             .build();
-        MysqlDatabase mydb = MysqlDatabase
-            .builder("my_db", "DBNAME", dbEndpointCapability)
-            .build();
-
-        return mydb;
     }
 
     private Apache createApache() {
         ContainerCapability containerCapability = createContainerCapability();
-        DatabaseEndpointCapability apacheEndpoint = DatabaseEndpointCapability
-            .builder("127.0.0.1", new Port(3306))
+        return Apache
+            .builder("apache_web_server")
+            .containerHost(containerCapability)
             .build();
-        AdminEndpointCapability adminEndpointCapability = AdminEndpointCapability
-            .builder("127.0.0.1", new Port(80))
-            .build();
-
-        Apache webServer = Apache.builder(
-            "apache_web_server",
-            containerCapability,
-            apacheEndpoint,
-            adminEndpointCapability)
-            .databaseEndpoint(apacheEndpoint)
-            .build();
-
-        return webServer;
     }
 
     private WebApplication createWebApplication() {
-        EndpointCapability endpointCapability = EndpointCapability
-            .builder("127.0.0.1", new Port(80))
-            .build();
         Set<String> appDependencies = new HashSet<>();
         appDependencies.add("my_app/myphpapp.php");
         appDependencies.add("my_app/mysql-credentials.php");
         Operation appCreate = Operation.builder()
-            .implementationArtifact("my_app/create_myphpapp.sh")
+            .artifact(Artifact.builder("artifact", "my_app/create_myphpapp.sh").build())
             .dependencies(appDependencies)
             .build();
 
@@ -154,7 +119,7 @@ public class LampApp {
         appInputs.add(dbPort);
 
         Operation appConfigure = Operation.builder()
-            .implementationArtifact("my_app/configure_myphpapp.sh")
+            .artifact(Artifact.builder("artifact", "my_app/configure_myphpapp.sh").build())
             .inputs(appInputs)
             .build();
 
@@ -162,11 +127,9 @@ public class LampApp {
             .create(appCreate)
             .configure(appConfigure)
             .build();
-        WebApplication webApplication = WebApplication
-            .builder("my_app", endpointCapability)
+        return WebApplication
+            .builder("my_app")
             .standardLifecycle(webAppLifecycle)
             .build();
-
-        return webApplication;
     }
 }

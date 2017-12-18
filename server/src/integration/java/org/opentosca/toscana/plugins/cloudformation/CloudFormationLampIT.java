@@ -17,9 +17,10 @@ public class CloudFormationLampIT extends BaseTransformTest {
     public CloudFormationLampIT() throws Exception {
         super(new CloudFormationPlugin());
     }
+
     @Override
     protected EffectiveModel getModel() {
-        return new EffectiveModel(LampAppAWS.getLampModel());
+        return LampAppAWS.getLampModel();
     }
 
     @Override

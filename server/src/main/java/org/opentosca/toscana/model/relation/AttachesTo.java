@@ -63,4 +63,7 @@ public class AttachesTo extends RootRelationship {
     public void accept(RelationshipVisitor v) {
         v.visit(this);
     }
+
+    public static class AttachesToBuilder extends RootRelationshipBuilder {
+    }
 }

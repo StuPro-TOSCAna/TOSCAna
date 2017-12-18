@@ -16,6 +16,8 @@ import lombok.Data;
 @Data
 public class Artifact extends DescribableEntity {
 
+    private final String name;
+
     /**
      The path (relative or absolute) which can be used to locate the artifact’s filePath.
      */
@@ -33,21 +35,27 @@ public class Artifact extends DescribableEntity {
     private final String deployPath;
 
     @Builder
-    protected Artifact(String filePath,
+    protected Artifact(String name,
+                       String filePath,
                        Repository repository,
                        String deployPath,
                        String description) {
         super(description);
+        this.name = Objects.requireNonNull(name);
         this.filePath = Objects.requireNonNull(filePath);
         this.repository = repository;
         this.deployPath = deployPath;
     }
 
     /**
+     @param name     {@link #name}
      @param filePath {@link #filePath}
      */
-    public static ArtifactBuilder builder(String filePath) {
-        return new ArtifactBuilder().filePath(filePath);
+    public static ArtifactBuilder builder(String name,
+                                          String filePath) {
+        return new ArtifactBuilder()
+            .name(name)
+            .filePath(filePath);
     }
 
     /**
