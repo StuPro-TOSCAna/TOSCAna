@@ -42,7 +42,7 @@ public class CloudFoundryApplication {
     }
 
     public void addEnvironmentVariables(String environmentVariableName) {
-        this.environmentVariables.put(environmentVariableName, "");
+        this.environmentVariables.put(environmentVariableName, "TODO");
     }
 
     public Map<String, CloudFoundryServiceType> getServices() {

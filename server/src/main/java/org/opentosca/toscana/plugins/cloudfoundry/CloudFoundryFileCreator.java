@@ -66,13 +66,16 @@ public class CloudFoundryFileCreator {
     }
 
     private void createEnvironmentVariables() throws IOException {
-        ArrayList<String> environmentVariables = new ArrayList<>();
-        environmentVariables.add(String.format("  %s:", ENVIRONMENT.getName()));
-        for (Map.Entry<String, String> entry : app.getEnvironmentVariables().entrySet()) {
-            environmentVariables.add(String.format("    %s: %s", entry.getKey(), entry.getValue()));
-        }
-        for (String env : environmentVariables) {
-            fileAccess.access(MANIFEST).appendln(env).close();
+        Map<String, String> envVariables = app.getEnvironmentVariables();
+        if (!envVariables.isEmpty() ) {
+            ArrayList<String> environmentVariables = new ArrayList<>();
+            environmentVariables.add(String.format("  %s:", ENVIRONMENT.getName()));
+            for (Map.Entry<String, String> entry : envVariables.entrySet()) {
+                environmentVariables.add(String.format("    %s: %s", entry.getKey(), entry.getValue()));
+            }
+            for (String env : environmentVariables) {
+                fileAccess.access(MANIFEST).appendln(env).close();
+            }
         }
     }
 
@@ -81,13 +84,16 @@ public class CloudFoundryFileCreator {
      add it to the manifest
      */
     private void createService() throws IOException {
-        ArrayList<String> services = new ArrayList<>();
-        services.add(String.format("  %s:", SERVICE.getName()));
-        for (Map.Entry<String, CloudFoundryServiceType> service : app.getServices().entrySet()) {
-            services.add(String.format("    - %s", service.getKey()));
-        }
-        for (String service : services) {
-            fileAccess.access(MANIFEST).appendln(service).close();
+        Map<String, CloudFoundryServiceType> appServices = app.getServices();
+        if (!appServices.isEmpty() ) {
+            ArrayList<String> services = new ArrayList<>();
+            services.add(String.format("  %s:", SERVICE.getName()));
+            for (Map.Entry<String, CloudFoundryServiceType> service : appServices.entrySet()) {
+                services.add(String.format("    - %s", service.getKey()));
+            }
+            for (String service : services) {
+                fileAccess.access(MANIFEST).appendln(service).close();
+            }
         }
     }
 

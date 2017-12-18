@@ -6,6 +6,7 @@ import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryApplication;
+import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryServiceType;
 import org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle;
 
 import org.apache.commons.io.FileUtils;
@@ -15,11 +16,7 @@ import org.mockito.Mock;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.BUILDPACK_FILEPATH_PHP;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.FILEPRAEFIX_DEPLOY;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.FILESUFFIX_DEPLOY;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.MANIFEST;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.NAMEBLOCK;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.*;
 import static org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryManifestAttribute.APPLICATIONS_SECTION;
 import static org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryManifestAttribute.ENVIRONMENT;
 import static org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryManifestAttribute.SERVICE;
@@ -33,20 +30,19 @@ public class CloudFoundryFileCreatorTest extends BaseUnitTest {
     private File targetDir;
     private String appName;
     private final String outputPath = AbstractLifecycle.SCRIPTS_DIR_PATH;
-    private final String expectedBuildpackcontent = "{\n" +
-        "    \"PHP-EXTENSIONS\": [\n" +
-        "        \"mysql\",\n" +
-        "        \"mysqli\"\n" +
-        "    ]\n" +
-        "}";
+    private final String buildPack1 = "mysql";
+    private final String buildPack2 = "mysqli";
+    private final String envVariable1 = "ENVTEST1";
+    private final String envVariable2 = "ENVTEST2";
+    private final String envValue = "TESTVALUE";
+    private final String service1 = "cleardb";
+    private final String service2 = "p-mysql";
 
     @Before
     public void setUp() {
         appName = "testApp";
         testApp = new CloudFoundryApplication();
         testApp.setName(appName);
-        testApp.addBuildpack("mysql");
-        testApp.addBuildpack("mysqli");
         File sourceDir = new File(tmpdir, "sourceDir");
         targetDir = new File(tmpdir, "targetDir");
         sourceDir.mkdir();
@@ -72,11 +68,28 @@ public class CloudFoundryFileCreatorTest extends BaseUnitTest {
         fileCreator.createFiles();
         File targetFile = new File(targetDir, MANIFEST);
         String manifestContent = FileUtils.readFileToString(targetFile);
-        String expectedManifestContent = String.format("---\n%s:\n- %s: %s\n  %s:\n  %s:\n",
-            APPLICATIONS_SECTION.getName(), NAMEBLOCK, appName, ENVIRONMENT.getName(), SERVICE.getName());
+        String expectedManifestContent = String.format("---\n%s:\n- %s: %s\n",
+            APPLICATIONS_SECTION.getName(), NAMEBLOCK, appName);
 
         assertEquals(expectedManifestContent, manifestContent);
     }
+
+    @Test
+    public void environmentVariables() throws Exception {
+        testApp.addEnvironmentVariables(envVariable1);
+        testApp.addEnvironmentVariables(envVariable2, envValue);
+        fileCreator.createFiles();
+        File targetFile = new File(targetDir, MANIFEST);
+        String manifestContent = FileUtils.readFileToString(targetFile);
+        String expectedManifestContent = String.format("---\n%s:\n- %s: %s\n  %s:\n    %s: %s\n    %s: %s\n",
+            APPLICATIONS_SECTION.getName(), NAMEBLOCK, appName, 
+            ENVIRONMENT.getName(), 
+            envVariable1, "TODO",
+            envVariable2, envValue);
+
+        assertEquals(expectedManifestContent, manifestContent);
+    }
+    
 
     @Test
     public void contentDeploy() throws Exception {
@@ -90,9 +103,34 @@ public class CloudFoundryFileCreatorTest extends BaseUnitTest {
 
     @Test
     public void buildpackAdditons() throws Exception {
+        testApp.addBuildpack(buildPack1);
+        testApp.addBuildpack(buildPack2);
+        String expectedBuildpackcontent = "{\n" +
+            "    \""+ BUILDPACK_OBJECT_PHP+"\": [\n" +
+            "        \"" + buildPack1 + "\",\n" +
+            "        \"" + buildPack2 + "\"\n" +
+            "    ]\n" +
+            "}";
+        
         fileCreator.createFiles();
         File targetFile = new File(targetDir, BUILDPACK_FILEPATH_PHP);
         String buildpackContent = FileUtils.readFileToString(targetFile);
         assertEquals(expectedBuildpackcontent, buildpackContent);
+    }
+
+    @Test
+    public void services() throws Exception {
+        testApp.addService(service1, CloudFoundryServiceType.MYSQL);
+        testApp.addService(service2, CloudFoundryServiceType.MYSQL);
+        fileCreator.createFiles();
+        File targetFile = new File(targetDir, MANIFEST);
+        String manifestContent = FileUtils.readFileToString(targetFile);
+        String expectedManifestContent = String.format("---\n%s:\n- %s: %s\n  %s:\n    - %s\n    - %s\n",
+            APPLICATIONS_SECTION.getName(), NAMEBLOCK, appName,
+            SERVICE.getName(),
+            service2,
+            service1);
+
+        assertEquals(expectedManifestContent, manifestContent);
     }
 }
