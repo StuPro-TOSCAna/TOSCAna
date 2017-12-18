@@ -1,6 +1,5 @@
 package org.opentosca.toscana.plugins.kubernetes;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,12 +15,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 public class ResourceFileCreatorTest extends BaseUnitTest {
-    String appName = "my-app";
-    String appServiceName = "my-app-service";
-    String appDeploymentName = "my-app-deployment";
+    private String appName = "my-app";
+    private String appServiceName = "my-app-service";
+    private String appDeploymentName = "my-app-deployment";
 
     @Test
-    public void testReplicationControllerCreation() throws IOException {
+    public void testReplicationControllerCreation() {
         ResourceFileCreator resourceFileCreator = new ResourceFileCreator(KubernetesLampApp.getNodeStack());
 
         HashMap<String, String> result = null;
@@ -31,8 +30,6 @@ public class ResourceFileCreatorTest extends BaseUnitTest {
             e.printStackTrace();
             fail();
         }
-
-        result.forEach((s, s2) -> System.out.println(s2));
 
         String service = result.get(appServiceName);
         String deployment = result.get(appDeploymentName);
@@ -69,8 +66,7 @@ public class ResourceFileCreatorTest extends BaseUnitTest {
 
     private void serviceTest(Map map) {
         // test the metadata
-        String serviceName = appServiceName;
-        metadataTest(serviceName, (Map) map.get("metadata"));
+        metadataTest(appServiceName, (Map) map.get("metadata"));
 
         //test the spec
         Map spec = (Map) map.get("spec");

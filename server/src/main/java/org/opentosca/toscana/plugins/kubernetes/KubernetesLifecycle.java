@@ -1,10 +1,8 @@
 package org.opentosca.toscana.plugins.kubernetes;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -25,10 +23,6 @@ import org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle;
 import org.opentosca.toscana.plugins.util.TransformationFailureException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import io.fabric8.kubernetes.api.model.HasMetadata;
-import io.fabric8.kubernetes.api.model.ServiceBuilder;
-import io.fabric8.kubernetes.api.model.extensions.DeploymentBuilder;
-import io.fabric8.kubernetes.client.internal.SerializationUtils;
 
 import static org.opentosca.toscana.plugins.kubernetes.util.GraphOperations.buildTopologyStacks;
 import static org.opentosca.toscana.plugins.kubernetes.util.GraphOperations.determineTopLevelNodes;
@@ -165,7 +159,7 @@ public class KubernetesLifecycle extends AbstractLifecycle {
      */
     private void createKubernetesResources() {
         logger.info("Creating Kubernetes Resource Descriptions");
-        
+
         ResourceFileCreator creator = new ResourceFileCreator(this.stacks);
 
         StringBuilder complete = new StringBuilder();

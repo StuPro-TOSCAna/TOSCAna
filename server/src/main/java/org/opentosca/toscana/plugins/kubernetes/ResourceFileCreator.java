@@ -1,7 +1,6 @@
 package org.opentosca.toscana.plugins.kubernetes;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Set;
 
 import org.opentosca.toscana.plugins.kubernetes.model.ResourceDeployment;

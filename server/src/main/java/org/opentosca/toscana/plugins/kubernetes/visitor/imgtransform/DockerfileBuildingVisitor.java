@@ -117,7 +117,7 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
         return name[name.length - 1];
     }
 
-    public void buildAndWriteDockerfile() throws IOException{
+    public void buildAndWriteDockerfile() throws IOException {
         logger.debug("Visiting nodes");
         stack.forEachNode(node -> {
             logger.debug("Visitng node: {}", node.getNode().getNodeName());
