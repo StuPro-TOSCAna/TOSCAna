@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.opentosca.toscana.core.BaseUnitTest;
-import org.opentosca.toscana.plugins.testdata.KubernetesLampApp;
+import org.opentosca.toscana.plugins.kubernetes.model.TestNodeStacks;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.Test;
@@ -21,7 +21,7 @@ public class ResourceFileCreatorTest extends BaseUnitTest {
 
     @Test
     public void testReplicationControllerCreation() {
-        ResourceFileCreator resourceFileCreator = new ResourceFileCreator(KubernetesLampApp.getNodeStack());
+        ResourceFileCreator resourceFileCreator = new ResourceFileCreator(TestNodeStacks.getNodeStacks());
 
         HashMap<String, String> result = null;
         try {

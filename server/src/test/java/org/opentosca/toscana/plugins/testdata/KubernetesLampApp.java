@@ -1,8 +1,6 @@
 package org.opentosca.toscana.plugins.testdata;
 
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 
 import org.opentosca.toscana.model.capability.AdminEndpointCapability;
@@ -25,20 +23,11 @@ import org.opentosca.toscana.model.requirement.BlockStorageRequirement;
 import org.opentosca.toscana.model.requirement.HostRequirement;
 import org.opentosca.toscana.model.requirement.MysqlDbmsRequirement;
 import org.opentosca.toscana.model.requirement.WebServerRequirement;
-import org.opentosca.toscana.plugins.kubernetes.util.KubernetesNodeContainer;
-import org.opentosca.toscana.plugins.kubernetes.util.NodeStack;
-
-import com.google.common.collect.Sets;
 
 @SuppressWarnings({"Duplicates"})
 public class KubernetesLampApp {
 
     private final Set<RootNode> testNodes = new HashSet<>();
-    private Compute compute;
-    private Apache webserver;
-    private MysqlDbms dbms;
-    private WebApplication webapp;
-    private MysqlDatabase mysql;
 
     public Set<RootNode> getLampApp() {
         createLampModel();
@@ -51,35 +40,16 @@ public class KubernetesLampApp {
 
     private void createLampModel() {
 
-        compute = createComputeNode();
-        webserver = createApache(compute);
-        dbms = createMysqlDbms(compute);
-        webapp = createWebApplication(webserver);
-        mysql = createMysqlDatabase(dbms);
+        Compute compute = createComputeNode();
+        Apache webserver = createApache(compute);
+        MysqlDbms dbms = createMysqlDbms(compute);
 
         testNodes.add(compute);
         testNodes.add(webserver);
         testNodes.add(dbms);
 
-        testNodes.add(mysql);
-        testNodes.add(webapp);
-    }
-
-    private HashSet<NodeStack> createNodeStack() {
-        createLampModel();
-        List<KubernetesNodeContainer> webAppNodes = new LinkedList<>();
-        KubernetesNodeContainer computeContainer = new KubernetesNodeContainer(compute);
-        computeContainer.hasParentComputeNode();
-        webAppNodes.add(new KubernetesNodeContainer(webapp));
-        webAppNodes.add(new KubernetesNodeContainer(webserver));
-        webAppNodes.add(computeContainer);
-
-        NodeStack webAppNodeStack = new NodeStack(webAppNodes);
-        return Sets.newHashSet(webAppNodeStack);
-    }
-
-    public static Set<NodeStack> getNodeStack() {
-        return new KubernetesLampApp().createNodeStack();
+        testNodes.add(createMysqlDatabase(dbms));
+        testNodes.add(createWebApplication(webserver));
     }
 
     private Compute createComputeNode() {
