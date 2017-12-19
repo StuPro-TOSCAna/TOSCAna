@@ -24,7 +24,7 @@ import org.opentosca.toscana.model.requirement.HostRequirement;
 import org.opentosca.toscana.model.requirement.MysqlDbmsRequirement;
 import org.opentosca.toscana.model.requirement.WebServerRequirement;
 
-@SuppressWarnings( {"Duplicates"})
+@SuppressWarnings({"Duplicates"})
 public class KubernetesLampApp {
 
     private final Set<RootNode> testNodes = new HashSet<>();
