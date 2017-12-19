@@ -18,7 +18,7 @@
 ### Java-cf-library
 
 * `+` provides many options
-* `+` easy authentification process
+* `+` easy authentication process
 * `-` new datatypes like `flux`
 
 ### Own Http-calls
