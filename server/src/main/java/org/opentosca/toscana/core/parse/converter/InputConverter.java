@@ -1,5 +1,6 @@
 package org.opentosca.toscana.core.parse.converter;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -10,6 +11,8 @@ import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.core.transformation.properties.PropertyType;
 
 import org.eclipse.winery.model.tosca.yaml.TParameterDefinition;
+import org.eclipse.winery.model.tosca.yaml.TServiceTemplate;
+import org.eclipse.winery.model.tosca.yaml.TTopologyTemplateDefinition;
 import org.eclipse.winery.yaml.common.Namespaces;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +24,11 @@ public class InputConverter {
 
     private final static Logger logger = LoggerFactory.getLogger(InputConverter.class.getName());
 
-    public Set<Property> convert(Map<String, TParameterDefinition> inputs) {
+    public Set<Property> convert(TServiceTemplate template) {
+        TTopologyTemplateDefinition topology = template.getTopologyTemplate();
+        if (topology == null) return new HashSet<>();
+        Map<String, TParameterDefinition> inputs = topology.getInputs();
+        if (inputs == null) return new HashSet<>();
         return inputs.entrySet()
             .stream()
             .map(this::convert)
@@ -32,16 +39,15 @@ public class InputConverter {
         String name = propertyEntry.getKey();
         TParameterDefinition parameter = propertyEntry.getValue();
         PropertyType type = convertType(parameter.getType());
-        System.out.println("PROPERTY TYPE: '" + parameter.getType() + "'");
         Property property = new Property(name, type, parameter.getDescription(), parameter.getRequired());
         return property;
     }
 
     private PropertyType convertType(QName type) {
-        if  (type == null){
+        if (type == null) {
             return PropertyType.TEXT;
         }
-        switch(type.getNamespaceURI()){
+        switch (type.getNamespaceURI()) {
             case Namespaces.YAML_NS:
                 return convertYamlType(type.getLocalPart());
             default:
@@ -51,7 +57,7 @@ public class InputConverter {
     }
 
     private PropertyType convertYamlType(String localPart) {
-        switch (localPart){
+        switch (localPart) {
             case "string":
                 return PropertyType.TEXT;
             case "integer":

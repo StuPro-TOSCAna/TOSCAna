@@ -34,7 +34,7 @@ public abstract class BaseSpringIntegrationTest extends BaseSpringTest {
     protected int port;
 
     /**
-     @return the local (127.0.0.1) URL to the server int he schema <code>http://127.0.0.1:<PORT>/</code>
+     @return the local (127.0.0.1) URL to the server in the schema <code>http://127.0.0.1:<PORT>/</code>
      */
     protected String getHttpUrl() {
         return "http://127.0.0.1:" + port + "/";

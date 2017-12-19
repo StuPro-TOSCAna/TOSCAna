@@ -35,17 +35,10 @@ public class ModelConverter {
         logger.debug("Convert service template to normative model");
         Set<Repository> repositories = getRepositories(serviceTemplate);
 
-        Set<Property> inputs = convertInputs(serviceTemplate.getTopologyTemplate());
+        Set<Property> inputs = new InputConverter().convert(serviceTemplate);
         Set<ConversionResult<RootNode>> result = convertNodeTemplates(serviceTemplate.getTopologyTemplate(), repositories);
         Set<RootNode> nodes = fulfillRequirements(result);
         return new EffectiveModel(nodes, inputs);
-    }
-
-    private Set<Property> convertInputs(TTopologyTemplateDefinition topology) {
-        if (topology != null) {
-            return new InputConverter().convert(topology.getInputs());
-        }
-        return new HashSet<>();
     }
 
     private Set<Repository> getRepositories(TServiceTemplate serviceTemplate) {
