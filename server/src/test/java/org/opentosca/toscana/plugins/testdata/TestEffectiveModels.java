@@ -34,7 +34,7 @@ public class TestEffectiveModels {
             .os(os)
             .host(host)
             .build();
-        return new EffectiveModel(Sets.newHashSet(computeNode));
+        return new EffectiveModel(Sets.newHashSet(computeNode), new HashSet<>());
     }
 
     public static EffectiveModel getMinimalDockerModel() {
@@ -49,10 +49,10 @@ public class TestEffectiveModels {
             .builder("simpleTaskApp")
             .dockerHost(host)
             .build();
-        return new EffectiveModel(Sets.newHashSet(simpleTaskApp, dockerRuntime));
+        return new EffectiveModel(Sets.newHashSet(simpleTaskApp, dockerRuntime), new HashSet<>());
     }
 
     public static EffectiveModel getLampModel() {
-        return new EffectiveModel(new LampApp().getLampApp());
+        return LampApp.getLampApp();
     }
 }

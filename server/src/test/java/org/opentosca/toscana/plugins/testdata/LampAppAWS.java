@@ -31,7 +31,7 @@ public class LampAppAWS {
     }
 
     public static EffectiveModel getLampModel() {
-        return new EffectiveModel(new LampAppAWS().getLampApp());
+        return new EffectiveModel(new LampAppAWS().getLampApp(), new HashSet<>());
     }
 
     private void createLampModel() {
