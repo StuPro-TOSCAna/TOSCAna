@@ -17,11 +17,11 @@ public class EffectiveModel {
 
     private final Graph<RootNode, RootRelationship> topology =
         new DefaultDirectedGraph<>(RootRelationship.class);
-    
+
     private final Map<String, RootNode> nodeMap;
-    
+
     private final Set<Property> inputs;
-    
+
     public EffectiveModel(Set<RootNode> vertices, Set<Property> inputs) {
         this.inputs = inputs;
         vertices.forEach(topology::addVertex);

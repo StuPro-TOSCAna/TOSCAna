@@ -38,7 +38,7 @@ public class TestCsars {
 
     @Autowired
     private CsarDao csarDao;
-    
+
     /**
      Creates given file as csar. Caution: Uses CsarDao internally
 
