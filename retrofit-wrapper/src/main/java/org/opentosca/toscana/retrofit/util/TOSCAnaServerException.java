@@ -3,7 +3,7 @@ package org.opentosca.toscana.retrofit.util;
 import org.opentosca.toscana.retrofit.model.ServerError;
 
 public class TOSCAnaServerException extends Exception {
-   
+
     private final ServerError errorResponse;
     private final int statusCode;
 

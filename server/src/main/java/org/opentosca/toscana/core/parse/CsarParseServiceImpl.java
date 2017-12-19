@@ -44,7 +44,7 @@ public class CsarParseServiceImpl implements CsarParseService {
         Path file = Paths.get(template.getName());
         serviceTemplate = reader.parse(parent, file);
         ModelConverter converter = new ModelConverter(logger);
-        
+
         return converter.convert(serviceTemplate);
     }
 
