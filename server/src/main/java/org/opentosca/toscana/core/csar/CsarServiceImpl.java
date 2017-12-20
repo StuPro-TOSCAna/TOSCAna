@@ -32,7 +32,6 @@ public class CsarServiceImpl implements CsarService {
         Csar csar = csarDao.create(identifier, csarStream);
         try {
             populateWithTemplate(csar);
-            csar.getModelSpecificProperties();
             return csar;
         } catch (InvalidCsarException e) {
             logger.warn("Failed to submit csar", e);
