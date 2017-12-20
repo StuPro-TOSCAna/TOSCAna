@@ -22,3 +22,4 @@ topology_template:
       description: description4
       type: float
       required: false
+      default: default-value

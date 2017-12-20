@@ -29,7 +29,8 @@ public class ModelSpecificPropertyIT extends BaseSpringIntegrationTest {
 
     private static final String[] KEYS = {"string-input", "boolean-input", "integer-input", "float-input"};
     private static final String[] TYPES = {"text", "boolean", "integer", "float"};
-    private static final String[] DESCRIPTION = {"description1", "description2", "description3", "description4"};
+    private static final String[] DESCRIPTIONS = {"description1", "description2", "description3", "description4"};
+    private static final String[] VALUES = {null, null, null, "default-value"};
     private static final boolean[] REQUIRED = {true, true, false, false};
 
     private TOSCAnaAPI api;
@@ -49,8 +50,7 @@ public class ModelSpecificPropertyIT extends BaseSpringIntegrationTest {
         String csarName = "test-csar";
         api.uploadCsar(csarName, TestCsars.VALID_INPUTS);
         List<Platform> platforms = api.getPlatforms().getContent();
-//        String platform = platforms.get(0).getId();
-        String platform = "cloud-foundry";
+        String platform = platforms.get(0).getId();
         api.createTransformation(csarName, platform);
         Transformation t = api.getTransformation(csarName, platform);
         List<TransformationProperty> properties = api.getProperties(csarName, platform).getProperties();
@@ -82,8 +82,9 @@ public class ModelSpecificPropertyIT extends BaseSpringIntegrationTest {
             TransformationProperty property = new TransformationProperty();
             property.setKey(KEYS[i]);
             property.setType(TYPES[i]);
-            property.setDescription(DESCRIPTION[i]);
+            property.setDescription(DESCRIPTIONS[i]);
             property.setRequired(REQUIRED[i]);
+            property.setValue(VALUES[i]);
             properties.add(property);
         }
         return properties;
