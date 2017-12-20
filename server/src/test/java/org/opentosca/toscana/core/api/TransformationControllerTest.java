@@ -38,17 +38,21 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.results.ResultMatchers;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import static net.bytebuddy.matcher.ElementMatchers.anyOf;
+import static net.bytebuddy.matcher.ElementMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -259,7 +263,6 @@ public class TransformationControllerTest extends BaseSpringTest {
             .andExpect(jsonPath("$.properties[0].type").isString())
             .andExpect(jsonPath("$.properties[0].description").isString())
             .andExpect(jsonPath("$.properties[0].required").isBoolean())
-            .andExpect(jsonPath("$.properties[0].value").doesNotExist()) //Check that the value is null
             .andExpect(jsonPath("$.links[0].rel").value("self"))
             .andExpect(jsonPath("$.links[0].href")
                 .value("http://localhost/api/csars/kubernetes-cluster/transformations/p-a/properties"))
