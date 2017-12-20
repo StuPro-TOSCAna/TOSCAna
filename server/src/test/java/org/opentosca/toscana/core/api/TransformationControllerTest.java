@@ -2,11 +2,13 @@ package org.opentosca.toscana.core.api;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
@@ -30,12 +32,14 @@ import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.core.transformation.properties.PropertyType;
 
 import ch.qos.logback.classic.Level;
+import com.jayway.jsonpath.JsonPath;
 import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -95,8 +99,10 @@ public class TransformationControllerTest extends BaseSpringTest {
     private final static String CREATE_CSAR_VALID_URL = "/api/csars/kubernetes-cluster/transformations/p-a/create";
     private final static String PLATFORM_NOT_FOUND_URL = "/api/csars/kubernetes-cluster/transformations/p-z";
     private final static String CSAR_NOT_FOUND_URL = "/api/csars/keinechtescsar/transformations";
-    private static final String[] CSAR_NAMES = new String[]{"kubernetes-cluster", "apache-test", "mongo-db"};
+    private static final String[] CSAR_NAMES = new String[] {"kubernetes-cluster", "apache-test", "mongo-db"};
     private static final String SECOND_VALID_PLATFORM_NAME = "p-b";
+    private static final String PROPERTY_TEST_DEFAULT_VALUE = "Test-Default-Value";
+    private static final String PROPERTY_TEST_DEFAULT_VALUE_KEY = "default_value_property";
     //</editor-fold>
 
     private CsarService csarService;
@@ -140,6 +146,15 @@ public class TransformationControllerTest extends BaseSpringTest {
                 properties.add(new Property(type.getTypeName() + "_property", type));
             }
             char[] chars = "abcdefghijklmnopqrstuvwxyz".toCharArray();
+            if (i == 0) {
+                properties.add(new Property(
+                    PROPERTY_TEST_DEFAULT_VALUE_KEY,
+                    PropertyType.TEXT,
+                    "",
+                    false,
+                    PROPERTY_TEST_DEFAULT_VALUE
+                ));
+            }
             platforms.add(new Platform("p-" + chars[i], "platform-" + (i + 1), properties));
         }
         when(platformService.getSupportedPlatforms()).thenReturn(platforms);
@@ -233,7 +248,7 @@ public class TransformationControllerTest extends BaseSpringTest {
     @Test
     public void getTransformationProperties() throws Exception {
         preInitNonCreationTests();
-        mvc.perform(
+        MvcResult result = mvc.perform(
             get(GET_PROPERTIES_VALID_URL)
         ).andDo(print())
             .andExpect(status().is(200))
@@ -249,6 +264,14 @@ public class TransformationControllerTest extends BaseSpringTest {
             .andExpect(jsonPath("$.links[0].href")
                 .value("http://localhost/api/csars/kubernetes-cluster/transformations/p-a/properties"))
             .andReturn();
+        
+        MockHttpServletResponse response = result.getResponse();
+        String responseJson = new String(response.getContentAsByteArray());
+        String[] values = JsonPath.parse(responseJson).read("$.properties[*].value", String[].class);
+        long nullCount = Arrays.asList(values).stream().filter(Objects::isNull).count();
+        long testCount = Arrays.asList(values).stream().filter(e -> e != null &&  e.equals(PROPERTY_TEST_DEFAULT_VALUE)).count();
+        assertEquals(7, nullCount);
+        assertEquals(1,  testCount);
     }
 
     @Test
@@ -274,11 +297,11 @@ public class TransformationControllerTest extends BaseSpringTest {
             if (content.getString("key").equals("secret_property")) {
                 valueFound = content.getString("value").equals("geheim");
             } else {
-                restNull = restNull && content.isNull("value");
+                restNull = restNull && (content.isNull("value") || content.equals(PROPERTY_TEST_DEFAULT_VALUE));
             }
         }
         assertTrue("Could not find valid value in property list", valueFound);
-        assertTrue("Not all other values in property list are null", restNull);
+        assertTrue("Not all other values in property list are null or equal to the default value", restNull);
     }
 
     //</editor-fold>

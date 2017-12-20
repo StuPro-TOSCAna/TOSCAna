@@ -13,6 +13,8 @@ public class Property {
     private final String description;
     private final boolean required;
 
+    private final String defaultValue;
+
     /**
      Constructs a new property object, describing the key of a property and the type of the value.
 
@@ -22,12 +24,27 @@ public class Property {
      checked tough)
      @param required    determines if the property is required or not
      */
-    public Property(String key, PropertyType type,
-                    String description, boolean required) {
+    public Property(
+        String key,
+        PropertyType type,
+        String description,
+        boolean required
+    ) {
+        this(key, type, description, required, null);
+    }
+
+    public Property(
+        String key,
+        PropertyType type,
+        String description,
+        boolean required,
+        String defaultValue
+    ) {
         this.key = key;
         this.type = type;
         this.description = description;
         this.required = required;
+        this.defaultValue = defaultValue;
     }
 
     /**
@@ -54,5 +71,9 @@ public class Property {
 
     public boolean isRequired() {
         return required;
+    }
+
+    public String getDefaultValue() {
+        return defaultValue;
     }
 }
