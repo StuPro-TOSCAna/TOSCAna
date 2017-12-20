@@ -297,7 +297,8 @@ public class TransformationControllerTest extends BaseSpringTest {
             if (content.getString("key").equals("secret_property")) {
                 valueFound = content.getString("value").equals("geheim");
             } else {
-                restNull = restNull && (content.isNull("value") || content.equals(PROPERTY_TEST_DEFAULT_VALUE));
+                restNull = restNull && (content.isNull("value") 
+                    || content.getString("value").equals(PROPERTY_TEST_DEFAULT_VALUE));
             }
         }
         assertTrue("Could not find valid value in property list", valueFound);
