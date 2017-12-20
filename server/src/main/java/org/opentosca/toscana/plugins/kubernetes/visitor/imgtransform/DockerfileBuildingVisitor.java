@@ -126,8 +126,8 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
                 String filename = determineFilename(e);
                 builder.copyFromCsar(e, nodeName, filename);
             }
-            if (operation.getImplementationArtifact().isPresent()) {
-                String path = operation.getImplementationArtifact().get();
+            if (operation.getArtifact().isPresent()) {
+                String path = operation.getArtifact().get().getFilePath();
                 builder.copyFromCsar(path, nodeName, nodeName + "-" + opName);
                 builder.run("sh " + nodeName + "-" + opName);
             }

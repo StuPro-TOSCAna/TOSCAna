@@ -16,10 +16,15 @@ import lombok.Data;
 public class ConnectsTo extends RootRelationship {
 
     /**
-     Used to present to the target endpoint for either authentication or authorization purposes.
+     The optional credential used to present to the target endpoint for either authentication or authorization purposes.
      (TOSCA Simple Profile in YAML Version 1.1, p. 161)
      */
     private final Credential credential;
+
+    public ConnectsTo() {
+        super(null);
+        credential = null;
+    }
 
     @Builder
     protected ConnectsTo(Credential credential,
@@ -40,6 +45,6 @@ public class ConnectsTo extends RootRelationship {
         v.visit(this);
     }
 
-    public static class ConnectsToBuilder extends DescribableEntityBuilder {
+    public static class ConnectsToBuilder extends RootRelationshipBuilder {
     }
 }

@@ -29,6 +29,6 @@ public class DependsOn extends RootRelationship {
         v.visit(this);
     }
 
-    public static class DependsOnBuilder extends DescribableEntityBuilder {
+    public static class DependsOnBuilder extends RootRelationshipBuilder {
     }
 }

@@ -90,11 +90,6 @@ public class CloudFoundryNodeVisitor implements StrictNodeVisitor {
                 myApp.addFilePath(operation.getArtifact().get().getFilePath());
             }
 
-            // add implementationArtifact path if not null
-            if (operation.getImplementationArtifact().isPresent()) {
-                myApp.addFilePath(operation.getImplementationArtifact().get());
-            }
-
             // add dependencies paths
             for (String dependency : operation.getDependencies()) {
                 myApp.addFilePath(dependency);

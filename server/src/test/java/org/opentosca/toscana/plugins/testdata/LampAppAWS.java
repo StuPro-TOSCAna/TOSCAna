@@ -3,13 +3,11 @@ package org.opentosca.toscana.plugins.testdata;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.opentosca.toscana.model.capability.AdminEndpointCapability;
+import org.opentosca.toscana.model.EffectiveModel;
+import org.opentosca.toscana.model.artifact.Artifact;
 import org.opentosca.toscana.model.capability.ContainerCapability;
 import org.opentosca.toscana.model.capability.ContainerCapability.ContainerCapabilityBuilder;
-import org.opentosca.toscana.model.capability.DatabaseEndpointCapability;
-import org.opentosca.toscana.model.capability.EndpointCapability;
 import org.opentosca.toscana.model.capability.OsCapability;
-import org.opentosca.toscana.model.datatype.Port;
 import org.opentosca.toscana.model.node.Apache;
 import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.MysqlDatabase;
@@ -19,8 +17,6 @@ import org.opentosca.toscana.model.node.WebApplication;
 import org.opentosca.toscana.model.operation.Operation;
 import org.opentosca.toscana.model.operation.OperationVariable;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
-import org.opentosca.toscana.model.relation.AttachesTo;
-import org.opentosca.toscana.model.requirement.BlockStorageRequirement;
 import org.opentosca.toscana.model.requirement.HostRequirement;
 import org.opentosca.toscana.model.requirement.MysqlDbmsRequirement;
 import org.opentosca.toscana.model.requirement.WebServerRequirement;
@@ -34,15 +30,15 @@ public class LampAppAWS {
         return testNodes;
     }
 
-    public static Set<RootNode> getLampModel() {
-        return new LampAppAWS().getLampApp();
+    public static EffectiveModel getLampModel() {
+        return new EffectiveModel(new LampAppAWS().getLampApp());
     }
 
     private void createLampModel() {
 
         MysqlDbms mysqlDbms = createMysqlDbms();
         Apache apache = createApache();
-        
+
         testNodes.add(createComputeNode());
         testNodes.add(mysqlDbms);
         testNodes.add(createMysqlDatabase(mysqlDbms));
@@ -51,26 +47,17 @@ public class LampAppAWS {
     }
 
     private Compute createComputeNode() {
-        AdminEndpointCapability computeAdminEndpointCap = AdminEndpointCapability
-            .builder("127.0.0.1", new Port(80))
-            .build();
-        AttachesTo attachesTo = AttachesTo
-            .builder("mount")
-            .build();
-        BlockStorageRequirement localStorage = BlockStorageRequirement
-            .builder(attachesTo)
-            .build();
         OsCapability osCapability = OsCapability
             .builder()
             .distribution(OsCapability.Distribution.UBUNTU)
             .type(OsCapability.Type.LINUX)
             .version("16.04")
             .build();
-        Compute computeNode = Compute
-            .builder("server", osCapability, computeAdminEndpointCap, localStorage)
+        return Compute
+            .builder("server")
+            .os(osCapability)
             .host(createContainerCapability())
             .build();
-        return computeNode;
     }
 
     private ContainerCapability createContainerCapability() {
@@ -89,7 +76,7 @@ public class LampAppAWS {
 
     private MysqlDbms createMysqlDbms() {
         Operation dbmsOperation = Operation.builder()
-            .implementationArtifact("mysql_dbms/mysql_dbms_configure.sh")
+            .artifact(Artifact.builder("", "mysql_dbms/mysql_dbms_configure.sh").build())
             .input(new OperationVariable("db_root_password"))
             .build();
 
@@ -101,7 +88,7 @@ public class LampAppAWS {
             "mysql_dbms",
             "geheim12")
             .port(3306)
-            .lifecycle(lifecycle)
+            .standardLifecycle(lifecycle)
             .host(getHostedOnServerRequirement())
             .build();
 
@@ -109,12 +96,9 @@ public class LampAppAWS {
     }
 
     private MysqlDatabase createMysqlDatabase(MysqlDbms mysqlDbms) {
-        DatabaseEndpointCapability dbEndpointCapability = DatabaseEndpointCapability
-            .builder("127.0.0.1", new Port(3306))
-            .build();
         MysqlDatabase mydb = MysqlDatabase
-            .builder("my_db", "DBNAME", dbEndpointCapability)
-            .host(MysqlDbmsRequirement.builder().fulfiller(mysqlDbms).build())
+            .builder("my_db", "DBNAME")
+            .mysqlHost(MysqlDbmsRequirement.builder().fulfiller(mysqlDbms).build())
             .user("root")
             .password("geheim12")
             .databaseName("DBNAME")
@@ -125,19 +109,9 @@ public class LampAppAWS {
 
     private Apache createApache() {
         ContainerCapability containerCapability = createContainerCapability();
-        DatabaseEndpointCapability apacheEndpoint = DatabaseEndpointCapability
-            .builder("127.0.0.1", new Port(3306))
-            .build();
-        AdminEndpointCapability adminEndpointCapability = AdminEndpointCapability
-            .builder("127.0.0.1", new Port(80))
-            .build();
-
-        Apache webServer = Apache.builder(
-            "apache_web_server",
-            containerCapability,
-            apacheEndpoint,
-            adminEndpointCapability)
-            .databaseEndpoint(apacheEndpoint)
+        Apache webServer = Apache
+            .builder("apache_web_server")
+            .containerHost(containerCapability)
             .host(getHostedOnServerRequirement())
             .build();
 
@@ -145,14 +119,11 @@ public class LampAppAWS {
     }
 
     private WebApplication createWebApplication(Apache webserver) {
-        EndpointCapability endpointCapability = EndpointCapability
-            .builder("127.0.0.1", new Port(80))
-            .build();
         Set<String> appDependencies = new HashSet<>();
         appDependencies.add("my_app/myphpapp.php");
         appDependencies.add("my_app/mysql-credentials.php");
         Operation appCreate = Operation.builder()
-            .implementationArtifact("my_app/create_myphpapp.sh")
+            .artifact(Artifact.builder("", "my_app/create_myphpapp.sh").build())
             .dependencies(appDependencies)
             .build();
 
@@ -165,7 +136,7 @@ public class LampAppAWS {
         appInputs.add(dbPort);
 
         Operation appConfigure = Operation.builder()
-            .implementationArtifact("my_app/configure_myphpapp.sh")
+            .artifact(Artifact.builder("", "my_app/configure_myphpapp.sh").build())
             .inputs(appInputs)
             .build();
 
@@ -173,13 +144,11 @@ public class LampAppAWS {
             .create(appCreate)
             .configure(appConfigure)
             .build();
-        WebApplication webApplication = WebApplication
-            .builder("my_app", endpointCapability)
+        return WebApplication
+            .builder("my_app")
             .standardLifecycle(webAppLifecycle)
             .host(WebServerRequirement.builder().fulfiller(webserver).build())
             .build();
-
-        return webApplication;
     }
 
     private HostRequirement getHostedOnServerRequirement() {

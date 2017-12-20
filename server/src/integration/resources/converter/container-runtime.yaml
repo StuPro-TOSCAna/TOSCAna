@@ -1,0 +1,12 @@
+tosca_definitions_version: tosca_simple_yaml_1_1
+
+description: a template containing a single, valid container runtime
+metadata:
+  template_name: empty-topology
+  template_author: stupro-toscana
+  template_version: 1.0
+
+topology_template:
+  containerRuntime:
+    type: tosca.nodes.Container.Runtime
+

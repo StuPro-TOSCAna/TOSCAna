@@ -70,10 +70,10 @@ public class EndpointCapability extends Capability {
      */
     private final Set<PortSpec> supportedPorts;
     /**
-     The IP address as propagated up by the associated node’s host ({@link Compute}) container.
+     The optional IP address as propagated up by the associated node’s host ({@link Compute}) container.
      (TOSCA Simple Profile in YAML Version 1.1, p. 153)
      */
-    private final String ipAddress;
+    private String ipAddress;
 
     @Builder
     protected EndpointCapability(NetworkProtocol protocol,
@@ -84,15 +84,9 @@ public class EndpointCapability extends Capability {
                                  String networkName,
                                  Initiator initiator,
                                  @Singular Set<PortSpec> supportedPorts,
-                                 String ipAddress,
                                  Set<Class<? extends RootNode>> validSourceTypes,
-                                 Range occurence,
-                                 String description) {
-        super(validSourceTypes, occurence, description);
-        if (port == null && supportedPorts.isEmpty()) {
-//            (TOSCA Simple Profile in YAML Version 1.1, p. 154): Additional Requirement
-            throw new IllegalArgumentException("Constraint violation: Either `port` or `supportedPorts` must provide a port");
-        }
+                                 Range occurrence) {
+        super(validSourceTypes, occurrence);
         this.protocol = Objects.nonNull(protocol) ? protocol : NetworkProtocol.TCP;
         this.port = port;
         this.secure = secure;
@@ -101,29 +95,10 @@ public class EndpointCapability extends Capability {
         this.networkName = Objects.nonNull(networkName) ? networkName : "PRIVATE";
         this.initiator = Objects.nonNull(initiator) ? initiator : Initiator.SOURCE;
         this.supportedPorts = Objects.requireNonNull(supportedPorts);
-        this.ipAddress = Objects.requireNonNull(ipAddress);
     }
 
-    /**
-     @param ipAddress {@link #ipAddress}
-     @param port      {@link #port}
-     */
-    public static EndpointCapabilityBuilder builder(String ipAddress,
-                                                    Port port) {
-        return new EndpointCapabilityBuilder()
-            .ipAddress(ipAddress)
-            .port(port);
-    }
-
-    /**
-     @param ipAddress     {@link #ipAddress}
-     @param supportedPort one of {@link #supportedPorts}
-     */
-    public static EndpointCapabilityBuilder builder(String ipAddress,
-                                                    PortSpec supportedPort) {
-        return new EndpointCapabilityBuilder()
-            .ipAddress(ipAddress)
-            .supportedPort(supportedPort);
+    public static EndpointCapability getFallback(EndpointCapability endpoint) {
+        return (endpoint == null) ? EndpointCapability.builder().build() : endpoint;
     }
 
     /**
@@ -159,6 +134,13 @@ public class EndpointCapability extends Capability {
      */
     public Optional<Initiator> getInitiator() {
         return Optional.ofNullable(initiator);
+    }
+
+    /**
+     @return {@link #ipAddress}
+     */
+    public Optional<String> getIpAddress() {
+        return Optional.ofNullable(ipAddress);
     }
 
     @Override

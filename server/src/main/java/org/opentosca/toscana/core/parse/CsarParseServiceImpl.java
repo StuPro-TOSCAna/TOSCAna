@@ -60,7 +60,7 @@ public class CsarParseServiceImpl implements CsarParseService {
         File[] entryPoints = content.listFiles((file, s) -> s.matches(".*\\.ya?ml$"));
         if (entryPoints.length == 1) {
             File entryPoint = entryPoints[0].getAbsoluteFile();
-            logger.warn("detected entry point of csar '{}' is '{}'", csar.getIdentifier(), entryPoint.getAbsolutePath());
+            logger.info("detected entry point of csar '{}' is '{}'", csar.getIdentifier(), entryPoint.getAbsolutePath());
             return entryPoint;
         } else if (entryPoints.length > 1) {
             logger.warn("parsing failed: more than one top level yaml file encountered in given csar");

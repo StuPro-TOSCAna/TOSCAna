@@ -79,9 +79,8 @@ public class DockerContainerCapability extends ContainerCapability {
                                         Integer diskSizeInMB,
                                         Integer memSizeInMB,
                                         Set<Class<? extends RootNode>> validSourceTypes,
-                                        Range occurence,
-                                        String description) {
-        super(resourceName, numCpus, cpuFrequencyInGhz, diskSizeInMB, memSizeInMB, validSourceTypes, occurence, description);
+                                        Range occurrence) {
+        super(resourceName, numCpus, cpuFrequencyInGhz, diskSizeInMB, memSizeInMB, validSourceTypes, occurrence);
         this.versions = Objects.requireNonNull(versions);
         this.publishAll = publishAll;
         this.publishPorts = Objects.requireNonNull(publishPorts);

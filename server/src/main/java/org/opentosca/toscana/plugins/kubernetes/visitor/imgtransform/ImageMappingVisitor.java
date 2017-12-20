@@ -29,7 +29,7 @@ public class ImageMappingVisitor implements NodeVisitor {
     }
 
     private boolean hasCreateScript(RootNode node) {
-        return node.getStandardLifecycle().getCreate().isPresent() && node.getStandardLifecycle().getCreate().get().getImplementationArtifact().isPresent();
+        return node.getStandardLifecycle().getCreate().isPresent() && node.getStandardLifecycle().getCreate().get().getArtifact().isPresent();
     }
 
     private boolean hasConfigureScript(RootNode node) {

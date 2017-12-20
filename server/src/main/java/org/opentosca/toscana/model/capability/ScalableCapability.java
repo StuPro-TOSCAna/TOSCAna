@@ -39,9 +39,8 @@ public class ScalableCapability extends Capability {
     protected ScalableCapability(Range scaleRange,
                                  Integer defaultInstances,
                                  Set<Class<? extends RootNode>> validSourceTypes,
-                                 Range occurence,
-                                 String description) {
-        super(validSourceTypes, occurence, description);
+                                 Range occurrence) {
+        super(validSourceTypes, occurrence);
         this.scaleRange = (scaleRange == null) ? Range.EXACTLY_ONCE : scaleRange;
         this.defaultInstances = defaultInstances;
         if (defaultInstances != null && !scaleRange.inRange(defaultInstances)) {

@@ -2,11 +2,14 @@ package org.opentosca.toscana.model.node;
 
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
+import org.opentosca.toscana.model.capability.Capability;
 import org.opentosca.toscana.model.capability.ContainerCapability;
 import org.opentosca.toscana.model.datatype.Credential;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
-import org.opentosca.toscana.model.requirement.HostRequirement;
+import org.opentosca.toscana.model.relation.HostedOn;
+import org.opentosca.toscana.model.requirement.Requirement;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 
 import lombok.Builder;
@@ -34,7 +37,7 @@ public class Dbms extends SoftwareComponent {
     private final ContainerCapability containerHost;
 
     @Builder
-    protected Dbms(HostRequirement host,
+    protected Dbms(Requirement<ContainerCapability, Compute, HostedOn> host,
                    ContainerCapability containerHost,
                    String rootPassword,
                    Integer port,
@@ -42,26 +45,25 @@ public class Dbms extends SoftwareComponent {
                    Credential adminCredential,
                    String nodeName,
                    StandardLifecycle standardLifecycle,
+                   Set<Requirement> requirements,
+                   Set<Capability> capabilities,
                    String description) {
-        super(componentVersion, adminCredential, host, nodeName, standardLifecycle, description);
+        super(componentVersion, adminCredential, host, nodeName, standardLifecycle, requirements, capabilities, description);
         this.containerHost = Objects.requireNonNull(containerHost);
         this.port = port;
         this.rootPassword = rootPassword;
 
-        capabilities.add(this.containerHost);
+        this.capabilities.add(this.containerHost);
     }
 
     /**
      @param nodeName      {@link #nodeName}
-     @param host          {@link #host}
      @param containerHost {@link #containerHost}
      */
     public static DbmsBuilder builder(String nodeName,
-                                      HostRequirement host,
                                       ContainerCapability containerHost) {
         return new DbmsBuilder()
             .nodeName(nodeName)
-            .host(host)
             .containerHost(containerHost);
     }
 
@@ -85,5 +87,7 @@ public class Dbms extends SoftwareComponent {
     }
 
     public static class DbmsBuilder extends SoftwareComponentBuilder {
+        protected Set<Requirement> requirements = super.requirements;
+        protected Set<Capability> capabilities = super.capabilities;
     }
 }
