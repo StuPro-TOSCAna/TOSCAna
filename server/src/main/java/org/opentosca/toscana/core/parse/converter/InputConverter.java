@@ -39,7 +39,9 @@ public class InputConverter {
         String name = propertyEntry.getKey();
         TParameterDefinition parameter = propertyEntry.getValue();
         PropertyType type = convertType(parameter.getType());
-        Property property = new Property(name, type, parameter.getDescription(), parameter.getRequired());
+        Object defaultObject = parameter.getDefault();
+        String defaultValue = (defaultObject == null) ? null : defaultObject.toString();
+        Property property = new Property(name, type, parameter.getDescription(), parameter.getRequired(), defaultValue);
         return property;
     }
 
