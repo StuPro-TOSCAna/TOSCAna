@@ -1,10 +1,13 @@
 package org.opentosca.toscana.model.node;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
 import org.opentosca.toscana.model.DescribableEntity;
+import org.opentosca.toscana.model.PropertyLinker;
 import org.opentosca.toscana.model.capability.Capability;
 import org.opentosca.toscana.model.capability.NodeCapability;
 import org.opentosca.toscana.model.datatype.Range;
@@ -21,6 +24,9 @@ import lombok.Data;
  */
 @Data
 public abstract class RootNode extends DescribableEntity implements VisitableNode {
+
+    protected static final Map<String, String> FIELD_MAP = new HashMap<>();
+    private final PropertyLinker propertyLinker = new PropertyLinker(this);
 
     protected final Set<Requirement> requirements = new HashSet<>();
     protected final Set<Capability> capabilities = new HashSet<>();
@@ -65,6 +71,22 @@ public abstract class RootNode extends DescribableEntity implements VisitableNod
      */
     public static RootNodeBuilder builder(String nodeName) {
         return new RootNodeBuilder().nodeName(nodeName);
+    }
+
+    /**
+     Establishes a link between this instance's property (defined by sourceField) and the targets targetField.
+     In other words, the linked property now behaves like a symbolic link.
+     */
+    public void link(String sourceField, RootNode target, String targetField) {
+        propertyLinker.link(sourceField, target, targetField);
+    }
+
+    protected <T> T get(String propertyName) {
+        return propertyLinker.resolveGet(propertyName);
+    }
+
+    protected <T> void set(T value, String propertyName) {
+        propertyLinker.resolveSet(value, propertyName);
     }
 
     public static class RootNodeBuilder extends DescribableEntityBuilder {
