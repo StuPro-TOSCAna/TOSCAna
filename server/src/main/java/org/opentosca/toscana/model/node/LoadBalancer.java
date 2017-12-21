@@ -18,6 +18,8 @@ import org.opentosca.toscana.model.visitor.NodeVisitor;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import static org.opentosca.toscana.model.nodedefinition.LoadBalancerDefinition.ALGORITHM_PROPERTY;
 import static org.opentosca.toscana.model.nodedefinition.LoadBalancerDefinition.CLIENT_CAPABILITY;
@@ -28,7 +30,8 @@ import static org.opentosca.toscana.model.nodedefinition.LoadBalancerDefinition.
  (e.g., for a clustered or scaled application).
  (TOSCA Simple Profile in YAML Version 1.1, p.177)
  */
-@Data
+@EqualsAndHashCode
+@ToString
 public class LoadBalancer extends RootNode {
 
     private final String algorithm;

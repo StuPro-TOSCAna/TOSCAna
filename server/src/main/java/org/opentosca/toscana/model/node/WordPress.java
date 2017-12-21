@@ -17,6 +17,8 @@ import org.opentosca.toscana.model.visitor.NodeVisitor;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import static org.opentosca.toscana.model.nodedefinition.WordPressDefinition.ADMIN_PASSWORD_PROPERTY;
 import static org.opentosca.toscana.model.nodedefinition.WordPressDefinition.ADMIN_USER_PROPERTY;
@@ -25,7 +27,8 @@ import static org.opentosca.toscana.model.nodedefinition.WordPressDefinition.DB_
 /**
  (TOSCA Simple Profile in YAML Version 1.1, p. 222)
  */
-@Data
+@EqualsAndHashCode
+@ToString
 public class WordPress extends WebApplication {
 
     private final String adminUser;

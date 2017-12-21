@@ -19,9 +19,12 @@ import org.opentosca.toscana.model.visitor.NodeVisitor;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.ToString;
 
-@Data
+@EqualsAndHashCode
+@ToString
 public class DockerApplication extends ContainerApplication {
 
     // public access due to hiding of parent field (and therefore getter conflicts..)

@@ -15,6 +15,8 @@ import org.opentosca.toscana.model.visitor.NodeVisitor;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import static org.opentosca.toscana.model.nodedefinition.DbmsDefinition.PORT_PROPERTY;
 import static org.opentosca.toscana.model.nodedefinition.DbmsDefinition.ROOT_PASSWORD_PROPERTY;
@@ -23,7 +25,8 @@ import static org.opentosca.toscana.model.nodedefinition.DbmsDefinition.ROOT_PAS
  Represents a typical relational, SQL Database Management System software component or service.
  (TOSCA Simple Profile in YAML Version 1.1, p. 172)
  */
-@Data
+@EqualsAndHashCode
+@ToString
 public class Dbms extends SoftwareComponent {
 
     /**

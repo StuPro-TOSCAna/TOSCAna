@@ -15,13 +15,16 @@ import org.opentosca.toscana.model.visitor.NodeVisitor;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  Represents operating system-level virtualization technology used to run
  multiple application services on a single {@link Compute} host.
  (TOSCA Simple Profile in YAML Version 1.1, p. 176)
  */
-@Data
+@EqualsAndHashCode
+@ToString
 public class ContainerRuntime extends SoftwareComponent {
 
     private final ContainerCapability containerHost;

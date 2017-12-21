@@ -19,11 +19,14 @@ import org.opentosca.toscana.model.visitor.VisitableNode;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  The base node. Every other node will derive from this class.
  */
-@Data
+@EqualsAndHashCode
+@ToString
 public abstract class RootNode extends DescribableEntity implements VisitableNode {
 
     protected static final Map<String, String> FIELD_MAP = new HashMap<>();

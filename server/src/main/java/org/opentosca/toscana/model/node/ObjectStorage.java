@@ -14,6 +14,8 @@ import org.opentosca.toscana.model.visitor.NodeVisitor;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import static org.opentosca.toscana.model.nodedefinition.ObjectStorageDefinition.MAXSIZE_PROPERTY;
 import static org.opentosca.toscana.model.nodedefinition.ObjectStorageDefinition.NAME_PROPERTY;
@@ -24,7 +26,8 @@ import static org.opentosca.toscana.model.nodedefinition.ObjectStorageDefinition
  without consideration for the underlying filesystem or devices.
  (TOSCA Simple Profile in YAML Version 1.1, p. 174)
  */
-@Data
+@EqualsAndHashCode
+@ToString
 public class ObjectStorage extends RootNode {
 
     /**

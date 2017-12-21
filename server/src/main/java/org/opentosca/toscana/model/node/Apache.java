@@ -17,11 +17,14 @@ import org.opentosca.toscana.model.visitor.NodeVisitor;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  (TOSCA Simple Profile in YAML Version 1.1, p. 222)
  */
-@Data
+@EqualsAndHashCode
+@ToString
 public class Apache extends WebServer {
 
     @Builder

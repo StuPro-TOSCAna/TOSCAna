@@ -17,10 +17,13 @@ import org.opentosca.toscana.model.visitor.NodeVisitor;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import static org.opentosca.toscana.model.nodedefinition.NodejsDefinition.GITHUB_URL_PROPERTY;
 
-@Data
+@EqualsAndHashCode
+@ToString
 public class Nodejs extends WebServer {
 
     private final String githubUrl;

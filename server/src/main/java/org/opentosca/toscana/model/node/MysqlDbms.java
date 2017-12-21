@@ -15,12 +15,15 @@ import org.opentosca.toscana.model.visitor.NodeVisitor;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  A MysqlDbms database (server)
  TOSCA Simple Profile in YAML Version 1.1, p. 221)
  */
-@Data
+@EqualsAndHashCode
+@ToString
 public class MysqlDbms extends Dbms {
 
     @Builder

@@ -23,6 +23,8 @@ import org.opentosca.toscana.model.visitor.NodeVisitor;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import static org.opentosca.toscana.model.nodedefinition.ComputeDefinition.NETWORKS_PROPERTY;
 import static org.opentosca.toscana.model.nodedefinition.ComputeDefinition.PORTS_PROPERTY;
@@ -35,7 +37,8 @@ import static org.opentosca.toscana.model.nodedefinition.ComputeDefinition.PUBLI
  Collectively, the resources the compute node represents can logically be viewed as a (real or virtual) “server”.
  (TOSCA Simple Profile in YAML Version 1.1, p. 169)
  */
-@Data
+@EqualsAndHashCode
+@ToString
 public class Compute extends RootNode {
     /**
      The collection of logical networks assigned to the compute host instance and information about them.

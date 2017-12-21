@@ -16,6 +16,8 @@ import org.opentosca.toscana.model.visitor.NodeVisitor;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import static org.opentosca.toscana.model.nodedefinition.SoftwareComponentDefinition.ADMIN_CREDENTIAL_PROPERTY;
 import static org.opentosca.toscana.model.nodedefinition.SoftwareComponentDefinition.COMPONENT_VERSION_PROPERTY;
@@ -24,7 +26,8 @@ import static org.opentosca.toscana.model.nodedefinition.SoftwareComponentDefini
  Represents a generic software component that can be managed and run by a Compute Node.
  (TOSCA Simple Profile in YAML Version 1.1, p.170)
  */
-@Data
+@EqualsAndHashCode
+@ToString
 public class SoftwareComponent extends RootNode {
 
     /**

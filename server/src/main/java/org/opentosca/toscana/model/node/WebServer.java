@@ -17,6 +17,8 @@ import org.opentosca.toscana.model.visitor.NodeVisitor;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  Represents an abstract software component or service that is capable of hosting and providing management operations
@@ -26,7 +28,8 @@ import lombok.Data;
  administration, as well as a regular endpoint ({@link #dataEndpoint}) for serving data.
  (TOSCA Simple Profile in YAML Version 1.1, p.171)
  */
-@Data
+@EqualsAndHashCode
+@ToString
 public class WebServer extends SoftwareComponent {
 
     private final EndpointCapability dataEndpoint;

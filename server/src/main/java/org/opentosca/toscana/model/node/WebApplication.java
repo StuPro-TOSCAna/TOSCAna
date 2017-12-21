@@ -16,6 +16,8 @@ import org.opentosca.toscana.model.visitor.NodeVisitor;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import static org.opentosca.toscana.model.nodedefinition.WebApplicationDefinition.CONTEXT_ROOT_PROPERTY;
 
@@ -24,7 +26,8 @@ import static org.opentosca.toscana.model.nodedefinition.WebApplicationDefinitio
  Specific types of web applications such as Java, etc. should be derived from this type.
  (TOSCA Simple Profile in YAML Version 1.1, p. 171)
  */
-@Data
+@EqualsAndHashCode
+@ToString
 public class WebApplication extends RootNode {
     /**
      The optional web application’s context root which designates
