@@ -90,7 +90,7 @@ public class CloudFoundryApplication {
         int lastOccurenceOfBackslash = mainApplicationPath.lastIndexOf("/");
 
         if (lastOccurenceOfBackslash != -1) {
-            this.mainApplicationPath = "/" + mainApplicationPath.substring(0, lastOccurenceOfBackslash);
+            this.mainApplicationPath = mainApplicationPath.substring(0, lastOccurenceOfBackslash);
         }
     }
 

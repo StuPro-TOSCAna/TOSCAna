@@ -18,9 +18,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.BUILDPACK_FILEPATH_PHP;
 import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.BUILDPACK_OBJECT_PHP;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.CLI_PATH_TO_MANIFEST;
 import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.FILEPRAEFIX_DEPLOY;
 import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.FILESUFFIX_DEPLOY;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.MANIFEST;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.MANIFEST_NAME;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.MANIFEST_PATH;
 import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.NAMEBLOCK;
 import static org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryManifestAttribute.APPLICATIONS_SECTION;
 import static org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryManifestAttribute.ENVIRONMENT;
@@ -60,7 +62,7 @@ public class CloudFoundryFileCreatorTest extends BaseUnitTest {
     @Test
     public void createFiles() throws Exception {
         fileCreator.createFiles();
-        File targetFile = new File(targetDir, MANIFEST);
+        File targetFile = new File(targetDir, MANIFEST_PATH);
         File deployFile = new File(targetDir, outputPath + FILEPRAEFIX_DEPLOY + appName + FILESUFFIX_DEPLOY);
         File buildPackAdditions = new File(targetDir, BUILDPACK_FILEPATH_PHP);
 
@@ -72,10 +74,10 @@ public class CloudFoundryFileCreatorTest extends BaseUnitTest {
     @Test
     public void contentManifest() throws Exception {
         String mainApplicationPath = "myapp/main/myphpapp.php";
-        String expectedPath = "/myapp/main";
+        String expectedPath = "../myapp/main";
         testApp.setMainApplicationPath(mainApplicationPath);
         fileCreator.createFiles();
-        File targetFile = new File(targetDir, MANIFEST);
+        File targetFile = new File(targetDir, MANIFEST_PATH);
         String manifestContent = FileUtils.readFileToString(targetFile);
         String expectedManifestContent = String.format("---\n%s:\n- %s: %s\n  %s: %s\n",
             APPLICATIONS_SECTION.getName(), NAMEBLOCK, appName, PATH.getName(), expectedPath);
@@ -88,7 +90,7 @@ public class CloudFoundryFileCreatorTest extends BaseUnitTest {
         testApp.addEnvironmentVariables(envVariable1);
         testApp.addEnvironmentVariables(envVariable2, envValue);
         fileCreator.createFiles();
-        File targetFile = new File(targetDir, MANIFEST);
+        File targetFile = new File(targetDir, MANIFEST_PATH);
         String manifestContent = FileUtils.readFileToString(targetFile);
         String expectedManifestContent = String.format("---\n%s:\n- %s: %s\n  %s:\n    %s: %s\n    %s: %s\n",
             APPLICATIONS_SECTION.getName(), NAMEBLOCK, appName,
@@ -105,12 +107,15 @@ public class CloudFoundryFileCreatorTest extends BaseUnitTest {
         File targetFile = new File(targetDir, outputPath + FILEPRAEFIX_DEPLOY + appName + FILESUFFIX_DEPLOY);
         String manifestContent = FileUtils.readFileToString(targetFile);
         String expectedDeployContent = "#!/bin/sh\n" +
-            "source util/*\ncheck \"cf\"\ncf push " + appName + "\n";
+            "source util/*\ncheck \"cf\"\ncf push " + appName + CLI_PATH_TO_MANIFEST + MANIFEST_NAME + "\n";
         assertEquals(expectedDeployContent, manifestContent);
     }
 
     @Test
     public void buildpackAdditons() throws Exception {
+        String mainApplicationPath = "myapp/main/myphpapp.php";
+        String expectedPath = "/myapp/main" + "/" + BUILDPACK_FILEPATH_PHP;
+        testApp.setMainApplicationPath(mainApplicationPath);
         testApp.addBuildpack(buildPack1);
         testApp.addBuildpack(buildPack2);
         String expectedBuildpackcontent = "{\n" +
@@ -121,7 +126,7 @@ public class CloudFoundryFileCreatorTest extends BaseUnitTest {
             "}";
 
         fileCreator.createFiles();
-        File targetFile = new File(targetDir, BUILDPACK_FILEPATH_PHP);
+        File targetFile = new File(targetDir, expectedPath);
         String buildpackContent = FileUtils.readFileToString(targetFile);
         assertEquals(expectedBuildpackcontent, buildpackContent);
     }
@@ -131,7 +136,7 @@ public class CloudFoundryFileCreatorTest extends BaseUnitTest {
         testApp.addService(service1, CloudFoundryServiceType.MYSQL);
         testApp.addService(service2, CloudFoundryServiceType.MYSQL);
         fileCreator.createFiles();
-        File targetFile = new File(targetDir, MANIFEST);
+        File targetFile = new File(targetDir, MANIFEST_PATH);
         String manifestContent = FileUtils.readFileToString(targetFile);
         String expectedManifestContent = String.format("---\n%s:\n- %s: %s\n  %s:\n    - %s\n    - %s\n",
             APPLICATIONS_SECTION.getName(), NAMEBLOCK, appName,
