@@ -26,7 +26,7 @@ public class Dbms extends SoftwareComponent {
      The optional root password for the Dbms server.
      (TOSCA Simple Profile in YAML Version 1.1, p. 172)
      */
-    private final String rootPassword;
+    private String rootPassword;
 
     /**
      The Dbms server’s port.
@@ -71,7 +71,9 @@ public class Dbms extends SoftwareComponent {
      @return {@link #rootPassword}
      */
     public Optional<String> getRootPassword() {
-        return Optional.ofNullable(rootPassword);
+        // TODO
+        return Optional.ofNullable(get(""));
+//        return Optional.ofNullable(rootPassword);
     }
 
     /**

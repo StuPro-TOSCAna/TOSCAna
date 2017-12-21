@@ -10,11 +10,11 @@ import org.opentosca.toscana.model.relation.RootRelationship;
 import org.eclipse.winery.model.tosca.yaml.TCapabilityAssignment;
 import org.eclipse.winery.model.tosca.yaml.TRequirementAssignment;
 
-public class ContainerApplicationVisitor<NodeT extends ContainerApplication, BuilderT extends ContainerApplicationBuilder> extends RootNodeVisitor<NodeT, BuilderT> {
+import static org.opentosca.toscana.model.nodedefinition.ContainerApplicationDefinition.HOST_REQUIREMENT;
+import static org.opentosca.toscana.model.nodedefinition.ContainerApplicationDefinition.NETWORK_REQUIREMENT;
+import static org.opentosca.toscana.model.nodedefinition.ContainerApplicationDefinition.STORAGE_REQUIREMENT;
 
-    private final static String HOST_REQUIREMENT = "host";
-    private final static String STORAGE_REQUIREMENT = "storage";
-    private final static String NETWORK_REQUIREMENT = "network";
+public class ContainerApplicationVisitor<NodeT extends ContainerApplication, BuilderT extends ContainerApplicationBuilder> extends RootNodeVisitor<NodeT, BuilderT> {
 
     @Override
     public ConversionResult<NodeT> visit(TCapabilityAssignment node, Context<BuilderT> parameter) {

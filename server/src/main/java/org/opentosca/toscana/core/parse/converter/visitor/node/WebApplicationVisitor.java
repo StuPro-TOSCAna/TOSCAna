@@ -10,13 +10,11 @@ import org.eclipse.winery.model.tosca.yaml.TCapabilityAssignment;
 import org.eclipse.winery.model.tosca.yaml.TPropertyAssignment;
 import org.eclipse.winery.model.tosca.yaml.TRequirementAssignment;
 
+import static org.opentosca.toscana.model.nodedefinition.WebApplicationDefinition.APP_ENDPOINT_CAPABILITY;
+import static org.opentosca.toscana.model.nodedefinition.WebApplicationDefinition.CONTEXT_ROOT_PROPERTY;
+import static org.opentosca.toscana.model.nodedefinition.WebApplicationDefinition.HOST_REQUIREMENT;
+
 public class WebApplicationVisitor<NodeT extends WebApplication, BuilderT extends WebApplicationBuilder> extends RootNodeVisitor<NodeT, BuilderT> {
-
-    private final static String CONTEXT_ROOT_PROPERTY = "context_root";
-
-    private final static String APP_ENDPOINT_CAPABILITY = "app_endpoint";
-
-    private final static String HOST_REQUIREMENT = "host";
 
     @Override
     protected void handleProperty(TPropertyAssignment node, Context<BuilderT> parameter, BuilderT builder, Object value) {

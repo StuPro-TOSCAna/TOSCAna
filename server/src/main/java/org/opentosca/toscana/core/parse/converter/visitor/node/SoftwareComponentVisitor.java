@@ -11,11 +11,11 @@ import org.opentosca.toscana.model.relation.HostedOn;
 import org.eclipse.winery.model.tosca.yaml.TPropertyAssignment;
 import org.eclipse.winery.model.tosca.yaml.TRequirementAssignment;
 
-public class SoftwareComponentVisitor<NodeT extends SoftwareComponent, BuilderT extends SoftwareComponentBuilder> extends RootNodeVisitor<NodeT, BuilderT> {
+import static org.opentosca.toscana.model.nodedefinition.SoftwareComponentDefinition.ADMIN_CREDENTIAL_PROPERTY;
+import static org.opentosca.toscana.model.nodedefinition.SoftwareComponentDefinition.COMPONENT_VERSION_PROPERTY;
+import static org.opentosca.toscana.model.nodedefinition.SoftwareComponentDefinition.HOST_REQUIREMENT;
 
-    private static final String ADMIN_CREDENTIAL_PROPERTY = "admin_credential";
-    private static final String COMPONENT_VERSION_PROPERTY = "component_version";
-    private static final String HOST_REQUIREMENT = "host";
+public class SoftwareComponentVisitor<NodeT extends SoftwareComponent, BuilderT extends SoftwareComponentBuilder> extends RootNodeVisitor<NodeT, BuilderT> {
 
     @Override
     protected void handleProperty(TPropertyAssignment node, Context<BuilderT> parameter, BuilderT builder, Object value) {

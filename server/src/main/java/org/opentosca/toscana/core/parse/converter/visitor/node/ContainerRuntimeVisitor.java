@@ -7,10 +7,11 @@ import org.opentosca.toscana.model.node.ContainerRuntime.ContainerRuntimeBuilder
 
 import org.eclipse.winery.model.tosca.yaml.TCapabilityAssignment;
 
+import static org.opentosca.toscana.model.nodedefinition.ContainerRuntimeDefinition.HOST_CAPABILITY;
+import static org.opentosca.toscana.model.nodedefinition.ContainerRuntimeDefinition.SCALABLE_CAPABILITY;
+
 public class ContainerRuntimeVisitor<NodeT extends ContainerRuntime, BuilderT extends ContainerRuntimeBuilder> extends SoftwareComponentVisitor<NodeT, BuilderT> {
 
-    private static final String HOST_CAPABILITY = "host";
-    private static final String SCALABLE_CAPABILITY = "scalable";
 
     @Override
     protected void handleCapability(TCapabilityAssignment node, BuilderT builder, String key) {

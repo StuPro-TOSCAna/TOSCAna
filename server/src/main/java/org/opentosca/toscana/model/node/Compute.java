@@ -42,7 +42,7 @@ public class Compute extends RootNode {
     private final Set<PortInfo> ports = new HashSet<>();
     private final ContainerCapability host;
     private final OsCapability os;
-    private final AdminEndpointCapability adminEndpoint;
+    private final AdminEndpointCapability endpoint;
     private final ScalableCapability scalable;
     private final BindableCapability binding;
     private final Requirement<AttachmentCapability, BlockStorage, AttachesTo> localStorage;
@@ -64,7 +64,7 @@ public class Compute extends RootNode {
                       String publicAddress,
                       ContainerCapability host,
                       OsCapability os,
-                      AdminEndpointCapability adminEndpoint,
+                      AdminEndpointCapability endpoint,
                       ScalableCapability scalable,
                       BindableCapability binding,
                       Requirement<AttachmentCapability, BlockStorage, AttachesTo> localStorage,
@@ -77,7 +77,7 @@ public class Compute extends RootNode {
         this.privateAddress = privateAddress;
         this.publicAddress = publicAddress;
         this.os = OsCapability.getFallback(os);
-        this.adminEndpoint = AdminEndpointCapability.getFallback(adminEndpoint);
+        this.endpoint = AdminEndpointCapability.getFallback(endpoint);
         this.host = (host == null) ? ContainerCapability.builder().build() : host;
         this.scalable = (scalable == null) ? ScalableCapability.builder().build() : scalable;
         this.binding = (binding == null) ? BindableCapability.builder().build() : binding;
@@ -85,7 +85,7 @@ public class Compute extends RootNode {
 
         this.capabilities.add(this.host);
         this.capabilities.add(this.os);
-        this.capabilities.add(this.adminEndpoint);
+        this.capabilities.add(this.endpoint);
         this.capabilities.add(this.scalable);
         this.capabilities.add(this.binding);
         this.requirements.add(this.localStorage);

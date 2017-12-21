@@ -10,13 +10,12 @@ import org.opentosca.toscana.model.node.BlockStorage.BlockStorageBuilder;
 import org.eclipse.winery.model.tosca.yaml.TCapabilityAssignment;
 import org.eclipse.winery.model.tosca.yaml.TPropertyAssignment;
 
+import static org.opentosca.toscana.model.nodedefinition.BlockStorageDefinition.ATTACHMENT_CAPABILITY;
+import static org.opentosca.toscana.model.nodedefinition.BlockStorageDefinition.SIZE_PROPERTY;
+import static org.opentosca.toscana.model.nodedefinition.BlockStorageDefinition.SNAPSHOT_ID_PROPERTY;
+import static org.opentosca.toscana.model.nodedefinition.BlockStorageDefinition.VOLUME_ID_PROPERTY;
+
 public class BlockStorageVisitor<NodeT extends BlockStorage, BuilderT extends BlockStorageBuilder> extends RootNodeVisitor<NodeT, BuilderT> {
-
-    private final static String SIZE_PROPERTY = "size";
-    private final static String VOLUME_ID_PROPERTY = "volume_id";
-    private final static String SNAPSHOT_ID_PROPERTY = "snapshot_id";
-
-    private final static String ATTACHMENT_CAPABILITY = "attachment";
 
     @Override
     protected void handleProperty(TPropertyAssignment node, Context<BuilderT> parameter, BuilderT builder, Object value) {
