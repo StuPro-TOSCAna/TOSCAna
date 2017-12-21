@@ -27,7 +27,6 @@ import static org.opentosca.toscana.model.nodedefinition.ComputeDefinition.SCALA
 
 public class ComputeVisitor<NodeT extends Compute, BuilderT extends ComputeBuilder> extends RootNodeVisitor<NodeT, BuilderT> {
 
-
     @Override
     protected void handleProperty(TPropertyAssignment node, Context<BuilderT> parameter, BuilderT builder, Object value) {
         switch (parameter.getKey()) {

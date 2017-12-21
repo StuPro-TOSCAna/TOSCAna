@@ -6,14 +6,21 @@ import java.util.Set;
 
 import org.opentosca.toscana.model.capability.AttachmentCapability;
 import org.opentosca.toscana.model.capability.Capability;
+import org.opentosca.toscana.model.nodedefinition.AbstractDefinition;
+import org.opentosca.toscana.model.nodedefinition.BlockStorageDefinition;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
 import org.opentosca.toscana.model.requirement.Requirement;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 
 import lombok.Builder;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import static java.lang.String.format;
+import static org.opentosca.toscana.model.nodedefinition.BlockStorageDefinition.ATTACHMENT_CAPABILITY;
+import static org.opentosca.toscana.model.nodedefinition.BlockStorageDefinition.SIZE_PROPERTY;
+import static org.opentosca.toscana.model.nodedefinition.BlockStorageDefinition.SNAPSHOT_ID_PROPERTY;
+import static org.opentosca.toscana.model.nodedefinition.BlockStorageDefinition.VOLUME_ID_PROPERTY;
 
 /**
  Represents a server-local block storage device (i.e., not shared) offering evenly sized blocks of data
@@ -30,7 +37,8 @@ import static java.lang.String.format;
  <p>
  (TOSCA Simple Profile in YAML Version 1.1, p. 175-176)
  */
-@Data
+@EqualsAndHashCode
+@ToString
 public class BlockStorage extends RootNode {
 
     /**
@@ -85,16 +93,16 @@ public class BlockStorage extends RootNode {
     }
 
     /**
+     @param nodeName   {@link #nodeName}
      @param attachment {@link #attachment}
-     @param lifecycle  {@link #standardLifecycle}
      @param snapshotId {@link #snapshotId}
      */
-    public static BlockStorageBuilder builder(AttachmentCapability attachment,
-                                              StandardLifecycle lifecycle,
+    public static BlockStorageBuilder builder(String nodeName,
+                                              AttachmentCapability attachment,
                                               String snapshotId) {
         return new BlockStorageBuilder()
+            .nodeName(nodeName)
             .attachment(attachment)
-            .standardLifecycle(lifecycle)
             .snapshotId(Objects.requireNonNull(snapshotId));
     }
 
@@ -116,26 +124,35 @@ public class BlockStorage extends RootNode {
      @return the optional size of this block storage (in MB)
      */
     public Optional<Integer> getSizeInMB() {
-        return Optional.ofNullable(sizeInMB);
+        return Optional.ofNullable(get(SIZE_PROPERTY));
     }
 
     /**
      @return the optional ID of the volume
      */
     public Optional<String> getVolumeId() {
-        return Optional.ofNullable(volumeId);
+        return Optional.ofNullable(get(VOLUME_ID_PROPERTY));
     }
 
     /**
      @return optional identifier of the existing snapshot which is used when creating the block storage
      */
     public Optional<String> getSnapshotId() {
-        return Optional.ofNullable(snapshotId);
+        return Optional.ofNullable(get(SNAPSHOT_ID_PROPERTY));
+    }
+
+    public AttachmentCapability getAttachment() {
+        return get(ATTACHMENT_CAPABILITY);
     }
 
     @Override
     public void accept(NodeVisitor v) {
         v.visit(this);
+    }
+
+    @Override
+    protected AbstractDefinition getDefinition() {
+        return new BlockStorageDefinition();
     }
 
     public static class BlockStorageBuilder extends RootNodeBuilder {

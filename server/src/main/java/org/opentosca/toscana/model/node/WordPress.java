@@ -6,6 +6,8 @@ import java.util.Set;
 import org.opentosca.toscana.model.capability.Capability;
 import org.opentosca.toscana.model.capability.DatabaseEndpointCapability;
 import org.opentosca.toscana.model.capability.EndpointCapability;
+import org.opentosca.toscana.model.nodedefinition.AbstractDefinition;
+import org.opentosca.toscana.model.nodedefinition.WordPressDefinition;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
 import org.opentosca.toscana.model.relation.ConnectsTo;
 import org.opentosca.toscana.model.requirement.DatabaseEndpointRequirement;
@@ -15,6 +17,10 @@ import org.opentosca.toscana.model.visitor.NodeVisitor;
 
 import lombok.Builder;
 import lombok.Data;
+
+import static org.opentosca.toscana.model.nodedefinition.WordPressDefinition.ADMIN_PASSWORD_PROPERTY;
+import static org.opentosca.toscana.model.nodedefinition.WordPressDefinition.ADMIN_USER_PROPERTY;
+import static org.opentosca.toscana.model.nodedefinition.WordPressDefinition.DB_HOST_PROPERTY;
 
 /**
  (TOSCA Simple Profile in YAML Version 1.1, p. 222)
@@ -76,9 +82,26 @@ public class WordPress extends WebApplication {
         return new WordPressBuilder();
     }
 
+    public String getAdminUser() {
+        return get(ADMIN_USER_PROPERTY);
+    }
+
+    public String getAdminPassword() {
+        return get(ADMIN_PASSWORD_PROPERTY);
+    }
+
+    public String getDbHost() {
+        return get(DB_HOST_PROPERTY);
+    }
+
     @Override
     public void accept(NodeVisitor v) {
         v.visit(this);
+    }
+
+    @Override
+    protected AbstractDefinition getDefinition() {
+        return new WordPressDefinition();
     }
 
     public static class WordPressBuilder extends WebApplicationBuilder {

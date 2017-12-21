@@ -7,7 +7,7 @@ public class WordPressDefinition extends WebApplicationDefinition {
     public final static String DB_HOST_PROPERTY = "db_host";
 
     public final static String HOST_REQUIREMENT = "host";
-    
+
     static {
         MAPPINGS.put(HOST_REQUIREMENT, "databaseEndpoint");
     }

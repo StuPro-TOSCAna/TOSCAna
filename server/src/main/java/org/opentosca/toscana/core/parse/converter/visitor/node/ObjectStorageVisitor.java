@@ -17,7 +17,6 @@ import static org.opentosca.toscana.model.nodedefinition.ObjectStorageDefinition
 
 public class ObjectStorageVisitor<NodeT extends ObjectStorage, BuilderT extends ObjectStorageBuilder> extends RootNodeVisitor<NodeT, BuilderT> {
 
-
     @Override
     protected void handleProperty(TPropertyAssignment node, Context<BuilderT> parameter, BuilderT builder, Object value) {
         switch (parameter.getKey()) {

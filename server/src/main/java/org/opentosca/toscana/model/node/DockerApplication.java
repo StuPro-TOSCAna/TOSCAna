@@ -7,6 +7,8 @@ import org.opentosca.toscana.model.capability.ContainerCapability;
 import org.opentosca.toscana.model.capability.DockerContainerCapability;
 import org.opentosca.toscana.model.capability.EndpointCapability;
 import org.opentosca.toscana.model.capability.StorageCapability;
+import org.opentosca.toscana.model.nodedefinition.AbstractDefinition;
+import org.opentosca.toscana.model.nodedefinition.DockerApplicationDefinition;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
 import org.opentosca.toscana.model.relation.HostedOn;
 import org.opentosca.toscana.model.relation.RootRelationship;
@@ -52,6 +54,11 @@ public class DockerApplication extends ContainerApplication {
     @Override
     public void accept(NodeVisitor v) {
         v.visit(this);
+    }
+
+    @Override
+    protected AbstractDefinition getDefinition() {
+        return new DockerApplicationDefinition();
     }
 
     public static class DockerApplicationBuilder extends ContainerApplicationBuilder {

@@ -10,7 +10,6 @@ import static org.opentosca.toscana.model.nodedefinition.NodejsDefinition.GITHUB
 
 public class NodejsVisitor<NodeT extends Nodejs, BuilderT extends NodejsBuilder> extends WebServerVisitor<NodeT, BuilderT> {
 
-
     @Override
     protected void handleProperty(TPropertyAssignment node, Context<BuilderT> parameter, BuilderT builder, Object value) {
         switch (parameter.getKey()) {

@@ -7,7 +7,7 @@ public class ObjectStorageDefinition extends AbstractDefinition {
     public static final String MAXSIZE_PROPERTY = "maxsize";
 
     public static final String STORAGE_ENDPOINT_CAPABILITY = "storage_endpoint";
-    
+
     static {
         MAPPINGS.put(NAME_PROPERTY, "storageName");
         MAPPINGS.put(SIZE_PROPERTY, "sizeInGB");

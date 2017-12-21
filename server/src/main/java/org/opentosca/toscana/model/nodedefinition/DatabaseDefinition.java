@@ -10,7 +10,7 @@ public class DatabaseDefinition extends AbstractDefinition {
     public final static String DATABASE_ENDPOINT_CAPABILITY = "database_endpoint";
 
     public final static String HOST_REQUIREMENT = "host";
-    
+
     static {
         MAPPINGS.put(NAME_PROPERTY, "databaseName");
     }

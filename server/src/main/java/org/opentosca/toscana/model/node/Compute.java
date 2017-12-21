@@ -13,6 +13,8 @@ import org.opentosca.toscana.model.capability.OsCapability;
 import org.opentosca.toscana.model.capability.ScalableCapability;
 import org.opentosca.toscana.model.datatype.NetworkInfo;
 import org.opentosca.toscana.model.datatype.PortInfo;
+import org.opentosca.toscana.model.nodedefinition.AbstractDefinition;
+import org.opentosca.toscana.model.nodedefinition.ComputeDefinition;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
 import org.opentosca.toscana.model.relation.AttachesTo;
 import org.opentosca.toscana.model.requirement.BlockStorageRequirement;
@@ -21,6 +23,11 @@ import org.opentosca.toscana.model.visitor.NodeVisitor;
 
 import lombok.Builder;
 import lombok.Data;
+
+import static org.opentosca.toscana.model.nodedefinition.ComputeDefinition.NETWORKS_PROPERTY;
+import static org.opentosca.toscana.model.nodedefinition.ComputeDefinition.PORTS_PROPERTY;
+import static org.opentosca.toscana.model.nodedefinition.ComputeDefinition.PRIVATE_ADDRESS_PROPERTY;
+import static org.opentosca.toscana.model.nodedefinition.ComputeDefinition.PUBLIC_ADDRESS_PROPERTY;
 
 /**
  Represents one or more real or virtual processors of software applications or services along with other essential local
@@ -103,19 +110,40 @@ public class Compute extends RootNode {
      @return {@link #privateAddress}
      */
     public Optional<String> getPrivateAddress() {
-        return Optional.ofNullable(privateAddress);
+        return Optional.ofNullable(get(PRIVATE_ADDRESS_PROPERTY));
+    }
+
+    public void setPrivateAddress(String privateAddress) {
+        set(PRIVATE_ADDRESS_PROPERTY, privateAddress);
     }
 
     /**
      @return {@link #publicAddress}
      */
     public Optional<String> getPublicAddress() {
-        return Optional.ofNullable(publicAddress);
+        return Optional.ofNullable(get(PUBLIC_ADDRESS_PROPERTY));
+    }
+
+    public void setPublicAddress(String publicAddress) {
+        set(PUBLIC_ADDRESS_PROPERTY, publicAddress);
+    }
+
+    public Set<NetworkInfo> getNetworks() {
+        return get(NETWORKS_PROPERTY);
+    }
+
+    public Set<PortInfo> getPorts() {
+        return get(PORTS_PROPERTY);
     }
 
     @Override
     public void accept(NodeVisitor v) {
         v.visit(this);
+    }
+
+    @Override
+    protected AbstractDefinition getDefinition() {
+        return new ComputeDefinition();
     }
 
     public static class ComputeBuilder extends RootNodeBuilder {

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.opentosca.toscana.model.node.RootNode;
+import org.opentosca.toscana.model.nodedefinition.AbstractDefinition;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,19 +15,24 @@ public class PropertyLinker {
     private static final Logger logger = LoggerFactory.getLogger(PropertyLinker.class);
 
     private final RootNode source;
+    private final AbstractDefinition propertyNameResolver;
     private final Map<String, LinkTarget> linkMap = new HashMap<>();
 
-    public PropertyLinker(RootNode source) {
+    public PropertyLinker(RootNode source, AbstractDefinition propertyNameResolver) {
         this.source = source;
+        this.propertyNameResolver = propertyNameResolver;
     }
 
-    public void link(String sourceFieldName, RootNode target, String targetFieldName) {
-        Field targetField = getField(target.getClass(), targetFieldName);
-        linkMap.put(sourceFieldName, new LinkTarget(target, targetField));
+    public void link(String toscaSourceFieldName, RootNode target, String toscaTargetFieldName) {
+        String javaSourceFieldName = propertyNameResolver.resolve(toscaSourceFieldName);
+        String javaTargetFieldName = propertyNameResolver.resolve(toscaTargetFieldName);
+        Field targetField = getField(target.getClass(), javaTargetFieldName);
+        linkMap.put(javaSourceFieldName, new LinkTarget(target, targetField));
     }
 
-    public <T> T resolveGet(String sourceField) {
-        LinkTarget linkTarget = resolveLinkTarget(sourceField);
+    public <T> T resolveGet(String toscaSourceFieldName) {
+        String javaSourceField = propertyNameResolver.resolve(toscaSourceFieldName);
+        LinkTarget linkTarget = resolveLinkTarget(javaSourceField);
         Field field = linkTarget.field;
         field.setAccessible(true);
         try {
@@ -37,8 +43,9 @@ public class PropertyLinker {
         }
     }
 
-    public <T> void resolveSet(T value, String sourceField) {
-        LinkTarget linkTarget = resolveLinkTarget(sourceField);
+    public <T> void resolveSet(String toscaSourceFieldName, T value) {
+        String javaSourceField = propertyNameResolver.resolve(toscaSourceFieldName);
+        LinkTarget linkTarget = resolveLinkTarget(javaSourceField);
         Field field = linkTarget.field;
         field.setAccessible(true);
         try {

@@ -5,6 +5,8 @@ import java.util.Set;
 import org.opentosca.toscana.model.capability.Capability;
 import org.opentosca.toscana.model.capability.ContainerCapability;
 import org.opentosca.toscana.model.capability.DatabaseEndpointCapability;
+import org.opentosca.toscana.model.nodedefinition.AbstractDefinition;
+import org.opentosca.toscana.model.nodedefinition.MysqlDatabaseDefinition;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
 import org.opentosca.toscana.model.relation.HostedOn;
 import org.opentosca.toscana.model.requirement.MysqlDbmsRequirement;
@@ -56,6 +58,11 @@ public class MysqlDatabase extends Database {
     @Override
     public void accept(NodeVisitor v) {
         v.visit(this);
+    }
+
+    @Override
+    protected AbstractDefinition getDefinition() {
+        return new MysqlDatabaseDefinition();
     }
 
     public static class MysqlDatabaseBuilder extends DatabaseBuilder {

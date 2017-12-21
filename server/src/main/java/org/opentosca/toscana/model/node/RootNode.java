@@ -11,6 +11,7 @@ import org.opentosca.toscana.model.PropertyLinker;
 import org.opentosca.toscana.model.capability.Capability;
 import org.opentosca.toscana.model.capability.NodeCapability;
 import org.opentosca.toscana.model.datatype.Range;
+import org.opentosca.toscana.model.nodedefinition.AbstractDefinition;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
 import org.opentosca.toscana.model.requirement.Dependency;
 import org.opentosca.toscana.model.requirement.Requirement;
@@ -26,7 +27,7 @@ import lombok.Data;
 public abstract class RootNode extends DescribableEntity implements VisitableNode {
 
     protected static final Map<String, String> FIELD_MAP = new HashMap<>();
-    private final PropertyLinker propertyLinker = new PropertyLinker(this);
+    private final PropertyLinker propertyLinker;
 
     protected final Set<Requirement> requirements = new HashSet<>();
     protected final Set<Capability> capabilities = new HashSet<>();
@@ -55,6 +56,7 @@ public abstract class RootNode extends DescribableEntity implements VisitableNod
                        Set<Capability> capabilities,
                        String description) {
         super(description);
+        this.propertyLinker = new PropertyLinker(this, getDefinition());
         this.nodeName = Objects.requireNonNull(nodeName);
         if (nodeName.isEmpty()) {
             throw new IllegalArgumentException("name must not be empty");
@@ -77,17 +79,19 @@ public abstract class RootNode extends DescribableEntity implements VisitableNod
      Establishes a link between this instance's property (defined by sourceField) and the targets targetField.
      In other words, the linked property now behaves like a symbolic link.
      */
-    public void link(String sourceField, RootNode target, String targetField) {
-        propertyLinker.link(sourceField, target, targetField);
+    public void link(String toscaSourceFieldName, RootNode target, String toscaTargetFieldName) {
+        propertyLinker.link(toscaSourceFieldName, target, toscaTargetFieldName);
     }
 
     protected <T> T get(String propertyName) {
         return propertyLinker.resolveGet(propertyName);
     }
 
-    protected <T> void set(T value, String propertyName) {
-        propertyLinker.resolveSet(value, propertyName);
+    protected <T> void set(String propertyName, T value) {
+        propertyLinker.resolveSet(propertyName, value);
     }
+
+    protected abstract AbstractDefinition getDefinition();
 
     public static class RootNodeBuilder extends DescribableEntityBuilder {
 

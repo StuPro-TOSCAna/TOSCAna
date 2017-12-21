@@ -7,6 +7,8 @@ import java.util.Set;
 import org.opentosca.toscana.model.capability.Capability;
 import org.opentosca.toscana.model.capability.ContainerCapability;
 import org.opentosca.toscana.model.capability.DatabaseEndpointCapability;
+import org.opentosca.toscana.model.nodedefinition.AbstractDefinition;
+import org.opentosca.toscana.model.nodedefinition.DatabaseDefinition;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
 import org.opentosca.toscana.model.relation.HostedOn;
 import org.opentosca.toscana.model.requirement.DbmsRequirement;
@@ -15,6 +17,11 @@ import org.opentosca.toscana.model.visitor.NodeVisitor;
 
 import lombok.Builder;
 import lombok.Data;
+
+import static org.opentosca.toscana.model.nodedefinition.DatabaseDefinition.NAME_PROPERTY;
+import static org.opentosca.toscana.model.nodedefinition.DatabaseDefinition.PASSWORD_PROPERTY;
+import static org.opentosca.toscana.model.nodedefinition.DatabaseDefinition.PORT_PROPERTY;
+import static org.opentosca.toscana.model.nodedefinition.DatabaseDefinition.USER_PROPERTY;
 
 /**
  Represents a logical database that can be managed and hosted by a {@link Dbms} node.
@@ -111,26 +118,35 @@ public class Database extends RootNode {
      @return {@link #port}
      */
     public Optional<Integer> getPort() {
-        return Optional.ofNullable(port);
+        return Optional.ofNullable(get(PORT_PROPERTY));
     }
 
     /**
      @return {@link #user}
      */
     public Optional<String> getUser() {
-        return Optional.ofNullable(user);
+        return Optional.ofNullable(get(USER_PROPERTY));
     }
 
     /**
      @return {@link #password}
      */
     public Optional<String> getPassword() {
-        return Optional.ofNullable(password);
+        return Optional.ofNullable(get(PASSWORD_PROPERTY));
+    }
+
+    public String getDatabaseName() {
+        return get(NAME_PROPERTY);
     }
 
     @Override
     public void accept(NodeVisitor v) {
         v.visit(this);
+    }
+
+    @Override
+    protected AbstractDefinition getDefinition() {
+        return new DatabaseDefinition();
     }
 
     public static class DatabaseBuilder extends RootNodeBuilder {

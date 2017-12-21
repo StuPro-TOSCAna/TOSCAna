@@ -6,12 +6,18 @@ import java.util.Set;
 
 import org.opentosca.toscana.model.capability.Capability;
 import org.opentosca.toscana.model.capability.EndpointCapability;
+import org.opentosca.toscana.model.nodedefinition.AbstractDefinition;
+import org.opentosca.toscana.model.nodedefinition.ObjectStorageDefinition;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
 import org.opentosca.toscana.model.requirement.Requirement;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 
 import lombok.Builder;
 import lombok.Data;
+
+import static org.opentosca.toscana.model.nodedefinition.ObjectStorageDefinition.MAXSIZE_PROPERTY;
+import static org.opentosca.toscana.model.nodedefinition.ObjectStorageDefinition.NAME_PROPERTY;
+import static org.opentosca.toscana.model.nodedefinition.ObjectStorageDefinition.SIZE_PROPERTY;
 
 /**
  Represents storage that provides the ability to store data as objects (or BLOBs of data)
@@ -81,19 +87,28 @@ public class ObjectStorage extends RootNode {
      @return {@link #sizeInGB}
      */
     public Optional<Integer> getSizeInGB() {
-        return Optional.ofNullable(sizeInGB);
+        return Optional.ofNullable(get(SIZE_PROPERTY));
     }
 
     /**
      @return {@link #maxSizeInGB}
      */
     public Optional<Integer> getMaxSizeInGB() {
-        return Optional.ofNullable(maxSizeInGB);
+        return Optional.ofNullable(get(MAXSIZE_PROPERTY));
+    }
+
+    public String getStorageName() {
+        return get(NAME_PROPERTY);
     }
 
     @Override
     public void accept(NodeVisitor v) {
         v.visit(this);
+    }
+
+    @Override
+    protected AbstractDefinition getDefinition() {
+        return new ObjectStorageDefinition();
     }
 
     public static class ObjectStorageBuilder extends RootNodeBuilder {

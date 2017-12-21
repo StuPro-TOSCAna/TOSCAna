@@ -12,7 +12,6 @@ import static org.opentosca.toscana.model.nodedefinition.ContainerRuntimeDefinit
 
 public class ContainerRuntimeVisitor<NodeT extends ContainerRuntime, BuilderT extends ContainerRuntimeBuilder> extends SoftwareComponentVisitor<NodeT, BuilderT> {
 
-
     @Override
     protected void handleCapability(TCapabilityAssignment node, BuilderT builder, String key) {
         switch (key) {
