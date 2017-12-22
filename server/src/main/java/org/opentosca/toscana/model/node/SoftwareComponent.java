@@ -26,8 +26,7 @@ import static org.opentosca.toscana.model.nodedefinition.SoftwareComponentDefini
  Represents a generic software component that can be managed and run by a Compute Node.
  (TOSCA Simple Profile in YAML Version 1.1, p.170)
  */
-@EqualsAndHashCode
-@ToString
+@Data
 public class SoftwareComponent extends RootNode {
 
     /**

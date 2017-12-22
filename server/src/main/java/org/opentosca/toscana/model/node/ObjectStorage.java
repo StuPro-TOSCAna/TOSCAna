@@ -26,8 +26,7 @@ import static org.opentosca.toscana.model.nodedefinition.ObjectStorageDefinition
  without consideration for the underlying filesystem or devices.
  (TOSCA Simple Profile in YAML Version 1.1, p. 174)
  */
-@EqualsAndHashCode
-@ToString
+@Data
 public class ObjectStorage extends RootNode {
 
     /**

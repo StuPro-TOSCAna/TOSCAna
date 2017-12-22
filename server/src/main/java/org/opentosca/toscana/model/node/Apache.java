@@ -23,8 +23,7 @@ import lombok.ToString;
 /**
  (TOSCA Simple Profile in YAML Version 1.1, p. 222)
  */
-@EqualsAndHashCode
-@ToString
+@Data
 public class Apache extends WebServer {
 
     @Builder

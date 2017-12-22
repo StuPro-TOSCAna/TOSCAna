@@ -30,8 +30,7 @@ import static org.opentosca.toscana.model.nodedefinition.LoadBalancerDefinition.
  (e.g., for a clustered or scaled application).
  (TOSCA Simple Profile in YAML Version 1.1, p.177)
  */
-@EqualsAndHashCode
-@ToString
+@Data
 public class LoadBalancer extends RootNode {
 
     private final String algorithm;

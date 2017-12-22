@@ -8,7 +8,7 @@ public class WordPressDefinition extends WebApplicationDefinition {
 
     public final static String HOST_REQUIREMENT = "host";
 
-    static {
-        MAPPINGS.put(HOST_REQUIREMENT, "databaseEndpoint");
+    public WordPressDefinition() {
+        mappings.put(HOST_REQUIREMENT, "databaseEndpoint");
     }
 }

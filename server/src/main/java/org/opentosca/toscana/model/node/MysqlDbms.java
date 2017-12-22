@@ -22,8 +22,7 @@ import lombok.ToString;
  A MysqlDbms database (server)
  TOSCA Simple Profile in YAML Version 1.1, p. 221)
  */
-@EqualsAndHashCode
-@ToString
+@Data
 public class MysqlDbms extends Dbms {
 
     @Builder

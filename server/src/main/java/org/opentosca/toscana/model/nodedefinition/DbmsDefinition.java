@@ -8,7 +8,7 @@ public class DbmsDefinition extends SoftwareComponentDefinition {
 
     public static final String PORT_PROPERTY = "port";
 
-    static {
-        MAPPINGS.put(HOST_CAPABILITY, "containerHost");
+    public DbmsDefinition() {
+        mappings.put(HOST_CAPABILITY, "containerHost");
     }
 }

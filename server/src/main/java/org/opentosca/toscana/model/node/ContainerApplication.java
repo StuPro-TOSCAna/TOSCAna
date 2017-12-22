@@ -19,16 +19,13 @@ import org.opentosca.toscana.model.visitor.NodeVisitor;
 
 import lombok.Builder;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.Singular;
-import lombok.ToString;
 
 /**
  Represents an application that requires Container-level virtualization technology.
  (TOSCA1.1, p. 177)
  */
-@EqualsAndHashCode
-@ToString
+@Data
 public class ContainerApplication extends RootNode {
 
     // public access due to hiding of field in subclasses (with different type):

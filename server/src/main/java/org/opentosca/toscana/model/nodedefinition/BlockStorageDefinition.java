@@ -8,7 +8,7 @@ public class BlockStorageDefinition extends AbstractDefinition {
 
     public final static String ATTACHMENT_CAPABILITY = "attachment";
 
-    static {
-        MAPPINGS.put(SIZE_PROPERTY, "sizeInMB");
+    public BlockStorageDefinition() {
+        mappings.put(SIZE_PROPERTY, "sizeInMB");
     }
 }

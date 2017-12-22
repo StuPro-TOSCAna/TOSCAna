@@ -26,8 +26,7 @@ import static org.opentosca.toscana.model.nodedefinition.WebApplicationDefinitio
  Specific types of web applications such as Java, etc. should be derived from this type.
  (TOSCA Simple Profile in YAML Version 1.1, p. 171)
  */
-@EqualsAndHashCode
-@ToString
+@Data
 public class WebApplication extends RootNode {
     /**
      The optional web application’s context root which designates

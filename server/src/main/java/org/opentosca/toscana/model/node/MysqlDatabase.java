@@ -20,8 +20,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
-@EqualsAndHashCode
-@ToString
+@Data
 public class MysqlDatabase extends Database {
 
     @Getter(AccessLevel.NONE)

@@ -23,8 +23,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
-@EqualsAndHashCode
-@ToString
+@Data
 public class DockerApplication extends ContainerApplication {
 
     // public access due to hiding of parent field (and therefore getter conflicts..)

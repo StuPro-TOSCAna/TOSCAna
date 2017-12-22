@@ -7,6 +7,7 @@ import java.util.Map;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.nodedefinition.AbstractDefinition;
 
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,14 +70,13 @@ public class PropertyLinker {
     }
 
     private Field getField(Class clazz, String fieldName) {
-        try {
-            Field targetField = clazz.getDeclaredField(fieldName);
-            return targetField;
-        } catch (NoSuchFieldException e) {
+        Field targetField = FieldUtils.getField(clazz, fieldName, true);
+        if (targetField == null){
             logger.error("Can not resolve property: Class '{}' does not have field '{}'",
-                clazz, fieldName, e);
+                clazz.getSimpleName(), fieldName);
             throw new IllegalStateException();
         }
+        return targetField;
     }
 
     private static class LinkTarget {

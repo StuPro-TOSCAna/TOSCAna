@@ -13,6 +13,7 @@ import org.opentosca.toscana.model.requirement.Requirement;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 
 import lombok.Builder;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -37,8 +38,7 @@ import static org.opentosca.toscana.model.nodedefinition.BlockStorageDefinition.
  <p>
  (TOSCA Simple Profile in YAML Version 1.1, p. 175-176)
  */
-@EqualsAndHashCode
-@ToString
+@Data
 public class BlockStorage extends RootNode {
 
     /**

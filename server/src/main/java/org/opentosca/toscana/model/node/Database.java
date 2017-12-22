@@ -17,8 +17,6 @@ import org.opentosca.toscana.model.visitor.NodeVisitor;
 
 import lombok.Builder;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
 
 import static org.opentosca.toscana.model.nodedefinition.DatabaseDefinition.NAME_PROPERTY;
 import static org.opentosca.toscana.model.nodedefinition.DatabaseDefinition.PASSWORD_PROPERTY;
@@ -29,8 +27,7 @@ import static org.opentosca.toscana.model.nodedefinition.DatabaseDefinition.USER
  Represents a logical database that can be managed and hosted by a {@link Dbms} node.
  (TOSCA Simple Profile in YAML Version 1.1, p. 173)
  */
-@EqualsAndHashCode
-@ToString
+@Data
 public class Database extends RootNode {
 
     public final Requirement<ContainerCapability, Dbms, HostedOn> host;

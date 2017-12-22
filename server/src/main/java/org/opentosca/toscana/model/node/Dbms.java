@@ -25,8 +25,7 @@ import static org.opentosca.toscana.model.nodedefinition.DbmsDefinition.ROOT_PAS
  Represents a typical relational, SQL Database Management System software component or service.
  (TOSCA Simple Profile in YAML Version 1.1, p. 172)
  */
-@EqualsAndHashCode
-@ToString
+@Data
 public class Dbms extends SoftwareComponent {
 
     /**

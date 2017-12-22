@@ -12,13 +12,13 @@ public abstract class AbstractDefinition {
      If the tosca key name can not simply be converter to camel case in order to reflect the corresponding property name,
      a custom mapping can be defined here.
      */
-    protected static final Map<String, String> MAPPINGS = new HashMap<>();
+    protected final Map<String, String> mappings = new HashMap<>();
 
     /**
      Converts names following the underscore convention to camel case.
      */
-    public static String resolve(String toscaPropertyName) {
-        String javaPropertyName = MAPPINGS.getOrDefault(toscaPropertyName, toCamelCase(toscaPropertyName));
+    public String resolve(String toscaPropertyName) {
+        String javaPropertyName = mappings.getOrDefault(toscaPropertyName, toCamelCase(toscaPropertyName));
         return javaPropertyName;
     }
 

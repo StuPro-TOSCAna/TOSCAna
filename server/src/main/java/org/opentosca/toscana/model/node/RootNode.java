@@ -1,8 +1,6 @@
 package org.opentosca.toscana.model.node;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -25,11 +23,9 @@ import lombok.ToString;
 /**
  The base node. Every other node will derive from this class.
  */
-@EqualsAndHashCode
-@ToString
+@Data
 public abstract class RootNode extends DescribableEntity implements VisitableNode {
 
-    protected static final Map<String, String> FIELD_MAP = new HashMap<>();
     private final PropertyLinker propertyLinker;
 
     protected final Set<Requirement> requirements = new HashSet<>();

@@ -23,8 +23,7 @@ import lombok.ToString;
  multiple application services on a single {@link Compute} host.
  (TOSCA Simple Profile in YAML Version 1.1, p. 176)
  */
-@EqualsAndHashCode
-@ToString
+@Data
 public class ContainerRuntime extends SoftwareComponent {
 
     private final ContainerCapability containerHost;

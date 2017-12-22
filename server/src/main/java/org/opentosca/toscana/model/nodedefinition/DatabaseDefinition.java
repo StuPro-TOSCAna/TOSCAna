@@ -11,7 +11,7 @@ public class DatabaseDefinition extends AbstractDefinition {
 
     public final static String HOST_REQUIREMENT = "host";
 
-    static {
-        MAPPINGS.put(NAME_PROPERTY, "databaseName");
+    public DatabaseDefinition() {
+        mappings.put(NAME_PROPERTY, "databaseName");
     }
 }

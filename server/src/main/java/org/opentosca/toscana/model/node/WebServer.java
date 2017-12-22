@@ -28,8 +28,7 @@ import lombok.ToString;
  administration, as well as a regular endpoint ({@link #dataEndpoint}) for serving data.
  (TOSCA Simple Profile in YAML Version 1.1, p.171)
  */
-@EqualsAndHashCode
-@ToString
+@Data
 public class WebServer extends SoftwareComponent {
 
     private final EndpointCapability dataEndpoint;
