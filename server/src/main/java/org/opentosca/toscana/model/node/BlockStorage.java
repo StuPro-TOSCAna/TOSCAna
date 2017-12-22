@@ -14,8 +14,6 @@ import org.opentosca.toscana.model.visitor.NodeVisitor;
 
 import lombok.Builder;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
 
 import static java.lang.String.format;
 import static org.opentosca.toscana.model.nodedefinition.BlockStorageDefinition.ATTACHMENT_CAPABILITY;

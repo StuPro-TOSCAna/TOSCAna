@@ -1,7 +1,6 @@
 package org.opentosca.toscana.model;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -22,12 +21,11 @@ public class EffectiveModel {
 
     private final Set<Property> inputs;
 
-    public EffectiveModel(Set<RootNode> vertices, Set<Property> inputs) {
+    public EffectiveModel(Map<String, RootNode> nodes, Set<Property> inputs) {
         this.inputs = inputs;
-        vertices.forEach(topology::addVertex);
+        nodeMap = nodes;
+        nodes.forEach((name, node) -> topology.addVertex(node));
         initEdges();
-        nodeMap = new HashMap<>();
-        vertices.forEach(e -> nodeMap.put(e.getNodeName(), e));
     }
 
     private void initEdges() {

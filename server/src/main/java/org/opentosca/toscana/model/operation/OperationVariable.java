@@ -1,6 +1,5 @@
 package org.opentosca.toscana.model.operation;
 
-import java.util.Objects;
 import java.util.Optional;
 
 import lombok.Data;
@@ -26,7 +25,7 @@ public class OperationVariable {
 
     public OperationVariable(String key, String value) throws IllegalArgumentException {
         this(key);
-        this.value = Objects.requireNonNull(value);
+        this.value = value;
     }
 
     /**

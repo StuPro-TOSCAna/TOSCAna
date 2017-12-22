@@ -119,13 +119,7 @@ class NodeConverter {
             throw new UnknownNodeTypeException(String.format(
                 "Node type '%s' is not supported by the internal model", template.getType()));
         }
-        try {
-            return toNode(name, template, type.builderClass, type.visitor);
-        } catch (UnsupportedOperationException e) {
-            throw new UnsupportedOperationException(
-                String.format("Converting node templates of type '%s' not yet supported",
-                    template.getType()), e);
-        }
+        return toNode(name, template, type.builderClass, type.visitor);
     }
 
     private <NodeT extends DescribableEntity, BuilderT extends DescribableEntityBuilder,

@@ -17,8 +17,6 @@ import org.opentosca.toscana.model.visitor.NodeVisitor;
 
 import lombok.Builder;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
 
 /**
  Represents an abstract software component or service that is capable of hosting and providing management operations

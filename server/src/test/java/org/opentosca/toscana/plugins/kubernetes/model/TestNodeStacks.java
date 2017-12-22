@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.opentosca.toscana.model.node.RootNode;
@@ -15,11 +16,7 @@ import com.google.common.collect.Sets;
 
 public class TestNodeStacks {
     private HashSet<NodeStack> createNodeStack() {
-        Set<RootNode> lampModel = KubernetesLampApp.getLampModel();
-        HashMap<String, RootNode> map = new HashMap<>();
-        for (RootNode rootNode : lampModel) {
-            map.put(rootNode.getNodeName(), rootNode);
-        }
+        Map<String, RootNode> map = KubernetesLampApp.getLampModel();
 
         List<KubernetesNodeContainer> webAppNodes = new LinkedList<>();
         KubernetesNodeContainer computeContainer = new KubernetesNodeContainer(map.get("server"));

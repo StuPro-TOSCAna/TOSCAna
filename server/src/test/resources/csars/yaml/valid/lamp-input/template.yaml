@@ -7,13 +7,6 @@ metadata:
 
 
 topology_template:
-  inputs:
-    database_name:
-      type: string
-    database_port:
-      type: integer
-    database_password:
-      type: string
 
   node_templates:
     my_app:

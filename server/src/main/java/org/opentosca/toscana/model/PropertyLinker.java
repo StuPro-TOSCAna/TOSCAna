@@ -71,7 +71,7 @@ public class PropertyLinker {
 
     private Field getField(Class clazz, String fieldName) {
         Field targetField = FieldUtils.getField(clazz, fieldName, true);
-        if (targetField == null){
+        if (targetField == null) {
             logger.error("Can not resolve property: Class '{}' does not have field '{}'",
                 clazz.getSimpleName(), fieldName);
             throw new IllegalStateException();

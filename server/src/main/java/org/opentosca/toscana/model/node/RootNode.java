@@ -17,8 +17,6 @@ import org.opentosca.toscana.model.visitor.VisitableNode;
 
 import lombok.Builder;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
 
 /**
  The base node. Every other node will derive from this class.

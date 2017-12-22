@@ -6,6 +6,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.opentosca.toscana.core.parse.converter.function.ToscaFunction;
+import org.opentosca.toscana.core.parse.converter.function.ToscaFunctionFactory;
+import org.opentosca.toscana.core.parse.converter.function.ToscaFunctionTemplate;
 import org.opentosca.toscana.core.parse.converter.visitor.ConversionResult;
 import org.opentosca.toscana.core.parse.converter.visitor.RepositoryVisitor;
 import org.opentosca.toscana.core.parse.converter.visitor.SetResult;
@@ -36,8 +39,26 @@ public class ModelConverter {
         Set<Repository> repositories = getRepositories(serviceTemplate);
         Set<Property> inputs = new InputConverter().convert(serviceTemplate);
         Set<ConversionResult<RootNode>> result = convertNodeTemplates(serviceTemplate.getTopologyTemplate(), repositories);
-        Set<RootNode> nodes = fulfillRequirements(result);
+        Set<ToscaFunctionTemplate> functions = extractFunctions(result);
+        Map<String, RootNode> nodes = fulfillRequirements(result);
+        applyFunctions(nodes, inputs, functions);
         return new EffectiveModel(nodes, inputs);
+    }
+
+    private Set<ToscaFunctionTemplate> extractFunctions(Set<ConversionResult<RootNode>> results) {
+        Set<ToscaFunctionTemplate> functions = new HashSet<>();
+        for (ConversionResult<RootNode> result : results) {
+            functions.addAll(result.getFunctions());
+        }
+        return functions;
+    }
+
+    private void applyFunctions(Map<String, RootNode> nodes, Set<Property> inputs, Set<ToscaFunctionTemplate> functions) {
+        for (ToscaFunctionTemplate template : functions) {
+            // todo mismatch input / operationvariable
+            ToscaFunction function = ToscaFunctionFactory.create(template, nodes);
+            function.apply();
+        }
     }
 
     private Set<Repository> getRepositories(TServiceTemplate serviceTemplate) {
@@ -65,7 +86,7 @@ public class ModelConverter {
         return results;
     }
 
-    private Set<RootNode> fulfillRequirements(Set<ConversionResult<RootNode>> results) {
+    private Map<String, RootNode> fulfillRequirements(Set<ConversionResult<RootNode>> results) {
         for (ConversionResult<RootNode> result : results) {
             for (RequirementConversion requirementConversion : result.getRequirementConversions()) {
                 for (ConversionResult<RootNode> potentialFulfiller : results) {
@@ -76,6 +97,9 @@ public class ModelConverter {
                 }
             }
         }
-        return results.stream().map(result -> result.getResult()).collect(Collectors.toSet());
+        return results.stream()
+            .collect(Collectors.toMap(
+                result -> result.getResult().getNodeName(),
+                result -> result.getResult()));
     }
 }

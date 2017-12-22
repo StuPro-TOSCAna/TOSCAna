@@ -75,7 +75,7 @@ public class Database extends RootNode {
         this.user = user;
         this.password = password;
         this.host = DbmsRequirement.getFallback(host);
-        this.databaseEndpoint = Objects.requireNonNull(databaseEndpoint);
+        this.databaseEndpoint = DatabaseEndpointCapability.getFallback(databaseEndpoint);
 
         capabilities.add(this.databaseEndpoint);
         requirements.add(this.host);

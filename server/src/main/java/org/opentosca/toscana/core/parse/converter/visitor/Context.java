@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.opentosca.toscana.core.parse.converter.RequirementConversion;
+import org.opentosca.toscana.core.parse.converter.function.ToscaFunctionTemplate;
 import org.opentosca.toscana.model.AbstractEntity.AbstractEntityBuilder;
 import org.opentosca.toscana.model.artifact.Artifact;
 import org.opentosca.toscana.model.artifact.Repository;
@@ -17,6 +18,7 @@ public class Context<BuilderT extends AbstractEntityBuilder> extends AbstractPar
     private final Set<Repository> repositories;
     private final Set<Artifact> artifacts = new HashSet<>();
     private final Set<RequirementConversion> requirementConversions = new HashSet<>();
+    private final Set<ToscaFunctionTemplate> functions = new HashSet<>();
 
     public Context(String name, BuilderT builder, Set<Repository> repositories) {
         this.nodeName = name;
@@ -60,5 +62,9 @@ public class Context<BuilderT extends AbstractEntityBuilder> extends AbstractPar
 
     public void addRequirementConversion(RequirementConversion conversion) {
         requirementConversions.add(conversion);
+    }
+
+    public Set<ToscaFunctionTemplate> getFunctions() {
+        return functions;
     }
 }

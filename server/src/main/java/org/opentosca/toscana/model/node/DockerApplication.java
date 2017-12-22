@@ -19,9 +19,7 @@ import org.opentosca.toscana.model.visitor.NodeVisitor;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.ToString;
 
 @Data
 public class DockerApplication extends ContainerApplication {

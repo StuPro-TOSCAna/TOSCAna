@@ -1,6 +1,7 @@
 package org.opentosca.toscana.plugins.cloudformation;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.HashSet;
 
 import org.opentosca.toscana.core.BaseUnitTest;
@@ -29,7 +30,7 @@ public class CloudFormationLifecycleTest extends BaseUnitTest {
     @Before
     public void setUp() throws Exception {
         PluginFileAccess access = new PluginFileAccess(new File(""), tmpdir, mock(Log.class));
-        EffectiveModel effectiveModel = new EffectiveModel(new HashSet<>(), new HashSet<>());
+        EffectiveModel effectiveModel = new EffectiveModel(new HashMap<>(), new HashSet<>());
         when(context.getPluginFileAccess()).thenReturn(access);
         when(context.getLogger((Class<?>) any(Class.class))).thenReturn(LoggerFactory.getLogger("Dummy Logger"));
         when(context.getModel()).thenReturn(effectiveModel);

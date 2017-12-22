@@ -1,7 +1,9 @@
 package org.opentosca.toscana.plugins.testdata;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.core.transformation.properties.PropertyType;
@@ -34,7 +36,7 @@ public class LampApp {
         return inputs;
     }
 
-    private static Set<RootNode> createLampNodes() {
+    private static Map<String, RootNode> createLampNodes() {
 
         Set<RootNode> testNodes = new HashSet<>();
         testNodes.add(createComputeNode());
@@ -42,7 +44,9 @@ public class LampApp {
         testNodes.add(createMysqlDatabase());
         testNodes.add(createApache());
         testNodes.add(createWebApplication());
-        return testNodes;
+        Map<String, RootNode> nodeMap = testNodes.stream()
+            .collect(Collectors.toMap(node -> node.getNodeName(), node -> node));
+        return nodeMap;
     }
 
     private static Compute createComputeNode() {

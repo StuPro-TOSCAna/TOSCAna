@@ -66,7 +66,8 @@ public class LifecycleConverter {
                     .map(QName::getLocalPart)
                     .collect(Collectors.toSet()))
                 .inputs(getInOrOutputs(operationDefintion.getInputs()))
-                .outputs(getInOrOutputs(operationDefintion.getOutputs()))
+                // TODO implement output support
+//                .outputs(getInOrOutputs(operationDefintion.getOutputs()))
                 .build();
         }
         return operation;

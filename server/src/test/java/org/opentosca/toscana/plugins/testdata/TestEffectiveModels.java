@@ -1,6 +1,8 @@
 package org.opentosca.toscana.plugins.testdata;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.opentosca.toscana.model.EffectiveModel;
@@ -12,6 +14,7 @@ import org.opentosca.toscana.model.node.DockerApplication;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.requirement.DockerHostRequirement;
 
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 public class TestEffectiveModels {
@@ -34,7 +37,9 @@ public class TestEffectiveModels {
             .os(os)
             .host(host)
             .build();
-        return new EffectiveModel(Sets.newHashSet(computeNode), new HashSet<>());
+        Map<String, RootNode> nodeMap = new HashMap<>();
+        nodeMap.put(computeNode.getNodeName(), computeNode);
+        return new EffectiveModel(nodeMap, new HashSet<>());
     }
 
     public static EffectiveModel getMinimalDockerModel() {
@@ -49,7 +54,10 @@ public class TestEffectiveModels {
             .builder("simpleTaskApp")
             .dockerHost(host)
             .build();
-        return new EffectiveModel(Sets.newHashSet(simpleTaskApp, dockerRuntime), new HashSet<>());
+        Map<String, RootNode> nodeMap = new HashMap<>();
+        nodeMap.put(simpleTaskApp.getNodeName(), simpleTaskApp);
+        nodeMap.put(dockerRuntime.getNodeName(), dockerRuntime);
+        return new EffectiveModel(nodeMap, new HashSet<>());
     }
 
     public static EffectiveModel getLampModel() {
