@@ -41,7 +41,7 @@ public abstract class Capability extends ToscaEntity implements VisitableCapabil
         this.occurrence = (occurrence != null) ? occurrence : Range.AT_LEAST_ONCE;
     }
 
-    public static class CapabilityBuilder extends AbstractEntityBuilder {
+    public static class CapabilityBuilder extends ToscaEntityBuilder {
 
         private Set<Class<? extends RootNode>> validSourceTypes = new HashSet<>();
 

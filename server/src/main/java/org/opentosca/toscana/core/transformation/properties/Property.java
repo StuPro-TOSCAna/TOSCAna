@@ -1,18 +1,14 @@
 package org.opentosca.toscana.core.transformation.properties;
 
-/**
- This class describes the model of a property, this means it defines the expected key name and the type the value
- has to be of.
- <p>
- The values get stored in the @PropertyInstance class
- */
-public class Property {
-    private final String key;
-    private final PropertyType type;
+import java.util.Optional;
 
+import org.opentosca.toscana.model.operation.OperationVariable;
+
+public class Property extends OperationVariable {
+
+    private final PropertyType type;
     private final String description;
     private final boolean required;
-
     private final String defaultValue;
 
     /**
@@ -20,8 +16,7 @@ public class Property {
 
      @param key         the unique key of the property
      @param type        the expected data type of the property value
-     @param description a short description of the property (should not exceed 200 characters, does not get
-     checked tough)
+     @param description a short description of the property (should not exceed 200 characters, does not get checked tough
      @param required    determines if the property is required or not
      */
     public Property(
@@ -40,7 +35,7 @@ public class Property {
         boolean required,
         String defaultValue
     ) {
-        this.key = key;
+        super(key);
         this.type = type;
         this.description = description;
         this.required = required;
@@ -57,10 +52,6 @@ public class Property {
         this(key, type, "", true);
     }
 
-    public String getKey() {
-        return key;
-    }
-
     public PropertyType getType() {
         return type;
     }
@@ -75,5 +66,14 @@ public class Property {
 
     public String getDefaultValue() {
         return defaultValue;
+    }
+
+    @Override
+    public Optional<String> getValue() {
+        Optional<String> value = super.getValue();
+        if (!value.isPresent()) {
+            value = Optional.ofNullable(defaultValue);
+        }
+        return value;
     }
 }

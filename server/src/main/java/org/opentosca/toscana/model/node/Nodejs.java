@@ -8,7 +8,7 @@ import org.opentosca.toscana.model.capability.Capability;
 import org.opentosca.toscana.model.capability.ContainerCapability;
 import org.opentosca.toscana.model.capability.EndpointCapability;
 import org.opentosca.toscana.model.datatype.Credential;
-import org.opentosca.toscana.model.nodedefinition.AbstractDefinition;
+import org.opentosca.toscana.model.nodedefinition.BaseDefinition;
 import org.opentosca.toscana.model.nodedefinition.NodejsDefinition;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
 import org.opentosca.toscana.model.relation.HostedOn;
@@ -74,7 +74,7 @@ public class Nodejs extends WebServer {
     }
 
     @Override
-    protected AbstractDefinition getDefinition() {
+    protected BaseDefinition getDefinition() {
         return new NodejsDefinition();
     }
 

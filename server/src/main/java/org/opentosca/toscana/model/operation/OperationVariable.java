@@ -2,6 +2,8 @@ package org.opentosca.toscana.model.operation;
 
 import java.util.Optional;
 
+import org.opentosca.toscana.model.ToscaEntity;
+
 import lombok.Data;
 
 /**
@@ -10,9 +12,9 @@ import lombok.Data;
  Serves either as input or output variable for an operation.
  */
 @Data
-public class OperationVariable {
+public class OperationVariable extends ToscaEntity {
 
-    public final String key;
+    private final String key;
 
     private String value;
 
@@ -32,6 +34,10 @@ public class OperationVariable {
      @return {@link #value}
      */
     public Optional<String> getValue() {
-        return Optional.ofNullable(value);
+        return Optional.ofNullable(get("value"));
+    }
+
+    public void setValue(String value) {
+        set("value", value);
     }
 }

@@ -5,13 +5,13 @@ import java.util.Set;
 
 import org.opentosca.toscana.core.parse.converter.RequirementConversion;
 import org.opentosca.toscana.core.parse.converter.function.ToscaFunctionTemplate;
-import org.opentosca.toscana.model.ToscaEntity.AbstractEntityBuilder;
+import org.opentosca.toscana.model.ToscaEntity.ToscaEntityBuilder;
 import org.opentosca.toscana.model.artifact.Artifact;
 import org.opentosca.toscana.model.artifact.Repository;
 
 import org.eclipse.winery.model.tosca.yaml.visitor.AbstractParameter;
 
-public class Context<BuilderT extends AbstractEntityBuilder> extends AbstractParameter<Context<BuilderT>> {
+public class Context<BuilderT extends ToscaEntityBuilder> extends AbstractParameter<Context<BuilderT>> {
 
     private final String nodeName;
     private final BuilderT builder;

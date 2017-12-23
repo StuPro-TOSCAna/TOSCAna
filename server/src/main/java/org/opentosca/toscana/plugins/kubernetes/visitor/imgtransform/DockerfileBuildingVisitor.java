@@ -117,7 +117,7 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
         if (optionalOperation.isPresent()) {
             optionalOperation.get().getInputs().forEach(e -> {
                 if (e.getValue().isPresent()) {
-                    builder.env(e.key, e.getValue().get());
+                    builder.env(e.getKey(), e.getValue().get());
                 }
             });
             logger.debug("{} - {} is present", nodeName, opName);

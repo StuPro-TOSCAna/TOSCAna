@@ -38,8 +38,9 @@ public abstract class ToscaEntity {
         return new BaseDefinition();
     }
 
-    public static class AbstractEntityBuilder {
-        public AbstractEntityBuilder() {
+    public static class ToscaEntityBuilder {
+        
+        public ToscaEntityBuilder(){
         }
 
         public ToscaEntity build() {

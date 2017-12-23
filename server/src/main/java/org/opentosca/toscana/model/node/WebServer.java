@@ -8,7 +8,7 @@ import org.opentosca.toscana.model.capability.ContainerCapability;
 import org.opentosca.toscana.model.capability.DatabaseEndpointCapability;
 import org.opentosca.toscana.model.capability.EndpointCapability;
 import org.opentosca.toscana.model.datatype.Credential;
-import org.opentosca.toscana.model.nodedefinition.AbstractDefinition;
+import org.opentosca.toscana.model.nodedefinition.BaseDefinition;
 import org.opentosca.toscana.model.nodedefinition.WebServerDefinition;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
 import org.opentosca.toscana.model.relation.HostedOn;
@@ -77,7 +77,7 @@ public class WebServer extends SoftwareComponent {
     }
 
     @Override
-    protected AbstractDefinition getDefinition() {
+    protected BaseDefinition getDefinition() {
         return new WebServerDefinition();
     }
 

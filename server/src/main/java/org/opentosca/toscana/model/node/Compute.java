@@ -13,7 +13,7 @@ import org.opentosca.toscana.model.capability.OsCapability;
 import org.opentosca.toscana.model.capability.ScalableCapability;
 import org.opentosca.toscana.model.datatype.NetworkInfo;
 import org.opentosca.toscana.model.datatype.PortInfo;
-import org.opentosca.toscana.model.nodedefinition.AbstractDefinition;
+import org.opentosca.toscana.model.nodedefinition.BaseDefinition;
 import org.opentosca.toscana.model.nodedefinition.ComputeDefinition;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
 import org.opentosca.toscana.model.relation.AttachesTo;
@@ -142,7 +142,7 @@ public class Compute extends RootNode {
     }
 
     @Override
-    protected AbstractDefinition getDefinition() {
+    protected BaseDefinition getDefinition() {
         return new ComputeDefinition();
     }
 

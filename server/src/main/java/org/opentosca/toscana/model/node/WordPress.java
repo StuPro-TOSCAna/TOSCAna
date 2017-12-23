@@ -6,7 +6,7 @@ import java.util.Set;
 import org.opentosca.toscana.model.capability.Capability;
 import org.opentosca.toscana.model.capability.DatabaseEndpointCapability;
 import org.opentosca.toscana.model.capability.EndpointCapability;
-import org.opentosca.toscana.model.nodedefinition.AbstractDefinition;
+import org.opentosca.toscana.model.nodedefinition.BaseDefinition;
 import org.opentosca.toscana.model.nodedefinition.WordPressDefinition;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
 import org.opentosca.toscana.model.relation.ConnectsTo;
@@ -100,7 +100,7 @@ public class WordPress extends WebApplication {
     }
 
     @Override
-    protected AbstractDefinition getDefinition() {
+    protected BaseDefinition getDefinition() {
         return new WordPressDefinition();
     }
 

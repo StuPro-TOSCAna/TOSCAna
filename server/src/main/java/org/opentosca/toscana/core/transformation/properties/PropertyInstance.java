@@ -2,6 +2,7 @@ package org.opentosca.toscana.core.transformation.properties;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -13,25 +14,20 @@ import org.opentosca.toscana.core.transformation.TransformationState;
  That means that this is storing the values that get assigned to the defined properties.
  */
 public class PropertyInstance {
-    private final Map<String, String> propertyValues;
     private final Set<Property> properties;
     private final Transformation transformation;
 
     /**
-     Creates a new property instance with no set property values for the given list (set) of properties.
+     Creates a new property instance for the given set of properties.
 
-     @param properties     the set of properties to create a property instance for.
-     Is not allowed to be null, if no props are needed add a empty set
+     @param properties     the set of properties to create a property instance for
      @param transformation the related transformation. It's TransformationState will be altered by this instance
      according to the state of the properties
      */
     public PropertyInstance(Set<Property> properties, Transformation transformation) {
+        if (properties == null) properties = new HashSet<>();
         this.transformation = transformation;
-        this.propertyValues = new HashMap<>();
         this.properties = properties;
-        properties.forEach(e -> {
-            propertyValues.put(e.getKey(), e.getDefaultValue());
-        });
         //Set state to input required if there are required properties
         if (properties.stream().anyMatch(Property::isRequired)) {
             transformation.setState(TransformationState.INPUT_REQUIRED);
@@ -102,7 +98,7 @@ public class PropertyInstance {
         for (Property p : properties) {
             if (p.getKey().equals(key)) {
                 if (p.getType().validate(value)) {
-                    this.propertyValues.put(key, value);
+                    p.setValue(value);
                     return;
                 } else {
                     throw new IllegalArgumentException("The Property value is invalid");
@@ -113,6 +109,10 @@ public class PropertyInstance {
     }
 
     public Map<String, String> getPropertyValues() {
+        Map<String, String> propertyValues = new HashMap<>();
+        for (Property p : properties) {
+            propertyValues.put(p.getKey(), p.getValue().orElse(null));
+        }
         return Collections.unmodifiableMap(propertyValues);
     }
 
