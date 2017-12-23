@@ -10,13 +10,11 @@ import org.eclipse.winery.model.tosca.yaml.TCapabilityAssignment;
 import org.eclipse.winery.model.tosca.yaml.TPropertyAssignment;
 import org.eclipse.winery.model.tosca.yaml.TRequirementAssignment;
 
+import static org.opentosca.toscana.model.nodedefinition.LoadBalancerDefinition.ALGORITHM_PROPERTY;
+import static org.opentosca.toscana.model.nodedefinition.LoadBalancerDefinition.APPLICATION_REQUIREMENT;
+import static org.opentosca.toscana.model.nodedefinition.LoadBalancerDefinition.CLIENT_CAPABILITY;
+
 public class LoadBalancerVisitor<NodeT extends LoadBalancer, BuilderT extends LoadBalancerBuilder> extends RootNodeVisitor<NodeT, BuilderT> {
-
-    private static final String ALGORITHM_PROPERTY = "algorithm";
-
-    private static final String CLIENT_CAPABILITY = "client";
-
-    private static final String APPLICATION_REQUIREMENT = "application";
 
     @Override
     protected void handleProperty(TPropertyAssignment node, Context<BuilderT> parameter, BuilderT builder, Object value) {

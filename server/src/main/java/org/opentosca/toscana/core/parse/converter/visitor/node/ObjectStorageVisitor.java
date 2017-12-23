@@ -10,13 +10,12 @@ import org.opentosca.toscana.model.node.ObjectStorage.ObjectStorageBuilder;
 import org.eclipse.winery.model.tosca.yaml.TCapabilityAssignment;
 import org.eclipse.winery.model.tosca.yaml.TPropertyAssignment;
 
+import static org.opentosca.toscana.model.nodedefinition.ObjectStorageDefinition.MAXSIZE_PROPERTY;
+import static org.opentosca.toscana.model.nodedefinition.ObjectStorageDefinition.NAME_PROPERTY;
+import static org.opentosca.toscana.model.nodedefinition.ObjectStorageDefinition.SIZE_PROPERTY;
+import static org.opentosca.toscana.model.nodedefinition.ObjectStorageDefinition.STORAGE_ENDPOINT_CAPABILITY;
+
 public class ObjectStorageVisitor<NodeT extends ObjectStorage, BuilderT extends ObjectStorageBuilder> extends RootNodeVisitor<NodeT, BuilderT> {
-
-    private static final String NAME_PROPERTY = "name";
-    private static final String SIZE_PROPERTY = "size";
-    private static final String MAXSIZE_PROPERTY = "maxsize";
-
-    private static final String STORAGE_ENDPOINT_CAPABILITY = "storage_endpoint";
 
     @Override
     protected void handleProperty(TPropertyAssignment node, Context<BuilderT> parameter, BuilderT builder, Object value) {

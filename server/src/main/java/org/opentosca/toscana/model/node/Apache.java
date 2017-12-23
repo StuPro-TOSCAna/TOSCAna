@@ -7,6 +7,8 @@ import org.opentosca.toscana.model.capability.Capability;
 import org.opentosca.toscana.model.capability.ContainerCapability;
 import org.opentosca.toscana.model.capability.EndpointCapability;
 import org.opentosca.toscana.model.datatype.Credential;
+import org.opentosca.toscana.model.nodedefinition.ApacheDefinition;
+import org.opentosca.toscana.model.nodedefinition.BaseDefinition;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
 import org.opentosca.toscana.model.relation.HostedOn;
 import org.opentosca.toscana.model.requirement.HostRequirement;
@@ -54,5 +56,10 @@ public class Apache extends WebServer {
     public static class ApacheBuilder extends WebServerBuilder {
         protected Set<Requirement> requirements = super.requirements;
         protected Set<Capability> capabilities = super.capabilities;
+    }
+
+    @Override
+    protected BaseDefinition getDefinition() {
+        return new ApacheDefinition();
     }
 }

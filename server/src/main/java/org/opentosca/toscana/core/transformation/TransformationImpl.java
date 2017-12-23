@@ -35,7 +35,7 @@ public class TransformationImpl implements Transformation {
 
         //Collect Possible Properties From the Platform and the Model
         Set<Property> properties = new HashSet<>();
-        properties.addAll(csar.getModelSpecificProperties());
+        properties.addAll(csar.getModelSpecificProperties().values());
         properties.addAll(targetPlatform.getProperties());
 
         // transformationState can get set to INPUT_REQUIRED by this call

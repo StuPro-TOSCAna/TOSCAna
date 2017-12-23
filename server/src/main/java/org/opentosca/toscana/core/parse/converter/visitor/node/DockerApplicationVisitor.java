@@ -7,9 +7,9 @@ import org.opentosca.toscana.model.relation.HostedOn;
 
 import org.eclipse.winery.model.tosca.yaml.TRequirementAssignment;
 
-public class DockerApplicationVisitor<NodeT extends DockerApplication, BuilderT extends DockerApplicationBuilder> extends ContainerApplicationVisitor<NodeT, BuilderT> {
+import static org.opentosca.toscana.model.nodedefinition.DockerApplicationDefinition.HOST_REQUIREMENT;
 
-    private static final String HOST_REQUIREMENT = "host";
+public class DockerApplicationVisitor<NodeT extends DockerApplication, BuilderT extends DockerApplicationBuilder> extends ContainerApplicationVisitor<NodeT, BuilderT> {
 
     @Override
     protected void handleRequirement(TRequirementAssignment node, Context<BuilderT> context, BuilderT builder) {

@@ -6,10 +6,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.opentosca.toscana.core.parse.converter.function.ToscaFunction;
+import org.opentosca.toscana.core.parse.converter.function.ToscaFunctionFactory;
+import org.opentosca.toscana.core.parse.converter.function.ToscaFunctionTemplate;
 import org.opentosca.toscana.core.parse.converter.visitor.ConversionResult;
 import org.opentosca.toscana.core.parse.converter.visitor.RepositoryVisitor;
 import org.opentosca.toscana.core.parse.converter.visitor.SetResult;
+import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.model.EffectiveModel;
+import org.opentosca.toscana.model.ToscaEntity;
 import org.opentosca.toscana.model.artifact.Repository;
 import org.opentosca.toscana.model.node.RootNode;
 
@@ -33,9 +38,29 @@ public class ModelConverter {
     public EffectiveModel convert(TServiceTemplate serviceTemplate) throws UnknownNodeTypeException {
         logger.debug("Convert service template to normative model");
         Set<Repository> repositories = getRepositories(serviceTemplate);
+        Map<String, Property> inputs = new InputConverter().convert(serviceTemplate);
         Set<ConversionResult<RootNode>> result = convertNodeTemplates(serviceTemplate.getTopologyTemplate(), repositories);
-        Set<RootNode> nodes = fulfillRequirements(result);
-        return new EffectiveModel(nodes);
+        Set<ToscaFunctionTemplate> functions = extractFunctions(result);
+        Map<String, RootNode> nodes = fulfillRequirements(result);
+        applyFunctions(nodes, inputs, functions);
+        return new EffectiveModel(nodes, inputs);
+    }
+
+    private Set<ToscaFunctionTemplate> extractFunctions(Set<ConversionResult<RootNode>> results) {
+        Set<ToscaFunctionTemplate> functions = new HashSet<>();
+        for (ConversionResult<RootNode> result : results) {
+            functions.addAll(result.getFunctions());
+        }
+        return functions;
+    }
+
+    private void applyFunctions(Map<String, RootNode> nodes, Map<String, Property> inputs, Set<ToscaFunctionTemplate> functionTemplates) {
+        Map<String, ToscaEntity> entities = new HashMap<>(nodes);
+        entities.putAll(inputs);
+        for (ToscaFunctionTemplate template : functionTemplates) {
+            ToscaFunction function = ToscaFunctionFactory.create(template, entities);
+            function.apply();
+        }
     }
 
     private Set<Repository> getRepositories(TServiceTemplate serviceTemplate) {
@@ -63,7 +88,7 @@ public class ModelConverter {
         return results;
     }
 
-    private Set<RootNode> fulfillRequirements(Set<ConversionResult<RootNode>> results) {
+    private Map<String, RootNode> fulfillRequirements(Set<ConversionResult<RootNode>> results) {
         for (ConversionResult<RootNode> result : results) {
             for (RequirementConversion requirementConversion : result.getRequirementConversions()) {
                 for (ConversionResult<RootNode> potentialFulfiller : results) {
@@ -74,6 +99,9 @@ public class ModelConverter {
                 }
             }
         }
-        return results.stream().map(result -> result.getResult()).collect(Collectors.toSet());
+        return results.stream()
+            .collect(Collectors.toMap(
+                result -> result.getResult().getNodeName(),
+                result -> result.getResult()));
     }
 }

@@ -8,13 +8,11 @@ import org.opentosca.toscana.model.node.Dbms.DbmsBuilder;
 import org.eclipse.winery.model.tosca.yaml.TCapabilityAssignment;
 import org.eclipse.winery.model.tosca.yaml.TPropertyAssignment;
 
+import static org.opentosca.toscana.model.nodedefinition.DbmsDefinition.HOST_CAPABILITY;
+import static org.opentosca.toscana.model.nodedefinition.DbmsDefinition.PORT_PROPERTY;
+import static org.opentosca.toscana.model.nodedefinition.DbmsDefinition.ROOT_PASSWORD_PROPERTY;
+
 public class DbmsVisitor<NodeT extends Dbms, BuilderT extends DbmsBuilder> extends SoftwareComponentVisitor<NodeT, BuilderT> {
-
-    private static final String ROOT_PASSWORD_PROPERTY = "root_password";
-
-    private static final String HOST_CAPABILITY = "host";
-
-    private static final String PORT_PROPERTY = "port";
 
     @Override
     protected void handleProperty(TPropertyAssignment node, Context<BuilderT> parameter, BuilderT builder, Object value) {

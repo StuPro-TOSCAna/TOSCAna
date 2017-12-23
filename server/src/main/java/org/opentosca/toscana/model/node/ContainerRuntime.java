@@ -6,6 +6,8 @@ import org.opentosca.toscana.model.capability.Capability;
 import org.opentosca.toscana.model.capability.ContainerCapability;
 import org.opentosca.toscana.model.capability.ScalableCapability;
 import org.opentosca.toscana.model.datatype.Credential;
+import org.opentosca.toscana.model.nodedefinition.BaseDefinition;
+import org.opentosca.toscana.model.nodedefinition.ContainerRuntimeDefinition;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
 import org.opentosca.toscana.model.relation.HostedOn;
 import org.opentosca.toscana.model.requirement.Requirement;
@@ -56,6 +58,11 @@ public class ContainerRuntime extends SoftwareComponent {
     @Override
     public void accept(NodeVisitor v) {
         v.visit(this);
+    }
+
+    @Override
+    protected BaseDefinition getDefinition() {
+        return new ContainerRuntimeDefinition();
     }
 
     public static class ContainerRuntimeBuilder extends SoftwareComponentBuilder {

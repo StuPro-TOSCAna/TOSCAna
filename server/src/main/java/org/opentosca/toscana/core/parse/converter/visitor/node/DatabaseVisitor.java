@@ -10,16 +10,14 @@ import org.eclipse.winery.model.tosca.yaml.TCapabilityAssignment;
 import org.eclipse.winery.model.tosca.yaml.TPropertyAssignment;
 import org.eclipse.winery.model.tosca.yaml.TRequirementAssignment;
 
+import static org.opentosca.toscana.model.nodedefinition.DatabaseDefinition.DATABASE_ENDPOINT_CAPABILITY;
+import static org.opentosca.toscana.model.nodedefinition.DatabaseDefinition.HOST_REQUIREMENT;
+import static org.opentosca.toscana.model.nodedefinition.DatabaseDefinition.NAME_PROPERTY;
+import static org.opentosca.toscana.model.nodedefinition.DatabaseDefinition.PASSWORD_PROPERTY;
+import static org.opentosca.toscana.model.nodedefinition.DatabaseDefinition.PORT_PROPERTY;
+import static org.opentosca.toscana.model.nodedefinition.DatabaseDefinition.USER_PROPERTY;
+
 public class DatabaseVisitor<NodeT extends Database, BuilderT extends DatabaseBuilder> extends RootNodeVisitor<NodeT, BuilderT> {
-
-    private final static String NAME_PROPERTY = "name";
-    private final static String PORT_PROPERTY = "port";
-    private final static String USER_PROPERTY = "user";
-    private final static String PASSWORD_PROPERTY = "password";
-
-    private final static String DATABASE_ENDPOINT_CAPABILITY = "database_endpoint";
-
-    private final static String HOST_REQUIREMENT = "host";
 
     @Override
     protected void handleProperty(TPropertyAssignment node, Context<BuilderT> parameter, BuilderT builder, Object value) {

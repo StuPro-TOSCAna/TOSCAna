@@ -5,6 +5,8 @@ import java.util.Set;
 import org.opentosca.toscana.model.capability.Capability;
 import org.opentosca.toscana.model.capability.ContainerCapability;
 import org.opentosca.toscana.model.datatype.Credential;
+import org.opentosca.toscana.model.nodedefinition.BaseDefinition;
+import org.opentosca.toscana.model.nodedefinition.MysqlDbmsDefinition;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
 import org.opentosca.toscana.model.relation.HostedOn;
 import org.opentosca.toscana.model.requirement.HostRequirement;
@@ -61,6 +63,11 @@ public class MysqlDbms extends Dbms {
     @Override
     public void accept(NodeVisitor v) {
         v.visit(this);
+    }
+
+    @Override
+    protected BaseDefinition getDefinition() {
+        return new MysqlDbmsDefinition();
     }
 
     public static class MysqlDbmsBuilder extends DbmsBuilder {

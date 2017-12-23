@@ -6,6 +6,8 @@ import java.util.Set;
 import org.opentosca.toscana.model.capability.Capability;
 import org.opentosca.toscana.model.capability.ContainerCapability;
 import org.opentosca.toscana.model.datatype.Credential;
+import org.opentosca.toscana.model.nodedefinition.BaseDefinition;
+import org.opentosca.toscana.model.nodedefinition.SoftwareComponentDefinition;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
 import org.opentosca.toscana.model.relation.HostedOn;
 import org.opentosca.toscana.model.requirement.HostRequirement;
@@ -14,6 +16,9 @@ import org.opentosca.toscana.model.visitor.NodeVisitor;
 
 import lombok.Builder;
 import lombok.Data;
+
+import static org.opentosca.toscana.model.nodedefinition.SoftwareComponentDefinition.ADMIN_CREDENTIAL_PROPERTY;
+import static org.opentosca.toscana.model.nodedefinition.SoftwareComponentDefinition.COMPONENT_VERSION_PROPERTY;
 
 /**
  Represents a generic software component that can be managed and run by a Compute Node.
@@ -62,16 +67,21 @@ public class SoftwareComponent extends RootNode {
     }
 
     public Optional<String> getComponentVersion() {
-        return Optional.ofNullable(componentVersion);
+        return Optional.ofNullable(get(COMPONENT_VERSION_PROPERTY));
     }
 
     public Optional<Credential> getAdminCredential() {
-        return Optional.ofNullable(adminCredential);
+        return Optional.ofNullable(get(ADMIN_CREDENTIAL_PROPERTY));
     }
 
     @Override
     public void accept(NodeVisitor v) {
         v.visit(this);
+    }
+
+    @Override
+    protected BaseDefinition getDefinition() {
+        return new SoftwareComponentDefinition();
     }
 
     public static class SoftwareComponentBuilder extends RootNodeBuilder {

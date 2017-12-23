@@ -13,6 +13,8 @@ import org.opentosca.toscana.model.capability.OsCapability;
 import org.opentosca.toscana.model.capability.ScalableCapability;
 import org.opentosca.toscana.model.datatype.NetworkInfo;
 import org.opentosca.toscana.model.datatype.PortInfo;
+import org.opentosca.toscana.model.nodedefinition.BaseDefinition;
+import org.opentosca.toscana.model.nodedefinition.ComputeDefinition;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
 import org.opentosca.toscana.model.relation.AttachesTo;
 import org.opentosca.toscana.model.requirement.BlockStorageRequirement;
@@ -21,6 +23,11 @@ import org.opentosca.toscana.model.visitor.NodeVisitor;
 
 import lombok.Builder;
 import lombok.Data;
+
+import static org.opentosca.toscana.model.nodedefinition.ComputeDefinition.NETWORKS_PROPERTY;
+import static org.opentosca.toscana.model.nodedefinition.ComputeDefinition.PORTS_PROPERTY;
+import static org.opentosca.toscana.model.nodedefinition.ComputeDefinition.PRIVATE_ADDRESS_PROPERTY;
+import static org.opentosca.toscana.model.nodedefinition.ComputeDefinition.PUBLIC_ADDRESS_PROPERTY;
 
 /**
  Represents one or more real or virtual processors of software applications or services along with other essential local
@@ -42,7 +49,7 @@ public class Compute extends RootNode {
     private final Set<PortInfo> ports = new HashSet<>();
     private final ContainerCapability host;
     private final OsCapability os;
-    private final AdminEndpointCapability adminEndpoint;
+    private final AdminEndpointCapability endpoint;
     private final ScalableCapability scalable;
     private final BindableCapability binding;
     private final Requirement<AttachmentCapability, BlockStorage, AttachesTo> localStorage;
@@ -64,7 +71,7 @@ public class Compute extends RootNode {
                       String publicAddress,
                       ContainerCapability host,
                       OsCapability os,
-                      AdminEndpointCapability adminEndpoint,
+                      AdminEndpointCapability endpoint,
                       ScalableCapability scalable,
                       BindableCapability binding,
                       Requirement<AttachmentCapability, BlockStorage, AttachesTo> localStorage,
@@ -77,7 +84,7 @@ public class Compute extends RootNode {
         this.privateAddress = privateAddress;
         this.publicAddress = publicAddress;
         this.os = OsCapability.getFallback(os);
-        this.adminEndpoint = AdminEndpointCapability.getFallback(adminEndpoint);
+        this.endpoint = AdminEndpointCapability.getFallback(endpoint);
         this.host = (host == null) ? ContainerCapability.builder().build() : host;
         this.scalable = (scalable == null) ? ScalableCapability.builder().build() : scalable;
         this.binding = (binding == null) ? BindableCapability.builder().build() : binding;
@@ -85,7 +92,7 @@ public class Compute extends RootNode {
 
         this.capabilities.add(this.host);
         this.capabilities.add(this.os);
-        this.capabilities.add(this.adminEndpoint);
+        this.capabilities.add(this.endpoint);
         this.capabilities.add(this.scalable);
         this.capabilities.add(this.binding);
         this.requirements.add(this.localStorage);
@@ -103,19 +110,40 @@ public class Compute extends RootNode {
      @return {@link #privateAddress}
      */
     public Optional<String> getPrivateAddress() {
-        return Optional.ofNullable(privateAddress);
+        return Optional.ofNullable(get(PRIVATE_ADDRESS_PROPERTY));
+    }
+
+    public void setPrivateAddress(String privateAddress) {
+        set(PRIVATE_ADDRESS_PROPERTY, privateAddress);
     }
 
     /**
      @return {@link #publicAddress}
      */
     public Optional<String> getPublicAddress() {
-        return Optional.ofNullable(publicAddress);
+        return Optional.ofNullable(get(PUBLIC_ADDRESS_PROPERTY));
+    }
+
+    public void setPublicAddress(String publicAddress) {
+        set(PUBLIC_ADDRESS_PROPERTY, publicAddress);
+    }
+
+    public Set<NetworkInfo> getNetworks() {
+        return get(NETWORKS_PROPERTY);
+    }
+
+    public Set<PortInfo> getPorts() {
+        return get(PORTS_PROPERTY);
     }
 
     @Override
     public void accept(NodeVisitor v) {
         v.visit(this);
+    }
+
+    @Override
+    protected BaseDefinition getDefinition() {
+        return new ComputeDefinition();
     }
 
     public static class ComputeBuilder extends RootNodeBuilder {

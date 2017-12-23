@@ -1,7 +1,9 @@
 package org.opentosca.toscana.plugins.testdata;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.opentosca.toscana.model.artifact.Artifact;
 import org.opentosca.toscana.model.capability.ContainerCapability;
@@ -24,12 +26,13 @@ public class KubernetesLampApp {
 
     private final Set<RootNode> testNodes = new HashSet<>();
 
-    public Set<RootNode> getLampApp() {
+    public Map<String, RootNode> getLampApp() {
         createLampModel();
-        return testNodes;
+        return testNodes.stream()
+            .collect(Collectors.toMap(RootNode::getNodeName, node -> node));
     }
 
-    public static Set<RootNode> getLampModel() {
+    public static Map<String, RootNode> getLampModel() {
         return new KubernetesLampApp().getLampApp();
     }
 

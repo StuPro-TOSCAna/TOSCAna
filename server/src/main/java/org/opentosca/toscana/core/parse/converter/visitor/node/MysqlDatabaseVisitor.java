@@ -7,9 +7,9 @@ import org.opentosca.toscana.model.relation.HostedOn;
 
 import org.eclipse.winery.model.tosca.yaml.TRequirementAssignment;
 
-public class MysqlDatabaseVisitor<NodeT extends MysqlDatabase, BuilderT extends MysqlDatabaseBuilder> extends DatabaseVisitor<NodeT, BuilderT> {
+import static org.opentosca.toscana.model.nodedefinition.MysqlDatabaseDefinition.HOST_REQUIREMENT;
 
-    private final static String HOST_REQUIREMENT = "host";
+public class MysqlDatabaseVisitor<NodeT extends MysqlDatabase, BuilderT extends MysqlDatabaseBuilder> extends DatabaseVisitor<NodeT, BuilderT> {
 
     @Override
     protected void handleRequirement(TRequirementAssignment requirement, Context<BuilderT> context, BuilderT builder) {

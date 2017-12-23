@@ -54,8 +54,12 @@ public class CsarImpl implements Csar {
     }
 
     @Override
-    public Set<Property> getModelSpecificProperties() {
-        return new HashSet<>();
+    public Map<String, Property> getModelSpecificProperties() {
+        if (model == null) {
+            return new HashMap<>();
+        } else {
+            return model.getInputs();
+        }
     }
 
     @Override

@@ -17,7 +17,7 @@ public abstract class DescribableEntityVisitor<NodeT extends DescribableEntity, 
         builder.description(node.getDescription());
         super.visit(node, parameter);
         NodeT resultingNode = (NodeT) builder.build();
-        ConversionResult<NodeT> result = new ConversionResult<NodeT>(resultingNode, parameter.getRequirementConversions());
+        ConversionResult<NodeT> result = new ConversionResult<NodeT>(resultingNode, parameter);
         return result;
     }
 

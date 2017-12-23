@@ -1,12 +1,13 @@
 package org.opentosca.toscana.model.node;
 
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
 import org.opentosca.toscana.model.capability.Capability;
 import org.opentosca.toscana.model.capability.ContainerCapability;
 import org.opentosca.toscana.model.datatype.Credential;
+import org.opentosca.toscana.model.nodedefinition.BaseDefinition;
+import org.opentosca.toscana.model.nodedefinition.DbmsDefinition;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
 import org.opentosca.toscana.model.relation.HostedOn;
 import org.opentosca.toscana.model.requirement.Requirement;
@@ -14,6 +15,9 @@ import org.opentosca.toscana.model.visitor.NodeVisitor;
 
 import lombok.Builder;
 import lombok.Data;
+
+import static org.opentosca.toscana.model.nodedefinition.DbmsDefinition.PORT_PROPERTY;
+import static org.opentosca.toscana.model.nodedefinition.DbmsDefinition.ROOT_PASSWORD_PROPERTY;
 
 /**
  Represents a typical relational, SQL Database Management System software component or service.
@@ -26,7 +30,7 @@ public class Dbms extends SoftwareComponent {
      The optional root password for the Dbms server.
      (TOSCA Simple Profile in YAML Version 1.1, p. 172)
      */
-    private final String rootPassword;
+    private String rootPassword;
 
     /**
      The Dbms server’s port.
@@ -49,7 +53,7 @@ public class Dbms extends SoftwareComponent {
                    Set<Capability> capabilities,
                    String description) {
         super(componentVersion, adminCredential, host, nodeName, standardLifecycle, requirements, capabilities, description);
-        this.containerHost = Objects.requireNonNull(containerHost);
+        this.containerHost = ContainerCapability.getFallback(containerHost);
         this.port = port;
         this.rootPassword = rootPassword;
 
@@ -57,33 +61,42 @@ public class Dbms extends SoftwareComponent {
     }
 
     /**
-     @param nodeName      {@link #nodeName}
-     @param containerHost {@link #containerHost}
+     @param nodeName {@link #nodeName}
      */
-    public static DbmsBuilder builder(String nodeName,
-                                      ContainerCapability containerHost) {
+    public static DbmsBuilder builder(String nodeName) {
         return new DbmsBuilder()
-            .nodeName(nodeName)
-            .containerHost(containerHost);
+            .nodeName(nodeName);
     }
 
     /**
      @return {@link #rootPassword}
      */
     public Optional<String> getRootPassword() {
-        return Optional.ofNullable(rootPassword);
+        return Optional.ofNullable(get(ROOT_PASSWORD_PROPERTY));
+    }
+
+    /**
+     @return {@link #rootPassword}
+     */
+    public void setRootPassword(String rootPassword) {
+        set(ROOT_PASSWORD_PROPERTY, rootPassword);
     }
 
     /**
      @return {@link #port}
      */
     public Optional<Integer> getPort() {
-        return Optional.ofNullable(port);
+        return Optional.ofNullable(get(PORT_PROPERTY));
     }
 
     @Override
     public void accept(NodeVisitor v) {
         v.visit(this);
+    }
+
+    @Override
+    protected BaseDefinition getDefinition() {
+        return new DbmsDefinition();
     }
 
     public static class DbmsBuilder extends SoftwareComponentBuilder {

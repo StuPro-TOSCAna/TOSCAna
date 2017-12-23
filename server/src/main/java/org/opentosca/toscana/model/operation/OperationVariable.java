@@ -1,7 +1,8 @@
 package org.opentosca.toscana.model.operation;
 
-import java.util.Objects;
 import java.util.Optional;
+
+import org.opentosca.toscana.model.ToscaEntity;
 
 import lombok.Data;
 
@@ -11,9 +12,11 @@ import lombok.Data;
  Serves either as input or output variable for an operation.
  */
 @Data
-public class OperationVariable {
+public class OperationVariable extends ToscaEntity {
+    
+    public final static String VALUE_PROPERTY = "value";
 
-    public final String key;
+    private final String key;
 
     private String value;
 
@@ -26,13 +29,17 @@ public class OperationVariable {
 
     public OperationVariable(String key, String value) throws IllegalArgumentException {
         this(key);
-        this.value = Objects.requireNonNull(value);
+        this.value = value;
     }
 
     /**
      @return {@link #value}
      */
     public Optional<String> getValue() {
-        return Optional.ofNullable(value);
+        return Optional.ofNullable(get(VALUE_PROPERTY));
+    }
+
+    public void setValue(String value) {
+        set(VALUE_PROPERTY, value);
     }
 }

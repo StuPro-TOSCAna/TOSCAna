@@ -8,12 +8,12 @@ import org.opentosca.toscana.model.relation.ConnectsTo;
 import org.eclipse.winery.model.tosca.yaml.TPropertyAssignment;
 import org.eclipse.winery.model.tosca.yaml.TRequirementAssignment;
 
-public class WordPressVisitor<NodeT extends WordPress, BuilderT extends WordPressBuilder> extends WebApplicationVisitor<NodeT, BuilderT> {
+import static org.opentosca.toscana.model.nodedefinition.WordPressDefinition.ADMIN_PASSWORD_PROPERTY;
+import static org.opentosca.toscana.model.nodedefinition.WordPressDefinition.ADMIN_USER_PROPERTY;
+import static org.opentosca.toscana.model.nodedefinition.WordPressDefinition.DB_HOST_PROPERTY;
+import static org.opentosca.toscana.model.nodedefinition.WordPressDefinition.HOST_REQUIREMENT;
 
-    private final static String ADMIN_USER_PROPERTY = "admin_user";
-    private final static String ADMIN_PASSWORD_PROPERTY = "admin_password";
-    private final static String DB_HOST_PROPERTY = "db_host";
-    private final static String HOST_REQUIREMENT = "host";
+public class WordPressVisitor<NodeT extends WordPress, BuilderT extends WordPressBuilder> extends WebApplicationVisitor<NodeT, BuilderT> {
 
     @Override
     protected void handleProperty(TPropertyAssignment node, Context<BuilderT> parameter, BuilderT builder, Object value) {

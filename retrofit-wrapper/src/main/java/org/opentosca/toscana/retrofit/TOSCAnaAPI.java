@@ -262,6 +262,7 @@ public class TOSCAnaAPI {
             response.code()
         );
         logger.debug("Throwing Exception", exception);
+        exception.printLog();
         throw exception;
     }
 }

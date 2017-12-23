@@ -8,11 +8,11 @@ import org.opentosca.toscana.model.node.WebServer.WebServerBuilder;
 
 import org.eclipse.winery.model.tosca.yaml.TCapabilityAssignment;
 
-public class WebServerVisitor<NodeT extends WebServer, BuilderT extends WebServerBuilder> extends SoftwareComponentVisitor<NodeT, BuilderT> {
+import static org.opentosca.toscana.model.nodedefinition.WebServerDefinition.ADMIN_ENDPOINT_CAPABILITY;
+import static org.opentosca.toscana.model.nodedefinition.WebServerDefinition.DATA_ENDPOINT_CAPABILITY;
+import static org.opentosca.toscana.model.nodedefinition.WebServerDefinition.HOST_CAPABILITY;
 
-    private static final String DATA_ENDPOINT_CAPABILITY = "data_endpoint";
-    private static final String ADMIN_ENDPOINT_CAPABILITY = "admin_endpoint";
-    private static final String HOST_CAPABILITY = "host";
+public class WebServerVisitor<NodeT extends WebServer, BuilderT extends WebServerBuilder> extends SoftwareComponentVisitor<NodeT, BuilderT> {
 
     @Override
     protected void handleCapability(TCapabilityAssignment node, BuilderT builder, String key) {

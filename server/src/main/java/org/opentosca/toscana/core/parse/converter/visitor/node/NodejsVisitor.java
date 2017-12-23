@@ -6,9 +6,9 @@ import org.opentosca.toscana.model.node.Nodejs.NodejsBuilder;
 
 import org.eclipse.winery.model.tosca.yaml.TPropertyAssignment;
 
-public class NodejsVisitor<NodeT extends Nodejs, BuilderT extends NodejsBuilder> extends WebServerVisitor<NodeT, BuilderT> {
+import static org.opentosca.toscana.model.nodedefinition.NodejsDefinition.GITHUB_URL_PROPERTY;
 
-    private final static String GITHUB_URL_PROPERTY = "github_url";
+public class NodejsVisitor<NodeT extends Nodejs, BuilderT extends NodejsBuilder> extends WebServerVisitor<NodeT, BuilderT> {
 
     @Override
     protected void handleProperty(TPropertyAssignment node, Context<BuilderT> parameter, BuilderT builder, Object value) {

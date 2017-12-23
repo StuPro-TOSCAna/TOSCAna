@@ -8,6 +8,8 @@ import org.opentosca.toscana.model.capability.Capability;
 import org.opentosca.toscana.model.capability.EndpointCapability;
 import org.opentosca.toscana.model.capability.PublicEndpointCapability;
 import org.opentosca.toscana.model.datatype.Range;
+import org.opentosca.toscana.model.nodedefinition.BaseDefinition;
+import org.opentosca.toscana.model.nodedefinition.LoadBalancerDefinition;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
 import org.opentosca.toscana.model.relation.RoutesTo;
 import org.opentosca.toscana.model.requirement.ApplicationRequirement;
@@ -16,6 +18,9 @@ import org.opentosca.toscana.model.visitor.NodeVisitor;
 
 import lombok.Builder;
 import lombok.Data;
+
+import static org.opentosca.toscana.model.nodedefinition.LoadBalancerDefinition.ALGORITHM_PROPERTY;
+import static org.opentosca.toscana.model.nodedefinition.LoadBalancerDefinition.CLIENT_CAPABILITY;
 
 /**
  Represents logical function that be used in conjunction with a Floating Address
@@ -67,12 +72,25 @@ public class LoadBalancer extends RootNode {
      @return {@link #algorithm}
      */
     public Optional<String> getAlgorithm() {
-        return Optional.ofNullable(algorithm);
+        return Optional.ofNullable(get(ALGORITHM_PROPERTY));
+    }
+
+    public PublicEndpointCapability getClient() {
+        return get(CLIENT_CAPABILITY);
+    }
+
+    public Requirement<EndpointCapability, RootNode, RoutesTo> getApplication() {
+        return application;
     }
 
     @Override
     public void accept(NodeVisitor v) {
         v.visit(this);
+    }
+
+    @Override
+    protected BaseDefinition getDefinition() {
+        return new LoadBalancerDefinition();
     }
 
     public static class LoadBalancerBuilder extends RootNodeBuilder {
