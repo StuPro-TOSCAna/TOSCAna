@@ -23,6 +23,7 @@ public class ToscaFunctionIT extends BaseIntegrationTest {
 
     private final static File GET_INPUT = new File(BASE_PATH, "get_input.yaml");
     private final static File GET_PROPERTY = new File(BASE_PATH, "get_property.yaml");
+    private final static File GET_PROPERTY_SELF = new File(BASE_PATH, "get_property_self.yaml");
     
     private CsarParseService parser;
     
@@ -43,5 +44,12 @@ public class ToscaFunctionIT extends BaseIntegrationTest {
         EffectiveModel model = parser.parse(GET_PROPERTY);
         Database database = (Database) model.getNodeMap().get("my_second_db");
         assertEquals("my_db_name", database.getDatabaseName());
+    }
+    
+    @Test
+    public void getPropertySelfTest() throws Exception {
+        EffectiveModel model = parser.parse(GET_PROPERTY_SELF);
+        Database database = (Database) model.getNodeMap().get("my_db");
+        assertEquals("my_user_name", database.getDatabaseName());
     }
 }

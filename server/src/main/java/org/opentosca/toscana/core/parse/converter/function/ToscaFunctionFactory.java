@@ -4,8 +4,6 @@ import java.util.Map;
 
 import org.opentosca.toscana.core.parse.converter.function.ToscaFunction.FunctionType;
 import org.opentosca.toscana.model.ToscaEntity;
-import org.opentosca.toscana.model.node.RootNode;
-import org.opentosca.toscana.model.operation.OperationVariable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +18,7 @@ public class ToscaFunctionFactory {
         FunctionType type = template.type;
         SourceType sourceType = template.sourceType;
         ToscaEntity source = entities.get(template.sourceEntity);
-        ToscaEntity target = entities.get(template.targetEntity);
+        ToscaEntity target = resolveTarget(entities, template);
         String sourceProperty = template.sourceProperty;
         String targetProperty = template.targetProperty;
 
@@ -31,5 +29,23 @@ public class ToscaFunctionFactory {
         }
 
         return new ToscaFunction(type, sourceType, source, sourceProperty, target, targetProperty);
+    }
+
+    private static ToscaEntity resolveTarget(Map<String, ToscaEntity> entities, ToscaFunctionTemplate template) {
+        String resolvedTargetName;
+        switch (template.targetEntity) {
+            case "SELF":
+                resolvedTargetName = template.sourceEntity;
+                break;
+            case "SOURCE":
+            case "TARGET":
+            case "HOST":
+                throw new UnsupportedOperationException(
+                    String.format("The function keyword '%s' is not yet supported by the model converter",
+                    template.targetEntity));
+            default:
+                resolvedTargetName = template.targetEntity;
+        }
+        return entities.get(resolvedTargetName);
     }
 }

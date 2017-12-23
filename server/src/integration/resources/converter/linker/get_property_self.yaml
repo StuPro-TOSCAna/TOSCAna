@@ -1,6 +1,6 @@
 tosca_definitions_version: tosca_simple_yaml_1_1
 
-description: a template for testing handling of the get_input function
+description: a template for testing handling of the SELF key name in a function
 metadata:
   template_name: empty-topology
   template_author: stupro-toscana
@@ -11,11 +11,6 @@ topology_template:
     my_db:
       type: tosca.nodes.Database
       properties:
-        name: { get_input: db_name } 
-
-  inputs:
-    db_name:
-      type: string
-      description: name of the database
-      default: my_db_name
+        user: my_user_name
+        name: { get_property: [ SELF, user ] }
 
