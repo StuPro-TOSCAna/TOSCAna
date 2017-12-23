@@ -18,7 +18,7 @@ public abstract class ToscaEntity {
      Establishes a link between this instance's property (defined by sourceField) and the targets targetField.
      In other words, the linked property now behaves like a symbolic link.
      */
-    public void link(String toscaSourceFieldName, RootNode target, String toscaTargetFieldName) {
+    public void link(String toscaSourceFieldName, ToscaEntity target, String toscaTargetFieldName) {
         propertyLinker.link(toscaSourceFieldName, target, toscaTargetFieldName);
     }
 

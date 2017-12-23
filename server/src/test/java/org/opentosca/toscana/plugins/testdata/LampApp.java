@@ -1,5 +1,6 @@
 package org.opentosca.toscana.plugins.testdata;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -28,11 +29,11 @@ public class LampApp {
         return new EffectiveModel(createLampNodes(), createLampInputs());
     }
 
-    private static Set<Property> createLampInputs() {
-        Set<Property> inputs = new HashSet<>();
-        inputs.add(new Property("database_name", PropertyType.TEXT));
-        inputs.add(new Property("database_port", PropertyType.INTEGER));
-        inputs.add(new Property("database_password", PropertyType.TEXT));
+    private static Map<String, Property> createLampInputs() {
+        Map<String, Property> inputs = new HashMap<>();
+        inputs.put("database_name", new Property("database_name", PropertyType.TEXT));
+        inputs.put("database_port", new Property("database_port", PropertyType.INTEGER));
+        inputs.put("database_password", new Property("database_password", PropertyType.TEXT));
         return inputs;
     }
 

@@ -40,7 +40,7 @@ public interface Csar {
      Returns model specific properties as a set. If there are none a empty set has to be returned. this must not
      return null to prevent problematic behaviour of the PropertyInstance class
      */
-    Set<Property> getModelSpecificProperties();
+    Map<String, Property> getModelSpecificProperties();
 
     void setModel(EffectiveModel model);
 

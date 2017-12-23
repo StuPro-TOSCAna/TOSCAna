@@ -1,7 +1,7 @@
 package org.opentosca.toscana.plugins.kubernetes;
 
 import java.io.File;
-import java.util.HashSet;
+import java.util.HashMap;
 
 import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
@@ -23,7 +23,7 @@ public class KubernetesLampIT extends BaseTransformTest {
 
     @Override
     protected EffectiveModel getModel() {
-        return new EffectiveModel(KubernetesLampApp.getLampModel(), new HashSet<>());
+        return new EffectiveModel(KubernetesLampApp.getLampModel(), new HashMap<>());
     }
 
     @Override

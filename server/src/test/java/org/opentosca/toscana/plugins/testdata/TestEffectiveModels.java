@@ -39,7 +39,7 @@ public class TestEffectiveModels {
             .build();
         Map<String, RootNode> nodeMap = new HashMap<>();
         nodeMap.put(computeNode.getNodeName(), computeNode);
-        return new EffectiveModel(nodeMap, new HashSet<>());
+        return new EffectiveModel(nodeMap, new HashMap<>());
     }
 
     public static EffectiveModel getMinimalDockerModel() {
@@ -57,7 +57,7 @@ public class TestEffectiveModels {
         Map<String, RootNode> nodeMap = new HashMap<>();
         nodeMap.put(simpleTaskApp.getNodeName(), simpleTaskApp);
         nodeMap.put(dockerRuntime.getNodeName(), dockerRuntime);
-        return new EffectiveModel(nodeMap, new HashSet<>());
+        return new EffectiveModel(nodeMap, new HashMap<>());
     }
 
     public static EffectiveModel getLampModel() {

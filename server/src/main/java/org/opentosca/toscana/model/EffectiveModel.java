@@ -19,9 +19,9 @@ public class EffectiveModel {
 
     private final Map<String, RootNode> nodeMap;
 
-    private final Set<Property> inputs;
+    private final Map<String, Property> inputs;
 
-    public EffectiveModel(Map<String, RootNode> nodes, Set<Property> inputs) {
+    public EffectiveModel(Map<String, RootNode> nodes, Map<String, Property> inputs) {
         this.inputs = inputs;
         nodeMap = nodes;
         nodes.forEach((name, node) -> topology.addVertex(node));
@@ -52,7 +52,7 @@ public class EffectiveModel {
         return topology;
     }
 
-    public Set<Property> getInputs() {
+    public Map<String, Property> getInputs() {
         return inputs;
     }
 }

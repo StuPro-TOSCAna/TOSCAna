@@ -1,8 +1,7 @@
 package org.opentosca.toscana.core.parse.converter;
 
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.xml.namespace.QName;
@@ -24,15 +23,14 @@ public class InputConverter {
 
     private final static Logger logger = LoggerFactory.getLogger(InputConverter.class.getName());
 
-    public Set<Property> convert(TServiceTemplate template) {
+    public Map<String, Property> convert(TServiceTemplate template) {
         TTopologyTemplateDefinition topology = template.getTopologyTemplate();
-        if (topology == null) return new HashSet<>();
+        if (topology == null) return new HashMap<>();
         Map<String, TParameterDefinition> inputs = topology.getInputs();
-        if (inputs == null) return new HashSet<>();
+        if (inputs == null) return new HashMap<>();
         return inputs.entrySet()
             .stream()
-            .map(this::convert)
-            .collect(Collectors.toSet());
+            .collect(Collectors.toMap(Map.Entry::getKey, this::convert));
     }
 
     private Property convert(Map.Entry<String, TParameterDefinition> propertyEntry) {

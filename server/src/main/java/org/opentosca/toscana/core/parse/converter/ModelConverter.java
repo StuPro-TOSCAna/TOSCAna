@@ -14,6 +14,7 @@ import org.opentosca.toscana.core.parse.converter.visitor.RepositoryVisitor;
 import org.opentosca.toscana.core.parse.converter.visitor.SetResult;
 import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.model.EffectiveModel;
+import org.opentosca.toscana.model.ToscaEntity;
 import org.opentosca.toscana.model.artifact.Repository;
 import org.opentosca.toscana.model.node.RootNode;
 
@@ -37,7 +38,7 @@ public class ModelConverter {
     public EffectiveModel convert(TServiceTemplate serviceTemplate) throws UnknownNodeTypeException {
         logger.debug("Convert service template to normative model");
         Set<Repository> repositories = getRepositories(serviceTemplate);
-        Set<Property> inputs = new InputConverter().convert(serviceTemplate);
+        Map<String, Property> inputs = new InputConverter().convert(serviceTemplate);
         Set<ConversionResult<RootNode>> result = convertNodeTemplates(serviceTemplate.getTopologyTemplate(), repositories);
         Set<ToscaFunctionTemplate> functions = extractFunctions(result);
         Map<String, RootNode> nodes = fulfillRequirements(result);
@@ -53,10 +54,11 @@ public class ModelConverter {
         return functions;
     }
 
-    private void applyFunctions(Map<String, RootNode> nodes, Set<Property> inputs, Set<ToscaFunctionTemplate> functions) {
-        for (ToscaFunctionTemplate template : functions) {
-            // todo mismatch input / operationvariable
-            ToscaFunction function = ToscaFunctionFactory.create(template, nodes);
+    private void applyFunctions(Map<String, RootNode> nodes, Map<String, Property> inputs, Set<ToscaFunctionTemplate> functionTemplates) {
+        Map<String, ToscaEntity> entities = new HashMap<>(nodes);
+        entities.putAll(inputs);
+        for (ToscaFunctionTemplate template : functionTemplates) {
+            ToscaFunction function = ToscaFunctionFactory.create(template, entities);
             function.apply();
         }
     }

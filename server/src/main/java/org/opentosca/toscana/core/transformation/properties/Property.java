@@ -1,9 +1,10 @@
 package org.opentosca.toscana.core.transformation.properties;
 
-import java.util.Optional;
-
 import org.opentosca.toscana.model.operation.OperationVariable;
 
+import lombok.Data;
+
+@Data
 public class Property extends OperationVariable {
 
     private final PropertyType type;
@@ -40,6 +41,7 @@ public class Property extends OperationVariable {
         this.description = description;
         this.required = required;
         this.defaultValue = defaultValue;
+        setValue(defaultValue);
     }
 
     /**
@@ -50,30 +52,5 @@ public class Property extends OperationVariable {
      */
     public Property(String key, PropertyType type) {
         this(key, type, "", true);
-    }
-
-    public PropertyType getType() {
-        return type;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public boolean isRequired() {
-        return required;
-    }
-
-    public String getDefaultValue() {
-        return defaultValue;
-    }
-
-    @Override
-    public Optional<String> getValue() {
-        Optional<String> value = super.getValue();
-        if (!value.isPresent()) {
-            value = Optional.ofNullable(defaultValue);
-        }
-        return value;
     }
 }

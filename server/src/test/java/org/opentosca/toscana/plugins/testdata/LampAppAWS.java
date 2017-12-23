@@ -1,5 +1,6 @@
 package org.opentosca.toscana.plugins.testdata;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -30,11 +31,11 @@ public class LampAppAWS {
     public Map<String, RootNode> getLampApp() {
         createLampModel();
         return testNodes.stream()
-            .collect(Collectors.toMap(node -> node.getNodeName(), node -> node));
+            .collect(Collectors.toMap(RootNode::getNodeName, node -> node));
     }
 
     public static EffectiveModel getLampModel() {
-        return new EffectiveModel(new LampAppAWS().getLampApp(), new HashSet<>());
+        return new EffectiveModel(new LampAppAWS().getLampApp(), new HashMap<>());
     }
 
     private void createLampModel() {

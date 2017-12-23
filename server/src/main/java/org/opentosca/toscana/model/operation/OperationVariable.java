@@ -13,6 +13,8 @@ import lombok.Data;
  */
 @Data
 public class OperationVariable extends ToscaEntity {
+    
+    public final static String VALUE_PROPERTY = "value";
 
     private final String key;
 
@@ -34,10 +36,10 @@ public class OperationVariable extends ToscaEntity {
      @return {@link #value}
      */
     public Optional<String> getValue() {
-        return Optional.ofNullable(get("value"));
+        return Optional.ofNullable(get(VALUE_PROPERTY));
     }
 
     public void setValue(String value) {
-        set("value", value);
+        set(VALUE_PROPERTY, value);
     }
 }

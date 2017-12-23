@@ -1,6 +1,6 @@
 package org.opentosca.toscana.core.parse.converter.function;
 
-import org.opentosca.toscana.model.node.RootNode;
+import org.opentosca.toscana.model.ToscaEntity;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,13 +11,13 @@ public class ToscaFunction {
 
     public final FunctionType type;
     public final SourceType sourceType;
-    public final RootNode source;
+    public final ToscaEntity source;
     public final String sourceProperty;
-    public final RootNode target;
+    public final ToscaEntity target;
     public final String targetProperty;
 
-    public ToscaFunction(FunctionType type, SourceType sourceType, RootNode source,
-                         String sourceProperty, RootNode target, String targetProperty) {
+    public ToscaFunction(FunctionType type, SourceType sourceType, ToscaEntity source,
+                         String sourceProperty, ToscaEntity target, String targetProperty) {
         this.type = type;
         this.sourceType = sourceType;
         this.source = source;
@@ -51,6 +51,8 @@ public class ToscaFunction {
     public void apply() {
         switch (this.type) {
             case GET_PROPERTY:
+            case GET_ATTRIBUTE:
+            case GET_INPUT:
                 this.source.link(this.sourceProperty, this.target, this.targetProperty);
                 break;
             default:

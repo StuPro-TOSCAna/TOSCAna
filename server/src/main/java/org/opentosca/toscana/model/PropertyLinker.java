@@ -4,7 +4,6 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.nodedefinition.BaseDefinition;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
@@ -24,7 +23,7 @@ public class PropertyLinker {
         this.propertyNameResolver = propertyNameResolver;
     }
 
-    public void link(String toscaSourceFieldName, RootNode target, String toscaTargetFieldName) {
+    public void link(String toscaSourceFieldName, ToscaEntity target, String toscaTargetFieldName) {
         String javaSourceFieldName = propertyNameResolver.resolve(toscaSourceFieldName);
         String javaTargetFieldName = propertyNameResolver.resolve(toscaTargetFieldName);
         Field targetField = getField(target.getClass(), javaTargetFieldName);

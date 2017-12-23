@@ -6,6 +6,7 @@ import java.util.Map;
 import org.opentosca.toscana.core.parse.converter.function.ToscaFunction.FunctionType;
 import org.opentosca.toscana.core.parse.converter.function.ToscaFunctionTemplate;
 import org.opentosca.toscana.core.parse.converter.visitor.Context;
+import org.opentosca.toscana.model.operation.OperationVariable;
 
 import org.eclipse.winery.model.tosca.yaml.TPropertyAssignment;
 import org.slf4j.Logger;
@@ -30,8 +31,8 @@ public class ParameterConverter {
         if (map.size() == 1) {
             if (map.containsKey(FunctionType.GET_INPUT.toString())) {
                 function.type = FunctionType.GET_INPUT;
-                String linkedInput = (String) map.get(FunctionType.GET_INPUT.toString());
-                function.targetEntity = linkedInput;
+                function.targetEntity = (String) map.get(FunctionType.GET_INPUT.toString());
+                function.targetProperty = OperationVariable.VALUE_PROPERTY;
             } else if (map.containsKey(FunctionType.GET_ATTRIBUTE.toString())) {
                 // TODO
 
