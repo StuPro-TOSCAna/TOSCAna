@@ -9,7 +9,7 @@ import lombok.Data;
  Inherit from this if there's need to describe the entity.
  */
 @Data
-public abstract class DescribableEntity extends AbstractEntity implements Serializable {
+public abstract class DescribableEntity extends ToscaEntity implements Serializable {
 
     /**
      The optional description of this.
@@ -25,7 +25,7 @@ public abstract class DescribableEntity extends AbstractEntity implements Serial
         this.description = description == null ? "" : description;
     }
 
-    public static class DescribableEntityBuilder extends AbstractEntityBuilder implements Serializable {
+    public static class DescribableEntityBuilder extends ToscaEntityBuilder implements Serializable {
 
         public DescribableEntityBuilder() {
         }

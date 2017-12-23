@@ -31,15 +31,12 @@ public class ToscaFunctionIT extends BaseIntegrationTest {
         parser = new CsarParseServiceImpl();
     }
 
-    // TODO delaying input functions - too complex for first step - continue after get_property
-//    @Test
-//    public void getInputTest() throws Exception {
-//        CsarParseService parser = new CsarParseServiceImpl();
-//        EffectiveModel model = parser.parse(GET_INPUT);
-//        
-//        Database database = (Database) model.getNodeMap().get("my_db");
-//        assertEquals("my_db_name", database.getDatabaseName());
-//    }
+    @Test
+    public void getInputTest() throws Exception {
+        EffectiveModel model = parser.parse(GET_INPUT);
+        Database database = (Database) model.getNodeMap().get("my_db");
+        assertEquals("my_db_name", database.getDatabaseName());
+    }
     
     @Test
     public void getPropertyTest() throws Exception {

@@ -1,6 +1,6 @@
 package org.opentosca.toscana.model.nodedefinition;
 
-public class WebApplicationDefinition extends AbstractDefinition {
+public class WebApplicationDefinition extends BaseDefinition {
 
     public final static String CONTEXT_ROOT_PROPERTY = "context_root";
 

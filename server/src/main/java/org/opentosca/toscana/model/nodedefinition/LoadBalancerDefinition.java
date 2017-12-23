@@ -1,6 +1,6 @@
 package org.opentosca.toscana.model.nodedefinition;
 
-public class LoadBalancerDefinition extends AbstractDefinition {
+public class LoadBalancerDefinition extends BaseDefinition {
 
     public static final String ALGORITHM_PROPERTY = "algorithm";
 

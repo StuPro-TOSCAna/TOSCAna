@@ -1,6 +1,6 @@
 package org.opentosca.toscana.model.nodedefinition;
 
-public class BlockStorageDefinition extends AbstractDefinition {
+public class BlockStorageDefinition extends BaseDefinition {
 
     public final static String SIZE_PROPERTY = "size";
     public final static String VOLUME_ID_PROPERTY = "volume_id";

@@ -5,7 +5,7 @@ import java.util.Set;
 import org.opentosca.toscana.model.capability.Capability;
 import org.opentosca.toscana.model.capability.ContainerCapability;
 import org.opentosca.toscana.model.capability.DatabaseEndpointCapability;
-import org.opentosca.toscana.model.nodedefinition.AbstractDefinition;
+import org.opentosca.toscana.model.nodedefinition.BaseDefinition;
 import org.opentosca.toscana.model.nodedefinition.MysqlDatabaseDefinition;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
 import org.opentosca.toscana.model.relation.HostedOn;
@@ -50,7 +50,7 @@ public class MysqlDatabase extends Database {
      */
     public static MysqlDatabaseBuilder builder(String nodeName,
                                                String databaseName) {
-        return (MysqlDatabaseBuilder) new MysqlDatabaseBuilder()
+        return new MysqlDatabaseBuilder()
             .nodeName(nodeName)
             .databaseName(databaseName);
     }
@@ -61,7 +61,7 @@ public class MysqlDatabase extends Database {
     }
 
     @Override
-    protected AbstractDefinition getDefinition() {
+    protected BaseDefinition getDefinition() {
         return new MysqlDatabaseDefinition();
     }
 

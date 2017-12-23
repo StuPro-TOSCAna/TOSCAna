@@ -1,6 +1,6 @@
 package org.opentosca.toscana.model.nodedefinition;
 
-public class DatabaseDefinition extends AbstractDefinition {
+public class DatabaseDefinition extends BaseDefinition {
 
     public final static String NAME_PROPERTY = "name";
     public final static String PORT_PROPERTY = "port";

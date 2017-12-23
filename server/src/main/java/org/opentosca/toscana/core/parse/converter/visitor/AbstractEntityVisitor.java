@@ -4,13 +4,13 @@ import java.util.Map;
 
 import org.opentosca.toscana.core.parse.converter.function.ToscaFunctionTemplate;
 import org.opentosca.toscana.core.parse.converter.util.ParameterConverter;
-import org.opentosca.toscana.model.AbstractEntity;
-import org.opentosca.toscana.model.AbstractEntity.AbstractEntityBuilder;
+import org.opentosca.toscana.model.ToscaEntity;
+import org.opentosca.toscana.model.ToscaEntity.AbstractEntityBuilder;
 
 import org.eclipse.winery.model.tosca.yaml.TPropertyAssignment;
 import org.eclipse.winery.model.tosca.yaml.visitor.AbstractVisitor;
 
-public abstract class AbstractEntityVisitor<NodeT extends AbstractEntity, BuilderT extends AbstractEntityBuilder> extends AbstractVisitor<ConversionResult<NodeT>, Context<BuilderT>> {
+public abstract class AbstractEntityVisitor<NodeT extends ToscaEntity, BuilderT extends AbstractEntityBuilder> extends AbstractVisitor<ConversionResult<NodeT>, Context<BuilderT>> {
 
     @Override
     public ConversionResult<NodeT> visit(TPropertyAssignment node, Context<BuilderT> parameter) {

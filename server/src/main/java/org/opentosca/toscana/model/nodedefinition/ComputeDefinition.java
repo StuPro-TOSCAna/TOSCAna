@@ -1,6 +1,6 @@
 package org.opentosca.toscana.model.nodedefinition;
 
-public class ComputeDefinition extends AbstractDefinition {
+public class ComputeDefinition extends BaseDefinition {
 
     public final static String PRIVATE_ADDRESS_PROPERTY = "private_address";
     public final static String PUBLIC_ADDRESS_PROPERTY = "public_address";

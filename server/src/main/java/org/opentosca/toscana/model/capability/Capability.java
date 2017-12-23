@@ -3,7 +3,7 @@ package org.opentosca.toscana.model.capability;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.opentosca.toscana.model.AbstractEntity;
+import org.opentosca.toscana.model.ToscaEntity;
 import org.opentosca.toscana.model.datatype.Range;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.visitor.VisitableCapability;
@@ -17,7 +17,7 @@ import lombok.NonNull;
  (TOSCA Simple Profile in YAML Version 1.1, p. 82)
  */
 @Data
-public abstract class Capability extends AbstractEntity implements VisitableCapability {
+public abstract class Capability extends ToscaEntity implements VisitableCapability {
 
     /**
      Set of Node Class Types that are valid sources of any relationship established to this capability.

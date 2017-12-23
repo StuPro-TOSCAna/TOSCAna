@@ -1,6 +1,6 @@
 package org.opentosca.toscana.model.nodedefinition;
 
-public class ContainerApplicationDefinition extends AbstractDefinition {
+public class ContainerApplicationDefinition extends BaseDefinition {
 
     public final static String HOST_REQUIREMENT = "host";
     public final static String STORAGE_REQUIREMENT = "storage";

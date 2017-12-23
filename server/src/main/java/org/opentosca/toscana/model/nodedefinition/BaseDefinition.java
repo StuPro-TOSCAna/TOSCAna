@@ -6,7 +6,7 @@ import java.util.Map;
 /**
  Abstract utility class for transforming TOSCA key names to java field names.
  */
-public abstract class AbstractDefinition {
+public class BaseDefinition {
 
     /**
      If the tosca key name can not simply be converter to camel case in order to reflect the corresponding property name,
@@ -18,25 +18,24 @@ public abstract class AbstractDefinition {
      Converts names following the underscore convention to camel case.
      */
     public String resolve(String toscaPropertyName) {
-        String javaPropertyName = mappings.getOrDefault(toscaPropertyName, toCamelCase(toscaPropertyName));
-        return javaPropertyName;
+        return mappings.getOrDefault(toscaPropertyName, toCamelCase(toscaPropertyName));
     }
 
     private static String toCamelCase(String toscaPropertyName) {
         boolean shift = false;
-        String javaPropertyName = "";
+        StringBuilder builder = new StringBuilder();
         for (char c : toscaPropertyName.toCharArray()) {
             if (c != '_') {
-                String append = String.valueOf(c);
+                String appendix = String.valueOf(c);
                 if (shift) {
-                    append = append.toUpperCase();
+                    appendix = appendix.toUpperCase();
                     shift = false;
                 }
-                javaPropertyName += append;
+                builder.append(appendix);
             } else {
                 shift = true;
             }
         }
-        return javaPropertyName;
+        return builder.toString();
     }
 }

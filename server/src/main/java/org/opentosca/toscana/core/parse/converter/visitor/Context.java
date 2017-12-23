@@ -5,7 +5,7 @@ import java.util.Set;
 
 import org.opentosca.toscana.core.parse.converter.RequirementConversion;
 import org.opentosca.toscana.core.parse.converter.function.ToscaFunctionTemplate;
-import org.opentosca.toscana.model.AbstractEntity.AbstractEntityBuilder;
+import org.opentosca.toscana.model.ToscaEntity.AbstractEntityBuilder;
 import org.opentosca.toscana.model.artifact.Artifact;
 import org.opentosca.toscana.model.artifact.Repository;
 

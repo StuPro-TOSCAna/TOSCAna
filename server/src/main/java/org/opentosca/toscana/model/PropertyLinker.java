@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.opentosca.toscana.model.node.RootNode;
-import org.opentosca.toscana.model.nodedefinition.AbstractDefinition;
+import org.opentosca.toscana.model.nodedefinition.BaseDefinition;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.slf4j.Logger;
@@ -15,11 +15,11 @@ public class PropertyLinker {
 
     private static final Logger logger = LoggerFactory.getLogger(PropertyLinker.class);
 
-    private final RootNode source;
-    private final AbstractDefinition propertyNameResolver;
+    private final ToscaEntity source;
+    private final BaseDefinition propertyNameResolver;
     private final Map<String, LinkTarget> linkMap = new HashMap<>();
 
-    public PropertyLinker(RootNode source, AbstractDefinition propertyNameResolver) {
+    public PropertyLinker(ToscaEntity source, BaseDefinition propertyNameResolver) {
         this.source = source;
         this.propertyNameResolver = propertyNameResolver;
     }
