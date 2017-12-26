@@ -34,6 +34,7 @@ public class TransformationInput extends AbstractTransformation {
      shows required inputs to start a transformation, or set's them
      */
     public TransformationInput() {
+
     }
 
     @Override

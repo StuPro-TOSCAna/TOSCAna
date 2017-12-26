@@ -23,6 +23,7 @@ public class ToscanaTransformation extends AbstractTransformation {
      shows the transformation usage and available subcommands
      */
     public ToscanaTransformation() {
+
     }
 
     @Override

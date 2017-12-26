@@ -18,6 +18,7 @@ public class TransformationLogs extends AbstractTransformation {
      returns all logs available for the Transformation, startpoint for return is set with start
      */
     public TransformationLogs() {
+
     }
 
     @Override

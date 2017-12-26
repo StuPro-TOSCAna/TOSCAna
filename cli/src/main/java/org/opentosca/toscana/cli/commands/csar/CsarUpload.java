@@ -22,6 +22,7 @@ public class CsarUpload extends AbstractCommand {
      Get's called if a CSAR should be uploaded
      */
     public CsarUpload() {
+
     }
 
     @Override

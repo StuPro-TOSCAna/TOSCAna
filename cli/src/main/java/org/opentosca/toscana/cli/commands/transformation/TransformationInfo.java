@@ -14,6 +14,7 @@ public class TransformationInfo extends AbstractTransformation {
      shows available Information about a specified Transformations
      */
     public TransformationInfo() {
+
     }
 
     @Override

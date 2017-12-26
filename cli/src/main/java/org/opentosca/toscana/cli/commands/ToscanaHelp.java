@@ -61,6 +61,7 @@ public class ToscanaHelp extends AbstractCommand {
      ToscanaHelp shows a help page for every available command/ subcommand
      */
     public ToscanaHelp() {
+
         helpMap = new HashMap<>();
         helpMap.put("csar", new ToscanaCsar());
         helpMap.put("status", new ToscanaStatus());

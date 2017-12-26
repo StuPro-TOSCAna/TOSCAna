@@ -33,9 +33,8 @@ public class ApiController {
     /**
      Constructor for the ApiController, parameters decide if there should be any output of information
      */
-    public ApiController(String apiUrl, LoggingMode mode) {
-        //starts the retrofit client with the chosen loglevel
-        toscAnaAPI = new TOSCAnaAPI(apiUrl, mode);
+    public ApiController(String apiUrl) {
+        toscAnaAPI = new TOSCAnaAPI(apiUrl);
     }
 
     /**
@@ -503,5 +502,9 @@ public class ApiController {
                 + Constants.SERVER_ERROR_PLACEHOLDER, e.getStatusCode(), e.getErrorResponse().getMessage()));
         }
         return stringStatus.toString();
+    }
+
+    public void setLoggingMode(LoggingMode loggingMode) {
+        toscAnaAPI.setLoggingMode(loggingMode);
     }
 }
