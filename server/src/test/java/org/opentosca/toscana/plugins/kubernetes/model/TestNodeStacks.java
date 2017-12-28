@@ -9,13 +9,13 @@ import java.util.Set;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.plugins.kubernetes.util.KubernetesNodeContainer;
 import org.opentosca.toscana.plugins.kubernetes.util.NodeStack;
-import org.opentosca.toscana.plugins.testdata.KubernetesLampApp;
+import org.opentosca.toscana.plugins.testdata.LampApp;
 
 import com.google.common.collect.Sets;
 
 public class TestNodeStacks {
     private HashSet<NodeStack> createNodeStack() {
-        Set<RootNode> lampModel = KubernetesLampApp.getLampModel();
+        Set<RootNode> lampModel = LampApp.getLampModel();
         HashMap<String, RootNode> map = new HashMap<>();
         for (RootNode rootNode : lampModel) {
             map.put(rootNode.getNodeName(), rootNode);

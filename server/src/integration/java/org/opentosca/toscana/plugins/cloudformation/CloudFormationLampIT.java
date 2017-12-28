@@ -6,7 +6,7 @@ import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
 import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.plugins.BaseTransformTest;
-import org.opentosca.toscana.plugins.testdata.LampAppAWS;
+import org.opentosca.toscana.plugins.testdata.TestEffectiveModels;
 
 import org.apache.commons.io.FileUtils;
 
@@ -20,7 +20,7 @@ public class CloudFormationLampIT extends BaseTransformTest {
 
     @Override
     protected EffectiveModel getModel() {
-        return LampAppAWS.getLampModel();
+        return TestEffectiveModels.getLampModel();
     }
 
     @Override

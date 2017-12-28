@@ -69,7 +69,7 @@ public class LampApp {
 
     private MysqlDbms createMysqlDbms() {
         Operation dbmsOperation = Operation.builder()
-            .artifact(Artifact.builder("artifact", "mysql_dbms/mysql_dbms_configure.sh").build())
+            .artifact(Artifact.builder("artifact", "mysql/createtable.sql").build())
             .input(new OperationVariable("db_root_password"))
             .build();
 

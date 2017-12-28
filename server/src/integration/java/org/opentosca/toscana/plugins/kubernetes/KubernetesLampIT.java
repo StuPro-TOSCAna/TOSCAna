@@ -7,7 +7,7 @@ import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
 import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.plugins.BaseTransformTest;
 import org.opentosca.toscana.plugins.kubernetes.docker.mapper.MapperTest;
-import org.opentosca.toscana.plugins.testdata.KubernetesLampApp;
+import org.opentosca.toscana.plugins.testdata.LampApp;
 
 import org.apache.commons.io.FileUtils;
 
@@ -22,7 +22,7 @@ public class KubernetesLampIT extends BaseTransformTest {
 
     @Override
     protected EffectiveModel getModel() {
-        return new EffectiveModel(KubernetesLampApp.getLampModel());
+        return new EffectiveModel(LampApp.getLampModel());
     }
 
     @Override

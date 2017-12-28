@@ -35,6 +35,7 @@ public class CloudFoundryPluginTest extends BaseUnitTest {
     private final static EffectiveModel lamp = TestEffectiveModels.getLampModel();
     private static CloudFoundryApplication myApp = new CloudFoundryApplication();
     private final static CloudFoundryNodeVisitor visitor = new CloudFoundryNodeVisitor(myApp);
+
     @Mock
     private Log log;
     private File targetDir;
@@ -56,7 +57,7 @@ public class CloudFoundryPluginTest extends BaseUnitTest {
         paths.add("my_app/mysql-credentials.php");
         paths.add("my_app/create_myphpapp.sh");
         paths.add("my_app/configure_myphpapp.sh");
-        paths.add("mysql_dbms/mysql_dbms_configure.sh");
+        paths.add("mysql/createtable.sql");
 
         for (VisitableNode node : nodes) {
             node.accept(visitor);
