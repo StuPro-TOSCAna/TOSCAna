@@ -59,7 +59,7 @@ public class CloudFoundryFileCreator {
 
     private void createManifest() throws IOException {
         createManifestHead();
-        addPathToMainApplication();
+        addPathToApplication();
         createAttributes();
         createEnvironmentVariables();
         createService();
@@ -70,10 +70,10 @@ public class CloudFoundryFileCreator {
         fileAccess.access(MANIFEST_PATH).appendln(manifestHead).close();
     }
 
-    private void addPathToMainApplication() throws IOException {
-        String mainApplicationPath = app.getMainApplicationPath();
+    private void addPathToApplication() throws IOException {
+        String mainApplicationPath = app.getPathToApplication();
         if (mainApplicationPath != null) {
-            String pathAddition = String.format("  %s: ../%s", PATH.getName(), app.getMainApplicationPath());
+            String pathAddition = String.format("  %s: ../%s", PATH.getName(), app.getPathToApplication());
             fileAccess.access(MANIFEST_PATH).appendln(pathAddition).close();
         }
     }
@@ -163,8 +163,8 @@ public class CloudFoundryFileCreator {
         }
         buildPackAdditionsJson.put(BUILDPACK_OBJECT_PHP, buildPacks);
         String path;
-        if (app.getMainApplicationPath() != null) {
-            path = app.getMainApplicationPath() + "/" + BUILDPACK_FILEPATH_PHP;
+        if (app.getPathToApplication() != null) {
+            path = String.format("%s/%s", app.getPathToApplication(), BUILDPACK_FILEPATH_PHP);
         } else {
             path = BUILDPACK_FILEPATH_PHP;
         }

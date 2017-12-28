@@ -75,7 +75,7 @@ public class CloudFoundryFileCreatorTest extends BaseUnitTest {
     public void contentManifest() throws Exception {
         String mainApplicationPath = "myapp/main/myphpapp.php";
         String expectedPath = "../myapp/main";
-        testApp.setMainApplicationPath(mainApplicationPath);
+        testApp.setPathToApplication(mainApplicationPath);
         fileCreator.createFiles();
         File targetFile = new File(targetDir, MANIFEST_PATH);
         String manifestContent = FileUtils.readFileToString(targetFile);
@@ -115,7 +115,7 @@ public class CloudFoundryFileCreatorTest extends BaseUnitTest {
     public void buildpackAdditons() throws Exception {
         String mainApplicationPath = "myapp/main/myphpapp.php";
         String expectedPath = "/myapp/main" + "/" + BUILDPACK_FILEPATH_PHP;
-        testApp.setMainApplicationPath(mainApplicationPath);
+        testApp.setPathToApplication(mainApplicationPath);
         testApp.addBuildpack(buildPack1);
         testApp.addBuildpack(buildPack2);
         String expectedBuildpackcontent = "{\n" +

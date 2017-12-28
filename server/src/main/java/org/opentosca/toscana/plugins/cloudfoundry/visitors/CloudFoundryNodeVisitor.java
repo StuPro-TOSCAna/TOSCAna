@@ -88,15 +88,13 @@ public class CloudFoundryNodeVisitor implements StrictNodeVisitor {
             // artifact path
             if (operation.getArtifact().isPresent()) {
                 String path = operation.getArtifact().get().getFilePath();
-                myApp.addFilePath(path);
-                setMainApplicationPath(path, isTopNode);
+                setPathToApplication(path, isTopNode);
             }
 
             // add implementationArtifact path if not null
             if (operation.getImplementationArtifact().isPresent()) {
                 String path = operation.getImplementationArtifact().get();
-                myApp.addFilePath(path);
-                setMainApplicationPath(path, isTopNode);
+                setPathToApplication(path, isTopNode);
             }
 
             // add dependencies paths
@@ -120,9 +118,10 @@ public class CloudFoundryNodeVisitor implements StrictNodeVisitor {
         }
     }
 
-    private void setMainApplicationPath(String path, Boolean isTopNode) {
-        if (myApp.getMainApplicationPath() == null && isTopNode) {
-            myApp.setMainApplicationPath(path);
+    private void setPathToApplication(String path, Boolean isTopNode) {
+        myApp.addFilePath(path);
+        if (myApp.getPathToApplication() == null && isTopNode) {
+            myApp.setPathToApplication(path);
         }
     }
 }
