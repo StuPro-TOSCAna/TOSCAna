@@ -1,15 +1,17 @@
 package org.opentosca.toscana.model.node;
 
+import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
+import org.opentosca.toscana.model.capability.Capability;
 import org.opentosca.toscana.model.capability.EndpointCapability;
 import org.opentosca.toscana.model.capability.PublicEndpointCapability;
-import org.opentosca.toscana.model.capability.PublicEndpointCapability.PublicEndpointCapabilityBuilder;
 import org.opentosca.toscana.model.datatype.Range;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
 import org.opentosca.toscana.model.relation.RoutesTo;
+import org.opentosca.toscana.model.requirement.ApplicationRequirement;
 import org.opentosca.toscana.model.requirement.Requirement;
-import org.opentosca.toscana.model.requirement.Requirement.RequirementBuilder;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 
 import lombok.Builder;
@@ -32,29 +34,33 @@ public class LoadBalancer extends RootNode {
 
     @Builder
     public LoadBalancer(String algorithm,
-                        PublicEndpointCapabilityBuilder clientBuilder,
-                        RequirementBuilder<EndpointCapability, RootNode, RoutesTo> applicationBuilder,
+                        PublicEndpointCapability client,
+                        Requirement<EndpointCapability, RootNode, RoutesTo> application,
                         String nodeName,
                         StandardLifecycle standardLifecycle,
+                        Set<Requirement> requirements,
+                        Set<Capability> capabilities,
                         String description) {
-        super(nodeName, standardLifecycle, description);
-        this.client = clientBuilder.occurence(Range.ANY).build();
-        this.application = applicationBuilder.occurrence(Range.ANY).build();
-        this.algorithm = algorithm;
+        super(nodeName, standardLifecycle, requirements, capabilities, description);
+        client.setOccurrence(Range.ANY);
+        this.client = Objects.requireNonNull(client);
+        application.setOccurrence(Range.ANY);
+        this.application = ApplicationRequirement.getFallback(application);
+        this.algorithm = Objects.requireNonNull(algorithm);
 
-        capabilities.add(this.client);
-        requirements.add(this.application);
+        this.capabilities.add(this.client);
+        this.requirements.add(this.application);
     }
 
     /**
      @param nodeName {@link #nodeName}
+     @param client   {@link #client}
      */
-    public static LoadBalancerBuilder builder(String nodeName, PublicEndpointCapabilityBuilder clientBuilder,
-                                              RequirementBuilder<EndpointCapability, RootNode, RoutesTo> applicationBuilder) {
+    public static LoadBalancerBuilder builder(String nodeName,
+                                              PublicEndpointCapability client) {
         return new LoadBalancerBuilder()
             .nodeName(nodeName)
-            .applicationBuilder(applicationBuilder)
-            .clientBuilder(clientBuilder);
+            .client(client);
     }
 
     /**
@@ -70,5 +76,7 @@ public class LoadBalancer extends RootNode {
     }
 
     public static class LoadBalancerBuilder extends RootNodeBuilder {
+        protected Set<Requirement> requirements = super.requirements;
+        protected Set<Capability> capabilities = super.capabilities;
     }
 }

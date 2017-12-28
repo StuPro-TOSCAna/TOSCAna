@@ -33,34 +33,14 @@ public class AdminEndpointCapability extends EndpointCapability {
                                       String networkName,
                                       Initiator initiator,
                                       @Singular Set<PortSpec> supportedPorts,
-                                      String ipAddress,
                                       Set<Class<? extends RootNode>> validSourceTypes,
-                                      Range occurence,
-                                      String description) {
+                                      Range occurrence) {
         super(protocol, port, true, urlPath, portName, networkName, initiator,
-            supportedPorts, ipAddress, validSourceTypes, occurence, description);
+            supportedPorts, validSourceTypes, occurrence);
     }
 
-    /**
-     @param ipAddress {@link #ipAddress}
-     @param port      {@link #port}
-     */
-    public static AdminEndpointCapabilityBuilder builder(String ipAddress,
-                                                         Port port) {
-        return new AdminEndpointCapabilityBuilder()
-            .ipAddress(ipAddress)
-            .port(port);
-    }
-
-    /**
-     @param ipAddress     {@link #ipAddress}
-     @param supportedPort {@link #supportedPorts}
-     */
-    public static AdminEndpointCapabilityBuilder builder(String ipAddress,
-                                                         PortSpec supportedPort) {
-        return new AdminEndpointCapabilityBuilder()
-            .ipAddress(ipAddress)
-            .supportedPort(supportedPort);
+    public static AdminEndpointCapability getFallback(AdminEndpointCapability endpoint) {
+        return (endpoint == null) ? AdminEndpointCapability.builder().build() : endpoint;
     }
 
     @Override

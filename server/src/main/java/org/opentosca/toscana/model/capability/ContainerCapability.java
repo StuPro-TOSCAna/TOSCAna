@@ -22,9 +22,8 @@ public class ContainerCapability extends ComputeCapability {
                                   Integer diskSizeInMB,
                                   Integer memSizeInMB,
                                   Set<Class<? extends RootNode>> validSourceTypes,
-                                  Range occurence,
-                                  String description) {
-        super(resourceName, numCpus, cpuFrequencyInGhz, diskSizeInMB, memSizeInMB, validSourceTypes, occurence, description);
+                                  Range occurrence) {
+        super(resourceName, numCpus, cpuFrequencyInGhz, diskSizeInMB, memSizeInMB, validSourceTypes, occurrence);
     }
 
     public static ContainerCapability getFallback(ContainerCapability c) {

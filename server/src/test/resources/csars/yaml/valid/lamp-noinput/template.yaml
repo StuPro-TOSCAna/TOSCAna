@@ -69,8 +69,10 @@ topology_template:
 
   outputs:
     public_address:
+      type: string
       description: Public address of the server
       value: { get_attribute: [ server, public_address ] }
     port:
+      type: string
       description: Port of the server
       value: { get_attribute: [ server, port ] }

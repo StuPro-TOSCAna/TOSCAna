@@ -32,7 +32,7 @@ import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator
 
 public class CloudFoundryPluginTest extends BaseUnitTest {
 
-    private final static EffectiveModel lamp = new TestEffectiveModels().getLampModel();
+    private final static EffectiveModel lamp = TestEffectiveModels.getLampModel();
     private static CloudFoundryApplication myApp = new CloudFoundryApplication();
     private final static CloudFoundryNodeVisitor visitor = new CloudFoundryNodeVisitor(myApp);
     @Mock

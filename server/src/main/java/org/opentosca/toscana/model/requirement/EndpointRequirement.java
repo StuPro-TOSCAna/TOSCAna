@@ -23,8 +23,10 @@ public class EndpointRequirement extends Requirement<EndpointCapability, RootNod
         super(capability, occurrence, fulfillers, DependsOn.getFallback(relationship));
     }
 
-    public static EndpointRequirementBuilder builder(EndpointCapability endpoint) {
-        return new EndpointRequirementBuilder()
-            .capability(endpoint);
+    public static Requirement<EndpointCapability, RootNode, RootRelationship> getFallback(Requirement<EndpointCapability, RootNode, RootRelationship> network) {
+        return (network == null) ? EndpointRequirement.builder().build() : network;
+    }
+
+    public static class EndpointRequirementBuilder extends RequirementBuilder<EndpointCapability, RootNode, RootRelationship> {
     }
 }

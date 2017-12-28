@@ -29,6 +29,9 @@ public class PropertyInstance {
         this.transformation = transformation;
         this.propertyValues = new HashMap<>();
         this.properties = properties;
+        properties.forEach(e -> {
+            propertyValues.put(e.getKey(), e.getDefaultValue());
+        });
         //Set state to input required if there are required properties
         if (properties.stream().anyMatch(Property::isRequired)) {
             transformation.setState(TransformationState.INPUT_REQUIRED);

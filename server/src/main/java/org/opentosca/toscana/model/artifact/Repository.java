@@ -19,6 +19,10 @@ import lombok.Data;
 public class Repository extends DescribableEntity {
 
     /**
+     The name of the repository.
+     */
+    private final String name;
+    /**
      The URL used to access the repository.
      */
     private final URL url;
@@ -29,17 +33,22 @@ public class Repository extends DescribableEntity {
     private final Credential credential;
 
     @Builder
-    protected Repository(URL url, Credential credential, String description) {
+    protected Repository(String name, URL url, Credential credential, String description) {
         super(description);
+        if (name.isEmpty()) {
+            throw new IllegalArgumentException("A repository name must not be empty");
+        }
+        this.name = Objects.requireNonNull(name);
         this.url = Objects.requireNonNull(url);
         this.credential = credential;
     }
 
     /**
-     @param url {@link #url}
+     @param name {@link #name}
+     @param url  {@link #url}
      */
-    public static RepositoryBuilder builder(URL url) {
-        return new RepositoryBuilder().url(url);
+    public static RepositoryBuilder builder(String name, URL url) {
+        return new RepositoryBuilder().name(name).url(url);
     }
 
     /**

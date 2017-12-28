@@ -3,12 +3,9 @@ package org.opentosca.toscana.plugins.testdata;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.opentosca.toscana.model.capability.AdminEndpointCapability;
+import org.opentosca.toscana.model.artifact.Artifact;
 import org.opentosca.toscana.model.capability.ContainerCapability;
-import org.opentosca.toscana.model.capability.DatabaseEndpointCapability;
-import org.opentosca.toscana.model.capability.EndpointCapability;
 import org.opentosca.toscana.model.capability.OsCapability;
-import org.opentosca.toscana.model.datatype.Port;
 import org.opentosca.toscana.model.node.Apache;
 import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.MysqlDatabase;
@@ -18,13 +15,11 @@ import org.opentosca.toscana.model.node.WebApplication;
 import org.opentosca.toscana.model.operation.Operation;
 import org.opentosca.toscana.model.operation.OperationVariable;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
-import org.opentosca.toscana.model.relation.AttachesTo;
-import org.opentosca.toscana.model.requirement.BlockStorageRequirement;
 import org.opentosca.toscana.model.requirement.HostRequirement;
 import org.opentosca.toscana.model.requirement.MysqlDbmsRequirement;
 import org.opentosca.toscana.model.requirement.WebServerRequirement;
 
-@SuppressWarnings( {"Duplicates"})
+@SuppressWarnings({"Duplicates"})
 public class KubernetesLampApp {
 
     private final Set<RootNode> testNodes = new HashSet<>();
@@ -53,15 +48,6 @@ public class KubernetesLampApp {
     }
 
     private Compute createComputeNode() {
-        AdminEndpointCapability computeAdminEndpointCap = AdminEndpointCapability
-            .builder("127.0.0.1", new Port(80))
-            .build();
-        AttachesTo attachesTo = AttachesTo
-            .builder("mount")
-            .build();
-        BlockStorageRequirement localStorage = BlockStorageRequirement
-            .builder(attachesTo)
-            .build();
         OsCapability osCapability = OsCapability
             .builder()
             .distribution(OsCapability.Distribution.UBUNTU)
@@ -69,7 +55,8 @@ public class KubernetesLampApp {
             .version("16.04")
             .build();
         Compute computeNode = Compute
-            .builder("server", osCapability, computeAdminEndpointCap, localStorage)
+            .builder("server")
+            .os(osCapability)
             .host(createContainerCapability())
             .build();
         return computeNode;
@@ -102,13 +89,9 @@ public class KubernetesLampApp {
     }
 
     private MysqlDatabase createMysqlDatabase(MysqlDbms dbms) {
-        DatabaseEndpointCapability dbEndpointCapability = DatabaseEndpointCapability
-            .builder("127.0.0.1", new Port(3306))
-            .build();
-
         MysqlDatabase mydb = MysqlDatabase
-            .builder("my-db", "DBNAME", dbEndpointCapability)
-            .host(MysqlDbmsRequirement.builder().fulfiller(dbms).build())
+            .builder("my-db", "DBNAME")
+            .mysqlHost(MysqlDbmsRequirement.builder().fulfiller(dbms).build())
             .build();
 
         return mydb;
@@ -116,34 +99,20 @@ public class KubernetesLampApp {
 
     private Apache createApache(Compute compute) {
         ContainerCapability containerCapability = createContainerCapability();
-        DatabaseEndpointCapability apacheEndpoint = DatabaseEndpointCapability
-            .builder("127.0.0.1", new Port(3306))
-            .build();
-        AdminEndpointCapability adminEndpointCapability = AdminEndpointCapability
-            .builder("127.0.0.1", new Port(80))
-            .build();
-
         Apache webServer = Apache.builder(
-            "apache-web-server",
-            containerCapability,
-            apacheEndpoint,
-            adminEndpointCapability)
+            "apache-web-server")
+            .containerHost(containerCapability)
             .host(HostRequirement.builder().fulfiller(compute).build())
-            .databaseEndpoint(apacheEndpoint)
             .build();
-
         return webServer;
     }
 
     private WebApplication createWebApplication(Apache webserver) {
-        EndpointCapability endpointCapability = EndpointCapability
-            .builder("127.0.0.1", new Port(80))
-            .build();
         Set<String> appDependencies = new HashSet<>();
         appDependencies.add("my_app/myphpapp.php");
         appDependencies.add("my_app/mysql-credentials.php");
         Operation appCreate = Operation.builder()
-            .implementationArtifact("my_app/create_myphpapp.sh")
+            .artifact(Artifact.builder("artifact", "my_app/create_myphpapp.sh").build())
             .dependencies(appDependencies)
             .build();
 
@@ -157,7 +126,7 @@ public class KubernetesLampApp {
         appInputs.add(dbPort);
 
         Operation appConfigure = Operation.builder()
-            .implementationArtifact("my_app/configure_myphpapp.sh")
+            .artifact(Artifact.builder("myartifact", "my_app/configure_myphpapp.sh").build())
             .inputs(appInputs)
             .build();
 
@@ -166,13 +135,12 @@ public class KubernetesLampApp {
             .configure(appConfigure)
             .build();
         WebApplication webApplication = WebApplication
-            .builder("my-app", endpointCapability)
+            .builder("my-app")
             .host(
                 WebServerRequirement.builder()
-                    .capability(
-                        ContainerCapability.builder().build()
-                    ).fulfiller(webserver).build()
-            )
+                    .capability(ContainerCapability.builder().build())
+                    .fulfiller(webserver)
+                    .build())
             .standardLifecycle(webAppLifecycle)
             .build();
 

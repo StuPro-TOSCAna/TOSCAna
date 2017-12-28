@@ -9,7 +9,7 @@ import lombok.Data;
  Inherit from this if there's need to describe the entity.
  */
 @Data
-public class DescribableEntity implements Serializable {
+public abstract class DescribableEntity extends AbstractEntity implements Serializable {
 
     /**
      The optional description of this.
@@ -25,9 +25,15 @@ public class DescribableEntity implements Serializable {
         this.description = description == null ? "" : description;
     }
 
-    public static class DescribableEntityBuilder implements Serializable {
+    public static class DescribableEntityBuilder extends AbstractEntityBuilder implements Serializable {
 
         public DescribableEntityBuilder() {
+        }
+
+        @Override
+        public DescribableEntity build() {
+            // should never happen
+            throw new IllegalStateException();
         }
     }
 }

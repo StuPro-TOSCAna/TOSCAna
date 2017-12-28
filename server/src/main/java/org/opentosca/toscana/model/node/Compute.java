@@ -1,19 +1,22 @@
 package org.opentosca.toscana.model.node;
 
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
 import org.opentosca.toscana.model.capability.AdminEndpointCapability;
+import org.opentosca.toscana.model.capability.AttachmentCapability;
 import org.opentosca.toscana.model.capability.BindableCapability;
+import org.opentosca.toscana.model.capability.Capability;
 import org.opentosca.toscana.model.capability.ContainerCapability;
 import org.opentosca.toscana.model.capability.OsCapability;
 import org.opentosca.toscana.model.capability.ScalableCapability;
 import org.opentosca.toscana.model.datatype.NetworkInfo;
 import org.opentosca.toscana.model.datatype.PortInfo;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
+import org.opentosca.toscana.model.relation.AttachesTo;
 import org.opentosca.toscana.model.requirement.BlockStorageRequirement;
+import org.opentosca.toscana.model.requirement.Requirement;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 
 import lombok.Builder;
@@ -28,42 +31,33 @@ import lombok.Data;
 @Data
 public class Compute extends RootNode {
     /**
-     The optional primary private IP address assigned by the cloud provider that applications may use to access the
-     Compute node.
-     (TOSCA Simple Profile in YAML Version 1.1, p. 169)
-     */
-    private final String privateAddress;
-
-    /**
-     The optional primary public IP address assigned by the cloud provider that applications may use to access the
-     Compute node.
-     (TOSCA Simple Profile in YAML Version 1.1, p. 169)
-     */
-    private final String publicAddress;
-
-    /**
      The collection of logical networks assigned to the compute host instance and information about them.
      (TOSCA Simple Profile in YAML Version 1.1, p. 169)
      */
     private final Set<NetworkInfo> networks = new HashSet<>();
-
     /**
      The set of logical ports assigned to this compute host instance and information about them.
      (TOSCA Simple Profile in YAML Version 1.1, p. 169)
      */
     private final Set<PortInfo> ports = new HashSet<>();
-
     private final ContainerCapability host;
-
     private final OsCapability os;
-
     private final AdminEndpointCapability adminEndpoint;
-
     private final ScalableCapability scalable;
-
     private final BindableCapability binding;
-
-    private final BlockStorageRequirement localStorage;
+    private final Requirement<AttachmentCapability, BlockStorage, AttachesTo> localStorage;
+    /**
+     The optional primary private IP address assigned by the cloud provider that applications may use to access the
+     Compute node.
+     (TOSCA Simple Profile in YAML Version 1.1, p. 169)
+     */
+    private String privateAddress;
+    /**
+     The optional primary public IP address assigned by the cloud provider that applications may use to access the
+     Compute node.
+     (TOSCA Simple Profile in YAML Version 1.1, p. 169)
+     */
+    private String publicAddress;
 
     @Builder
     protected Compute(String privateAddress,
@@ -73,42 +67,36 @@ public class Compute extends RootNode {
                       AdminEndpointCapability adminEndpoint,
                       ScalableCapability scalable,
                       BindableCapability binding,
-                      BlockStorageRequirement localStorage,
+                      Requirement<AttachmentCapability, BlockStorage, AttachesTo> localStorage,
                       String nodeName,
                       StandardLifecycle standardLifecycle,
+                      Set<Requirement> requirements,
+                      Set<Capability> capabilities,
                       String description) {
-        super(nodeName, standardLifecycle, description);
+        super(nodeName, standardLifecycle, requirements, capabilities, description);
         this.privateAddress = privateAddress;
         this.publicAddress = publicAddress;
-        this.os = Objects.requireNonNull(os);
-        this.adminEndpoint = Objects.requireNonNull(adminEndpoint);
+        this.os = OsCapability.getFallback(os);
+        this.adminEndpoint = AdminEndpointCapability.getFallback(adminEndpoint);
         this.host = (host == null) ? ContainerCapability.builder().build() : host;
         this.scalable = (scalable == null) ? ScalableCapability.builder().build() : scalable;
         this.binding = (binding == null) ? BindableCapability.builder().build() : binding;
-        this.localStorage = Objects.requireNonNull(localStorage);
+        this.localStorage = BlockStorageRequirement.getFallback(localStorage);
 
-        capabilities.add(this.host);
-        capabilities.add(this.os);
-        capabilities.add(this.adminEndpoint);
-        capabilities.add(this.scalable);
-        capabilities.add(this.binding);
-        requirements.add(this.localStorage);
+        this.capabilities.add(this.host);
+        this.capabilities.add(this.os);
+        this.capabilities.add(this.adminEndpoint);
+        this.capabilities.add(this.scalable);
+        this.capabilities.add(this.binding);
+        this.requirements.add(this.localStorage);
     }
 
     /**
-     @param nodeName      {@link #nodeName}
-     @param adminEndpoint {@link #adminEndpoint}
-     @param localStorage  {@link #localStorage}
+     @param nodeName {@link #nodeName}
      */
-    public static ComputeBuilder builder(String nodeName,
-                                         OsCapability os,
-                                         AdminEndpointCapability adminEndpoint,
-                                         BlockStorageRequirement localStorage) {
+    public static ComputeBuilder builder(String nodeName) {
         return new ComputeBuilder()
-            .os(os)
-            .nodeName(nodeName)
-            .adminEndpoint(adminEndpoint)
-            .localStorage(localStorage);
+            .nodeName(nodeName);
     }
 
     /**
@@ -131,6 +119,8 @@ public class Compute extends RootNode {
     }
 
     public static class ComputeBuilder extends RootNodeBuilder {
+        protected Set<Requirement> requirements = super.requirements;
+        protected Set<Capability> capabilities = super.capabilities;
     }
 }
 

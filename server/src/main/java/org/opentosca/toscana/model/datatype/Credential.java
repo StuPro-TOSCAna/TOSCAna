@@ -1,8 +1,8 @@
 package org.opentosca.toscana.model.datatype;
 
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 
 import lombok.Builder;
 import lombok.Data;
@@ -42,7 +42,7 @@ public class Credential {
      <p>
      (TOSCA Simple Profile in YAML Version 1.1, p. 140)
      */
-    private final Set<String> keys;
+    private final Map<String, String> keys;
 
     /**
      The optional user (name or ID) used for non-token based credentials.
@@ -55,7 +55,7 @@ public class Credential {
     protected Credential(String protocol,
                          TokenType type,
                          String token,
-                         @Singular Set<String> keys,
+                         @Singular Map<String, String> keys,
                          String user) {
         this.protocol = protocol;
         this.type = (type == null) ? TokenType.PASSWORD : type;
