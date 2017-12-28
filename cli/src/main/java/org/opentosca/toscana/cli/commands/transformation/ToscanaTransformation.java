@@ -7,7 +7,6 @@ import picocli.CommandLine.Command;
 import static picocli.CommandLine.usage;
 
 @Command(name = "transformation",
-    description = {"Transformation Overview"},
     customSynopsis = "@|bold toscana transformation|@ [@|yellow <subcommand>|@] [@|yellow -mv|@]%n",
     commandListHeading = "%nAvailable Subcommands are:%n",
     subcommands = {TransformationDelete.class,

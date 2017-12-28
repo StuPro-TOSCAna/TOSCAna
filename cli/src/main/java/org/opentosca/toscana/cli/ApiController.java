@@ -497,9 +497,11 @@ public class ApiController {
             System.err.println(String.format(SOMETHING_WRONG + Constants.STATUS_ERROR
                 + Constants.ERROR_PLACEHOLDER, e.getMessage()));
             e.printStackTrace();
+            System.exit(1);
         } catch (TOSCAnaServerException e) {
             System.err.println(String.format(SOMETHING_WRONG + Constants.STATUS_ERROR
                 + Constants.SERVER_ERROR_PLACEHOLDER, e.getStatusCode(), e.getErrorResponse().getMessage()));
+            System.exit(1);
         }
         return stringStatus.toString();
     }

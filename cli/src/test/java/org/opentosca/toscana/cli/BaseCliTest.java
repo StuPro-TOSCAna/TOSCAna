@@ -1,9 +1,8 @@
 package org.opentosca.toscana.cli;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-
 import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.contrib.java.lang.system.SystemOutRule;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.slf4j.Logger;
@@ -13,6 +12,8 @@ import static org.mockito.Mockito.mock;
 
 @RunWith(JUnit4.class)
 public abstract class BaseCliTest {
+    @ClassRule
+    public static final SystemOutRule systemOutRule = new SystemOutRule().enableLog();
 
     protected final String CSAR_JSON = "responses/csarInfo.json";
     protected final String CSARS_JSON = "responses/csarsList.json";
@@ -53,26 +54,10 @@ public abstract class BaseCliTest {
     protected final String[] INPUT_MANUAL_ERROR = {"input", "-c", CSAR, "-p", PLATFORM, "test="};
     protected final String[] INPUT_FILE_VALID = {"input", "-c", CSAR, "-p", PLATFORM, "-f", "src/test/resources/responses/test.txt"};
     private final Logger logger = LoggerFactory.getLogger(getClass());
-
     ApiController apiController;
-    PrintStream old;
-    ByteArrayOutputStream outputStream;
 
     @Before
     public void setUp() {
         apiController = mock(ApiController.class);
-        // Create a stream to hold the output
-        outputStream = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(outputStream);
-        // IMPORTANT: Save the old System.out!
-        old = System.out;
-        // Tell Java to use your special stream
-        System.setOut(ps);
-    }
-
-    public String getResult() {
-        System.out.flush();
-        System.setOut(old);
-        return outputStream.toString();
     }
 }

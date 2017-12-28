@@ -42,9 +42,6 @@ public class CliMain extends AbstractCommand {
         AnsiConsole.systemInstall();
         System.setProperty("picocli.ansi", "true");
 
-        //First startup to create cli.properties
-        new CliProperties();
-
         //System Property gets set here, because picocli.trace must be set before CommandLine starts
         String input = String.join("", args);
         if (input.contains("-m")) {
@@ -56,10 +53,6 @@ public class CliMain extends AbstractCommand {
         CommandLine commandLine = new CommandLine(new CliMain(), new CliPropertiesFactory(apiController));
         commandLine.parseWithHandler(new CommandLine.RunLast(), System.err, args);
         AnsiConsole.systemUninstall();
-    }
-
-    public void addSubcommands(CommandLine commandLine) {
-        commandLine.addSubcommand("csar", new ToscanaCsar());
     }
 
     @Override
