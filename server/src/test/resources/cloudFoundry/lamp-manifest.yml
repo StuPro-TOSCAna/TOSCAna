@@ -5,7 +5,6 @@ applications:
   mem_size: 1024MB
   env:
     database_user: 
-    db_root_password: 
     database_name: 
     database_host: 
     database_port: 3306

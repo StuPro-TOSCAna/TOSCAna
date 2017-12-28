@@ -24,19 +24,19 @@ public class LampApp {
 
     private final Set<RootNode> testNodes = new HashSet<>();
 
-    public static Set<RootNode> getLampModel() {
-        return new LampApp().getLampApp();
-    }
-
-    public Set<RootNode> getLampApp() {
+    private Set<RootNode> createLampApp() {
         createLampModel();
         return testNodes;
+    }
+
+    public static Set<RootNode> getLampModel() {
+        return new LampApp().createLampApp();
     }
 
     private void createLampModel() {
 
         Compute compute = createComputeNode();
-        Apache webserver = createApache(compute);
+        Apache webserver = createApache();
         MysqlDbms dbms = createMysqlDbms(compute);
         MysqlDatabase database = createMysqlDatabase(dbms);
         WebApplication webApplication = createWebApplication(webserver, database);
@@ -78,24 +78,12 @@ public class LampApp {
     }
 
     private MysqlDbms createMysqlDbms(Compute compute) {
-        Operation dbmsOperation = Operation.builder()
-            .artifact(Artifact.builder("artifact", "mysql_dbms/mysql_dbms_configure.sh").build())
-            .input(new OperationVariable("db_root_password"))
-            .build();
-
-        StandardLifecycle lifecycle = StandardLifecycle.builder()
-            .configure(dbmsOperation)
-            .build();
-
-        MysqlDbms mysqlDbms = MysqlDbms.builder(
+        return MysqlDbms.builder(
             "mysql_dbms",
             "geheim12")
             .host(HostRequirement.builder().fulfiller(compute).build()) //TODO Relationship?
             .port(3306)
-            .standardLifecycle(lifecycle)
             .build();
-
-        return mysqlDbms;
     }
 
     private MysqlDatabase createMysqlDatabase(MysqlDbms dbms) {
@@ -108,9 +96,9 @@ public class LampApp {
             .build();
 
         MysqlDatabase mydb = MysqlDatabase
-            .builder("my_db", "DBNAME")
-            .user("test")
-            .password("test")
+            .builder("my_db", "")
+            .user("")
+            .password("")
             .port(3306)
             .standardLifecycle(lifecycle)
             .mysqlHost(MysqlDbmsRequirement.builder().fulfiller(dbms).build()) //TODO Relationship?
@@ -119,13 +107,13 @@ public class LampApp {
         return mydb;
     }
 
-    private Apache createApache(Compute compute) {
-        Apache webServer = Apache.builder(
-            "apache_web_server")
-            .host(HostRequirement.builder().fulfiller(compute).build()) //TODO Relationship
+    private Apache createApache() {
+        ContainerCapability containerCapability = createContainerCapability();
+        return Apache
+            .builder("apache_web_server")
+            .containerHost(containerCapability)
+            .host(getHostedOnServerRequirement())
             .build();
-
-        return webServer;
     }
 
     private WebApplication createWebApplication(Apache webserver, MysqlDatabase database) {
@@ -161,5 +149,12 @@ public class LampApp {
             .build();
 
         return webApplication;
+    }
+
+    private HostRequirement getHostedOnServerRequirement() {
+        ContainerCapability hostCapability = ContainerCapability.builder().resourceName("server").build();
+
+        return HostRequirement.builder()
+            .capability(hostCapability).build();
     }
 }

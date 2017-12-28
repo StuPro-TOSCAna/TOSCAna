@@ -57,6 +57,7 @@ public class CloudFoundryNodeVisitor implements StrictNodeVisitor {
         create service
         ignore password and port
          */
+        handleStandardLifecycle(node);
         myApp.addService(node.getNodeName(), CloudFoundryServiceType.MYSQL);
     }
 
