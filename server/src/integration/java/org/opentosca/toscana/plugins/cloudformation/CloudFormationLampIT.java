@@ -35,7 +35,7 @@ public class CloudFormationLampIT extends BaseTransformTest {
 
     @Override
     protected void copyArtifacts(File contentDir) throws Exception {
-        File inputDir = new File(getClass().getResource("/csars/yaml/valid/lamp-input-aws").getFile());
+        File inputDir = new File(getClass().getResource("/csars/yaml/valid/lamp-input").getFile());
         FileUtils.copyDirectory(inputDir, contentDir);
     }
 
