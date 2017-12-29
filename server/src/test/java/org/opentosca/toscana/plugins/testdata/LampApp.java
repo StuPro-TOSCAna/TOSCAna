@@ -16,12 +16,15 @@ import org.opentosca.toscana.model.node.WebApplication;
 import org.opentosca.toscana.model.operation.Operation;
 import org.opentosca.toscana.model.operation.OperationVariable;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
+import org.opentosca.toscana.model.requirement.HostRequirement;
+import org.opentosca.toscana.model.requirement.MysqlDbmsRequirement;
+import org.opentosca.toscana.model.requirement.WebServerRequirement;
 
 public class LampApp {
 
     private final Set<RootNode> testNodes = new HashSet<>();
 
-    public Set<RootNode> createLampApp() {
+    private Set<RootNode> createLampApp() {
         createLampModel();
         return testNodes;
     }
@@ -31,11 +34,14 @@ public class LampApp {
     }
 
     private void createLampModel() {
+        MysqlDbms mysqlDbms = createMysqlDbms();
+        Apache apache = createApache();
+
         testNodes.add(createComputeNode());
-        testNodes.add(createMysqlDbms());
-        testNodes.add(createMysqlDatabase());
-        testNodes.add(createApache());
-        testNodes.add(createWebApplication());
+        testNodes.add(mysqlDbms);
+        testNodes.add(createMysqlDatabase(mysqlDbms));
+        testNodes.add(apache);
+        testNodes.add(createWebApplication(apache));
     }
 
     private Compute createComputeNode() {
@@ -45,12 +51,11 @@ public class LampApp {
             .type(OsCapability.Type.LINUX)
             .version("16.04")
             .build();
-        Compute computeNode = Compute
+        return Compute
             .builder("server")
             .os(osCapability)
             .host(createContainerCapability())
             .build();
-        return computeNode;
     }
 
     private ContainerCapability createContainerCapability() {
@@ -82,12 +87,14 @@ public class LampApp {
             "geheim")
             .port(3306)
             .standardLifecycle(lifecycle)
+            .host(getHostedOnServerRequirement())
             .build();
     }
 
-    private MysqlDatabase createMysqlDatabase() {
+    private MysqlDatabase createMysqlDatabase(MysqlDbms mysqlDbms) {
         return MysqlDatabase
             .builder("my_db", "DBNAME")
+            .mysqlHost(MysqlDbmsRequirement.builder().fulfiller(mysqlDbms).build())
             .build();
     }
 
@@ -96,10 +103,11 @@ public class LampApp {
         return Apache
             .builder("apache_web_server")
             .containerHost(containerCapability)
+            .host(getHostedOnServerRequirement())
             .build();
     }
 
-    private WebApplication createWebApplication() {
+    private WebApplication createWebApplication(Apache apache) {
         Set<String> appDependencies = new HashSet<>();
         appDependencies.add("my_app/myphpapp.php");
         appDependencies.add("my_app/mysql-credentials.php");
@@ -129,6 +137,14 @@ public class LampApp {
         return WebApplication
             .builder("my_app")
             .standardLifecycle(webAppLifecycle)
+            .host(WebServerRequirement.builder().fulfiller(apache).build())
             .build();
+    }
+
+    private HostRequirement getHostedOnServerRequirement() {
+        ContainerCapability hostCapability = ContainerCapability.builder().resourceName("server").build();
+
+        return HostRequirement.builder()
+            .capability(hostCapability).build();
     }
 }

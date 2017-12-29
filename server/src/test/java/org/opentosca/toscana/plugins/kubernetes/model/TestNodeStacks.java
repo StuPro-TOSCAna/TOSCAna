@@ -14,7 +14,11 @@ import org.opentosca.toscana.plugins.testdata.LampApp;
 import com.google.common.collect.Sets;
 
 public class TestNodeStacks {
-    private HashSet<NodeStack> createNodeStack() {
+    public static Set<NodeStack> getLampNodeStacks() {
+        return new TestNodeStacks().createLampNodeStacks();
+    }
+
+    private HashSet<NodeStack> createLampNodeStacks() {
         Set<RootNode> lampModel = LampApp.getLampModel();
         HashMap<String, RootNode> map = new HashMap<>();
         for (RootNode rootNode : lampModel) {
@@ -24,15 +28,11 @@ public class TestNodeStacks {
         List<KubernetesNodeContainer> webAppNodes = new LinkedList<>();
         KubernetesNodeContainer computeContainer = new KubernetesNodeContainer(map.get("server"));
         computeContainer.hasParentComputeNode();
-        webAppNodes.add(new KubernetesNodeContainer(map.get("my-app")));
-        webAppNodes.add(new KubernetesNodeContainer(map.get("apache-web-server")));
+        webAppNodes.add(new KubernetesNodeContainer(map.get("my_app")));
+        webAppNodes.add(new KubernetesNodeContainer(map.get("apache_web_server")));
         webAppNodes.add(computeContainer);
 
         NodeStack webAppNodeStack = new NodeStack(webAppNodes);
         return Sets.newHashSet(webAppNodeStack);
-    }
-
-    public static Set<NodeStack> getNodeStacks() {
-        return new TestNodeStacks().createNodeStack();
     }
 }

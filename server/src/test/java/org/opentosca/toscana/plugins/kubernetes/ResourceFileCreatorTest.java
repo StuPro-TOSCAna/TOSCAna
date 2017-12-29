@@ -16,12 +16,12 @@ import static org.junit.Assert.fail;
 
 public class ResourceFileCreatorTest extends BaseUnitTest {
     private String appName = "my-app";
-    private String appServiceName = "my-app-service";
-    private String appDeploymentName = "my-app-deployment";
+    private String appServiceName = "my_app-service";
+    private String appDeploymentName = "my_app-deployment";
 
     @Test
     public void testReplicationControllerCreation() {
-        ResourceFileCreator resourceFileCreator = new ResourceFileCreator(TestNodeStacks.getNodeStacks());
+        ResourceFileCreator resourceFileCreator = new ResourceFileCreator(TestNodeStacks.getLampNodeStacks());
 
         HashMap<String, String> result = null;
         try {
@@ -41,7 +41,7 @@ public class ResourceFileCreatorTest extends BaseUnitTest {
     private void deploymentTest(Map map) {
         Map metadata = (Map) map.get("metadata");
         // test the metadata
-        assertEquals(appDeploymentName, metadata.get("name"));
+        assertEquals(appDeploymentName.replaceAll("_", "-"), metadata.get("name"));
         assertEquals(appName, ((Map) metadata.get("labels")).get("app"));
 
         // test the spec
@@ -66,7 +66,7 @@ public class ResourceFileCreatorTest extends BaseUnitTest {
 
     private void serviceTest(Map map) {
         // test the metadata
-        metadataTest(appServiceName, (Map) map.get("metadata"));
+        metadataTest(appServiceName.replaceAll("_", "-"), (Map) map.get("metadata"));
 
         //test the spec
         Map spec = (Map) map.get("spec");
