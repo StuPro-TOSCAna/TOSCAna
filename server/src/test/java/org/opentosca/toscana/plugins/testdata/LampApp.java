@@ -88,7 +88,7 @@ public class LampApp {
 
     private MysqlDatabase createMysqlDatabase(MysqlDbms dbms) {
         Operation databaseConfigureOperation = Operation.builder()
-            .artifact(Artifact.builder("artifact", "mysql/createtable.sql").build())
+            .artifact(Artifact.builder("artifact", "my_db/createtable.sql").build())
             .build();
 
         StandardLifecycle lifecycle = StandardLifecycle.builder()
@@ -96,7 +96,7 @@ public class LampApp {
             .build();
 
         MysqlDatabase mydb = MysqlDatabase
-            .builder("my_db", "")
+            .builder("my_db", "DBNAME")
             .user("")
             .password("")
             .port(3306)
