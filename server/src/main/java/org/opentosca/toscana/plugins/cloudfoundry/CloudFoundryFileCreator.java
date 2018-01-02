@@ -19,7 +19,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import static org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryManifestAttribute.ENVIRONMENT;
+import static org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryManifestAttribute.PATH;
 import static org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryManifestAttribute.SERVICE;
+import static org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle.OUTPUT_DIR;
 
 /**
  Creates all files which are necessary to deploy the application
@@ -27,15 +29,17 @@ import static org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundr
  */
 public class CloudFoundryFileCreator {
 
-    public static final String MANIFEST = "manifest.yml";
+    public static final String MANIFEST_NAME = "manifest.yml";
+    public static final String MANIFEST_PATH = OUTPUT_DIR + MANIFEST_NAME;
     public static final String MANIFESTHEAD = "---\napplications:\n";
     public static final String NAMEBLOCK = "name";
     public static final String CLI_CREATE_SERVICE_DEFAULT = "cf create-service {plan} {service} ";
     public static final String CLI_CREATE_SERVICE = "cf create-service ";
     public static final String CLI_PUSH = "cf push ";
+    public static final String CLI_PATH_TO_MANIFEST = " -f ../";
     public static final String FILEPRAEFIX_DEPLOY = "deploy_";
     public static final String FILESUFFIX_DEPLOY = ".sh";
-    public static final String BUILDPACK_OBJECT_PHP = "PHP-EXTENSIONS";
+    public static final String BUILDPACK_OBJECT_PHP = "PHP_EXTENSIONS";
     public static final String BUILDPACK_FILEPATH_PHP = ".bp-config/options.json";
 
     private final PluginFileAccess fileAccess;
@@ -55,6 +59,7 @@ public class CloudFoundryFileCreator {
 
     private void createManifest() throws IOException {
         createManifestHead();
+        addPathToApplication();
         createAttributes();
         createEnvironmentVariables();
         createService();
@@ -62,17 +67,28 @@ public class CloudFoundryFileCreator {
 
     private void createManifestHead() throws IOException {
         String manifestHead = String.format("%s- %s: %s", MANIFESTHEAD, NAMEBLOCK, app.getName());
-        fileAccess.access(MANIFEST).appendln(manifestHead).close();
+        fileAccess.access(MANIFEST_PATH).appendln(manifestHead).close();
+    }
+
+    private void addPathToApplication() throws IOException {
+        String mainApplicationPath = app.getPathToApplication();
+        if (mainApplicationPath != null) {
+            String pathAddition = String.format("  %s: ../%s", PATH.getName(), app.getPathToApplication());
+            fileAccess.access(MANIFEST_PATH).appendln(pathAddition).close();
+        }
     }
 
     private void createEnvironmentVariables() throws IOException {
-        ArrayList<String> environmentVariables = new ArrayList<>();
-        environmentVariables.add(String.format("  %s:", ENVIRONMENT.getName()));
-        for (Map.Entry<String, String> entry : app.getEnvironmentVariables().entrySet()) {
-            environmentVariables.add(String.format("    %s: %s", entry.getKey(), entry.getValue()));
-        }
-        for (String env : environmentVariables) {
-            fileAccess.access(MANIFEST).appendln(env).close();
+        Map<String, String> envVariables = app.getEnvironmentVariables();
+        if (!envVariables.isEmpty()) {
+            ArrayList<String> environmentVariables = new ArrayList<>();
+            environmentVariables.add(String.format("  %s:", ENVIRONMENT.getName()));
+            for (Map.Entry<String, String> entry : envVariables.entrySet()) {
+                environmentVariables.add(String.format("    %s: %s", entry.getKey(), entry.getValue()));
+            }
+            for (String env : environmentVariables) {
+                fileAccess.access(MANIFEST_PATH).appendln(env).close();
+            }
         }
     }
 
@@ -81,13 +97,16 @@ public class CloudFoundryFileCreator {
      add it to the manifest
      */
     private void createService() throws IOException {
-        ArrayList<String> services = new ArrayList<>();
-        services.add(String.format("  %s:", SERVICE.getName()));
-        for (Map.Entry<String, CloudFoundryServiceType> service : app.getServices().entrySet()) {
-            services.add(String.format("    - %s", service.getKey()));
-        }
-        for (String service : services) {
-            fileAccess.access(MANIFEST).appendln(service).close();
+        Map<String, CloudFoundryServiceType> appServices = app.getServices();
+        if (!appServices.isEmpty()) {
+            ArrayList<String> services = new ArrayList<>();
+            services.add(String.format("  %s:", SERVICE.getName()));
+            for (Map.Entry<String, CloudFoundryServiceType> service : appServices.entrySet()) {
+                services.add(String.format("    - %s", service.getKey()));
+            }
+            for (String service : services) {
+                fileAccess.access(MANIFEST_PATH).appendln(service).close();
+            }
         }
     }
 
@@ -131,10 +150,11 @@ public class CloudFoundryFileCreator {
             }
         }
 
-        deployScript.append(CLI_PUSH + app.getName());
+        deployScript.append(CLI_PUSH + app.getName() + CLI_PATH_TO_MANIFEST + MANIFEST_NAME);
     }
 
-    //only for PHP
+    //only for PHP 
+    //TODO: check if PHP and mysql then add "mysql" & "mysqli"
     private void createBuildpackAdditionsFile() throws IOException, JSONException {
         JSONObject buildPackAdditionsJson = new JSONObject();
         JSONArray buildPacks = new JSONArray();
@@ -142,7 +162,13 @@ public class CloudFoundryFileCreator {
             buildPacks.put(buildPack);
         }
         buildPackAdditionsJson.put(BUILDPACK_OBJECT_PHP, buildPacks);
-        fileAccess.access(BUILDPACK_FILEPATH_PHP).append(buildPackAdditionsJson.toString(4)).close();
+        String path;
+        if (app.getPathToApplication() != null) {
+            path = String.format("%s/%s", app.getPathToApplication(), BUILDPACK_FILEPATH_PHP);
+        } else {
+            path = BUILDPACK_FILEPATH_PHP;
+        }
+        fileAccess.access(path).append(buildPackAdditionsJson.toString(4)).close();
     }
 
     private void createAttributes() throws IOException {
@@ -153,7 +179,7 @@ public class CloudFoundryFileCreator {
                 attributes.add(String.format("  %s: %s", attribute.getKey(), attribute.getValue()));
             }
             for (String attribute : attributes) {
-                fileAccess.access(MANIFEST).appendln(attribute).close();
+                fileAccess.access(MANIFEST_PATH).appendln(attribute).close();
             }
         }
     }
