@@ -8,22 +8,24 @@ import io.fabric8.kubernetes.api.model.ServiceBuilder;
 import io.fabric8.kubernetes.client.internal.SerializationUtils;
 
 public class ResourceService {
+    private final String name;
     private NodeStack stack;
     private Service service;
 
     public ResourceService(NodeStack stack) {
         this.stack = stack;
+        this.name = stack.getStackName().replaceAll("_", "-");
     }
 
     public ResourceService build() {
         service = new ServiceBuilder()
             .withNewMetadata()
-            .withName(stack.getStackName() + "-service")
-            .addToLabels("app", stack.getStackName() + "-service")
+            .withName(name + "-service")
+            .addToLabels("app", name + "-service")
             .endMetadata()
             .withNewSpec()
             .addAllToPorts(stack.getOpenServicePorts())
-            .addToSelector("app", stack.getStackName())
+            .addToSelector("app", name)
             .withType("NodePort")
             .endSpec()
             .build();

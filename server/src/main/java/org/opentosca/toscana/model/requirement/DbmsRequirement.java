@@ -19,13 +19,13 @@ public class DbmsRequirement extends Requirement<ContainerCapability, Dbms, Host
                               Range occurrence,
                               @Singular Set<Dbms> fulfillers,
                               HostedOn relationship) {
-        super(capability, occurrence, fulfillers, relationship);
+        super(capability, occurrence, fulfillers, HostedOn.getFallback(relationship));
     }
 
-    public static DbmsRequirementBuilder builder(ContainerCapability capability,
-                                                 HostedOn relationship) {
-        return new DbmsRequirementBuilder()
-            .capability(capability)
-            .relationship(relationship);
+    public static Requirement<ContainerCapability, Dbms, HostedOn> getFallback(Requirement<ContainerCapability, Dbms, HostedOn> host) {
+        return (host == null) ? DbmsRequirement.builder().build() : host;
+    }
+
+    public static class DbmsRequirementBuilder extends RequirementBuilder<ContainerCapability, Dbms, HostedOn> {
     }
 }

@@ -1,12 +1,7 @@
 package org.opentosca.toscana.plugins.kubernetes.model;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
-import org.opentosca.toscana.model.artifact.Artifact;
-import org.opentosca.toscana.model.node.DockerApplication;
-import org.opentosca.toscana.model.operation.Operation;
 import org.opentosca.toscana.plugins.kubernetes.util.NodeStack;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -23,7 +18,7 @@ public class ResourceDeployment {
 
     public ResourceDeployment(NodeStack stack) {
         this.stack = stack;
-        this.name = stack.getStackName();
+        this.name = stack.getStackName().replaceAll("_", "-");
     }
 
     public ResourceDeployment build() {
@@ -31,7 +26,7 @@ public class ResourceDeployment {
 
         Container container = new ContainerBuilder()
             .withName(name)
-            .withImage(stack.getStackName())
+            .withImage(name)
             .addAllToPorts(stack.getOpenContainerPorts()).build();
         containers.add(container);
 

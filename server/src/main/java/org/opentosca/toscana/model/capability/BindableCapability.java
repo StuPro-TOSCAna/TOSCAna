@@ -18,9 +18,8 @@ public class BindableCapability extends NodeCapability {
 
     @Builder
     protected BindableCapability(Set<Class<? extends RootNode>> validSourceTypes,
-                                 Range occurence,
-                                 String description) {
-        super(validSourceTypes, occurence, description);
+                                 Range occurrence) {
+        super(validSourceTypes, occurrence);
     }
 
     @Override

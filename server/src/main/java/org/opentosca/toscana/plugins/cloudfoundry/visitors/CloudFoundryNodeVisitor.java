@@ -57,6 +57,7 @@ public class CloudFoundryNodeVisitor implements StrictNodeVisitor {
         create service
         ignore password and port
          */
+        handleStandardLifecycle(node, false);
         myApp.addService(node.getNodeName(), CloudFoundryServiceType.MYSQL);
     }
 
@@ -88,12 +89,6 @@ public class CloudFoundryNodeVisitor implements StrictNodeVisitor {
             // artifact path
             if (operation.getArtifact().isPresent()) {
                 String path = operation.getArtifact().get().getFilePath();
-                setPathToApplication(path, isTopNode);
-            }
-
-            // add implementationArtifact path if not null
-            if (operation.getImplementationArtifact().isPresent()) {
-                String path = operation.getImplementationArtifact().get();
                 setPathToApplication(path, isTopNode);
             }
 

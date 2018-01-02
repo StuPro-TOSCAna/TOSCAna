@@ -18,9 +18,8 @@ public class AttachmentCapability extends Capability {
 
     @Builder
     protected AttachmentCapability(Set<Class<? extends RootNode>> validSourceTypes,
-                                   Range occurence,
-                                   String description) {
-        super(validSourceTypes, occurence, description);
+                                   Range occurrence) {
+        super(validSourceTypes, occurrence);
     }
 
     public static AttachmentCapability getFallback(AttachmentCapability c) {

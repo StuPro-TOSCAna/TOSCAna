@@ -34,9 +34,10 @@ import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator
 
 public class CloudFoundryPluginTest extends BaseUnitTest {
 
-    private final static EffectiveModel lamp = new TestEffectiveModels().getLampModel();
+    private final static EffectiveModel lamp = TestEffectiveModels.getLampModel();
     private static CloudFoundryApplication myApp = new CloudFoundryApplication();
     private final static CloudFoundryNodeVisitor visitor = new CloudFoundryNodeVisitor(myApp);
+
     @Mock
     private Log log;
     private File targetDir;
@@ -58,7 +59,7 @@ public class CloudFoundryPluginTest extends BaseUnitTest {
         paths.add("my_app/mysql-credentials.php");
         paths.add("my_app/create_myphpapp.sh");
         paths.add("my_app/configure_myphpapp.sh");
-        paths.add("mysql_dbms/mysql_dbms_configure.sh");
+        paths.add("my_db/createtable.sql");
 
         for (VisitableNode node : nodes) {
             node.accept(visitor);
@@ -87,7 +88,11 @@ public class CloudFoundryPluginTest extends BaseUnitTest {
     @Test
     public void getFiles() {
         for (String path : paths) {
+            for (File file : targetDir.listFiles()) {
+                System.out.println(file);
+            }
             File targetFile = new File(targetDir, path);
+            System.out.println(targetFile);
             assertTrue(targetFile.exists());
         }
     }

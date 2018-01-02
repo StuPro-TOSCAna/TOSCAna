@@ -5,7 +5,7 @@ import java.security.InvalidParameterException;
 import static java.lang.String.format;
 
 /**
- Specifies a range of occurences.
+ Specifies a range of occurrences.
  */
 public class Range {
 
@@ -17,8 +17,8 @@ public class Range {
     public final int max;
 
     /**
-     @param min the minimum allowed number of occurences.
-     @param max the maximum allowed number of occurences. Use Integer.MAX_VALUE to indicate `UNBOUNDED`.
+     @param min the minimum allowed number of occurrences.
+     @param max the maximum allowed number of occurrences. Use Integer.MAX_VALUE to indicate `UNBOUNDED`.
      Must not be less than min
      */
     public Range(int min, int max) {
@@ -37,5 +37,10 @@ public class Range {
      */
     public boolean inRange(int value) {
         return (min <= value && value <= max);
+    }
+
+    @Override
+    public String toString() {
+        return format("[Range:%s-%s]", min, max);
     }
 }

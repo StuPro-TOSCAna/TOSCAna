@@ -7,7 +7,7 @@ import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
 import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.plugins.BaseTransformTest;
 import org.opentosca.toscana.plugins.kubernetes.docker.mapper.MapperTest;
-import org.opentosca.toscana.plugins.testdata.KubernetesLampApp;
+import org.opentosca.toscana.plugins.testdata.LampApp;
 
 import org.apache.commons.io.FileUtils;
 
@@ -22,16 +22,11 @@ public class KubernetesLampIT extends BaseTransformTest {
 
     @Override
     protected EffectiveModel getModel() {
-        return new EffectiveModel(KubernetesLampApp.getLampModel());
+        return new EffectiveModel(LampApp.getLampModel());
     }
 
     @Override
-    protected void onSuccess(File outputDir) {
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+    protected void onSuccess(File outputDir) throws Exception {
         //Do Nothing
     }
 
@@ -42,7 +37,7 @@ public class KubernetesLampIT extends BaseTransformTest {
 
     @Override
     protected void copyArtifacts(File contentDir) throws Exception {
-        File inputDir = new File(getClass().getResource("/kubernetes/csars/lamp").getFile());
+        File inputDir = new File(getClass().getResource("/csars/yaml/valid/lamp-input").getFile());
         FileUtils.copyDirectory(inputDir, contentDir);
     }
 

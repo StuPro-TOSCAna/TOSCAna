@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.opentosca.toscana.core.transformation.TransformationContext;
+import org.opentosca.toscana.model.artifact.Artifact;
 import org.opentosca.toscana.model.node.Apache;
 import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.MysqlDatabase;
@@ -18,6 +19,7 @@ import org.opentosca.toscana.model.operation.StandardLifecycle;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 import org.opentosca.toscana.plugins.kubernetes.docker.dockerfile.builder.DockerfileBuilder;
 import org.opentosca.toscana.plugins.kubernetes.util.NodeStack;
+import org.opentosca.toscana.plugins.util.TransformationFailureException;
 
 import org.slf4j.Logger;
 
@@ -71,6 +73,33 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
     public void visit(MysqlDatabase node) {
         builder.env("MYSQL_DATABASE", node.getDatabaseName());
         handleDefault(node);
+        List<Optional<Operation>> lifecycles = new ArrayList<>();
+        lifecycles.add(node.getStandardLifecycle().getConfigure());
+        lifecycles.add(node.getStandardLifecycle().getCreate());
+        if (lifecycles.stream().anyMatch(Optional::isPresent)) {
+            builder.workdir("/docker-entrypoint-initdb.d");
+
+            lifecycles.forEach(e -> {
+                if (e.isPresent()) {
+                    Operation operation = e.get();
+                    Optional<Artifact> artifact = operation.getArtifact();
+                    if (artifact.isPresent()) {
+                        String path = artifact.get().getFilePath();
+                        if (path.endsWith(".sql")) {
+                            String filename = determineFilename(path);
+                            try {
+                                builder.copyFromCsar(path, "", filename);
+                            } catch (IOException ex) {
+                                logger.error("Copying dependencies of node {} has failed!", node.getNodeName(), ex);
+                                throw new TransformationFailureException("Copying dependencies failed", ex);
+                            }
+                        }
+                    }
+                }
+            });
+
+            builder.workdir("/toscana-root");
+        }
     }
 
     private void handleDefault(RootNode node) {
@@ -100,8 +129,9 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
                 String filename = determineFilename(e);
                 builder.copyFromCsar(e, nodeName, filename);
             }
-            if (operation.getImplementationArtifact().isPresent()) {
-                String path = operation.getImplementationArtifact().get();
+            if (operation.getArtifact().isPresent()) {
+                String path = operation.getArtifact().get().getFilePath();
+                if (path.endsWith(".sql")) return;
                 builder.copyFromCsar(path, nodeName, nodeName + "-" + opName);
                 builder.run("sh " + nodeName + "-" + opName);
             }
@@ -117,7 +147,7 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
         return name[name.length - 1];
     }
 
-    public void buildAndWriteDockerfile() throws IOException{
+    public void buildAndWriteDockerfile() throws IOException {
         logger.debug("Visiting nodes");
         stack.forEachNode(node -> {
             logger.debug("Visitng node: {}", node.getNode().getNodeName());

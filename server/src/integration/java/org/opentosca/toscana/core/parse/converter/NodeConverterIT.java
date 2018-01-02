@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import javax.xml.namespace.QName;
 
 import org.opentosca.toscana.core.BaseIntegrationTest;
+import org.opentosca.toscana.model.artifact.Repository;
 
 import com.google.common.collect.Sets;
 import org.eclipse.winery.model.tosca.yaml.TNodeTemplate;
@@ -27,7 +28,7 @@ public class NodeConverterIT extends BaseIntegrationTest {
 
     @Test
     public void supportForAllWineryNodeTypes() throws UnknownNodeTypeException {
-        NodeConverter converter = new NodeConverter();
+        NodeConverter converter = new NodeConverter(new HashSet<Repository>(), logger);
         Set<String> wineryNodeTypes = getWineryNodeTypes();
         for (String nodeType : wineryNodeTypes) {
             logger.info("Testing conversion of type '{}'", nodeType);
@@ -38,6 +39,8 @@ public class NodeConverterIT extends BaseIntegrationTest {
                 logger.info("Node Type '{}': known", nodeType);
             } catch (UnsupportedOperationException e) {
                 logger.info("Node Type '{}': known (not yet supported)", nodeType);
+            } catch (NullPointerException e) {
+                // ignore
             } finally {
                 System.out.println();
             }
@@ -48,7 +51,7 @@ public class NodeConverterIT extends BaseIntegrationTest {
     private Set<String> getWineryNodeTypes() {
         Set<String> knownNodeTypes = new HashSet<>();
         Set<List<String>> typeLists = Sets.newHashSet(
-            Defaults.TOSCA_NORMATIVE_NAMES, Defaults.TOSCA_NON_NORMATIVE_NAMES);
+            Defaults.TOSCA_NORMATIVE_NAMES, Defaults.TOSCA_NONNORMATIVE_NAMES);
 
         for (List<String> typeList : typeLists) {
             knownNodeTypes.addAll(typeList.stream()
@@ -64,7 +67,7 @@ public class NodeConverterIT extends BaseIntegrationTest {
                 }
                 knownNodeTypes.addAll(knownSimpleTypes);
             }
-        }  
+        }
         // toscana does not support abstract root node
         knownNodeTypes.remove("tosca.nodes.Root");
         return knownNodeTypes;

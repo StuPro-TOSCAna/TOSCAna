@@ -34,7 +34,7 @@ public abstract class RootNode extends DescribableEntity implements VisitableNod
     /**
      Every node has the capability of a node.
      */
-    private final NodeCapability feature = NodeCapability.builder().occurence(Range.EXACTLY_ONCE).build();
+    private final NodeCapability feature = NodeCapability.builder().occurrence(Range.EXACTLY_ONCE).build();
     private final StandardLifecycle standardLifecycle;
     /**
      Dependencies are generic requirements that can be used to express timing dependencies between nodes.
@@ -45,6 +45,8 @@ public abstract class RootNode extends DescribableEntity implements VisitableNod
     @Builder
     protected RootNode(String nodeName,
                        StandardLifecycle standardLifecycle,
+                       Set<Requirement> requirements,
+                       Set<Capability> capabilities,
                        String description) {
         super(description);
         this.nodeName = Objects.requireNonNull(nodeName);
@@ -52,8 +54,10 @@ public abstract class RootNode extends DescribableEntity implements VisitableNod
             throw new IllegalArgumentException("name must not be empty");
         }
         this.standardLifecycle = (standardLifecycle == null) ? StandardLifecycle.builder().build() : standardLifecycle;
-        capabilities.add(this.feature);
-        requirements.addAll(this.dependencies);
+        this.capabilities.add(this.feature);
+        this.requirements.addAll(this.dependencies);
+        if (capabilities != null) this.capabilities.addAll(capabilities);
+        if (requirements != null) this.requirements.addAll(requirements);
     }
 
     /**
@@ -65,37 +69,26 @@ public abstract class RootNode extends DescribableEntity implements VisitableNod
 
     public static class RootNodeBuilder extends DescribableEntityBuilder {
 
-        private String nodeName;
-        private StandardLifecycle standardLifecycle;
-        private String description;
+        protected Set<Requirement> requirements = new HashSet<>();
+        protected Set<Capability> capabilities = new HashSet<>();
 
-        RootNodeBuilder() {
+        protected RootNodeBuilder() {
+        }
+
+        public RootNodeBuilder requirement(Requirement requirement) {
+            requirements.add(requirement);
+            return this;
+        }
+
+        public RootNodeBuilder capability(Capability capability) {
+            capabilities.add(capability);
+            return this;
         }
 
         @Override
         public RootNode build() {
             // should never be called (RootNode is abstract)
             throw new UnsupportedOperationException();
-        }
-
-        public RootNodeBuilder nodeName(String nodeName) {
-            this.nodeName = nodeName;
-            return this;
-        }
-
-        public RootNodeBuilder standardLifecycle(StandardLifecycle standardLifecycle) {
-            this.standardLifecycle = standardLifecycle;
-            return this;
-        }
-
-        @Override
-        public RootNodeBuilder description(String description) {
-            this.description = description;
-            return this;
-        }
-
-        public String toString() {
-            return "RootNode.RootNodeBuilder(nodeName=" + this.nodeName + ", standardLifecycle=" + this.standardLifecycle + ", description=" + this.description + ")";
         }
     }
 }

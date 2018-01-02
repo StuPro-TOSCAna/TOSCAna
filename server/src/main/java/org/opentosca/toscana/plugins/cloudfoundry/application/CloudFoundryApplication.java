@@ -39,7 +39,11 @@ public class CloudFoundryApplication {
     }
 
     public void addEnvironmentVariables(String environmentVariableName, String value) {
-        this.environmentVariables.put(environmentVariableName, value);
+        if (value.isEmpty()) {
+            this.addEnvironmentVariables(environmentVariableName);
+        } else {
+            this.environmentVariables.put(environmentVariableName, value);
+        }
     }
 
     public void addEnvironmentVariables(String environmentVariableName) {

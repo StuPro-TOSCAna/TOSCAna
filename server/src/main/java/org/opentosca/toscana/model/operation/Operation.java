@@ -23,11 +23,6 @@ public class Operation extends DescribableEntity {
     private final Artifact artifact;
 
     /**
-     The implementation artifact for this operation. Might be null.
-     */
-    private final String implementationArtifact;
-
-    /**
      several dependent or secondary implementation artifact names which
      are referenced by the primary implementation artifact
      (e.g., a library the script installs or a secondary script).
@@ -48,25 +43,16 @@ public class Operation extends DescribableEntity {
     private final Set<OperationVariable> outputs;
 
     @Builder
-    protected Operation(String implementationArtifact,
-                        Artifact artifact,
+    protected Operation(Artifact artifact,
                         @Singular Set<String> dependencies,
                         @Singular Set<OperationVariable> inputs,
                         @Singular Set<OperationVariable> outputs,
                         String description) {
         super(description);
-        this.implementationArtifact = implementationArtifact;
         this.artifact = artifact;
         this.dependencies = Objects.requireNonNull(dependencies);
         this.inputs = Objects.requireNonNull(inputs);
         this.outputs = Objects.requireNonNull(outputs);
-    }
-
-    /**
-     @return {@link #implementationArtifact}
-     */
-    public Optional<String> getImplementationArtifact() {
-        return Optional.ofNullable(implementationArtifact);
     }
 
     /**

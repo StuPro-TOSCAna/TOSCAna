@@ -13,6 +13,10 @@ import lombok.Data;
 @Data
 public class RoutesTo extends RootRelationship {
 
+    public RoutesTo() {
+        super(null);
+    }
+
     @Builder
     protected RoutesTo(String description) {
         super(description);
@@ -23,6 +27,6 @@ public class RoutesTo extends RootRelationship {
         v.visit(this);
     }
 
-    public static class RoutesToBuilder extends DescribableEntityBuilder {
+    public static class RoutesToBuilder extends RootRelationshipBuilder {
     }
 }

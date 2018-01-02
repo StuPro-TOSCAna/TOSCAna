@@ -64,9 +64,8 @@ public class ComputeCapability extends Capability {
                                 Integer diskSizeInMB,
                                 Integer memSizeInMB,
                                 Set<Class<? extends RootNode>> validSourceTypes,
-                                Range occurence,
-                                String description) {
-        super(validSourceTypes, occurence, description);
+                                Range occurrence) {
+        super(validSourceTypes, occurrence);
         if (numCpus != null && numCpus < 1) {
             throw new IllegalArgumentException(String.format(
                 "numCpus must be greater than 0, but was %d", numCpus));
