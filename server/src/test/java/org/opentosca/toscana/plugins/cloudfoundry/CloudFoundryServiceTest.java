@@ -1,6 +1,7 @@
 package org.opentosca.toscana.plugins.cloudfoundry;
 
 import java.io.File;
+import java.util.Map;
 
 import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
@@ -13,6 +14,7 @@ import org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle;
 
 import org.apache.commons.io.FileUtils;
 import org.hamcrest.CoreMatchers;
+import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -87,6 +89,30 @@ public class CloudFoundryServiceTest extends BaseUnitTest {
         String deployContent = FileUtils.readFileToString(targetFile);
         assertThat(deployContent, CoreMatchers.containsString(expectedDeployContent));
     }
+
+    @Test
+    public void checkServiceCredentials() throws Exception {
+        assumeNotNull(envUser, envHost, envOrga, envPw, envSpace);
+
+        try {
+            cloudFoundryConnection = new CloudFoundryConnection(envUser,
+                envPw,
+                envHost,
+                envOrga,
+                envSpace);
+
+            provider = new CloudFoundryProvider(CloudFoundryProvider.CloudFoundryProviderType.PIVOTAL);
+            provider.setOfferedService(cloudFoundryConnection.getServices());
+        } catch (Exception e) {
+            assumeTrue(false);
+        }
+
+        JSONObject env = cloudFoundryConnection.getServiceCredentials("mydb", "myphpapp");
+        
+        System.out.println(env);
+        
+    }
+        
 }
 
 
