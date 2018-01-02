@@ -18,6 +18,7 @@ import org.json.JSONException;
 public class CloudFoundryLifecycle extends AbstractLifecycle {
 
     private CloudFoundryProvider provider;
+    private CloudFoundryConnection cloudFoundryConnection;
 
     public CloudFoundryLifecycle(TransformationContext context) throws IOException {
         super(context);
@@ -42,7 +43,7 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
             String space = properties.get("space");
             String apiHost = properties.get("apihost");
 
-            CloudFoundryConnection cloudFoundryConnection = new CloudFoundryConnection(username, password,
+            cloudFoundryConnection = new CloudFoundryConnection(username, password,
                 apiHost, organization, space);
 
             //TODO: check how to get used provider or figure out whether it is necessary to know it?
@@ -55,6 +56,7 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
     public void transform() {
         CloudFoundryApplication myApp = new CloudFoundryApplication();
         myApp.setProvider(provider);
+        myApp.setConnection(cloudFoundryConnection);
         CloudFoundryNodeVisitor visitor = new CloudFoundryNodeVisitor(myApp);
         Set<RootNode> nodes = context.getModel().getNodes();
 

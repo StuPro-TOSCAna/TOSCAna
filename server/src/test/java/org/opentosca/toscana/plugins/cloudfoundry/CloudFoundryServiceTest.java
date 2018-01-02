@@ -14,6 +14,7 @@ import org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle;
 
 import org.apache.commons.io.FileUtils;
 import org.hamcrest.CoreMatchers;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
@@ -54,6 +55,7 @@ public class CloudFoundryServiceTest extends BaseUnitTest {
         envSpace = System.getenv("TEST_CF_SPACE");
 
         app = new CloudFoundryApplication(appName);
+        cloudFoundryConnection = createConnection();
     }
 
     @Test
@@ -63,12 +65,6 @@ public class CloudFoundryServiceTest extends BaseUnitTest {
         app.addService("my_db", CloudFoundryServiceType.MYSQL);
 
         try {
-            cloudFoundryConnection = new CloudFoundryConnection(envUser,
-                envPw,
-                envHost,
-                envOrga,
-                envSpace);
-
             provider = new CloudFoundryProvider(CloudFoundryProvider.CloudFoundryProviderType.PIVOTAL);
             provider.setOfferedService(cloudFoundryConnection.getServices());
         } catch (Exception e) {
@@ -93,26 +89,32 @@ public class CloudFoundryServiceTest extends BaseUnitTest {
     @Test
     public void checkServiceCredentials() throws Exception {
         assumeNotNull(envUser, envHost, envOrga, envPw, envSpace);
-
+        JSONObject env=null;
         try {
+            env = cloudFoundryConnection.getServiceCredentials("mydb", "myphpapp");
+        } catch (JSONException e) {
+            assumeTrue(false);
+        }
+        assertThat(env.toString(), CoreMatchers.containsString("username"));
+    }
+    
+    @Test
+    public void checkPushApplication() throws Exception {
+        CloudFoundryPluginTest pluginTest = new CloudFoundryPluginTest();
+        pluginTest.setUp();
+        CloudFoundryApplication app = CloudFoundryPluginTest.myApp;
+        
+    }
+    
+    private CloudFoundryConnection createConnection() {
             cloudFoundryConnection = new CloudFoundryConnection(envUser,
                 envPw,
                 envHost,
                 envOrga,
                 envSpace);
-
-            provider = new CloudFoundryProvider(CloudFoundryProvider.CloudFoundryProviderType.PIVOTAL);
-            provider.setOfferedService(cloudFoundryConnection.getServices());
-        } catch (Exception e) {
-            assumeTrue(false);
-        }
-
-        JSONObject env = cloudFoundryConnection.getServiceCredentials("mydb", "myphpapp");
-        
-        System.out.println(env);
-        
+            
+        return cloudFoundryConnection;
     }
-        
 }
 
 

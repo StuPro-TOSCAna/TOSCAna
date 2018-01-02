@@ -1,5 +1,6 @@
 package org.opentosca.toscana.plugins.cloudfoundry.client;
 
+import java.nio.file.Path;
 import java.util.List;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -7,7 +8,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.cloudfoundry.operations.CloudFoundryOperations;
 import org.cloudfoundry.operations.DefaultCloudFoundryOperations;
 import org.cloudfoundry.operations.applications.ApplicationEnvironments;
+import org.cloudfoundry.operations.applications.ApplicationManifest;
 import org.cloudfoundry.operations.applications.GetApplicationEnvironmentsRequest;
+import org.cloudfoundry.operations.applications.PushApplicationManifestRequest;
+import org.cloudfoundry.operations.services.CreateServiceInstanceRequest;
 import org.cloudfoundry.operations.services.ListServiceOfferingsRequest;
 import org.cloudfoundry.operations.services.ServiceOffering;
 import org.cloudfoundry.reactor.DefaultConnectionContext;
@@ -16,6 +20,8 @@ import org.cloudfoundry.reactor.client.ReactorCloudFoundryClient;
 import org.cloudfoundry.reactor.tokenprovider.PasswordGrantTokenProvider;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import static java.lang.Boolean.TRUE;
 
 /**
  implements java-cf-client
@@ -75,7 +81,7 @@ public class CloudFoundryConnection {
 
     /**
      Method to get the service credentials which depends on the CloudFoundry instance.
-     Therefore a connection to a CF instance is needed 
+     Therefore a connection to a CF instance is needed
      and the application has to be deployed and binded to the given service
      You can get special credentials in this way: JSONObject.getString("port")
 
@@ -94,5 +100,29 @@ public class CloudFoundryConnection {
         return jsonObject.getJSONArray(serviceName)
             .getJSONObject(0) //TODO: Check if always on the same index
             .getJSONObject("credentials");
+    }
+
+    /**
+     Creates the service
+     Deploys the application with minimal attributes.
+     */
+    public void pushApplication(Path pathToApplication, String name, String serviceName, String plan, 
+                       String serviceInstanceName) {
+        cloudFoundryOperations.services()
+            .createInstance(CreateServiceInstanceRequest.builder()
+                .serviceInstanceName(serviceInstanceName)
+                .serviceName(serviceName)
+                .planName(plan)
+                .build());
+
+        cloudFoundryOperations.applications()
+            .pushManifest(PushApplicationManifestRequest.builder()
+                .manifest(ApplicationManifest.builder()
+                    .path(pathToApplication)
+                    .name(name)
+                    .service(serviceName)
+                    .build())
+                .noStart(TRUE)
+                .build());
     }
 }

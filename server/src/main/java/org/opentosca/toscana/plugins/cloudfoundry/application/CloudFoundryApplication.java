@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.opentosca.toscana.plugins.cloudfoundry.client.CloudFoundryConnection;
+
 /**
  This class should describe a CloudFoundryApplication with all needed information to deploy it
  */
@@ -18,6 +20,7 @@ public class CloudFoundryApplication {
     private final ArrayList<String> buildpackAdditions = new ArrayList<>();
     private CloudFoundryProvider provider;
     private String pathToApplication;
+    private CloudFoundryConnection connection;
 
     public CloudFoundryApplication(String name) {
         this.name = name;
@@ -26,6 +29,13 @@ public class CloudFoundryApplication {
     public CloudFoundryApplication() {
     }
 
+    public void setConnection(CloudFoundryConnection connection) {
+        this.connection = connection;
+    }
+    
+    public CloudFoundryConnection getConnection(){
+        return connection;
+    }
     public void setName(String name) {
         this.name = name;
     }
