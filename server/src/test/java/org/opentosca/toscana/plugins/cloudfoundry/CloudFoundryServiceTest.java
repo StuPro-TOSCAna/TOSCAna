@@ -96,6 +96,7 @@ public class CloudFoundryServiceTest extends BaseUnitTest {
 
     @Test
     public void checkPushApplication() throws Exception {
+        assumeNotNull(envUser, envHost, envOrga, envPw, envSpace);
         setUpMyApp();
 
         CloudFoundryInjectionHandler injectionHandler = new CloudFoundryInjectionHandler(myApp);
@@ -119,6 +120,7 @@ public class CloudFoundryServiceTest extends BaseUnitTest {
 
     @Test
     public void checkServiceCredentialInjection() throws Exception {
+        assumeNotNull(envUser, envHost, envOrga, envPw, envSpace);
         setUpMyApp();
 
         CloudFoundryInjectionHandler injectionHandler = new CloudFoundryInjectionHandler(myApp);
@@ -136,6 +138,7 @@ public class CloudFoundryServiceTest extends BaseUnitTest {
     }
 
     private CloudFoundryConnection createConnection() {
+        assumeNotNull(envUser, envHost, envOrga, envPw, envSpace);
         cloudFoundryConnection = new CloudFoundryConnection(envUser,
             envPw,
             envHost,

@@ -10,6 +10,7 @@ import org.opentosca.toscana.model.visitor.VisitableNode;
 import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryApplication;
 import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryProvider;
 import org.opentosca.toscana.plugins.cloudfoundry.client.CloudFoundryConnection;
+import org.opentosca.toscana.plugins.cloudfoundry.client.CloudFoundryInjectionHandler;
 import org.opentosca.toscana.plugins.cloudfoundry.visitors.CloudFoundryNodeVisitor;
 import org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle;
 
@@ -43,12 +44,19 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
             String space = properties.get("space");
             String apiHost = properties.get("apihost");
 
-            cloudFoundryConnection = new CloudFoundryConnection(username, password,
-                apiHost, organization, space);
+            if (username != null && 
+                password != null && 
+                organization != null && 
+                space != null && 
+                apiHost != null) {
+                
+                cloudFoundryConnection = new CloudFoundryConnection(username, password,
+                    apiHost, organization, space);
 
-            //TODO: check how to get used provider or figure out whether it is necessary to know it?
-            provider = new CloudFoundryProvider(CloudFoundryProvider.CloudFoundryProviderType.PIVOTAL);
-            provider.setOfferedService(cloudFoundryConnection.getServices());
+                //TODO: check how to get used provider or figure out whether it is necessary to know it?
+                provider = new CloudFoundryProvider(CloudFoundryProvider.CloudFoundryProviderType.PIVOTAL);
+                provider.setOfferedService(cloudFoundryConnection.getServices());
+            }
         }
     }
 
@@ -68,6 +76,10 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
         try {
             CloudFoundryFileCreator fileCreator = new CloudFoundryFileCreator(context.getPluginFileAccess(), myApp);
             fileCreator.createFiles();
+            if (cloudFoundryConnection != null) {
+                CloudFoundryInjectionHandler injectionHandler = new CloudFoundryInjectionHandler(myApp);
+                fileCreator.createFiles();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JSONException e) {
