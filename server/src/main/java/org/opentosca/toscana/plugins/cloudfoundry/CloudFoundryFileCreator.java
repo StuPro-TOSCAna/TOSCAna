@@ -66,6 +66,11 @@ public class CloudFoundryFileCreator {
         createService();
     }
 
+    public void updateManifest() throws IOException {
+        fileAccess.delete(MANIFEST_PATH);
+        createManifest();
+    }
+
     private void createManifestHead() throws IOException {
         String manifestHead = String.format("%s- %s: %s", MANIFESTHEAD, NAMEBLOCK, app.getName());
         fileAccess.access(MANIFEST_PATH).appendln(manifestHead).close();

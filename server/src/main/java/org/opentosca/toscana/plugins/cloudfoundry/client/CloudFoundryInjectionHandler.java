@@ -24,6 +24,11 @@ public class CloudFoundryInjectionHandler {
         this.app = app;
         this.cloudFoundryConnection = app.getConnection();
     }
+    
+    public void injectServiceCredentials() {
+        deploy();
+        getServiceCredentials();
+    }
 
     /**
      deploys the application, creates the services and bind the application to the service

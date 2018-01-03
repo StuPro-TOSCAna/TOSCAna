@@ -16,6 +16,12 @@ import org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle;
 
 import org.json.JSONException;
 
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin.CF_PROPERTY_KEY_API;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin.CF_PROPERTY_KEY_ORGANIZATION;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin.CF_PROPERTY_KEY_PASSWORD;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin.CF_PROPERTY_KEY_SPACE;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin.CF_PROPERTY_KEY_USERNAME;
+
 public class CloudFoundryLifecycle extends AbstractLifecycle {
 
     private CloudFoundryProvider provider;
@@ -38,18 +44,18 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
         Map<String, String> properties = context.getProperties().getPropertyValues();
 
         if (!properties.isEmpty()) {
-            String username = properties.get("username");
-            String password = properties.get("password");
-            String organization = properties.get("organization");
-            String space = properties.get("space");
-            String apiHost = properties.get("apihost");
+            String username = properties.get(CF_PROPERTY_KEY_USERNAME);
+            String password = properties.get(CF_PROPERTY_KEY_PASSWORD);
+            String organization = properties.get(CF_PROPERTY_KEY_ORGANIZATION);
+            String space = properties.get(CF_PROPERTY_KEY_SPACE);
+            String apiHost = properties.get(CF_PROPERTY_KEY_API);
 
-            if (username != null && 
-                password != null && 
-                organization != null && 
-                space != null && 
+            if (username != null &&
+                password != null &&
+                organization != null &&
+                space != null &&
                 apiHost != null) {
-                
+
                 cloudFoundryConnection = new CloudFoundryConnection(username, password,
                     apiHost, organization, space);
 
@@ -78,7 +84,8 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
             fileCreator.createFiles();
             if (cloudFoundryConnection != null) {
                 CloudFoundryInjectionHandler injectionHandler = new CloudFoundryInjectionHandler(myApp);
-                fileCreator.createFiles();
+                injectionHandler.injectServiceCredentials();
+                fileCreator.updateManifest();
             }
         } catch (IOException e) {
             e.printStackTrace();
