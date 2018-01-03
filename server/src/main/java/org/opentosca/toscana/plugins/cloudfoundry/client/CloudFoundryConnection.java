@@ -81,6 +81,9 @@ public class CloudFoundryConnection {
         return cloudFoundryOperations;
     }
 
+    /**
+     @return a list with all service offerings of the provider
+     */
     public List<ServiceOffering> getServices() {
         ListServiceOfferingsRequest serviceOfferingsRequest = ListServiceOfferingsRequest.builder().build();
         List<ServiceOffering> listServiceOfferings = cloudFoundryOperations.services().listServiceOfferings(serviceOfferingsRequest).collectList().block();
@@ -97,6 +100,7 @@ public class CloudFoundryConnection {
      */
     public JSONObject getServiceCredentials(String serviceName, String applicationName)
         throws JSONException, JsonProcessingException {
+
         ApplicationEnvironments environments = cloudFoundryOperations.applications()
             .getEnvironments(GetApplicationEnvironmentsRequest.builder()
                 .name(applicationName)

@@ -1,7 +1,9 @@
 package org.opentosca.toscana.plugins.cloudfoundry;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Set;
 
 import org.opentosca.toscana.core.BaseUnitTest;
@@ -28,6 +30,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.slf4j.LoggerFactory;
 
+import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assume.assumeNotNull;
 import static org.junit.Assume.assumeTrue;
@@ -40,7 +43,6 @@ public class CloudFoundryServiceTest extends BaseUnitTest {
 
     private CloudFoundryConnection cloudFoundryConnection;
     private CloudFoundryApplication app;
-    private CloudFoundryProvider provider;
     private CloudFoundryFileCreator fileCreator;
 
     private String envUser;
@@ -55,6 +57,9 @@ public class CloudFoundryServiceTest extends BaseUnitTest {
     private final String appName = "testapp";
     private final String expectedDeployContent = "cf create-service cleardb spark my_db";
     private final String outputPath = AbstractLifecycle.SCRIPTS_DIR_PATH;
+    private final CloudFoundryProvider provider = new CloudFoundryProvider(CloudFoundryProvider
+        .CloudFoundryProviderType.PIVOTAL);
+    private CloudFoundryApplication myApp = new CloudFoundryApplication();
 
     @Before
     public void setUp() {
@@ -65,7 +70,9 @@ public class CloudFoundryServiceTest extends BaseUnitTest {
         envSpace = System.getenv("TEST_CF_SPACE");
 
         app = new CloudFoundryApplication(appName);
+        app.setProvider(provider);
         cloudFoundryConnection = createConnection();
+        app.setConnection(cloudFoundryConnection);
     }
 
     @Test
@@ -73,15 +80,6 @@ public class CloudFoundryServiceTest extends BaseUnitTest {
         assumeNotNull(envUser, envHost, envOrga, envPw, envSpace);
 
         app.addService("my_db", CloudFoundryServiceType.MYSQL);
-
-        try {
-            provider = new CloudFoundryProvider(CloudFoundryProvider.CloudFoundryProviderType.PIVOTAL);
-            provider.setOfferedService(cloudFoundryConnection.getServices());
-        } catch (Exception e) {
-            assumeTrue(false);
-        }
-
-        app.setProvider(provider);
 
         File sourceDir = new File(tmpdir, "sourceDir");
         targetDir = new File(tmpdir, "targetDir");
@@ -98,7 +96,56 @@ public class CloudFoundryServiceTest extends BaseUnitTest {
 
     @Test
     public void checkPushApplication() throws Exception {
-        CloudFoundryApplication myApp = new CloudFoundryApplication();
+        setUpMyApp();
+
+        CloudFoundryInjectionHandler injectionHandler = new CloudFoundryInjectionHandler(myApp);
+        injectionHandler.deploy();
+    }
+
+    @Test
+    public void checkReadingServiceCredentials() throws Exception {
+        assumeNotNull(envUser, envHost, envOrga, envPw, envSpace);
+        JSONObject env = null;
+        try {
+            env = cloudFoundryConnection.getServiceCredentials("cleardb", "my_app");
+        } catch (JSONException e) {
+            e.printStackTrace();
+            assumeTrue(false);
+        } catch (Exception e) {
+            assumeTrue(false);
+        }
+        assertThat(env.toString(), CoreMatchers.containsString("username"));
+    }
+
+    @Test
+    public void checkServiceCredentialInjection() throws Exception {
+        setUpMyApp();
+
+        CloudFoundryInjectionHandler injectionHandler = new CloudFoundryInjectionHandler(myApp);
+        injectionHandler.deploy();
+
+        injectionHandler.getServiceCredentials();
+
+        Map<String, String> environmentVariables = myApp.getEnvironmentVariables();
+        String contentEnvVariables = "";
+        for (Map.Entry<String, String> entry : environmentVariables.entrySet()) {
+            contentEnvVariables = String.format("%s%s: %s\n", contentEnvVariables, entry.getKey(), entry.getValue());
+        }
+
+        assertThat(contentEnvVariables, not(CoreMatchers.containsString("database_user: TODO")));
+    }
+
+    private CloudFoundryConnection createConnection() {
+        cloudFoundryConnection = new CloudFoundryConnection(envUser,
+            envPw,
+            envHost,
+            envOrga,
+            envSpace);
+
+        return cloudFoundryConnection;
+    }
+
+    private void setUpMyApp() throws IOException, JSONException {
         CloudFoundryNodeVisitor visitor = new CloudFoundryNodeVisitor(myApp);
         EffectiveModel lamp = TestEffectiveModels.getLampModel();
         ArrayList<String> paths = new ArrayList<>();
@@ -123,38 +170,11 @@ public class CloudFoundryServiceTest extends BaseUnitTest {
         myApp = visitor.getFilledApp();
         assumeNotNull(cloudFoundryConnection);
         myApp.setConnection(cloudFoundryConnection);
+        myApp.setProvider(provider);
         String pathToApplication = myApp.getPathToApplication();
         myApp.setPathToApplication(targetDir + "/" + pathToApplication + "/");
         CloudFoundryFileCreator fileCreator = new CloudFoundryFileCreator(fileAccess, myApp);
         fileCreator.createFiles();
-
-        CloudFoundryInjectionHandler injectionHandler = new CloudFoundryInjectionHandler(myApp);
-        injectionHandler.deploy();
-    }
-
-    @Test
-    public void checkServiceCredentials() throws Exception {
-        assumeNotNull(envUser, envHost, envOrga, envPw, envSpace);
-        JSONObject env = null;
-        try {
-            env = cloudFoundryConnection.getServiceCredentials("cleardb", "my_app");
-        } catch (JSONException e) {
-            e.printStackTrace();
-            assumeTrue(false);
-        } catch (Exception e) {
-            assumeTrue(false);
-        }
-        assertThat(env.toString(), CoreMatchers.containsString("username"));
-    }
-
-    private CloudFoundryConnection createConnection() {
-        cloudFoundryConnection = new CloudFoundryConnection(envUser,
-            envPw,
-            envHost,
-            envOrga,
-            envSpace);
-
-        return cloudFoundryConnection;
     }
 }
 

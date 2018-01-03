@@ -118,11 +118,12 @@ public class CloudFoundryFileCreator {
         BashScript deployScript = new BashScript(fileAccess, FILEPRAEFIX_DEPLOY + app.getName());
         deployScript.append(EnvironmentCheck.checkEnvironment("cf"));
 
-        if (app.getProvider() != null && !app.getServices().isEmpty()) {
+        if (app.getProvider() != null && !app.getServices().isEmpty() && app.getConnection() != null) {
+            CloudFoundryProvider provider = app.getProvider();
+            provider.setOfferedService(app.getConnection().getServices());
             addProviderServiceOfferings(deployScript);
             for (Map.Entry<String, CloudFoundryServiceType> service : app.getServices().entrySet()) {
                 String description = service.getValue().getName();
-                CloudFoundryProvider provider = app.getProvider();
                 List<ServiceOffering> services = provider.getOfferedService();
                 Boolean isSet = false;
 
@@ -138,7 +139,7 @@ public class CloudFoundryFileCreator {
                                 deployScript.append(String.format("%s%s %s %s", CLI_CREATE_SERVICE,
                                     serviceName, planName, serviceInstanceName));
                                 app.addMatchedService(
-                                    new CloudFoundryService(serviceName, serviceInstanceName, planName));
+                                    new CloudFoundryService(serviceName, serviceInstanceName, planName, service.getValue()));
                                 isSet = true;
                                 break;
                             }
