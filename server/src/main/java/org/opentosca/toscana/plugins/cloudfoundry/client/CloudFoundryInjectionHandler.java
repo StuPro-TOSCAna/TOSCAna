@@ -19,9 +19,13 @@ public class CloudFoundryInjectionHandler {
 
     //TODO: deploy the application to create service and bind the application to it
     //needs a manifest to deploy
-    private void deploy() {
-        cloudFoundryConnection.pushApplication(Paths.get(app.getPathToApplication()),
-            app.getName(), "cleardb", "spark", "my_db");
+    public void deploy() {
+        try {
+            cloudFoundryConnection.pushApplication(Paths.get(app.getPathToApplication()),
+                app.getName(), "cleardb", "spark", "my_db");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     //TODO: read the service credentials and add it to the environment variables which the values belong to

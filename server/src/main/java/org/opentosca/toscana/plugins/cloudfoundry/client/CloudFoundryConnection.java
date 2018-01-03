@@ -2,6 +2,7 @@ package org.opentosca.toscana.plugins.cloudfoundry.client;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,6 +21,8 @@ import org.cloudfoundry.reactor.client.ReactorCloudFoundryClient;
 import org.cloudfoundry.reactor.tokenprovider.PasswordGrantTokenProvider;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static java.lang.Boolean.TRUE;
 
@@ -29,6 +32,8 @@ import static java.lang.Boolean.TRUE;
  */
 public class CloudFoundryConnection {
 
+    private final static Logger logger = LoggerFactory.getLogger(CloudFoundryConnection.class);
+    
     private String userName;
     private String password;
     private String apiHost;
@@ -106,23 +111,45 @@ public class CloudFoundryConnection {
      Creates the service
      Deploys the application with minimal attributes.
      */
-    public void pushApplication(Path pathToApplication, String name, String serviceName, String plan, 
-                       String serviceInstanceName) {
-        cloudFoundryOperations.services()
-            .createInstance(CreateServiceInstanceRequest.builder()
-                .serviceInstanceName(serviceInstanceName)
-                .serviceName(serviceName)
-                .planName(plan)
-                .build());
+    public void pushApplication(Path pathToApplication, String name, String serviceName, String plan,
+                                String serviceInstanceName) throws InterruptedException {
+
+        createService(serviceInstanceName,serviceName,plan);
+        
+        CountDownLatch latch = new CountDownLatch(1);
 
         cloudFoundryOperations.applications()
             .pushManifest(PushApplicationManifestRequest.builder()
                 .manifest(ApplicationManifest.builder()
                     .path(pathToApplication)
                     .name(name)
-                    .service(serviceName)
+                    .service(serviceInstanceName)
                     .build())
                 .noStart(TRUE)
-                .build());
+                .build())
+            .doOnSubscribe(s -> logger.info("Deployment Started"))
+            .doOnError(t -> this.logger.error("Deployment Failed", t))
+            .doOnSuccess(v -> this.logger.info("Deployment Successful"))
+            .subscribe(System.out::println, t -> latch.countDown(), latch::countDown);
+
+        latch.await();
+    }
+    
+    private void createService(String serviceInstanceName, String serviceName, String plan) throws InterruptedException {
+        
+        CountDownLatch latchService = new CountDownLatch(1);
+
+        cloudFoundryOperations.services()
+            .createInstance(CreateServiceInstanceRequest.builder()
+                .serviceInstanceName(serviceInstanceName)
+                .serviceName(serviceName)
+                .planName(plan)
+                .build())
+            .doOnSubscribe(s -> logger.info("Create Service Started"))
+            .doOnError(t -> this.logger.error("Service creation Failed", t))
+            .doOnSuccess(v -> this.logger.info("Service creation Successful"))
+            .subscribe(System.out::println, t -> latchService.countDown(), latchService::countDown);
+
+        latchService.await();
     }
 }
