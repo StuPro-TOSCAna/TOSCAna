@@ -1,8 +1,11 @@
 package org.opentosca.toscana.plugins.cloudfoundry.client;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+
+import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryService;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,7 +36,7 @@ import static java.lang.Boolean.TRUE;
 public class CloudFoundryConnection {
 
     private final static Logger logger = LoggerFactory.getLogger(CloudFoundryConnection.class);
-    
+
     private String userName;
     private String password;
     private String apiHost;
@@ -92,10 +95,12 @@ public class CloudFoundryConnection {
 
      @return JSONObject with credentials of the given serviceId
      */
-    public JSONObject getServiceCredentials(String serviceName, String applicationName) throws JSONException, JsonProcessingException {
-        ApplicationEnvironments environments = cloudFoundryOperations.applications().getEnvironments(GetApplicationEnvironmentsRequest.builder()
-            .name(applicationName)
-            .build()).block();
+    public JSONObject getServiceCredentials(String serviceName, String applicationName)
+        throws JSONException, JsonProcessingException {
+        ApplicationEnvironments environments = cloudFoundryOperations.applications()
+            .getEnvironments(GetApplicationEnvironmentsRequest.builder()
+                .name(applicationName)
+                .build()).block();
 
         Object env = environments.getSystemProvided();
         ObjectMapper mapper = new ObjectMapper();
@@ -108,22 +113,33 @@ public class CloudFoundryConnection {
     }
 
     /**
-     Creates the service
-     Deploys the application with minimal attributes.
+     Creates the services
+     Deploys the application with minimal attributes and bind application to service.
      */
-    public void pushApplication(Path pathToApplication, String name, String serviceName, String plan,
-                                String serviceInstanceName) throws InterruptedException {
+    public void pushApplication(Path pathToApplication, String name, ArrayList<CloudFoundryService> services)
+        throws InterruptedException {
 
-        createService(serviceInstanceName,serviceName,plan);
-        
+        for (CloudFoundryService service : services) {
+            createService(service.getServiceInstanceName(), service.getServiceName(), service.getPlan());
+        }
+        deployApplication(pathToApplication, name, services);
+    }
+
+    private void deployApplication(Path pathToApplication, String name,
+                                   ArrayList<CloudFoundryService> services) throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
+
+        String[] serviceInstanceNames = new String[services.size()];
+        for (int i = 0; i < services.size(); i++) {
+            serviceInstanceNames[i] = services.get(i).getServiceInstanceName();
+        }
 
         cloudFoundryOperations.applications()
             .pushManifest(PushApplicationManifestRequest.builder()
                 .manifest(ApplicationManifest.builder()
                     .path(pathToApplication)
                     .name(name)
-                    .service(serviceInstanceName)
+                    .service(serviceInstanceNames)
                     .build())
                 .noStart(TRUE)
                 .build())
@@ -134,9 +150,10 @@ public class CloudFoundryConnection {
 
         latch.await();
     }
-    
-    private void createService(String serviceInstanceName, String serviceName, String plan) throws InterruptedException {
-        
+
+    private void createService(String serviceInstanceName, String serviceName, String plan)
+        throws InterruptedException {
+
         CountDownLatch latchService = new CountDownLatch(1);
 
         cloudFoundryOperations.services()

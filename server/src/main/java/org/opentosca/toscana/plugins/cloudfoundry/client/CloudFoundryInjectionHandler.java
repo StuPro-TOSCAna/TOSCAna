@@ -22,7 +22,7 @@ public class CloudFoundryInjectionHandler {
     public void deploy() {
         try {
             cloudFoundryConnection.pushApplication(Paths.get(app.getPathToApplication()),
-                app.getName(), "cleardb", "spark", "my_db");
+                app.getName(), app.getServicesMatchedToProvider());
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

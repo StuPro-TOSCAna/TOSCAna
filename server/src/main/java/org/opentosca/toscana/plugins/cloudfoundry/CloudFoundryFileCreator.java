@@ -8,6 +8,7 @@ import java.util.Map;
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryApplication;
 import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryProvider;
+import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryService;
 import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryServiceType;
 import org.opentosca.toscana.plugins.scripts.BashScript;
 import org.opentosca.toscana.plugins.scripts.EnvironmentCheck;
@@ -131,8 +132,13 @@ public class CloudFoundryFileCreator {
                     if (offeredService.getDescription().toLowerCase().indexOf(description.toLowerCase()) != -1) {
                         for (ServicePlan plan : offeredService.getServicePlans()) {
                             if (plan.getFree()) {
+                                String serviceName = offeredService.getLabel();
+                                String planName = plan.getName();
+                                String serviceInstanceName = service.getKey();
                                 deployScript.append(String.format("%s%s %s %s", CLI_CREATE_SERVICE,
-                                    offeredService.getLabel(), plan.getName(), service.getKey()));
+                                    serviceName, planName, serviceInstanceName));
+                                app.addMatchedService(
+                                    new CloudFoundryService(serviceName, serviceInstanceName, planName));
                                 isSet = true;
                                 break;
                             }

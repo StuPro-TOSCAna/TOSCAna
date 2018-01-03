@@ -17,6 +17,7 @@ public class CloudFoundryApplication {
     private final Map<String, String> environmentVariables = new HashMap<>();
     private final Map<String, String> attributes = new HashMap<>();
     private final Map<String, CloudFoundryServiceType> services = new HashMap<>();
+    private final ArrayList<CloudFoundryService> servicesMatchedToProvider = new ArrayList<>();
     private final ArrayList<String> buildpackAdditions = new ArrayList<>();
     private CloudFoundryProvider provider;
     private String pathToApplication;
@@ -32,10 +33,11 @@ public class CloudFoundryApplication {
     public void setConnection(CloudFoundryConnection connection) {
         this.connection = connection;
     }
-    
-    public CloudFoundryConnection getConnection(){
+
+    public CloudFoundryConnection getConnection() {
         return connection;
     }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -62,6 +64,14 @@ public class CloudFoundryApplication {
 
     public Map<String, CloudFoundryServiceType> getServices() {
         return services;
+    }
+
+    public ArrayList<CloudFoundryService> getServicesMatchedToProvider() {
+        return servicesMatchedToProvider;
+    }
+
+    public void addMatchedService(CloudFoundryService matchedService) {
+        servicesMatchedToProvider.add(matchedService);
     }
 
     public void addService(String serviceName, CloudFoundryServiceType serviceType) {

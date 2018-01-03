@@ -2,7 +2,6 @@ package org.opentosca.toscana.plugins.cloudfoundry;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.Set;
 
 import org.opentosca.toscana.core.BaseUnitTest;
@@ -68,7 +67,7 @@ public class CloudFoundryServiceTest extends BaseUnitTest {
         app = new CloudFoundryApplication(appName);
         cloudFoundryConnection = createConnection();
     }
-    
+
     @Test
     public void checkService() throws Exception {
         assumeNotNull(envUser, envHost, envOrga, envPw, envSpace);
@@ -96,7 +95,6 @@ public class CloudFoundryServiceTest extends BaseUnitTest {
         String deployContent = FileUtils.readFileToString(targetFile);
         assertThat(deployContent, CoreMatchers.containsString(expectedDeployContent));
     }
-
 
     @Test
     public void checkPushApplication() throws Exception {
@@ -126,10 +124,10 @@ public class CloudFoundryServiceTest extends BaseUnitTest {
         assumeNotNull(cloudFoundryConnection);
         myApp.setConnection(cloudFoundryConnection);
         String pathToApplication = myApp.getPathToApplication();
-        myApp.setPathToApplication(targetDir+"/"+pathToApplication+"/");
+        myApp.setPathToApplication(targetDir + "/" + pathToApplication + "/");
         CloudFoundryFileCreator fileCreator = new CloudFoundryFileCreator(fileAccess, myApp);
         fileCreator.createFiles();
-        
+
         CloudFoundryInjectionHandler injectionHandler = new CloudFoundryInjectionHandler(myApp);
         injectionHandler.deploy();
     }
@@ -137,24 +135,25 @@ public class CloudFoundryServiceTest extends BaseUnitTest {
     @Test
     public void checkServiceCredentials() throws Exception {
         assumeNotNull(envUser, envHost, envOrga, envPw, envSpace);
-        JSONObject env=null;
+        JSONObject env = null;
         try {
-            env = cloudFoundryConnection.getServiceCredentials("mydb", "myphpapp");
+            env = cloudFoundryConnection.getServiceCredentials("cleardb", "my_app");
         } catch (JSONException e) {
+            e.printStackTrace();
             assumeTrue(false);
         } catch (Exception e) {
             assumeTrue(false);
         }
         assertThat(env.toString(), CoreMatchers.containsString("username"));
     }
-    
+
     private CloudFoundryConnection createConnection() {
-            cloudFoundryConnection = new CloudFoundryConnection(envUser,
-                envPw,
-                envHost,
-                envOrga,
-                envSpace);
-            
+        cloudFoundryConnection = new CloudFoundryConnection(envUser,
+            envPw,
+            envHost,
+            envOrga,
+            envSpace);
+
         return cloudFoundryConnection;
     }
 }
