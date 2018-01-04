@@ -26,7 +26,7 @@ public class ResourceDeployment {
 
         Container container = new ContainerBuilder()
             .withName(name)
-            .withImage(name)
+            .withImage(stack.getDockerImageTag().orElseThrow(NullPointerException::new))
             .addAllToPorts(stack.getOpenContainerPorts()).build();
         containers.add(container);
 

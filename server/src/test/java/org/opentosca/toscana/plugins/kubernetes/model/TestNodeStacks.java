@@ -33,6 +33,8 @@ public class TestNodeStacks {
         webAppNodes.add(computeContainer);
 
         NodeStack webAppNodeStack = new NodeStack(webAppNodes);
+        //Manualy set the docker image tag (used for testing the ResourceFileCreator)
+        webAppNodeStack.setDockerImageTag("my-app");
         return Sets.newHashSet(webAppNodeStack);
     }
 }
