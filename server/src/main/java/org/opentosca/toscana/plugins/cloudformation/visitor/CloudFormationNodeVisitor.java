@@ -7,12 +7,14 @@ import org.opentosca.toscana.model.capability.ComputeCapability;
 import org.opentosca.toscana.model.capability.OsCapability;
 import org.opentosca.toscana.model.node.Apache;
 import org.opentosca.toscana.model.node.Compute;
+import org.opentosca.toscana.model.node.Dbms;
 import org.opentosca.toscana.model.node.MysqlDatabase;
 import org.opentosca.toscana.model.node.MysqlDbms;
 import org.opentosca.toscana.model.node.WebApplication;
 import org.opentosca.toscana.model.node.WebServer;
 import org.opentosca.toscana.model.operation.Operation;
 import org.opentosca.toscana.model.operation.OperationVariable;
+import org.opentosca.toscana.model.requirement.Requirement;
 import org.opentosca.toscana.model.visitor.StrictNodeVisitor;
 import org.opentosca.toscana.model.visitor.UnsupportedTypeException;
 import org.opentosca.toscana.plugins.cloudformation.CloudFormationModule;
@@ -111,11 +113,16 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
 
             //get the name of the server where the dbms this node is hosted on, is hosted on
             String serverName;
-            if (node.host.getFulfillers().size() == 1) {
-                MysqlDbms mysqlDbms = node.host.getFulfillers().toArray(new MysqlDbms[1])[0];
-                serverName = toAlphanumerical(mysqlDbms.getHost().getCapability().get().getResourceName().get());
+            if (exactlyOneFulfiller(node.host)) {
+                Dbms dbms = node.host.getFulfillers().iterator().next();
+                if (exactlyOneFulfiller(dbms.getHost())) {
+                    Compute compute = dbms.getHost().getFulfillers().iterator().next();
+                    serverName = toAlphanumerical(compute.getNodeName());
+                } else {
+                    throw new IllegalStateException("Got " + dbms.getHost().getFulfillers().size() + " instead of one fulfiller");
+                }
             } else {
-                throw new IllegalStateException("More than one fulfiller");
+                throw new IllegalStateException("Got " + node.getHost().getFulfillers().size() + " instead of one fulfiller");
             }
             String dbName = node.getDatabaseName();
             //throw error, take default or generate random?
@@ -200,6 +207,10 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
 
     private String toAlphanumerical(String inp) {
         return inp.replaceAll("[^A-Za-z0-9]", "");
+    }
+
+    private boolean exactlyOneFulfiller(Requirement requirement) {
+        return (requirement.getFulfillers().size() == 1);
     }
 
     private void handleOperation(Operation operation, String serverName, String config) {
