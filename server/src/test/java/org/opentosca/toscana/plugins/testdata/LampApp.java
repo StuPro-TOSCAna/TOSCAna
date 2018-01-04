@@ -97,8 +97,8 @@ public class LampApp {
 
         MysqlDatabase mydb = MysqlDatabase
             .builder("my_db", "DBNAME")
-            .user("")
-            .password("")
+            .user("root")
+            .password("geheim12")
             .port(3306)
             .standardLifecycle(lifecycle)
             .mysqlHost(MysqlDbmsRequirement.builder().fulfiller(dbms).build()) //TODO Relationship?
