@@ -22,6 +22,7 @@ public class NodeStack {
     private final List<KubernetesNodeContainer> stackNodes;
 
     private String dockerfilePath = null;
+    private String dockerImageTag = null;
 
     private List<Integer> openPorts = new ArrayList<>();
 
@@ -79,6 +80,14 @@ public class NodeStack {
         return Optional.ofNullable(dockerfilePath);
     }
 
+    public void setDockerImageTag(String dockerImageTag) {
+        this.dockerImageTag = dockerImageTag;
+    }
+
+    public Optional<String> getDockerImageTag() {
+        return Optional.ofNullable(dockerImageTag);
+    }
+    
     public String getStackName() {
         return stackNodes.get(0).getNode().getNodeName();
     }
