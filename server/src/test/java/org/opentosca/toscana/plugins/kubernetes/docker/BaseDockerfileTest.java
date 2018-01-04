@@ -2,7 +2,6 @@ package org.opentosca.toscana.plugins.kubernetes.docker;
 
 import java.io.File;
 import java.io.IOException;
-import java.security.MessageDigest;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -14,6 +13,7 @@ import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.plugins.kubernetes.docker.dockerfile.builder.DockerfileBuilder;
 import org.opentosca.toscana.plugins.kubernetes.docker.dockerfile.builder.DockerfileBuilderTest;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
@@ -54,7 +54,7 @@ public abstract class BaseDockerfileTest extends BaseUnitTest {
         builder = new DockerfileBuilder("library/ubuntu:latest", WORKING_DIR_SUBFOLDER_NAME, access);
     }
 
-    public byte[] buildSHADockerfile() throws Exception {
+    public String buildSHADockerfile() throws Exception {
         File bindir = new File(inputDir, "bin");
         bindir.mkdirs();
         byte[] data = new byte[1024 * 1024 * 10];
@@ -70,7 +70,7 @@ public abstract class BaseDockerfileTest extends BaseUnitTest {
             .entrypoint("sha256sum", "test.bin");
 
         builder.write();
-        return MessageDigest.getInstance("SHA-256").digest(data);
+        return DigestUtils.sha256Hex(data);
     }
 
     public void validate(String s, String path) throws IOException {
