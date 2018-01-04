@@ -27,15 +27,20 @@ import static picocli.CommandLine.usage;
         ToscanaStatus.class,
         ToscanaTransformation.class})
 public class CliMain extends AbstractCommand {
+    private ApiController apiController;
 
-    public static void main(String[] args) {
+    public CliMain() {
+    }
+
+    public void setApiController(ApiController apiController) {
+        this.apiController = apiController;
+    }
+
+    public void main(String[] args) {
 
         //Activate ANSI on Windows
         AnsiConsole.systemInstall();
         System.setProperty("picocli.ansi", "true");
-
-        //First startup to create cli.properties
-        new CliProperties();
 
         //System Property gets set here, because picocli.trace must be set before CommandLine starts
         String input = String.join("", args);
@@ -45,7 +50,7 @@ public class CliMain extends AbstractCommand {
             System.setProperty("picocli.trace", "INFO");
         }
 
-        CommandLine commandLine = new CommandLine(new CliMain());
+        CommandLine commandLine = new CommandLine(new CliMain(), new CliPropertiesFactory(apiController));
         commandLine.parseWithHandler(new CommandLine.RunLast(), System.err, args);
         AnsiConsole.systemUninstall();
     }
