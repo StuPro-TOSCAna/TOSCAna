@@ -36,7 +36,7 @@ public class LampApp {
     private void createLampModel() {
 
         Compute compute = createComputeNode();
-        Apache webserver = createApache();
+        Apache webserver = createApache(compute);
         MysqlDbms dbms = createMysqlDbms(compute);
         MysqlDatabase database = createMysqlDatabase(dbms);
         WebApplication webApplication = createWebApplication(webserver, database);
@@ -107,12 +107,12 @@ public class LampApp {
         return mydb;
     }
 
-    private Apache createApache() {
+    private Apache createApache(Compute compute) {
         ContainerCapability containerCapability = createContainerCapability();
         return Apache
             .builder("apache_web_server")
             .containerHost(containerCapability)
-            .host(getHostedOnServerRequirement())
+            .host(getHostedOnServerRequirement(compute))
             .build();
     }
 
@@ -151,10 +151,10 @@ public class LampApp {
         return webApplication;
     }
 
-    private HostRequirement getHostedOnServerRequirement() {
+    private HostRequirement getHostedOnServerRequirement(Compute compute) {
         ContainerCapability hostCapability = ContainerCapability.builder().resourceName("server").build();
 
         return HostRequirement.builder()
-            .capability(hostCapability).build();
+            .capability(hostCapability).fulfiller(compute).build();
     }
 }
