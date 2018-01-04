@@ -219,7 +219,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
         //Add dependencies
         for (String dependency : operation.getDependencies()) {
             try {
-                String cfnFileMode = "000400"; //TODO Check what mode is needed (only read?)
+                String cfnFileMode = "000644"; //TODO Check what mode is needed (only read?)
                 String cfnFileOwner = "root"; //TODO Check what Owner is needed
                 String cfnFileGroup = "root"; //TODO Check what Group is needed
 
