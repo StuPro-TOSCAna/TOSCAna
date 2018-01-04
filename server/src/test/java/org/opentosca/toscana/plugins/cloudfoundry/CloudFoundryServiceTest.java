@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
+import org.opentosca.toscana.core.testutils.TestUtils;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.model.node.RootNode;
@@ -28,15 +29,12 @@ import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
-import org.slf4j.LoggerFactory;
 
 import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeNotNull;
 import static org.junit.Assume.assumeTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.FILEPRAEFIX_DEPLOY;
 import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.FILESUFFIX_DEPLOY;
 
@@ -63,13 +61,19 @@ public class CloudFoundryServiceTest extends BaseUnitTest {
     private CloudFoundryApplication myApp = new CloudFoundryApplication();
     private PluginFileAccess fileAccess;
 
+    public final static String CF_ENVIRONMENT_USER = "TEST_CF_USER";
+    public final static String CF_ENVIRONMENT_PW = "TEST_CF_PW";
+    public final static String CF_ENVIRONMENT_HOST = "TEST_CF_HOST";
+    public final static String CF_ENVIRONMENT_ORGA = "TEST_CF_ORGA";
+    public final static String CF_ENVIRONMENT_SPACE = "TEST_CF_SPACE";
+
     @Before
     public void setUp() {
-        envUser = System.getenv("TEST_CF_USER");
-        envPw = System.getenv("TEST_CF_PW");
-        envHost = System.getenv("TEST_CF_HOST");
-        envOrga = System.getenv("TEST_CF_ORGA");
-        envSpace = System.getenv("TEST_CF_SPACE");
+        envUser = System.getenv(CF_ENVIRONMENT_USER);
+        envPw = System.getenv(CF_ENVIRONMENT_PW);
+        envHost = System.getenv(CF_ENVIRONMENT_HOST);
+        envOrga = System.getenv(CF_ENVIRONMENT_ORGA);
+        envSpace = System.getenv(CF_ENVIRONMENT_SPACE);
 
         app = new CloudFoundryApplication(appName);
         app.setProvider(provider);
@@ -103,7 +107,7 @@ public class CloudFoundryServiceTest extends BaseUnitTest {
 
         CloudFoundryInjectionHandler injectionHandler = new CloudFoundryInjectionHandler(fileAccess, myApp);
         Boolean isPushed = injectionHandler.deploy();
-        
+
         assertTrue(isPushed);
     }
 
@@ -161,7 +165,7 @@ public class CloudFoundryServiceTest extends BaseUnitTest {
         targetDir = new File(tmpdir, "targetDir");
         sourceDir.mkdir();
         targetDir.mkdir();
-        when(log.getLogger(any(Class.class))).thenReturn(LoggerFactory.getLogger("Test logger"));
+        log = TestUtils.getMockLog();
         PluginFileAccess fileAccess = new PluginFileAccess(sourceDir, targetDir, log);
         Set<RootNode> nodes = lamp.getNodes();
 

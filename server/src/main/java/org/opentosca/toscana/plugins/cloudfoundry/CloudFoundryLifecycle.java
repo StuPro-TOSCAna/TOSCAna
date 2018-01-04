@@ -62,13 +62,12 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
     }
 
     private boolean isNotNull(String... elements) {
-        Boolean isOk = true;
         for (String el : elements) {
             if (el == null) {
-                isOk = false;
+                return false;
             }
         }
-        return isOk;
+        return true;
     }
 
     @Override
@@ -93,9 +92,7 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
                 injectionHandler.injectServiceCredentials();
                 fileCreator.updateManifest();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
+        } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
     }

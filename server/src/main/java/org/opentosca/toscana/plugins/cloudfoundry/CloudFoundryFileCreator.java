@@ -127,31 +127,17 @@ public class CloudFoundryFileCreator {
             CloudFoundryProvider provider = app.getProvider();
             provider.setOfferedService(app.getConnection().getServices());
             addProviderServiceOfferings(deployScript);
+
             for (Map.Entry<String, CloudFoundryServiceType> service : app.getServices().entrySet()) {
                 String description = service.getValue().getName();
                 List<ServiceOffering> services = provider.getOfferedService();
-                Boolean isSet = false;
+                Boolean isSet;
 
                 //checks if a offered service of the provider contains the description of the needed service
                 //if yes then add the service to the script with a free plan
-                for (ServiceOffering offeredService : services) {
-                    if (offeredService.getDescription().toLowerCase().indexOf(description.toLowerCase()) != -1) {
-                        for (ServicePlan plan : offeredService.getServicePlans()) {
-                            if (plan.getFree()) {
-                                String serviceName = offeredService.getLabel();
-                                String planName = plan.getName();
-                                String serviceInstanceName = service.getKey();
-                                deployScript.append(String.format("%s%s %s %s", CLI_CREATE_SERVICE,
-                                    serviceName, planName, serviceInstanceName));
-                                app.addMatchedService(
-                                    new CloudFoundryService(serviceName, serviceInstanceName, planName, service.getValue()));
-                                isSet = true;
-                                break;
-                            }
-                        }
-                    }
-                }
+                isSet = addMatchedServices(services, deployScript, description, service);
 
+                //if not then add the default create command to the deploy script
                 if (!isSet) {
                     deployScript.append(CLI_CREATE_SERVICE_DEFAULT + service);
                 }
@@ -161,8 +147,34 @@ public class CloudFoundryFileCreator {
                 deployScript.append(CLI_CREATE_SERVICE_DEFAULT + service.getKey());
             }
         }
-
         deployScript.append(CLI_PUSH + app.getName() + CLI_PATH_TO_MANIFEST + MANIFEST_NAME);
+    }
+
+    //checks if a service of a provider matches the needed service
+    private Boolean addMatchedServices(List<ServiceOffering> services,
+                                       BashScript deployScript,
+                                       String description,
+                                       Map.Entry<String, CloudFoundryServiceType> service) throws IOException {
+        Boolean isSet = false;
+
+        for (ServiceOffering offeredService : services) {
+            if (offeredService.getDescription().toLowerCase().indexOf(description.toLowerCase()) != -1) {
+                for (ServicePlan plan : offeredService.getServicePlans()) {
+                    if (plan.getFree()) {
+                        String serviceName = offeredService.getLabel();
+                        String planName = plan.getName();
+                        String serviceInstanceName = service.getKey();
+                        deployScript.append(String.format("%s%s %s %s", CLI_CREATE_SERVICE,
+                            serviceName, planName, serviceInstanceName));
+                        app.addMatchedService(
+                            new CloudFoundryService(serviceName, serviceInstanceName, planName, service.getValue()));
+                        isSet = true;
+                        break;
+                    }
+                }
+            }
+        }
+        return isSet;
     }
 
     //only for PHP 

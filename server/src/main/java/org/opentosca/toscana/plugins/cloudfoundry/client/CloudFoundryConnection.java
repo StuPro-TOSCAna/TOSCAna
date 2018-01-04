@@ -1,7 +1,6 @@
 package org.opentosca.toscana.plugins.cloudfoundry.client;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -121,7 +120,7 @@ public class CloudFoundryConnection {
      Creates the services
      Deploys the application with minimal attributes and bind application to service.
      */
-    public Boolean pushApplication(Path pathToApplication, String name, ArrayList<CloudFoundryService> services)
+    public boolean pushApplication(Path pathToApplication, String name, List<CloudFoundryService> services)
         throws InterruptedException {
 
         Boolean succeed = false;
@@ -133,8 +132,8 @@ public class CloudFoundryConnection {
         return succeed;
     }
 
-    private Boolean deployApplication(Path pathToApplication, String name,
-                                      ArrayList<CloudFoundryService> services) throws InterruptedException {
+    private boolean deployApplication(Path pathToApplication, String name,
+                                      List<CloudFoundryService> services) throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
 
         String[] serviceInstanceNames = new String[services.size()];

@@ -18,11 +18,22 @@ import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin.CF_P
 import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin.CF_PROPERTY_KEY_PASSWORD;
 import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin.CF_PROPERTY_KEY_SPACE;
 import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin.CF_PROPERTY_KEY_USERNAME;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryServiceTest.CF_ENVIRONMENT_HOST;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryServiceTest.CF_ENVIRONMENT_ORGA;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryServiceTest.CF_ENVIRONMENT_PW;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryServiceTest.CF_ENVIRONMENT_SPACE;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryServiceTest.CF_ENVIRONMENT_USER;
 
 /**
  Created by jensmuller on 03.01.18.
  */
 public class CloudFoundryLampIT extends BaseTransformTest {
+
+    private final String envUser = System.getenv(CF_ENVIRONMENT_USER);
+    private final String envPw = System.getenv(CF_ENVIRONMENT_PW);
+    private final String envHost = System.getenv(CF_ENVIRONMENT_HOST);
+    private final String envOrga = System.getenv(CF_ENVIRONMENT_ORGA);
+    private final String envSpace = System.getenv(CF_ENVIRONMENT_SPACE);
 
     public CloudFoundryLampIT() {
         super(new CloudFoundryPlugin());
@@ -46,14 +57,6 @@ public class CloudFoundryLampIT extends BaseTransformTest {
 
     @Override
     protected PropertyInstance getProperties() throws Exception {
-        String envUser = System.getenv("TEST_CF_USER");
-        String envPw = System.getenv("TEST_CF_PW");
-        String envHost = System.getenv("TEST_CF_HOST");
-        String envOrga = System.getenv("TEST_CF_ORGA");
-        String envSpace = System.getenv("TEST_CF_SPACE");
-
-        assumeNotNull(envUser, envHost, envOrga, envPw, envSpace);
-
         PropertyInstance props = new PropertyInstance(plugin.getPlatform().properties, mock(Transformation.class));
         props.setPropertyValue(CF_PROPERTY_KEY_USERNAME, envUser);
         props.setPropertyValue(CF_PROPERTY_KEY_PASSWORD, envPw);
@@ -68,5 +71,10 @@ public class CloudFoundryLampIT extends BaseTransformTest {
     protected void copyArtifacts(File contentDir) throws Exception {
         File inputDir = new File(getClass().getResource("/csars/yaml/valid/lamp-input").getFile());
         FileUtils.copyDirectory(inputDir, contentDir);
+    }
+
+    @Override
+    protected void checkAssumptions() {
+        assumeNotNull(envUser, envPw, envHost, envOrga, envSpace);
     }
 }

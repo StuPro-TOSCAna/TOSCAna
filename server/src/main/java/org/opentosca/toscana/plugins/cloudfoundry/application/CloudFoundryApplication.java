@@ -1,6 +1,7 @@
 package org.opentosca.toscana.plugins.cloudfoundry.application;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,8 +67,8 @@ public class CloudFoundryApplication {
         return services;
     }
 
-    public ArrayList<CloudFoundryService> getServicesMatchedToProvider() {
-        return servicesMatchedToProvider;
+    public List<CloudFoundryService> getServicesMatchedToProvider() {
+        return Collections.unmodifiableList(servicesMatchedToProvider);
     }
 
     public void addMatchedService(CloudFoundryService matchedService) {

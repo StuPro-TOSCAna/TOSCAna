@@ -44,7 +44,7 @@ public class CloudFoundryInjectionHandler {
      deploys the application, creates the services and bind the application to the service
      the application is not running after that
      */
-    public Boolean deploy() {
+    public boolean deploy() {
         Boolean succeed = false;
         try {
             if (cloudFoundryConnection != null) {
@@ -53,11 +53,9 @@ public class CloudFoundryInjectionHandler {
                     app.getName(), app.getServicesMatchedToProvider());
             }
         } catch (InterruptedException e) {
-            logger.error("Something went wrong while pushing the application");
-            logger.error(e.getMessage());
+            logger.error("Something went wrong while pushing the application", e);
         } catch (FileNotFoundException e) {
-            logger.error("Application could not be found while pushing the application");
-            logger.error(e.getMessage());
+            logger.error("Something went wrong while pushing the application", e);
         }
         return succeed;
     }
@@ -89,9 +87,7 @@ public class CloudFoundryInjectionHandler {
                     app.addEnvironmentVariables("database_host", host);
                     app.addEnvironmentVariables("database_password", password);
                     app.addEnvironmentVariables("database_port", port);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                } catch (JsonProcessingException e) {
+                } catch (JSONException | JsonProcessingException e) {
                     e.printStackTrace();
                 }
             }
