@@ -10,6 +10,7 @@ import org.opentosca.toscana.plugins.testdata.TestEffectiveModels;
 
 import org.apache.commons.io.FileUtils;
 
+import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeNotNull;
 import static org.mockito.Mockito.mock;
 import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin.CF_PROPERTY_KEY_API;
@@ -34,13 +35,13 @@ public class CloudFoundryLampIT extends BaseTransformTest {
 
     @Override
     protected void onSuccess(File outputDir) throws Exception {
-        System.out.println("You can stop me now");
-        Thread.sleep(5000);
+        //System.out.println("You can stop me now");
+        //Thread.sleep(5000);
     }
 
     @Override
     protected void onFailure(File outputDir, Exception e) throws Exception {
-
+        fail();
     }
 
     @Override

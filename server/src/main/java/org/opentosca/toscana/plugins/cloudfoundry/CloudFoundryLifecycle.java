@@ -49,11 +49,7 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
             String space = properties.get(CF_PROPERTY_KEY_SPACE);
             String apiHost = properties.get(CF_PROPERTY_KEY_API);
 
-            if (username != null &&
-                password != null &&
-                organization != null &&
-                space != null &&
-                apiHost != null) {
+            if (isNotNull(username, password, organization, space, apiHost)) {
 
                 cloudFoundryConnection = new CloudFoundryConnection(username, password,
                     apiHost, organization, space);
@@ -63,6 +59,16 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
                 provider.setOfferedService(cloudFoundryConnection.getServices());
             }
         }
+    }
+
+    private boolean isNotNull(String... elements) {
+        Boolean isOk = true;
+        for (String el : elements) {
+            if (el == null) {
+                isOk = false;
+            }
+        }
+        return isOk;
     }
 
     @Override
