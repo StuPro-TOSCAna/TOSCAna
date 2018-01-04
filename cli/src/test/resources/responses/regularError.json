@@ -1,8 +1,0 @@
-{
-    "timestamp": 1509410650466,
-    "status": 404,
-    "error": "Not Found",
-    "exception": "org.opentosca.toscana.core.api.exceptions.CsarNotFoundException",
-    "message": "No such Csar",
-    "path": "/api/csars/simple-task-"
-}

@@ -8,7 +8,7 @@ import picocli.CommandLine.Command;
 import static picocli.CommandLine.usage;
 
 @Command(name = "csar",
-    description = {"CSAR Overview"},
+    //description = {"CSAR Overview"},
     customSynopsis = "@|bold toscana csar|@ [@|yellow <subcommand>|@] [@|yellow -mv|@]%n",
     commandListHeading = "%nAvailable Subcommands are:%n",
     subcommands = {CsarDelete.class,

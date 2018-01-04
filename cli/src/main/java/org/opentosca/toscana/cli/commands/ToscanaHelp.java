@@ -28,7 +28,6 @@ import picocli.CommandLine.Parameters;
 import static picocli.CommandLine.usage;
 
 @Command(name = "help",
-    header = {"Help Page", ""},
     customSynopsis = "@|bold toscana help|@ [@|yellow <command>|@] [@|yellow <subcommand>|@] [@|yellow -mv|@]",
     descriptionHeading = "%nAvailable TOSCAna CLI commands and subcommands:%n",
     description = {"@|bold csar|@                          Show CSAR usage and all subcommands",
