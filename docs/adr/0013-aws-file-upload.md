@@ -27,7 +27,7 @@ As a plugin developer I want to upload files to Amazon S3 in order to use their 
 
 ### Use the AWS CLI
 
-* `+` Target artifact is "self-contained". Deployment only requires 
+* `+` Target artifact is "self-contained". Deployment only requires the files inside of the target artifact and no remotely hosted resources.
 * `+` Credentials are only handled by user himself
 * `+` Transformation is purely model to model
 * `-` More effort required by the user
