@@ -53,6 +53,6 @@ public class TestEffectiveModels {
     }
 
     public static EffectiveModel getLampModel() {
-        return new EffectiveModel(new LampApp().getLampApp());
+        return new EffectiveModel(LampApp.getLampModel());
     }
 }

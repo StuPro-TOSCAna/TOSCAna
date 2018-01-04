@@ -18,7 +18,7 @@ public class ResourceDeployment {
 
     public ResourceDeployment(NodeStack stack) {
         this.stack = stack;
-        this.name = stack.getStackName();
+        this.name = stack.getStackName().replaceAll("_", "-");
     }
 
     public ResourceDeployment build() {
@@ -26,7 +26,7 @@ public class ResourceDeployment {
 
         Container container = new ContainerBuilder()
             .withName(name)
-            .withImage(stack.getStackName())
+            .withImage(stack.getDockerImageTag().orElseThrow(NullPointerException::new))
             .addAllToPorts(stack.getOpenContainerPorts()).build();
         containers.add(container);
 

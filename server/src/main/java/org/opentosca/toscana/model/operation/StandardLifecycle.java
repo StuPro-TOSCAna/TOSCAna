@@ -18,7 +18,6 @@ public class StandardLifecycle extends Interface {
      The create operation is generally used to create the resource or service its node represents in the topology.
      */
     private final Operation create;
-
     private final Operation configure;
     private final Operation start;
     private final Operation stop;

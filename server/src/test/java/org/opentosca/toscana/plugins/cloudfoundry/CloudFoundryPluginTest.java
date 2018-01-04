@@ -25,16 +25,19 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.CLI_CREATE_SERVICE_DEFAULT;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.CLI_PATH_TO_MANIFEST;
 import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.CLI_PUSH;
 import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.FILEPRAEFIX_DEPLOY;
 import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.FILESUFFIX_DEPLOY;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.MANIFEST;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.MANIFEST_NAME;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.MANIFEST_PATH;
 
 public class CloudFoundryPluginTest extends BaseUnitTest {
 
-    private final static EffectiveModel lamp = new TestEffectiveModels().getLampModel();
+    private final static EffectiveModel lamp = TestEffectiveModels.getLampModel();
     private static CloudFoundryApplication myApp = new CloudFoundryApplication();
     private final static CloudFoundryNodeVisitor visitor = new CloudFoundryNodeVisitor(myApp);
+
     @Mock
     private Log log;
     private File targetDir;
@@ -56,7 +59,7 @@ public class CloudFoundryPluginTest extends BaseUnitTest {
         paths.add("my_app/mysql-credentials.php");
         paths.add("my_app/create_myphpapp.sh");
         paths.add("my_app/configure_myphpapp.sh");
-        paths.add("mysql_dbms/mysql_dbms_configure.sh");
+        paths.add("my_db/createtable.sql");
 
         for (VisitableNode node : nodes) {
             node.accept(visitor);
@@ -73,7 +76,7 @@ public class CloudFoundryPluginTest extends BaseUnitTest {
 
     @Test
     public void getManifest() throws Exception {
-        File targetFile = new File(targetDir, MANIFEST);
+        File targetFile = new File(targetDir, MANIFEST_PATH);
         String manifestContent = FileUtils.readFileToString(targetFile);
 
         File expectedFile = new File(resourcesPath + "cloudFoundry/lamp-manifest.yml");
@@ -85,7 +88,11 @@ public class CloudFoundryPluginTest extends BaseUnitTest {
     @Test
     public void getFiles() {
         for (String path : paths) {
+            for (File file : targetDir.listFiles()) {
+                System.out.println(file);
+            }
             File targetFile = new File(targetDir, path);
+            System.out.println(targetFile);
             assertTrue(targetFile.exists());
         }
     }
@@ -95,8 +102,8 @@ public class CloudFoundryPluginTest extends BaseUnitTest {
         File targetFile = new File(targetDir + "/output/scripts/", FILEPRAEFIX_DEPLOY + appName +
             FILESUFFIX_DEPLOY);
         String deployScript = FileUtils.readFileToString(targetFile);
-        String expectedOutput = String.format("#!/bin/sh\nsource util/*\ncheck \"cf\"\n%smy_db\n%s%s\n",
-            CLI_CREATE_SERVICE_DEFAULT, CLI_PUSH, appName);
+        String expectedOutput = String.format("#!/bin/sh\nsource util/*\ncheck \"cf\"\n%smy_db\n%s%s%s%s\n",
+            CLI_CREATE_SERVICE_DEFAULT, CLI_PUSH, appName, CLI_PATH_TO_MANIFEST, MANIFEST_NAME);
 
         assertEquals(expectedOutput, deployScript);
     }

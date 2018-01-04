@@ -1,14 +1,14 @@
 ---
 applications:
 - name: my_app
+  path: ../my_app
   disk_quota: 2000MB
   mem_size: 1024MB
   env:
-    database_user: 
-    db_root_password: 
-    database_name: 
-    database_host: 
+    database_user: TODO
+    database_name: DBNAME
+    database_host: TODO
     database_port: 3306
-    database_password: 
+    database_password: TODO
   services:
     - my_db

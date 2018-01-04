@@ -17,6 +17,7 @@ public class CloudFoundryApplication {
     private final Map<String, CloudFoundryServiceType> services = new HashMap<>();
     private final ArrayList<String> buildpackAdditions = new ArrayList<>();
     private CloudFoundryProvider provider;
+    private String pathToApplication;
 
     public CloudFoundryApplication(String name) {
         this.name = name;
@@ -38,11 +39,15 @@ public class CloudFoundryApplication {
     }
 
     public void addEnvironmentVariables(String environmentVariableName, String value) {
-        this.environmentVariables.put(environmentVariableName, value);
+        if (value.isEmpty()) {
+            this.addEnvironmentVariables(environmentVariableName);
+        } else {
+            this.environmentVariables.put(environmentVariableName, value);
+        }
     }
 
     public void addEnvironmentVariables(String environmentVariableName) {
-        this.environmentVariables.put(environmentVariableName, "");
+        this.environmentVariables.put(environmentVariableName, "TODO");
     }
 
     public Map<String, CloudFoundryServiceType> getServices() {
@@ -83,5 +88,17 @@ public class CloudFoundryApplication {
 
     public void setProvider(CloudFoundryProvider provider) {
         this.provider = provider;
+    }
+
+    public void setPathToApplication(String pathToApplication) {
+        int lastOccurenceOfBackslash = pathToApplication.lastIndexOf("/");
+
+        if (lastOccurenceOfBackslash != -1) {
+            this.pathToApplication = pathToApplication.substring(0, lastOccurenceOfBackslash);
+        }
+    }
+
+    public String getPathToApplication() {
+        return pathToApplication;
     }
 }
