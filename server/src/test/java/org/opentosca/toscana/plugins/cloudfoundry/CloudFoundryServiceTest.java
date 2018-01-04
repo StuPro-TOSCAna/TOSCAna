@@ -60,6 +60,7 @@ public class CloudFoundryServiceTest extends BaseUnitTest {
     private final CloudFoundryProvider provider = new CloudFoundryProvider(CloudFoundryProvider
         .CloudFoundryProviderType.PIVOTAL);
     private CloudFoundryApplication myApp = new CloudFoundryApplication();
+    private PluginFileAccess fileAccess;
 
     @Before
     public void setUp() {
@@ -73,6 +74,12 @@ public class CloudFoundryServiceTest extends BaseUnitTest {
         app.setProvider(provider);
         cloudFoundryConnection = createConnection();
         app.setConnection(cloudFoundryConnection);
+
+        File sourceDir = new File(tmpdir, "sourceDir");
+        targetDir = new File(tmpdir, "targetDir");
+        sourceDir.mkdir();
+        targetDir.mkdir();
+        fileAccess = new PluginFileAccess(sourceDir, targetDir, log);
     }
 
     @Test
@@ -80,12 +87,6 @@ public class CloudFoundryServiceTest extends BaseUnitTest {
         assumeNotNull(envUser, envHost, envOrga, envPw, envSpace);
 
         app.addService("my_db", CloudFoundryServiceType.MYSQL);
-
-        File sourceDir = new File(tmpdir, "sourceDir");
-        targetDir = new File(tmpdir, "targetDir");
-        sourceDir.mkdir();
-        targetDir.mkdir();
-        PluginFileAccess fileAccess = new PluginFileAccess(sourceDir, targetDir, log);
         fileCreator = new CloudFoundryFileCreator(fileAccess, app);
 
         fileCreator.createFiles();
@@ -99,7 +100,7 @@ public class CloudFoundryServiceTest extends BaseUnitTest {
         assumeNotNull(envUser, envHost, envOrga, envPw, envSpace);
         setUpMyApp();
 
-        CloudFoundryInjectionHandler injectionHandler = new CloudFoundryInjectionHandler(myApp);
+        CloudFoundryInjectionHandler injectionHandler = new CloudFoundryInjectionHandler(fileAccess, myApp);
         injectionHandler.deploy();
     }
 
@@ -123,7 +124,7 @@ public class CloudFoundryServiceTest extends BaseUnitTest {
         assumeNotNull(envUser, envHost, envOrga, envPw, envSpace);
         setUpMyApp();
 
-        CloudFoundryInjectionHandler injectionHandler = new CloudFoundryInjectionHandler(myApp);
+        CloudFoundryInjectionHandler injectionHandler = new CloudFoundryInjectionHandler(fileAccess, myApp);
         injectionHandler.deploy();
 
         injectionHandler.getServiceCredentials();

@@ -1,7 +1,10 @@
 package org.opentosca.toscana.plugins.cloudfoundry.client;
 
+import java.io.FileNotFoundException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryApplication;
 import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryService;
 import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryServiceType;
@@ -12,19 +15,26 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- Created by jensmuller on 02.01.18.
+ inject service credentials to the environment variables
+ depends on the service type
  */
 public class CloudFoundryInjectionHandler {
 
     private final static Logger logger = LoggerFactory.getLogger(CloudFoundryInjectionHandler.class);
     private CloudFoundryApplication app;
     private CloudFoundryConnection cloudFoundryConnection;
+    private PluginFileAccess fileAccess;
 
-    public CloudFoundryInjectionHandler(CloudFoundryApplication app) {
+    public CloudFoundryInjectionHandler(PluginFileAccess fileAccess, CloudFoundryApplication app) {
         this.app = app;
         this.cloudFoundryConnection = app.getConnection();
+        this.fileAccess = fileAccess;
     }
-    
+
+    /**
+     create services on CF instance, deploy application, bind application to service and
+     add the credentials to the environment variables.
+     */
     public void injectServiceCredentials() {
         deploy();
         getServiceCredentials();
@@ -37,11 +47,15 @@ public class CloudFoundryInjectionHandler {
     public void deploy() {
         try {
             if (cloudFoundryConnection != null) {
-                cloudFoundryConnection.pushApplication(Paths.get(app.getPathToApplication()),
+                Path pathToApplication = Paths.get(fileAccess.getAbsolutePath(app.getPathToApplication()));
+                cloudFoundryConnection.pushApplication(pathToApplication,
                     app.getName(), app.getServicesMatchedToProvider());
             }
         } catch (InterruptedException e) {
             logger.error("Something went wrong while pushing the application");
+            logger.error(e.getMessage());
+        } catch (FileNotFoundException e) {
+            logger.error("Application could not be found while pushing the application");
             logger.error(e.getMessage());
         }
     }
@@ -60,7 +74,6 @@ public class CloudFoundryInjectionHandler {
                         app.getName()).getString("port");
                     String username = cloudFoundryConnection.getServiceCredentials(service.getServiceName(),
                         app.getName()).getString("username");
-                    System.out.println(username);
                     String database_name = cloudFoundryConnection.getServiceCredentials(service.getServiceName(),
                         app.getName()).getString("name");
                     String password = cloudFoundryConnection.getServiceCredentials(service.getServiceName(),
@@ -81,15 +94,5 @@ public class CloudFoundryInjectionHandler {
                 }
             }
         }
-    }
-
-    //TODO: delete the old manifest
-    private void deleteOldManifest() {
-
-    }
-
-    //TODO: create the new manifest with the values of the service credentials
-    private void createNewManifest() {
-
     }
 }

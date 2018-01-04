@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 
+import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.visitor.VisitableNode;
@@ -39,8 +40,6 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
 
     @Override
     public void prepare() {
-        //throw new UnsupportedOperationException();
-
         Map<String, String> properties = context.getProperties().getPropertyValues();
 
         if (!properties.isEmpty()) {
@@ -69,6 +68,7 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
     @Override
     public void transform() {
         CloudFoundryApplication myApp = new CloudFoundryApplication();
+        PluginFileAccess fileAccess = context.getPluginFileAccess();
         myApp.setProvider(provider);
         myApp.setConnection(cloudFoundryConnection);
         CloudFoundryNodeVisitor visitor = new CloudFoundryNodeVisitor(myApp);
@@ -80,10 +80,10 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
         myApp = visitor.getFilledApp();
 
         try {
-            CloudFoundryFileCreator fileCreator = new CloudFoundryFileCreator(context.getPluginFileAccess(), myApp);
+            CloudFoundryFileCreator fileCreator = new CloudFoundryFileCreator(fileAccess, myApp);
             fileCreator.createFiles();
             if (cloudFoundryConnection != null) {
-                CloudFoundryInjectionHandler injectionHandler = new CloudFoundryInjectionHandler(myApp);
+                CloudFoundryInjectionHandler injectionHandler = new CloudFoundryInjectionHandler(fileAccess, myApp);
                 injectionHandler.injectServiceCredentials();
                 fileCreator.updateManifest();
             }
