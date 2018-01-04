@@ -56,7 +56,7 @@ public class TOSCAnaAPI {
 
     public TOSCAnaAPI(String url, LoggingMode mode) {
         this.url = url;
-        logger.setLevel(Level.valueOf(mode.name()));
+        setLoggingMode(mode);
 
         //Build the logging interceptor
         logger.debug("Creating Http Logging Interceptor with mode {}", mode.name());
@@ -80,6 +80,10 @@ public class TOSCAnaAPI {
 
         //Create the Jackson Object Mapper used by this class
         this.objectMapper = new ObjectMapper();
+    }
+
+    public void setLoggingMode(LoggingMode mode) {
+        logger.setLevel(Level.valueOf(mode.name()));
     }
 
     private <E> E performCall(Call<E> call)

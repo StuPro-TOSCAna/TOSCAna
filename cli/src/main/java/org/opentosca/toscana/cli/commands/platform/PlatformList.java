@@ -14,6 +14,7 @@ public class PlatformList extends AbstractCommand {
      shows the available platforms, that are ready to start a transformation
      */
     public PlatformList() {
+
     }
 
     @Override
