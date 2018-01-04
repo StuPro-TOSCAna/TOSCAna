@@ -44,11 +44,12 @@ public class CloudFoundryInjectionHandler {
      deploys the application, creates the services and bind the application to the service
      the application is not running after that
      */
-    public void deploy() {
+    public Boolean deploy() {
+        Boolean succeed = false;
         try {
             if (cloudFoundryConnection != null) {
                 Path pathToApplication = Paths.get(fileAccess.getAbsolutePath(app.getPathToApplication()));
-                cloudFoundryConnection.pushApplication(pathToApplication,
+                succeed = cloudFoundryConnection.pushApplication(pathToApplication,
                     app.getName(), app.getServicesMatchedToProvider());
             }
         } catch (InterruptedException e) {
@@ -58,6 +59,7 @@ public class CloudFoundryInjectionHandler {
             logger.error("Application could not be found while pushing the application");
             logger.error(e.getMessage());
         }
+        return succeed;
     }
 
     /**

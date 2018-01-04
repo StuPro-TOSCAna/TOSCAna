@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeNotNull;
 import static org.junit.Assume.assumeTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -101,7 +102,9 @@ public class CloudFoundryServiceTest extends BaseUnitTest {
         setUpMyApp();
 
         CloudFoundryInjectionHandler injectionHandler = new CloudFoundryInjectionHandler(fileAccess, myApp);
-        injectionHandler.deploy();
+        Boolean isPushed = injectionHandler.deploy();
+        
+        assertTrue(isPushed);
     }
 
     @Test

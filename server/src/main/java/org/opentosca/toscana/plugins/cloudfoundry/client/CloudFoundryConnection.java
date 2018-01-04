@@ -4,6 +4,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryService;
 
@@ -120,23 +121,28 @@ public class CloudFoundryConnection {
      Creates the services
      Deploys the application with minimal attributes and bind application to service.
      */
-    public void pushApplication(Path pathToApplication, String name, ArrayList<CloudFoundryService> services)
+    public Boolean pushApplication(Path pathToApplication, String name, ArrayList<CloudFoundryService> services)
         throws InterruptedException {
 
+        Boolean succeed = false;
         for (CloudFoundryService service : services) {
             createService(service.getServiceInstanceName(), service.getServiceName(), service.getPlan());
         }
-        deployApplication(pathToApplication, name, services);
+        succeed = deployApplication(pathToApplication, name, services);
+
+        return succeed;
     }
 
-    private void deployApplication(Path pathToApplication, String name,
-                                   ArrayList<CloudFoundryService> services) throws InterruptedException {
+    private Boolean deployApplication(Path pathToApplication, String name,
+                                      ArrayList<CloudFoundryService> services) throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
 
         String[] serviceInstanceNames = new String[services.size()];
         for (int i = 0; i < services.size(); i++) {
             serviceInstanceNames[i] = services.get(i).getServiceInstanceName();
         }
+
+        AtomicBoolean succeed = new AtomicBoolean(false);
 
         cloudFoundryOperations.applications()
             .pushManifest(PushApplicationManifestRequest.builder()
@@ -150,9 +156,12 @@ public class CloudFoundryConnection {
             .doOnSubscribe(s -> logger.info("Deployment Started"))
             .doOnError(t -> this.logger.error("Deployment Failed", t))
             .doOnSuccess(v -> this.logger.info("Deployment Successful"))
+            .doOnSuccess(u -> succeed.set(true))
             .subscribe(System.out::println, t -> latch.countDown(), latch::countDown);
 
         latch.await();
+
+        return succeed.get();
     }
 
     private void createService(String serviceInstanceName, String serviceName, String plan)
