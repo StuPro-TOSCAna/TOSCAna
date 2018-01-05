@@ -188,8 +188,13 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
         //get the name of the server where this node is hosted on
         String serverName;
         if (exactlyOneFulfiller(node.getHost())) {
-            WebServer webServer = node.getHost().getFulfillers().toArray(new WebServer[1])[0];
-            serverName = toAlphanumerical(webServer.getHost().getCapability().get().getResourceName().get());
+            WebServer webServer = node.getHost().getFulfillers().iterator().next();
+            if (exactlyOneFulfiller(webServer.getHost())){
+                Compute compute = webServer.getHost().getFulfillers().iterator().next();
+                serverName = toAlphanumerical(compute.getNodeName());
+            } else {
+                throw new IllegalStateException("Got " + webServer.getHost().getFulfillers().size() + " instead of one fulfiller");
+            }
         } else {
             throw new IllegalStateException("Got " + node.getHost().getFulfillers().size() + " instead of one fulfiller");
         }
