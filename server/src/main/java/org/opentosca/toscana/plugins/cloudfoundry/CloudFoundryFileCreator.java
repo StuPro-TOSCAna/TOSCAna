@@ -131,7 +131,7 @@ public class CloudFoundryFileCreator {
             for (Map.Entry<String, CloudFoundryServiceType> service : app.getServices().entrySet()) {
                 String description = service.getValue().getName();
                 List<ServiceOffering> services = provider.getOfferedService();
-                Boolean isSet;
+                boolean isSet;
 
                 //checks if a offered service of the provider contains the description of the needed service
                 //if yes then add the service to the script with a free plan
@@ -151,11 +151,11 @@ public class CloudFoundryFileCreator {
     }
 
     //checks if a service of a provider matches the needed service
-    private Boolean addMatchedServices(List<ServiceOffering> services,
+    private boolean addMatchedServices(List<ServiceOffering> services,
                                        BashScript deployScript,
                                        String description,
                                        Map.Entry<String, CloudFoundryServiceType> service) throws IOException {
-        Boolean isSet = false;
+        boolean isSet = false;
 
         for (ServiceOffering offeredService : services) {
             if (offeredService.getDescription().toLowerCase().indexOf(description.toLowerCase()) != -1) {

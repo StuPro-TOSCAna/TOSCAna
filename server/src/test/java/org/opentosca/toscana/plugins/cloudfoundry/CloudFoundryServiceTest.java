@@ -40,6 +40,12 @@ import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator
 
 public class CloudFoundryServiceTest extends BaseUnitTest {
 
+    public final static String CF_ENVIRONMENT_USER = "TEST_CF_USER";
+    public final static String CF_ENVIRONMENT_PW = "TEST_CF_PW";
+    public final static String CF_ENVIRONMENT_HOST = "TEST_CF_HOST";
+    public final static String CF_ENVIRONMENT_ORGA = "TEST_CF_ORGA";
+    public final static String CF_ENVIRONMENT_SPACE = "TEST_CF_SPACE";
+    
     private CloudFoundryConnection cloudFoundryConnection;
     private CloudFoundryApplication app;
     private CloudFoundryFileCreator fileCreator;
@@ -60,12 +66,6 @@ public class CloudFoundryServiceTest extends BaseUnitTest {
         .CloudFoundryProviderType.PIVOTAL);
     private CloudFoundryApplication myApp = new CloudFoundryApplication();
     private PluginFileAccess fileAccess;
-
-    public final static String CF_ENVIRONMENT_USER = "TEST_CF_USER";
-    public final static String CF_ENVIRONMENT_PW = "TEST_CF_PW";
-    public final static String CF_ENVIRONMENT_HOST = "TEST_CF_HOST";
-    public final static String CF_ENVIRONMENT_ORGA = "TEST_CF_ORGA";
-    public final static String CF_ENVIRONMENT_SPACE = "TEST_CF_SPACE";
 
     @Before
     public void setUp() {

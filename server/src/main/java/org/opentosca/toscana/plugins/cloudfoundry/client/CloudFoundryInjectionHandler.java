@@ -52,9 +52,7 @@ public class CloudFoundryInjectionHandler {
                 succeed = cloudFoundryConnection.pushApplication(pathToApplication,
                     app.getName(), app.getServicesMatchedToProvider());
             }
-        } catch (InterruptedException e) {
-            logger.error("Something went wrong while pushing the application", e);
-        } catch (FileNotFoundException e) {
+        } catch (InterruptedException | FileNotFoundException e) {
             logger.error("Something went wrong while pushing the application", e);
         }
         return succeed;
