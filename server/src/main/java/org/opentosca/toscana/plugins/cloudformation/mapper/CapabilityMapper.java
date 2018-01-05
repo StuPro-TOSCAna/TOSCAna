@@ -4,7 +4,18 @@ import org.opentosca.toscana.model.capability.ComputeCapability;
 import org.opentosca.toscana.model.capability.OsCapability;
 import org.opentosca.toscana.model.visitor.UnsupportedTypeException;
 
+import com.google.common.collect.ImmutableMap;
+import org.apache.commons.collections.keyvalue.MultiKey;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class CapabilityMapper {
+
+    private final static Logger logger = LoggerFactory.getLogger(CapabilityMapper.class);
+
+    private static final ImmutableMap<MultiKey, String> INSTANCE_TYPES = ImmutableMap.<MultiKey, String>builder()
+        .put(new MultiKey(1, 1024), "t2.micro")
+        .build();
 
     public static String mapOsCapabilityToImageId(OsCapability osCapability) {
         String imageId = "";
@@ -20,13 +31,21 @@ public class CapabilityMapper {
     }
 
     public static String mapComputeCapabilityToInstanceType(ComputeCapability computeCapability) {
-        String instanceType = "";
+        //TODO what to do with disksize?
+        //default type is t2.micro
+        String instanceType;
         //here should be a check for isPresent, but what to do if not present?
-        if (computeCapability.getNumCpus().get().equals(1) &&
-            computeCapability.getMemSizeInMB().get().equals(1024)) {
-            instanceType = "t2.micro";
+        if (computeCapability.getNumCpus().isPresent() &&
+            computeCapability.getMemSizeInMB().isPresent()) {
+            instanceType = INSTANCE_TYPES.get(new MultiKey(computeCapability.getNumCpus().get(), computeCapability
+                .getMemSizeInMB().get()));
+            if (instanceType == null) {
+                throw new UnsupportedTypeException("Combination of NumCpus: " + computeCapability.getNumCpus().get() +
+                    " and Memory: " + computeCapability.getMemSizeInMB().get() + " is not available");
+            }
         } else {
-            throw new UnsupportedTypeException("Only 1 CPU and 1024 MB memory supported.");
+            logger.warn("NumCpus and MemSize not both given, defaulting to t2.micro");
+            instanceType = "t2.micro";
         }
         return instanceType;
     }

@@ -3,7 +3,6 @@ package org.opentosca.toscana.plugins.cloudformation.visitor;
 import java.io.File;
 import java.io.IOException;
 
-import org.opentosca.toscana.model.capability.Capability;
 import org.opentosca.toscana.model.capability.ComputeCapability;
 import org.opentosca.toscana.model.capability.OsCapability;
 import org.opentosca.toscana.model.node.Apache;
@@ -17,7 +16,6 @@ import org.opentosca.toscana.model.operation.Operation;
 import org.opentosca.toscana.model.operation.OperationVariable;
 import org.opentosca.toscana.model.requirement.Requirement;
 import org.opentosca.toscana.model.visitor.StrictNodeVisitor;
-import org.opentosca.toscana.model.visitor.UnsupportedTypeException;
 import org.opentosca.toscana.plugins.cloudformation.CloudFormationModule;
 import org.opentosca.toscana.plugins.cloudformation.mapper.CapabilityMapper;
 
