@@ -14,7 +14,13 @@ public class CapabilityMapper {
     private final static Logger logger = LoggerFactory.getLogger(CapabilityMapper.class);
 
     private static final ImmutableMap<MultiKey, String> INSTANCE_TYPES = ImmutableMap.<MultiKey, String>builder()
+        .put(new MultiKey(1, 512) , "t2.nano")
         .put(new MultiKey(1, 1024), "t2.micro")
+        .put(new MultiKey(1, 2048) , "t2.small")
+        .put(new MultiKey(2, 4096) , "t2.medium")
+        .put(new MultiKey(2, 8192) , "t2.large")
+        .put(new MultiKey(4, 16384) , "t2.xlarge")
+        .put(new MultiKey(8, 32768) , "t2.2xlarge")
         .build();
 
     public static String mapOsCapabilityToImageId(OsCapability osCapability) {
@@ -34,9 +40,9 @@ public class CapabilityMapper {
         //TODO what to do with disksize?
         //default type is t2.micro
         String instanceType;
-        //here should be a check for isPresent, but what to do if not present?
         if (computeCapability.getNumCpus().isPresent() &&
             computeCapability.getMemSizeInMB().isPresent()) {
+            // if numcpu not key1 or mem not key2 scale upwards!
             instanceType = INSTANCE_TYPES.get(new MultiKey(computeCapability.getNumCpus().get(), computeCapability
                 .getMemSizeInMB().get()));
             if (instanceType == null) {
