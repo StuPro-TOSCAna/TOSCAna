@@ -3,6 +3,7 @@ package org.opentosca.toscana.plugins.cloudformation.visitor;
 import java.io.File;
 import java.io.IOException;
 
+import org.opentosca.toscana.model.capability.Capability;
 import org.opentosca.toscana.model.capability.ComputeCapability;
 import org.opentosca.toscana.model.capability.OsCapability;
 import org.opentosca.toscana.model.node.Apache;
@@ -18,6 +19,7 @@ import org.opentosca.toscana.model.requirement.Requirement;
 import org.opentosca.toscana.model.visitor.StrictNodeVisitor;
 import org.opentosca.toscana.model.visitor.UnsupportedTypeException;
 import org.opentosca.toscana.plugins.cloudformation.CloudFormationModule;
+import org.opentosca.toscana.plugins.cloudformation.mapper.CapabilityMapper;
 
 import com.scaleset.cfbuilder.ec2.Instance;
 import com.scaleset.cfbuilder.ec2.SecurityGroup;
@@ -70,26 +72,12 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             // we only support linux ubuntu 16.04 but there should be a mapping of os properties to imageIds
             // ImageIds different depending on the region you use this is us-west-2 atm
             OsCapability computeOs = node.getOs();
-            String imageId;
-            //here should be a check for isPresent, but what to do if not present?
-            if (computeOs.getType().get().equals(OsCapability.Type.LINUX) &&
-                computeOs.getDistribution().get().equals(OsCapability.Distribution.UBUNTU) &&
-                computeOs.getVersion().get().equals("16.04")) {
-                imageId = "ami-0def3275";
-            } else {
-                throw new UnsupportedTypeException("Only Linux, Ubuntu 16.04 supported.");
-            }
+            String imageId = CapabilityMapper.mapOsCapabilityToImageId(computeOs);
+            
             //check what host should be taken
             // we only support t2.micro atm since its free for student accounts
             ComputeCapability computeCompute = node.getHost();
-            String instanceType;
-            //here should be a check for isPresent, but what to do if not present?
-            if (computeCompute.getNumCpus().get().equals(1) &&
-                computeCompute.getMemSizeInMB().get().equals(1024)) {
-                instanceType = "t2.micro";
-            } else {
-                throw new UnsupportedTypeException("Only 1 CPU and 1024 MB memory supported.");
-            }
+            String instanceType = CapabilityMapper.mapComputeCapabilityToInstanceType(computeCompute);
             //create CFN init and store it
             CFNInit init = new CFNInit(CONFIG_SETS);
             cfnModule.putCFNInit(nodeName, init);
