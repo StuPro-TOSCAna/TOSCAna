@@ -4,6 +4,7 @@ import org.opentosca.toscana.model.capability.ComputeCapability;
 import org.opentosca.toscana.model.capability.OsCapability;
 import org.opentosca.toscana.model.visitor.UnsupportedTypeException;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.collections.keyvalue.MultiKey;
 import org.slf4j.Logger;
@@ -14,13 +15,21 @@ public class CapabilityMapper {
     private final static Logger logger = LoggerFactory.getLogger(CapabilityMapper.class);
 
     private static final ImmutableMap<MultiKey, String> INSTANCE_TYPES = ImmutableMap.<MultiKey, String>builder()
-        .put(new MultiKey(1, 512) , "t2.nano")
+        .put(new MultiKey(1, 512), "t2.nano")
         .put(new MultiKey(1, 1024), "t2.micro")
-        .put(new MultiKey(1, 2048) , "t2.small")
-        .put(new MultiKey(2, 4096) , "t2.medium")
-        .put(new MultiKey(2, 8192) , "t2.large")
-        .put(new MultiKey(4, 16384) , "t2.xlarge")
-        .put(new MultiKey(8, 32768) , "t2.2xlarge")
+        .put(new MultiKey(1, 2048), "t2.small")
+        .put(new MultiKey(2, 4096), "t2.medium")
+        .put(new MultiKey(2, 8192), "t2.large")
+        .put(new MultiKey(4, 16384), "t2.xlarge")
+        .put(new MultiKey(8, 32768), "t2.2xlarge")
+        .build();
+
+    //need to be sorted !!
+    private static ImmutableList<Integer> CPUS = ImmutableList.<Integer>builder()
+        .add(1)
+        .add(2)
+        .add(4)
+        .add(8)
         .build();
 
     public static String mapOsCapabilityToImageId(OsCapability osCapability) {
@@ -42,11 +51,20 @@ public class CapabilityMapper {
         String instanceType;
         if (computeCapability.getNumCpus().isPresent() &&
             computeCapability.getMemSizeInMB().isPresent()) {
+            Integer numCpus = computeCapability.getNumCpus().get();
+            Integer memSize = computeCapability.getMemSizeInMB().get();
             // if numcpu not key1 or mem not key2 scale upwards!
-            instanceType = INSTANCE_TYPES.get(new MultiKey(computeCapability.getNumCpus().get(), computeCapability
-                .getMemSizeInMB().get()));
+            if (!CPUS.contains(numCpus)) {
+                for (Integer num : CPUS) {
+                    if (num > numCpus) {
+                        numCpus = num;
+                        break;
+                    }
+                }
+            }
+            instanceType = INSTANCE_TYPES.get(new MultiKey(numCpus, memSize));
             if (instanceType == null) {
-                throw new UnsupportedTypeException("Combination of NumCpus: " + computeCapability.getNumCpus().get() +
+                throw new UnsupportedTypeException("Combination of NumCpus: " + numCpus +
                     " and Memory: " + computeCapability.getMemSizeInMB().get() + " is not available");
             }
         } else {
