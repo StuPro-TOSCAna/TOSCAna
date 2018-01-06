@@ -2,6 +2,7 @@ package org.opentosca.toscana.plugins.cloudformation.visitor;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.UUID;
 
 import org.opentosca.toscana.model.capability.ComputeCapability;
 import org.opentosca.toscana.model.capability.OsCapability;
@@ -17,6 +18,20 @@ import org.opentosca.toscana.model.visitor.StrictNodeVisitor;
 import org.opentosca.toscana.model.visitor.UnsupportedTypeException;
 import org.opentosca.toscana.plugins.cloudformation.CloudFormationModule;
 
+import com.amazonaws.AmazonClientException;
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.auth.policy.Policy;
+import com.amazonaws.auth.policy.Principal;
+import com.amazonaws.auth.policy.Statement;
+import com.amazonaws.auth.policy.actions.S3Actions;
+import com.amazonaws.auth.policy.resources.S3ObjectResource;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.GetObjectRequest;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.scaleset.cfbuilder.ec2.Instance;
 import com.scaleset.cfbuilder.ec2.SecurityGroup;
 import com.scaleset.cfbuilder.ec2.metadata.CFNCommand;
@@ -39,6 +54,8 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
 
     private final Logger logger;
     private CloudFormationModule cfnModule;
+    private AmazonS3 s3;
+    private String bucketName;
 
     /**
      Creates a <tt>CloudFormationNodeVisitor<tt> in order to build a template with the given
@@ -50,6 +67,16 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
     public CloudFormationNodeVisitor(Logger logger, CloudFormationModule cfnModule) throws Exception {
         this.logger = logger;
         this.cfnModule = cfnModule;
+        // TODO Get credentials and possibly region from User
+        BasicAWSCredentials awsCreds = new BasicAWSCredentials("", "");
+        this.s3 = AmazonS3ClientBuilder.standard()
+            .withCredentials(new AWSStaticCredentialsProvider(awsCreds))
+            .withRegion(Regions.US_WEST_2)
+            .build();
+        this.bucketName = createBucket(s3);
+        // TODO check if files need to be public for CloudFormation to access them
+        // Allows anyone to access files in the bucket
+        s3.setBucketPolicy(bucketName, getPublicReadPolicy().toJson());
     }
 
     @Override
@@ -264,5 +291,88 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                 e.printStackTrace();
             }
         }
+    }
+
+    /**
+     * Creates a new bucket with a random name on the given AmazonS3 and returns the name of said bucket.
+     *
+     * @param s3 where the bucket should be created
+     * @return name of the created bucket
+     */
+    private String createBucket(AmazonS3 s3) {
+        try {
+            String bucketName = "cf-bucket-" + UUID.randomUUID();
+            logger.debug("Creating bucket " + bucketName + ".");
+            s3.createBucket(bucketName);
+        } catch (AmazonServiceException ase) {
+            logger.error("Caught an AmazonServiceException while trying to create the bucket.");
+            logASEError(ase);
+        } catch (AmazonClientException ace) {
+            logger.error("Caught an AmazonClientException while trying to create the bucket.");
+            logACEError(ace);
+        }
+        return bucketName;
+    }
+
+    /**
+     * Logs the details of an AmazonServiceException as an error.
+     * 
+     * @param ase the AmazonServiceException to be reported on
+     */
+    private void logASEError (AmazonServiceException ase) {
+        logger.error("This means the request made it to Amazon S3, but was rejected with an error response.");
+        logger.error("Error Message:    " + ase.getMessage());
+        logger.error("HTTP Status Code: " + ase.getStatusCode());
+        logger.error("AWS Error Code:   " + ase.getErrorCode());
+        logger.error("Error Type:       " + ase.getErrorType());
+        logger.error("Request ID:       " + ase.getRequestId());
+    }
+
+    /**
+     * Logs the details of an AmazonClientException as an error.
+     * 
+     * @param ace the AmazonClientException to be reported on
+     */
+    private void logACEError (AmazonClientException ace) {
+        logger.error("This means the client encountered an internal problem while trying to communicate with S3.");
+        logger.error("Error Message: " + ace.getMessage());
+    }
+
+    /**
+     * Uploads a file to a bucket on AmazonS3 and returns its URL.
+     * If the upload fails, an empty URL is returned instead.
+     * 
+     * @return the URL of the file
+     */
+    private String uploadFileAndGetURL(AmazonS3 s3, String bucketName, File file) {
+        String fileURL = "";
+        String key = file.getName();
+        try {
+            String fileName = "";
+            logger.debug("Uploading file " + fileName + "to S3.");
+            s3.putObject(new PutObjectRequest(bucketName, key, file));
+            fileURL = s3.getObject(new GetObjectRequest(bucketName, file.getName())).getRedirectLocation();
+        } catch (AmazonServiceException ase) {
+            logger.error("Caught an AmazonServiceException while trying to upload a file.");
+            logASEError(ase);
+            logger.error("Returning an empty fileURL.");
+        } catch (AmazonClientException ace) {
+            logger.error("Caught an AmazonClientException while trying to upload a file.");
+            logACEError(ace);
+            logger.error("Returning an empty fileURL.");
+        }
+        return fileURL;
+    }
+
+    /**
+     * Returns a policy that allows anyone access to read all the objects in a bucket.
+     * @return the public read policy
+     */
+    private Policy getPublicReadPolicy() {
+        Statement allowPublicReadStatement = new Statement(Statement.Effect.Allow)
+            .withPrincipals(Principal.AllUsers)
+            .withActions(S3Actions.GetObject)
+            .withResources(new S3ObjectResource(bucketName, "*"));
+        return new Policy().withStatements(allowPublicReadStatement);
     }
 }
