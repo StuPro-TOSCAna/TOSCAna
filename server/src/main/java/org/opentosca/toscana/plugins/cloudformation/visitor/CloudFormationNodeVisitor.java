@@ -29,8 +29,8 @@ import com.amazonaws.auth.policy.actions.S3Actions;
 import com.amazonaws.auth.policy.resources.S3ObjectResource;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.scaleset.cfbuilder.ec2.Instance;
 import com.scaleset.cfbuilder.ec2.SecurityGroup;
@@ -238,18 +238,27 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                 String cfnFileMode = "000400"; //TODO Check what mode is needed (only read?)
                 String cfnFileOwner = "root"; //TODO Check what Owner is needed
                 String cfnFileGroup = "root"; //TODO Check what Group is needed
-
+                
+                // TODO: re-allow content-dumping instead of source
+//                CFNFile cfnFile = new CFNFile(cfnFilePath + dependency)
+//                    .setContent(cfnModule.getFileAccess().read(dependency))
+//                    .setMode(cfnFileMode)
+//                    .setOwner(cfnFileOwner)
+//                    .setGroup(cfnFileGroup);
+                
+                String cfnSource = uploadFileAndGetURL(s3, bucketName, new File(dependency));
                 CFNFile cfnFile = new CFNFile(cfnFilePath + dependency)
-                    .setContent(cfnModule.getFileAccess().read(dependency))
+                    .setSource(cfnSource)
                     .setMode(cfnFileMode)
                     .setOwner(cfnFileOwner)
                     .setGroup(cfnFileGroup);
-
+                
                 // Add file to install
                 cfnModule.getCFNInit(serverName)
                     .getOrAddConfig(CONFIG_SETS, config)
                     .putFile(cfnFile);
-            } catch (IOException e) {
+//            } catch (IOException e) {
+            } catch (Exception e) {
                 logger.error("Problem with reading file " + dependency);
                 e.printStackTrace();
             }
@@ -264,8 +273,16 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             String cfnFileGroup = "root"; //TODO Check what Group is needed
 
             try {
+                // TODO: re-allow content-dumping instead of source
+//                CFNFile cfnFile = new CFNFile(cfnFilePath + artifact)
+//                    .setContent(cfnModule.getFileAccess().read(artifact))
+//                    .setMode(cfnFileMode)
+//                    .setOwner(cfnFileOwner)
+//                    .setGroup(cfnFileGroup);
+
+                String cfnSource = uploadFileAndGetURL(s3, bucketName, new File(artifact));
                 CFNFile cfnFile = new CFNFile(cfnFilePath + artifact)
-                    .setContent(cfnModule.getFileAccess().read(artifact))
+                    .setSource(cfnSource)
                     .setMode(cfnFileMode)
                     .setOwner(cfnFileOwner)
                     .setGroup(cfnFileGroup);
@@ -286,7 +303,8 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                     .putFile(cfnFile)
                     .putCommand(cfnCommand)
                     .putCommand(new CFNCommand("restart apache2", "service apache2 restart")); //put commands
-            } catch (IOException e) {
+//            } catch (IOException e) {
+              } catch (Exception e) {  
                 logger.error("Problem with reading file " + artifact);
                 e.printStackTrace();
             }
@@ -351,7 +369,8 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             String fileName = "";
             logger.debug("Uploading file " + fileName + "to S3.");
             s3.putObject(new PutObjectRequest(bucketName, key, file));
-            fileURL = s3.getObject(new GetObjectRequest(bucketName, file.getName())).getRedirectLocation();
+            //TODO: Find non-deprecated method for retrieving the URL
+            fileURL = new AmazonS3Client().getResourceUrl(bucketName, key);
         } catch (AmazonServiceException ase) {
             logger.error("Caught an AmazonServiceException while trying to upload a file.");
             logASEError(ase);
