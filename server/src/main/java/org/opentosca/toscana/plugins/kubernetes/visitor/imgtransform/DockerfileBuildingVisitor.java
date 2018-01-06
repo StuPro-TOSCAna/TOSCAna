@@ -29,6 +29,8 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
     private final DockerfileBuilder builder;
     private final NodeStack stack;
 
+    private boolean sudoInstalled = false;
+
     private List<Integer> ports = new ArrayList<>();
 
     public DockerfileBuildingVisitor(String baseImage, NodeStack stack, TransformationContext context) {
@@ -131,11 +133,21 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
             }
             if (operation.getArtifact().isPresent()) {
                 String path = operation.getArtifact().get().getFilePath();
+                if (!sudoInstalled && needsSudo(path)) {
+                    //Install sudo, currently only works with Debian based systems
+                    builder.run("apt-get update && apt-get install -y sudo; true");
+                    sudoInstalled = true;
+                }
                 if (path.endsWith(".sql")) return;
                 builder.copyFromCsar(path, nodeName, nodeName + "-" + opName);
                 builder.run("sh " + nodeName + "-" + opName);
             }
         }
+    }
+
+    private boolean needsSudo(String path) {
+        //TODO implement sudo detection mechanism
+        return true;
     }
 
     public List<Integer> getPorts() {

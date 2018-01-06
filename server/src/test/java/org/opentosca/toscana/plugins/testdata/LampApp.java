@@ -126,7 +126,7 @@ public class LampApp {
             .build();
 
         Set<OperationVariable> appInputs = new HashSet<>();
-        appInputs.add(new OperationVariable("database_host")); //TODO what to put in here?
+        appInputs.add(new OperationVariable("database_host", "localhost")); //TODO what to put in here?
         appInputs.add(new OperationVariable("database_password", database.getPassword().get()));
         appInputs.add(new OperationVariable("database_name", database.getDatabaseName()));
         appInputs.add(new OperationVariable("database_user", database.getUser().get()));
