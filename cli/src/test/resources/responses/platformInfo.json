@@ -1,9 +1,0 @@
-{
-	"id": "p-a",
-	"name": "platform-1",
-	"_links": {
-		"self": {
-			"href": "http://localhost:8080/platforms/p-a"
-		}
-	}
-}

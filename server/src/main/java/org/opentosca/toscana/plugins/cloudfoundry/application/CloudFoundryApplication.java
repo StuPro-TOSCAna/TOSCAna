@@ -1,9 +1,12 @@
 package org.opentosca.toscana.plugins.cloudfoundry.application;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.opentosca.toscana.plugins.cloudfoundry.client.CloudFoundryConnection;
 
 /**
  This class should describe a CloudFoundryApplication with all needed information to deploy it
@@ -15,15 +18,25 @@ public class CloudFoundryApplication {
     private final Map<String, String> environmentVariables = new HashMap<>();
     private final Map<String, String> attributes = new HashMap<>();
     private final Map<String, CloudFoundryServiceType> services = new HashMap<>();
+    private final ArrayList<CloudFoundryService> servicesMatchedToProvider = new ArrayList<>();
     private final ArrayList<String> buildpackAdditions = new ArrayList<>();
     private CloudFoundryProvider provider;
     private String pathToApplication;
+    private CloudFoundryConnection connection;
 
     public CloudFoundryApplication(String name) {
         this.name = name;
     }
 
     public CloudFoundryApplication() {
+    }
+
+    public void setConnection(CloudFoundryConnection connection) {
+        this.connection = connection;
+    }
+
+    public CloudFoundryConnection getConnection() {
+        return connection;
     }
 
     public void setName(String name) {
@@ -52,6 +65,14 @@ public class CloudFoundryApplication {
 
     public Map<String, CloudFoundryServiceType> getServices() {
         return services;
+    }
+
+    public List<CloudFoundryService> getServicesMatchedToProvider() {
+        return Collections.unmodifiableList(servicesMatchedToProvider);
+    }
+
+    public void addMatchedService(CloudFoundryService matchedService) {
+        servicesMatchedToProvider.add(matchedService);
     }
 
     public void addService(String serviceName, CloudFoundryServiceType serviceType) {

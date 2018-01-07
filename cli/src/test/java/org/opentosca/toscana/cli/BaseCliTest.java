@@ -1,22 +1,20 @@
 package org.opentosca.toscana.cli;
 
-import java.io.IOException;
-import java.io.InputStream;
-
-import org.opentosca.toscana.retrofit.util.LoggingMode;
-
-import okhttp3.mockwebserver.MockResponse;
-import okhttp3.mockwebserver.MockWebServer;
-import okio.Buffer;
-import org.junit.After;
 import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.contrib.java.lang.system.SystemOutRule;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import picocli.CommandLine;
 
-abstract class TestHelper {
+import static org.mockito.Mockito.mock;
 
-    private static final String MIME_TYPE_JSON = "application/json";
+@RunWith(JUnit4.class)
+public abstract class BaseCliTest {
+    @ClassRule
+    public static final SystemOutRule systemOutRule = new SystemOutRule().enableLog();
+
     protected final String CSAR_JSON = "responses/csarInfo.json";
     protected final String CSARS_JSON = "responses/csarsList.json";
     protected final String PLATFORM = "p-a";
@@ -33,7 +31,6 @@ abstract class TestHelper {
     protected final String[] CLI_HELP = {"help"};
     protected final String[] CLI_HELP_STATUS = {"help", "status"};
     protected final String[] CLI_CSAR_LIST = {"csar", "list"};
-    protected final String[] CLI_STATUS = {"status"};
     protected final String[] CSAR_AR = {"csar", "-v"};
     protected final String[] CSAR_UPLOAD = {"csar", "upload", "-f", "arch.csar"};
     protected final String[] CSAR_LIST = {"csar", "list"};
@@ -57,55 +54,10 @@ abstract class TestHelper {
     protected final String[] INPUT_MANUAL_ERROR = {"input", "-c", CSAR, "-p", PLATFORM, "test="};
     protected final String[] INPUT_FILE_VALID = {"input", "-c", CSAR, "-p", PLATFORM, "-f", "src/test/resources/responses/test.txt"};
     private final Logger logger = LoggerFactory.getLogger(getClass());
-    protected ApiController api;
-    private MockWebServer server;
-    private CommandLine cmd = null;
+    ApiController apiController;
 
     @Before
-    public void setUp() throws IOException {
-        logger.info("Starting Mock Webserver");
-        server = new MockWebServer();
-        server.start();
-        String baseURL = server.url("").toString();
-        logger.info("Server Running on {}", baseURL);
-        api = new ApiController(baseURL, LoggingMode.MEDIUM);
+    public void setUp() {
+        apiController = mock(ApiController.class);
     }
-
-    @After
-    public void tearDown() throws IOException {
-        logger.info("Stopping server");
-        server.shutdown();
-    }
-
-    private void enqueResponse(String resourcePath, int code, String mimeType) throws IOException {
-        logger.info("Loading Resource from Path {}", resourcePath);
-        InputStream in = getClass().getClassLoader().getResourceAsStream(resourcePath);
-        Buffer buffer = new Buffer();
-        buffer.readFrom(in);
-        logger.info("Mocking Response");
-        MockResponse response = new MockResponse()
-            .setResponseCode(code)
-            .setBody(buffer).
-                addHeader("Content-Type", mimeType);
-        server.enqueue(response);
-    }
-
-    protected void enqueError(int code) throws IOException {
-        enqueResponse("responses/regularError.json", code, MIME_TYPE_JSON);
-    }
-
-    protected void apiSingleInput(String resource, int code) throws IOException {
-        logger.info("Creating Response with CSAR: {} and Code: {}", CSAR, code);
-        enqueResponse(resource, code, MIME_TYPE_JSON);
-    }
-
-    protected void apiDoubleInput(String csar, String plat, String resource, int code) throws IOException {
-        logger.info("Creating Response with CSAR: {}, Platform: {}, Resource: {} and Code: {}", csar, plat, resource, code);
-        enqueResponse(resource, code, MIME_TYPE_JSON);
-    }
-/*
-    void apiInputError(String[] cliInput, int code) throws IOException {
-        enqueError(code);
-        List<Object> parsed = cmd.parseWithHandler(new CommandLine.RunLast(), System.err, cliInput);
-    } */
 }
