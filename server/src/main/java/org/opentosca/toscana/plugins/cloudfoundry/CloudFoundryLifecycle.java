@@ -4,20 +4,29 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 
+import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.visitor.VisitableNode;
 import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryApplication;
 import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryProvider;
 import org.opentosca.toscana.plugins.cloudfoundry.client.CloudFoundryConnection;
+import org.opentosca.toscana.plugins.cloudfoundry.client.CloudFoundryInjectionHandler;
 import org.opentosca.toscana.plugins.cloudfoundry.visitors.CloudFoundryNodeVisitor;
 import org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle;
 
 import org.json.JSONException;
 
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin.CF_PROPERTY_KEY_API;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin.CF_PROPERTY_KEY_ORGANIZATION;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin.CF_PROPERTY_KEY_PASSWORD;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin.CF_PROPERTY_KEY_SPACE;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin.CF_PROPERTY_KEY_USERNAME;
+
 public class CloudFoundryLifecycle extends AbstractLifecycle {
 
     private CloudFoundryProvider provider;
+    private CloudFoundryConnection cloudFoundryConnection;
 
     public CloudFoundryLifecycle(TransformationContext context) throws IOException {
         super(context);
@@ -31,30 +40,42 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
 
     @Override
     public void prepare() {
-        //throw new UnsupportedOperationException();
-
         Map<String, String> properties = context.getProperties().getPropertyValues();
 
         if (!properties.isEmpty()) {
-            String username = properties.get("username");
-            String password = properties.get("password");
-            String organization = properties.get("organization");
-            String space = properties.get("space");
-            String apiHost = properties.get("apihost");
+            String username = properties.get(CF_PROPERTY_KEY_USERNAME);
+            String password = properties.get(CF_PROPERTY_KEY_PASSWORD);
+            String organization = properties.get(CF_PROPERTY_KEY_ORGANIZATION);
+            String space = properties.get(CF_PROPERTY_KEY_SPACE);
+            String apiHost = properties.get(CF_PROPERTY_KEY_API);
 
-            CloudFoundryConnection cloudFoundryConnection = new CloudFoundryConnection(username, password,
-                apiHost, organization, space);
+            if (isNotNull(username, password, organization, space, apiHost)) {
 
-            //TODO: check how to get used provider or figure out whether it is necessary to know it?
-            provider = new CloudFoundryProvider(CloudFoundryProvider.CloudFoundryProviderType.PIVOTAL);
-            provider.setOfferedService(cloudFoundryConnection.getServices());
+                cloudFoundryConnection = new CloudFoundryConnection(username, password,
+                    apiHost, organization, space);
+
+                //TODO: check how to get used provider or figure out whether it is necessary to know it?
+                provider = new CloudFoundryProvider(CloudFoundryProvider.CloudFoundryProviderType.PIVOTAL);
+                provider.setOfferedService(cloudFoundryConnection.getServices());
+            }
         }
+    }
+
+    private boolean isNotNull(String... elements) {
+        for (String el : elements) {
+            if (el == null) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
     public void transform() {
         CloudFoundryApplication myApp = new CloudFoundryApplication();
+        PluginFileAccess fileAccess = context.getPluginFileAccess();
         myApp.setProvider(provider);
+        myApp.setConnection(cloudFoundryConnection);
         CloudFoundryNodeVisitor visitor = new CloudFoundryNodeVisitor(myApp);
         Set<RootNode> nodes = context.getModel().getNodes();
 
@@ -64,11 +85,14 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
         myApp = visitor.getFilledApp();
 
         try {
-            CloudFoundryFileCreator fileCreator = new CloudFoundryFileCreator(context.getPluginFileAccess(), myApp);
+            CloudFoundryFileCreator fileCreator = new CloudFoundryFileCreator(fileAccess, myApp);
             fileCreator.createFiles();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
+            if (cloudFoundryConnection != null) {
+                CloudFoundryInjectionHandler injectionHandler = new CloudFoundryInjectionHandler(fileAccess, myApp);
+                injectionHandler.injectServiceCredentials();
+                fileCreator.updateManifest();
+            }
+        } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
     }
