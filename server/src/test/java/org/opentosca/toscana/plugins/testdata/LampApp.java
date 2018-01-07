@@ -109,10 +109,17 @@ public class LampApp {
 
     private Apache createApache(Compute compute) {
         ContainerCapability containerCapability = createContainerCapability();
+        Operation apacheConfigureOperation = Operation.builder()
+            .artifact(Artifact.builder("artifact", "my_apache/install_php.sh").build())
+            .build();
+        StandardLifecycle lifecycle =  StandardLifecycle.builder()
+            .configure(apacheConfigureOperation)
+            .build();
         return Apache
             .builder("apache_web_server")
             .containerHost(containerCapability)
             .host(getHostedOnServerRequirement(compute))
+            .lifecycle(lifecycle)
             .build();
     }
 
