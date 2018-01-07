@@ -15,6 +15,13 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class CloudFoundryPlugin extends LifecycleAwarePlugin<CloudFoundryLifecycle> {
+
+    public final static String CF_PROPERTY_KEY_USERNAME = "username";
+    public final static String CF_PROPERTY_KEY_PASSWORD = "password";
+    public final static String CF_PROPERTY_KEY_API = "apiHost";
+    public final static String CF_PROPERTY_KEY_SPACE = "space";
+    public final static String CF_PROPERTY_KEY_ORGANIZATION = "organization";
+
     private final static Logger logger = LoggerFactory.getLogger(CloudFoundryPlugin.class);
 
     public CloudFoundryPlugin() {
@@ -31,19 +38,19 @@ public class CloudFoundryPlugin extends LifecycleAwarePlugin<CloudFoundryLifecyc
         String platformName = "CloudFoundry";
         Set<Property> platformProperties = new HashSet<>();
 
-        Property cfUserName = new Property("username", PropertyType.NAME,
+        Property cfUserName = new Property(CF_PROPERTY_KEY_USERNAME, PropertyType.TEXT,
             "Username of CloudFoundry provideraccount",
             false);
-        Property cfUserPw = new Property("password", PropertyType.SECRET,
+        Property cfUserPw = new Property(CF_PROPERTY_KEY_PASSWORD, PropertyType.SECRET,
             "Password of CloudFoundry provideraccount",
             false);
-        Property cfEndpoint = new Property("apihost", PropertyType.TEXT,
+        Property cfEndpoint = new Property(CF_PROPERTY_KEY_API, PropertyType.TEXT,
             "The endpoint of the provider",
             false);
-        Property cfSpace = new Property("space", PropertyType.TEXT,
+        Property cfSpace = new Property(CF_PROPERTY_KEY_SPACE, PropertyType.TEXT,
             "The space of the useraccount which should be used to deploy",
             false);
-        Property cfOrganization = new Property("organization", PropertyType.TEXT,
+        Property cfOrganization = new Property(CF_PROPERTY_KEY_ORGANIZATION, PropertyType.TEXT,
             "The space of the useraccount which should be used to deploy",
             false);
 

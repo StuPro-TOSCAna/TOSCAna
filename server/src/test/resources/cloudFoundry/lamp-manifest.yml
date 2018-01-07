@@ -7,7 +7,7 @@ applications:
   env:
     database_user: root
     database_name: DBNAME
-    database_host: TODO
+    database_host: localhost
     database_port: 3306
     database_password: geheim12
   services:

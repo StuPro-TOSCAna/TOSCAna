@@ -109,10 +109,17 @@ public class LampApp {
 
     private Apache createApache(Compute compute) {
         ContainerCapability containerCapability = createContainerCapability();
+        Operation apacheConfigureOperation = Operation.builder()
+            .artifact(Artifact.builder("artifact", "my_apache/install_php.sh").build())
+            .build();
+        StandardLifecycle lifecycle =  StandardLifecycle.builder()
+            .configure(apacheConfigureOperation)
+            .build();
         return Apache
             .builder("apache_web_server")
             .containerHost(containerCapability)
             .host(getHostedOnServerRequirement(compute))
+            .lifecycle(lifecycle)
             .build();
     }
 
@@ -126,7 +133,7 @@ public class LampApp {
             .build();
 
         Set<OperationVariable> appInputs = new HashSet<>();
-        appInputs.add(new OperationVariable("database_host")); //TODO what to put in here?
+        appInputs.add(new OperationVariable("database_host", "localhost")); //TODO what to put in here?
         appInputs.add(new OperationVariable("database_password", database.getPassword().get()));
         appInputs.add(new OperationVariable("database_name", database.getDatabaseName()));
         appInputs.add(new OperationVariable("database_user", database.getUser().get()));
