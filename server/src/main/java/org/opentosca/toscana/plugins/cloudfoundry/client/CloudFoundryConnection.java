@@ -123,7 +123,7 @@ public class CloudFoundryConnection {
     public boolean pushApplication(Path pathToApplication, String name, List<CloudFoundryService> services)
         throws InterruptedException {
 
-        Boolean succeed = false;
+        boolean succeed = false;
         for (CloudFoundryService service : services) {
             createService(service.getServiceInstanceName(), service.getServiceName(), service.getPlan());
         }

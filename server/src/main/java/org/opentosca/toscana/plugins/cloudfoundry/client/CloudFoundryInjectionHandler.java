@@ -45,7 +45,7 @@ public class CloudFoundryInjectionHandler {
      the application is not running after that
      */
     public boolean deploy() {
-        Boolean succeed = false;
+        boolean succeed = false;
         try {
             if (cloudFoundryConnection != null) {
                 Path pathToApplication = Paths.get(fileAccess.getAbsolutePath(app.getPathToApplication()));
