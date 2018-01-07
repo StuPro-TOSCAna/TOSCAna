@@ -56,7 +56,8 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
         ports.add(443);
         //TODO only do this if a Mysql node connects to (is in a connection relationship with this node)
         builder.run("docker-php-ext-install mysqli");
-        handleDefault(node);
+        //TODO Add Dependency Detection for apache
+        //handleDefault(node);
     }
 
     @Override
