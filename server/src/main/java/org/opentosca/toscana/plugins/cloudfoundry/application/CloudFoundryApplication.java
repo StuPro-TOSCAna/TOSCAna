@@ -23,6 +23,7 @@ public class CloudFoundryApplication {
     private CloudFoundryProvider provider;
     private String pathToApplication;
     private String applicationSuffix;
+
     private CloudFoundryConnection connection;
 
     public CloudFoundryApplication(String name) {
@@ -126,10 +127,7 @@ public class CloudFoundryApplication {
 
     private boolean isValidApplicationSuffix(String suffix) {
         ArrayList<String> invalidApplicationSuffix = new ArrayList<>(Arrays.asList("sh", "sql"));
-        if (invalidApplicationSuffix.contains(suffix)) {
-            return false;
-        }
-        return true;
+        return !invalidApplicationSuffix.contains(suffix);
     }
 
     public String getPathToApplication() {
