@@ -45,7 +45,7 @@ public class CloudFoundryServiceTest extends BaseUnitTest {
     public final static String CF_ENVIRONMENT_HOST = "TEST_CF_HOST";
     public final static String CF_ENVIRONMENT_ORGA = "TEST_CF_ORGA";
     public final static String CF_ENVIRONMENT_SPACE = "TEST_CF_SPACE";
-    
+
     private CloudFoundryConnection cloudFoundryConnection;
     private CloudFoundryApplication app;
     private CloudFoundryFileCreator fileCreator;
@@ -106,7 +106,7 @@ public class CloudFoundryServiceTest extends BaseUnitTest {
         setUpMyApp();
 
         CloudFoundryInjectionHandler injectionHandler = new CloudFoundryInjectionHandler(fileAccess, myApp);
-        Boolean isPushed = injectionHandler.deploy();
+        boolean isPushed = injectionHandler.deploy();
 
         assertTrue(isPushed);
     }

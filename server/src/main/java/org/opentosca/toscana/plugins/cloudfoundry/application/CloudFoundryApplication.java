@@ -1,6 +1,7 @@
 package org.opentosca.toscana.plugins.cloudfoundry.application;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -19,9 +20,9 @@ public class CloudFoundryApplication {
     private final Map<String, String> attributes = new HashMap<>();
     private final Map<String, CloudFoundryServiceType> services = new HashMap<>();
     private final ArrayList<CloudFoundryService> servicesMatchedToProvider = new ArrayList<>();
-    private final ArrayList<String> buildpackAdditions = new ArrayList<>();
     private CloudFoundryProvider provider;
     private String pathToApplication;
+    private String applicationSuffix;
     private CloudFoundryConnection connection;
 
     public CloudFoundryApplication(String name) {
@@ -79,14 +80,6 @@ public class CloudFoundryApplication {
         this.services.put(serviceName, serviceType);
     }
 
-    public List<String> getBuildpackAdditions() {
-        return buildpackAdditions;
-    }
-
-    public void addBuildpack(String buildPack) {
-        this.buildpackAdditions.add(buildPack);
-    }
-
     public void addAttribute(String attributeName, String attributeValue) {
         attributes.put(attributeName, attributeValue);
     }
@@ -111,12 +104,32 @@ public class CloudFoundryApplication {
         this.provider = provider;
     }
 
+    public String getApplicationSuffix() {
+        return applicationSuffix;
+    }
+
     public void setPathToApplication(String pathToApplication) {
         int lastOccurenceOfBackslash = pathToApplication.lastIndexOf("/");
+        int lastOccurenceOfDot = pathToApplication.lastIndexOf(".");
 
-        if (lastOccurenceOfBackslash != -1) {
-            this.pathToApplication = pathToApplication.substring(0, lastOccurenceOfBackslash);
+        if (lastOccurenceOfDot != -1) {
+            String suffix = pathToApplication.substring(lastOccurenceOfDot + 1, pathToApplication.length());
+            if (isValidApplicationSuffix(suffix)) {
+                this.applicationSuffix = pathToApplication.substring(lastOccurenceOfDot + 1, pathToApplication.length());
+
+                if (lastOccurenceOfBackslash != -1) {
+                    this.pathToApplication = pathToApplication.substring(0, lastOccurenceOfBackslash);
+                }
+            }
         }
+    }
+
+    private boolean isValidApplicationSuffix(String suffix) {
+        ArrayList<String> invalidApplicationSuffix = new ArrayList<>(Arrays.asList("sh", "sql"));
+        if (invalidApplicationSuffix.contains(suffix)) {
+            return false;
+        }
+        return true;
     }
 
     public String getPathToApplication() {

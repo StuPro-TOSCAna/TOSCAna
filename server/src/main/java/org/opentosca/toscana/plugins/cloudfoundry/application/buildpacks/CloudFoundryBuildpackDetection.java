@@ -20,10 +20,10 @@ import org.slf4j.LoggerFactory;
  */
 public class CloudFoundryBuildpackDetection {
 
-    private final static Logger logger = LoggerFactory.getLogger(CloudFoundryPlugin.class);
+    public static final String BUILDPACK_OBJECT_PHP = "PHP_EXTENSIONS";
+    public static final String BUILDPACK_FILEPATH_PHP = ".bp-config/options.json";
 
-    private static final String BUILDPACK_OBJECT_PHP = "PHP_EXTENSIONS";
-    private static final String BUILDPACK_FILEPATH_PHP = ".bp-config/options.json";
+    private final static Logger logger = LoggerFactory.getLogger(CloudFoundryPlugin.class);
 
     private CloudFoundryApplication application;
     private String applicationSuffix;
@@ -32,18 +32,21 @@ public class CloudFoundryBuildpackDetection {
     public CloudFoundryBuildpackDetection(CloudFoundryApplication application, PluginFileAccess fileAccess) {
         this.application = application;
         this.fileAccess = fileAccess;
-        //this.applicationSuffix = application.getApplicationSuffix();
+        this.applicationSuffix = application.getApplicationSuffix();
     }
 
     public void detectBuildpackAdditions() {
-        if (applicationSuffix.toLowerCase().equals("php")) {
-            try {
-                addBuildpackAdditonsPHP();
-            } catch (JSONException | IOException e) {
-                e.printStackTrace();
-            }
+        if (applicationSuffix != null) {
+            logger.info("Application suffix is: " + applicationSuffix);
+            if (applicationSuffix.equalsIgnoreCase("php")) {
+                try {
+                    addBuildpackAdditonsPHP();
+                } catch (JSONException | IOException e) {
+                    logger.error("Something went wrong while trying to add additional buildpacks", e);
+                }
 
-            //TODO: expand with more languages
+                //TODO: expand with more languages
+            }
         }
     }
 
@@ -54,7 +57,9 @@ public class CloudFoundryBuildpackDetection {
             JSONArray buildPacks = new JSONArray(Arrays.asList("mysql", "mysqli"));
 
             //add default php values because they will be overriden by manual additions
-            buildPacks.put(CloudFoundryBuildpack.DEFAULT_PHP_BUILDPACKS);
+            for (String buildpack : CloudFoundryBuildpack.DEFAULT_PHP_BUILDPACKS) {
+                buildPacks.put(buildpack);
+            }
 
             buildPackAdditionsJson.put(BUILDPACK_OBJECT_PHP, buildPacks);
             String path;

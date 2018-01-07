@@ -95,6 +95,7 @@ public class CloudFoundryNodeVisitor implements StrictNodeVisitor {
             // add dependencies paths
             for (String dependency : operation.getDependencies()) {
                 myApp.addFilePath(dependency);
+                setPathToApplication(dependency, isTopNode);
             }
 
             // add inputs to environment list

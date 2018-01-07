@@ -16,8 +16,6 @@ import org.mockito.Mock;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.BUILDPACK_FILEPATH_PHP;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.BUILDPACK_OBJECT_PHP;
 import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.CLI_PATH_TO_MANIFEST;
 import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.FILEPRAEFIX_DEPLOY;
 import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.FILESUFFIX_DEPLOY;
@@ -28,6 +26,8 @@ import static org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundr
 import static org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryManifestAttribute.ENVIRONMENT;
 import static org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryManifestAttribute.PATH;
 import static org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryManifestAttribute.SERVICE;
+import static org.opentosca.toscana.plugins.cloudfoundry.application.buildpacks.CloudFoundryBuildpackDetection.BUILDPACK_FILEPATH_PHP;
+import static org.opentosca.toscana.plugins.cloudfoundry.application.buildpacks.CloudFoundryBuildpackDetection.BUILDPACK_OBJECT_PHP;
 
 public class CloudFoundryFileCreatorTest extends BaseUnitTest {
     private CloudFoundryFileCreator fileCreator;
@@ -45,6 +45,7 @@ public class CloudFoundryFileCreatorTest extends BaseUnitTest {
     private final String envValue = "TESTVALUE";
     private final String service1 = "cleardb";
     private final String service2 = "p-mysql";
+    private final String mainApplicationPath = "myapp/main/myphpapp.php";
 
     @Before
     public void setUp() {
@@ -61,10 +62,13 @@ public class CloudFoundryFileCreatorTest extends BaseUnitTest {
 
     @Test
     public void createFiles() throws Exception {
+        testApp.setPathToApplication(mainApplicationPath);
+        testApp.addService(service1, CloudFoundryServiceType.MYSQL);
+        testApp.setPathToApplication(mainApplicationPath);
         fileCreator.createFiles();
         File targetFile = new File(targetDir, MANIFEST_PATH);
         File deployFile = new File(targetDir, outputPath + FILEPRAEFIX_DEPLOY + appName + FILESUFFIX_DEPLOY);
-        File buildPackAdditions = new File(targetDir, BUILDPACK_FILEPATH_PHP);
+        File buildPackAdditions = new File(targetDir, "/myapp/main" + "/" + BUILDPACK_FILEPATH_PHP);
 
         assertTrue(targetFile.exists());
         assertTrue(deployFile.exists());
@@ -73,9 +77,8 @@ public class CloudFoundryFileCreatorTest extends BaseUnitTest {
 
     @Test
     public void contentManifest() throws Exception {
-        String mainApplicationPath = "myapp/main/myphpapp.php";
-        String expectedPath = "../myapp/main";
         testApp.setPathToApplication(mainApplicationPath);
+        String expectedPath = "../myapp/main";
         fileCreator.createFiles();
         File targetFile = new File(targetDir, MANIFEST_PATH);
         String manifestContent = FileUtils.readFileToString(targetFile);
@@ -113,15 +116,17 @@ public class CloudFoundryFileCreatorTest extends BaseUnitTest {
 
     @Test
     public void buildpackAdditons() throws Exception {
-        String mainApplicationPath = "myapp/main/myphpapp.php";
         String expectedPath = "/myapp/main" + "/" + BUILDPACK_FILEPATH_PHP;
         testApp.setPathToApplication(mainApplicationPath);
-        testApp.addBuildpack(buildPack1);
-        testApp.addBuildpack(buildPack2);
+        testApp.addService(service1, CloudFoundryServiceType.MYSQL);
         String expectedBuildpackcontent = "{\n" +
             "    \"" + BUILDPACK_OBJECT_PHP + "\": [\n" +
             "        \"" + buildPack1 + "\",\n" +
-            "        \"" + buildPack2 + "\"\n" +
+            "        \"" + buildPack2 + "\",\n" +
+            "        \"" + "bz2" + "\",\n" +
+            "        \"" + "zlib" + "\",\n" +
+            "        \"" + "curl" + "\",\n" +
+            "        \"" + "mcrypt" + "\"\n" +
             "    ]\n" +
             "}";
 
