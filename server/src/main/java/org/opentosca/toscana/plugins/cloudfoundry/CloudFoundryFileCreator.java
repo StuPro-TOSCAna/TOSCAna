@@ -10,14 +10,13 @@ import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryApplic
 import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryProvider;
 import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryService;
 import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryServiceType;
+import org.opentosca.toscana.plugins.cloudfoundry.application.buildpacks.CloudFoundryBuildpackDetection;
 import org.opentosca.toscana.plugins.scripts.BashScript;
 import org.opentosca.toscana.plugins.scripts.EnvironmentCheck;
 
 import org.cloudfoundry.operations.services.ServiceOffering;
 import org.cloudfoundry.operations.services.ServicePlan;
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import static org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryManifestAttribute.ENVIRONMENT;
 import static org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryManifestAttribute.PATH;
@@ -40,8 +39,6 @@ public class CloudFoundryFileCreator {
     public static final String CLI_PATH_TO_MANIFEST = " -f ../";
     public static final String FILEPRAEFIX_DEPLOY = "deploy_";
     public static final String FILESUFFIX_DEPLOY = ".sh";
-    public static final String BUILDPACK_OBJECT_PHP = "PHP_EXTENSIONS";
-    public static final String BUILDPACK_FILEPATH_PHP = ".bp-config/options.json";
 
     private final PluginFileAccess fileAccess;
     private final CloudFoundryApplication app;
@@ -177,22 +174,12 @@ public class CloudFoundryFileCreator {
         return isSet;
     }
 
-    //only for PHP 
-    //TODO: check if PHP and mysql then add "mysql" & "mysqli"
+    /**
+     detect if additional buildpacks are needed and add them
+     */
     private void createBuildpackAdditionsFile() throws IOException, JSONException {
-        JSONObject buildPackAdditionsJson = new JSONObject();
-        JSONArray buildPacks = new JSONArray();
-        for (String buildPack : app.getBuildpackAdditions()) {
-            buildPacks.put(buildPack);
-        }
-        buildPackAdditionsJson.put(BUILDPACK_OBJECT_PHP, buildPacks);
-        String path;
-        if (app.getPathToApplication() != null) {
-            path = String.format("%s/%s", app.getPathToApplication(), BUILDPACK_FILEPATH_PHP);
-        } else {
-            path = BUILDPACK_FILEPATH_PHP;
-        }
-        fileAccess.access(path).append(buildPackAdditionsJson.toString(4)).close();
+        CloudFoundryBuildpackDetection buildpackDetection = new CloudFoundryBuildpackDetection(app, fileAccess);
+        buildpackDetection.detectBuildpackAdditions();
     }
 
     private void createAttributes() throws IOException {
