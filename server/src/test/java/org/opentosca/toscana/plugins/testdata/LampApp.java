@@ -36,7 +36,7 @@ public class LampApp {
     private void createLampModel() {
 
         Compute compute = createComputeNode();
-        Apache webserver = createApache();
+        Apache webserver = createApache(compute);
         MysqlDbms dbms = createMysqlDbms(compute);
         MysqlDatabase database = createMysqlDatabase(dbms);
         WebApplication webApplication = createWebApplication(webserver, database);
@@ -97,8 +97,8 @@ public class LampApp {
 
         MysqlDatabase mydb = MysqlDatabase
             .builder("my_db", "DBNAME")
-            .user("")
-            .password("")
+            .user("root")
+            .password("geheim12")
             .port(3306)
             .standardLifecycle(lifecycle)
             .mysqlHost(MysqlDbmsRequirement.builder().fulfiller(dbms).build()) //TODO Relationship?
@@ -107,12 +107,19 @@ public class LampApp {
         return mydb;
     }
 
-    private Apache createApache() {
+    private Apache createApache(Compute compute) {
         ContainerCapability containerCapability = createContainerCapability();
+        Operation apacheConfigureOperation = Operation.builder()
+            .artifact(Artifact.builder("artifact", "my_apache/install_php.sh").build())
+            .build();
+        StandardLifecycle lifecycle =  StandardLifecycle.builder()
+            .configure(apacheConfigureOperation)
+            .build();
         return Apache
             .builder("apache_web_server")
             .containerHost(containerCapability)
-            .host(getHostedOnServerRequirement())
+            .host(getHostedOnServerRequirement(compute))
+            .lifecycle(lifecycle)
             .build();
     }
 
@@ -126,7 +133,7 @@ public class LampApp {
             .build();
 
         Set<OperationVariable> appInputs = new HashSet<>();
-        appInputs.add(new OperationVariable("database_host")); //TODO what to put in here?
+        appInputs.add(new OperationVariable("database_host", "localhost")); //TODO what to put in here?
         appInputs.add(new OperationVariable("database_password", database.getPassword().get()));
         appInputs.add(new OperationVariable("database_name", database.getDatabaseName()));
         appInputs.add(new OperationVariable("database_user", database.getUser().get()));
@@ -151,10 +158,10 @@ public class LampApp {
         return webApplication;
     }
 
-    private HostRequirement getHostedOnServerRequirement() {
+    private HostRequirement getHostedOnServerRequirement(Compute compute) {
         ContainerCapability hostCapability = ContainerCapability.builder().resourceName("server").build();
 
         return HostRequirement.builder()
-            .capability(hostCapability).build();
+            .capability(hostCapability).fulfiller(compute).build();
     }
 }
