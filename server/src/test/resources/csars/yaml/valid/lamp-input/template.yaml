@@ -48,7 +48,7 @@ topology_template:
       interfaces:
         Standard:
           configure:
-            implementation: my_app/install_php.sh
+            implementation: my_apache/install_php.sh
 
     my_db:
       type: tosca.nodes.Database.MySQL
