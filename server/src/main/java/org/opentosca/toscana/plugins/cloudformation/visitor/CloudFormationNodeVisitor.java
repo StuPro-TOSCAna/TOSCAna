@@ -1,8 +1,8 @@
 package org.opentosca.toscana.plugins.cloudformation.visitor;
 
 import java.io.File;
-//import java.io.IOException;
 import java.util.UUID;
+//import java.io.IOException;
 
 import org.opentosca.toscana.model.capability.ComputeCapability;
 import org.opentosca.toscana.model.capability.OsCapability;
@@ -47,8 +47,8 @@ import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.SECURITY_GROUP;
 
 /**
- Class for building a CloudFormation template from an effective model instance via the visitor pattern. Currently only
- supports LAMP-stacks built with Compute, WebApplication, Apache, MySQL, MySQL nodes.
+ * Class for building a CloudFormation template from an effective model instance via the visitor pattern. Currently only
+ * supports LAMP-stacks built with Compute, WebApplication, Apache, MySQL, MySQL nodes.
  */
 public class CloudFormationNodeVisitor implements StrictNodeVisitor {
 
@@ -58,11 +58,11 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
     private String bucketName;
 
     /**
-     Creates a <tt>CloudFormationNodeVisitor<tt> in order to build a template with the given
-     <tt>CloudFormationModule<tt>.
-
-     @param logger    Logger for logging visitor behaviour
-     @param cfnModule Module to build the template model
+     * Creates a <tt>CloudFormationNodeVisitor<tt> in order to build a template with the given
+     * <tt>CloudFormationModule<tt>.
+     *
+     * @param logger    Logger for logging visitor behaviour
+     * @param cfnModule Module to build the template model
      */
     public CloudFormationNodeVisitor(Logger logger, CloudFormationModule cfnModule) throws Exception {
         this.logger = logger;
@@ -235,21 +235,21 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                 String cfnFileMode = "000400"; //TODO Check what mode is needed (only read?)
                 String cfnFileOwner = "root"; //TODO Check what Owner is needed
                 String cfnFileGroup = "root"; //TODO Check what Group is needed
-                
+
                 // TODO: re-allow content-dumping instead of source
 //                CFNFile cfnFile = new CFNFile(cfnFilePath + dependency)
 //                    .setContent(cfnModule.getFileAccess().read(dependency))
 //                    .setMode(cfnFileMode)
 //                    .setOwner(cfnFileOwner)
 //                    .setGroup(cfnFileGroup);
-                
+
                 String cfnSource = uploadFileAndGetURL(s3, bucketName, new File(dependency));
                 CFNFile cfnFile = new CFNFile(cfnFilePath + dependency)
                     .setSource(cfnSource)
                     .setMode(cfnFileMode)
                     .setOwner(cfnFileOwner)
                     .setGroup(cfnFileGroup);
-                
+
                 // Add file to install
                 cfnModule.getCFNInit(serverName)
                     .getOrAddConfig(CONFIG_SETS, config)
@@ -301,7 +301,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                     .putCommand(cfnCommand)
                     .putCommand(new CFNCommand("restart apache2", "service apache2 restart")); //put commands
 //            } catch (IOException e) {
-              } catch (Exception e) {  
+            } catch (Exception e) {
                 logger.error("Problem with reading file " + artifact);
                 e.printStackTrace();
             }
@@ -324,6 +324,9 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             // TODO check if files need to be public for CloudFormation to access them
             // Allows anyone to access files in the bucket
             s3.setBucketPolicy(bucketName, getPublicReadPolicy().toJson());
+            // TODO: Possibly stop transformation when Exceptions occur
+            // Then Handle these Exception in the transform() function in the CloudFormationLifeCycle
+            // The same goes for those in the fileUploadAndGetUrl function.
         } catch (AmazonServiceException ase) {
             logger.error("Caught an AmazonServiceException while trying to create the bucket.");
             logASEError(ase);
@@ -332,18 +335,17 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             logACEError(ace);
         } catch (IllegalArgumentException iae) {
             logger.error("Caught an IllegalArgumentException while trying to create the bucket.");
-            logger.error("This means that the bucketName is invalid" +
-                " most likely due to a failure during the bucket creation.");
+            logIAEError(iae);
         }
         return bucketName;
     }
 
     /**
      * Logs the details of an AmazonServiceException as an error.
-     * 
+     *
      * @param ase the AmazonServiceException to be reported on
      */
-    private void logASEError (AmazonServiceException ase) {
+    private void logASEError(AmazonServiceException ase) {
         logger.error("This means the request made it to Amazon S3, but was rejected with an error response.");
         logger.error("Error Message:    " + ase.getMessage());
         logger.error("HTTP Status Code: " + ase.getStatusCode());
@@ -354,18 +356,24 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
 
     /**
      * Logs the details of an AmazonClientException as an error.
-     * 
+     *
      * @param ace the AmazonClientException to be reported on
      */
-    private void logACEError (AmazonClientException ace) {
+    private void logACEError(AmazonClientException ace) {
         logger.error("This means the client encountered an internal problem while trying to communicate with S3.");
         logger.error("Error Message: " + ace.getMessage());
+    }
+
+    private void logIAEError(IllegalArgumentException iae) {
+        logger.error("This means that the bucketName is invalid" +
+            " most likely due to a failure during the bucket creation.");
+        iae.printStackTrace();
     }
 
     /**
      * Uploads a file to a bucket on AmazonS3 and returns its URL.
      * If the upload fails, an empty URL is returned instead.
-     * 
+     *
      * @return the URL of the file
      */
     private String uploadFileAndGetURL(AmazonS3 s3, String bucketName, File file) {
@@ -385,12 +393,17 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             logger.error("Caught an AmazonClientException while trying to upload a file.");
             logACEError(ace);
             logger.error("Returning an empty fileURL.");
+        } catch (IllegalArgumentException iae) {
+            logger.error("Caught an IllegalArgumentException while trying to upload a file.");
+            logIAEError(iae);
+            logger.error("Returning an empty fileURL.");
         }
         return fileURL;
     }
 
     /**
      * Returns a policy that allows anyone access to read all the objects in a bucket.
+     *
      * @return the public read policy
      */
     private Policy getPublicReadPolicy() {
