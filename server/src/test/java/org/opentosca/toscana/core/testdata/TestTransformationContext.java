@@ -5,8 +5,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
+import org.opentosca.toscana.api.exceptions.PlatformNotFoundException;
 import org.opentosca.toscana.core.BaseSpringTest;
-import org.opentosca.toscana.core.api.exceptions.PlatformNotFoundException;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarDao;
 import org.opentosca.toscana.core.csar.CsarService;
