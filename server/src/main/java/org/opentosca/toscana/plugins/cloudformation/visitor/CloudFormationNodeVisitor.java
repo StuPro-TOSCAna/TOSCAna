@@ -64,11 +64,12 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
      * @param logger    Logger for logging visitor behaviour
      * @param cfnModule Module to build the template model
      */
-    public CloudFormationNodeVisitor(Logger logger, CloudFormationModule cfnModule) throws Exception {
+    public CloudFormationNodeVisitor(Logger logger, CloudFormationModule cfnModule, String accessKey, String secretKey) throws Exception {
         this.logger = logger;
         this.cfnModule = cfnModule;
-        // TODO Get credentials and possibly region from User
-        BasicAWSCredentials awsCreds = new BasicAWSCredentials("","");
+        // TODO Possibly get Region from user
+        // TODO Either extract bucket-creation from visitor or get accesKey/SecretKey some other way
+        BasicAWSCredentials awsCreds = new BasicAWSCredentials(accessKey, secretKey);
         this.s3 = AmazonS3ClientBuilder.standard()
             .withCredentials(new AWSStaticCredentialsProvider(awsCreds))
             .withRegion(Regions.US_WEST_2)

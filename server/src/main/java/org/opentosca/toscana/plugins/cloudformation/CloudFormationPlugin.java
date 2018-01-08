@@ -6,6 +6,7 @@ import java.util.Set;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.Property;
+import org.opentosca.toscana.core.transformation.properties.PropertyType;
 import org.opentosca.toscana.plugins.lifecycle.LifecycleAwarePlugin;
 
 import org.slf4j.Logger;
@@ -24,6 +25,21 @@ public class CloudFormationPlugin extends LifecycleAwarePlugin<CloudFormationLif
         String platformId = "cloudformation";
         String platformName = "AWS CloudFormation";
         Set<Property> platformProperties = new HashSet<>();
+        
+        //TODO change to other PropertyType?
+        Property awsAccessKey = new Property("access-key", PropertyType.SECRET,
+            "AccesKey needed for AWS authentication.",
+            false,
+            "");
+            
+        Property awsSecretKey = new Property("secret-key", PropertyType.SECRET,
+            "SecretKey needed for AWS authentication.",
+            false,
+            "");
+        
+        platformProperties.add(awsAccessKey);
+        platformProperties.add(awsSecretKey);
+        
         return new Platform(platformId, platformName, platformProperties);
     }
 
