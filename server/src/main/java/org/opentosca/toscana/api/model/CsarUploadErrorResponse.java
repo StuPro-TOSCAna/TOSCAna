@@ -1,4 +1,4 @@
-package org.opentosca.toscana.core.api.model;
+package org.opentosca.toscana.api.model;
 
 import java.util.List;
 
@@ -44,7 +44,7 @@ public class CsarUploadErrorResponse {
 
     @ApiModelProperty(
         required = true,
-        dataType = "integer", 
+        dataType = "integer",
         example = "1509907624000",
         notes = "The Unix timestamp (in milliseconds) when this exception has occrued (Was constructed internally)"
     )

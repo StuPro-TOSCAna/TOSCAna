@@ -1,4 +1,4 @@
-package org.opentosca.toscana.core.api.docs;
+package org.opentosca.toscana.api.docs;
 
 import org.springframework.context.annotation.Configuration;
 

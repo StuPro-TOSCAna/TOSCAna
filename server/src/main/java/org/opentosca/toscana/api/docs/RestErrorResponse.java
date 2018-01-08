@@ -1,4 +1,4 @@
-package org.opentosca.toscana.core.api.docs;
+package org.opentosca.toscana.api.docs;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
@@ -9,7 +9,7 @@ import io.swagger.annotations.ApiModelProperty;
  */
 @ApiModel
 public class RestErrorResponse {
-    
+
     @ApiModelProperty(
         required = true,
         dataType = "integer",

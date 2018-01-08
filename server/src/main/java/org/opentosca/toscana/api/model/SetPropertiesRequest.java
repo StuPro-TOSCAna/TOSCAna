@@ -1,4 +1,4 @@
-package org.opentosca.toscana.core.api.model;
+package org.opentosca.toscana.api.model;
 
 import java.util.Map;
 

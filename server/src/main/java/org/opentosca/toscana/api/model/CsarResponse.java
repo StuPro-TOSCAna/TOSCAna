@@ -1,13 +1,14 @@
-package org.opentosca.toscana.core.api.model;
+package org.opentosca.toscana.api.model;
 
-import org.opentosca.toscana.core.api.CsarController;
-import org.opentosca.toscana.core.api.TransformationController;
-import org.opentosca.toscana.core.api.docs.HiddenResourceSupport;
+import org.opentosca.toscana.api.CsarController;
+import org.opentosca.toscana.api.TransformationController;
+import org.opentosca.toscana.api.docs.HiddenResourceSupport;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.hateoas.core.Relation;
+import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
@@ -21,13 +22,13 @@ public class CsarResponse extends HiddenResourceSupport {
         @JsonProperty("name") String name
     ) {
         this.name = name;
-        add(linkTo(methodOn(CsarController.class)
+        add(ControllerLinkBuilder.linkTo(methodOn(CsarController.class)
             .getCSARInfo(name)).withSelfRel());
         add(linkTo(methodOn(CsarController.class).deleteCsar(name)).withRel("delete"));
-        add(linkTo(methodOn(TransformationController.class)
+        add(ControllerLinkBuilder.linkTo(methodOn(TransformationController.class)
             .getCSARTransformations(name)).withRel("transformations").expand(name));
     }
-    
+
     @ApiModelProperty(
         required = true,
         example = "test",

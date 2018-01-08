@@ -1,4 +1,4 @@
-package org.opentosca.toscana.core.api;
+package org.opentosca.toscana.api;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,13 +6,13 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.opentosca.toscana.core.api.docs.CsarResources;
-import org.opentosca.toscana.core.api.docs.HiddenResources;
-import org.opentosca.toscana.core.api.docs.RestErrorResponse;
-import org.opentosca.toscana.core.api.exceptions.ActiveTransformationsException;
-import org.opentosca.toscana.core.api.exceptions.CsarNotFoundException;
-import org.opentosca.toscana.core.api.model.CsarResponse;
-import org.opentosca.toscana.core.api.model.CsarUploadErrorResponse;
+import org.opentosca.toscana.api.docs.CsarResources;
+import org.opentosca.toscana.api.docs.HiddenResources;
+import org.opentosca.toscana.api.docs.RestErrorResponse;
+import org.opentosca.toscana.api.exceptions.ActiveTransformationsException;
+import org.opentosca.toscana.api.exceptions.CsarNotFoundException;
+import org.opentosca.toscana.api.model.CsarResponse;
+import org.opentosca.toscana.api.model.CsarUploadErrorResponse;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarService;
 import org.opentosca.toscana.core.parse.InvalidCsarException;
@@ -110,7 +110,7 @@ public class CsarController {
         notes = "Returns the element with the given name, Object contents are " +
             "equal to a regular /csars request (if you just look at the desired entry)"
     )
-    @ApiResponses( {
+    @ApiResponses({
         @ApiResponse(
             code = 200,
             message = "The Csar was found and the contents are found in the body",
@@ -154,7 +154,7 @@ public class CsarController {
             "Upload gets performed using Multipart Form upload.",
         code = 201
     )
-    @ApiResponses( {
+    @ApiResponses({
         @ApiResponse(
             code = 201,
             message = "The upload and parsing of the csar was sucessful",

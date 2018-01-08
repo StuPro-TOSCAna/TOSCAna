@@ -1,13 +1,13 @@
-package org.opentosca.toscana.core.api;
+package org.opentosca.toscana.api;
 
 import java.util.ArrayList;
 import java.util.Optional;
 
-import org.opentosca.toscana.core.api.docs.HiddenResources;
-import org.opentosca.toscana.core.api.docs.PlatformResources;
-import org.opentosca.toscana.core.api.docs.RestErrorResponse;
-import org.opentosca.toscana.core.api.exceptions.PlatformNotFoundException;
-import org.opentosca.toscana.core.api.model.PlatformResponse;
+import org.opentosca.toscana.api.docs.HiddenResources;
+import org.opentosca.toscana.api.docs.PlatformResources;
+import org.opentosca.toscana.api.docs.RestErrorResponse;
+import org.opentosca.toscana.api.exceptions.PlatformNotFoundException;
+import org.opentosca.toscana.api.model.PlatformResponse;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.platform.PlatformService;
 
@@ -103,7 +103,7 @@ public class PlatformController {
         notes = "Returns the resource object for one specific plugin (platform)",
         code = 200
     )
-    @ApiResponses( {
+    @ApiResponses({
         @ApiResponse(
             code = 200,
             message = "The request has been executed with no error!",

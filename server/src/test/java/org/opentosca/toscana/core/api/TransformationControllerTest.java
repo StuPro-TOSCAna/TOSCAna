@@ -13,8 +13,9 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 
+import org.opentosca.toscana.api.TransformationController;
+import org.opentosca.toscana.api.exceptions.PlatformNotFoundException;
 import org.opentosca.toscana.core.BaseSpringTest;
-import org.opentosca.toscana.core.api.exceptions.PlatformNotFoundException;
 import org.opentosca.toscana.core.api.utils.HALRelationUtils;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarImpl;
@@ -38,21 +39,17 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.experimental.results.ResultMatchers;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import static net.bytebuddy.matcher.ElementMatchers.anyOf;
-import static net.bytebuddy.matcher.ElementMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -103,7 +100,7 @@ public class TransformationControllerTest extends BaseSpringTest {
     private final static String CREATE_CSAR_VALID_URL = "/api/csars/kubernetes-cluster/transformations/p-a/create";
     private final static String PLATFORM_NOT_FOUND_URL = "/api/csars/kubernetes-cluster/transformations/p-z";
     private final static String CSAR_NOT_FOUND_URL = "/api/csars/keinechtescsar/transformations";
-    private static final String[] CSAR_NAMES = new String[] {"kubernetes-cluster", "apache-test", "mongo-db"};
+    private static final String[] CSAR_NAMES = new String[]{"kubernetes-cluster", "apache-test", "mongo-db"};
     private static final String SECOND_VALID_PLATFORM_NAME = "p-b";
     private static final String PROPERTY_TEST_DEFAULT_VALUE = "Test-Default-Value";
     private static final String PROPERTY_TEST_DEFAULT_VALUE_KEY = "default_value_property";
@@ -267,14 +264,14 @@ public class TransformationControllerTest extends BaseSpringTest {
             .andExpect(jsonPath("$.links[0].href")
                 .value("http://localhost/api/csars/kubernetes-cluster/transformations/p-a/properties"))
             .andReturn();
-        
+
         MockHttpServletResponse response = result.getResponse();
         String responseJson = new String(response.getContentAsByteArray());
         String[] values = JsonPath.parse(responseJson).read("$.properties[*].value", String[].class);
         long nullCount = Arrays.asList(values).stream().filter(Objects::isNull).count();
-        long testCount = Arrays.asList(values).stream().filter(e -> e != null &&  e.equals(PROPERTY_TEST_DEFAULT_VALUE)).count();
+        long testCount = Arrays.asList(values).stream().filter(e -> e != null && e.equals(PROPERTY_TEST_DEFAULT_VALUE)).count();
         assertEquals(7, nullCount);
-        assertEquals(1,  testCount);
+        assertEquals(1, testCount);
     }
 
     @Test
@@ -300,7 +297,7 @@ public class TransformationControllerTest extends BaseSpringTest {
             if (content.getString("key").equals("secret_property")) {
                 valueFound = content.getString("value").equals("geheim");
             } else {
-                restNull = restNull && (content.isNull("value") 
+                restNull = restNull && (content.isNull("value")
                     || content.getString("value").equals(PROPERTY_TEST_DEFAULT_VALUE));
             }
         }

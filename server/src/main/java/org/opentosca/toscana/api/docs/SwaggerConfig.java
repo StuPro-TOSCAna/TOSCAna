@@ -1,4 +1,4 @@
-package org.opentosca.toscana.core.api.docs;
+package org.opentosca.toscana.api.docs;
 
 import java.util.Objects;
 
@@ -16,7 +16,7 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-@SuppressWarnings( {"unchecked", "Guava"})
+@SuppressWarnings({"unchecked", "Guava"})
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig {

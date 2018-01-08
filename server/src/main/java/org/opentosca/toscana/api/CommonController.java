@@ -1,8 +1,8 @@
-package org.opentosca.toscana.core.api;
+package org.opentosca.toscana.api;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.opentosca.toscana.core.api.docs.HiddenResourceSupport;
+import org.opentosca.toscana.api.docs.HiddenResourceSupport;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -33,7 +33,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
     description = "Hypermedia only endpoints"
 )
 public class CommonController {
-    
+
     @Value("${endpoints.mappings.enabled}")
     private Boolean actuatorMappingsActive = false;
 

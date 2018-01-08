@@ -2,6 +2,7 @@ package org.opentosca.toscana.core.api;
 
 import java.util.Optional;
 
+import org.opentosca.toscana.api.PlatformController;
 import org.opentosca.toscana.core.BaseTest;
 import org.opentosca.toscana.core.plugin.PluginService;
 import org.opentosca.toscana.core.transformation.platform.Platform;
@@ -29,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(value = PlatformController.class)
-@ActiveProfiles( {INTEGRATION_TEST_PROFILE, "base-image-mapper"})
+@ActiveProfiles({INTEGRATION_TEST_PROFILE, "base-image-mapper"})
 @DirtiesContext(
     classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD
 )

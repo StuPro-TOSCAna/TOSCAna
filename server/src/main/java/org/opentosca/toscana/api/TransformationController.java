@@ -1,4 +1,4 @@
-package org.opentosca.toscana.core.api;
+package org.opentosca.toscana.api;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,20 +12,20 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.opentosca.toscana.core.api.docs.HiddenResources;
-import org.opentosca.toscana.core.api.docs.RestErrorResponse;
-import org.opentosca.toscana.core.api.docs.TransformationResources;
-import org.opentosca.toscana.core.api.exceptions.CsarNotFoundException;
-import org.opentosca.toscana.core.api.exceptions.IllegalTransformationStateException;
-import org.opentosca.toscana.core.api.exceptions.PlatformNotFoundException;
-import org.opentosca.toscana.core.api.exceptions.TransformationAlreadyPresentException;
-import org.opentosca.toscana.core.api.exceptions.TransformationNotFoundException;
-import org.opentosca.toscana.core.api.model.GetPropertiesResponse;
-import org.opentosca.toscana.core.api.model.GetPropertiesResponse.PropertyWrap;
-import org.opentosca.toscana.core.api.model.LogResponse;
-import org.opentosca.toscana.core.api.model.SetPropertiesRequest;
-import org.opentosca.toscana.core.api.model.SetPropertiesResponse;
-import org.opentosca.toscana.core.api.model.TransformationResponse;
+import org.opentosca.toscana.api.docs.HiddenResources;
+import org.opentosca.toscana.api.docs.RestErrorResponse;
+import org.opentosca.toscana.api.docs.TransformationResources;
+import org.opentosca.toscana.api.exceptions.CsarNotFoundException;
+import org.opentosca.toscana.api.exceptions.IllegalTransformationStateException;
+import org.opentosca.toscana.api.exceptions.PlatformNotFoundException;
+import org.opentosca.toscana.api.exceptions.TransformationAlreadyPresentException;
+import org.opentosca.toscana.api.exceptions.TransformationNotFoundException;
+import org.opentosca.toscana.api.model.GetPropertiesResponse;
+import org.opentosca.toscana.api.model.GetPropertiesResponse.PropertyWrap;
+import org.opentosca.toscana.api.model.LogResponse;
+import org.opentosca.toscana.api.model.SetPropertiesRequest;
+import org.opentosca.toscana.api.model.SetPropertiesResponse;
+import org.opentosca.toscana.api.model.TransformationResponse;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarService;
 import org.opentosca.toscana.core.transformation.Transformation;
@@ -130,7 +130,7 @@ public class TransformationController {
         tags = {"transformations", "csars"},
         notes = "Returns a HAL-Resources list containing all Transformations for a specific CSAR"
     )
-    @ApiResponses( {
+    @ApiResponses({
         @ApiResponse(
             code = 200,
             message = "The operation was executed successfully",
@@ -198,7 +198,7 @@ public class TransformationController {
         tags = {"transformations"},
         notes = "Returns a HAL-Resource Containing the details for the transformation with the given parameters"
     )
-    @ApiResponses( {
+    @ApiResponses({
         @ApiResponse(
             code = 200,
             message = "The operation was executed successfully"
@@ -260,7 +260,7 @@ public class TransformationController {
             "(If the platform does not exist and there is no other transformation with the same CSAR and Platform, " +
             "you have to delete the old transformation in this case)"
     )
-    @ApiResponses( {
+    @ApiResponses({
         @ApiResponse(
             code = 200,
             message = "The operation was executed successfully"
@@ -337,7 +337,7 @@ public class TransformationController {
         notes = "Starts a transformation that has been created and is ready to get started. To start a transformation, the " +
             "Transformation has to be in the state READY otherwise the transformation cannot start."
     )
-    @ApiResponses( {
+    @ApiResponses({
         @ApiResponse(
             code = 200,
             message = "The operation was executed successfully"
@@ -411,7 +411,7 @@ public class TransformationController {
         tags = {"transformations"},
         notes = "Deletes a transformation and all the coresponding artifacts"
     )
-    @ApiResponses( {
+    @ApiResponses({
         @ApiResponse(
             code = 200,
             message = "The operation was executed successfully"
@@ -483,7 +483,7 @@ public class TransformationController {
             "following log lines get returned. If the start index is larger than the current last log index the operation " +
             "will return a empty list."
     )
-    @ApiResponses( {
+    @ApiResponses({
         @ApiResponse(
             code = 200,
             message = "The operation was executed successfully",
@@ -565,7 +565,7 @@ public class TransformationController {
             "It is possible to download a archive (ZIP format) of all the files generated while the transformation was " +
             "running."
     )
-    @ApiResponses( {
+    @ApiResponses({
         @ApiResponse(
             code = 200,
             message = "The operation was executed successfully"
@@ -647,7 +647,7 @@ public class TransformationController {
             "(See Set Properties Operation). If the Transformation does not need any properties a empty list (Json Array) " +
             "is returned"
     )
-    @ApiResponses( {
+    @ApiResponses({
         @ApiResponse(
             code = 200,
             message = "The operation was executed successfully",
@@ -727,7 +727,7 @@ public class TransformationController {
             "to ready once all required properties have a value assigned to them. Once this is done the value can be changed or you can still " +
             "set non required properties."
     )
-    @ApiResponses( {
+    @ApiResponses({
         @ApiResponse(
             code = 200,
             message = "The operation was executed successfully",

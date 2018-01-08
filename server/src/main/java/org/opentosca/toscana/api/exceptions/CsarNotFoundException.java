@@ -1,4 +1,4 @@
-package org.opentosca.toscana.core.api.exceptions;
+package org.opentosca.toscana.api.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

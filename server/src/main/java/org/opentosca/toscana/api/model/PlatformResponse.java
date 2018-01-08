@@ -1,6 +1,6 @@
-package org.opentosca.toscana.core.api.model;
+package org.opentosca.toscana.api.model;
 
-import org.opentosca.toscana.core.api.docs.HiddenResourceSupport;
+import org.opentosca.toscana.api.docs.HiddenResourceSupport;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 
 import com.fasterxml.jackson.annotation.JsonProperty;

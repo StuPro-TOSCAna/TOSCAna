@@ -1,15 +1,15 @@
-package org.opentosca.toscana.core.api.model;
+package org.opentosca.toscana.api.model;
 
 import java.util.List;
 
-import org.opentosca.toscana.core.api.TransformationController;
-import org.opentosca.toscana.core.api.docs.HiddenResourceSupport;
+import org.opentosca.toscana.api.TransformationController;
+import org.opentosca.toscana.api.docs.HiddenResourceSupport;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 @ApiModel
@@ -23,7 +23,7 @@ public class GetPropertiesResponse extends HiddenResourceSupport {
         @JsonProperty("properties") List<PropertyWrap> properties
     ) {
         this.properties = properties;
-        add(linkTo(methodOn(TransformationController.class)
+        add(ControllerLinkBuilder.linkTo(methodOn(TransformationController.class)
             .getTransformationProperties(null, null))
             .withSelfRel().expand(csarName, platformName)
         );
@@ -91,7 +91,7 @@ public class GetPropertiesResponse extends HiddenResourceSupport {
         public String getDescription() {
             return description;
         }
-        
+
         @ApiModelProperty(
             required = true,
             notes = "Determines if the property is required to start the transformation",
@@ -101,7 +101,7 @@ public class GetPropertiesResponse extends HiddenResourceSupport {
         public boolean isRequired() {
             return required;
         }
-        
+
         @ApiModelProperty(
             required = false,
             notes = "the current value of this property",

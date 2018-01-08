@@ -1,15 +1,16 @@
-package org.opentosca.toscana.core.api.model;
+package org.opentosca.toscana.api.model;
 
 import java.io.IOException;
 
-import org.opentosca.toscana.core.api.PlatformController;
-import org.opentosca.toscana.core.api.TransformationController;
-import org.opentosca.toscana.core.api.docs.HiddenResourceSupport;
+import org.opentosca.toscana.api.PlatformController;
+import org.opentosca.toscana.api.TransformationController;
+import org.opentosca.toscana.api.docs.HiddenResourceSupport;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.hateoas.core.Relation;
+import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
@@ -30,13 +31,13 @@ public class TransformationResponse extends HiddenResourceSupport {
         this.progress = progress;
         this.status = status;
         this.platform = platform;
-        this.add(linkTo(methodOn(TransformationController.class)
+        this.add(ControllerLinkBuilder.linkTo(methodOn(TransformationController.class)
             .getCSARTransformation(csarName, platform))
             .withSelfRel().expand(csarName));
         this.add(linkTo(methodOn(TransformationController.class)
             .getTransformationLogs(csarName, platform, 0L))
             .withRel("logs").expand(csarName));
-        this.add(linkTo(methodOn(PlatformController.class)
+        this.add(ControllerLinkBuilder.linkTo(methodOn(PlatformController.class)
             .getPlatform(platform)).withRel("platform"));
         this.add(linkTo(methodOn(TransformationController.class)
             .getTransformationProperties(csarName, platform))
@@ -67,7 +68,7 @@ public class TransformationResponse extends HiddenResourceSupport {
         required = true,
         //Sadly Java does not allow Dynamic calls here, therefore this has to be updated manually
         notes = "The Current State of the transformation. Has to be one of the following: " +
-            "\"READY\", \"INPUT_REQUIRED\", \"TRANSFORMING\", \"DONE\" or \"ERROR\"", 
+            "\"READY\", \"INPUT_REQUIRED\", \"TRANSFORMING\", \"DONE\" or \"ERROR\"",
         example = "READY"
     )
     @JsonProperty("status")

@@ -1,5 +1,6 @@
 package org.opentosca.toscana.core.api;
 
+import org.opentosca.toscana.api.CommonController;
 import org.opentosca.toscana.core.BaseTest;
 
 import org.junit.Test;
@@ -22,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DirtiesContext(
     classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD
 )
-@ActiveProfiles( {INTEGRATION_TEST_PROFILE, "base-image-mapper"})
+@ActiveProfiles({INTEGRATION_TEST_PROFILE, "base-image-mapper"})
 public class CommonControllerTest extends BaseTest {
 
     @Autowired
