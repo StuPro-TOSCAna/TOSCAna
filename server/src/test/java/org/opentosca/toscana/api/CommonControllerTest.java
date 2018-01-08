@@ -1,6 +1,5 @@
-package org.opentosca.toscana.core.api;
+package org.opentosca.toscana.api;
 
-import org.opentosca.toscana.api.CommonController;
 import org.opentosca.toscana.core.BaseTest;
 
 import org.junit.Test;
@@ -9,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -24,6 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD
 )
 @ActiveProfiles({INTEGRATION_TEST_PROFILE, "base-image-mapper"})
+@ContextConfiguration(classes = CommonController.class)
 public class CommonControllerTest extends BaseTest {
 
     @Autowired

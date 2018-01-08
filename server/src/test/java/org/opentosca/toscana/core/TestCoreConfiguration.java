@@ -37,12 +37,12 @@ import org.springframework.context.annotation.PropertySource;
 
 import static org.opentosca.toscana.core.testdata.TestProfiles.INTEGRATION_TEST_PROFILE;
 
-@SuppressWarnings( {"UnnecessaryLocalVariable", "Duplicates"})
+@SuppressWarnings({"UnnecessaryLocalVariable", "Duplicates"})
 @Configuration
 @PropertySource("classpath:application.yml")
 //Exclude Controller test profile and the integration test profile, 
 //used for applications that need to launch the application with a normal context
-@Profile( {"!" + INTEGRATION_TEST_PROFILE})
+@Profile({"!" + INTEGRATION_TEST_PROFILE})
 public class TestCoreConfiguration extends CoreConfiguration {
 
     @Bean

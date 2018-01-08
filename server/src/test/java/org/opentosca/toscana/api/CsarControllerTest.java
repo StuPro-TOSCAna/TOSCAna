@@ -1,4 +1,4 @@
-package org.opentosca.toscana.core.api;
+package org.opentosca.toscana.api;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 
-import org.opentosca.toscana.api.CsarController;
+import org.opentosca.toscana.api.utils.HALRelationUtils;
 import org.opentosca.toscana.core.BaseSpringTest;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarImpl;
@@ -40,7 +40,6 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
-import static org.opentosca.toscana.core.api.utils.HALRelationUtils.validateRelations;
 import static org.opentosca.toscana.core.testdata.ByteArrayUtils.assertHashesEqual;
 import static org.opentosca.toscana.core.testdata.ByteArrayUtils.generateRandomByteArray;
 import static org.opentosca.toscana.core.testdata.ByteArrayUtils.getSHA256Hash;
@@ -179,7 +178,7 @@ public class CsarControllerTest extends BaseSpringTest {
             //Validate String result
             MvcResult result = resultActions.andReturn();
             JSONObject object = new JSONObject(result.getResponse().getContentAsString());
-            validateRelations(object.getJSONArray("links"), relations, name);
+            HALRelationUtils.validateRelations(object.getJSONArray("links"), relations, name);
         }
     }
 

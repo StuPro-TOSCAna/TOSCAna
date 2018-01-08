@@ -1,8 +1,7 @@
-package org.opentosca.toscana.core.api;
+package org.opentosca.toscana.api;
 
 import java.util.Optional;
 
-import org.opentosca.toscana.api.PlatformController;
 import org.opentosca.toscana.core.BaseTest;
 import org.opentosca.toscana.core.plugin.PluginService;
 import org.opentosca.toscana.core.transformation.platform.Platform;
@@ -16,6 +15,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -34,6 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DirtiesContext(
     classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD
 )
+@ContextConfiguration(classes = PlatformController.class)
 public class PlatformControllerTest extends BaseTest {
 
     @Autowired

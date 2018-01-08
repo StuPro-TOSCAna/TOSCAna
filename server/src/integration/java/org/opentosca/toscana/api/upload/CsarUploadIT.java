@@ -1,4 +1,4 @@
-package org.opentosca.toscana.core.api.upload;
+package org.opentosca.toscana.api.upload;
 
 import org.opentosca.toscana.core.BaseSpringIntegrationTest;
 import org.opentosca.toscana.core.testdata.TestCsars;

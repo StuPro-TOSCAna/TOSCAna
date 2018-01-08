@@ -1,4 +1,4 @@
-package org.opentosca.toscana.core.api;
+package org.opentosca.toscana.api;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -13,10 +13,9 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 
-import org.opentosca.toscana.api.TransformationController;
 import org.opentosca.toscana.api.exceptions.PlatformNotFoundException;
+import org.opentosca.toscana.api.utils.HALRelationUtils;
 import org.opentosca.toscana.core.BaseSpringTest;
-import org.opentosca.toscana.core.api.utils.HALRelationUtils;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarImpl;
 import org.opentosca.toscana.core.csar.CsarService;
