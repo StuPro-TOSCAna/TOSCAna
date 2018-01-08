@@ -1,7 +1,7 @@
 package org.opentosca.toscana.plugins.cloudformation.visitor;
 
 import java.io.File;
-import java.io.IOException;
+//import java.io.IOException;
 import java.util.UUID;
 
 import org.opentosca.toscana.model.capability.ComputeCapability;
@@ -68,15 +68,12 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
         this.logger = logger;
         this.cfnModule = cfnModule;
         // TODO Get credentials and possibly region from User
-        BasicAWSCredentials awsCreds = new BasicAWSCredentials("", "");
+        BasicAWSCredentials awsCreds = new BasicAWSCredentials("","");
         this.s3 = AmazonS3ClientBuilder.standard()
             .withCredentials(new AWSStaticCredentialsProvider(awsCreds))
             .withRegion(Regions.US_WEST_2)
             .build();
         this.bucketName = createBucket(s3);
-        // TODO check if files need to be public for CloudFormation to access them
-        // Allows anyone to access files in the bucket
-        s3.setBucketPolicy(bucketName, getPublicReadPolicy().toJson());
     }
 
     @Override
@@ -312,7 +309,8 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
     }
 
     /**
-     * Creates a new bucket with a random name on the given AmazonS3 and returns the name of said bucket.
+     * Creates a new bucket with a random name on the given AmazonS3, sets its policy
+     * and returns the name of said bucket.
      *
      * @param s3 where the bucket should be created
      * @return name of the created bucket
@@ -322,12 +320,20 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             String bucketName = "cf-bucket-" + UUID.randomUUID();
             logger.debug("Creating bucket " + bucketName + ".");
             s3.createBucket(bucketName);
+
+            // TODO check if files need to be public for CloudFormation to access them
+            // Allows anyone to access files in the bucket
+            s3.setBucketPolicy(bucketName, getPublicReadPolicy().toJson());
         } catch (AmazonServiceException ase) {
             logger.error("Caught an AmazonServiceException while trying to create the bucket.");
             logASEError(ase);
         } catch (AmazonClientException ace) {
             logger.error("Caught an AmazonClientException while trying to create the bucket.");
             logACEError(ace);
+        } catch (IllegalArgumentException iae) {
+            logger.error("Caught an IllegalArgumentException while trying to create the bucket.");
+            logger.error("This means that the bucketName is invalid" +
+                " most likely due to a failure during the bucket creation.");
         }
         return bucketName;
     }
