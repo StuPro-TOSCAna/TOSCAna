@@ -181,16 +181,16 @@ public class TOSCAnaAPI {
         String platform,
         TransformationProperties props
     ) throws IOException, TOSCAnaServerException {
-        TransformationProperties wrapper = new TransformationProperties(props.getProperties());
+        TransformationProperties properties = new TransformationProperties(props.getProperties());
         //Set The properties
         //Create the call
-        Call<ResponseBody> call = apiService.updateProperties(csarName, platform, wrapper);
+        Call<ResponseBody> call = apiService.updateProperties(csarName, platform, properties);
         Response<ResponseBody> response = call.execute();
         if (!response.isSuccessful() && response.code() == 406) {
             return (Map<String, Boolean>) objectMapper.readValue(response.errorBody().string(), Map.class).get("valid_inputs");
         } else if (response.isSuccessful()) {
             Map<String, Boolean> result = new HashMap<>();
-            wrapper.getProperties()
+            properties.getProperties()
                 .forEach(transformationProperty -> result.put(transformationProperty.getKey(), true));
             return result;
         }

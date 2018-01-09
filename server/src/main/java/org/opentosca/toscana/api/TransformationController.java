@@ -21,8 +21,8 @@ import org.opentosca.toscana.api.exceptions.PlatformNotFoundException;
 import org.opentosca.toscana.api.exceptions.TransformationAlreadyPresentException;
 import org.opentosca.toscana.api.exceptions.TransformationNotFoundException;
 import org.opentosca.toscana.api.model.GetPropertiesResponse;
-import org.opentosca.toscana.api.model.GetPropertiesResponse.PropertyWrap;
 import org.opentosca.toscana.api.model.LogResponse;
+import org.opentosca.toscana.api.model.PropertyWrap;
 import org.opentosca.toscana.api.model.SetPropertiesRequest;
 import org.opentosca.toscana.api.model.SetPropertiesResponse;
 import org.opentosca.toscana.api.model.TransformationResponse;
@@ -764,7 +764,7 @@ public class TransformationController {
         Map<String, Boolean> successes = new HashMap<>();
         boolean somethingFailed = false;
         //Set The Properties and check their validity
-        for (SetPropertiesRequest.PropertyWrap entry : setPropertiesRequest.getProperties()) {
+        for (PropertyWrap entry : setPropertiesRequest.getProperties()) {
             try {
                 transformation.setProperty(entry.getKey(), entry.getValue());
                 successes.put(entry.getKey(), true);

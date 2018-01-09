@@ -113,14 +113,6 @@ public class TransformationControllerTest extends BaseSpringTest {
         "    } " +
         "}";
 
-    //    private final static String INVALID_PROPERTY_INPUT = "{\n" +
-//        "\t\"properties\": {\n" +
-//        "\t\t\"text_property\":\"Meddl Loide\",\n" +
-//        "\t\t\"name_property\": \"meddl\",\n" +
-//        "\t\t\"secret_property\": \"I bims 1 geheimnis\",\n" +
-//        "\t\t\"unsigned_integer_property\": \"-1337\"\n" +
-//        "\t}\n" +
-//        "}";
     private final static String VALID_CSAR_NAME = "kubernetes-cluster";
     private final static String VALID_PLATFORM_NAME = "p-a";
     private final static String START_TRANSFORMATION_VALID_URL = "/api/csars/kubernetes-cluster/transformations/p-a/start";
