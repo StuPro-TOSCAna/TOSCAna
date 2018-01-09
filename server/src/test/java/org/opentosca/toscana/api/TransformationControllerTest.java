@@ -112,6 +112,21 @@ public class TransformationControllerTest extends BaseSpringTest {
         "        }\n" +
         "    } " +
         "}";
+    private final static String MISSING_VALUE_PROPERTY_INPUT = "{\n" +
+        "    \"properties\": [\n" +
+        "        {\n" +
+        "            \"key\": \"text_property\",\n" +
+        "            \"type\": \"text\",\n" +
+        "            \"required\": true,\n" +
+        "            \"description\": \"\",\n" +
+        "        },\n" +
+        "    ],\n" +
+        "    \"_links\": {\n" +
+        "        \"self\": {\n" +
+        "            \"href\": \"http://localhost:8080/csars/mongo-db/transformations/p-a/properties\"\n" +
+        "        }\n" +
+        "    } " +
+        "}";
 
     private final static String VALID_CSAR_NAME = "kubernetes-cluster";
     private final static String VALID_PLATFORM_NAME = "p-a";
@@ -271,6 +286,18 @@ public class TransformationControllerTest extends BaseSpringTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
             .andExpect(jsonPath("$.valid_inputs.unsigned_integer").value(false))
             .andExpect(jsonPath("$.valid_inputs.text_property").value(true))
+            .andReturn();
+    }
+
+    @Test
+    public void setTransformationPropertiesMissingValueInvalidInput() throws Exception {
+        preInitNonCreationTests();
+        mvc.perform(
+            put(GET_PROPERTIES_VALID_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(MISSING_VALUE_PROPERTY_INPUT)
+        ).andDo(print())
+            .andExpect(status().is(400))
             .andReturn();
     }
 

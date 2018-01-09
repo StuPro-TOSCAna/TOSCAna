@@ -181,16 +181,16 @@ public class TOSCAnaAPI {
         String platform,
         TransformationProperties props
     ) throws IOException, TOSCAnaServerException {
-        TransformationProperties properties = new TransformationProperties(props.getProperties());
-        //Set The properties
-        //Create the call
-        Call<ResponseBody> call = apiService.updateProperties(csarName, platform, properties);
+        Call<ResponseBody> call = apiService.updateProperties(csarName, platform, props);
         Response<ResponseBody> response = call.execute();
-        if (!response.isSuccessful() && response.code() == 406) {
+        if (response.code() == 400) {
+            return objectMapper.readValue(response.errorBody().string(), Map.class);
+        } else if (response.code() == 406) {
+            // input validation failed return map with a boolean if property value for given key is correct
             return (Map<String, Boolean>) objectMapper.readValue(response.errorBody().string(), Map.class).get("valid_inputs");
         } else if (response.isSuccessful()) {
             Map<String, Boolean> result = new HashMap<>();
-            properties.getProperties()
+            props.getProperties()
                 .forEach(transformationProperty -> result.put(transformationProperty.getKey(), true));
             return result;
         }
@@ -241,10 +241,6 @@ public class TOSCAnaAPI {
 
     public Retrofit getRetrofit() {
         return retrofit;
-    }
-
-    public TOSCAnaAPIService getApiService() {
-        return apiService;
     }
 
     private <E> void throwToscanaException(

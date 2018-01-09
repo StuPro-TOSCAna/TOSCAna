@@ -747,7 +747,7 @@ public class TransformationController {
         @ApiResponse(
             code = 406,
             message = "At least one of the properties could not get set because either the key does not exist or the " +
-                "Syntax vlaidation of the value has failed.",
+                "Syntax validation of the value has failed.",
             response = SetPropertiesResponse.class
         )
     })

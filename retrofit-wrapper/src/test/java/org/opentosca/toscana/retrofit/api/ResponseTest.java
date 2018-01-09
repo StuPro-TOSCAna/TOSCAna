@@ -29,18 +29,6 @@ public class ResponseTest extends BaseTOSCAnaAPITest {
     }
 
     @Test
-    public void setValidPropertiesTest() throws Exception {
-        enqueResponse("json/set_valid_properties.json", 200, "application/json");
-        TransformationProperty property = new TransformationProperty();
-        property.setType("name");
-        property.setKey("text_property");
-        property.setValue("test");
-        TransformationProperties properties = new TransformationProperties(Arrays.asList(property));
-        Map<String, Boolean> res = api.updateProperties("test", "test", properties);
-        assertEquals(true, res.get("text_property"));
-    }
-
-    @Test
     public void setInvalidPropertiesTest() throws Exception {
         enqueResponse("json/set_invalid_properties.json", 406, "application/json");
         TransformationProperty property = new TransformationProperty();
