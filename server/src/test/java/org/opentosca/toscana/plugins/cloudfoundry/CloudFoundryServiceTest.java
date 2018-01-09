@@ -116,7 +116,7 @@ public class CloudFoundryServiceTest extends BaseUnitTest {
         assumeNotNull(envUser, envHost, envOrga, envPw, envSpace);
         JSONObject env = null;
         try {
-            env = cloudFoundryConnection.getServiceCredentials("cleardb", "my_app");
+            env = cloudFoundryConnection.getServiceCredentials("cleardb", "my-app");
         } catch (JSONException e) {
             e.printStackTrace();
             assumeTrue(false);

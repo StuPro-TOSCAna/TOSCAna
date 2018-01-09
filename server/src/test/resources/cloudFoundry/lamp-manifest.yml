@@ -1,6 +1,6 @@
 ---
 applications:
-- name: my_app
+- name: my-app
   path: ../my_app
   disk_quota: 2000MB
   mem_size: 1024MB

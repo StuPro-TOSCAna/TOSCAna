@@ -42,6 +42,7 @@ public class CloudFoundryPluginTest extends BaseUnitTest {
     private Log log;
     private File targetDir;
     private final String appName = "my_app";
+    private final String appNameClearedUp = "my-app";
     private final ArrayList<String> paths = new ArrayList<>();
     private final String resourcesPath = "src/test/resources/";
 
@@ -71,7 +72,7 @@ public class CloudFoundryPluginTest extends BaseUnitTest {
 
     @Test
     public void getName() {
-        assertEquals(appName, myApp.getName());
+        assertEquals(appNameClearedUp, myApp.getName());
     }
 
     @Test
@@ -99,11 +100,11 @@ public class CloudFoundryPluginTest extends BaseUnitTest {
 
     @Test
     public void getDeployScript() throws Exception {
-        File targetFile = new File(targetDir + "/output/scripts/", FILEPRAEFIX_DEPLOY + appName +
+        File targetFile = new File(targetDir + "/output/scripts/", FILEPRAEFIX_DEPLOY + appNameClearedUp +
             FILESUFFIX_DEPLOY);
         String deployScript = FileUtils.readFileToString(targetFile);
         String expectedOutput = String.format("#!/bin/sh\nsource util/*\ncheck \"cf\"\n%smy_db\n%s%s%s%s\n",
-            CLI_CREATE_SERVICE_DEFAULT, CLI_PUSH, appName, CLI_PATH_TO_MANIFEST, MANIFEST_NAME);
+            CLI_CREATE_SERVICE_DEFAULT, CLI_PUSH, appNameClearedUp, CLI_PATH_TO_MANIFEST, MANIFEST_NAME);
 
         assertEquals(expectedOutput, deployScript);
     }

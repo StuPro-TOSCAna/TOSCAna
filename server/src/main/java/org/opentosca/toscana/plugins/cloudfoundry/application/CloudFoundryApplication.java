@@ -27,7 +27,7 @@ public class CloudFoundryApplication {
     private CloudFoundryConnection connection;
 
     public CloudFoundryApplication(String name) {
-        this.name = name;
+        this.setName(name);
     }
 
     public CloudFoundryApplication() {
@@ -42,7 +42,8 @@ public class CloudFoundryApplication {
     }
 
     public void setName(String name) {
-        this.name = name;
+        String clearedUpName = name.replaceAll("[:/?#@$&'()*+,;=_]", "-");
+        this.name = clearedUpName;
     }
 
     public String getName() {
