@@ -25,6 +25,7 @@ import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator
 import static org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryManifestAttribute.APPLICATIONS_SECTION;
 import static org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryManifestAttribute.ENVIRONMENT;
 import static org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryManifestAttribute.PATH;
+import static org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryManifestAttribute.RANDOM_ROUTE;
 import static org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryManifestAttribute.SERVICE;
 import static org.opentosca.toscana.plugins.cloudfoundry.application.buildpacks.CloudFoundryBuildpackDetection.BUILDPACK_FILEPATH_PHP;
 import static org.opentosca.toscana.plugins.cloudfoundry.application.buildpacks.CloudFoundryBuildpackDetection.BUILDPACK_OBJECT_PHP;
@@ -82,8 +83,8 @@ public class CloudFoundryFileCreatorTest extends BaseUnitTest {
         fileCreator.createFiles();
         File targetFile = new File(targetDir, MANIFEST_PATH);
         String manifestContent = FileUtils.readFileToString(targetFile);
-        String expectedManifestContent = String.format("---\n%s:\n- %s: %s\n  %s: %s\n",
-            APPLICATIONS_SECTION.getName(), NAMEBLOCK, appName, PATH.getName(), expectedPath);
+        String expectedManifestContent = String.format("---\n%s:\n- %s: %s\n  %s: %s\n  %s: %s\n",
+            APPLICATIONS_SECTION.getName(), NAMEBLOCK, appName, PATH.getName(), expectedPath, RANDOM_ROUTE.getName(), "true");
 
         assertEquals(expectedManifestContent, manifestContent);
     }
@@ -95,8 +96,9 @@ public class CloudFoundryFileCreatorTest extends BaseUnitTest {
         fileCreator.createFiles();
         File targetFile = new File(targetDir, MANIFEST_PATH);
         String manifestContent = FileUtils.readFileToString(targetFile);
-        String expectedManifestContent = String.format("---\n%s:\n- %s: %s\n  %s:\n    %s: %s\n    %s: %s\n",
+        String expectedManifestContent = String.format("---\n%s:\n- %s: %s\n  %s: %s\n  %s:\n    %s: %s\n    %s: %s\n",
             APPLICATIONS_SECTION.getName(), NAMEBLOCK, appName,
+            RANDOM_ROUTE.getName(), "true",
             ENVIRONMENT.getName(),
             envVariable1, "TODO",
             envVariable2, envValue);
@@ -143,8 +145,9 @@ public class CloudFoundryFileCreatorTest extends BaseUnitTest {
         fileCreator.createFiles();
         File targetFile = new File(targetDir, MANIFEST_PATH);
         String manifestContent = FileUtils.readFileToString(targetFile);
-        String expectedManifestContent = String.format("---\n%s:\n- %s: %s\n  %s:\n    - %s\n    - %s\n",
+        String expectedManifestContent = String.format("---\n%s:\n- %s: %s\n  %s: %s\n  %s:\n    - %s\n    - %s\n",
             APPLICATIONS_SECTION.getName(), NAMEBLOCK, appName,
+            RANDOM_ROUTE.getName(), "true",
             SERVICE.getName(),
             service2,
             service1);

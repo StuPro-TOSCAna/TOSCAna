@@ -4,6 +4,7 @@ applications:
   path: ../my_app
   disk_quota: 2000MB
   mem_size: 1024MB
+  random-route: true
   env:
     database_user: root
     database_name: DBNAME

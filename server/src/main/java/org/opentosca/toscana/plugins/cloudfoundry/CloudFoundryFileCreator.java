@@ -18,8 +18,10 @@ import org.cloudfoundry.operations.services.ServiceOffering;
 import org.cloudfoundry.operations.services.ServicePlan;
 import org.json.JSONException;
 
+import static org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryManifestAttribute.DOMAIN;
 import static org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryManifestAttribute.ENVIRONMENT;
 import static org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryManifestAttribute.PATH;
+import static org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryManifestAttribute.RANDOM_ROUTE;
 import static org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryManifestAttribute.SERVICE;
 import static org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle.OUTPUT_DIR;
 
@@ -186,12 +188,22 @@ public class CloudFoundryFileCreator {
 
         if (!app.getAttributes().isEmpty()) {
             ArrayList<String> attributes = new ArrayList<>();
+            boolean containsDomain = false;
             for (Map.Entry<String, String> attribute : app.getAttributes().entrySet()) {
                 attributes.add(String.format("  %s: %s", attribute.getKey(), attribute.getValue()));
+                if (attribute.getKey().equals(DOMAIN.getName())) {
+                    containsDomain = true;
+                }
+            }
+            if (!containsDomain) {
+                attributes.add(String.format("  %s: %s", RANDOM_ROUTE.getName(), "true"));
             }
             for (String attribute : attributes) {
                 fileAccess.access(MANIFEST_PATH).appendln(attribute).close();
             }
+        } else {
+            String randomRouteAttribute = String.format("  %s: %s", RANDOM_ROUTE.getName(), "true");
+            fileAccess.access(MANIFEST_PATH).appendln(randomRouteAttribute).close();
         }
     }
 
