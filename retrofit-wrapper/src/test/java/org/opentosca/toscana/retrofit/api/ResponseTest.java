@@ -1,8 +1,11 @@
 package org.opentosca.toscana.retrofit.api;
 
+import java.util.Arrays;
 import java.util.Map;
 
 import org.opentosca.toscana.retrofit.model.ServerError;
+import org.opentosca.toscana.retrofit.model.TransformationProperties;
+import org.opentosca.toscana.retrofit.model.TransformationProperty;
 import org.opentosca.toscana.retrofit.model.TransformerStatus;
 import org.opentosca.toscana.retrofit.model.embedded.CsarResources;
 import org.opentosca.toscana.retrofit.util.TOSCAnaServerException;
@@ -12,7 +15,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -24,6 +26,30 @@ public class ResponseTest extends BaseTOSCAnaAPITest {
         enqueResponse("json/health.json", 200, "application/json");
         TransformerStatus status = api.getServerStatus();
         assertEquals("UP", status.getStatus());
+    }
+
+    @Test
+    public void setValidPropertiesTest() throws Exception {
+        enqueResponse("json/set_valid_properties.json", 200, "application/json");
+        TransformationProperty property = new TransformationProperty();
+        property.setType("name");
+        property.setKey("text_property");
+        property.setValue("test");
+        TransformationProperties properties = new TransformationProperties(Arrays.asList(property));
+        Map<String, Boolean> res = api.updateProperties("test", "test", properties);
+        assertEquals(true, res.get("text_property"));
+    }
+
+    @Test
+    public void setInvalidPropertiesTest() throws Exception {
+        enqueResponse("json/set_invalid_properties.json", 406, "application/json");
+        TransformationProperty property = new TransformationProperty();
+        property.setType("unsigned_integer");
+        property.setKey("unsigned_integer");
+        property.setValue("-11");
+        TransformationProperties properties = new TransformationProperties(Arrays.asList(property));
+        Map<String, Boolean> res = api.updateProperties("test", "test", properties);
+        assertEquals(false, res.get("unsigned_integer"));
     }
 
     @Test

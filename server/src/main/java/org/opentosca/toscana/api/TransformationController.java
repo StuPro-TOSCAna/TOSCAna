@@ -764,7 +764,7 @@ public class TransformationController {
         Map<String, Boolean> successes = new HashMap<>();
         boolean somethingFailed = false;
         //Set The Properties and check their validity
-        for (Map.Entry<String, String> entry : setPropertiesRequest.getProperties().entrySet()) {
+        for (SetPropertiesRequest.PropertyWrap entry : setPropertiesRequest.getProperties()) {
             try {
                 transformation.setProperty(entry.getKey(), entry.getValue());
                 successes.put(entry.getKey(), true);
