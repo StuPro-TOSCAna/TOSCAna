@@ -1,5 +1,5 @@
 # This image is based on the Docker in Docker image (needs --privileged to work correctly)
-# If the privileged is missing this image will not support kubernetes based transformations
+# If the privileged flag is missing this image will not support kubernetes based transformations
 FROM docker:dind
 LABEL maintainer="Christian Müller <cmueller.dev@gmail.com>"
 WORKDIR /toscana
