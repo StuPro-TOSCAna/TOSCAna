@@ -13,16 +13,16 @@ import org.apache.commons.io.FileUtils;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeNotNull;
 import static org.mockito.Mockito.mock;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin.CF_PROPERTY_KEY_API;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin.CF_PROPERTY_KEY_ORGANIZATION;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin.CF_PROPERTY_KEY_PASSWORD;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin.CF_PROPERTY_KEY_SPACE;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin.CF_PROPERTY_KEY_USERNAME;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryServiceTest.CF_ENVIRONMENT_HOST;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryServiceTest.CF_ENVIRONMENT_ORGA;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryServiceTest.CF_ENVIRONMENT_PW;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryServiceTest.CF_ENVIRONMENT_SPACE;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryServiceTest.CF_ENVIRONMENT_USER;
+import static org.opentosca.toscana.plugins.cloudfoundry.Plugin.CF_PROPERTY_KEY_API;
+import static org.opentosca.toscana.plugins.cloudfoundry.Plugin.CF_PROPERTY_KEY_ORGANIZATION;
+import static org.opentosca.toscana.plugins.cloudfoundry.Plugin.CF_PROPERTY_KEY_PASSWORD;
+import static org.opentosca.toscana.plugins.cloudfoundry.Plugin.CF_PROPERTY_KEY_SPACE;
+import static org.opentosca.toscana.plugins.cloudfoundry.Plugin.CF_PROPERTY_KEY_USERNAME;
+import static org.opentosca.toscana.plugins.cloudfoundry.ServiceTest.CF_ENVIRONMENT_HOST;
+import static org.opentosca.toscana.plugins.cloudfoundry.ServiceTest.CF_ENVIRONMENT_ORGA;
+import static org.opentosca.toscana.plugins.cloudfoundry.ServiceTest.CF_ENVIRONMENT_PW;
+import static org.opentosca.toscana.plugins.cloudfoundry.ServiceTest.CF_ENVIRONMENT_SPACE;
+import static org.opentosca.toscana.plugins.cloudfoundry.ServiceTest.CF_ENVIRONMENT_USER;
 
 /**
  Created by jensmuller on 03.01.18.
@@ -36,7 +36,7 @@ public class CloudFoundryLampIT extends BaseTransformTest {
     private final String envSpace = System.getenv(CF_ENVIRONMENT_SPACE);
 
     public CloudFoundryLampIT() {
-        super(new CloudFoundryPlugin());
+        super(new Plugin());
     }
 
     @Override

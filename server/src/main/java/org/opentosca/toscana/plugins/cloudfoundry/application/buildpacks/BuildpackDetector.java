@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
-import org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin;
-import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryApplication;
-import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryServiceType;
+import org.opentosca.toscana.plugins.cloudfoundry.Plugin;
+import org.opentosca.toscana.plugins.cloudfoundry.application.Application;
+import org.opentosca.toscana.plugins.cloudfoundry.application.ServiceTypes;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,18 +18,18 @@ import org.slf4j.LoggerFactory;
  detect which language is used and add additional buildpacks which are not default
  checks the combination of used services and language
  */
-public class CloudFoundryBuildpackDetection {
+public class BuildpackDetector {
 
     public static final String BUILDPACK_OBJECT_PHP = "PHP_EXTENSIONS";
     public static final String BUILDPACK_FILEPATH_PHP = ".bp-config/options.json";
 
-    private final static Logger logger = LoggerFactory.getLogger(CloudFoundryPlugin.class);
+    private final static Logger logger = LoggerFactory.getLogger(Plugin.class);
 
-    private CloudFoundryApplication application;
+    private Application application;
     private String applicationSuffix;
     private PluginFileAccess fileAccess;
 
-    public CloudFoundryBuildpackDetection(CloudFoundryApplication application, PluginFileAccess fileAccess) {
+    public BuildpackDetector(Application application, PluginFileAccess fileAccess) {
         this.application = application;
         this.fileAccess = fileAccess;
         this.applicationSuffix = application.getApplicationSuffix();
@@ -52,12 +52,12 @@ public class CloudFoundryBuildpackDetection {
 
     private void addBuildpackAdditonsPHP() throws JSONException, IOException {
 
-        if (application.getServices().containsValue(CloudFoundryServiceType.MYSQL)) {
+        if (application.getServices().containsValue(ServiceTypes.MYSQL)) {
             JSONObject buildPackAdditionsJson = new JSONObject();
             JSONArray buildPacks = new JSONArray(Arrays.asList("mysql", "mysqli"));
 
             //add default php values because they will be overriden by manual additions
-            for (String buildpack : CloudFoundryBuildpack.DEFAULT_PHP_BUILDPACKS) {
+            for (String buildpack : Buildpacks.DEFAULT_PHP_BUILDPACKS) {
                 buildPacks.put(buildpack);
             }
 

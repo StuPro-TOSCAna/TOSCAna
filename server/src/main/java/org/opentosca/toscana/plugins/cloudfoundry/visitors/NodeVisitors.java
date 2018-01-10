@@ -9,22 +9,22 @@ import org.opentosca.toscana.model.node.WebApplication;
 import org.opentosca.toscana.model.operation.Operation;
 import org.opentosca.toscana.model.operation.OperationVariable;
 import org.opentosca.toscana.model.visitor.StrictNodeVisitor;
-import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryApplication;
-import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryServiceType;
+import org.opentosca.toscana.plugins.cloudfoundry.application.Application;
+import org.opentosca.toscana.plugins.cloudfoundry.application.ServiceTypes;
 
-import static org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryManifestAttribute.DISKSIZE;
-import static org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryManifestAttribute.DOMAIN;
-import static org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryManifestAttribute.MEMORY;
+import static org.opentosca.toscana.plugins.cloudfoundry.application.ManifestAttributes.DISKSIZE;
+import static org.opentosca.toscana.plugins.cloudfoundry.application.ManifestAttributes.DOMAIN;
+import static org.opentosca.toscana.plugins.cloudfoundry.application.ManifestAttributes.MEMORY;
 
-public class CloudFoundryNodeVisitor implements StrictNodeVisitor {
+public class NodeVisitors implements StrictNodeVisitor {
 
-    private CloudFoundryApplication myApp;
+    private Application myApp;
 
-    public CloudFoundryNodeVisitor(CloudFoundryApplication myApp) {
+    public NodeVisitors(Application myApp) {
         this.myApp = myApp;
     }
 
-    public CloudFoundryApplication getFilledApp() {
+    public Application getFilledApp() {
         return myApp;
     }
 
@@ -58,7 +58,7 @@ public class CloudFoundryNodeVisitor implements StrictNodeVisitor {
         ignore password and port
          */
         handleStandardLifecycle(node, false);
-        myApp.addService(node.getNodeName(), CloudFoundryServiceType.MYSQL);
+        myApp.addService(node.getNodeName(), ServiceTypes.MYSQL);
     }
 
     @Override

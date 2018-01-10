@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
-import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryApplication;
-import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryProvider;
-import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryService;
-import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryServiceType;
-import org.opentosca.toscana.plugins.cloudfoundry.application.buildpacks.CloudFoundryBuildpackDetection;
+import org.opentosca.toscana.plugins.cloudfoundry.application.Application;
+import org.opentosca.toscana.plugins.cloudfoundry.application.Provider;
+import org.opentosca.toscana.plugins.cloudfoundry.application.Service;
+import org.opentosca.toscana.plugins.cloudfoundry.application.ServiceTypes;
+import org.opentosca.toscana.plugins.cloudfoundry.application.buildpacks.BuildpackDetector;
 import org.opentosca.toscana.plugins.scripts.BashScript;
 import org.opentosca.toscana.plugins.scripts.EnvironmentCheck;
 
@@ -18,16 +18,16 @@ import org.cloudfoundry.operations.services.ServiceOffering;
 import org.cloudfoundry.operations.services.ServicePlan;
 import org.json.JSONException;
 
-import static org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryManifestAttribute.ENVIRONMENT;
-import static org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryManifestAttribute.PATH;
-import static org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryManifestAttribute.SERVICE;
+import static org.opentosca.toscana.plugins.cloudfoundry.application.ManifestAttributes.ENVIRONMENT;
+import static org.opentosca.toscana.plugins.cloudfoundry.application.ManifestAttributes.PATH;
+import static org.opentosca.toscana.plugins.cloudfoundry.application.ManifestAttributes.SERVICE;
 import static org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle.OUTPUT_DIR;
 
 /**
  Creates all files which are necessary to deploy the application
  Files: manifest.yml, builpack additions, deployScript
  */
-public class CloudFoundryFileCreator {
+public class FileCreator {
 
     public static final String MANIFEST_NAME = "manifest.yml";
     public static final String MANIFEST_PATH = OUTPUT_DIR + MANIFEST_NAME;
@@ -41,9 +41,9 @@ public class CloudFoundryFileCreator {
     public static final String FILESUFFIX_DEPLOY = ".sh";
 
     private final PluginFileAccess fileAccess;
-    private final CloudFoundryApplication app;
+    private final Application app;
 
-    public CloudFoundryFileCreator(PluginFileAccess fileAccess, CloudFoundryApplication app) {
+    public FileCreator(PluginFileAccess fileAccess, Application app) {
         this.fileAccess = fileAccess;
         this.app = app;
     }
@@ -100,11 +100,11 @@ public class CloudFoundryFileCreator {
      add it to the manifest
      */
     private void createService() throws IOException {
-        Map<String, CloudFoundryServiceType> appServices = app.getServices();
+        Map<String, ServiceTypes> appServices = app.getServices();
         if (!appServices.isEmpty()) {
             ArrayList<String> services = new ArrayList<>();
             services.add(String.format("  %s:", SERVICE.getName()));
-            for (Map.Entry<String, CloudFoundryServiceType> service : appServices.entrySet()) {
+            for (Map.Entry<String, ServiceTypes> service : appServices.entrySet()) {
                 services.add(String.format("    - %s", service.getKey()));
             }
             for (String service : services) {
@@ -121,11 +121,11 @@ public class CloudFoundryFileCreator {
         deployScript.append(EnvironmentCheck.checkEnvironment("cf"));
 
         if (app.getProvider() != null && !app.getServices().isEmpty() && app.getConnection() != null) {
-            CloudFoundryProvider provider = app.getProvider();
+            Provider provider = app.getProvider();
             provider.setOfferedService(app.getConnection().getServices());
             addProviderServiceOfferings(deployScript);
 
-            for (Map.Entry<String, CloudFoundryServiceType> service : app.getServices().entrySet()) {
+            for (Map.Entry<String, ServiceTypes> service : app.getServices().entrySet()) {
                 String description = service.getValue().getName();
                 List<ServiceOffering> services = provider.getOfferedService();
                 boolean isSet;
@@ -140,7 +140,7 @@ public class CloudFoundryFileCreator {
                 }
             }
         } else {
-            for (Map.Entry<String, CloudFoundryServiceType> service : app.getServices().entrySet()) {
+            for (Map.Entry<String, ServiceTypes> service : app.getServices().entrySet()) {
                 deployScript.append(CLI_CREATE_SERVICE_DEFAULT + service.getKey());
             }
         }
@@ -151,7 +151,7 @@ public class CloudFoundryFileCreator {
     private boolean addMatchedServices(List<ServiceOffering> services,
                                        BashScript deployScript,
                                        String description,
-                                       Map.Entry<String, CloudFoundryServiceType> service) throws IOException {
+                                       Map.Entry<String, ServiceTypes> service) throws IOException {
         boolean isSet = false;
 
         for (ServiceOffering offeredService : services) {
@@ -164,7 +164,7 @@ public class CloudFoundryFileCreator {
                         deployScript.append(String.format("%s%s %s %s", CLI_CREATE_SERVICE,
                             serviceName, planName, serviceInstanceName));
                         app.addMatchedService(
-                            new CloudFoundryService(serviceName, serviceInstanceName, planName, service.getValue()));
+                            new Service(serviceName, serviceInstanceName, planName, service.getValue()));
                         isSet = true;
                         break;
                     }
@@ -178,7 +178,7 @@ public class CloudFoundryFileCreator {
      detect if additional buildpacks are needed and add them
      */
     private void createBuildpackAdditionsFile() throws IOException, JSONException {
-        CloudFoundryBuildpackDetection buildpackDetection = new CloudFoundryBuildpackDetection(app, fileAccess);
+        BuildpackDetector buildpackDetection = new BuildpackDetector(app, fileAccess);
         buildpackDetection.detectBuildpackAdditions();
     }
 
@@ -202,7 +202,7 @@ public class CloudFoundryFileCreator {
     }
 
     private void addProviderServiceOfferings(BashScript deployScript) throws IOException {
-        CloudFoundryProvider provider = app.getProvider();
+        Provider provider = app.getProvider();
         List<ServiceOffering> services = provider.getOfferedService();
 
         deployScript.append("# following services you could choose:");

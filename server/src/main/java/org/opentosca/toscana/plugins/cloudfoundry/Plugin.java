@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CloudFoundryPlugin extends LifecycleAwarePlugin<CloudFoundryLifecycle> {
+public class Plugin extends LifecycleAwarePlugin<Lifecycle> {
 
     public final static String CF_PROPERTY_KEY_USERNAME = "username";
     public final static String CF_PROPERTY_KEY_PASSWORD = "password";
@@ -22,15 +22,15 @@ public class CloudFoundryPlugin extends LifecycleAwarePlugin<CloudFoundryLifecyc
     public final static String CF_PROPERTY_KEY_SPACE = "space";
     public final static String CF_PROPERTY_KEY_ORGANIZATION = "organization";
 
-    private final static Logger logger = LoggerFactory.getLogger(CloudFoundryPlugin.class);
+    private final static Logger logger = LoggerFactory.getLogger(Plugin.class);
 
-    public CloudFoundryPlugin() {
+    public Plugin() {
         super(getPlatformDetails());
     }
 
     @Override
-    protected CloudFoundryLifecycle getInstance(TransformationContext context) throws Exception {
-        return new CloudFoundryLifecycle(context);
+    protected Lifecycle getInstance(TransformationContext context) throws Exception {
+        return new Lifecycle(context);
     }
 
     private static Platform getPlatformDetails() {

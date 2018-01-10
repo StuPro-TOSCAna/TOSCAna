@@ -5,8 +5,8 @@ import java.io.File;
 import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.core.transformation.logging.Log;
-import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryApplication;
-import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryServiceType;
+import org.opentosca.toscana.plugins.cloudfoundry.application.Application;
+import org.opentosca.toscana.plugins.cloudfoundry.application.ServiceTypes;
 import org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle;
 
 import org.apache.commons.io.FileUtils;
@@ -16,22 +16,22 @@ import org.mockito.Mock;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.CLI_PATH_TO_MANIFEST;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.FILEPRAEFIX_DEPLOY;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.FILESUFFIX_DEPLOY;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.MANIFEST_NAME;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.MANIFEST_PATH;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.NAMEBLOCK;
-import static org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryManifestAttribute.APPLICATIONS_SECTION;
-import static org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryManifestAttribute.ENVIRONMENT;
-import static org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryManifestAttribute.PATH;
-import static org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryManifestAttribute.SERVICE;
-import static org.opentosca.toscana.plugins.cloudfoundry.application.buildpacks.CloudFoundryBuildpackDetection.BUILDPACK_FILEPATH_PHP;
-import static org.opentosca.toscana.plugins.cloudfoundry.application.buildpacks.CloudFoundryBuildpackDetection.BUILDPACK_OBJECT_PHP;
+import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.CLI_PATH_TO_MANIFEST;
+import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.FILEPRAEFIX_DEPLOY;
+import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.FILESUFFIX_DEPLOY;
+import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.MANIFEST_NAME;
+import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.MANIFEST_PATH;
+import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.NAMEBLOCK;
+import static org.opentosca.toscana.plugins.cloudfoundry.application.ManifestAttributes.APPLICATIONS_SECTION;
+import static org.opentosca.toscana.plugins.cloudfoundry.application.ManifestAttributes.ENVIRONMENT;
+import static org.opentosca.toscana.plugins.cloudfoundry.application.ManifestAttributes.PATH;
+import static org.opentosca.toscana.plugins.cloudfoundry.application.ManifestAttributes.SERVICE;
+import static org.opentosca.toscana.plugins.cloudfoundry.application.buildpacks.BuildpackDetector.BUILDPACK_FILEPATH_PHP;
+import static org.opentosca.toscana.plugins.cloudfoundry.application.buildpacks.BuildpackDetector.BUILDPACK_OBJECT_PHP;
 
-public class CloudFoundryFileCreatorTest extends BaseUnitTest {
-    private CloudFoundryFileCreator fileCreator;
-    private CloudFoundryApplication testApp;
+public class FileCreatorTest extends BaseUnitTest {
+    private FileCreator fileCreator;
+    private Application testApp;
 
     @Mock
     private Log log;
@@ -50,20 +50,20 @@ public class CloudFoundryFileCreatorTest extends BaseUnitTest {
     @Before
     public void setUp() {
         appName = "testApp";
-        testApp = new CloudFoundryApplication();
+        testApp = new Application();
         testApp.setName(appName);
         File sourceDir = new File(tmpdir, "sourceDir");
         targetDir = new File(tmpdir, "targetDir");
         sourceDir.mkdir();
         targetDir.mkdir();
         PluginFileAccess fileAccess = new PluginFileAccess(sourceDir, targetDir, log);
-        fileCreator = new CloudFoundryFileCreator(fileAccess, testApp);
+        fileCreator = new FileCreator(fileAccess, testApp);
     }
 
     @Test
     public void createFiles() throws Exception {
         testApp.setPathToApplication(mainApplicationPath);
-        testApp.addService(service1, CloudFoundryServiceType.MYSQL);
+        testApp.addService(service1, ServiceTypes.MYSQL);
         testApp.setPathToApplication(mainApplicationPath);
         fileCreator.createFiles();
         File targetFile = new File(targetDir, MANIFEST_PATH);
@@ -118,7 +118,7 @@ public class CloudFoundryFileCreatorTest extends BaseUnitTest {
     public void buildpackAdditons() throws Exception {
         String expectedPath = "/myapp/main" + "/" + BUILDPACK_FILEPATH_PHP;
         testApp.setPathToApplication(mainApplicationPath);
-        testApp.addService(service1, CloudFoundryServiceType.MYSQL);
+        testApp.addService(service1, ServiceTypes.MYSQL);
         String expectedBuildpackcontent = "{\n" +
             "    \"" + BUILDPACK_OBJECT_PHP + "\": [\n" +
             "        \"" + buildPack1 + "\",\n" +
@@ -138,8 +138,8 @@ public class CloudFoundryFileCreatorTest extends BaseUnitTest {
 
     @Test
     public void services() throws Exception {
-        testApp.addService(service1, CloudFoundryServiceType.MYSQL);
-        testApp.addService(service2, CloudFoundryServiceType.MYSQL);
+        testApp.addService(service1, ServiceTypes.MYSQL);
+        testApp.addService(service2, ServiceTypes.MYSQL);
         fileCreator.createFiles();
         File targetFile = new File(targetDir, MANIFEST_PATH);
         String manifestContent = FileUtils.readFileToString(targetFile);

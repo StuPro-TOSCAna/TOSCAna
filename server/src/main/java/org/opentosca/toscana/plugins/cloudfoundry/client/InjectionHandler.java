@@ -5,9 +5,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
-import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryApplication;
-import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryService;
-import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryServiceType;
+import org.opentosca.toscana.plugins.cloudfoundry.application.Application;
+import org.opentosca.toscana.plugins.cloudfoundry.application.Service;
+import org.opentosca.toscana.plugins.cloudfoundry.application.ServiceTypes;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.json.JSONException;
@@ -18,16 +18,16 @@ import org.slf4j.LoggerFactory;
  inject service credentials to the environment variables
  depends on the service type
  */
-public class CloudFoundryInjectionHandler {
+public class InjectionHandler {
 
-    private final static Logger logger = LoggerFactory.getLogger(CloudFoundryInjectionHandler.class);
-    private CloudFoundryApplication app;
-    private CloudFoundryConnection cloudFoundryConnection;
+    private final static Logger logger = LoggerFactory.getLogger(InjectionHandler.class);
+    private Application app;
+    private Connection connection;
     private PluginFileAccess fileAccess;
 
-    public CloudFoundryInjectionHandler(PluginFileAccess fileAccess, CloudFoundryApplication app) {
+    public InjectionHandler(PluginFileAccess fileAccess, Application app) {
         this.app = app;
-        this.cloudFoundryConnection = app.getConnection();
+        this.connection = app.getConnection();
         this.fileAccess = fileAccess;
     }
 
@@ -47,9 +47,9 @@ public class CloudFoundryInjectionHandler {
     public boolean deploy() {
         boolean succeed = false;
         try {
-            if (cloudFoundryConnection != null) {
+            if (connection != null) {
                 Path pathToApplication = Paths.get(fileAccess.getAbsolutePath(app.getPathToApplication()));
-                succeed = cloudFoundryConnection.pushApplication(pathToApplication,
+                succeed = connection.pushApplication(pathToApplication,
                     app.getName(), app.getServicesMatchedToProvider());
             }
         } catch (InterruptedException | FileNotFoundException e) {
@@ -65,18 +65,18 @@ public class CloudFoundryInjectionHandler {
      */
     public void getServiceCredentials() {
 
-        for (CloudFoundryService service : app.getServicesMatchedToProvider()) {
-            if (service.getServiceType() == CloudFoundryServiceType.MYSQL) {
+        for (Service service : app.getServicesMatchedToProvider()) {
+            if (service.getServiceType() == ServiceTypes.MYSQL) {
                 try {
-                    String port = cloudFoundryConnection.getServiceCredentials(service.getServiceName(),
+                    String port = connection.getServiceCredentials(service.getServiceName(),
                         app.getName()).getString("port");
-                    String username = cloudFoundryConnection.getServiceCredentials(service.getServiceName(),
+                    String username = connection.getServiceCredentials(service.getServiceName(),
                         app.getName()).getString("username");
-                    String database_name = cloudFoundryConnection.getServiceCredentials(service.getServiceName(),
+                    String database_name = connection.getServiceCredentials(service.getServiceName(),
                         app.getName()).getString("name");
-                    String password = cloudFoundryConnection.getServiceCredentials(service.getServiceName(),
+                    String password = connection.getServiceCredentials(service.getServiceName(),
                         app.getName()).getString("password");
-                    String host = cloudFoundryConnection.getServiceCredentials(service.getServiceName(),
+                    String host = connection.getServiceCredentials(service.getServiceName(),
                         app.getName()).getString("hostname");
 
                     //TODO: check for environment variable names. Probably in the ToscaSpec

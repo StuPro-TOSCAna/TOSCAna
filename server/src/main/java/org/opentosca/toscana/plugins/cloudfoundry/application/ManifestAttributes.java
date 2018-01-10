@@ -3,7 +3,7 @@ package org.opentosca.toscana.plugins.cloudfoundry.application;
 /**
  provides attribute-names for the cloud foundry manifest
  */
-public enum CloudFoundryManifestAttribute {
+public enum ManifestAttributes {
     APPLICATIONS_SECTION("applications"),
     SERVICE("services"),
     INSTANCES("instances"),
@@ -32,7 +32,7 @@ public enum CloudFoundryManifestAttribute {
 
     private final String name;
 
-    CloudFoundryManifestAttribute(String name) {
+    ManifestAttributes(String name) {
         this.name = name;
     }
 

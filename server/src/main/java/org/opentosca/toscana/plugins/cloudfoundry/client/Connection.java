@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryService;
+import org.opentosca.toscana.plugins.cloudfoundry.application.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,9 +33,9 @@ import static java.lang.Boolean.TRUE;
  implements java-cf-client
  create a connection to the cf provider
  */
-public class CloudFoundryConnection {
+public class Connection {
 
-    private final static Logger logger = LoggerFactory.getLogger(CloudFoundryConnection.class);
+    private final static Logger logger = LoggerFactory.getLogger(Connection.class);
 
     private String userName;
     private String password;
@@ -44,9 +44,9 @@ public class CloudFoundryConnection {
     private String space;
     private CloudFoundryOperations cloudFoundryOperations;
 
-    public CloudFoundryConnection(String username, String password,
-                                  String apiHost, String organization,
-                                  String space) {
+    public Connection(String username, String password,
+                      String apiHost, String organization,
+                      String space) {
 
         this.userName = username;
         this.password = password;
@@ -120,11 +120,11 @@ public class CloudFoundryConnection {
      Creates the services
      Deploys the application with minimal attributes and bind application to service.
      */
-    public boolean pushApplication(Path pathToApplication, String name, List<CloudFoundryService> services)
+    public boolean pushApplication(Path pathToApplication, String name, List<Service> services)
         throws InterruptedException {
 
         boolean succeed = false;
-        for (CloudFoundryService service : services) {
+        for (Service service : services) {
             createService(service.getServiceInstanceName(), service.getServiceName(), service.getPlan());
         }
         succeed = deployApplication(pathToApplication, name, services);
@@ -133,7 +133,7 @@ public class CloudFoundryConnection {
     }
 
     private boolean deployApplication(Path pathToApplication, String name,
-                                      List<CloudFoundryService> services) throws InterruptedException {
+                                      List<Service> services) throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
 
         String[] serviceInstanceNames = new String[services.size()];
