@@ -17,18 +17,18 @@ import org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle;
 
 import org.json.JSONException;
 
-import static org.opentosca.toscana.plugins.cloudfoundry.Plugin.CF_PROPERTY_KEY_API;
-import static org.opentosca.toscana.plugins.cloudfoundry.Plugin.CF_PROPERTY_KEY_ORGANIZATION;
-import static org.opentosca.toscana.plugins.cloudfoundry.Plugin.CF_PROPERTY_KEY_PASSWORD;
-import static org.opentosca.toscana.plugins.cloudfoundry.Plugin.CF_PROPERTY_KEY_SPACE;
-import static org.opentosca.toscana.plugins.cloudfoundry.Plugin.CF_PROPERTY_KEY_USERNAME;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin.CF_PROPERTY_KEY_API;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin.CF_PROPERTY_KEY_ORGANIZATION;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin.CF_PROPERTY_KEY_PASSWORD;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin.CF_PROPERTY_KEY_SPACE;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin.CF_PROPERTY_KEY_USERNAME;
 
-public class Lifecycle extends AbstractLifecycle {
+public class CloudFoundryLifecycle extends AbstractLifecycle {
 
     private Provider provider;
     private Connection connection;
 
-    public Lifecycle(TransformationContext context) throws IOException {
+    public CloudFoundryLifecycle(TransformationContext context) throws IOException {
         super(context);
     }
 

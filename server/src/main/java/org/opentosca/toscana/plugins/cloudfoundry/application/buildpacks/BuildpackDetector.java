@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
-import org.opentosca.toscana.plugins.cloudfoundry.Plugin;
+import org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin;
 import org.opentosca.toscana.plugins.cloudfoundry.application.Application;
 import org.opentosca.toscana.plugins.cloudfoundry.application.ServiceTypes;
 
@@ -23,7 +23,7 @@ public class BuildpackDetector {
     public static final String BUILDPACK_OBJECT_PHP = "PHP_EXTENSIONS";
     public static final String BUILDPACK_FILEPATH_PHP = ".bp-config/options.json";
 
-    private final static Logger logger = LoggerFactory.getLogger(Plugin.class);
+    private final static Logger logger = LoggerFactory.getLogger(CloudFoundryPlugin.class);
 
     private Application application;
     private String applicationSuffix;

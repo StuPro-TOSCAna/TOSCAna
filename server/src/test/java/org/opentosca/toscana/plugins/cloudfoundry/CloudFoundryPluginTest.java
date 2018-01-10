@@ -32,7 +32,7 @@ import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.FILESUFFIX_
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.MANIFEST_NAME;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.MANIFEST_PATH;
 
-public class PluginTest extends BaseUnitTest {
+public class CloudFoundryPluginTest extends BaseUnitTest {
 
     private final static EffectiveModel lamp = TestEffectiveModels.getLampModel();
     private static Application myApp = new Application();
