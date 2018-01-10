@@ -67,21 +67,67 @@ public class TransformationControllerTest extends BaseSpringTest {
     //<editor-fold desc="Constant Definition">
 
     private final static String VALID_PROPERTY_INPUT = "{\n" +
-        "\t\"properties\": {\n" +
-        "\t\t\"text_property\":\"Hallo Welt\",\n" +
-        "\t\t\"name_property\": \"hallo\",\n" +
-        "\t\t\"secret_property\": \"I bims 1 geheimnis\",\n" +
-        "\t\t\"unsigned_integer_property\": \"1337\"\n" +
-        "\t}\n" +
+        "    \"properties\": [\n" +
+        "        {\n" +
+        "            \"key\": \"text_property\",\n" +
+        "            \"type\": \"text\",\n" +
+        "            \"required\": true,\n" +
+        "            \"description\": \"\",\n" +
+        "            \"value\": \"Hallo\"\n" +
+        "        },\n" +
+        "        {\n" +
+        "            \"key\": \"name_property\",\n" +
+        "            \"type\": \"name\",\n" +
+        "            \"required\": true,\n" +
+        "            \"description\": \"\",\n" +
+        "            \"value\": \"myname\"\n" +
+        "        }\n" +
+        "    ],\n" +
+        "    \"_links\": {\n" +
+        "        \"self\": {\n" +
+        "            \"href\": \"http://localhost:8080/csars/mongo-db/transformations/p-a/properties\"\n" +
+        "        }\n" +
+        "    } " +
         "}";
     private final static String INVALID_PROPERTY_INPUT = "{\n" +
-        "\t\"properties\": {\n" +
-        "\t\t\"text_property\":\"Meddl Loide\",\n" +
-        "\t\t\"name_property\": \"meddl\",\n" +
-        "\t\t\"secret_property\": \"I bims 1 geheimnis\",\n" +
-        "\t\t\"unsigned_integer_property\": \"-1337\"\n" +
-        "\t}\n" +
+        "    \"properties\": [\n" +
+        "        {\n" +
+        "            \"key\": \"text_property\",\n" +
+        "            \"type\": \"text\",\n" +
+        "            \"required\": true,\n" +
+        "            \"description\": \"\",\n" +
+        "            \"value\": \"Hallo\"\n" +
+        "        },\n" +
+        "        {\n" +
+        "            \"key\": \"unsigned_integer\",\n" +
+        "            \"type\": \"unsigned_integer\",\n" +
+        "            \"required\": true,\n" +
+        "            \"description\": \"\",\n" +
+        "            \"value\": \"-111\"\n" +
+        "        }\n" +
+        "    ],\n" +
+        "    \"_links\": {\n" +
+        "        \"self\": {\n" +
+        "            \"href\": \"http://localhost:8080/csars/mongo-db/transformations/p-a/properties\"\n" +
+        "        }\n" +
+        "    } " +
         "}";
+    private final static String MISSING_VALUE_PROPERTY_INPUT = "{\n" +
+        "    \"properties\": [\n" +
+        "        {\n" +
+        "            \"key\": \"text_property\",\n" +
+        "            \"type\": \"text\",\n" +
+        "            \"required\": true,\n" +
+        "            \"description\": \"\",\n" +
+        "        },\n" +
+        "    ],\n" +
+        "    \"_links\": {\n" +
+        "        \"self\": {\n" +
+        "            \"href\": \"http://localhost:8080/csars/mongo-db/transformations/p-a/properties\"\n" +
+        "        }\n" +
+        "    } " +
+        "}";
+
     private final static String VALID_CSAR_NAME = "kubernetes-cluster";
     private final static String VALID_PLATFORM_NAME = "p-a";
     private final static String START_TRANSFORMATION_VALID_URL = "/api/csars/kubernetes-cluster/transformations/p-a/start";
@@ -238,10 +284,20 @@ public class TransformationControllerTest extends BaseSpringTest {
         ).andDo(print())
             .andExpect(status().is(406))
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-            .andExpect(jsonPath("$.valid_inputs.name_property").value(true))
+            .andExpect(jsonPath("$.valid_inputs.unsigned_integer").value(false))
             .andExpect(jsonPath("$.valid_inputs.text_property").value(true))
-            .andExpect(jsonPath("$.valid_inputs.secret_property").value(true))
-            .andExpect(jsonPath("$.valid_inputs.unsigned_integer_property").value(false))
+            .andReturn();
+    }
+
+    @Test
+    public void setTransformationPropertiesMissingValueInvalidInput() throws Exception {
+        preInitNonCreationTests();
+        mvc.perform(
+            put(GET_PROPERTIES_VALID_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(MISSING_VALUE_PROPERTY_INPUT)
+        ).andDo(print())
+            .andExpect(status().is(400))
             .andReturn();
     }
 
@@ -545,7 +601,7 @@ public class TransformationControllerTest extends BaseSpringTest {
         mvc.perform(
             put(PLATFORM_NOT_FOUND_URL + "/properties")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"properties\": {}}")
+                .content("{\"properties\": [{}]}")
         ).andDo(print()).andExpect(status().isNotFound()).andReturn();
     }
 
@@ -603,7 +659,7 @@ public class TransformationControllerTest extends BaseSpringTest {
     public void transformationPropertiesPutCsarNotFound() throws Exception {
         mvc.perform(
             put(CSAR_NOT_FOUND_URL + "/p-a/properties")
-                .content("{\"properties\": {}}")
+                .content("{\"properties\": [{}]}")
                 .contentType(MediaType.APPLICATION_JSON)
         ).andDo(print()).andExpect(status().isNotFound()).andReturn();
     }

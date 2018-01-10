@@ -1,29 +1,30 @@
 package org.opentosca.toscana.api.model;
 
-import java.util.Map;
+import java.util.List;
+
+import org.opentosca.toscana.api.docs.HiddenResourceSupport;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 @ApiModel
-public class SetPropertiesRequest {
-    private final Map<String, String> properties;
+public class SetPropertiesRequest extends HiddenResourceSupport {
+
+    private final List<PropertyWrap> properties;
 
     public SetPropertiesRequest(
-        @JsonProperty("properties") Map<String, String> properties
+        @JsonProperty("properties") List<PropertyWrap> properties
     ) {
         this.properties = properties;
     }
 
     @ApiModelProperty(
         required = true,
-        notes = "Represents a Key-Value map (String to string) that associates one Property key " +
-            "(received by calling get Properties) with a value, the value then gets processed by the the server " +
-            "and the values get set if the input is valid"
+        notes = "The list of properties associated with this transformation, containing properties with values set by the client."
     )
     @JsonProperty("properties")
-    public Map<String, String> getProperties() {
+    public List<PropertyWrap> getProperties() {
         return properties;
     }
 }
