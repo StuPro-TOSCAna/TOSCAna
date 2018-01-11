@@ -17,7 +17,7 @@ public class ResourceDeployment {
 
     public ResourceDeployment(Pod stack) {
         this.pod = stack;
-        this.name = stack.getName().replaceAll("_", "-");
+        this.name = stack.getName();
     }
 
     public ResourceDeployment build() {
@@ -26,6 +26,7 @@ public class ResourceDeployment {
         pod.getContainers().forEach(e -> {
             Container container = new ContainerBuilder()
                 .withImage(e.getDockerImageTag().get())
+                .withName(e.getCleanStackName())
                 .addAllToPorts(e.getOpenPorts().stream().map(Port::toContainerPort).collect(Collectors.toList()))
                 .build();
             

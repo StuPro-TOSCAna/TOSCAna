@@ -80,7 +80,7 @@ public class NodeStack {
     }
 
     public List<Port> getOpenPorts() {
-        return openPorts.stream().map(Port::new).collect(Collectors.toList());
+        return openPorts.stream().map(e -> new Port(e, this.getCleanStackName())).collect(Collectors.toList());
     }
 
     public Optional<String> getDockerfilePath() {
@@ -94,16 +94,20 @@ public class NodeStack {
     public Optional<String> getDockerImageTag() {
         return Optional.ofNullable(dockerImageTag);
     }
-    
+
     public String getStackName() {
         return stackNodes.get(0).getNode().getNodeName();
+    }
+
+    public String getCleanStackName() {
+        return getStackName().replaceAll("_", "-");
     }
 
     public Compute getComputeNode() {
         return (Compute) this.stackNodes.stream().filter(e -> e.getNode() instanceof Compute)
             .findFirst().orElseThrow(IllegalArgumentException::new).getNode();
     }
-    
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();

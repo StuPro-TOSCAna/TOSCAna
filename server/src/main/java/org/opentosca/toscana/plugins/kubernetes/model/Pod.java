@@ -33,7 +33,7 @@ public class Pod {
 
     public String getName() {
         //TODO find better mechanism to name the pod
-        return containers.get(0).getStackName();
+        return containers.get(0).getCleanStackName();
     }
 
     public static List<Pod> getPods(Collection<NodeStack> stacks) {

@@ -17,8 +17,8 @@ import static org.junit.Assert.fail;
 
 public class ResourceFileCreatorTest extends BaseUnitTest {
     private String appName = "my-app";
-    private String appServiceName = "my_app-service";
-    private String appDeploymentName = "my_app-deployment";
+    private String appServiceName = "my-app-service";
+    private String appDeploymentName = "my-app-deployment";
 
     @Test
     public void testReplicationControllerCreation() {
@@ -57,7 +57,7 @@ public class ResourceFileCreatorTest extends BaseUnitTest {
         ArrayList<Map> containers = (ArrayList<Map>) ((Map) template.get("spec")).get("containers");
         Map container = containers.get(0);
         assertEquals(appName, container.get("image"));
-//        assertEquals(appName, container.get("name"));
+        assertEquals(appName, container.get("name"));
     }
 
     private void metadataTest(String name, Map templateMetadata) {
