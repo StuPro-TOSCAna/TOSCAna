@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import org.opentosca.toscana.core.parse.converter.visitor.ConversionResult;
 import org.opentosca.toscana.core.parse.converter.visitor.RepositoryVisitor;
 import org.opentosca.toscana.core.parse.converter.visitor.SetResult;
+import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.model.artifact.Repository;
 import org.opentosca.toscana.model.node.RootNode;
@@ -33,9 +34,18 @@ public class ModelConverter {
     public EffectiveModel convert(TServiceTemplate serviceTemplate) throws UnknownNodeTypeException {
         logger.debug("Convert service template to normative model");
         Set<Repository> repositories = getRepositories(serviceTemplate);
+
+        Set<Property> inputs = convertInputs(serviceTemplate.getTopologyTemplate());
         Set<ConversionResult<RootNode>> result = convertNodeTemplates(serviceTemplate.getTopologyTemplate(), repositories);
         Set<RootNode> nodes = fulfillRequirements(result);
-        return new EffectiveModel(nodes);
+        return new EffectiveModel(nodes, inputs);
+    }
+
+    private Set<Property> convertInputs(TTopologyTemplateDefinition topology) {
+        if (topology != null) {
+            return new InputConverter().convert(topology.getInputs());
+        }
+        return new HashSet<>();
     }
 
     private Set<Repository> getRepositories(TServiceTemplate serviceTemplate) {

@@ -31,7 +31,7 @@ public class CsarParseServiceImpl implements CsarParseService {
         try {
             return parse(entryPoint);
         } catch (Exception e) {
-            logger.warn("An error occured while parsing csar '{}'", csar, e);
+            logger.warn("An error occurred while parsing CSAR '{}'", csar, e);
             throw new InvalidCsarException(csar.getLog());
         }
     }
@@ -44,6 +44,7 @@ public class CsarParseServiceImpl implements CsarParseService {
         Path file = Paths.get(template.getName());
         serviceTemplate = reader.parse(parent, file);
         ModelConverter converter = new ModelConverter(logger);
+        
         return converter.convert(serviceTemplate);
     }
 

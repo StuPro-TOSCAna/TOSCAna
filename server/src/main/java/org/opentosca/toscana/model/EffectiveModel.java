@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.relation.RootRelationship;
 import org.opentosca.toscana.model.requirement.Requirement;
@@ -16,10 +17,13 @@ public class EffectiveModel {
 
     private final Graph<RootNode, RootRelationship> topology =
         new DefaultDirectedGraph<>(RootRelationship.class);
-
+    
     private final Map<String, RootNode> nodeMap;
-
-    public EffectiveModel(Set<RootNode> vertices) {
+    
+    private final Set<Property> inputs;
+    
+    public EffectiveModel(Set<RootNode> vertices, Set<Property> inputs) {
+        this.inputs = inputs;
         vertices.forEach(topology::addVertex);
         initEdges();
         nodeMap = new HashMap<>();
@@ -48,6 +52,10 @@ public class EffectiveModel {
 
     public Graph<RootNode, RootRelationship> getTopology() {
         return topology;
+    }
+
+    public Set<Property> getInputs() {
+        return inputs;
     }
 }
 

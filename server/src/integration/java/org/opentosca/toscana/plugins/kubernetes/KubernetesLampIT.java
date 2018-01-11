@@ -6,14 +6,12 @@ import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
 import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.plugins.BaseTransformTest;
-import org.opentosca.toscana.plugins.kubernetes.docker.DockerTestUtils;
 import org.opentosca.toscana.plugins.kubernetes.docker.mapper.MapperTest;
 import org.opentosca.toscana.plugins.testdata.LampApp;
 
 import org.apache.commons.io.FileUtils;
 
 import static org.junit.Assert.fail;
-import static org.junit.Assume.assumeTrue;
 import static org.mockito.Mockito.mock;
 import static org.opentosca.toscana.plugins.kubernetes.KubernetesPlugin.DOCKER_PUSH_TO_REGISTRY_PROPERTY_KEY;
 import static org.opentosca.toscana.plugins.kubernetes.KubernetesPlugin.DOCKER_REGISTRY_PASSWORD_PROPERTY_KEY;
@@ -29,18 +27,11 @@ public class KubernetesLampIT extends BaseTransformTest {
 
     @Override
     protected EffectiveModel getModel() {
-        return new EffectiveModel(LampApp.getLampModel());
-    }
-
-    protected void checkAssumptions() {
-        //Skip the test if a docker daemon is not available
-        assumeTrue(DockerTestUtils.isDockerAvailable());
+        return LampApp.getLampApp();
     }
 
     @Override
     protected void onSuccess(File outputDir) throws Exception {
-        //Comment out the sleep command to allow the interruption of the test before the files get deleted
-        Thread.sleep(10000);
         //Do Nothing
     }
 

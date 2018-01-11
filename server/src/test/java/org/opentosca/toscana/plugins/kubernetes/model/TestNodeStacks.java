@@ -19,7 +19,7 @@ public class TestNodeStacks {
     }
 
     private HashSet<NodeStack> createLampNodeStacks() {
-        Set<RootNode> lampModel = LampApp.getLampModel();
+        Set<RootNode> lampModel = LampApp.getLampApp().getNodes();
         HashMap<String, RootNode> map = new HashMap<>();
         for (RootNode rootNode : lampModel) {
             map.put(rootNode.getNodeName(), rootNode);
