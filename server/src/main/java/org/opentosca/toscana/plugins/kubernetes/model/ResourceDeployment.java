@@ -1,8 +1,7 @@
 package org.opentosca.toscana.plugins.kubernetes.model;
 
 import java.util.ArrayList;
-
-import org.opentosca.toscana.plugins.kubernetes.util.NodeStack;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.fabric8.kubernetes.api.model.Container;
@@ -13,22 +12,25 @@ import io.fabric8.kubernetes.client.internal.SerializationUtils;
 
 public class ResourceDeployment {
     private final String name;
-    private NodeStack stack;
+    private Pod pod;
     private Deployment deployment;
 
-    public ResourceDeployment(NodeStack stack) {
-        this.stack = stack;
-        this.name = stack.getStackName().replaceAll("_", "-");
+    public ResourceDeployment(Pod stack) {
+        this.pod = stack;
+        this.name = stack.getName().replaceAll("_", "-");
     }
 
     public ResourceDeployment build() {
         ArrayList<Container> containers = new ArrayList<>();
 
-        Container container = new ContainerBuilder()
-            .withName(name)
-            .withImage(stack.getDockerImageTag().orElseThrow(NullPointerException::new))
-            .addAllToPorts(stack.getOpenContainerPorts()).build();
-        containers.add(container);
+        pod.getContainers().forEach(e -> {
+            Container container = new ContainerBuilder()
+                .withImage(e.getDockerImageTag().get())
+                .addAllToPorts(e.getOpenPorts().stream().map(Port::toContainerPort).collect(Collectors.toList()))
+                .build();
+            
+            containers.add(container);
+        });
 
         deployment = new DeploymentBuilder()
             .withNewMetadata()

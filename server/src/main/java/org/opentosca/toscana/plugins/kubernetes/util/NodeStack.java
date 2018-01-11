@@ -6,9 +6,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import org.opentosca.toscana.core.transformation.TransformationContext;
+import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.plugins.kubernetes.docker.mapper.BaseImageMapper;
+import org.opentosca.toscana.plugins.kubernetes.model.Port;
 import org.opentosca.toscana.plugins.kubernetes.visitor.imgtransform.DockerfileBuildingVisitor;
 import org.opentosca.toscana.plugins.kubernetes.visitor.imgtransform.ImageMappingVisitor;
 
@@ -76,6 +79,10 @@ public class NodeStack {
         return Collections.unmodifiableList(ports);
     }
 
+    public List<Port> getOpenPorts() {
+        return openPorts.stream().map(Port::new).collect(Collectors.toList());
+    }
+
     public Optional<String> getDockerfilePath() {
         return Optional.ofNullable(dockerfilePath);
     }
@@ -92,6 +99,11 @@ public class NodeStack {
         return stackNodes.get(0).getNode().getNodeName();
     }
 
+    public Compute getComputeNode() {
+        return (Compute) this.stackNodes.stream().filter(e -> e.getNode() instanceof Compute)
+            .findFirst().orElseThrow(IllegalArgumentException::new).getNode();
+    }
+    
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
