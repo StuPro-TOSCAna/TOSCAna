@@ -45,14 +45,42 @@ public class CapabilityMapper {
     public static String mapOsCapabilityToImageId(BasicAWSCredentials awsCreds, OsCapability osCapability) {
         AmazonEC2 ec2 = AmazonEC2ClientBuilder.standard()
             .withCredentials(new AWSStaticCredentialsProvider(awsCreds))
-            .withRegion(Regions.US_WEST_2)
+            .withRegion(Regions.US_WEST_2) //TODO get this from user
             .build();
+        //need to set these, owner are self and amazon
         DescribeImagesRequest describeImagesRequest = new DescribeImagesRequest()
-            .withFilters(new Filter("name")
-                .withValues("ubuntu", "linux", "16.04"));
+            .withFilters(
+                new Filter("virtualization-type").withValues("hvm"),
+                new Filter("root-device-type").withValues("ebs"))
+            .withOwners("self", "099720109477");
         //TODO set filter  with owners, executable users?
+        if (osCapability.getType().isPresent()) {
+            if (osCapability.getType().get().equals(OsCapability.Type.WINDOWS)) {
+                describeImagesRequest.withFilters(new Filter("platform").withValues("windows"));
+            }
+        }
+        if (osCapability.getDistribution().isPresent()) {
+            if (osCapability.getDistribution().get().equals(OsCapability.Distribution.UBUNTU)) {
+                // /ubuntu/images/ gets better results
+                describeImagesRequest.withFilters(new Filter("name").withValues("*ubuntu/images/*"));
+            } else {
+                //just search for the string
+                describeImagesRequest.withFilters(new Filter("name").withValues("*" + osCapability.getDistribution().toString() + "*"));
+            }
+        }
+        if (osCapability.getVersion().isPresent()) {
+            describeImagesRequest.withFilters(new Filter("name").withValues("*" + osCapability.getVersion().get() + "*"));
+        }
+        if (osCapability.getArchitecture().isPresent()) {
+            if (osCapability.getArchitecture().get().equals(OsCapability.Architecture.x86_64)) {
+                describeImagesRequest.withFilters(new Filter("architecture").withValues("x86_64"));
+            } else if (osCapability.getArchitecture().get().equals(OsCapability.Architecture.x86_32)) {
+                describeImagesRequest.withFilters(new Filter("architecture").withValues("i386"));
+            }
+        }
         DescribeImagesResult describeImagesResult = ec2.describeImages(describeImagesRequest);
-        for (Image image : describeImagesResult.getImages()){
+        System.out.println(describeImagesResult.getImages().size());
+        for (Image image : describeImagesResult.getImages()) {
             System.out.println(image.toString());
         }
         String imageId = "";
