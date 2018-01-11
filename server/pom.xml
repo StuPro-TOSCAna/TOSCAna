@@ -68,6 +68,11 @@
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-s3</artifactId>
         </dependency>
+        <!--AWS Java SDK ec2 module-->
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-ec2</artifactId>
+        </dependency>
 
         <!--CloudFoundry Plugin-->
         <!--CloudFoundry java-client-->

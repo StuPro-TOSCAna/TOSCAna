@@ -58,7 +58,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
     private CloudFormationModule cfnModule;
     private AmazonS3 s3;
     private String bucketName;
-
+    
     /**
      Creates a <tt>CloudFormationNodeVisitor<tt> in order to build a template with the given
      <tt>CloudFormationModule<tt>.
@@ -71,14 +71,14 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
         this.cfnModule = cfnModule;
         // TODO Get credentials and possibly region from User
         BasicAWSCredentials awsCreds = new BasicAWSCredentials("", "");
-        this.s3 = AmazonS3ClientBuilder.standard()
+        /*this.s3 = AmazonS3ClientBuilder.standard()
             .withCredentials(new AWSStaticCredentialsProvider(awsCreds))
             .withRegion(Regions.US_WEST_2)
             .build();
         this.bucketName = createBucket(s3);
         // TODO check if files need to be public for CloudFormation to access them
         // Allows anyone to access files in the bucket
-        s3.setBucketPolicy(bucketName, getPublicReadPolicy().toJson());
+        s3.setBucketPolicy(bucketName, getPublicReadPolicy().toJson());*/
     }
 
     @Override
@@ -97,7 +97,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             // we only support linux ubuntu 16.04 but there should be a mapping of os properties to imageIds
             // ImageIds different depending on the region you use this is us-west-2 atm
             OsCapability computeOs = node.getOs();
-            String imageId = CapabilityMapper.mapOsCapabilityToImageId(computeOs);
+            String imageId = CapabilityMapper.mapOsCapabilityToImageId(awsCreds, computeOs);
             
             //check what host should be taken
             // we only support t2.micro atm since its free for student accounts

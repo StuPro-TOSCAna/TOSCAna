@@ -4,6 +4,16 @@ import org.opentosca.toscana.model.capability.ComputeCapability;
 import org.opentosca.toscana.model.capability.OsCapability;
 import org.opentosca.toscana.model.visitor.UnsupportedTypeException;
 
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.ec2.AmazonEC2;
+import com.amazonaws.services.ec2.AmazonEC2Client;
+import com.amazonaws.services.ec2.AmazonEC2ClientBuilder;
+import com.amazonaws.services.ec2.model.DescribeImagesRequest;
+import com.amazonaws.services.ec2.model.DescribeImagesResult;
+import com.amazonaws.services.ec2.model.Filter;
+import com.amazonaws.services.ec2.model.Image;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.collections.keyvalue.MultiKey;
@@ -32,7 +42,19 @@ public class CapabilityMapper {
         .add(8)
         .build();
 
-    public static String mapOsCapabilityToImageId(OsCapability osCapability) {
+    public static String mapOsCapabilityToImageId(BasicAWSCredentials awsCreds, OsCapability osCapability) {
+        AmazonEC2 ec2 = AmazonEC2ClientBuilder.standard()
+            .withCredentials(new AWSStaticCredentialsProvider(awsCreds))
+            .withRegion(Regions.US_WEST_2)
+            .build();
+        DescribeImagesRequest describeImagesRequest = new DescribeImagesRequest()
+            .withFilters(new Filter("name")
+                .withValues("ubuntu", "linux", "16.04"));
+        //TODO set filter  with owners, executable users?
+        DescribeImagesResult describeImagesResult = ec2.describeImages(describeImagesRequest);
+        for (Image image : describeImagesResult.getImages()){
+            System.out.println(image.toString());
+        }
         String imageId = "";
         //here should be a check for isPresent, but what to do if not present?
         if (osCapability.getType().get().equals(OsCapability.Type.LINUX) &&
