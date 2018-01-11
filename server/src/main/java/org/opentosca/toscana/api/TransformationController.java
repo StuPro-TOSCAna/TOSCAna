@@ -21,8 +21,8 @@ import org.opentosca.toscana.api.exceptions.PlatformNotFoundException;
 import org.opentosca.toscana.api.exceptions.TransformationAlreadyPresentException;
 import org.opentosca.toscana.api.exceptions.TransformationNotFoundException;
 import org.opentosca.toscana.api.model.GetPropertiesResponse;
-import org.opentosca.toscana.api.model.GetPropertiesResponse.PropertyWrap;
 import org.opentosca.toscana.api.model.LogResponse;
+import org.opentosca.toscana.api.model.PropertyWrap;
 import org.opentosca.toscana.api.model.SetPropertiesRequest;
 import org.opentosca.toscana.api.model.SetPropertiesResponse;
 import org.opentosca.toscana.api.model.TransformationResponse;
@@ -747,7 +747,7 @@ public class TransformationController {
         @ApiResponse(
             code = 406,
             message = "At least one of the properties could not get set because either the key does not exist or the " +
-                "Syntax vlaidation of the value has failed.",
+                "Syntax validation of the value has failed.",
             response = SetPropertiesResponse.class
         )
     })
@@ -764,7 +764,7 @@ public class TransformationController {
         Map<String, Boolean> successes = new HashMap<>();
         boolean somethingFailed = false;
         //Set The Properties and check their validity
-        for (Map.Entry<String, String> entry : setPropertiesRequest.getProperties().entrySet()) {
+        for (PropertyWrap entry : setPropertiesRequest.getProperties()) {
             try {
                 transformation.setProperty(entry.getKey(), entry.getValue());
                 successes.put(entry.getKey(), true);
