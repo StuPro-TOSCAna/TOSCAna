@@ -5,7 +5,7 @@ import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Optional;
 
-import org.opentosca.toscana.core.api.exceptions.PlatformNotFoundException;
+import org.opentosca.toscana.api.exceptions.PlatformNotFoundException;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarDao;
 import org.opentosca.toscana.core.transformation.artifacts.TargetArtifact;

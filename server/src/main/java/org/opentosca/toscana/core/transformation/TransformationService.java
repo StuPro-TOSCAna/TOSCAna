@@ -1,6 +1,6 @@
 package org.opentosca.toscana.core.transformation;
 
-import org.opentosca.toscana.core.api.exceptions.PlatformNotFoundException;
+import org.opentosca.toscana.api.exceptions.PlatformNotFoundException;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 

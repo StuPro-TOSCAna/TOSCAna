@@ -4,7 +4,6 @@ import java.util.Map;
 
 import org.opentosca.toscana.retrofit.model.Csar;
 import org.opentosca.toscana.retrofit.model.Platform;
-import org.opentosca.toscana.retrofit.model.SetPropertiesWrapper;
 import org.opentosca.toscana.retrofit.model.Transformation;
 import org.opentosca.toscana.retrofit.model.TransformationLogs;
 import org.opentosca.toscana.retrofit.model.TransformationProperties;
@@ -106,7 +105,7 @@ public interface TOSCAnaAPIService {
     Call<ResponseBody> updateProperties(
         @Path("csarName") String csarName,
         @Path("platform") String platform,
-        @Body SetPropertiesWrapper body
+        @Body TransformationProperties body
     );
 
     @Multipart
