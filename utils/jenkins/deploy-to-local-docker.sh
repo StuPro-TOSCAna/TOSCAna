@@ -12,6 +12,7 @@ mkdir server/target/docker_deploy
 # Copying Dockerfile to working Directory
 echo "Copying Dockerfile"
 cp utils/jenkins/Dockerfile server/target/docker_deploy
+cp docker/alpine-dind/toscana-dind-entrypoint.sh server/target/docker_deploy
 # Copying server.jar in working Directory
 echo "Copying server.jar"
 cp server/target/server-1.0-SNAPSHOT.jar server/target/docker_deploy/server.jar
@@ -30,7 +31,9 @@ echo "Building Docker image"
 docker build . -t toscana/toscana:alpine-build
 
 echo "Running Docker image"
-docker run -d -p 127.0.0.1:9001:8080 -v toscana_data:/toscana/data --restart=unless-stopped --name=toscana toscana/toscana:alpine-build
+docker run -d -p 127.0.0.1:9001:8080 --privileged \
+  -v toscana_data:/toscana/data --restart=unless-stopped \
+  --name=toscana toscana/toscana:alpine-build
 
 cd ..
 

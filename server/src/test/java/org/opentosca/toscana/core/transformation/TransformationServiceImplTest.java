@@ -5,8 +5,8 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+import org.opentosca.toscana.api.exceptions.PlatformNotFoundException;
 import org.opentosca.toscana.core.BaseSpringTest;
-import org.opentosca.toscana.core.api.exceptions.PlatformNotFoundException;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.transformation.artifacts.TargetArtifact;
