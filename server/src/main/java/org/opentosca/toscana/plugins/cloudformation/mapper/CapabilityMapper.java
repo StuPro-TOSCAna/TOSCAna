@@ -12,11 +12,8 @@ import org.opentosca.toscana.model.capability.ComputeCapability;
 import org.opentosca.toscana.model.capability.OsCapability;
 import org.opentosca.toscana.model.visitor.UnsupportedTypeException;
 
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.ec2.AmazonEC2;
-import com.amazonaws.services.ec2.AmazonEC2Client;
 import com.amazonaws.services.ec2.AmazonEC2ClientBuilder;
 import com.amazonaws.services.ec2.model.DescribeImagesRequest;
 import com.amazonaws.services.ec2.model.DescribeImagesResult;
@@ -86,32 +83,27 @@ public class CapabilityMapper {
             }
         }
         DescribeImagesResult describeImagesResult = ec2.describeImages(describeImagesRequest);
-        System.out.println(describeImagesResult.getImages().size());
-        logger.debug("Got " + describeImagesResult.getImages().size());
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        Map<Date, Image> creationDateMap = new HashMap<>();
-        for (Image image : describeImagesResult.getImages()) {
-            System.out.println(image.getCreationDate());
-            //System.out.println(image.toString());
-            try {
-                Date date = dateFormat.parse(image.getCreationDate());
-                creationDateMap.put(date, image);
-                System.out.println(date);
-            } catch (ParseException pE) {
-                logger.error("Error parsing dateformat");
-                pE.printStackTrace();
-            }
-        }
-        System.out.println(Collections.max(creationDateMap.keySet()));
-        System.out.println(creationDateMap.get(Collections.max(creationDateMap.keySet())));
+        Integer numReceivedImages = describeImagesResult.getImages().size();
+        logger.debug("Got " + numReceivedImages + " images from aws");
         String imageId = "";
-        //here should be a check for isPresent, but what to do if not present?
-        if (osCapability.getType().get().equals(OsCapability.Type.LINUX) &&
-            osCapability.getDistribution().get().equals(OsCapability.Distribution.UBUNTU) &&
-            osCapability.getVersion().get().equals("16.04")) {
-            imageId = "ami-0def3275";
+        if (numReceivedImages > 0) {
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+            Map<Date, Image> creationDateMap = new HashMap<>();
+            for (Image image : describeImagesResult.getImages()) {
+                try {
+                    Date date = dateFormat.parse(image.getCreationDate());
+                    creationDateMap.put(date, image);
+                } catch (ParseException pE) {
+                    logger.error("Error parsing dateformat");
+                    pE.printStackTrace();
+                }
+            }
+            Image latest = creationDateMap.get(Collections.max(creationDateMap.keySet()));
+            logger.debug("Latest image received: " + latest.toString());
+            imageId = latest.getImageId();
         } else {
-            throw new UnsupportedTypeException("Only Linux, Ubuntu 16.04 supported.");
+            logger.warn("No images received defaulting to old ubuntu 16.04 image");
+            imageId = "ami-0def3275";
         }
         return imageId;
     }

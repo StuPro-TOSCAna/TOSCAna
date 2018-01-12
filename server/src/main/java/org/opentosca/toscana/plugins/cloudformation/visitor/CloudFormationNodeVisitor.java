@@ -40,7 +40,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
 
     private final Logger logger;
     private CloudFormationModule cfnModule;
-    
+
     /**
      Creates a <tt>CloudFormationNodeVisitor<tt> in order to build a template with the given
      <tt>CloudFormationModule<tt>.
@@ -70,7 +70,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             // ImageIds different depending on the region you use this is us-west-2 atm
             OsCapability computeOs = node.getOs();
             String imageId = CapabilityMapper.mapOsCapabilityToImageId(computeOs);
-            
+
             //check what host should be taken
             // we only support t2.micro atm since its free for student accounts
             ComputeCapability computeCompute = node.getHost();
@@ -215,15 +215,14 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                 String cfnFileMode = "000644"; //TODO Check what mode is needed (only read?)
                 String cfnFileOwner = "root"; //TODO Check what Owner is needed
                 String cfnFileGroup = "root"; //TODO Check what Group is needed
-                
+
                 // TODO: re-allow content-dumping instead of source
                 CFNFile cfnFile = new CFNFile(cfnFilePath + dependency)
                     .setContent(cfnModule.getFileAccess().read(dependency))
                     .setMode(cfnFileMode)
                     .setOwner(cfnFileOwner)
                     .setGroup(cfnFileGroup);
-                
-                
+
                 // Add file to install
                 cfnModule.getCFNInit(serverName)
                     .getOrAddConfig(CONFIG_SETS, config)
@@ -251,7 +250,6 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                     .setOwner(cfnFileOwner)
                     .setGroup(cfnFileGroup);
 
-
                 CFNCommand cfnCommand = new CFNCommand(artifact,
                     cfnFilePath + artifact) //file is the full path, so need for "./"
                     .setCwd(cfnFilePath + new File(artifact).getParent());
@@ -269,11 +267,10 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                     .putCommand(cfnCommand)
                     .putCommand(new CFNCommand("restart apache2", "service apache2 restart")); //put commands
 //            } catch (IOException e) {
-              } catch (Exception e) {  
+            } catch (Exception e) {
                 logger.error("Problem with reading file " + artifact);
                 e.printStackTrace();
             }
         }
     }
-    
 }
