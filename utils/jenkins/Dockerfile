@@ -1,10 +1,11 @@
-FROM openjdk:8-jre-alpine
-MAINTAINER c-muelller (cmueller.dev@gmail.com)
+FROM docker:dind
+LABEL maintainer="Christian Müller <cmueller.dev@gmail.com>"
 WORKDIR /toscana
+RUN apk add --update --no-cache openjdk8-jre bash
 COPY server.jar server.jar
 ENV DATADIR="/toscana/data"
 ENV SERVER_PORT="8080"
-ENV ARGS=""
 VOLUME ["/toscana/data"]
 EXPOSE 8080
-ENTRYPOINT java -jar server.jar $ARGS
+ADD toscana-dind-entrypoint.sh .
+ENTRYPOINT ./toscana-dind-entrypoint.sh

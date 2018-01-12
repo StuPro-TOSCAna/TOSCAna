@@ -17,6 +17,7 @@ import org.opentosca.toscana.plugins.kubernetes.docker.image.PushingImageBuilder
 import org.opentosca.toscana.plugins.kubernetes.docker.mapper.BaseImageMapper;
 import org.opentosca.toscana.plugins.kubernetes.docker.util.DockerRegistryCredentials;
 import org.opentosca.toscana.plugins.kubernetes.exceptions.UnsupportedOsTypeException;
+import org.opentosca.toscana.plugins.kubernetes.model.Pod;
 import org.opentosca.toscana.plugins.kubernetes.util.KubernetesNodeContainer;
 import org.opentosca.toscana.plugins.kubernetes.util.NodeStack;
 import org.opentosca.toscana.plugins.kubernetes.visitor.check.NodeTypeCheckVisitor;
@@ -238,7 +239,7 @@ public class KubernetesLifecycle extends AbstractLifecycle {
     private void createKubernetesResources() {
         logger.info("Creating Kubernetes Resource Descriptions");
 
-        ResourceFileCreator creator = new ResourceFileCreator(this.stacks);
+        ResourceFileCreator creator = new ResourceFileCreator(Pod.getPods(this.stacks));
 
         StringBuilder complete = new StringBuilder();
         try {
