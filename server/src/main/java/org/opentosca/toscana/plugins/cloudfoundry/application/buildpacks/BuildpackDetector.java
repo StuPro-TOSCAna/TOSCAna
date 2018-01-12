@@ -7,6 +7,7 @@ import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin;
 import org.opentosca.toscana.plugins.cloudfoundry.application.Application;
 import org.opentosca.toscana.plugins.cloudfoundry.application.ServiceTypes;
+import org.opentosca.toscana.plugins.util.TransformationFailureException;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -42,7 +43,7 @@ public class BuildpackDetector {
                 try {
                     addBuildpackAdditonsPHP();
                 } catch (JSONException | IOException e) {
-                    logger.error("Something went wrong while trying to add additional buildpacks", e);
+                    throw new TransformationFailureException("Fail to add buildpacks", e);
                 }
 
                 //TODO: expand with more languages
