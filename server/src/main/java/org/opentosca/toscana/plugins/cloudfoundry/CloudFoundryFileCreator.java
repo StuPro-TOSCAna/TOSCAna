@@ -8,6 +8,7 @@ import java.util.Map;
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryApplication;
 import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryProvider;
+import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryService;
 import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryServiceType;
 import org.opentosca.toscana.plugins.scripts.BashScript;
 import org.opentosca.toscana.plugins.scripts.EnvironmentCheck;
@@ -65,6 +66,11 @@ public class CloudFoundryFileCreator {
         createService();
     }
 
+    public void updateManifest() throws IOException {
+        fileAccess.delete(MANIFEST_PATH);
+        createManifest();
+    }
+
     private void createManifestHead() throws IOException {
         String manifestHead = String.format("%s- %s: %s", MANIFESTHEAD, NAMEBLOCK, app.getName());
         fileAccess.access(MANIFEST_PATH).appendln(manifestHead).close();
@@ -117,29 +123,21 @@ public class CloudFoundryFileCreator {
         BashScript deployScript = new BashScript(fileAccess, FILEPRAEFIX_DEPLOY + app.getName());
         deployScript.append(EnvironmentCheck.checkEnvironment("cf"));
 
-        if (app.getProvider() != null && !app.getServices().isEmpty()) {
+        if (app.getProvider() != null && !app.getServices().isEmpty() && app.getConnection() != null) {
+            CloudFoundryProvider provider = app.getProvider();
+            provider.setOfferedService(app.getConnection().getServices());
             addProviderServiceOfferings(deployScript);
+
             for (Map.Entry<String, CloudFoundryServiceType> service : app.getServices().entrySet()) {
                 String description = service.getValue().getName();
-                CloudFoundryProvider provider = app.getProvider();
                 List<ServiceOffering> services = provider.getOfferedService();
-                Boolean isSet = false;
+                boolean isSet;
 
                 //checks if a offered service of the provider contains the description of the needed service
                 //if yes then add the service to the script with a free plan
-                for (ServiceOffering offeredService : services) {
-                    if (offeredService.getDescription().toLowerCase().indexOf(description.toLowerCase()) != -1) {
-                        for (ServicePlan plan : offeredService.getServicePlans()) {
-                            if (plan.getFree()) {
-                                deployScript.append(String.format("%s%s %s %s", CLI_CREATE_SERVICE,
-                                    offeredService.getLabel(), plan.getName(), service.getKey()));
-                                isSet = true;
-                                break;
-                            }
-                        }
-                    }
-                }
+                isSet = addMatchedServices(services, deployScript, description, service);
 
+                //if not then add the default create command to the deploy script
                 if (!isSet) {
                     deployScript.append(CLI_CREATE_SERVICE_DEFAULT + service);
                 }
@@ -149,8 +147,34 @@ public class CloudFoundryFileCreator {
                 deployScript.append(CLI_CREATE_SERVICE_DEFAULT + service.getKey());
             }
         }
-
         deployScript.append(CLI_PUSH + app.getName() + CLI_PATH_TO_MANIFEST + MANIFEST_NAME);
+    }
+
+    //checks if a service of a provider matches the needed service
+    private boolean addMatchedServices(List<ServiceOffering> services,
+                                       BashScript deployScript,
+                                       String description,
+                                       Map.Entry<String, CloudFoundryServiceType> service) throws IOException {
+        boolean isSet = false;
+
+        for (ServiceOffering offeredService : services) {
+            if (offeredService.getDescription().toLowerCase().indexOf(description.toLowerCase()) != -1) {
+                for (ServicePlan plan : offeredService.getServicePlans()) {
+                    if (plan.getFree()) {
+                        String serviceName = offeredService.getLabel();
+                        String planName = plan.getName();
+                        String serviceInstanceName = service.getKey();
+                        deployScript.append(String.format("%s%s %s %s", CLI_CREATE_SERVICE,
+                            serviceName, planName, serviceInstanceName));
+                        app.addMatchedService(
+                            new CloudFoundryService(serviceName, serviceInstanceName, planName, service.getValue()));
+                        isSet = true;
+                        break;
+                    }
+                }
+            }
+        }
+        return isSet;
     }
 
     //only for PHP 

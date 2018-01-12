@@ -143,9 +143,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
     @Override
     public void visit(MysqlDbms node) {
         logger.debug("Visit MysqlDbms node " + node.getNodeName() + ".");
-        // TODO what to do if there is a configure script
-        // Get the host of this DBMS node
-        // String host = toAlphanumerical(node.getHost().getCapability().getResourceName().get());
+        // TODO handle sql artifact if present
     }
 
     @Override
@@ -164,6 +162,11 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                 //TODO apt only if linux
                 new CFNPackage("apt")
                     .addPackage("apache2"));
+        //instead of lifecycle create we add the package apache2 to the configset
+        if (node.getStandardLifecycle().getConfigure().isPresent()) {
+            Operation configure = node.getStandardLifecycle().getConfigure().get();
+            handleOperation(configure, serverName, CONFIG_CONFIGURE);
+        }
     }
 
     @Override

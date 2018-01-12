@@ -78,7 +78,7 @@ public class CloudFoundryNodeVisitor implements StrictNodeVisitor {
         handleStandardLifecycle(node, true);
     }
 
-    private void handleStandardLifecycle(RootNode node, Boolean isTopNode) {
+    private void handleStandardLifecycle(RootNode node, boolean isTopNode) {
         // get StandardLifecycle inputs
         for (OperationVariable lifecycleInput : node.getStandardLifecycle().getInputs()) {
             addEnvironmentVariable(lifecycleInput);
@@ -113,7 +113,7 @@ public class CloudFoundryNodeVisitor implements StrictNodeVisitor {
         }
     }
 
-    private void setPathToApplication(String path, Boolean isTopNode) {
+    private void setPathToApplication(String path, boolean isTopNode) {
         myApp.addFilePath(path);
         if (myApp.getPathToApplication() == null && isTopNode) {
             myApp.setPathToApplication(path);

@@ -5,10 +5,10 @@ applications:
   disk_quota: 2000MB
   mem_size: 1024MB
   env:
-    database_user: TODO
+    database_user: root
     database_name: DBNAME
-    database_host: TODO
+    database_host: localhost
     database_port: 3306
-    database_password: TODO
+    database_password: geheim12
   services:
     - my_db

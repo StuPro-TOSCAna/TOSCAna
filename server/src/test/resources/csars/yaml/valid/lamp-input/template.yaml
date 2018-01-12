@@ -45,6 +45,10 @@ topology_template:
       type: tosca.nodes.WebServer.Apache
       requirements:
         - host: server
+      interfaces:
+        Standard:
+          configure:
+            implementation: my_apache/install_php.sh
 
     my_db:
       type: tosca.nodes.Database.MySQL
