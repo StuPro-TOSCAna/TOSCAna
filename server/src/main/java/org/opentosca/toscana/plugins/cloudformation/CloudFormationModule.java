@@ -34,7 +34,7 @@ public class CloudFormationModule extends Module {
         "mkdir -p /tmp/aws-cfn-bootstrap-latest\n",
         "curl https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz | tar xz -C /tmp/aws-cfn-bootstrap-latest --strip-components 1\n",
         "apt-get update\n",
-        "DEBIAN_FRONTEND=noninteractive apt-get upgrade -yq\n", 
+        "DEBIAN_FRONTEND=noninteractive apt-get upgrade -yq\n",
         "apt-get -y install python-setuptools\n",
         "easy_install /tmp/aws-cfn-bootstrap-latest\n",
         "cp /tmp/aws-cfn-bootstrap-latest/init/ubuntu/cfn-hup /etc/init.d/cfn-hup\n",
@@ -43,7 +43,7 @@ public class CloudFormationModule extends Module {
         "# Install the files and packages from the metadata\n",
         "/usr/local/bin/cfn-init -v ",
         "         --stack "};
-    
+
     private Object keyNameVar;
 
     private Map<String, CFNInit> cfnInitMap;
@@ -65,8 +65,9 @@ public class CloudFormationModule extends Module {
 
     /**
      Put a CFNInit into a map which will be added to the resource at build time
+
      @param resource resource to add CFNInit to
-     @param init CNFInit to add
+     @param init     CNFInit to add
      */
     public void putCFNInit(String resource, CFNInit init) {
         cfnInitMap.put(resource, init);
@@ -105,7 +106,7 @@ public class CloudFormationModule extends Module {
             "         --region ",
             template.ref("AWS::Region"),
             "\n"};
-        
+
         // Combine constant params with ref params
         List params = new ArrayList<Object>();
         Collections.addAll(params, USERDATA_CONSTANT_PARAMS);
@@ -127,7 +128,6 @@ public class CloudFormationModule extends Module {
 
     /**
      Get the fileAccess of this module
-     @return
      */
     public PluginFileAccess getFileAccess() {
         return fileAccess;
