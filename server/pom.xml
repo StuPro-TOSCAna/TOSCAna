@@ -58,16 +58,6 @@
             <artifactId>cloudformation-builder</artifactId>
             <version>06ce7113584a66632dfc439363d1a2c4bc999851</version>
         </dependency>
-        <!--AWS Java SDK cloudformation module-->
-        <dependency>
-            <groupId>com.amazonaws</groupId>
-            <artifactId>aws-java-sdk-cloudformation</artifactId>
-        </dependency>
-        <!--AWS Java SDK s3 module-->
-        <dependency>
-            <groupId>com.amazonaws</groupId>
-            <artifactId>aws-java-sdk-s3</artifactId>
-        </dependency>
         <!--AWS Java SDK ec2 module-->
         <dependency>
             <groupId>com.amazonaws</groupId>

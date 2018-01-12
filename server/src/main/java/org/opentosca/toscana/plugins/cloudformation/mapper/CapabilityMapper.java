@@ -1,5 +1,8 @@
 package org.opentosca.toscana.plugins.cloudformation.mapper;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
 import org.opentosca.toscana.model.capability.ComputeCapability;
 import org.opentosca.toscana.model.capability.OsCapability;
 import org.opentosca.toscana.model.visitor.UnsupportedTypeException;
@@ -42,9 +45,8 @@ public class CapabilityMapper {
         .add(8)
         .build();
 
-    public static String mapOsCapabilityToImageId(BasicAWSCredentials awsCreds, OsCapability osCapability) {
+    public static String mapOsCapabilityToImageId(OsCapability osCapability) {
         AmazonEC2 ec2 = AmazonEC2ClientBuilder.standard()
-            .withCredentials(new AWSStaticCredentialsProvider(awsCreds))
             .withRegion(Regions.US_WEST_2) //TODO get this from user
             .build();
         //need to set these, owner are self and amazon
@@ -52,7 +54,7 @@ public class CapabilityMapper {
             .withFilters(
                 new Filter("virtualization-type").withValues("hvm"),
                 new Filter("root-device-type").withValues("ebs"))
-            .withOwners("self", "099720109477");
+            .withOwners("099720109477");
         //TODO set filter  with owners, executable users?
         if (osCapability.getType().isPresent()) {
             if (osCapability.getType().get().equals(OsCapability.Type.WINDOWS)) {
@@ -81,7 +83,9 @@ public class CapabilityMapper {
         DescribeImagesResult describeImagesResult = ec2.describeImages(describeImagesRequest);
         System.out.println(describeImagesResult.getImages().size());
         for (Image image : describeImagesResult.getImages()) {
-            System.out.println(image.toString());
+            System.out.println(image.getCreationDate());
+            //System.out.println(image.toString());
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-")
         }
         String imageId = "";
         //here should be a check for isPresent, but what to do if not present?
