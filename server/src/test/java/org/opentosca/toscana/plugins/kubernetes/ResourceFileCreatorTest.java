@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.opentosca.toscana.core.BaseUnitTest;
+import org.opentosca.toscana.plugins.kubernetes.model.Pod;
 import org.opentosca.toscana.plugins.kubernetes.model.TestNodeStacks;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -16,12 +17,12 @@ import static org.junit.Assert.fail;
 
 public class ResourceFileCreatorTest extends BaseUnitTest {
     private String appName = "my-app";
-    private String appServiceName = "my_app-service";
-    private String appDeploymentName = "my_app-deployment";
+    private String appServiceName = "my-app-service";
+    private String appDeploymentName = "my-app-deployment";
 
     @Test
     public void testReplicationControllerCreation() {
-        ResourceFileCreator resourceFileCreator = new ResourceFileCreator(TestNodeStacks.getLampNodeStacks());
+        ResourceFileCreator resourceFileCreator = new ResourceFileCreator(Pod.getPods(TestNodeStacks.getLampNodeStacks()));
 
         HashMap<String, String> result = null;
         try {
