@@ -1,7 +1,12 @@
 package org.opentosca.toscana.plugins.cloudformation.mapper;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.opentosca.toscana.model.capability.ComputeCapability;
 import org.opentosca.toscana.model.capability.OsCapability;
@@ -82,11 +87,23 @@ public class CapabilityMapper {
         }
         DescribeImagesResult describeImagesResult = ec2.describeImages(describeImagesRequest);
         System.out.println(describeImagesResult.getImages().size());
+        logger.debug("Got " + describeImagesResult.getImages().size());
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        Map<Date, Image> creationDateMap = new HashMap<>();
         for (Image image : describeImagesResult.getImages()) {
             System.out.println(image.getCreationDate());
             //System.out.println(image.toString());
-            DateFormat dateFormat = new SimpleDateFormat("yyyy-")
+            try {
+                Date date = dateFormat.parse(image.getCreationDate());
+                creationDateMap.put(date, image);
+                System.out.println(date);
+            } catch (ParseException pE) {
+                logger.error("Error parsing dateformat");
+                pE.printStackTrace();
+            }
         }
+        System.out.println(Collections.max(creationDateMap.keySet()));
+        System.out.println(creationDateMap.get(Collections.max(creationDateMap.keySet())));
         String imageId = "";
         //here should be a check for isPresent, but what to do if not present?
         if (osCapability.getType().get().equals(OsCapability.Type.LINUX) &&
