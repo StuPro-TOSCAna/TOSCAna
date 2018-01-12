@@ -40,7 +40,7 @@ public class KubernetesLampIT extends BaseTransformTest {
     @Override
     protected void onSuccess(File outputDir) throws Exception {
         //Comment out the sleep command to allow the interruption of the test before the files get deleted
-        Thread.sleep(10000+0);
+        Thread.sleep(10000);
         //Do Nothing
     }
 
