@@ -66,15 +66,14 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                 .ingress(ingress -> ingress.cidrIp(cidrIp), "tcp", 80, 22);
 
             // check what image id should be taken
-            // we only support linux ubuntu 16.04 but there should be a mapping of os properties to imageIds
-            // ImageIds different depending on the region you use this is us-west-2 atm
-            OsCapability computeOs = node.getOs();
-            String imageId = CapabilityMapper.mapOsCapabilityToImageId(computeOs);
+            CapabilityMapper capabilityMapper = new CapabilityMapper();
 
+            OsCapability computeOs = node.getOs();
+            String imageId = capabilityMapper.mapOsCapabilityToImageId(computeOs);
             //check what host should be taken
             // we only support t2.micro atm since its free for student accounts
             ComputeCapability computeCompute = node.getHost();
-            String instanceType = CapabilityMapper.mapComputeCapabilityToInstanceType(computeCompute);
+            String instanceType = capabilityMapper.mapComputeCapabilityToInstanceType(computeCompute);
             //create CFN init and store it
             CFNInit init = new CFNInit(CONFIG_SETS);
             cfnModule.putCFNInit(nodeName, init);
