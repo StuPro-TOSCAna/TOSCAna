@@ -112,7 +112,7 @@ public class LampApp {
         Operation apacheConfigureOperation = Operation.builder()
             .artifact(Artifact.builder("artifact", "my_apache/install_php.sh").build())
             .build();
-        StandardLifecycle lifecycle =  StandardLifecycle.builder()
+        StandardLifecycle lifecycle = StandardLifecycle.builder()
             .configure(apacheConfigureOperation)
             .build();
         return Apache

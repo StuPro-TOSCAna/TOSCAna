@@ -104,15 +104,18 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                     Compute compute = dbms.getHost().getFulfillers().iterator().next();
                     serverName = toAlphanumerical(compute.getNodeName());
                 } else {
-                    throw new IllegalStateException("Got " + dbms.getHost().getFulfillers().size() + " instead of one fulfiller");
+                    throw new IllegalStateException("Got " + dbms.getHost().getFulfillers().size() + " instead of one" +
+                        " fulfiller");
                 }
             } else {
-                throw new IllegalStateException("Got " + node.getHost().getFulfillers().size() + " instead of one fulfiller");
+                throw new IllegalStateException("Got " + node.getHost().getFulfillers().size() + " instead of one " +
+                    "fulfiller");
             }
             String dbName = node.getDatabaseName();
             //throw error, take default or generate random?
             String masterUser = node.getUser().orElseThrow(() -> new IllegalArgumentException("Database user not set"));
-            String masterPassword = node.getPassword().orElseThrow(() -> new IllegalArgumentException("Database password not set"));
+            String masterPassword = node.getPassword().orElseThrow(() -> new IllegalArgumentException("Database " +
+                "password not set"));
             Integer port = node.getPort().orElse(3306);
             //TODO check downwards to compute and take its values
             String dBInstanceClass = "db.t2.micro";
@@ -154,7 +157,8 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             Compute compute = node.getHost().getFulfillers().iterator().next();
             serverName = toAlphanumerical(compute.getNodeName());
         } else {
-            throw new IllegalStateException("Got " + node.getHost().getFulfillers().size() + " instead of one fulfiller");
+            throw new IllegalStateException("Got " + node.getHost().getFulfillers().size() + " instead of one " +
+                "fulfiller");
         }
         cfnModule.getCFNInit(serverName)
             .getOrAddConfig(CONFIG_SETS, CONFIG_INSTALL)
@@ -181,10 +185,12 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                 Compute compute = webServer.getHost().getFulfillers().iterator().next();
                 serverName = toAlphanumerical(compute.getNodeName());
             } else {
-                throw new IllegalStateException("Got " + webServer.getHost().getFulfillers().size() + " instead of one fulfiller");
+                throw new IllegalStateException("Got " + webServer.getHost().getFulfillers().size() + " instead of " +
+                    "one fulfiller");
             }
         } else {
-            throw new IllegalStateException("Got " + node.getHost().getFulfillers().size() + " instead of one fulfiller");
+            throw new IllegalStateException("Got " + node.getHost().getFulfillers().size() + " instead of one " +
+                "fulfiller");
         }
 
         if (node.getStandardLifecycle().getCreate().isPresent()) {
