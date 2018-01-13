@@ -1,0 +1,20 @@
+language: java
+os:       linux
+sudo:     required
+service:  docker
+
+before_install:
+  - docker run --rm --privileged -v /:/host solita/ubuntu-systemd setup
+  - "docker run --security-opt seccomp=unconfined
+      --tmpfs /run --tmpfs /run/lock
+      -v /sys/fs/cgroup:/sys/fs/cgroup:ro
+      -v $PWD:/testfolder
+      -dt --name test --rm -p 8443:8443
+      --privileged nfode/minikube"
+
+
+install:
+  - curl -Lo kubectl https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl && chmod +x kubectl
+  - docker exec -it test minikube start --vm-driver=none
+  - sh extract-certs.sh
+  - ./kubectl config use-context minikube
