@@ -1,41 +1,44 @@
 package org.opentosca.toscana.plugins.cloudfoundry.application;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.opentosca.toscana.plugins.cloudfoundry.client.CloudFoundryConnection;
+import org.opentosca.toscana.plugins.cloudfoundry.client.Connection;
 
 /**
- This class should describe a CloudFoundryApplication with all needed information to deploy it
+ This class should describe a Application with all needed information to deploy it
  */
-public class CloudFoundryApplication {
+public class Application {
 
     private String name;
     private final ArrayList<String> filePaths = new ArrayList<>();
     private final Map<String, String> environmentVariables = new HashMap<>();
     private final Map<String, String> attributes = new HashMap<>();
-    private final Map<String, CloudFoundryServiceType> services = new HashMap<>();
-    private final ArrayList<CloudFoundryService> servicesMatchedToProvider = new ArrayList<>();
-    private final ArrayList<String> buildpackAdditions = new ArrayList<>();
-    private CloudFoundryProvider provider;
+    private final Map<String, ServiceTypes> services = new HashMap<>();
+    private final ArrayList<Service> servicesMatchedToProvider = new ArrayList<>();
+    private final ArrayList<String> invalidApplicationSuffixes = new ArrayList<>(Arrays.asList("sh", "sql"));
+    private Provider provider;
     private String pathToApplication;
-    private CloudFoundryConnection connection;
+    private String applicationSuffix;
 
-    public CloudFoundryApplication(String name) {
+    private Connection connection;
+
+    public Application(String name) {
         this.name = name;
     }
 
-    public CloudFoundryApplication() {
+    public Application() {
     }
 
-    public void setConnection(CloudFoundryConnection connection) {
+    public void setConnection(Connection connection) {
         this.connection = connection;
     }
 
-    public CloudFoundryConnection getConnection() {
+    public Connection getConnection() {
         return connection;
     }
 
@@ -63,28 +66,20 @@ public class CloudFoundryApplication {
         this.environmentVariables.put(environmentVariableName, "TODO");
     }
 
-    public Map<String, CloudFoundryServiceType> getServices() {
+    public Map<String, ServiceTypes> getServices() {
         return services;
     }
 
-    public List<CloudFoundryService> getServicesMatchedToProvider() {
+    public List<Service> getServicesMatchedToProvider() {
         return Collections.unmodifiableList(servicesMatchedToProvider);
     }
 
-    public void addMatchedService(CloudFoundryService matchedService) {
+    public void addMatchedService(Service matchedService) {
         servicesMatchedToProvider.add(matchedService);
     }
 
-    public void addService(String serviceName, CloudFoundryServiceType serviceType) {
+    public void addService(String serviceName, ServiceTypes serviceType) {
         this.services.put(serviceName, serviceType);
-    }
-
-    public List<String> getBuildpackAdditions() {
-        return buildpackAdditions;
-    }
-
-    public void addBuildpack(String buildPack) {
-        this.buildpackAdditions.add(buildPack);
     }
 
     public void addAttribute(String attributeName, String attributeValue) {
@@ -103,20 +98,36 @@ public class CloudFoundryApplication {
         return filePaths;
     }
 
-    public CloudFoundryProvider getProvider() {
+    public Provider getProvider() {
         return provider;
     }
 
-    public void setProvider(CloudFoundryProvider provider) {
+    public void setProvider(Provider provider) {
         this.provider = provider;
+    }
+
+    public String getApplicationSuffix() {
+        return applicationSuffix;
     }
 
     public void setPathToApplication(String pathToApplication) {
         int lastOccurenceOfBackslash = pathToApplication.lastIndexOf("/");
+        int lastOccurenceOfDot = pathToApplication.lastIndexOf(".");
 
-        if (lastOccurenceOfBackslash != -1) {
-            this.pathToApplication = pathToApplication.substring(0, lastOccurenceOfBackslash);
+        if (lastOccurenceOfDot != -1) {
+            String suffix = pathToApplication.substring(lastOccurenceOfDot + 1, pathToApplication.length());
+            if (isValidApplicationSuffix(suffix)) {
+                this.applicationSuffix = pathToApplication.substring(lastOccurenceOfDot + 1, pathToApplication.length());
+
+                if (lastOccurenceOfBackslash != -1) {
+                    this.pathToApplication = pathToApplication.substring(0, lastOccurenceOfBackslash);
+                }
+            }
         }
+    }
+
+    private boolean isValidApplicationSuffix(String suffix) {
+        return !invalidApplicationSuffixes.contains(suffix);
     }
 
     public String getPathToApplication() {

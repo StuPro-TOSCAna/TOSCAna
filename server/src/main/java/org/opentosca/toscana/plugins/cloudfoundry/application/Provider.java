@@ -7,7 +7,7 @@ import org.cloudfoundry.operations.services.ServiceOffering;
 /**
  Created by jensmuller on 05.12.17.
  */
-public class CloudFoundryProvider {
+public class Provider {
 
     // will be expanded with several cloud Providers
     public enum CloudFoundryProviderType {
@@ -17,7 +17,7 @@ public class CloudFoundryProvider {
     private List<ServiceOffering> offeredService;
     private CloudFoundryProviderType name;
 
-    public CloudFoundryProvider(CloudFoundryProviderType name) {
+    public Provider(CloudFoundryProviderType name) {
         this.name = name;
     }
 

@@ -4,21 +4,21 @@ package org.opentosca.toscana.plugins.cloudfoundry.application;
  Created by jensmuller on 03.01.18.
  represents a service which is offered by a provider and the application needs
  */
-public class CloudFoundryService {
+public class Service {
 
     private String serviceName;
     private String serviceInstanceName;
     private String plan;
-    private CloudFoundryServiceType serviceType;
+    private ServiceTypes serviceType;
 
-    public CloudFoundryService(String serviceName, String serviceInstanceName, String plan, CloudFoundryServiceType serviceType) {
+    public Service(String serviceName, String serviceInstanceName, String plan, ServiceTypes serviceType) {
         this.serviceName = serviceName;
         this.serviceInstanceName = serviceInstanceName;
         this.plan = plan;
         this.serviceType = serviceType;
     }
 
-    public CloudFoundryServiceType getServiceType() {
+    public ServiceTypes getServiceType() {
         return serviceType;
     }
 
