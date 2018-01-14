@@ -311,7 +311,7 @@ public class TransformationControllerTest extends BaseSpringTest {
             .andExpect(content().contentType(DEFAULT_CHARSET_HAL_JSON))
             .andExpect(jsonPath("$.properties").isArray())
             .andExpect(jsonPath("$.properties").isNotEmpty())
-            .andExpect(jsonPath("$.properties[0].name").isString())
+            .andExpect(jsonPath("$.properties[0].key").isString())
             .andExpect(jsonPath("$.properties[0].type").isString())
             .andExpect(jsonPath("$.properties[0].description").isString())
             .andExpect(jsonPath("$.properties[0].required").isBoolean())
@@ -349,7 +349,7 @@ public class TransformationControllerTest extends BaseSpringTest {
         boolean restNull = true;
         for (int i = 0; i < obj.length(); i++) {
             JSONObject content = obj.getJSONObject(i);
-            if (content.getString("name").equals("secret_property")) {
+            if (content.getString("key").equals("secret_property")) {
                 valueFound = content.getString("value").equals("geheim");
             } else {
                 restNull = restNull && (content.isNull("value")
