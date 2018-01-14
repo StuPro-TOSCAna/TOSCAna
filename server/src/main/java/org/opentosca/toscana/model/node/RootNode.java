@@ -22,7 +22,7 @@ import lombok.ToString;
 @ToString
 public abstract class RootNode extends DescribableEntity implements VisitableNode {
 
-    // TODO what kind of class is Property and Attribute?
+    // TODO what kind of class is SimpleProperty and Attribute?
     public static ToscaKey<Requirement> REQUIREMENTS = new ToscaKey<>("requirements")
         .type(Requirement.class);
     public static ToscaKey<Capability> CAPABILITIES = new ToscaKey<>("capabilities")

@@ -3,6 +3,7 @@ package org.opentosca.toscana.core.parse.graphconverter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -10,9 +11,11 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.opentosca.toscana.core.parse.graphconverter.util.ToscaStructure;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.model.EntityId;
+import org.opentosca.toscana.model.Parameter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +26,7 @@ public class ServiceModel {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
     private ServiceGraph graph;
+    private Map<String, Property> inputs;
 
     public ServiceModel(File template, Log log) {
         this(template);
@@ -38,8 +42,7 @@ public class ServiceModel {
             GraphNormalizer.normalize(this);
             new LinkResolver(this).resolveLinks();
         } catch (FileNotFoundException e) {
-            // TODO handle error
-            e.printStackTrace();
+            logger.error(String.format("Template '%s' does not exist - failed to construct ServiceModel", template, e));
         }
     }
 
@@ -81,8 +84,15 @@ public class ServiceModel {
     }
 
     public Map<String, Property> getInputs() {
-        // TODO add general mechanism for handling inputs
-        return null;
+        if (inputs == null) {
+            inputs = new HashMap<>();
+            Set<BaseEntity<?>> inputEntities = graph.getChildren(ToscaStructure.INPUTS);
+            for (BaseEntity inputEntity : inputEntities) {
+                Parameter input = new ToscaFactory(logger).wrapEntity((MappingEntity) inputEntity, Parameter.class);
+                inputs.put(input.getEntityName(), input);
+            }
+        }
+        return inputs;
     }
 
     public ServiceGraph getGraph() {

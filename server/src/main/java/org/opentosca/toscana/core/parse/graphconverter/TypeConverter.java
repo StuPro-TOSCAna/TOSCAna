@@ -39,6 +39,9 @@ public class TypeConverter {
             return (T) string;
         } else if (targetType.getSimpleName().equals("Integer")) {
             return (T) Integer.valueOf(string);
+        } else if (Boolean.class.isAssignableFrom(targetType)) {
+            return (T) Boolean.valueOf(string);
+            // TODO handle values besides true/false
         } else if (targetType.isEnum()) {
             T result = (T) EnumUtils.getEnum(targetType, string);
             // TODO handle wrong values

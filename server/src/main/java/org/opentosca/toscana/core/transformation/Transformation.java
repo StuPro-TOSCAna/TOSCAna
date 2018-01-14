@@ -35,7 +35,7 @@ public interface Transformation {
     }
 
     /**
-     @return Key(Property Name)-Value map of all properties that have been set explicitly!
+     @return Key(SimpleProperty Name)-Value map of all properties that have been set explicitly!
      */
     PropertyInstance getProperties();
 

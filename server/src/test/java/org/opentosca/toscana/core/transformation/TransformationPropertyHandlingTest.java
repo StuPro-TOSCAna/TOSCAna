@@ -10,6 +10,7 @@ import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.core.transformation.properties.PropertyType;
+import org.opentosca.toscana.core.transformation.properties.SimpleProperty;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -35,7 +36,7 @@ public class TransformationPropertyHandlingTest extends BaseUnitTest {
         HashSet<Property> props = new HashSet<>();
         for (int i = 0; i < 10; i++) {
             props.add(
-                new Property(
+                new SimpleProperty(
                     "prop-" + i,
                     PropertyType.UNSIGNED_INTEGER,
                     "No real Description",

@@ -38,6 +38,7 @@ import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.platform.PlatformService;
 import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
+import org.opentosca.toscana.core.transformation.properties.SimpleProperty;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -676,7 +677,7 @@ public class TransformationController {
             propertyWrapList.add(new PropertyWrap(
                     property.getKey(),
                     property.getType().getTypeName(),
-                    property.getDescription(),
+                    property.getDescription().orElse(null),
                     instance.getPropertyValues().get(property.getKey()),
                     property.isRequired()
                 )

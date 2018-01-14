@@ -70,7 +70,7 @@ public class ModelSpecificPropertyIT extends BaseSpringIntegrationTest {
             }
             if (!match) {
                 throw new IllegalStateException(String.format(
-                    "Property '%s' does not match expected properties (one of %s)",
+                    "SimpleProperty '%s' does not match expected properties (one of %s)",
                     property, expectedProperties));
             }
         }

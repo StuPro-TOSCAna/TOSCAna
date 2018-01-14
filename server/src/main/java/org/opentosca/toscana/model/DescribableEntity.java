@@ -3,6 +3,7 @@ package org.opentosca.toscana.model;
 import java.util.Optional;
 
 import org.opentosca.toscana.core.parse.graphconverter.MappingEntity;
+import org.opentosca.toscana.model.util.ToscaKey;
 
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -17,23 +18,23 @@ public abstract class DescribableEntity extends BaseToscaElement {
     /**
      The optional description of this entity
      */
-    private String description;
+    public static ToscaKey<String> DESCRIPTION = new ToscaKey<>("description");
 
     public DescribableEntity(MappingEntity mappingEntity) {
         super(mappingEntity);
     }
 
     /**
-     @return {@link #description}
-     */
+     @return {@link #DESCRIPTION} */
     public Optional<String> getDescription() {
-        return Optional.ofNullable(description);
+        return Optional.ofNullable(get(DESCRIPTION));
     }
 
     /**
-     Sets {@link #description}
+     Sets {@link #DESCRIPTION}
      */
-    public void setDescription(String description) {
-        this.description = description;
+    public DescribableEntity setDescription(String description) {
+        set(DESCRIPTION, description);
+        return this;
     }
 }

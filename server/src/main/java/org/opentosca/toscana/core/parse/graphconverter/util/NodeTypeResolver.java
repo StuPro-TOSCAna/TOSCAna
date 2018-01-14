@@ -1,4 +1,4 @@
-package org.opentosca.toscana.core.parse.graphconverter;
+package org.opentosca.toscana.core.parse.graphconverter.util;
 
 import java.util.HashMap;
 import java.util.Map;

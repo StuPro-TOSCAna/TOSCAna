@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.opentosca.toscana.core.transformation.properties.Property;
+import org.opentosca.toscana.core.transformation.properties.SimpleProperty;
 
 public class Platform {
 
@@ -47,6 +48,7 @@ public class Platform {
         return Collections.unmodifiableSet(properties);
     }
 
+    @Override
     public String toString() {
         return String.format("Platform [id='%s', name='%s', properties='%s']", id, name, properties);
     }

@@ -1,5 +1,7 @@
-package org.opentosca.toscana.core.parse.graphconverter;
+package org.opentosca.toscana.core.parse.graphconverter.util;
 
+import org.opentosca.toscana.core.parse.graphconverter.MappingEntity;
+import org.opentosca.toscana.core.parse.graphconverter.ServiceGraph;
 import org.opentosca.toscana.model.EntityId;
 
 import com.google.common.collect.Lists;

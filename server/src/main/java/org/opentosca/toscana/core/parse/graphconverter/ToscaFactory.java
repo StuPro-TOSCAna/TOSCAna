@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.opentosca.toscana.core.parse.graphconverter.util.NodeTypeResolver;
+import org.opentosca.toscana.core.parse.graphconverter.util.ToscaStructure;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.util.ToscaKey;
 

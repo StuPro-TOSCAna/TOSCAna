@@ -3,11 +3,11 @@ package org.opentosca.toscana.core.csar;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.properties.Property;
+import org.opentosca.toscana.core.transformation.properties.SimpleProperty;
 import org.opentosca.toscana.model.EffectiveModel;
 
 public interface Csar {

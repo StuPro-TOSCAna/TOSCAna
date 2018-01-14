@@ -9,6 +9,7 @@ import org.opentosca.toscana.core.transformation.artifacts.TargetArtifact;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.Property;
+import org.opentosca.toscana.core.transformation.properties.SimpleProperty;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
 
 import static java.lang.String.format;

@@ -2,6 +2,7 @@ package org.opentosca.toscana.core.parse.graphconverter;
 
 import java.util.Optional;
 
+import org.opentosca.toscana.core.parse.graphconverter.util.ToscaStructure;
 import org.opentosca.toscana.model.EntityId;
 import org.opentosca.toscana.model.artifact.Artifact;
 import org.opentosca.toscana.model.artifact.Repository;

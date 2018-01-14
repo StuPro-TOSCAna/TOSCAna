@@ -1,9 +1,8 @@
-package org.opentosca.toscana.model.nodedefinition;
+package org.opentosca.toscana.model;
 
 import java.util.Optional;
 
 import org.opentosca.toscana.core.testdata.TestCsars;
-import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.model.capability.OsCapability;
 import org.opentosca.toscana.model.capability.ScalableCapability;
 import org.opentosca.toscana.model.node.Compute;
