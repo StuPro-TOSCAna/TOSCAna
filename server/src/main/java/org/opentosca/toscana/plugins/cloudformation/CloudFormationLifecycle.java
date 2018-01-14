@@ -1,6 +1,7 @@
 package org.opentosca.toscana.plugins.cloudformation;
 
 import java.io.IOException;
+import java.util.Hashtable;
 import java.util.Set;
 
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
@@ -37,7 +38,7 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
         PluginFileAccess fileAccess = context.getPluginFileAccess();
         CloudFormationModule cfnModule = new CloudFormationModule(fileAccess);
         Set<RootNode> nodes = model.getNodes();
-        
+
         // Visit Compute nodes first, then all others
         try {
             CloudFormationNodeVisitor cfnNodeVisitor = new CloudFormationNodeVisitor(logger, cfnModule);
@@ -52,22 +53,27 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
                 }
             }
             fileAccess.access("output/template.yaml").appendln(cfnModule.toString()).close();
-            
         } catch (Exception e) {
             logger.error("Transformation to CloudFormation unsuccessful. Please check the StackTrace for more Info.");
             e.printStackTrace();
         }
-        
+
         // Create scripts for the deployment of the template
         logger.info("Creating CloudFormation scripts.");
         try {
-            CloudFormationScriptCreator fileCreator = new CloudFormationScriptCreator(fileAccess, "lampstatic");
+            // TODO get file uploads
+            Hashtable<String, String> filesToBeUploaded = new Hashtable<>();
+            CloudFormationScriptCreator fileCreator = new CloudFormationScriptCreator(fileAccess,
+                "lampstatic",
+                "bucket-name",
+                filesToBeUploaded,
+                logger);
             fileCreator.createScripts();
         } catch (IOException e) {
             e.printStackTrace();
             logger.error("Transformation to CloudFormation unsuccessful. Please check the StackTrace for more Info.");
         }
-        
+
         logger.info("Transformation to CloudFormation successful.");
     }
 

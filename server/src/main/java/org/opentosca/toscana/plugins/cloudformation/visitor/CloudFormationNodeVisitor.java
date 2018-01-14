@@ -284,4 +284,27 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             }
         }
     }
+
+    /**
+     * Generates a valid URL for a file on a S3Bucket.
+     *
+     * @param bucketName name of the bucket containg the file
+     * @param region     where the bucket is hosted
+     * @param objectKey  belonging to the file in the bucket
+     * @return URL for the file
+     */
+    private String generateFileURL(String bucketName, String region, String objectKey) {
+        //TODO implementation
+        return "";
+    }
+
+    /**
+     * Returns a random bucket name.
+     *
+     * @return random bucket name
+     */
+    private String generateBucketName() {
+        //TODO implementation
+        return "";
+    }
 }
