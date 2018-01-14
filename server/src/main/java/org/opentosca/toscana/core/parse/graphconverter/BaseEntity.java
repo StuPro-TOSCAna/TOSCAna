@@ -51,6 +51,11 @@ public abstract class BaseEntity<T> implements Comparable<BaseEntity<T>> {
     public Optional<BaseEntity<?>> getChild(String key) {
         return graph.getChild(this, key);
     }
+    
+    public Optional<BaseEntity<?>> getChild(ToscaKey<?> key) {
+        return graph.getChild(this, key);
+        
+    }
 
     public BaseEntity<T> set(T value) {
         this.value = value;

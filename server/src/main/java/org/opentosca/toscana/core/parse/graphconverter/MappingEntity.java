@@ -39,15 +39,19 @@ public class MappingEntity extends BaseEntity<Map<String, String>> {
         }
     }
 
+    /**
+     Returns the child entity specified by given key. If the child entity does not exist yet, creates the entity.
+     */
     public MappingEntity getOrNewChild(ToscaKey<? extends BaseToscaElement> key) {
         MappingEntity child;
-        Optional<BaseEntity<?>> entity = getChild(key.name);
+        Optional<BaseEntity<?>> entity = getChild(key);
         if (entity.isPresent()) {
             child = (MappingEntity) entity.get();
         } else {
-            child = new MappingEntity(getId().descend(key.name), graph);
+            child = new MappingEntity(getId().descend(key), graph);
             graph.addEntity(child);
         }
         return child;
     }
+
 }

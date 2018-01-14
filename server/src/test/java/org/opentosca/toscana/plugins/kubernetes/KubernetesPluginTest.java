@@ -34,7 +34,7 @@ public class KubernetesPluginTest extends BaseUnitTest {
 
     @Test(expected = ValidationFailureException.class)
     public void modelCheckTest() throws Exception {
-        File template = new File("src/test/resources/kubernetes/software-component.yaml");
+        File template = new File("src/test/resources/kubernetes/single-compute.yaml");
         EffectiveModel singleComputeModel = new EffectiveModel(template);
         TransformationContext context = setUpMockTransformationContext(singleComputeModel);
         plugin.transform(context);

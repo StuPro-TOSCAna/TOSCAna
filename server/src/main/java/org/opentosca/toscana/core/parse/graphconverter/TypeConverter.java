@@ -12,7 +12,6 @@ public class TypeConverter {
         } else if (targetType.isEnum()){
             T result = (T) EnumUtils.getEnum(targetType, string);
             // TODO handle wrong values
-            System.out.println(result);
             return result;
         } else {
             throw new UnsupportedOperationException(String.format(
