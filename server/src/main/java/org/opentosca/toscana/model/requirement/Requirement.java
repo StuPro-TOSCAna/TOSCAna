@@ -1,7 +1,6 @@
 package org.opentosca.toscana.model.requirement;
 
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 import org.opentosca.toscana.core.parse.graphconverter.MappingEntity;
@@ -34,7 +33,7 @@ public class Requirement<CapabilityT extends Capability, NodeT extends RootNode,
     public static String CAPABILITY_NAME = "capability";
     public static String NODE_NAME = "node";
     public static String RELATIONSHIP_NAME = "relationship";
-    
+
     public ToscaKey<Capability> CAPABILITY = new ToscaKey<>(CAPABILITY_NAME)
         .type(Capability.class);
     public ToscaKey<? extends RootNode> NODE = new ToscaKey<>(NODE_NAME)

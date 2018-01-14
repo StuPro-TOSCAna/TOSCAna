@@ -43,10 +43,10 @@ public class AttachesTo extends RootRelationship {
      */
     public static ToscaKey<String> DEVICE = new ToscaKey<>(PROPERTIES, "device");
 
-    public AttachesTo(MappingEntity entity){
+    public AttachesTo(MappingEntity entity) {
         super(entity);
     }
-    
+
     /**
      @return {@link #MOUNT_POINT}
      */

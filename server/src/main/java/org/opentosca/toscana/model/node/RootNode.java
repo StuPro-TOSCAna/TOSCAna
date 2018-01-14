@@ -69,13 +69,15 @@ public abstract class RootNode extends DescribableEntity implements VisitableNod
     }
 
     /**
-     @return {@link #ARTIFACTS} */
+     @return {@link #ARTIFACTS}
+     */
     public Set<Artifact> getArtifacts() {
         return getCollection(ARTIFACTS);
     }
 
     /**
-     @return {@link #INTERFACES} */
+     @return {@link #INTERFACES}
+     */
     public Set<Interface> getInterfaces() {
         return getCollection(INTERFACES);
     }

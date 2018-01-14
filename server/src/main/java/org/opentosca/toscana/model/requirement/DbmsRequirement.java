@@ -5,7 +5,6 @@ import java.util.Optional;
 import org.opentosca.toscana.core.parse.graphconverter.MappingEntity;
 import org.opentosca.toscana.model.capability.ContainerCapability;
 import org.opentosca.toscana.model.node.Dbms;
-import org.opentosca.toscana.model.relation.ConnectsTo;
 import org.opentosca.toscana.model.relation.HostedOn;
 import org.opentosca.toscana.model.util.ToscaKey;
 

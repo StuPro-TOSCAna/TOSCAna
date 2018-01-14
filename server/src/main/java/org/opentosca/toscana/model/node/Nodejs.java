@@ -17,7 +17,6 @@ public class Nodejs extends WebServer {
      */
     public static ToscaKey<String> GITHUB_URL = new ToscaKey<>(PROPERTIES, "github_url");
 
-
     public Nodejs(MappingEntity mappingEntity) {
         super(mappingEntity);
         init();

@@ -51,7 +51,6 @@ public class Database extends RootNode {
     public static ToscaKey<DbmsRequirement> HOST = new ToscaKey<>(REQUIREMENTS, "host")
         .type(DbmsRequirement.class);
 
-
     public Database(MappingEntity mappingEntity) {
         super(mappingEntity);
         init();

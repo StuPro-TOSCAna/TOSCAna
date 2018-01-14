@@ -88,7 +88,7 @@ public abstract class BaseToscaElement {
     public MappingEntity getBackingEntity() {
         return mappingEntity;
     }
-    
+
     protected MappingEntity getChildEntity(ToscaKey<? extends BaseToscaElement> childKey) {
         return mappingEntity.getOrNewChild(childKey);
     }

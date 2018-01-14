@@ -1,7 +1,6 @@
 package org.opentosca.toscana.model.datatype;
 
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
 import org.opentosca.toscana.core.parse.graphconverter.MappingEntity;
@@ -56,7 +55,7 @@ public class Credential extends BaseToscaElement {
         super(mappingEntity);
         setDefault(TYPE, TokenType.PASSWORD);
     }
-    
+
     /**
      @return {@link #PROTOCOL}
      */

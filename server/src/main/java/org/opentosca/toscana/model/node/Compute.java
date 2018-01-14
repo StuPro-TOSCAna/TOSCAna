@@ -67,7 +67,6 @@ public class Compute extends RootNode {
     public static ToscaKey<BlockStorageRequirement> LOCAL_STORAGE = new ToscaKey<>(CAPABILITIES, "local_storage")
         .required(true).type(BlockStorageRequirement.class);
 
-
     public Compute(MappingEntity mappingEntity) {
         super(mappingEntity);
         init();

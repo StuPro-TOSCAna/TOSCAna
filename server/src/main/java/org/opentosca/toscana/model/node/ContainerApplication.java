@@ -25,7 +25,6 @@ public class ContainerApplication extends RootNode {
     public static ToscaKey<NetworkRequirement> NETWORK = new ToscaKey<>(REQUIREMENTS, "network")
         .type(NetworkRequirement.class);
 
-
     public ContainerApplication(MappingEntity mappingEntity) {
         super(mappingEntity);
         init();

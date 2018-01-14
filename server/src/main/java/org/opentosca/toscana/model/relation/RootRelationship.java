@@ -24,7 +24,7 @@ public class RootRelationship extends DescribableEntity implements VisitableRela
     public RootRelationship(MappingEntity entity) {
         super(entity);
     }
-   
+
     @Override
     public void accept(RelationshipVisitor v) {
     }

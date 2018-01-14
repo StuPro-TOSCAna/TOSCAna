@@ -50,8 +50,8 @@ public class ToscaKey<T> {
     public Optional<ToscaKey<?>> getPredecessor() {
         return Optional.ofNullable(predecessor);
     }
-    
-    public boolean hasPredecessor(){
+
+    public boolean hasPredecessor() {
         return (predecessor != null);
     }
 }

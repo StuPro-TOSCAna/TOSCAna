@@ -1,6 +1,5 @@
 package org.opentosca.toscana.model.node;
 
-import java.util.Objects;
 import java.util.Optional;
 
 import org.opentosca.toscana.core.parse.graphconverter.MappingEntity;

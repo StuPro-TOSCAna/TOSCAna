@@ -80,13 +80,12 @@ public class ServiceModel {
         return map.iterator();
     }
 
-    public Map<String,Property> getInputs() {
+    public Map<String, Property> getInputs() {
         // TODO add general mechanism for handling inputs
         return null;
     }
-    
+
     public ServiceGraph getGraph() {
         return graph;
     }
-
 }

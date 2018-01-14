@@ -6,7 +6,6 @@ import org.opentosca.toscana.core.parse.graphconverter.MappingEntity;
 import org.opentosca.toscana.model.DescribableEntity;
 import org.opentosca.toscana.model.util.ToscaKey;
 
-import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -49,19 +48,19 @@ public class Artifact extends DescribableEntity {
     }
 
     /**
-     @return {@link #REPOSITORY}
-     */
-
-    public Optional<Repository> getRepository() {
-        return Optional.ofNullable(get(REPOSITORY));
-    }
-
-    /**
      Sets {@link #FILE_PATH}
      */
     public Artifact setFilePath(String filePath) {
         set(FILE_PATH, filePath);
         return this;
+    }
+
+    /**
+     @return {@link #REPOSITORY}
+     */
+
+    public Optional<Repository> getRepository() {
+        return Optional.ofNullable(get(REPOSITORY));
     }
 
     /**
@@ -73,18 +72,18 @@ public class Artifact extends DescribableEntity {
     }
 
     /**
-     Sets {@link #DEPLOY_PATH}
-     */
-    public Artifact setDeployPath(String deployPath) {
-        set(DEPLOY_PATH, deployPath);
-        return this;
-    }
-
-    /**
      @return {@link #DEPLOY_PATH}
      */
 
     public Optional<String> getDeployPath() {
         return Optional.ofNullable(get(DEPLOY_PATH));
+    }
+
+    /**
+     Sets {@link #DEPLOY_PATH}
+     */
+    public Artifact setDeployPath(String deployPath) {
+        set(DEPLOY_PATH, deployPath);
+        return this;
     }
 }

@@ -31,7 +31,6 @@ public class WebApplication extends RootNode {
     public static ToscaKey<WebServerRequirement> HOST = new ToscaKey<>(REQUIREMENTS, "host")
         .type(WebServerRequirement.class);
 
-
     public WebApplication(MappingEntity mappingEntity) {
         super(mappingEntity);
         init();
@@ -41,7 +40,6 @@ public class WebApplication extends RootNode {
         setDefault(APP_ENDPOINT, new EndpointCapability(getChildEntity(APP_ENDPOINT)));
         setDefault(HOST, new WebServerRequirement(getChildEntity(HOST)));
     }
-
 
     /**
      @return {@link #CONTEXT_ROOT}

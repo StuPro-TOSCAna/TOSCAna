@@ -35,7 +35,7 @@ public class SequenceEntity extends BaseEntity<List<String>> {
     public Set<BaseEntity<?>> getChildren() {
         Set<BaseEntity<?>> children = new HashSet<>();
         Set<BaseEntity<?>> entities = graph.getChildren(this);
-        for (BaseEntity entity : entities){
+        for (BaseEntity entity : entities) {
             Iterator<BaseEntity> it = entity.getChildren().iterator();
             BaseEntity child = it.next();
             children.add(child);

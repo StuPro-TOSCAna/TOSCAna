@@ -15,13 +15,12 @@ public class ToscaStructure {
     public static final EntityId NODE_TEMPLATES = TOPOLOGY_TEMPLATE.descend("node_templates");
     public static final EntityId INPUTS = TOPOLOGY_TEMPLATE.descend("inputs");
     public static final EntityId OUTPUTS = TOPOLOGY_TEMPLATE.descend("outputs");
-    
-    public static void buildBasicStructure(ServiceGraph graph){
+
+    public static void buildBasicStructure(ServiceGraph graph) {
         graph.addEntity(new MappingEntity(REPOSITORIES, graph));
         graph.addEntity(new MappingEntity(TOPOLOGY_TEMPLATE, graph));
         graph.addEntity(new MappingEntity(NODE_TEMPLATES, graph));
         graph.addEntity(new MappingEntity(INPUTS, graph));
         graph.addEntity(new MappingEntity(OUTPUTS, graph));
     }
-
 }

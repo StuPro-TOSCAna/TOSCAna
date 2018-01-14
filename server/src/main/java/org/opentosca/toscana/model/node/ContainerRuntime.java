@@ -23,7 +23,6 @@ public class ContainerRuntime extends SoftwareComponent {
     public static ToscaKey<ScalableCapability> SCALABLE = new ToscaKey<>(CAPABILITIES, "scalable")
         .type(ScalableCapability.class);
 
-
     public ContainerRuntime(MappingEntity mappingEntity) {
         super(mappingEntity);
         init();

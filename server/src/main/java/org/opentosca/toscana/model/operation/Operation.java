@@ -33,8 +33,8 @@ public class Operation extends DescribableEntity {
      */
     public static ToscaKey<Void> IMPLEMENTATION = new ToscaKey<>("implementation")
         .type(Void.class);
-    
-    public static final ToscaKey<Artifact> PRIMARY = new ToscaKey<>(IMPLEMENTATION,"primary")
+
+    public static final ToscaKey<Artifact> PRIMARY = new ToscaKey<>(IMPLEMENTATION, "primary")
         .type(Artifact.class);
     /**
      several dependent or secondary implementation artifact names which
@@ -42,8 +42,8 @@ public class Operation extends DescribableEntity {
      (e.g., a library the script installs or a secondary script).
      Might be empty
      */
-    public static final ToscaKey<Set<String>> DEPENDENCIES = new ToscaKey<>(IMPLEMENTATION,"dependencies");
-    
+    public static final ToscaKey<Set<String>> DEPENDENCIES = new ToscaKey<>(IMPLEMENTATION, "dependencies");
+
     public Operation(MappingEntity entity) {
         super(entity);
     }
