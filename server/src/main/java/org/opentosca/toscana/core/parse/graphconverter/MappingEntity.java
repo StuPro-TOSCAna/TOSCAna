@@ -28,12 +28,7 @@ public class MappingEntity extends BaseEntity<Map<String, String>> {
     public <V> V get(ToscaKey<V> key) {
         Optional<BaseEntity<?>> entity = graph.getChild(this, key);
         if (entity.isPresent()) {
-
-            if (entity.get() instanceof ScalarEntity) {
-                ScalarEntity scalarEntity = (ScalarEntity) entity.get();
-                return TypeConverter.convert(scalarEntity.get(), key.getType());
-            }
-            return (V) entity.get();
+            return new TypeConverter().convert(entity.get(), key);
         } else {
             return null;
         }
@@ -53,5 +48,4 @@ public class MappingEntity extends BaseEntity<Map<String, String>> {
         }
         return child;
     }
-
 }

@@ -48,14 +48,12 @@ public class GraphNormalizerIT extends BaseIntegrationTest {
         assertTrue(create.getArtifact().isPresent());
         Artifact createArtifact = create.getArtifact().get();
         assertEquals("test-artifact", createArtifact.getFilePath());
-        
+
         EntityId startId = lifecycleId.descend(StandardLifecycle.START.name);
         BaseEntity startEntity = model.getEntity(startId).get();
         Operation start = new ToscaFactory().wrapEntity((MappingEntity) startEntity, Operation.class);
         assertTrue(start.getArtifact().isPresent());
         Artifact startArtifact = start.getArtifact().get();
         assertEquals("test-artifact2", startArtifact.getFilePath());
-
-
     }
 }

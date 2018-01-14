@@ -3,6 +3,7 @@ package org.opentosca.toscana.plugins.kubernetes;
 import java.io.File;
 
 import org.opentosca.toscana.core.BaseUnitTest;
+import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.plugins.kubernetes.docker.mapper.BaseImageMapper;
@@ -34,8 +35,7 @@ public class KubernetesPluginTest extends BaseUnitTest {
 
     @Test(expected = ValidationFailureException.class)
     public void modelCheckTest() throws Exception {
-        File template = new File("src/test/resources/kubernetes/single-compute.yaml");
-        EffectiveModel singleComputeModel = new EffectiveModel(template);
+        EffectiveModel singleComputeModel = new EffectiveModel(TestCsars.VALID_SINGLE_COMPUTE_TEMPLATE);
         TransformationContext context = setUpMockTransformationContext(singleComputeModel);
         plugin.transform(context);
     }

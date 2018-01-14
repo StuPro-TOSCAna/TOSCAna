@@ -28,7 +28,6 @@ public class EffectiveModel {
     private final Graph<RootNode, RootRelationship> topology =
         new DefaultDirectedGraph<>(RootRelationship.class);
     private final ServiceModel serviceModel;
-    private final ToscaFactory factory;
     private Map<String, RootNode> nodeMap;
     private Map<String, Property> inputs;
 
@@ -36,7 +35,6 @@ public class EffectiveModel {
         Log log = csar.getLog();
         CsarEntrypointDetector entrypointDetector = new CsarEntrypointDetector(log);
         logger = log.getLogger(getClass());
-        factory = new ToscaFactory(logger);
         File template = entrypointDetector.findEntryPoint(csarContentRoot);
         this.serviceModel = new ServiceModel(template);
         init();
@@ -44,7 +42,6 @@ public class EffectiveModel {
 
     public EffectiveModel(File template) {
         logger = LoggerFactory.getLogger(getClass());
-        factory = new ToscaFactory(logger);
         this.serviceModel = new ServiceModel(template);
         init();
     }

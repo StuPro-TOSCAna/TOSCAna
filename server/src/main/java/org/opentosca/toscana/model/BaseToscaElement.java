@@ -32,9 +32,6 @@ public abstract class BaseToscaElement {
 
     public <T> T get(ToscaKey<T> key) {
         T value = mappingEntity.get(key);
-        if (BaseToscaElement.class.isAssignableFrom(key.getType())) {
-            value = (T) new ToscaFactory().wrapEntity((MappingEntity) value, key.getType());
-        }
         return value;
     }
 

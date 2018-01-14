@@ -22,12 +22,12 @@ public class Operation extends DescribableEntity {
      inputs which shall be injected into the artifacts environment before execution.
      Might be empty.
      */
-    public static final ToscaKey<Set<OperationVariable>> INPUTS = new ToscaKey<>("inputs");
+    public static final ToscaKey<OperationVariable> INPUTS = new ToscaKey<>("inputs");
     /**
      outputs which are supposed to be available in the environment after execution of the operation.
      Might be empty.
      */
-    public static final ToscaKey<Set<OperationVariable>> OUTPUTS = new ToscaKey<>("outputs");
+    public static final ToscaKey<OperationVariable> OUTPUTS = new ToscaKey<>("outputs");
     /**
      The optional primary deployment artifact.
      */
@@ -42,7 +42,7 @@ public class Operation extends DescribableEntity {
      (e.g., a library the script installs or a secondary script).
      Might be empty
      */
-    public static final ToscaKey<Set<String>> DEPENDENCIES = new ToscaKey<>(IMPLEMENTATION, "dependencies");
+    public static final ToscaKey<String> DEPENDENCIES = new ToscaKey<>(IMPLEMENTATION, "dependencies");
 
     public Operation(MappingEntity entity) {
         super(entity);
@@ -65,20 +65,20 @@ public class Operation extends DescribableEntity {
      @return {@link #DEPENDENCIES}
      */
     public Set<String> getDependencies() {
-        return get(DEPENDENCIES);
+        return getCollection(DEPENDENCIES);
     }
 
     /**
      @return {@link #INPUTS}
      */
     public Set<OperationVariable> getInputs() {
-        return get(INPUTS);
+        return getCollection(INPUTS);
     }
 
     /**
      @return {@link #OUTPUTS}
      */
     public Set<OperationVariable> getOutputs() {
-        return get(OUTPUTS);
+        return getCollection(OUTPUTS);
     }
 }
