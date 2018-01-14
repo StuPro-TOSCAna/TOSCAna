@@ -19,17 +19,20 @@ public class OsCapability extends Capability {
      The optional Operating System architecture.
      (TOSCA Simple Profile in YAML Version 1.1, p. 157)
      */
-    public static ToscaKey<Architecture> ARCHITECTURE = new ToscaKey<>(PROPERTIES, "architecture");
+    public static ToscaKey<Architecture> ARCHITECTURE = new ToscaKey<>(PROPERTIES, "architecture")
+        .type(Architecture.class);
     /**
      The optional Operating System type.
      (TOSCA Simple Profile in YAML Version 1.1, p. 157)
      */
-    public static ToscaKey<Type> TYPE = new ToscaKey<>(PROPERTIES, "type");
+    public static ToscaKey<Type> TYPE = new ToscaKey<>(PROPERTIES, "type")
+        .type(Type.class);
     /**
      The optional Operating System distribution.
      (TOSCA Simple Profile in YAML Version 1.1, p. 157)
      */
-    public static ToscaKey<Distribution> DISTRIBUTION = new ToscaKey<>(PROPERTIES, "distribution");
+    public static ToscaKey<Distribution> DISTRIBUTION = new ToscaKey<>(PROPERTIES, "distribution")
+        .type(Distribution.class);
     /**
      The optional Operating System version.
      (TOSCA Simple Profile in YAML Version 1.1, p. 157)

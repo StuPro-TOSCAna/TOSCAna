@@ -1,6 +1,6 @@
 package org.opentosca.toscana.core.parse.graphconverter;
 
-import org.opentosca.toscana.model.requirement.Requirement;
+import org.apache.commons.lang3.EnumUtils;
 
 public class TypeConverter {
 
@@ -9,9 +9,11 @@ public class TypeConverter {
             return (T) string;
         } else if (targetType.getSimpleName().equals("Integer")) {
             return (T) Integer.valueOf(string);
-        } else if (Requirement.class.isAssignableFrom(targetType)) {
-            System.out.println("yippie");
-            return null;
+        } else if (targetType.isEnum()){
+            T result = (T) EnumUtils.getEnum(targetType, string);
+            // TODO handle wrong values
+            System.out.println(result);
+            return result;
         } else {
             throw new UnsupportedOperationException(String.format(
                 "Cannot convert value of type %s: currently unsupported", targetType.getSimpleName()));
