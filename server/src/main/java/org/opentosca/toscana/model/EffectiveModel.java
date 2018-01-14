@@ -56,8 +56,8 @@ public class EffectiveModel {
     private void initEdges() {
         for (RootNode node : topology.vertexSet()) {
             for (Requirement<?, ?, ?> requirement : node.getRequirements()) {
-                for (Object o : requirement.getFulfillers()) {
-                    RootNode fulfiller = (RootNode) o;
+                Set<? extends RootNode> fulfillers = requirement.getFulfillers();
+                for (RootNode fulfiller : fulfillers) {
                     topology.addEdge(node, fulfiller, requirement.get(requirement.RELATIONSHIP));
                 }
             }

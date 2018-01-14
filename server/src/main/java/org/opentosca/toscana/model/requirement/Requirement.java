@@ -11,7 +11,6 @@ import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.relation.RootRelationship;
 import org.opentosca.toscana.model.util.ToscaKey;
 
-import com.google.common.collect.Sets;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -84,8 +83,12 @@ public class Requirement<CapabilityT extends Capability, NodeT extends RootNode,
      @return {@link #fulfillers}
      */
     public Set<NodeT> getFulfillers() {
+        Set<NodeT> fulfillers = new HashSet<>();
         NodeT fulfiller = (NodeT) get(NODE);
-        return Sets.newHashSet(fulfiller);
+        if (fulfiller != null) {
+            fulfillers.add(fulfiller);
+        }
+        return fulfillers;
     }
 
     /**
