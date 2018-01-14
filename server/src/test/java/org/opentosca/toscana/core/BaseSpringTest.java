@@ -56,6 +56,6 @@ public abstract class BaseSpringTest extends BaseTest {
     @After
     public final void shutdownCleanUpDisk() throws IOException {
         FileUtils.deleteDirectory(tmpdir);
-        logger.info("Cleaned up disk");
+        logger.info("Clean up disk");
     }
 }

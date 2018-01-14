@@ -11,20 +11,20 @@ import org.springframework.test.context.ContextConfiguration;
 import static org.opentosca.toscana.core.testdata.TestProfiles.INTEGRATION_TEST_PROFILE;
 
 /**
- This Subclass of the BaseSpringTest sets the context to the same as you would get when executing the application 
+ This Subclass of the BaseSpringTest sets the context to the same as you would get when executing the application
  within the main module.
  */
 @SpringBootTest(
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
 @ContextConfiguration(classes = {Main.class, CoreConfiguration.class})
-@ActiveProfiles( {INTEGRATION_TEST_PROFILE, "base-image-mapper"})
+@ActiveProfiles({INTEGRATION_TEST_PROFILE, "base-image-mapper"})
 @Category(IntegrationTest.class)
 public abstract class BaseSpringIntegrationTest extends BaseSpringTest {
 
     /**
      The port the server is bound to.
-     
+     <p>
      connecting to it can be done using the URL:
      <code>"http://127.0.0.1:" + port + "/"</code>
      Using localhost is not recomended, as it may cause issues if the hostfile isn't
@@ -34,7 +34,7 @@ public abstract class BaseSpringIntegrationTest extends BaseSpringTest {
     protected int port;
 
     /**
-     @return the local (127.0.0.1) URL to the server int he schema <code>http://127.0.0.1:<PORT>/</code>
+     @return the local (127.0.0.1) URL to the server in the schema <code>http://127.0.0.1:<PORT>/</code>
      */
     protected String getHttpUrl() {
         return "http://127.0.0.1:" + port + "/";
