@@ -1,88 +1,100 @@
 package org.opentosca.toscana.model.node;
 
-import java.util.Objects;
-import java.util.Set;
-
-import org.opentosca.toscana.model.capability.Capability;
-import org.opentosca.toscana.model.capability.DatabaseEndpointCapability;
-import org.opentosca.toscana.model.capability.EndpointCapability;
-import org.opentosca.toscana.model.operation.StandardLifecycle;
-import org.opentosca.toscana.model.relation.ConnectsTo;
+import org.opentosca.toscana.core.parse.graphconverter.MappingEntity;
 import org.opentosca.toscana.model.requirement.DatabaseEndpointRequirement;
-import org.opentosca.toscana.model.requirement.Requirement;
-import org.opentosca.toscana.model.requirement.WebServerRequirement;
+import org.opentosca.toscana.model.util.ToscaKey;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  (TOSCA Simple Profile in YAML Version 1.1, p. 222)
  */
-@Data
+@EqualsAndHashCode
+@ToString
 public class WordPress extends WebApplication {
 
-    private final String adminUser;
+    public static ToscaKey<String> ADMIN_USER = new ToscaKey<>(PROPERTIES, "admin_user").required(true);
 
-    private final String adminPassword;
+    public static ToscaKey<String> ADMIN_PASSWORD = new ToscaKey<>(PROPERTIES, "admin_password").required(true);
 
-    private final String dbHost;
+    public static ToscaKey<String> DB_HOST = new ToscaKey<>(PROPERTIES, "db_host").required(true);
 
-    private final Requirement<DatabaseEndpointCapability, Database, ConnectsTo> databaseEndpoint;
+    public static ToscaKey<DatabaseEndpointRequirement> DATABASE_ENDPOINT = new ToscaKey<>(REQUIREMENTS, "database_endpoint")
+        .type(DatabaseEndpointRequirement.class);
 
-    @Builder
-    protected WordPress(String adminUser,
-                        String adminPassword,
-                        String dbHost,
-                        Requirement<DatabaseEndpointCapability, Database, ConnectsTo> databaseEndpoint,
-                        String contextRoot,
-                        EndpointCapability endpoint,
-                        WebServerRequirement host,
-                        String nodeName,
-                        StandardLifecycle standardLifecycle,
-                        Set<Requirement> requirements,
-                        Set<Capability> capabilities,
-                        String description) {
-        super(contextRoot, endpoint, host, nodeName, standardLifecycle, requirements, capabilities, description);
-        this.adminUser = Objects.requireNonNull(adminUser);
-        this.adminPassword = Objects.requireNonNull(adminPassword);
-        this.dbHost = Objects.requireNonNull(dbHost);
-        this.databaseEndpoint = DatabaseEndpointRequirement.getFallback(databaseEndpoint);
+    public WordPress(MappingEntity mappingEntity) {
+        super(mappingEntity);
+        init();
+    }
 
-        this.requirements.add(this.databaseEndpoint);
+    private void init() {
+        setDefault(DATABASE_ENDPOINT, new DatabaseEndpointRequirement(getChildEntity(DATABASE_ENDPOINT)));
     }
 
     /**
-     @param nodeName      {@link #nodeName}
-     @param adminUser     {@link #adminUser}
-     @param adminPassword {@link #adminPassword}
-     @param dbHost        {@link #dbHost}
-     @param endpoint      {@link WebApplication#appEndpoint}
+     @return {@link #ADMIN_USER}
      */
-    public static WordPressBuilder builder(String nodeName,
-                                           String adminUser,
-                                           String adminPassword,
-                                           String dbHost,
-                                           EndpointCapability endpoint) {
-        return (WordPressBuilder) new WordPressBuilder()
-            .nodeName(nodeName)
-            .adminUser(adminUser)
-            .adminPassword(adminPassword)
-            .dbHost(dbHost)
-            .endpoint(endpoint);
+    public String getAdminUser() {
+        return get(ADMIN_USER);
     }
 
-    public static WordPressBuilder builder() {
-        return new WordPressBuilder();
+    /**
+     Sets {@link #ADMIN_USER}
+     */
+    public WordPress setAdminUser(String adminUser) {
+        set(ADMIN_USER, adminUser);
+        return this;
+    }
+
+    /**
+     @return {@link #ADMIN_PASSWORD}
+     */
+    public String getAdminPassword() {
+        return get(ADMIN_PASSWORD);
+    }
+
+    /**
+     Sets {@link #ADMIN_PASSWORD}
+     */
+    public WordPress setAdminPassword(String adminPassword) {
+        set(ADMIN_PASSWORD, adminPassword);
+        return this;
+    }
+
+    /**
+     @return {@link #DB_HOST}
+     */
+    public String getDbHost() {
+        return get(DB_HOST);
+    }
+
+    /**
+     Sets {@link #DB_HOST}
+     */
+    public WordPress setDbHost(String dbHost) {
+        set(DB_HOST, dbHost);
+        return this;
+    }
+
+    /**
+     @return {@link #DATABASE_ENDPOINT}
+     */
+    public DatabaseEndpointRequirement getDatabaseEndpoint() {
+        return get(DATABASE_ENDPOINT);
+    }
+
+    /**
+     Sets {@link #DATABASE_ENDPOINT}
+     */
+    public WordPress setDatabaseEndpoint(DatabaseEndpointRequirement databaseEndpoint) {
+        set(DATABASE_ENDPOINT, databaseEndpoint);
+        return this;
     }
 
     @Override
     public void accept(NodeVisitor v) {
         v.visit(this);
-    }
-
-    public static class WordPressBuilder extends WebApplicationBuilder {
-        protected Set<Requirement> requirements = super.requirements;
-        protected Set<Capability> capabilities = super.capabilities;
     }
 }

@@ -1,39 +1,39 @@
 package org.opentosca.toscana.model;
 
-import java.io.Serializable;
+import java.util.Optional;
 
-import lombok.Builder;
-import lombok.Data;
+import org.opentosca.toscana.core.parse.graphconverter.MappingEntity;
+
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  Inherit from this if there's need to describe the entity.
  */
-@Data
-public abstract class DescribableEntity extends AbstractEntity implements Serializable {
+@EqualsAndHashCode
+@ToString
+public abstract class DescribableEntity extends BaseToscaElement {
 
     /**
-     The optional description of this.
+     The optional description of this entity
      */
-    private final String description;
+    private String description;
 
-    public DescribableEntity() {
-        description = "";
+    public DescribableEntity(MappingEntity mappingEntity) {
+        super(mappingEntity);
     }
 
-    @Builder
-    public DescribableEntity(String description) {
-        this.description = description == null ? "" : description;
+    /**
+     @return {@link #description}
+     */
+    public Optional<String> getDescription() {
+        return Optional.ofNullable(description);
     }
 
-    public static class DescribableEntityBuilder extends AbstractEntityBuilder implements Serializable {
-
-        public DescribableEntityBuilder() {
-        }
-
-        @Override
-        public DescribableEntity build() {
-            // should never happen
-            throw new IllegalStateException();
-        }
+    /**
+     Sets {@link #description}
+     */
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

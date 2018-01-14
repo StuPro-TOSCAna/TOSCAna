@@ -4,85 +4,134 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.Singular;
+import org.opentosca.toscana.core.parse.graphconverter.MappingEntity;
+import org.opentosca.toscana.model.BaseToscaElement;
+import org.opentosca.toscana.model.util.ToscaKey;
+
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  Describes authorization credentials used to access network accessible resources.
  <p>
  (TOSCA Simple Profile in YAML Version 1.1, p. 140)
  */
-@Data
-public class Credential {
+@EqualsAndHashCode
+@ToString
+public class Credential extends BaseToscaElement {
 
     /**
      The optional protocol name.
      <p>
      (TOSCA Simple Profile in YAML Version 1.1, p. 140)
      */
-    private final String protocol;
-
+    public static ToscaKey<String> PROTOCOL = new ToscaKey<>("protocol");
     /**
-     The token type. Defaults to {@link TokenType#PASSWORD}
+     The optional token type. Defaults to {@link TokenType#PASSWORD}
      <p>
      (TOSCA Simple Profile in YAML Version 1.1, p. 140)
      */
-    private final TokenType type;
-
+    public static ToscaKey<TokenType> TYPE = new ToscaKey<>("type")
+        .type(TokenType.class);
     /**
      The required token used as a credential for authorization or access to a networked resource.
      <p>
      (TOSCA Simple Profile in YAML Version 1.1, p. 140)
      */
-    private final String token;
-
+    public static ToscaKey<String> TOKEN = new ToscaKey<>("token").required(true);
     /**
-     Set of protocol-specific keys or assertions. Might be empty.
+     Map of protocol-specific keys or assertions. Might be empty.
      <p>
      (TOSCA Simple Profile in YAML Version 1.1, p. 140)
      */
-    private final Map<String, String> keys;
-
+    public static ToscaKey<Map<String, String>> KEYS = new ToscaKey<>("keys");
     /**
      The optional user (name or ID) used for non-token based credentials.
      <p>
      (TOSCA Simple Profile in YAML Version 1.1, p.140)
      */
-    private final String user;
+    public static ToscaKey<String> USER = new ToscaKey<>("user");
 
-    @Builder
-    protected Credential(String protocol,
-                         TokenType type,
-                         String token,
-                         @Singular Map<String, String> keys,
-                         String user) {
-        this.protocol = protocol;
-        this.type = (type == null) ? TokenType.PASSWORD : type;
-        this.token = Objects.requireNonNull(token);
-        this.keys = Objects.requireNonNull(keys);
-        this.user = user;
+    public Credential(MappingEntity mappingEntity) {
+        super(mappingEntity);
+        setDefault(TYPE, TokenType.PASSWORD);
     }
-
+    
     /**
-     @param token {@link #token}
-     */
-    public static CredentialBuilder builder(String token) {
-        return new CredentialBuilder().token(token);
-    }
-
-    /**
-     @return {@link #protocol}
+     @return {@link #PROTOCOL}
      */
     public Optional<String> getProtocol() {
-        return Optional.ofNullable(protocol);
+        return Optional.ofNullable(get(PROTOCOL));
     }
 
     /**
-     @return {@link #user}
+     Sets {@link #PROTOCOL}
      */
+    public Credential setProtocol(String protocol) {
+        set(PROTOCOL, protocol);
+        return this;
+    }
+
+    /**
+     @return {@link #TOKEN}
+     */
+
+    public String getToken() {
+        return get(TOKEN);
+    }
+
+    /**
+     Sets {@link #TOKEN}
+     */
+    public Credential setToken(String token) {
+        set(TOKEN, token);
+        return this;
+    }
+
+    /**
+     @return {@link #USER}
+     */
+
     public Optional<String> getUser() {
-        return Optional.ofNullable(user);
+        return Optional.ofNullable(get(USER));
+    }
+
+    /**
+     Sets {@link #USER}
+     */
+    public Credential setUser(String user) {
+        set(USER, user);
+        return this;
+    }
+
+    /**
+     @return {@link #TYPE}
+     */
+    public TokenType getType() {
+        return get(TYPE);
+    }
+
+    /**
+     Sets {@link #TYPE}
+     */
+    public Credential setType(TokenType type) {
+        set(TYPE, type);
+        return this;
+    }
+
+    /**
+     @return {@link #KEYS}
+     */
+    public Map<String, String> getKeys() {
+        return get(KEYS);
+    }
+
+    /**
+     Sets {@link #KEYS}
+     */
+    public Credential setKeys(Map<String, String> keys) {
+        set(KEYS, keys);
+        return this;
     }
 
     public enum TokenType {

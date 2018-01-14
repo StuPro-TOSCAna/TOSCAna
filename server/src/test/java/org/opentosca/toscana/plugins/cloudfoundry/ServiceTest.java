@@ -8,10 +8,12 @@ import java.util.Set;
 
 import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
+import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.testutils.TestUtils;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.model.node.RootNode;
+import org.opentosca.toscana.model.visitor.NodeVisitor;
 import org.opentosca.toscana.model.visitor.VisitableNode;
 import org.opentosca.toscana.plugins.cloudfoundry.application.Application;
 import org.opentosca.toscana.plugins.cloudfoundry.application.Provider;
@@ -20,7 +22,6 @@ import org.opentosca.toscana.plugins.cloudfoundry.client.Connection;
 import org.opentosca.toscana.plugins.cloudfoundry.client.InjectionHandler;
 import org.opentosca.toscana.plugins.cloudfoundry.visitors.NodeVisitors;
 import org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle;
-import org.opentosca.toscana.plugins.testdata.TestEffectiveModels;
 
 import org.apache.commons.io.FileUtils;
 import org.hamcrest.CoreMatchers;
@@ -158,7 +159,7 @@ public class ServiceTest extends BaseUnitTest {
 
     private void setUpMyApp() throws IOException, JSONException {
         NodeVisitors visitor = new NodeVisitors(myApp);
-        EffectiveModel lamp = TestEffectiveModels.getLampModel();
+        EffectiveModel lamp = new EffectiveModel(TestCsars.VALID_LAMP_INPUT_TEMPLATE);
         ArrayList<String> paths = new ArrayList<>();
         String resourcesPath = "src/test/resources/";
         File sourceDir = new File(resourcesPath + "csars/yaml/valid/lamp-input/");

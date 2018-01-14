@@ -1,72 +1,52 @@
 package org.opentosca.toscana.model.node;
 
-import java.util.Set;
-
-import org.opentosca.toscana.model.capability.Capability;
-import org.opentosca.toscana.model.capability.ContainerCapability;
-import org.opentosca.toscana.model.capability.DockerContainerCapability;
-import org.opentosca.toscana.model.capability.EndpointCapability;
-import org.opentosca.toscana.model.capability.StorageCapability;
-import org.opentosca.toscana.model.operation.StandardLifecycle;
-import org.opentosca.toscana.model.relation.HostedOn;
-import org.opentosca.toscana.model.relation.RootRelationship;
+import org.opentosca.toscana.core.parse.graphconverter.MappingEntity;
+import org.opentosca.toscana.model.requirement.ContainerHostRequirement;
 import org.opentosca.toscana.model.requirement.DockerHostRequirement;
-import org.opentosca.toscana.model.requirement.Requirement;
+import org.opentosca.toscana.model.util.ToscaKey;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
-@Data
+@EqualsAndHashCode
+@ToString
 public class DockerApplication extends ContainerApplication {
 
-    // public access due to hiding of parent field (and therefore getter conflicts..)
-    @Getter(AccessLevel.NONE)
-    public final Requirement<DockerContainerCapability, ContainerRuntime, HostedOn> host;
+    public static ToscaKey<DockerHostRequirement> DOCKER_HOST = new ToscaKey<>(REQUIREMENTS, "host")
+        .type(DockerHostRequirement.class);
 
-    @Builder
-    private DockerApplication(Requirement<DockerContainerCapability, ContainerRuntime, HostedOn> host,
-                              Requirement<StorageCapability, RootNode, RootRelationship> storage,
-                              Requirement<EndpointCapability, RootNode, RootRelationship> network,
-                              String nodeName,
-                              StandardLifecycle standardLifecycle,
-                              Set<Requirement> requirements,
-                              Set<Capability> capabilities,
-                              String description) {
-        super(storage, network, nodeName, standardLifecycle, requirements, capabilities, description);
-        this.host = DockerHostRequirement.getFallback(host);
+    public DockerApplication(MappingEntity mappingEntity) {
+        super(mappingEntity);
+        init();
+    }
 
-        this.requirements.add(this.host);
+    private void init() {
+        setDefault(DOCKER_HOST, new DockerHostRequirement(getChildEntity(DOCKER_HOST)));
     }
 
     /**
-     @param nodeName {@link #nodeName}
+     @return {@link #HOST}
      */
-    public static DockerApplicationBuilder builder(String nodeName) {
-        return new DockerApplicationBuilder()
-            .nodeName(nodeName);
+    public DockerHostRequirement getDockerHost() {
+        return get(DOCKER_HOST);
+    }
+
+    @Override
+    public ContainerHostRequirement getHost() {
+        throw new UnsupportedOperationException("Use 'getDockerHost()' instead of 'getHost()'");
+    }
+
+    /**
+     Sets {@link #HOST}
+     */
+    public DockerApplication setHost(DockerHostRequirement host) {
+        set(DOCKER_HOST, host);
+        return this;
     }
 
     @Override
     public void accept(NodeVisitor v) {
         v.visit(this);
-    }
-
-    public static class DockerApplicationBuilder extends ContainerApplicationBuilder {
-        protected Set<Requirement> requirements = super.requirements;
-        protected Set<Capability> capabilities = super.capabilities;
-
-        @Override
-        public ContainerApplicationBuilder host(Requirement<ContainerCapability, ContainerRuntime, HostedOn> host) {
-            // this is a hack.. this "enforces" usage of dockerHost() instead of host() (generic type erasure is the root of all evil)
-            throw new IllegalArgumentException();
-        }
-
-        public DockerApplicationBuilder dockerHost(Requirement<DockerContainerCapability, ContainerRuntime, HostedOn> host) {
-            this.host = host;
-            return this;
-        }
     }
 }

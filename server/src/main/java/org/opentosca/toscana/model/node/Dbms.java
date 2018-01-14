@@ -1,93 +1,95 @@
 package org.opentosca.toscana.model.node;
 
-import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 
-import org.opentosca.toscana.model.capability.Capability;
+import org.opentosca.toscana.core.parse.graphconverter.MappingEntity;
 import org.opentosca.toscana.model.capability.ContainerCapability;
-import org.opentosca.toscana.model.datatype.Credential;
-import org.opentosca.toscana.model.operation.StandardLifecycle;
-import org.opentosca.toscana.model.relation.HostedOn;
-import org.opentosca.toscana.model.requirement.Requirement;
+import org.opentosca.toscana.model.util.ToscaKey;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  Represents a typical relational, SQL Database Management System software component or service.
  (TOSCA Simple Profile in YAML Version 1.1, p. 172)
  */
-@Data
+@EqualsAndHashCode
+@ToString
 public class Dbms extends SoftwareComponent {
 
     /**
      The optional root password for the Dbms server.
      (TOSCA Simple Profile in YAML Version 1.1, p. 172)
      */
-    private final String rootPassword;
+    public static ToscaKey<String> ROOT_PASSWORD = new ToscaKey<>(PROPERTIES, "root_password");
 
     /**
-     The Dbms server’s port.
+     The optional Dbms server port.
      (TOSCA Simple Profile in YAML Version 1.1, p. 172)
      */
-    private final Integer port;
+    public static ToscaKey<Integer> PORT = new ToscaKey<>(PROPERTIES, "port")
+        .type(Integer.class);
 
-    private final ContainerCapability containerHost;
+    public static ToscaKey<ContainerCapability> CONTAINER_HOST = new ToscaKey<>(CAPABILITIES, "host")
+        .type(ContainerCapability.class);
 
-    @Builder
-    protected Dbms(Requirement<ContainerCapability, Compute, HostedOn> host,
-                   ContainerCapability containerHost,
-                   String rootPassword,
-                   Integer port,
-                   String componentVersion,
-                   Credential adminCredential,
-                   String nodeName,
-                   StandardLifecycle standardLifecycle,
-                   Set<Requirement> requirements,
-                   Set<Capability> capabilities,
-                   String description) {
-        super(componentVersion, adminCredential, host, nodeName, standardLifecycle, requirements, capabilities, description);
-        this.containerHost = Objects.requireNonNull(containerHost);
-        this.port = port;
-        this.rootPassword = rootPassword;
+    public Dbms(MappingEntity mappingEntity) {
+        super(mappingEntity);
+        init();
+    }
 
-        this.capabilities.add(this.containerHost);
+    private void init() {
+        setDefault(CONTAINER_HOST, new ContainerCapability(getChildEntity(CONTAINER_HOST)));
     }
 
     /**
-     @param nodeName      {@link #nodeName}
-     @param containerHost {@link #containerHost}
+     @return {@link #CONTAINER_HOST}
      */
-    public static DbmsBuilder builder(String nodeName,
-                                      ContainerCapability containerHost) {
-        return new DbmsBuilder()
-            .nodeName(nodeName)
-            .containerHost(containerHost);
+    public ContainerCapability getContainerHost() {
+        return get(CONTAINER_HOST);
     }
 
     /**
-     @return {@link #rootPassword}
+     Sets {@link #CONTAINER_HOST}
+     */
+    public Dbms setContainerHost(ContainerCapability containerHost) {
+        set(CONTAINER_HOST, containerHost);
+        return this;
+    }
+
+    /**
+     @return {@link #ROOT_PASSWORD}
      */
     public Optional<String> getRootPassword() {
-        return Optional.ofNullable(rootPassword);
+        return Optional.ofNullable(get(ROOT_PASSWORD));
     }
 
     /**
-     @return {@link #port}
+     Sets {@link #ROOT_PASSWORD}
+     */
+    public Dbms setRootPassword(String rootPassword) {
+        set(ROOT_PASSWORD, rootPassword);
+        return this;
+    }
+
+    /**
+     @return {@link #PORT}
      */
     public Optional<Integer> getPort() {
-        return Optional.ofNullable(port);
+        return Optional.ofNullable(get(PORT));
+    }
+
+    /**
+     Sets {@link #PORT}
+     */
+    public Dbms setPort(Integer port) {
+        set(PORT, port);
+        return this;
     }
 
     @Override
     public void accept(NodeVisitor v) {
         v.visit(this);
-    }
-
-    public static class DbmsBuilder extends SoftwareComponentBuilder {
-        protected Set<Requirement> requirements = super.requirements;
-        protected Set<Capability> capabilities = super.capabilities;
     }
 }

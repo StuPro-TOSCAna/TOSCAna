@@ -6,8 +6,13 @@ import org.opentosca.toscana.IntegrationTest;
 import org.opentosca.toscana.core.BaseTest;
 import org.opentosca.toscana.core.CoreConfiguration;
 import org.opentosca.toscana.core.Main;
+import org.opentosca.toscana.core.parse.graphconverter.MappingEntity;
+import org.opentosca.toscana.core.parse.graphconverter.ServiceGraph;
 import org.opentosca.toscana.core.util.Preferences;
+import org.opentosca.toscana.model.EntityId;
+import org.opentosca.toscana.model.capability.OsCapability;
 
+import com.google.common.collect.Lists;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
@@ -27,7 +32,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import static org.junit.Assert.assertEquals;
 import static org.opentosca.toscana.core.testdata.TestProfiles.INTEGRATION_TEST_PROFILE;
 import static org.opentosca.toscana.model.capability.OsCapability.Distribution.DEBIAN;
-import static org.opentosca.toscana.model.capability.OsCapability.builder;
 import static org.opentosca.toscana.plugins.kubernetes.docker.mapper.MapperTagLoaderIT.LOADER_TEST_PROFILE;
 
 @RunWith(SpringRunner.class)
@@ -35,12 +39,14 @@ import static org.opentosca.toscana.plugins.kubernetes.docker.mapper.MapperTagLo
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
 @ContextConfiguration(classes = {Main.class, CoreConfiguration.class, MapperTagLoaderIT.BIMTestConfiguration.class})
-@ActiveProfiles( {INTEGRATION_TEST_PROFILE, LOADER_TEST_PROFILE})
+@ActiveProfiles({INTEGRATION_TEST_PROFILE, LOADER_TEST_PROFILE})
 @Category(IntegrationTest.class)
 public class MapperTagLoaderIT extends BaseTest {
-    
+
     static final String LOADER_TEST_PROFILE = "base-image-mapper-loader-test";
     private static final Logger logger = LoggerFactory.getLogger(MapperTagLoaderIT.class);
+    private static EntityId entityId = new EntityId(Lists.newArrayList("my", "id"));
+    private static MappingEntity entity = new MappingEntity(entityId, new ServiceGraph());
 
     @Autowired
     private BaseImageMapper mapper;
@@ -48,7 +54,7 @@ public class MapperTagLoaderIT extends BaseTest {
     @Test
     public void testLoader() {
         String image = mapper.mapToBaseImage(
-            builder().distribution(DEBIAN).build()
+            new OsCapability(entity).setDistribution(DEBIAN)
         );
         logger.info("Performed a mapping to {}", image);
         TagStorage data = mapper.getTagStorage();

@@ -1,82 +1,97 @@
 package org.opentosca.toscana.model.node;
 
 import java.util.Optional;
-import java.util.Set;
 
-import org.opentosca.toscana.model.capability.Capability;
-import org.opentosca.toscana.model.capability.ContainerCapability;
+import org.opentosca.toscana.core.parse.graphconverter.MappingEntity;
 import org.opentosca.toscana.model.datatype.Credential;
-import org.opentosca.toscana.model.operation.StandardLifecycle;
-import org.opentosca.toscana.model.relation.HostedOn;
 import org.opentosca.toscana.model.requirement.HostRequirement;
-import org.opentosca.toscana.model.requirement.Requirement;
+import org.opentosca.toscana.model.util.ToscaKey;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  Represents a generic software component that can be managed and run by a Compute Node.
  (TOSCA Simple Profile in YAML Version 1.1, p.170)
  */
-@Data
+@EqualsAndHashCode
+@ToString
 public class SoftwareComponent extends RootNode {
 
     /**
      The optional software component’s version.
      (TOSCA Simple Profile in YAML Version 1.1, p.170)
      */
-    private final String componentVersion;
+    public static ToscaKey<String> COMPONENT_VERSION = new ToscaKey<>(PROPERTIES, "component_version");
 
     /**
      The optional credential that can be used to authenticate to the software component.
      (TOSCA Simple Profile in YAML Version 1.1, p.170)
      */
-    private final Credential adminCredential;
+    public static ToscaKey<Credential> ADMIN_CREDENTIAL = new ToscaKey<>(PROPERTIES, "admin_credential")
+        .type(Credential.class);
 
-    private final Requirement<ContainerCapability, Compute, HostedOn> host;
+    public static ToscaKey<HostRequirement> HOST = new ToscaKey<>(REQUIREMENTS, "host")
+        .type(HostRequirement.class);
 
-    @Builder
-    protected SoftwareComponent(String componentVersion,
-                                Credential adminCredential,
-                                Requirement<ContainerCapability, Compute, HostedOn> host,
-                                String nodeName,
-                                StandardLifecycle standardLifecycle,
-                                Set<Requirement> requirements,
-                                Set<Capability> capabilities,
-                                String description) {
-        super(nodeName, standardLifecycle, requirements, capabilities, description);
-        this.componentVersion = componentVersion;
-        this.adminCredential = adminCredential;
-        this.host = (host == null) ? HostRequirement.builder().build() : host;
+    public SoftwareComponent(MappingEntity mappingEntity) {
+        super(mappingEntity);
+        init();
+    }
 
-        this.requirements.add(this.host);
+    private void init() {
+        setDefault(HOST, new HostRequirement(getChildEntity(HOST)));
     }
 
     /**
-     @param nodeName {@link #nodeName}
+     @return {@link #HOST}
      */
-    public static SoftwareComponentBuilder builder(String nodeName) {
-        return new SoftwareComponentBuilder()
-            .nodeName(nodeName);
+    public HostRequirement getHost() {
+        return get(HOST);
     }
 
+    /**
+     Sets {@link #HOST}
+     */
+    public SoftwareComponent setHost(HostRequirement host) {
+        set(HOST, host);
+        return this;
+    }
+
+    /**
+     @return {@link #COMPONENT_VERSION}
+     */
     public Optional<String> getComponentVersion() {
-        return Optional.ofNullable(componentVersion);
+        return Optional.ofNullable(get(COMPONENT_VERSION));
     }
 
+    /**
+     Sets {@link #COMPONENT_VERSION}
+     */
+    public SoftwareComponent setComponentVersion(String componentVersion) {
+        set(COMPONENT_VERSION, componentVersion);
+        return this;
+    }
+
+    /**
+     @return {@link #ADMIN_CREDENTIAL}
+     */
     public Optional<Credential> getAdminCredential() {
-        return Optional.ofNullable(adminCredential);
+        return Optional.ofNullable(get(ADMIN_CREDENTIAL));
+    }
+
+    /**
+     Sets {@link #ADMIN_CREDENTIAL}
+     */
+    public SoftwareComponent setAdminCredential(Credential adminCredential) {
+        set(ADMIN_CREDENTIAL, adminCredential);
+        return this;
     }
 
     @Override
     public void accept(NodeVisitor v) {
         v.visit(this);
-    }
-
-    public static class SoftwareComponentBuilder extends RootNodeBuilder {
-        protected Set<Requirement> requirements = super.requirements;
-        protected Set<Capability> capabilities = super.capabilities;
     }
 }
 

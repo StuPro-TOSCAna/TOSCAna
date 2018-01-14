@@ -1,79 +1,110 @@
 package org.opentosca.toscana.model.operation;
 
 import java.util.Optional;
-import java.util.Set;
 
-import com.google.common.collect.Sets;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Singular;
+import org.opentosca.toscana.core.parse.graphconverter.MappingEntity;
+import org.opentosca.toscana.model.util.ToscaKey;
+
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  see TOSCA Specification V1.1 ch. 5.8.4
  */
-@Data
+@EqualsAndHashCode
+@ToString
 public class StandardLifecycle extends Interface {
 
     /**
      The create operation is generally used to create the resource or service its node represents in the topology.
      */
-    private final Operation create;
-    private final Operation configure;
-    private final Operation start;
-    private final Operation stop;
-    private final Operation delete;
+    public static ToscaKey<Operation> CREATE = new ToscaKey<>("create").type(Operation.class);
+    public static ToscaKey<Operation> CONFIGURE = new ToscaKey<>("configure").type(Operation.class);
+    public static ToscaKey<Operation> START = new ToscaKey<>("start").type(Operation.class);
+    public static ToscaKey<Operation> STOP = new ToscaKey<>("stop").type(Operation.class);
+    public static ToscaKey<Operation> DELETE = new ToscaKey<>("delete").type(Operation.class);
 
-    @Builder
-    public StandardLifecycle(Operation create,
-                             Operation configure,
-                             Operation start,
-                             Operation stop,
-                             Operation delete,
-                             @Singular Set<OperationVariable> inputs) {
-        super(inputs,
-            Sets.newHashSet(create, configure, start, stop, delete));
-        this.create = create;
-        this.configure = configure;
-        this.start = start;
-        this.stop = stop;
-        this.delete = delete;
+    public StandardLifecycle(MappingEntity entity) {
+        super(entity);
     }
 
     /**
-     @return {@link #create}
+     @return {@link #CREATE}
      */
+
     public Optional<Operation> getCreate() {
-        return Optional.ofNullable(create);
+        return Optional.ofNullable(get(CREATE));
     }
 
     /**
-     @return {@link #configure}
+     Sets {@link #CREATE}
      */
+    public StandardLifecycle setCreate(Operation create) {
+        set(CREATE, create);
+        return this;
+    }
+
+    /**
+     @return {@link #CONFIGURE}
+     */
+
     public Optional<Operation> getConfigure() {
-        return Optional.ofNullable(configure);
+        return Optional.ofNullable(get(CONFIGURE));
     }
 
     /**
-     @return {@link #start}
+     Sets {@link #CONFIGURE}
      */
+    public StandardLifecycle setConfigure(Operation configure) {
+        set(CONFIGURE, configure);
+        return this;
+    }
+
+    /**
+     @return {@link #START}
+     */
+
     public Optional<Operation> getStart() {
-        return Optional.ofNullable(start);
+        return Optional.ofNullable(get(START));
     }
 
     /**
-     @return {@link #stop}
+     Sets {@link #START}
      */
+    public StandardLifecycle setStart(Operation start) {
+        set(START, start);
+        return this;
+    }
+
+    /**
+     @return {@link #STOP}
+     */
+
     public Optional<Operation> getStop() {
-        return Optional.ofNullable(stop);
+        return Optional.ofNullable(get(STOP));
     }
 
     /**
-     @return {@link #delete}
+     Sets {@link #STOP}
      */
-    public Optional<Operation> getDelete() {
-        return Optional.ofNullable(delete);
+    public StandardLifecycle setStop(Operation stop) {
+        set(STOP, stop);
+        return this;
     }
 
-    public static class StandardLifecycleBuilder extends InterfaceBuilder {
+    /**
+     @return {@link #DELETE}
+     */
+
+    public Optional<Operation> getDelete() {
+        return Optional.ofNullable(get(DELETE));
+    }
+
+    /**
+     Sets {@link #DELETE}
+     */
+    public StandardLifecycle setDelete(Operation delete) {
+        set(DELETE, delete);
+        return this;
     }
 }

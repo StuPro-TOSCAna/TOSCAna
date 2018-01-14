@@ -1,36 +1,58 @@
 package org.opentosca.toscana.model.requirement;
 
-import java.util.Set;
+import java.util.Optional;
 
+import org.opentosca.toscana.core.parse.graphconverter.MappingEntity;
 import org.opentosca.toscana.model.capability.EndpointCapability;
-import org.opentosca.toscana.model.datatype.Range;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.relation.RoutesTo;
+import org.opentosca.toscana.model.util.ToscaKey;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.Singular;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
-@Data
+@EqualsAndHashCode
+@ToString
 public class ApplicationRequirement extends Requirement<EndpointCapability, RootNode, RoutesTo> {
 
-    @Builder
-    protected ApplicationRequirement(EndpointCapability capability,
-                                     Range occurrence,
-                                     @Singular Set<RootNode> fulfillers,
-                                     RoutesTo relationship) {
-        super(capability, occurrence, fulfillers, relationship);
+    public ToscaKey<EndpointCapability> CAPABILITY = new ToscaKey<>(CAPABILITY_NAME)
+        .type(EndpointCapability.class);
+    public ToscaKey<RoutesTo> RELATIONSHIP = new ToscaKey<>(RELATIONSHIP_NAME)
+        .type(RoutesTo.class);
+
+    public ApplicationRequirement(MappingEntity mappingEntity) {
+        super(mappingEntity);
+        setDefault(RELATIONSHIP, new RoutesTo(getChildEntity(RELATIONSHIP)));
     }
 
-    public static ApplicationRequirementBuilder builder(RoutesTo relationship) {
-        return new ApplicationRequirementBuilder()
-            .relationship(relationship);
+    /**
+     @return {@link #RELATIONSHIP}
+     */
+    public Optional<RoutesTo> getRelationship() {
+        return Optional.ofNullable(get(RELATIONSHIP));
     }
 
-    public static Requirement<EndpointCapability, RootNode, RoutesTo> getFallback(Requirement<EndpointCapability, RootNode, RoutesTo> application) {
-        return (application == null) ? ApplicationRequirement.builder(new RoutesTo()).build() : application;
+    /**
+     Sets {@link #RELATIONSHIP}
+     */
+    @Override
+    public ApplicationRequirement setRelationship(RoutesTo relationship) {
+        set(RELATIONSHIP, relationship);
+        return this;
     }
 
-    public static class ApplicationRequirementBuilder extends RequirementBuilder<EndpointCapability, RootNode, RoutesTo> {
+    /**
+     @return {@link #CAPABILITY}
+     */
+    public EndpointCapability getCapability() {
+        return get(CAPABILITY);
+    }
+
+    /**
+     Sets {@link #CAPABILITY}
+     */
+    public ApplicationRequirement setCapability(EndpointCapability capability) {
+        set(CAPABILITY, capability);
+        return this;
     }
 }

@@ -2,16 +2,14 @@ package org.opentosca.toscana.model.node;
 
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 
+import org.opentosca.toscana.core.parse.graphconverter.MappingEntity;
 import org.opentosca.toscana.model.capability.AttachmentCapability;
-import org.opentosca.toscana.model.capability.Capability;
-import org.opentosca.toscana.model.operation.StandardLifecycle;
-import org.opentosca.toscana.model.requirement.Requirement;
+import org.opentosca.toscana.model.util.ToscaKey;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import static java.lang.String.format;
 
@@ -30,116 +28,112 @@ import static java.lang.String.format;
  <p>
  (TOSCA Simple Profile in YAML Version 1.1, p. 175-176)
  */
-@Data
+@EqualsAndHashCode
+@ToString
 public class BlockStorage extends RootNode {
 
     /**
      The requested storage size in MB.
      <p>
-     Note : Required when an existing volume ({@link #volumeId}) is not available.
+     Note : Required when an existing volume ({@link #VOLUME_ID}) is not available.
      <p>
-     If {@link #volumeId} is provided, size is ignored.
+     If {@link #VOLUME_ID} is provided, size is ignored.
      <p>
      Resize of existing volumes is not considered at this time.
      (TOSCA Simple Profile in YAML Version 1.1, p. 175)
      */
-    private final Integer sizeInMB;
+    public static ToscaKey<Integer> SIZE_IN_MB = new ToscaKey<>(PROPERTIES, "size")
+        .type(Integer.class);
 
     /**
      Optional ID of an existing volume (that is in the accessible scope of the requesting application).
      (TOSCA Simple Profile in YAML Version 1.1, p. 175)
      */
-    private final String volumeId;
+    public static ToscaKey<String> VOLUME_ID = new ToscaKey<>(PROPERTIES, "volume_id");
 
     /**
      Optional ID of an existing snapshot that should be used when creating the block storage (volume).
      (TOSCA Simple Profile in YAML Version 1.1, p. 175)
      */
-    private final String snapshotId;
+    public static ToscaKey<String> SNAPSHOT_ID = new ToscaKey<>(PROPERTIES, "snapshot_id");
 
-    private final AttachmentCapability attachment;
+    public static ToscaKey<AttachmentCapability> ATTACHMENT = new ToscaKey<>(CAPABILITIES, "attachment")
+        .type(AttachmentCapability.class);
+
+    public BlockStorage(MappingEntity mappingEntity) {
+        super(mappingEntity);
+        init();
+    }
+
+    private void init() {
+        setDefault(ATTACHMENT, new AttachmentCapability(getChildEntity(ATTACHMENT)));
+    }
 
     /**
-     Either sizeInMB or volumeId must be given.
+     @return {@link #ATTACHMENT}
      */
-    @Builder
-    private BlockStorage(Integer sizeInMB,
-                         String volumeId,
-                         String snapshotId,
-                         AttachmentCapability attachment,
-                         String nodeName,
-                         StandardLifecycle standardLifecycle,
-                         Set<Requirement> requirements,
-                         Set<Capability> capabilities,
-                         String description) {
-        super(nodeName, standardLifecycle, requirements, capabilities, description);
-        if (sizeInMB != null && sizeInMB < 1) {
-            throw new IllegalArgumentException(format("Constraint violation: sizeInMB >= 1; but was '%d'", sizeInMB));
+    public Optional<AttachmentCapability> getAttachment() {
+        return Optional.ofNullable(get(ATTACHMENT));
+    }
+
+    /**
+     Sets {@link #ATTACHMENT}
+     */
+    public BlockStorage setAttachment(AttachmentCapability attachment) {
+        set(ATTACHMENT, attachment);
+        return this;
+    }
+
+    /**
+     @return {@link #SIZE_IN_MB}
+     */
+    public Optional<Integer> getSizeInMb() {
+        return Optional.ofNullable(get(SIZE_IN_MB));
+    }
+
+    /**
+     Sets {@link #SIZE_IN_MB}
+     */
+    public BlockStorage setSizeInMb(Integer sizeInMb) {
+        if (sizeInMb < 1) {
+            throw new IllegalArgumentException(format("Constraint violation: sizeInMB >= 1; but was '%d'", sizeInMb));
         }
-        this.sizeInMB = sizeInMB;
-        this.volumeId = volumeId;
-        this.snapshotId = snapshotId;
-        this.attachment = Objects.requireNonNull(attachment);
-
-        this.capabilities.add(this.attachment);
+        set(SIZE_IN_MB, sizeInMb);
+        return this;
     }
 
     /**
-     @param attachment {@link #attachment}
-     @param lifecycle  {@link #standardLifecycle}
-     @param snapshotId {@link #snapshotId}
-     */
-    public static BlockStorageBuilder builder(AttachmentCapability attachment,
-                                              StandardLifecycle lifecycle,
-                                              String snapshotId) {
-        return new BlockStorageBuilder()
-            .attachment(attachment)
-            .standardLifecycle(lifecycle)
-            .snapshotId(Objects.requireNonNull(snapshotId));
-    }
-
-    /**
-     @param nodeName   {@link #nodeName}
-     @param volumeId   {@link #volumeId}
-     @param attachment {@link #attachment}
-     */
-    public static BlockStorageBuilder builder(String nodeName,
-                                              String volumeId,
-                                              AttachmentCapability attachment) {
-        return new BlockStorageBuilder()
-            .nodeName(nodeName)
-            .volumeId(Objects.requireNonNull(volumeId))
-            .attachment(attachment);
-    }
-
-    /**
-     @return the optional size of this block storage (in MB)
-     */
-    public Optional<Integer> getSizeInMB() {
-        return Optional.ofNullable(sizeInMB);
-    }
-
-    /**
-     @return the optional ID of the volume
+     @return {@link #VOLUME_ID}
      */
     public Optional<String> getVolumeId() {
-        return Optional.ofNullable(volumeId);
+        return Optional.ofNullable(get(VOLUME_ID));
     }
 
     /**
-     @return optional identifier of the existing snapshot which is used when creating the block storage
+     Sets {@link #VOLUME_ID}
+     */
+    public BlockStorage setVolumeId(String volumeId) {
+        set(VOLUME_ID, volumeId);
+        return this;
+    }
+
+    /**
+     @return {@link #SNAPSHOT_ID}
      */
     public Optional<String> getSnapshotId() {
-        return Optional.ofNullable(snapshotId);
+        return Optional.ofNullable(get(SNAPSHOT_ID));
+    }
+
+    /**
+     Sets {@link #SNAPSHOT_ID}
+     */
+    public BlockStorage setSnapshotId(String snapshotId) {
+        set(SNAPSHOT_ID, snapshotId);
+        return this;
     }
 
     @Override
     public void accept(NodeVisitor v) {
         v.visit(this);
-    }
-
-    public static class BlockStorageBuilder extends RootNodeBuilder {
-        protected Set<Requirement> requirements = super.requirements;
-        protected Set<Capability> capabilities = super.capabilities;
     }
 }

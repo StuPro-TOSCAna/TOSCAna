@@ -26,9 +26,9 @@ public interface Transformation {
     Platform getPlatform();
 
     /**
-     Sets the value of the property with its given key.
+     Sets the value of the property with its given name.
 
-     @throws IllegalArgumentException if a property with the given key cannot be found or if entered value is invalid
+     @throws IllegalArgumentException if a property with the given name cannot be found or if entered value is invalid
      */
     default void setProperty(String key, String value) {
         getProperties().setPropertyValue(key, value);

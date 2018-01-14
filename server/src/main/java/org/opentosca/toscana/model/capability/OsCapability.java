@@ -1,13 +1,11 @@
 package org.opentosca.toscana.model.capability;
 
 import java.util.Optional;
-import java.util.Set;
 
-import org.opentosca.toscana.model.datatype.Range;
-import org.opentosca.toscana.model.node.RootNode;
+import org.opentosca.toscana.core.parse.graphconverter.MappingEntity;
+import org.opentosca.toscana.model.util.ToscaKey;
 import org.opentosca.toscana.model.visitor.CapabilityVisitor;
 
-import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -21,72 +19,94 @@ public class OsCapability extends Capability {
      The optional Operating System architecture.
      (TOSCA Simple Profile in YAML Version 1.1, p. 157)
      */
-    private final Architecture architecture;
+    public static ToscaKey<Architecture> ARCHITECTURE = new ToscaKey<>(PROPERTIES, "architecture");
     /**
      The optional Operating System type.
      (TOSCA Simple Profile in YAML Version 1.1, p. 157)
      */
-    private final Type type;
+    public static ToscaKey<Type> TYPE = new ToscaKey<>(PROPERTIES, "type");
     /**
      The optional Operating System distribution.
      (TOSCA Simple Profile in YAML Version 1.1, p. 157)
      */
-    private final Distribution distribution;
+    public static ToscaKey<Distribution> DISTRIBUTION = new ToscaKey<>(PROPERTIES, "distribution");
     /**
      The optional Operating System version.
      (TOSCA Simple Profile in YAML Version 1.1, p. 157)
      */
-    private final String version;
+    public static ToscaKey<String> VERSION = new ToscaKey<>(PROPERTIES, "version");
 
-    @Builder
-    protected OsCapability(Architecture architecture,
-                           Type type,
-                           Distribution distribution,
-                           String version,
-                           Set<Class<? extends RootNode>> validSourceTypes,
-                           Range occurrence) {
-        super(validSourceTypes, occurrence);
-        this.architecture = architecture;
-        this.type = type;
-        this.distribution = distribution;
-        this.version = version;
-    }
-
-    public static OsCapability getFallback(OsCapability os) {
-        return (os == null) ? OsCapability.builder().build() : os;
-    }
-
-    /**
-     @return {@link #architecture}
-     */
-    public Optional<Architecture> getArchitecture() {
-        return Optional.ofNullable(architecture);
-    }
-
-    /**
-     @return {@link #type}
-     */
-    public Optional<Type> getType() {
-        return Optional.ofNullable(type);
-    }
-
-    /**
-     @return {@link #distribution}
-     */
-    public Optional<Distribution> getDistribution() {
-        return Optional.ofNullable(distribution);
-    }
-
-    /**
-     @return {@link #version}
-     */
-    public Optional<String> getVersion() {
-        return Optional.ofNullable(version);
+    public OsCapability(MappingEntity mappingEntity) {
+        super(mappingEntity);
     }
 
     @Override
     public void accept(CapabilityVisitor v) {
         v.visit(this);
+    }
+
+    /**
+     @return {@link #ARCHITECTURE}
+     */
+
+    public Optional<Architecture> getArchitecture() {
+        return Optional.ofNullable(get(ARCHITECTURE));
+    }
+
+    /**
+     Sets {@link #ARCHITECTURE}
+     */
+    public OsCapability setArchitecture(Architecture architecture) {
+        set(ARCHITECTURE, architecture);
+        return this;
+    }
+
+    /**
+     @return {@link #TYPE}
+     */
+
+    public Optional<Type> getType() {
+        return Optional.ofNullable(get(TYPE));
+    }
+
+    /**
+     Sets {@link #TYPE}
+     */
+    public OsCapability setType(Type type) {
+        set(TYPE, type);
+        return this;
+    }
+
+    /**
+     @return {@link #DISTRIBUTION}
+     */
+
+    public Optional<Distribution> getDistribution() {
+        return Optional.ofNullable(get(DISTRIBUTION));
+    }
+
+    /**
+     Sets {@link #DISTRIBUTION}
+     */
+    public OsCapability setDistribution(Distribution distribution) {
+        set(DISTRIBUTION, distribution);
+        return this;
+    }
+
+    /**
+     @return {@link #VERSION}
+     */
+
+    public Optional<String> getVersion() {
+        return Optional.ofNullable(get(VERSION));
+    }
+
+    /**
+     Sets {@link #VERSION}
+     */
+    public OsCapability setVersion(String version) {
+        set(VERSION, version);
+        return this;
     }
 
     public enum Architecture {
@@ -115,8 +135,5 @@ public class OsCapability extends Capability {
         BUSYBOX,
         OPEN_SUSE,
         // might grow
-    }
-
-    public static class OsCapabilityBuilder extends CapabilityBuilder {
     }
 }

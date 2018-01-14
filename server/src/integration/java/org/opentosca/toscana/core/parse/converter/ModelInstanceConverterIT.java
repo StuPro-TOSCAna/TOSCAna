@@ -1,9 +1,9 @@
 package org.opentosca.toscana.core.parse.converter;
 
-import org.opentosca.toscana.core.parse.CsarParseService;
-import org.opentosca.toscana.core.parse.CsarParseServiceImpl;
 import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.model.EffectiveModel;
+import org.opentosca.toscana.model.node.DockerApplication;
+import org.opentosca.toscana.model.requirement.DockerHostRequirement;
 
 import org.junit.Test;
 
@@ -14,24 +14,24 @@ import static org.junit.Assert.assertNotNull;
  */
 public class ModelInstanceConverterIT {
 
-    private final CsarParseService parser = new CsarParseServiceImpl();
-
     @Test
     public void dockerConverter() throws Exception {
-        EffectiveModel model = parser.parse(TestCsars.VALID_MINIMAL_DOCKER_TEMPLATE);
+        EffectiveModel model = new EffectiveModel(TestCsars.VALID_MINIMAL_DOCKER_TEMPLATE);
         assertNotNull(model);
+        DockerApplication dockerApp = (DockerApplication) model.getNodeMap().get("simpleTaskApp");
+        DockerHostRequirement host = dockerApp.getDockerHost();
+        host.getFulfillers().stream().findFirst().get();
     }
 
     @Test
     public void lampNoInputConverter() throws Exception {
-        EffectiveModel model = parser.parse(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE);
+        EffectiveModel model = new EffectiveModel(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE);
         assertNotNull(model);
     }
 
-    // TODO WIP
-//    @Test
-//    public void lampInputConverter() throws Exception {
-//        EffectiveModel model = parser.parse(TestCsars.VALID_LAMP_INPUT_TEMPLATE);
-//        assertNotNull(model);
-//    }
+    @Test
+    public void lampInputConverter() throws Exception {
+        EffectiveModel model = new EffectiveModel(TestCsars.VALID_LAMP_INPUT_TEMPLATE);
+        assertNotNull(model);
+    }
 }

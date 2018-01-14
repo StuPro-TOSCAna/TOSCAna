@@ -1,0 +1,17 @@
+tosca_definitions_version: tosca_simple_yaml_1_1
+
+description: template for testing resolving of symbolic links in requirements
+metadata:
+  template_name: requirement_link
+  template_author: stupro-toscana
+  template_version: 1.0
+
+topology_template:
+  node_templates:
+    test-node1:
+      type: WebServer
+      requirements:
+        - host: test-node2
+        
+    test-node2:
+      type: Compute

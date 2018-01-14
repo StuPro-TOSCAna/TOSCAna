@@ -1,7 +1,8 @@
 package org.opentosca.toscana.core.parse.converter.util;
 
 import org.opentosca.toscana.core.BaseUnitTest;
-import org.opentosca.toscana.core.parse.converter.util.SizeConverter.Unit;
+import org.opentosca.toscana.core.parse.converter.SizeConverter;
+import org.opentosca.toscana.core.parse.converter.SizeConverter.Unit;
 
 import org.junit.Before;
 import org.junit.Test;

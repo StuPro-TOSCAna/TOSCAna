@@ -2,11 +2,11 @@ package org.opentosca.toscana.plugins.cloudfoundry;
 
 import java.io.File;
 
+import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
 import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.plugins.BaseTransformTest;
-import org.opentosca.toscana.plugins.testdata.TestEffectiveModels;
 
 import org.apache.commons.io.FileUtils;
 
@@ -41,7 +41,7 @@ public class CloudFoundryLampIT extends BaseTransformTest {
 
     @Override
     protected EffectiveModel getModel() throws Exception {
-        return TestEffectiveModels.getLampModel();
+        return new EffectiveModel(TestCsars.VALID_LAMP_INPUT_TEMPLATE);
     }
 
     @Override

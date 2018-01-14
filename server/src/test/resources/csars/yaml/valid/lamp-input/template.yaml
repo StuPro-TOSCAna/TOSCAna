@@ -14,13 +14,17 @@ topology_template:
   inputs:
     database_name:
       type: string
+      description: Name for the database
     database_port:
       type: integer
+      description: Port for the database
     database_password:
       type: string
+      description: Password for the database
     database_user:
       type: string
-
+      description: User name for the database
+      
   node_templates:
     my_app:
       type: tosca.nodes.WebApplication
@@ -93,17 +97,6 @@ topology_template:
             distribution: ubuntu
             version: 16.04
             
-  inputs:
-    database_password:
-      type: string
-      description: Password for the database
-    database_name:
-      type: string
-      description: Name for the database
-    database_port:
-      description: Port for the database
-      type: integer
-
   outputs:
     public_address:
       type: string
@@ -112,5 +105,4 @@ topology_template:
     port:
       type: string
       description: Port of the server
-      type: string
       value: { get_attribute: [ server, port ] }

@@ -1,60 +1,57 @@
 package org.opentosca.toscana.model.artifact;
 
-import java.net.URL;
-import java.util.Objects;
 import java.util.Optional;
 
+import org.opentosca.toscana.core.parse.graphconverter.MappingEntity;
 import org.opentosca.toscana.model.DescribableEntity;
 import org.opentosca.toscana.model.datatype.Credential;
+import org.opentosca.toscana.model.util.ToscaKey;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  A repository defines a named external repository which contains deployment and
  implementation artifacts that are referenced within an operation.
  */
 
-@Data
+@EqualsAndHashCode
+@ToString
 public class Repository extends DescribableEntity {
 
     /**
-     The name of the repository.
-     */
-    private final String name;
-    /**
      The URL used to access the repository.
      */
-    private final URL url;
+    public static final ToscaKey<String> URL = new ToscaKey<>("url").required(true);
 
     /**
      The optional Credential used to authorize access to the repository.
      */
-    private final Credential credential;
+    public static ToscaKey<Credential> CREDENTIAL = new ToscaKey<>("credential");
 
-    @Builder
-    protected Repository(String name, URL url, Credential credential, String description) {
-        super(description);
-        if (name.isEmpty()) {
-            throw new IllegalArgumentException("A repository name must not be empty");
-        }
-        this.name = Objects.requireNonNull(name);
-        this.url = Objects.requireNonNull(url);
-        this.credential = credential;
+    public Repository(MappingEntity entity) {
+        super(entity);
     }
 
     /**
-     @param name {@link #name}
-     @param url  {@link #url}
-     */
-    public static RepositoryBuilder builder(String name, URL url) {
-        return new RepositoryBuilder().name(name).url(url);
-    }
-
-    /**
-     @return {@link #credential}
+     @return {@link #CREDENTIAL}
      */
     public Optional<Credential> getCredential() {
-        return Optional.ofNullable(credential);
+        return Optional.ofNullable(get(CREDENTIAL));
+    }
+
+    /**
+     Sets {@link #CREDENTIAL}
+     */
+    public Repository setCredential(Credential credential) {
+        set(CREDENTIAL, credential);
+        return this;
+    }
+
+    /**
+     @return {@link #URL}
+     */
+    public String getUrl() {
+        return get(URL);
     }
 }

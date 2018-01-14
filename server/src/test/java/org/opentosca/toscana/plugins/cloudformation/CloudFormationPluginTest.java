@@ -5,13 +5,13 @@ import java.util.Set;
 
 import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
+import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.visitor.VisitableNode;
 import org.opentosca.toscana.plugins.cloudformation.visitor.CloudFormationNodeVisitor;
-import org.opentosca.toscana.plugins.testdata.TestEffectiveModels;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -24,7 +24,7 @@ import static org.mockito.Mockito.when;
 
 public class CloudFormationPluginTest extends BaseUnitTest {
     private final static Logger logger = LoggerFactory.getLogger(CloudFormationPluginTest.class);
-    private final static EffectiveModel lamp = TestEffectiveModels.getLampModel();
+    private final static EffectiveModel lamp = new EffectiveModel(TestCsars.VALID_LAMP_INPUT_TEMPLATE);
     private static CloudFormationNodeVisitor cfnNodeVisitor;
     private static CloudFormationModule cfnModule;
     private static PluginFileAccess fileAccess;

@@ -1,35 +1,25 @@
 package org.opentosca.toscana.model.relation;
 
+import org.opentosca.toscana.core.parse.graphconverter.MappingEntity;
 import org.opentosca.toscana.model.visitor.RelationshipVisitor;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  Represents a hosting relationship between two nodes.
  (TOSCA Simple Profile in YAML Version 1.1, p. 160)
  */
-@Data
+@EqualsAndHashCode
+@ToString
 public class HostedOn extends RootRelationship {
 
-    public HostedOn() {
-        super(null);
-    }
-
-    @Builder
-    protected HostedOn(String description) {
-        super(description);
-    }
-
-    public static HostedOn getFallback(HostedOn rel) {
-        return (rel == null) ? new HostedOn() : rel;
+    public HostedOn(MappingEntity entity) {
+        super(entity);
     }
 
     @Override
     public void accept(RelationshipVisitor v) {
         v.visit(this);
-    }
-
-    public static class HostedOnBuilder extends RootRelationshipBuilder {
     }
 }

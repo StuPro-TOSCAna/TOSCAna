@@ -6,12 +6,16 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import org.opentosca.toscana.core.BaseUnitTest;
+import org.opentosca.toscana.core.parse.graphconverter.MappingEntity;
+import org.opentosca.toscana.core.parse.graphconverter.ServiceGraph;
 import org.opentosca.toscana.core.util.Preferences;
+import org.opentosca.toscana.model.EntityId;
 import org.opentosca.toscana.model.capability.OsCapability;
 import org.opentosca.toscana.model.capability.OsCapability.Distribution;
 import org.opentosca.toscana.plugins.kubernetes.docker.mapper.util.DataContainer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
 import org.apache.commons.io.IOUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -25,7 +29,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.opentosca.toscana.model.capability.OsCapability.Architecture.x86_64;
 import static org.opentosca.toscana.model.capability.OsCapability.Type.LINUX;
-import static org.opentosca.toscana.model.capability.OsCapability.builder;
 import static org.opentosca.toscana.plugins.kubernetes.docker.mapper.DockerBaseImages.ALPINE;
 import static org.opentosca.toscana.plugins.kubernetes.docker.mapper.DockerBaseImages.DEBIAN;
 import static org.opentosca.toscana.plugins.kubernetes.docker.mapper.DockerBaseImages.UBUNTU;
@@ -36,6 +39,8 @@ public class MapperTest extends BaseUnitTest {
 
     private static final Logger logger = LoggerFactory.getLogger(MapperTest.class);
     private static BaseImageMapper baseImageMapper;
+    private static EntityId entityId = new EntityId(Lists.newArrayList("my", "id"));
+    private static MappingEntity entity = new MappingEntity(entityId, new ServiceGraph());
 
     private String name;
     private OsCapability capability;
@@ -71,7 +76,7 @@ public class MapperTest extends BaseUnitTest {
         Preferences preferences = mock(Preferences.class);
         when(preferences.getDataDir()).thenReturn(staticTmpDir);
         TagStorage tagStorage = new TagStorage(preferences);
-        BaseImageMapper baseImageMapper = new BaseImageMapper(new DockerBaseImages[] {
+        BaseImageMapper baseImageMapper = new BaseImageMapper(new DockerBaseImages[]{
             ALPINE,
             DEBIAN,
             UBUNTU
@@ -89,37 +94,37 @@ public class MapperTest extends BaseUnitTest {
             {
                 {
                     "Empty Capability",
-                    builder().build(),
+                    new OsCapability(entity),
                     DEFAULT_IMAGE_PATH
                 },
                 {
                     "Specific Version",
-                    builder().type(LINUX).distribution(Distribution.DEBIAN).version("9.2").build(),
+                    new OsCapability(entity).setType(LINUX).setDistribution(Distribution.DEBIAN).setVersion("9.2"),
                     "library/debian:9.2"
                 },
                 {
                     "Version too specific",
-                    builder().type(LINUX).distribution(Distribution.UBUNTU).version("16.04.3").build(),
+                    new OsCapability(entity).setType(LINUX).setDistribution(Distribution.UBUNTU).setVersion("16.04.3"),
                     "library/ubuntu:16.04"
                 },
                 {
                     "Version not found but newer fix version available",
-                    builder().type(LINUX).distribution(Distribution.UBUNTU).version("12.04.3").build(),
+                    new OsCapability(entity).setType(LINUX).setDistribution(Distribution.UBUNTU).setVersion("12.04.3"),
                     "library/ubuntu:12.04.5"
                 },
                 {
                     "Specific Version not found (Expect later version)",
-                    builder().type(LINUX).distribution(Distribution.UBUNTU).version("17.09").build(),
+                    new OsCapability(entity).setType(LINUX).setDistribution(Distribution.UBUNTU).setVersion("17.09"),
                     "library/ubuntu:17.10"
                 },
                 {
                     "Architecture Only",
-                    builder().architecture(x86_64).build(),
+                    new OsCapability(entity).setArchitecture(x86_64),
                     DEFAULT_IMAGE_PATH
                 },
                 {
                     "Missing Distribution",
-                    builder().type(LINUX).version("17.09").build(),
+                    new OsCapability(entity).setType(LINUX).setVersion("17.09"),
                     DEFAULT_IMAGE_PATH
                 },
             }

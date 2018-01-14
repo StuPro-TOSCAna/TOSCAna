@@ -1,103 +1,119 @@
 package org.opentosca.toscana.model.node;
 
-import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 
-import org.opentosca.toscana.model.capability.Capability;
+import org.opentosca.toscana.core.parse.graphconverter.MappingEntity;
 import org.opentosca.toscana.model.capability.EndpointCapability;
-import org.opentosca.toscana.model.operation.StandardLifecycle;
-import org.opentosca.toscana.model.requirement.Requirement;
+import org.opentosca.toscana.model.util.ToscaKey;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  Represents storage that provides the ability to store data as objects (or BLOBs of data)
  without consideration for the underlying filesystem or devices.
  (TOSCA Simple Profile in YAML Version 1.1, p. 174)
  */
-@Data
+@EqualsAndHashCode
+@ToString
 public class ObjectStorage extends RootNode {
 
     /**
      The logical name of the object store (or container).
      (TOSCA Simple Profile in YAML Version 1.1, p. 174)
      */
-    private final String storageName;
+    public static ToscaKey<String> STORAGE_NAME = new ToscaKey<>(PROPERTIES, "name")
+        .required(true);
 
     /**
      The optional requested initial storage size in GB.
      (TOSCA Simple Profile in YAML Version 1.1, p. 174)
      */
-    private final Integer sizeInGB;
+    public static ToscaKey<Integer> SIZE_IN_GB = new ToscaKey<>(PROPERTIES, "size")
+        .type(Integer.class);
 
     /**
      The optional requested maximum storage size in GB.
      (TOSCA Simple Profile in YAML Version 1.1, p. 174)
      */
-    private final Integer maxSizeInGB;
+    public static ToscaKey<Integer> MAX_SIZE_IN_GB = new ToscaKey<>(PROPERTIES, "maxsize")
+        .type(Integer.class);
 
-    private final EndpointCapability storageEndpoint;
+    public static ToscaKey<EndpointCapability> STORAGE_ENDPOINT = new ToscaKey<>(CAPABILITIES, "storage_endpoint")
+        .type(EndpointCapability.class);
 
-    @Builder
-    private ObjectStorage(String storageName,
-                          Integer sizeInGB,
-                          Integer maxSizeInGB,
-                          EndpointCapability storageEndpoint,
-                          String nodeName,
-                          StandardLifecycle standardLifecycle,
-                          Set<Requirement> requirements,
-                          Set<Capability> capabilities,
-                          String description) {
-        super(nodeName, standardLifecycle, requirements, capabilities, description);
-        if ((sizeInGB != null && sizeInGB < 0) || (sizeInGB != null && maxSizeInGB < 0)) {
-            throw new IllegalArgumentException("Size for ObjectStorage must not be < 0");
-        }
-        this.storageName = Objects.requireNonNull(storageName);
-        this.sizeInGB = sizeInGB;
-        this.maxSizeInGB = maxSizeInGB;
-        this.storageEndpoint = Objects.requireNonNull(storageEndpoint);
+    public ObjectStorage(MappingEntity mappingEntity) {
+        super(mappingEntity);
+        init();
+    }
 
-        this.capabilities.add(this.storageEndpoint);
+    private void init() {
+        setDefault(STORAGE_ENDPOINT, new EndpointCapability(getChildEntity(STORAGE_ENDPOINT)));
     }
 
     /**
-     @param nodeName        {@link #nodeName}
-     @param storageName     {@link #storageName}
-     @param storageEndpoint {@link #storageEndpoint}
+     @return {@link #STORAGE_NAME}
      */
-    public static ObjectStorageBuilder builder(String nodeName,
-                                               String storageName,
-                                               EndpointCapability storageEndpoint) {
-        return new ObjectStorageBuilder()
-            .nodeName(nodeName)
-            .storageName(storageName)
-            .storageEndpoint(storageEndpoint);
+    public String getStorageName() {
+        return get(STORAGE_NAME);
     }
 
     /**
-     @return {@link #sizeInGB}
+     Sets {@link #STORAGE_NAME}
      */
-    public Optional<Integer> getSizeInGB() {
-        return Optional.ofNullable(sizeInGB);
+    public ObjectStorage setStorageName(String storageName) {
+        set(STORAGE_NAME, storageName);
+        return this;
     }
 
     /**
-     @return {@link #maxSizeInGB}
+     @return {@link #STORAGE_ENDPOINT}
      */
-    public Optional<Integer> getMaxSizeInGB() {
-        return Optional.ofNullable(maxSizeInGB);
+    public EndpointCapability getStorageEndpoint() {
+        return get(STORAGE_ENDPOINT);
+    }
+
+    /**
+     Sets {@link #STORAGE_ENDPOINT}
+     */
+    public ObjectStorage setStorageEndpoint(EndpointCapability storageEndpoint) {
+        set(STORAGE_ENDPOINT, storageEndpoint);
+        return this;
+    }
+
+    /**
+     @return {@link #SIZE_IN_GB}
+     */
+    public Optional<Integer> getSizeInGb() {
+        return Optional.ofNullable(get(SIZE_IN_GB));
+    }
+
+    /**
+     Sets {@link #SIZE_IN_GB}
+     */
+    public ObjectStorage setSizeInGb(Integer sizeInGb) {
+        set(SIZE_IN_GB, sizeInGb);
+        return this;
+    }
+
+    /**
+     @return {@link #MAX_SIZE_IN_GB}
+     */
+    public Optional<Integer> getMaxSizeInGb() {
+        return Optional.ofNullable(get(MAX_SIZE_IN_GB));
+    }
+
+    /**
+     Sets {@link #MAX_SIZE_IN_GB}
+     */
+    public ObjectStorage setMaxSizeInGb(Integer maxSizeInGb) {
+        set(MAX_SIZE_IN_GB, maxSizeInGb);
+        return this;
     }
 
     @Override
     public void accept(NodeVisitor v) {
         v.visit(this);
-    }
-
-    public static class ObjectStorageBuilder extends RootNodeBuilder {
-        protected Set<Requirement> requirements = super.requirements;
-        protected Set<Capability> capabilities = super.capabilities;
     }
 }

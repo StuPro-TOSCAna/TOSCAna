@@ -6,13 +6,13 @@ import java.util.Set;
 
 import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
+import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.visitor.VisitableNode;
 import org.opentosca.toscana.plugins.cloudfoundry.application.Application;
 import org.opentosca.toscana.plugins.cloudfoundry.visitors.NodeVisitors;
-import org.opentosca.toscana.plugins.testdata.TestEffectiveModels;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
@@ -34,7 +34,7 @@ import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.MANIFEST_PA
 
 public class CloudFoundryPluginTest extends BaseUnitTest {
 
-    private final static EffectiveModel lamp = TestEffectiveModels.getLampModel();
+    private final static EffectiveModel lamp = new EffectiveModel(TestCsars.VALID_LAMP_INPUT_TEMPLATE);
     private static Application myApp = new Application();
     private final static NodeVisitors visitor = new NodeVisitors(myApp);
 

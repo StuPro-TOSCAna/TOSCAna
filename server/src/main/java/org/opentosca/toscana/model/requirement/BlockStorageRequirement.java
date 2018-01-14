@@ -1,36 +1,75 @@
 package org.opentosca.toscana.model.requirement;
 
-import java.util.Set;
+import java.util.Optional;
 
+import org.opentosca.toscana.core.parse.graphconverter.MappingEntity;
 import org.opentosca.toscana.model.capability.AttachmentCapability;
-import org.opentosca.toscana.model.datatype.Range;
 import org.opentosca.toscana.model.node.BlockStorage;
 import org.opentosca.toscana.model.relation.AttachesTo;
+import org.opentosca.toscana.model.util.ToscaKey;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.Singular;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
-@Data
+@EqualsAndHashCode
+@ToString
 public class BlockStorageRequirement extends Requirement<AttachmentCapability, BlockStorage, AttachesTo> {
 
-    @Builder
-    protected BlockStorageRequirement(AttachmentCapability capability,
-                                      Range occurrence,
-                                      @Singular Set<BlockStorage> fulfillers,
-                                      AttachesTo relationship) {
-        super(capability, occurrence, fulfillers, relationship);
+    public ToscaKey<AttachmentCapability> CAPABILITY = new ToscaKey<>(CAPABILITY_NAME)
+        .type(AttachmentCapability.class);
+    public ToscaKey<BlockStorage> NODE = new ToscaKey<>(NODE_NAME)
+        .type(BlockStorage.class);
+    public ToscaKey<AttachesTo> RELATIONSHIP = new ToscaKey<>(RELATIONSHIP_NAME)
+        .type(AttachesTo.class);
+
+    public BlockStorageRequirement(MappingEntity mappingEntity) {
+        super(mappingEntity);
+        setDefault(RELATIONSHIP, new AttachesTo(getChildEntity(RELATIONSHIP)));
     }
 
-    public static Requirement<AttachmentCapability, BlockStorage, AttachesTo> getFallback(Requirement<AttachmentCapability, BlockStorage, AttachesTo> storage) {
-        return (storage == null) ? BlockStorageRequirement.builder(AttachesTo.builder("/").build()).build() : storage;
+    /**
+     @return {@link #CAPABILITY}
+     */
+    public AttachmentCapability getCapability() {
+        return get(CAPABILITY);
     }
 
-    public static BlockStorageRequirementBuilder builder(AttachesTo relationship) {
-        return new BlockStorageRequirementBuilder()
-            .relationship(relationship);
+    /**
+     Sets {@link #CAPABILITY}
+     */
+    public BlockStorageRequirement setCapability(AttachmentCapability capability) {
+        set(CAPABILITY, capability);
+        return this;
     }
 
-    public static class BlockStorageRequirementBuilder extends RequirementBuilder<AttachmentCapability, BlockStorage, AttachesTo> {
+    /**
+     @return {@link #NODE}
+     */
+    public Optional<BlockStorage> getNode() {
+        return Optional.ofNullable(get(NODE));
+    }
+
+    /**
+     Sets {@link #NODE}
+     */
+    public BlockStorageRequirement setNode(BlockStorage node) {
+        set(NODE, node);
+        return this;
+    }
+
+    /**
+     @return {@link #RELATIONSHIP}
+     */
+    public Optional<AttachesTo> getRelationship() {
+        return Optional.ofNullable(get(RELATIONSHIP));
+    }
+
+    /**
+     Sets {@link #RELATIONSHIP}
+     */
+    @Override
+    public BlockStorageRequirement setRelationship(AttachesTo relationship) {
+        set(RELATIONSHIP, relationship);
+        return this;
     }
 }

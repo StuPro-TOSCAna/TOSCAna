@@ -1,38 +1,41 @@
 package org.opentosca.toscana.model.operation;
 
-import java.util.Objects;
 import java.util.Optional;
 
-import lombok.Data;
+import org.opentosca.toscana.core.parse.graphconverter.MappingEntity;
+import org.opentosca.toscana.model.BaseToscaElement;
+import org.opentosca.toscana.model.util.ToscaKey;
+
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  See TOSCA Specification V1.1 ch. 2.1.1; 2.14
  <p>
  Serves either as input or output variable for an operation.
  */
-@Data
-public class OperationVariable {
+@EqualsAndHashCode
+@ToString
+public class OperationVariable extends BaseToscaElement {
 
-    public final String key;
+    public final static ToscaKey<String> VALUE = new ToscaKey("value");
 
-    private String value;
-
-    public OperationVariable(String key) {
-        if (key == null || key.isEmpty()) {
-            throw new IllegalArgumentException("key must not be empty or null");
-        }
-        this.key = key;
-    }
-
-    public OperationVariable(String key, String value) throws IllegalArgumentException {
-        this(key);
-        this.value = Objects.requireNonNull(value);
+    public OperationVariable(MappingEntity entity) {
+        super(entity);
     }
 
     /**
-     @return {@link #value}
+     @return {@link #VALUE}
      */
     public Optional<String> getValue() {
-        return Optional.ofNullable(value);
+        return Optional.ofNullable(get(VALUE));
+    }
+
+    public void setValue(String value) {
+        set(VALUE, value);
+    }
+
+    public String getKey() {
+        return getEntityName();
     }
 }

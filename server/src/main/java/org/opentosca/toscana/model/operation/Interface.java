@@ -1,19 +1,22 @@
 package org.opentosca.toscana.model.operation;
 
-import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import lombok.Builder;
-import lombok.Data;
+import org.opentosca.toscana.core.parse.graphconverter.MappingEntity;
+import org.opentosca.toscana.model.BaseToscaElement;
+import org.opentosca.toscana.model.util.ToscaKey;
+
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  Defines a named interface that can be associated with a Node.
  (TOSCA Simple Profile in YAML Version 1.1, p. 73)
  */
-@Data
-public class Interface {
+@EqualsAndHashCode
+@ToString
+public class Interface extends BaseToscaElement {
 
     /**
      Set of inputs which the TOSCA orchestrator shall make available for all defined operations.
@@ -21,32 +24,30 @@ public class Interface {
      artifacts associated to each operation during their execution.
      (TOSCA Simple Profile in YAML Version 1.1, p. 74)
      */
-    protected final Set<OperationVariable> inputs;
+    public static ToscaKey<OperationVariable> INPUTS = new ToscaKey<>("inputs")
+        .type(OperationVariable.class);
+
+    public Interface(MappingEntity entity) {
+        super(entity);
+    }
+
+    /**
+     @return {@link #INPUTS}
+     */
+    public Set<OperationVariable> getInputs() {
+        return getCollection(INPUTS);
+    }
 
     /**
      Represents the defined operations of this interface.
      */
-    protected final Set<Operation> operations;
-
-    @Builder
-    protected Interface(Set<OperationVariable> inputs,
-                        Set<Operation> operations) {
-        this.inputs = Objects.requireNonNull(inputs);
-        this.operations = operations.stream().filter(Objects::nonNull).collect(Collectors.toSet());
-    }
-
-    public static class OperationBuilder {
-        private Set<OperationVariable> inputs = new HashSet<>();
-        private Set<Operation> operations = new HashSet<>();
-
-        public OperationBuilder input(OperationVariable operationVariable) {
-            inputs.add(operationVariable);
-            return this;
-        }
-
-        public OperationBuilder operation(Operation operation) {
-            operations.add(operation);
-            return this;
-        }
+    public Set<Operation> getOperations() {
+        Set<Operation> operations = getThisAsSet(Operation.class);
+        /* filter operation set (in tosca, inputs and outputs are unfortunately defined 
+         on the same level as the individual operations) */
+        operations = operations.stream()
+            .filter(o -> !o.getEntityName().matches("inputs|outputs"))
+            .collect(Collectors.toSet());
+        return operations;
     }
 }

@@ -1,67 +1,84 @@
 package org.opentosca.toscana.model.operation;
 
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
+import org.opentosca.toscana.core.parse.graphconverter.MappingEntity;
 import org.opentosca.toscana.model.DescribableEntity;
 import org.opentosca.toscana.model.artifact.Artifact;
+import org.opentosca.toscana.model.util.ToscaKey;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.Singular;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  see TOSCA Specification V1.1 ch. 3.5.13
  */
-@Data
+@EqualsAndHashCode
+@ToString
 public class Operation extends DescribableEntity {
 
     /**
+     inputs which shall be injected into the artifacts environment before execution.
+     Might be empty.
+     */
+    public static final ToscaKey<Set<OperationVariable>> INPUTS = new ToscaKey<>("inputs");
+    /**
+     outputs which are supposed to be available in the environment after execution of the operation.
+     Might be empty.
+     */
+    public static final ToscaKey<Set<OperationVariable>> OUTPUTS = new ToscaKey<>("outputs");
+    /**
      The optional primary deployment artifact.
      */
-    private final Artifact artifact;
-
+    public static ToscaKey<Void> IMPLEMENTATION = new ToscaKey<>("implementation")
+        .type(Void.class);
+    
+    public static final ToscaKey<Artifact> PRIMARY = new ToscaKey<>(IMPLEMENTATION,"primary")
+        .type(Artifact.class);
     /**
      several dependent or secondary implementation artifact names which
      are referenced by the primary implementation artifact
      (e.g., a library the script installs or a secondary script).
      Might be empty
      */
-    private final Set<String> dependencies;
-
-    /**
-     inputs which shall be injected into the artifacts environment before execution.
-     Might be empty.
-     */
-    private final Set<OperationVariable> inputs;
-
-    /**
-     outputs which are supposed to be available in the environment after execution of the operation.
-     Might be empty.
-     */
-    private final Set<OperationVariable> outputs;
-
-    @Builder
-    protected Operation(Artifact artifact,
-                        @Singular Set<String> dependencies,
-                        @Singular Set<OperationVariable> inputs,
-                        @Singular Set<OperationVariable> outputs,
-                        String description) {
-        super(description);
-        this.artifact = artifact;
-        this.dependencies = Objects.requireNonNull(dependencies);
-        this.inputs = Objects.requireNonNull(inputs);
-        this.outputs = Objects.requireNonNull(outputs);
+    public static final ToscaKey<Set<String>> DEPENDENCIES = new ToscaKey<>(IMPLEMENTATION,"dependencies");
+    
+    public Operation(MappingEntity entity) {
+        super(entity);
     }
 
     /**
-     @return {@link #artifact}
+     @return {@link #IMPLEMENTATION}
      */
+
     public Optional<Artifact> getArtifact() {
-        return Optional.ofNullable(artifact);
+        return Optional.ofNullable(get(PRIMARY));
     }
 
-    public static class OperationBuilder extends DescribableEntityBuilder {
+    public Operation setArtifact(Artifact artifact) {
+        set(PRIMARY, artifact);
+        return this;
+    }
+
+    /**
+     @return {@link #DEPENDENCIES}
+     */
+    public Set<String> getDependencies() {
+        return get(DEPENDENCIES);
+    }
+
+    /**
+     @return {@link #INPUTS}
+     */
+    public Set<OperationVariable> getInputs() {
+        return get(INPUTS);
+    }
+
+    /**
+     @return {@link #OUTPUTS}
+     */
+    public Set<OperationVariable> getOutputs() {
+        return get(OUTPUTS);
     }
 }

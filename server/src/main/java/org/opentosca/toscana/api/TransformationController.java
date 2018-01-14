@@ -611,7 +611,7 @@ public class TransformationController {
     }
 
     /**
-     Returns a list of properties (key-value pairs) that might have to be set (if they are required) in order to start
+     Returns a list of properties (name-value pairs) that might have to be set (if they are required) in order to start
      the transformation <p>
      Accessed with http call <code>GET /csars/{csar}/transformations/{platform}/properties</code>
      <table summary="">
