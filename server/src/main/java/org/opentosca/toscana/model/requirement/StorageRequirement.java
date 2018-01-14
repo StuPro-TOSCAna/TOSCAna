@@ -20,7 +20,7 @@ public class StorageRequirement extends Requirement<StorageCapability, RootNode,
                                  Range occurrence,
                                  @Singular Set<RootNode> fulfillers,
                                  RootRelationship relationship) {
-        super(StorageCapability.getFallback(capability), occurrence, fulfillers, relationship);
+        super(capability, occurrence, fulfillers, relationship);
     }
 
     public static StorageRequirementBuilder builder(RootRelationship relationship) {
@@ -28,7 +28,10 @@ public class StorageRequirement extends Requirement<StorageCapability, RootNode,
             .relationship(relationship);
     }
 
-    public static StorageRequirement getFallback(StorageRequirement s) {
-        return (s == null) ? StorageRequirement.builder(new DependsOn()).build() : s;
+    public static Requirement<StorageCapability, RootNode, RootRelationship> getFallback(Requirement<StorageCapability, RootNode, RootRelationship> s) {
+        return (s == null) ? StorageRequirement.builder((RootRelationship) new DependsOn()).build() : s;
+    }
+
+    public static class StorageRequirementBuilder extends RequirementBuilder<StorageCapability, RootNode, RootRelationship> {
     }
 }

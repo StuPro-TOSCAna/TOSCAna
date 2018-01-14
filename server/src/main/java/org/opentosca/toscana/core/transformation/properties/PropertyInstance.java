@@ -3,6 +3,7 @@ package org.opentosca.toscana.core.transformation.properties;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.opentosca.toscana.core.transformation.Transformation;
@@ -29,6 +30,9 @@ public class PropertyInstance {
         this.transformation = transformation;
         this.propertyValues = new HashMap<>();
         this.properties = properties;
+        properties.forEach(e -> {
+            propertyValues.put(e.getKey(), e.getDefaultValue());
+        });
         //Set state to input required if there are required properties
         if (properties.stream().anyMatch(Property::isRequired)) {
             transformation.setState(TransformationState.INPUT_REQUIRED);
@@ -111,6 +115,10 @@ public class PropertyInstance {
 
     public Map<String, String> getPropertyValues() {
         return Collections.unmodifiableMap(propertyValues);
+    }
+
+    public Optional<String> getPropertyValue(String key) {
+        return Optional.ofNullable(propertyValues.get(key));
     }
 
     public Set<Property> getPropertySchema() {

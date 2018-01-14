@@ -1,9 +1,14 @@
 package org.opentosca.toscana.model.node;
 
+import java.util.Set;
+
+import org.opentosca.toscana.model.capability.Capability;
 import org.opentosca.toscana.model.capability.ContainerCapability;
 import org.opentosca.toscana.model.datatype.Credential;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
+import org.opentosca.toscana.model.relation.HostedOn;
 import org.opentosca.toscana.model.requirement.HostRequirement;
+import org.opentosca.toscana.model.requirement.Requirement;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 
 import lombok.Builder;
@@ -17,17 +22,19 @@ import lombok.Data;
 public class MysqlDbms extends Dbms {
 
     @Builder
-    private MysqlDbms(HostRequirement host,
+    private MysqlDbms(Requirement<ContainerCapability, Compute, HostedOn> host,
                       ContainerCapability containerHost,
                       String rootPassword,
                       Integer port,
                       String componentVersion,
                       Credential adminCredential,
                       String nodeName,
-                      StandardLifecycle lifecycle,
+                      StandardLifecycle standardLifecycle,
+                      Set<Requirement> requirements,
+                      Set<Capability> capabilities,
                       String description) {
         super(HostRequirement.getFallback(host), makeValidContainerHost(containerHost), rootPassword, fallbackPort(port),
-            componentVersion, adminCredential, nodeName, lifecycle, description);
+            componentVersion, adminCredential, nodeName, standardLifecycle, requirements, capabilities, description);
     }
 
     /**
@@ -57,5 +64,7 @@ public class MysqlDbms extends Dbms {
     }
 
     public static class MysqlDbmsBuilder extends DbmsBuilder {
+        protected Set<Requirement> requirements = super.requirements;
+        protected Set<Capability> capabilities = super.capabilities;
     }
 }

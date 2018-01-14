@@ -1,10 +1,8 @@
 package org.opentosca.toscana.plugins.kubernetes;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -13,9 +11,13 @@ import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.RootNode;
-import org.opentosca.toscana.plugins.kubernetes.docker.image.DockerImageBuilder;
+import org.opentosca.toscana.plugins.kubernetes.docker.image.ExportingImageBuilder;
+import org.opentosca.toscana.plugins.kubernetes.docker.image.ImageBuilder;
+import org.opentosca.toscana.plugins.kubernetes.docker.image.PushingImageBuilder;
 import org.opentosca.toscana.plugins.kubernetes.docker.mapper.BaseImageMapper;
+import org.opentosca.toscana.plugins.kubernetes.docker.util.DockerRegistryCredentials;
 import org.opentosca.toscana.plugins.kubernetes.exceptions.UnsupportedOsTypeException;
+import org.opentosca.toscana.plugins.kubernetes.model.Pod;
 import org.opentosca.toscana.plugins.kubernetes.util.KubernetesNodeContainer;
 import org.opentosca.toscana.plugins.kubernetes.util.NodeStack;
 import org.opentosca.toscana.plugins.kubernetes.visitor.check.NodeTypeCheckVisitor;
@@ -25,10 +27,6 @@ import org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle;
 import org.opentosca.toscana.plugins.util.TransformationFailureException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import io.fabric8.kubernetes.api.model.HasMetadata;
-import io.fabric8.kubernetes.api.model.ServiceBuilder;
-import io.fabric8.kubernetes.api.model.extensions.DeploymentBuilder;
-import io.fabric8.kubernetes.client.internal.SerializationUtils;
 
 import static org.opentosca.toscana.plugins.kubernetes.util.GraphOperations.buildTopologyStacks;
 import static org.opentosca.toscana.plugins.kubernetes.util.GraphOperations.determineTopLevelNodes;
@@ -43,10 +41,22 @@ public class KubernetesLifecycle extends AbstractLifecycle {
     private Set<KubernetesNodeContainer> computeNodes = new HashSet<>();
     private Set<NodeStack> stacks = new HashSet<>();
 
+    private boolean pushToRegistry = false;
+    private Map<NodeStack, ImageBuilder> imageBuilders = new HashMap<>();
+
     public KubernetesLifecycle(TransformationContext context, BaseImageMapper mapper) throws IOException {
         super(context);
         this.baseImageMapper = mapper;
         model = context.getModel();
+        //Fix failing K8s plugin test
+        if (context.getProperties() == null) {
+            pushToRegistry = false;
+            return;
+        }
+        pushToRegistry = Boolean.parseBoolean(
+            context.getProperties().getPropertyValue(KubernetesPlugin.DOCKER_PUSH_TO_REGISTRY_PROPERTY_KEY)
+                .orElse("false")
+        );
     }
 
     @Override
@@ -125,23 +135,86 @@ public class KubernetesLifecycle extends AbstractLifecycle {
 
     @Override
     public void cleanup() {
-        // NOOP
+        removeDockerImages();
+    }
+
+    private void removeDockerImages() {
+        logger.info("Removing built Docker Images");
+
+        for (ImageBuilder builder : imageBuilders.values()) {
+            try {
+                builder.cleanup();
+            } catch (Exception e) {
+                logger.error("Docker Image Cleanup failed!", e);
+                throw new TransformationFailureException(
+                    "Transformaton Cleanup failed, while cleaning up Docker Images",
+                    e
+                );
+            }
+        }
     }
 
     /**
      Builds all Dockerimages of the stack and exports the images as a tar archive.
      */
     private void buildDockerImages() {
+        instantiateImageBuilders();
+
         logger.info("Building Docker images");
-        stacks.forEach(e -> {
-            logger.info("Building {}", e);
-            DockerImageBuilder builder = new DockerImageBuilder(e.getStackName(), e.getDockerfilePath().get(), context);
+        imageBuilders.forEach((stack, builder) -> {
+            logger.info("Building {}", stack);
             try {
-                builder.buildImage("output/docker/" + e.getStackName() + ".tar.gz");
+                builder.buildImage();
             } catch (Exception ex) {
                 ex.printStackTrace();
-                throw new TransformationFailureException("Transformation Failed", ex);
+                throw new TransformationFailureException(
+                    "Transformation Failed, while building a docker image for " + stack,
+                    ex
+                );
             }
+        });
+
+        storeDockerImages();
+    }
+
+    private void storeDockerImages() {
+        logger.info("Storing Docker images");
+        imageBuilders.forEach((stack, builder) -> {
+            logger.info("Storing {}", stack);
+            try {
+                builder.storeImage();
+                stack.setDockerImageTag(builder.getTag());
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                throw new TransformationFailureException(
+                    "Transformation Failed, while storing a docker image for " + stack,
+                    ex
+                );
+            }
+        });
+    }
+
+    private void instantiateImageBuilders() {
+        logger.debug("Instantiating Docker Image Builders");
+        stacks.forEach(e -> {
+            ImageBuilder builder;
+            if (!pushToRegistry) {
+                builder = new ExportingImageBuilder(
+                    "output/docker/" + e.getStackName() + ".tar.gz",
+                    e.getStackName(),
+                    e.getDockerfilePath().get(),
+                    context
+                );
+            } else {
+                builder = new PushingImageBuilder(
+                    DockerRegistryCredentials.fromContext(context),
+                    e.getStackName(),
+                    e.getDockerfilePath().get(),
+                    context
+                );
+            }
+
+            imageBuilders.put(e, builder);
         });
     }
 
@@ -165,8 +238,8 @@ public class KubernetesLifecycle extends AbstractLifecycle {
      */
     private void createKubernetesResources() {
         logger.info("Creating Kubernetes Resource Descriptions");
-        
-        ResourceFileCreator creator = new ResourceFileCreator(this.stacks);
+
+        ResourceFileCreator creator = new ResourceFileCreator(Pod.getPods(this.stacks));
 
         StringBuilder complete = new StringBuilder();
         try {

@@ -73,6 +73,7 @@ public abstract class BaseTransformTest extends BaseIntegrationTest {
      */
     @Test
     public void performTransformation() throws Exception {
+        checkAssumptions();
         logger.info("Starting Transformation");
         try {
             plugin.transform(context);
@@ -113,6 +114,14 @@ public abstract class BaseTransformTest extends BaseIntegrationTest {
         //Can be implemented by subclasses but is not required!
     }
 
+    /**
+     this method gets called at the beginning of the execute transformation
+     test it can be used to place JUnit assumptions ath this point
+     */
+    protected void checkAssumptions() {
+        // No assumptions by default
+    }
+    
     /**
      This method is intended to build and return the effective model used in this test
      */

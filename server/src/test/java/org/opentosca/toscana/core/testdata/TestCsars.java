@@ -25,6 +25,12 @@ public class TestCsars {
     // yaml csars
     public final static File VALID_EMPTY_TOPOLOGY = new File(YAML_DIR, "valid/empty-topology.csar");
     public final static File VALID_MINIMAL_DOCKER = new File(YAML_DIR, "valid/minimal-docker.csar");
+    public final static File VALID_MINIMAL_DOCKER_TEMPLATE = new File(YAML_DIR, "valid/minimal-docker/minimal-docker.yaml");
+    public final static File VALID_LAMP_NO_INPUT = new File(YAML_DIR, "valid/lamp-noinput.csar");
+    public final static File VALID_LAMP_NO_INPUT_TEMPLATE = new File(YAML_DIR, "valid/lamp-noinput/template.yaml");
+    public final static File VALID_LAMP_INPUT = new File(YAML_DIR, "valid/lamp-input.csar");
+    public final static File VALID_LAMP_INPUT_TEMPLATE = new File(YAML_DIR, "valid/lamp-input/template.yaml");
+    public final static File VALID_INPUTS = new File(YAML_DIR, "valid/inputs.csar");
     public final static File INVALID_DEPENDENCIES_MISSING = new File(YAML_DIR, "invalid/dependencies_missing.csar");
     public final static File INVALID_DOCKERAPP_MISSING = new File(YAML_DIR, "invalid/dockerapp_missing.csar");
     public final static File INVALID_ENTRYPOINT_MISSING = new File(YAML_DIR, "invalid/entrypoint_missing.csar");
@@ -32,7 +38,7 @@ public class TestCsars {
 
     @Autowired
     private CsarDao csarDao;
-    
+
     /**
      Creates given file as csar. Caution: Uses CsarDao internally
 

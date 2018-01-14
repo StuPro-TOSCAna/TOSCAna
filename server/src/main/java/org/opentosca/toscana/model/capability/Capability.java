@@ -3,7 +3,7 @@ package org.opentosca.toscana.model.capability;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.opentosca.toscana.model.DescribableEntity;
+import org.opentosca.toscana.model.AbstractEntity;
 import org.opentosca.toscana.model.datatype.Range;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.visitor.VisitableCapability;
@@ -17,7 +17,7 @@ import lombok.NonNull;
  (TOSCA Simple Profile in YAML Version 1.1, p. 82)
  */
 @Data
-public abstract class Capability extends DescribableEntity implements VisitableCapability {
+public abstract class Capability extends AbstractEntity implements VisitableCapability {
 
     /**
      Set of Node Class Types that are valid sources of any relationship established to this capability.
@@ -32,18 +32,16 @@ public abstract class Capability extends DescribableEntity implements VisitableC
      Defaults to {@link Range#AT_LEAST_ONCE}
      */
     @NonNull
-    private final Range occurence;
+    private Range occurrence;
 
     @Builder
     protected Capability(Set<Class<? extends RootNode>> validSourceTypes,
-                         Range occurence,
-                         String description) {
-        super(description);
+                         Range occurrence) {
         this.validSourceTypes = (validSourceTypes == null) ? new HashSet<>() : validSourceTypes;
-        this.occurence = (occurence != null) ? occurence : Range.AT_LEAST_ONCE;
+        this.occurrence = (occurrence != null) ? occurrence : Range.AT_LEAST_ONCE;
     }
 
-    public static class CapabilityBuilder extends DescribableEntityBuilder {
+    public static class CapabilityBuilder extends AbstractEntityBuilder {
 
         private Set<Class<? extends RootNode>> validSourceTypes = new HashSet<>();
 

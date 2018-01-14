@@ -1,13 +1,7 @@
 package org.opentosca.toscana.plugins.kubernetes.model;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import org.opentosca.toscana.model.artifact.Artifact;
-import org.opentosca.toscana.model.node.DockerApplication;
-import org.opentosca.toscana.model.operation.Operation;
-import org.opentosca.toscana.plugins.kubernetes.util.NodeStack;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.fabric8.kubernetes.api.model.Container;
@@ -18,22 +12,26 @@ import io.fabric8.kubernetes.client.internal.SerializationUtils;
 
 public class ResourceDeployment {
     private final String name;
-    private NodeStack stack;
+    private Pod pod;
     private Deployment deployment;
 
-    public ResourceDeployment(NodeStack stack) {
-        this.stack = stack;
-        this.name = stack.getStackName();
+    public ResourceDeployment(Pod stack) {
+        this.pod = stack;
+        this.name = stack.getName();
     }
 
     public ResourceDeployment build() {
         ArrayList<Container> containers = new ArrayList<>();
 
-        Container container = new ContainerBuilder()
-            .withName(name)
-            .withImage(stack.getStackName())
-            .addAllToPorts(stack.getOpenContainerPorts()).build();
-        containers.add(container);
+        pod.getContainers().forEach(e -> {
+            Container container = new ContainerBuilder()
+                .withImage(e.getDockerImageTag().get())
+                .withName(e.getCleanStackName())
+                .addAllToPorts(e.getOpenPorts().stream().map(Port::toContainerPort).collect(Collectors.toList()))
+                .build();
+            
+            containers.add(container);
+        });
 
         deployment = new DeploymentBuilder()
             .withNewMetadata()

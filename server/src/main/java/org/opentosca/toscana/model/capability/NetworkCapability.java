@@ -26,9 +26,8 @@ public class NetworkCapability extends Capability {
     @Builder
     protected NetworkCapability(String name,
                                 Set<Class<? extends RootNode>> validSourceTypes,
-                                Range occurence,
-                                String description) {
-        super(validSourceTypes, occurence, description);
+                                Range occurrence) {
+        super(validSourceTypes, occurrence);
         this.name = name;
     }
 

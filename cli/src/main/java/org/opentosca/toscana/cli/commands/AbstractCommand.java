@@ -12,6 +12,10 @@ import picocli.CommandLine.Command;
     commandListHeading = "%nCommands:%n")
 public abstract class AbstractCommand extends AbstractApiCall {
 
+    public AbstractCommand() {
+
+    }
+
     protected abstract String performCall(ApiController ap);
 
     @Override

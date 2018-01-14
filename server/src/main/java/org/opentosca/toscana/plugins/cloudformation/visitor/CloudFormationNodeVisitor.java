@@ -7,12 +7,14 @@ import org.opentosca.toscana.model.capability.ComputeCapability;
 import org.opentosca.toscana.model.capability.OsCapability;
 import org.opentosca.toscana.model.node.Apache;
 import org.opentosca.toscana.model.node.Compute;
+import org.opentosca.toscana.model.node.Dbms;
 import org.opentosca.toscana.model.node.MysqlDatabase;
 import org.opentosca.toscana.model.node.MysqlDbms;
 import org.opentosca.toscana.model.node.WebApplication;
 import org.opentosca.toscana.model.node.WebServer;
 import org.opentosca.toscana.model.operation.Operation;
 import org.opentosca.toscana.model.operation.OperationVariable;
+import org.opentosca.toscana.model.requirement.Requirement;
 import org.opentosca.toscana.model.visitor.StrictNodeVisitor;
 import org.opentosca.toscana.model.visitor.UnsupportedTypeException;
 import org.opentosca.toscana.plugins.cloudformation.CloudFormationModule;
@@ -32,8 +34,8 @@ import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.SECURITY_GROUP;
 
 /**
- * Class for building a CloudFormation template from an effective model instance via the visitor pattern. Currently only
- * supports LAMP-stacks built with Compute, WebApplication, Apache, MySQL, MySQL nodes.
+ Class for building a CloudFormation template from an effective model instance via the visitor pattern. Currently only
+ supports LAMP-stacks built with Compute, WebApplication, Apache, MySQL, MySQL nodes.
  */
 public class CloudFormationNodeVisitor implements StrictNodeVisitor {
 
@@ -41,11 +43,11 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
     private CloudFormationModule cfnModule;
 
     /**
-     * Creates a <tt>CloudFormationNodeVisitor<tt> in order to build a template with the given
-     * <tt>CloudFormationModule<tt>.
-     *
-     * @param logger    Logger for logging visitor behaviour
-     * @param cfnModule Module to build the template model
+     Creates a <tt>CloudFormationNodeVisitor<tt> in order to build a template with the given
+     <tt>CloudFormationModule<tt>.
+
+     @param logger    Logger for logging visitor behaviour
+     @param cfnModule Module to build the template model
      */
     public CloudFormationNodeVisitor(Logger logger, CloudFormationModule cfnModule) throws Exception {
         this.logger = logger;
@@ -111,11 +113,16 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
 
             //get the name of the server where the dbms this node is hosted on, is hosted on
             String serverName;
-            if (node.host.getFulfillers().size() == 1) {
-                MysqlDbms mysqlDbms = node.host.getFulfillers().toArray(new MysqlDbms[1])[0];
-                serverName = toAlphanumerical(mysqlDbms.getHost().getCapability().getResourceName().get());
+            if (exactlyOneFulfiller(node.host)) {
+                Dbms dbms = node.host.getFulfillers().iterator().next();
+                if (exactlyOneFulfiller(dbms.getHost())) {
+                    Compute compute = dbms.getHost().getFulfillers().iterator().next();
+                    serverName = toAlphanumerical(compute.getNodeName());
+                } else {
+                    throw new IllegalStateException("Got " + dbms.getHost().getFulfillers().size() + " instead of one fulfiller");
+                }
             } else {
-                throw new IllegalStateException("More than one fulfiller");
+                throw new IllegalStateException("Got " + node.getHost().getFulfillers().size() + " instead of one fulfiller");
             }
             String dbName = node.getDatabaseName();
             //throw error, take default or generate random?
@@ -151,26 +158,29 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
     @Override
     public void visit(MysqlDbms node) {
         logger.debug("Visit MysqlDbms node " + node.getNodeName() + ".");
-        // TODO what to do if there is a configure script
-        // Get the host of this DBMS node
-        // String host = toAlphanumerical(node.getHost().getCapability().getResourceName().get());
+        // TODO handle sql artifact if present
     }
 
     @Override
     public void visit(Apache node) {
         logger.debug("Visit Apache node " + node.getNodeName() + ".");
-        // check if host is available
-        ComputeCapability computeCapability = node.getHost().getCapability();
-        if (computeCapability.getResourceName().isPresent()) {
-            //Hosted on name
-            String host = toAlphanumerical(computeCapability.getResourceName().get());
-
-            cfnModule.getCFNInit(host)
-                .getOrAddConfig(CONFIG_SETS, CONFIG_INSTALL)
-                .putPackage(
-                    //TODO apt only if linux
-                    new CFNPackage("apt")
-                        .addPackage("apache2"));
+        String serverName;
+        if (exactlyOneFulfiller(node.getHost())) {
+            Compute compute = node.getHost().getFulfillers().iterator().next();
+            serverName = toAlphanumerical(compute.getNodeName());
+        } else {
+            throw new IllegalStateException("Got " + node.getHost().getFulfillers().size() + " instead of one fulfiller");
+        }
+        cfnModule.getCFNInit(serverName)
+            .getOrAddConfig(CONFIG_SETS, CONFIG_INSTALL)
+            .putPackage(
+                //TODO apt only if linux
+                new CFNPackage("apt")
+                    .addPackage("apache2"));
+        //instead of lifecycle create we add the package apache2 to the configset
+        if (node.getStandardLifecycle().getConfigure().isPresent()) {
+            Operation configure = node.getStandardLifecycle().getConfigure().get();
+            handleOperation(configure, serverName, CONFIG_CONFIGURE);
         }
     }
 
@@ -180,11 +190,16 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
 
         //get the name of the server where this node is hosted on
         String serverName;
-        if (node.getHost().getFulfillers().size() == 1) {
-            WebServer webServer = node.getHost().getFulfillers().toArray(new WebServer[1])[0];
-            serverName = toAlphanumerical(webServer.getHost().getCapability().getResourceName().get());
+        if (exactlyOneFulfiller(node.getHost())) {
+            WebServer webServer = node.getHost().getFulfillers().iterator().next();
+            if (exactlyOneFulfiller(webServer.getHost())) {
+                Compute compute = webServer.getHost().getFulfillers().iterator().next();
+                serverName = toAlphanumerical(compute.getNodeName());
+            } else {
+                throw new IllegalStateException("Got " + webServer.getHost().getFulfillers().size() + " instead of one fulfiller");
+            }
         } else {
-            throw new IllegalStateException("More than one or no fulfiller");
+            throw new IllegalStateException("Got " + node.getHost().getFulfillers().size() + " instead of one fulfiller");
         }
 
         if (node.getStandardLifecycle().getCreate().isPresent()) {
@@ -202,13 +217,17 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
         return inp.replaceAll("[^A-Za-z0-9]", "");
     }
 
+    private boolean exactlyOneFulfiller(Requirement requirement) {
+        return (requirement.getFulfillers().size() == 1);
+    }
+
     private void handleOperation(Operation operation, String serverName, String config) {
         String cfnFilePath = "/home/ubuntu/"; // TODO Check what path is needed
 
         //Add dependencies
         for (String dependency : operation.getDependencies()) {
             try {
-                String cfnFileMode = "000400"; //TODO Check what mode is needed (only read?)
+                String cfnFileMode = "000644"; //TODO Check what mode is needed (only read?)
                 String cfnFileOwner = "root"; //TODO Check what Owner is needed
                 String cfnFileGroup = "root"; //TODO Check what Group is needed
 
@@ -228,28 +247,28 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             }
         }
 
-        //Add ImplementationArtifact
-        if (operation.getImplementationArtifact().isPresent()) {
-            String implementationArtifact = operation.getImplementationArtifact().get();
+        //Add artifact
+        if (operation.getArtifact().isPresent()) {
+            String artifact = operation.getArtifact().get().getFilePath();
 
             String cfnFileMode = "000500"; //TODO Check what mode is needed (read? + execute?)
             String cfnFileOwner = "root"; //TODO Check what Owner is needed
             String cfnFileGroup = "root"; //TODO Check what Group is needed
 
             try {
-                CFNFile cfnFile = new CFNFile(cfnFilePath + implementationArtifact)
-                    .setContent(cfnModule.getFileAccess().read(implementationArtifact))
+                CFNFile cfnFile = new CFNFile(cfnFilePath + artifact)
+                    .setContent(cfnModule.getFileAccess().read(artifact))
                     .setMode(cfnFileMode)
                     .setOwner(cfnFileOwner)
                     .setGroup(cfnFileGroup);
 
-                CFNCommand cfnCommand = new CFNCommand(implementationArtifact,
-                    cfnFilePath + implementationArtifact) //file is the full path, so need for "./"
-                    .setCwd(cfnFilePath + new File(implementationArtifact).getParent());
+                CFNCommand cfnCommand = new CFNCommand(artifact,
+                    cfnFilePath + artifact) //file is the full path, so need for "./"
+                    .setCwd(cfnFilePath + new File(artifact).getParent());
                 // add inputs to environment, but where to get other needed variables?
                 for (OperationVariable input : operation.getInputs()) {
                     Object value = input.getValue().orElse("");
-                    if ("".equals(value) && input.getKey().contains("host")) {
+                    if (("127.0.0.1".equals(value) || "localhost".equals(value)) && input.getKey().contains("host")) {
                         value = cfnModule.fnGetAtt("mydb", "Endpoint.Address");
                     }
                     cfnCommand.addEnv(input.getKey(), value); //TODO add default
@@ -260,7 +279,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                     .putCommand(cfnCommand)
                     .putCommand(new CFNCommand("restart apache2", "service apache2 restart")); //put commands
             } catch (IOException e) {
-                logger.error("Problem with reading file " + implementationArtifact);
+                logger.error("Problem with reading file " + artifact);
                 e.printStackTrace();
             }
         }

@@ -6,6 +6,7 @@ import org.opentosca.toscana.model.DescribableEntity;
 import org.opentosca.toscana.model.visitor.VisitableRelationship;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 
@@ -18,8 +19,18 @@ public abstract class RootRelationship extends DescribableEntity implements Visi
 
     @Getter(AccessLevel.NONE)
     private String uid = UUID.randomUUID().toString();
-    
+
+    @Builder
     protected RootRelationship(String description) {
         super(description);
+    }
+
+    public static class RootRelationshipBuilder extends DescribableEntityBuilder {
+
+        @Override
+        public RootRelationship build() {
+            // should never happen, is abstract
+            return null;
+        }
     }
 }

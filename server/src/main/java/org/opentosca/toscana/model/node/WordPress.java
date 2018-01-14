@@ -1,10 +1,15 @@
 package org.opentosca.toscana.model.node;
 
 import java.util.Objects;
+import java.util.Set;
 
+import org.opentosca.toscana.model.capability.Capability;
+import org.opentosca.toscana.model.capability.DatabaseEndpointCapability;
 import org.opentosca.toscana.model.capability.EndpointCapability;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
+import org.opentosca.toscana.model.relation.ConnectsTo;
 import org.opentosca.toscana.model.requirement.DatabaseEndpointRequirement;
+import org.opentosca.toscana.model.requirement.Requirement;
 import org.opentosca.toscana.model.requirement.WebServerRequirement;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 
@@ -23,51 +28,47 @@ public class WordPress extends WebApplication {
 
     private final String dbHost;
 
-    private final DatabaseEndpointRequirement databaseEndpoint;
+    private final Requirement<DatabaseEndpointCapability, Database, ConnectsTo> databaseEndpoint;
 
     @Builder
     protected WordPress(String adminUser,
                         String adminPassword,
                         String dbHost,
-                        DatabaseEndpointRequirement databaseEndpoint,
+                        Requirement<DatabaseEndpointCapability, Database, ConnectsTo> databaseEndpoint,
                         String contextRoot,
                         EndpointCapability endpoint,
                         WebServerRequirement host,
                         String nodeName,
                         StandardLifecycle standardLifecycle,
+                        Set<Requirement> requirements,
+                        Set<Capability> capabilities,
                         String description) {
-        super(contextRoot, endpoint, host, nodeName, standardLifecycle, description);
+        super(contextRoot, endpoint, host, nodeName, standardLifecycle, requirements, capabilities, description);
         this.adminUser = Objects.requireNonNull(adminUser);
         this.adminPassword = Objects.requireNonNull(adminPassword);
         this.dbHost = Objects.requireNonNull(dbHost);
-        this.databaseEndpoint = databaseEndpoint;
+        this.databaseEndpoint = DatabaseEndpointRequirement.getFallback(databaseEndpoint);
 
-        requirements.add(this.databaseEndpoint);
+        this.requirements.add(this.databaseEndpoint);
     }
 
     /**
-     @param nodeName         {@link #nodeName}
-     @param adminUser        {@link #adminUser}
-     @param adminPassword    {@link #adminPassword}
-     @param dbHost           {@link #dbHost}
-     @param databaseEndpoint {@link #databaseEndpoint}
-     @param endpoint         {@link WebApplication#appEndpoint}
-     @param host             {@link #host}
+     @param nodeName      {@link #nodeName}
+     @param adminUser     {@link #adminUser}
+     @param adminPassword {@link #adminPassword}
+     @param dbHost        {@link #dbHost}
+     @param endpoint      {@link WebApplication#appEndpoint}
      */
     public static WordPressBuilder builder(String nodeName,
                                            String adminUser,
                                            String adminPassword,
                                            String dbHost,
-                                           DatabaseEndpointRequirement databaseEndpoint,
-                                           EndpointCapability endpoint,
-                                           WebServerRequirement host) {
+                                           EndpointCapability endpoint) {
         return (WordPressBuilder) new WordPressBuilder()
             .nodeName(nodeName)
-            .host(host)
             .adminUser(adminUser)
             .adminPassword(adminPassword)
             .dbHost(dbHost)
-            .databaseEndpoint(databaseEndpoint)
             .endpoint(endpoint);
     }
 
@@ -81,5 +82,7 @@ public class WordPress extends WebApplication {
     }
 
     public static class WordPressBuilder extends WebApplicationBuilder {
+        protected Set<Requirement> requirements = super.requirements;
+        protected Set<Capability> capabilities = super.capabilities;
     }
 }

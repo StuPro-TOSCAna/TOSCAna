@@ -1,4 +1,0 @@
-key1="VALUE"
-key2="VALUE2"
-key3="VALUE3"
-key4="VALUE4"

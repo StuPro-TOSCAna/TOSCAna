@@ -14,6 +14,7 @@ public class TransformationStop extends AbstractTransformation {
      stops the specified currently running Transformation
      */
     public TransformationStop() {
+
     }
 
     @Override

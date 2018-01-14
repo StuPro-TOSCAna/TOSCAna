@@ -2,10 +2,15 @@ package org.opentosca.toscana.model.node;
 
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
+import org.opentosca.toscana.model.capability.Capability;
+import org.opentosca.toscana.model.capability.ContainerCapability;
 import org.opentosca.toscana.model.capability.DatabaseEndpointCapability;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
+import org.opentosca.toscana.model.relation.HostedOn;
 import org.opentosca.toscana.model.requirement.DbmsRequirement;
+import org.opentosca.toscana.model.requirement.Requirement;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 
 import lombok.Builder;
@@ -18,7 +23,7 @@ import lombok.Data;
 @Data
 public class Database extends RootNode {
 
-    public final DbmsRequirement host;
+    public final Requirement<ContainerCapability, Dbms, HostedOn> host;
 
     /**
      The logical database databaseName.
@@ -37,7 +42,6 @@ public class Database extends RootNode {
      (TOSCA Simple Profile in YAML Version 1.1, p. 173)
      */
     private final String user;
-
     /**
      The optional password associated with the user account provided in the {@link #user} field.
      (TOSCA Simple Profile in YAML Version 1.1, p. 173)
@@ -51,21 +55,23 @@ public class Database extends RootNode {
                      Integer port,
                      String user,
                      String password,
-                     DbmsRequirement host,
+                     Requirement<ContainerCapability, Dbms, HostedOn> host,
                      DatabaseEndpointCapability databaseEndpoint,
                      String nodeName,
                      StandardLifecycle standardLifecycle,
+                     Set<Requirement> requirements,
+                     Set<Capability> capabilities,
                      String description) {
-        super(nodeName, standardLifecycle, description);
+        super(nodeName, standardLifecycle, requirements, capabilities, description);
         this.databaseName = Objects.requireNonNull(databaseName);
         this.port = port;
         this.user = user;
         this.password = password;
-        this.host = Objects.requireNonNull(host);
+        this.host = DbmsRequirement.getFallback(host);
         this.databaseEndpoint = Objects.requireNonNull(databaseEndpoint);
 
-        capabilities.add(databaseEndpoint);
-        requirements.add(host);
+        capabilities.add(this.databaseEndpoint);
+        requirements.add(this.host);
     }
 
     // only use when subclassing this and hiding host field
@@ -76,33 +82,29 @@ public class Database extends RootNode {
                        DatabaseEndpointCapability databaseEndpoint,
                        String nodeName,
                        StandardLifecycle standardLifecycle,
+                       Set<Requirement> requirements,
+                       Set<Capability> capabilities,
                        String description) {
-        super(nodeName, standardLifecycle, description);
+        super(nodeName, standardLifecycle, requirements, capabilities, description);
         this.databaseName = Objects.requireNonNull(databaseName);
         this.port = port;
         this.user = user;
         this.password = password;
         this.host = null;
-        this.databaseEndpoint = Objects.requireNonNull(databaseEndpoint);
+        this.databaseEndpoint = DatabaseEndpointCapability.getFallback(databaseEndpoint);
 
-        capabilities.add(this.databaseEndpoint);
+        this.capabilities.add(this.databaseEndpoint);
     }
 
     /**
-     @param nodeName         {@link #nodeName}
-     @param databaseName     {@link #databaseName}
-     @param host             {@link #host}
-     @param databaseEndpoint {@link #databaseEndpoint}
+     @param nodeName     {@link #nodeName}
+     @param databaseName {@link #databaseName}
      */
     public static DatabaseBuilder builder(String nodeName,
-                                          String databaseName,
-                                          DbmsRequirement host,
-                                          DatabaseEndpointCapability databaseEndpoint) {
+                                          String databaseName) {
         return new DatabaseBuilder()
             .nodeName(nodeName)
-            .databaseName(databaseName)
-            .host(host)
-            .databaseEndpoint(databaseEndpoint);
+            .databaseName(databaseName);
     }
 
     /**
@@ -132,5 +134,7 @@ public class Database extends RootNode {
     }
 
     public static class DatabaseBuilder extends RootNodeBuilder {
+        protected Set<Requirement> requirements = super.requirements;
+        protected Set<Capability> capabilities = super.capabilities;
     }
 }

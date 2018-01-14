@@ -6,9 +6,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import org.opentosca.toscana.core.transformation.TransformationContext;
+import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.plugins.kubernetes.docker.mapper.BaseImageMapper;
+import org.opentosca.toscana.plugins.kubernetes.model.Port;
 import org.opentosca.toscana.plugins.kubernetes.visitor.imgtransform.DockerfileBuildingVisitor;
 import org.opentosca.toscana.plugins.kubernetes.visitor.imgtransform.ImageMappingVisitor;
 
@@ -22,6 +25,7 @@ public class NodeStack {
     private final List<KubernetesNodeContainer> stackNodes;
 
     private String dockerfilePath = null;
+    private String dockerImageTag = null;
 
     private List<Integer> openPorts = new ArrayList<>();
 
@@ -75,12 +79,33 @@ public class NodeStack {
         return Collections.unmodifiableList(ports);
     }
 
+    public List<Port> getOpenPorts() {
+        return openPorts.stream().map(e -> new Port(e, this.getCleanStackName())).collect(Collectors.toList());
+    }
+
     public Optional<String> getDockerfilePath() {
         return Optional.ofNullable(dockerfilePath);
     }
 
+    public void setDockerImageTag(String dockerImageTag) {
+        this.dockerImageTag = dockerImageTag;
+    }
+
+    public Optional<String> getDockerImageTag() {
+        return Optional.ofNullable(dockerImageTag);
+    }
+
     public String getStackName() {
         return stackNodes.get(0).getNode().getNodeName();
+    }
+
+    public String getCleanStackName() {
+        return getStackName().replaceAll("_", "-");
+    }
+
+    public Compute getComputeNode() {
+        return (Compute) this.stackNodes.stream().filter(e -> e.getNode() instanceof Compute)
+            .findFirst().orElseThrow(IllegalArgumentException::new).getNode();
     }
 
     @Override

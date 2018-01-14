@@ -2,9 +2,12 @@ package org.opentosca.toscana.model.node;
 
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 import org.opentosca.toscana.model.capability.AttachmentCapability;
+import org.opentosca.toscana.model.capability.Capability;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
+import org.opentosca.toscana.model.requirement.Requirement;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 
 import lombok.Builder;
@@ -66,8 +69,10 @@ public class BlockStorage extends RootNode {
                          AttachmentCapability attachment,
                          String nodeName,
                          StandardLifecycle standardLifecycle,
+                         Set<Requirement> requirements,
+                         Set<Capability> capabilities,
                          String description) {
-        super(nodeName, standardLifecycle, description);
+        super(nodeName, standardLifecycle, requirements, capabilities, description);
         if (sizeInMB != null && sizeInMB < 1) {
             throw new IllegalArgumentException(format("Constraint violation: sizeInMB >= 1; but was '%d'", sizeInMB));
         }
@@ -76,7 +81,7 @@ public class BlockStorage extends RootNode {
         this.snapshotId = snapshotId;
         this.attachment = Objects.requireNonNull(attachment);
 
-        capabilities.add(this.attachment);
+        this.capabilities.add(this.attachment);
     }
 
     /**
@@ -134,5 +139,7 @@ public class BlockStorage extends RootNode {
     }
 
     public static class BlockStorageBuilder extends RootNodeBuilder {
+        protected Set<Requirement> requirements = super.requirements;
+        protected Set<Capability> capabilities = super.capabilities;
     }
 }

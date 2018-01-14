@@ -1,22 +1,26 @@
 package org.opentosca.toscana.cli.commands;
 
 import org.opentosca.toscana.cli.ApiController;
-import org.opentosca.toscana.cli.CliProperties;
 import org.opentosca.toscana.retrofit.util.LoggingMode;
 
-import picocli.CommandLine.Option;
+import picocli.CommandLine;
 
 public abstract class AbstractApiCall implements Runnable {
 
     protected ApiController api;
-    @Option(names = {"-v", "--verbose"}, description = "Enable Info Level Process Output")
+
+    @CommandLine.Option(names = {"-v", "--verbose"}, description = "Enable Info Level Process Output")
     private boolean showVerbose;
-    @Option(names = {"-m", "--moreverbose"}, description = "Enable Debug Level Process Output")
+    @CommandLine.Option(names = {"-m", "--moreverbose"}, description = "Enable Debug Level Process Output")
     private boolean showMVerbose;
 
-    protected AbstractApiCall() {
-        CliProperties prop = new CliProperties();
-        api = new ApiController(prop.getApiUrl(), getLoggingMode(showVerbose, showMVerbose));
+    public AbstractApiCall() {
+
+    }
+
+    public void createApi(ApiController apiController) {
+        api = apiController;
+        api.setLoggingMode(getLoggingMode(showVerbose, showMVerbose));
     }
 
     /**

@@ -2,9 +2,12 @@ package org.opentosca.toscana.model.node;
 
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
+import org.opentosca.toscana.model.capability.Capability;
 import org.opentosca.toscana.model.capability.EndpointCapability;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
+import org.opentosca.toscana.model.requirement.Requirement;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 
 import lombok.Builder;
@@ -45,8 +48,10 @@ public class ObjectStorage extends RootNode {
                           EndpointCapability storageEndpoint,
                           String nodeName,
                           StandardLifecycle standardLifecycle,
+                          Set<Requirement> requirements,
+                          Set<Capability> capabilities,
                           String description) {
-        super(nodeName, standardLifecycle, description);
+        super(nodeName, standardLifecycle, requirements, capabilities, description);
         if ((sizeInGB != null && sizeInGB < 0) || (sizeInGB != null && maxSizeInGB < 0)) {
             throw new IllegalArgumentException("Size for ObjectStorage must not be < 0");
         }
@@ -55,7 +60,7 @@ public class ObjectStorage extends RootNode {
         this.maxSizeInGB = maxSizeInGB;
         this.storageEndpoint = Objects.requireNonNull(storageEndpoint);
 
-        capabilities.add(this.storageEndpoint);
+        this.capabilities.add(this.storageEndpoint);
     }
 
     /**
@@ -92,5 +97,7 @@ public class ObjectStorage extends RootNode {
     }
 
     public static class ObjectStorageBuilder extends RootNodeBuilder {
+        protected Set<Requirement> requirements = super.requirements;
+        protected Set<Capability> capabilities = super.capabilities;
     }
 }

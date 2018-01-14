@@ -1,6 +1,8 @@
 package org.opentosca.toscana.model.requirement;
 
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 import org.opentosca.toscana.model.capability.Capability;
@@ -10,9 +12,8 @@ import org.opentosca.toscana.model.relation.RootRelationship;
 
 import lombok.Builder;
 import lombok.Data;
-import lombok.Singular;
 
-// note: breaking Sun's naming convention recommendation in favour of new Google Style (append T)
+// note: breaking Sun's naming convention recommendation for Generic Type Names in favour of new Google Style (append T)
 
 /**
  A dependency of a Node which needs to be fulfilled by a matching {@link Capability}.
@@ -27,23 +28,22 @@ import lombok.Singular;
 public class Requirement<CapabilityT extends Capability, NodeT extends RootNode, RelationshipT extends RootRelationship> {
 
     /**
-     Capability that can fulfill this requirement.
+     The Relationship to construct when fulfilling the requirement.
      (TOSCA Simple Profile in YAML Version 1.1, p. 85)
      */
-    protected final CapabilityT capability;
-
+    protected final RelationshipT relationship;
     /**
      The optional minimum and maximum occurrences for the requirement.
      (TOSCA Simple Profile in YAML Version 1.1, p. 85)
      <p>
      Note: Defaults to {@link Range#EXACTLY_ONCE}
      */
-    protected final Range occurrence;
+    protected Range occurrence;
     /**
-     The Relationship to construct when fulfilling the requirement.
+     The optional Capability that can fulfill this requirement.
      (TOSCA Simple Profile in YAML Version 1.1, p. 85)
      */
-    protected final RelationshipT relationship;
+    protected CapabilityT capability;
     /**
      The optional Nodes that have the required capability and shall be used to fulfill this requirement.
      (TOSCA Simple Profile in YAML Version 1.1, p. 85)
@@ -53,23 +53,45 @@ public class Requirement<CapabilityT extends Capability, NodeT extends RootNode,
     @Builder
     protected Requirement(CapabilityT capability,
                           Range occurrence,
-                          @Singular Set<NodeT> fulfillers,
+                          Set<NodeT> fulfillers,
                           RelationshipT relationship) {
-        this.capability = Objects.requireNonNull(capability);
+        this.capability = capability;
         this.occurrence = (occurrence == null) ? Range.EXACTLY_ONCE : occurrence;
         this.fulfillers = Objects.requireNonNull(fulfillers);
         this.relationship = Objects.requireNonNull(relationship);
     }
 
     /**
-     @param capability {@link #capability}
+     @param relationship {@link #relationship}
      */
     public static <CapabilityT extends Capability, NodeT extends RootNode, RelationshipT extends RootRelationship>
-    RequirementBuilder<CapabilityT, NodeT, RelationshipT> builder(CapabilityT capability, RelationshipT relationship) {
+    RequirementBuilder<CapabilityT, NodeT, RelationshipT> builder(RelationshipT relationship) {
         return new RequirementBuilder<CapabilityT, NodeT, RelationshipT>()
-            .capability(capability)
             .relationship(relationship);
     }
 
+    /**
+     @return {@link #capability}
+     */
+    public Optional<CapabilityT> getCapability() {
+        return Optional.ofNullable(capability);
+    }
+
+    public static class RequirementBuilder<CapabilityT extends Capability, NodeT extends RootNode, RelationshipT extends RootRelationship> {
+        private HashSet<NodeT> fulfillers = new HashSet<>();
+
+        public RequirementBuilder<CapabilityT, NodeT, RelationshipT> fulfiller(NodeT fulfiller) {
+            if (this.fulfillers == null) this.fulfillers = new HashSet<NodeT>();
+            this.fulfillers.add(fulfiller);
+            return this;
+        }
+
+        public RequirementBuilder<CapabilityT, NodeT, RelationshipT> clearFulfillers() {
+            if (this.fulfillers != null) {
+                this.fulfillers.clear();
+            }
+            return this;
+        }
+    }
     // TODO add some kind of isFulfilled():boolean method.
 }

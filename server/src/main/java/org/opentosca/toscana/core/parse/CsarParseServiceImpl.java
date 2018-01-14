@@ -31,7 +31,7 @@ public class CsarParseServiceImpl implements CsarParseService {
         try {
             return parse(entryPoint);
         } catch (Exception e) {
-            logger.warn("An error occured while parsing csar '{}'", csar, e);
+            logger.warn("An error occurred while parsing CSAR '{}'", csar, e);
             throw new InvalidCsarException(csar.getLog());
         }
     }
@@ -44,6 +44,7 @@ public class CsarParseServiceImpl implements CsarParseService {
         Path file = Paths.get(template.getName());
         serviceTemplate = reader.parse(parent, file);
         ModelConverter converter = new ModelConverter(logger);
+
         return converter.convert(serviceTemplate);
     }
 
@@ -60,7 +61,7 @@ public class CsarParseServiceImpl implements CsarParseService {
         File[] entryPoints = content.listFiles((file, s) -> s.matches(".*\\.ya?ml$"));
         if (entryPoints.length == 1) {
             File entryPoint = entryPoints[0].getAbsoluteFile();
-            logger.warn("detected entry point of csar '{}' is '{}'", csar.getIdentifier(), entryPoint.getAbsolutePath());
+            logger.info("detected entry point of csar '{}' is '{}'", csar.getIdentifier(), entryPoint.getName());
             return entryPoint;
         } else if (entryPoints.length > 1) {
             logger.warn("parsing failed: more than one top level yaml file encountered in given csar");

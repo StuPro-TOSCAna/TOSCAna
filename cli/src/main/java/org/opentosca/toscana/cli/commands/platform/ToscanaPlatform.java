@@ -8,7 +8,6 @@ import picocli.CommandLine.Command;
 import static picocli.CommandLine.usage;
 
 @Command(name = "platform",
-    description = {"Platform Overview"},
     customSynopsis = "@|bold toscana platform|@ [@|yellow <subcommand>|@] [@|yellow -mv|@]%n",
     commandListHeading = "%nAvailable Subcommands are:%n",
     subcommands = {PlatformInfo.class,

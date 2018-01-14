@@ -24,7 +24,7 @@ import static org.mockito.Mockito.when;
 
 public class CloudFormationPluginTest extends BaseUnitTest {
     private final static Logger logger = LoggerFactory.getLogger(CloudFormationPluginTest.class);
-    private final static EffectiveModel lamp = new TestEffectiveModels().getLampAWSModel();
+    private final static EffectiveModel lamp = TestEffectiveModels.getLampModel();
     private static CloudFormationNodeVisitor cfnNodeVisitor;
     private static CloudFormationModule cfnModule;
     private static PluginFileAccess fileAccess;
@@ -34,7 +34,7 @@ public class CloudFormationPluginTest extends BaseUnitTest {
     @Before
     public void setUp() throws Exception {
         when(log.getLogger(any(Class.class))).thenReturn(LoggerFactory.getLogger("Test logger"));
-        fileAccess = new PluginFileAccess(new File("src/test/resources/csars/yaml/valid/lamp-input-aws/"), tmpdir, log);
+        fileAccess = new PluginFileAccess(new File("src/test/resources/csars/yaml/valid/lamp-input/"), tmpdir, log);
         cfnModule = new CloudFormationModule(fileAccess);
         cfnNodeVisitor = new CloudFormationNodeVisitor(logger, cfnModule);
     }

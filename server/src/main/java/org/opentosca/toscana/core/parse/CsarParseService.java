@@ -25,7 +25,6 @@ public interface CsarParseService {
 
      @param template the TOSCA service template yaml file
      @return the corresponding effective model
-     @throws Exception
      */
     EffectiveModel parse(File template) throws Exception;
 }

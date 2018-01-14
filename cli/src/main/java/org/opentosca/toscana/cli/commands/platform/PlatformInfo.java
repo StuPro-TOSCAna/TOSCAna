@@ -20,6 +20,7 @@ public class PlatformInfo extends AbstractCommand {
      show's information about the wanted platform
      */
     public PlatformInfo() {
+
     }
 
     @Override

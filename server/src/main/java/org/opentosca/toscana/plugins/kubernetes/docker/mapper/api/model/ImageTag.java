@@ -1,6 +1,5 @@
 package org.opentosca.toscana.plugins.kubernetes.docker.mapper.api.model;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +26,7 @@ public class ImageTag {
     private List<Image> images = null;
 
     /**
-     This field and its corresponding getter/setter is needed to parse the data, it contains all the fields that 
+     This field and its corresponding getter/setter is needed to parse the data, it contains all the fields that
      have not been asigned to any field explicitly, because it is not needed.
      */
     @JsonIgnore
@@ -42,7 +41,7 @@ public class ImageTag {
     public void setAdditionalProperty(String name, Object value) {
         this.additionalProperties.put(name, value);
     }
-    
+
     @JsonProperty("name")
     public String getName() {
         return name;

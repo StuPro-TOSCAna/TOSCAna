@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.opentosca.toscana.core.transformation.TransformationContext;
+import org.opentosca.toscana.model.artifact.Artifact;
 import org.opentosca.toscana.model.node.Apache;
 import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.MysqlDatabase;
@@ -27,6 +28,8 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
     private final Logger logger;
     private final DockerfileBuilder builder;
     private final NodeStack stack;
+
+    private boolean sudoInstalled = false;
 
     private List<Integer> ports = new ArrayList<>();
 
@@ -53,7 +56,8 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
         ports.add(443);
         //TODO only do this if a Mysql node connects to (is in a connection relationship with this node)
         builder.run("docker-php-ext-install mysqli");
-        handleDefault(node);
+        //TODO Add Dependency Detection for apache
+        //handleDefault(node);
     }
 
     @Override
@@ -81,20 +85,22 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
             lifecycles.forEach(e -> {
                 if (e.isPresent()) {
                     Operation operation = e.get();
-                    operation.getDependencies().forEach(dep -> {
-                        if (dep.endsWith(".sql")) {
-                            String filename = determineFilename(dep);
+                    Optional<Artifact> artifact = operation.getArtifact();
+                    if (artifact.isPresent()) {
+                        String path = artifact.get().getFilePath();
+                        if (path.endsWith(".sql")) {
+                            String filename = determineFilename(path);
                             try {
-                                builder.copyFromCsar(dep, "", filename);
+                                builder.copyFromCsar(path, "", filename);
                             } catch (IOException ex) {
                                 logger.error("Copying dependencies of node {} has failed!", node.getNodeName(), ex);
                                 throw new TransformationFailureException("Copying dependencies failed", ex);
                             }
                         }
-                    });
+                    }
                 }
             });
-            
+
             builder.workdir("/toscana-root");
         }
     }
@@ -126,12 +132,23 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
                 String filename = determineFilename(e);
                 builder.copyFromCsar(e, nodeName, filename);
             }
-            if (operation.getImplementationArtifact().isPresent()) {
-                String path = operation.getImplementationArtifact().get();
+            if (operation.getArtifact().isPresent()) {
+                String path = operation.getArtifact().get().getFilePath();
+                if (!sudoInstalled && needsSudo(path)) {
+                    //Install sudo, currently only works with Debian based systems
+                    builder.run("apt-get update && apt-get install -y sudo; true");
+                    sudoInstalled = true;
+                }
+                if (path.endsWith(".sql")) return;
                 builder.copyFromCsar(path, nodeName, nodeName + "-" + opName);
                 builder.run("sh " + nodeName + "-" + opName);
             }
         }
+    }
+
+    private boolean needsSudo(String path) {
+        //TODO implement sudo detection mechanism
+        return true;
     }
 
     public List<Integer> getPorts() {
