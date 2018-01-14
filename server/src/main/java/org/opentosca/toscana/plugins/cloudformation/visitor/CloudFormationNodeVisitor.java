@@ -1,7 +1,8 @@
 package org.opentosca.toscana.plugins.cloudformation.visitor;
 
 import java.io.File;
-import java.io.IOException;
+import java.util.UUID;
+//import java.io.IOException;
 
 import org.opentosca.toscana.model.capability.ComputeCapability;
 import org.opentosca.toscana.model.capability.OsCapability;
@@ -19,6 +20,20 @@ import org.opentosca.toscana.model.visitor.StrictNodeVisitor;
 import org.opentosca.toscana.model.visitor.UnsupportedTypeException;
 import org.opentosca.toscana.plugins.cloudformation.CloudFormationModule;
 
+import com.amazonaws.AmazonClientException;
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.auth.policy.Policy;
+import com.amazonaws.auth.policy.Principal;
+import com.amazonaws.auth.policy.Statement;
+import com.amazonaws.auth.policy.actions.S3Actions;
+import com.amazonaws.auth.policy.resources.S3ObjectResource;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.scaleset.cfbuilder.ec2.Instance;
 import com.scaleset.cfbuilder.ec2.SecurityGroup;
 import com.scaleset.cfbuilder.ec2.metadata.CFNCommand;
@@ -34,24 +49,34 @@ import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.SECURITY_GROUP;
 
 /**
- Class for building a CloudFormation template from an effective model instance via the visitor pattern. Currently only
- supports LAMP-stacks built with Compute, WebApplication, Apache, MySQL, MySQL nodes.
+ * Class for building a CloudFormation template from an effective model instance via the visitor pattern. Currently only
+ * supports LAMP-stacks built with Compute, WebApplication, Apache, MySQL, MySQL nodes.
  */
 public class CloudFormationNodeVisitor implements StrictNodeVisitor {
 
     private final Logger logger;
     private CloudFormationModule cfnModule;
+    private AmazonS3 s3;
+    private String bucketName;
 
     /**
-     Creates a <tt>CloudFormationNodeVisitor<tt> in order to build a template with the given
-     <tt>CloudFormationModule<tt>.
-
-     @param logger    Logger for logging visitor behaviour
-     @param cfnModule Module to build the template model
+     * Creates a <tt>CloudFormationNodeVisitor<tt> in order to build a template with the given
+     * <tt>CloudFormationModule<tt>.
+     *
+     * @param logger    Logger for logging visitor behaviour
+     * @param cfnModule Module to build the template model
      */
-    public CloudFormationNodeVisitor(Logger logger, CloudFormationModule cfnModule) throws Exception {
+    public CloudFormationNodeVisitor(Logger logger, CloudFormationModule cfnModule, String accessKey, String secretKey) throws Exception {
         this.logger = logger;
         this.cfnModule = cfnModule;
+        // TODO Possibly get Region from user
+        // TODO Either extract bucket-creation from visitor or get accesKey/SecretKey some other way
+        BasicAWSCredentials awsCreds = new BasicAWSCredentials(accessKey, secretKey);
+        this.s3 = AmazonS3ClientBuilder.standard()
+            .withCredentials(new AWSStaticCredentialsProvider(awsCreds))
+            .withRegion(Regions.US_WEST_2)
+            .build();
+        this.bucketName = createBucket(s3);
     }
 
     @Override
@@ -231,8 +256,16 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                 String cfnFileOwner = "root"; //TODO Check what Owner is needed
                 String cfnFileGroup = "root"; //TODO Check what Group is needed
 
+                // TODO: re-allow content-dumping instead of source
+//                CFNFile cfnFile = new CFNFile(cfnFilePath + dependency)
+//                    .setContent(cfnModule.getFileAccess().read(dependency))
+//                    .setMode(cfnFileMode)
+//                    .setOwner(cfnFileOwner)
+//                    .setGroup(cfnFileGroup);
+
+                String cfnSource = uploadFileAndGetURL(s3, bucketName, new File(dependency));
                 CFNFile cfnFile = new CFNFile(cfnFilePath + dependency)
-                    .setContent(cfnModule.getFileAccess().read(dependency))
+                    .setSource(cfnSource)
                     .setMode(cfnFileMode)
                     .setOwner(cfnFileOwner)
                     .setGroup(cfnFileGroup);
@@ -241,7 +274,8 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                 cfnModule.getCFNInit(serverName)
                     .getOrAddConfig(CONFIG_SETS, config)
                     .putFile(cfnFile);
-            } catch (IOException e) {
+//            } catch (IOException e) {
+            } catch (Exception e) {
                 logger.error("Problem with reading file " + dependency);
                 e.printStackTrace();
             }
@@ -256,8 +290,16 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             String cfnFileGroup = "root"; //TODO Check what Group is needed
 
             try {
+                // TODO: re-allow content-dumping instead of source
+//                CFNFile cfnFile = new CFNFile(cfnFilePath + artifact)
+//                    .setContent(cfnModule.getFileAccess().read(artifact))
+//                    .setMode(cfnFileMode)
+//                    .setOwner(cfnFileOwner)
+//                    .setGroup(cfnFileGroup);
+
+                String cfnSource = uploadFileAndGetURL(s3, bucketName, new File(artifact));
                 CFNFile cfnFile = new CFNFile(cfnFilePath + artifact)
-                    .setContent(cfnModule.getFileAccess().read(artifact))
+                    .setSource(cfnSource)
                     .setMode(cfnFileMode)
                     .setOwner(cfnFileOwner)
                     .setGroup(cfnFileGroup);
@@ -278,10 +320,117 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                     .putFile(cfnFile)
                     .putCommand(cfnCommand)
                     .putCommand(new CFNCommand("restart apache2", "service apache2 restart")); //put commands
-            } catch (IOException e) {
+//            } catch (IOException e) {
+            } catch (Exception e) {
                 logger.error("Problem with reading file " + artifact);
                 e.printStackTrace();
             }
         }
+    }
+
+    /**
+     * Creates a new bucket with a random name on the given AmazonS3, sets its policy
+     * and returns the name of said bucket.
+     *
+     * @param s3 where the bucket should be created
+     * @return name of the created bucket
+     */
+    private String createBucket(AmazonS3 s3) {
+        try {
+            String bucketName = "cf-bucket-" + UUID.randomUUID();
+            logger.debug("Creating bucket " + bucketName + ".");
+            s3.createBucket(bucketName);
+
+            // TODO check if files need to be public for CloudFormation to access them
+            // Allows anyone to access files in the bucket
+            s3.setBucketPolicy(bucketName, getPublicReadPolicy().toJson());
+            // TODO: Possibly stop transformation when Exceptions occur
+            // Then Handle these Exception in the transform() function in the CloudFormationLifeCycle
+            // The same goes for those in the fileUploadAndGetUrl function.
+        } catch (AmazonServiceException ase) {
+            logger.error("Caught an AmazonServiceException while trying to create the bucket.");
+            logASEError(ase);
+        } catch (AmazonClientException ace) {
+            logger.error("Caught an AmazonClientException while trying to create the bucket.");
+            logACEError(ace);
+        } catch (IllegalArgumentException iae) {
+            logger.error("Caught an IllegalArgumentException while trying to create the bucket.");
+            logIAEError(iae);
+        }
+        return bucketName;
+    }
+
+    /**
+     * Logs the details of an AmazonServiceException as an error.
+     *
+     * @param ase the AmazonServiceException to be reported on
+     */
+    private void logASEError(AmazonServiceException ase) {
+        logger.error("This means the request made it to Amazon S3, but was rejected with an error response.");
+        logger.error("Error Message:    " + ase.getMessage());
+        logger.error("HTTP Status Code: " + ase.getStatusCode());
+        logger.error("AWS Error Code:   " + ase.getErrorCode());
+        logger.error("Error Type:       " + ase.getErrorType());
+        logger.error("Request ID:       " + ase.getRequestId());
+    }
+
+    /**
+     * Logs the details of an AmazonClientException as an error.
+     *
+     * @param ace the AmazonClientException to be reported on
+     */
+    private void logACEError(AmazonClientException ace) {
+        logger.error("This means the client encountered an internal problem while trying to communicate with S3.");
+        logger.error("Error Message: " + ace.getMessage());
+    }
+
+    private void logIAEError(IllegalArgumentException iae) {
+        logger.error("This means that the bucketName is invalid" +
+            " most likely due to a failure during the bucket creation.");
+        iae.printStackTrace();
+    }
+
+    /**
+     * Uploads a file to a bucket on AmazonS3 and returns its URL.
+     * If the upload fails, an empty URL is returned instead.
+     *
+     * @return the URL of the file
+     */
+    private String uploadFileAndGetURL(AmazonS3 s3, String bucketName, File file) {
+        String fileURL = "";
+        String key = file.getName();
+        try {
+            String fileName = "";
+            logger.debug("Uploading file " + fileName + "to S3.");
+            s3.putObject(new PutObjectRequest(bucketName, key, file));
+            //TODO: Find non-deprecated method for retrieving the URL
+            fileURL = new AmazonS3Client().getResourceUrl(bucketName, key);
+        } catch (AmazonServiceException ase) {
+            logger.error("Caught an AmazonServiceException while trying to upload a file.");
+            logASEError(ase);
+            logger.error("Returning an empty fileURL.");
+        } catch (AmazonClientException ace) {
+            logger.error("Caught an AmazonClientException while trying to upload a file.");
+            logACEError(ace);
+            logger.error("Returning an empty fileURL.");
+        } catch (IllegalArgumentException iae) {
+            logger.error("Caught an IllegalArgumentException while trying to upload a file.");
+            logIAEError(iae);
+            logger.error("Returning an empty fileURL.");
+        }
+        return fileURL;
+    }
+
+    /**
+     * Returns a policy that allows anyone access to read all the objects in a bucket.
+     *
+     * @return the public read policy
+     */
+    private Policy getPublicReadPolicy() {
+        Statement allowPublicReadStatement = new Statement(Statement.Effect.Allow)
+            .withPrincipals(Principal.AllUsers)
+            .withActions(S3Actions.GetObject)
+            .withResources(new S3ObjectResource(bucketName, "*"));
+        return new Policy().withStatements(allowPublicReadStatement);
     }
 }

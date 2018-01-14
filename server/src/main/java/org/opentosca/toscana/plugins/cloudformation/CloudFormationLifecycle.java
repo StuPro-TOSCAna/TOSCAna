@@ -1,6 +1,7 @@
 package org.opentosca.toscana.plugins.cloudformation;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Set;
 
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
@@ -37,9 +38,14 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
         PluginFileAccess fileAccess = context.getPluginFileAccess();
         CloudFormationModule cfnModule = new CloudFormationModule(fileAccess);
         Set<RootNode> nodes = model.getNodes();
-
+                
+        //TODO move to prepare?
+        Map<String, String> properties = context.getProperties().getPropertyValues();
+        String accessKey = properties.get("access-key");
+        String secretKey = properties.get("secret-key");
+        
         try {
-            CloudFormationNodeVisitor cfnNodeVisitor = new CloudFormationNodeVisitor(logger, cfnModule);
+            CloudFormationNodeVisitor cfnNodeVisitor = new CloudFormationNodeVisitor(logger, cfnModule, accessKey, secretKey);
             for (VisitableNode node : nodes) {
                 if (node instanceof Compute) {
                     node.accept(cfnNodeVisitor);
