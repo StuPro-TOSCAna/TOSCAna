@@ -5,7 +5,7 @@ include_once "mysql-credentials.php";
 // get task from post after task was entered in form
 $post = $_POST['task'];
 if ($post != "") {
-    checkOrCreateTable()
+    checkOrCreateTable();
     saveToDb($post);
 }
 

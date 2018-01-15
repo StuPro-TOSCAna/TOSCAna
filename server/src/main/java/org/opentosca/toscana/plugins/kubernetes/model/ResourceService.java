@@ -1,5 +1,7 @@
 package org.opentosca.toscana.plugins.kubernetes.model;
 
+import java.util.stream.Collectors;
+
 import org.opentosca.toscana.plugins.kubernetes.util.NodeStack;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -9,12 +11,12 @@ import io.fabric8.kubernetes.client.internal.SerializationUtils;
 
 public class ResourceService {
     private final String name;
-    private NodeStack stack;
+    private Pod pod;
     private Service service;
 
-    public ResourceService(NodeStack stack) {
-        this.stack = stack;
-        this.name = stack.getStackName().replaceAll("_", "-");
+    public ResourceService(Pod pod) {
+        this.pod = pod;
+        this.name = pod.getName().replaceAll("_", "-");
     }
 
     public ResourceService build() {
@@ -24,7 +26,7 @@ public class ResourceService {
             .addToLabels("app", name + "-service")
             .endMetadata()
             .withNewSpec()
-            .addAllToPorts(stack.getOpenServicePorts())
+            .addAllToPorts(pod.getPorts().stream().map(Port::toServicePort).collect(Collectors.toList()))
             .addToSelector("app", name)
             .withType("NodePort")
             .endSpec()

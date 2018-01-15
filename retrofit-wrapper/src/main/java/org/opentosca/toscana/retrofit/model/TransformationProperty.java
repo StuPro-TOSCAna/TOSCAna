@@ -42,7 +42,21 @@ public class TransformationProperty {
         return description;
     }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public boolean isRequired() {
         return required;
+    }
+
+    public void setRequired(boolean required) {
+        this.required = required;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Property (key=%s, type=%s, description=%s, required=%s, value=%s)"
+            , key, type, description, required, value);
     }
 }

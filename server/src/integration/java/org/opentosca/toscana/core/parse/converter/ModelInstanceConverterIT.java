@@ -13,7 +13,7 @@ import static org.junit.Assert.assertNotNull;
  Tests the conversion of the minimal-docker csar to an effective model
  */
 public class ModelInstanceConverterIT {
-    
+
     private final CsarParseService parser = new CsarParseServiceImpl();
 
     @Test
@@ -21,11 +21,17 @@ public class ModelInstanceConverterIT {
         EffectiveModel model = parser.parse(TestCsars.VALID_MINIMAL_DOCKER_TEMPLATE);
         assertNotNull(model);
     }
-    
+
     @Test
     public void lampNoInputConverter() throws Exception {
         EffectiveModel model = parser.parse(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE);
         assertNotNull(model);
     }
-    
+
+    // TODO WIP
+//    @Test
+//    public void lampInputConverter() throws Exception {
+//        EffectiveModel model = parser.parse(TestCsars.VALID_LAMP_INPUT_TEMPLATE);
+//        assertNotNull(model);
+//    }
 }

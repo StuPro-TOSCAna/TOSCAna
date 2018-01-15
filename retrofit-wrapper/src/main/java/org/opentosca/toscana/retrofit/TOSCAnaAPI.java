@@ -9,7 +9,6 @@ import java.util.Map;
 import org.opentosca.toscana.retrofit.model.Csar;
 import org.opentosca.toscana.retrofit.model.Platform;
 import org.opentosca.toscana.retrofit.model.ServerError;
-import org.opentosca.toscana.retrofit.model.SetPropertiesWrapper;
 import org.opentosca.toscana.retrofit.model.Transformation;
 import org.opentosca.toscana.retrofit.model.TransformationLogs;
 import org.opentosca.toscana.retrofit.model.TransformationProperties;
@@ -182,28 +181,21 @@ public class TOSCAnaAPI {
         String platform,
         TransformationProperties props
     ) throws IOException, TOSCAnaServerException {
-        //Convert the properties to SetPropertiesWrapper object (temporary)
-        Map<String, String> properties = new HashMap<>();
-        props.getProperties().forEach(e -> {
-            if (e.getValue() != null) {
-                properties.put(e.getKey(), e.getValue());
-            }
-        });
-        SetPropertiesWrapper wrapper = new SetPropertiesWrapper(properties);
-        //Set The properties
-        //Create the call
-        Call<ResponseBody> call = apiService.updateProperties(csarName, platform, wrapper);
+        Call<ResponseBody> call = apiService.updateProperties(csarName, platform, props);
         Response<ResponseBody> response = call.execute();
-        if (!response.isSuccessful() && response.code() == 400) {
+        if (response.code() == 400) {
             return objectMapper.readValue(response.errorBody().string(), Map.class);
-        } else {
-            throwToscanaException(call, response);
+        } else if (response.code() == 406) {
+            // input validation failed return map with a boolean if property value for given key is correct
+            return (Map<String, Boolean>) objectMapper.readValue(response.errorBody().string(), Map.class).get("valid_inputs");
+        } else if (response.isSuccessful()) {
+            Map<String, Boolean> result = new HashMap<>();
+            props.getProperties()
+                .forEach(transformationProperty -> result.put(transformationProperty.getKey(), true));
+            return result;
         }
-
-        //Generate map with the property keys that have been set and true (only if request was sucessful)
-        Map<String, Boolean> result = new HashMap<>();
-        wrapper.getProperties().forEach((k, v) -> result.put(k, true));
-        return result;
+        throwToscanaException(call, response);
+        return null;
     }
 
     public byte[] downloadArtifactAsBytes(String csarName,
@@ -251,10 +243,6 @@ public class TOSCAnaAPI {
         return retrofit;
     }
 
-    public TOSCAnaAPIService getApiService() {
-        return apiService;
-    }
-
     private <E> void throwToscanaException(
         Call<E> call, Response<E> response
     ) throws TOSCAnaServerException, IOException {
@@ -266,6 +254,7 @@ public class TOSCAnaAPI {
             response.code()
         );
         logger.debug("Throwing Exception", exception);
+        exception.printLog();
         throw exception;
     }
 }

@@ -74,7 +74,7 @@ public class ExecutionTask implements Runnable {
     private void transform() {
         try {
             EffectiveModel model = transformation.getCsar().getModel().orElseThrow(() ->
-                new IllegalStateException("TServiceTemplate is null, will not start transformation."));
+                new IllegalStateException("EffectiveModel is null, will not start transformation."));
             plugin.transform(new TransformationContext(csarContentDir, transformationRootDir,
                 transformation.getLog(), model, transformation.getProperties()));
             transformation.setState(TransformationState.DONE);

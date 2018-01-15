@@ -10,7 +10,7 @@ import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.springframework.test.context.ActiveProfiles;
 
-@ActiveProfiles( {Profiles.EXCLUDE_BASE_IMAGE_MAPPER})
+@ActiveProfiles({Profiles.EXCLUDE_BASE_IMAGE_MAPPER})
 @Category(UnitTest.class)
 public abstract class BaseTest {
 
