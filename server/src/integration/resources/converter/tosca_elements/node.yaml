@@ -18,7 +18,6 @@ topology_template:
       artifacts:
         test-artifact:
           file: test-file
-          repository: test-repository
           description: test-artifact-description
           deploy_path: test-deploy-path
       

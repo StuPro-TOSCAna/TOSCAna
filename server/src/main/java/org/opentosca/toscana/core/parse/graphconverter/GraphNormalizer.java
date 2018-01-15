@@ -8,6 +8,7 @@ import org.opentosca.toscana.model.artifact.Artifact;
 import org.opentosca.toscana.model.artifact.Repository;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.operation.Operation;
+import org.opentosca.toscana.model.requirement.Requirement;
 
 /**
  Responsible for converting tosca short notations (one-line notation) to its corresponding extended (ergo: normalized) form
@@ -18,6 +19,7 @@ public class GraphNormalizer {
         ServiceGraph graph = serviceModel.getGraph();
         normalizeRepositories(graph);
         normalizeOperations(graph);
+        normalizeRequirements(graph);
     }
 
     private static void normalizeRepositories(ServiceGraph graph) {
@@ -38,6 +40,17 @@ public class GraphNormalizer {
                         Optional<BaseEntity<Object>> shortArtifact = graph.getEntity(operation.getId().descend(Operation.PRIMARY));
                         normalize(graph, shortArtifact.get(), Artifact.FILE_PATH.name);
                     }
+                }
+            }
+        }
+    }
+
+    private static void normalizeRequirements(ServiceGraph graph) {
+        for (BaseEntity node : graph.getChildren(ToscaStructure.NODE_TEMPLATES)) {
+            Optional<BaseEntity<?>> requirements = node.getChild(RootNode.REQUIREMENTS);
+            if (requirements.isPresent()) {
+                for (BaseEntity<?> requirement : requirements.get().getChildren()) {
+                    normalize(graph, requirement, Requirement.NODE_NAME);
                 }
             }
         }

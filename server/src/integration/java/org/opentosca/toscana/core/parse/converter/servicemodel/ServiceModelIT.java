@@ -5,11 +5,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import javax.xml.namespace.QName;
-
 import org.opentosca.toscana.core.BaseIntegrationTest;
 import org.opentosca.toscana.core.parse.graphconverter.BaseEntity;
 import org.opentosca.toscana.core.parse.graphconverter.ServiceModel;
+import org.opentosca.toscana.model.node.RootNode;
 
 import com.google.common.collect.Lists;
 import org.junit.Test;
@@ -37,7 +36,7 @@ public class ServiceModelIT extends BaseIntegrationTest {
     @Test
     public void repositoryTest() throws Exception {
         currentFile = REPOSITORY;
-        assertEquals("https://first-url.com/", get("repositories", "first_repo"));
+        assertEquals("https://first-url.com/", get("repositories", "first_repo", "url"));
         assertEquals("test-description", get("repositories", "second_repo", "description"));
         assertEquals("https://second-url.com/", get("repositories", "second_repo", "url"));
         assertEquals("test-token", get("repositories", "second_repo", "credential", "token"));
@@ -83,12 +82,12 @@ public class ServiceModelIT extends BaseIntegrationTest {
         assertEquals("test-description", get("topology_template", "node_templates", "test-node", "interfaces",
             "test-interface1", "test-operation", "description"));
         assertEquals("test-implementation1", get("topology_template", "node_templates", "test-node", "interfaces",
-            "test-interface1", "test-operation", "implementation"));
+            "test-interface1", "test-operation", "implementation", "primary", "file"));
         assertEquals("test-value2", get("topology_template", "node_templates", "test-node", "interfaces",
             "test-interface1", "test-operation", "inputs", "test-input2"));
 
         assertEquals("test-implementation2", get("topology_template", "node_templates", "test-node", "interfaces",
-            "test-interface2", "test-operation", "implementation", "primary"));
+            "test-interface2", "test-operation", "implementation", "primary", "file"));
         assertEquals(Lists.newArrayList("test-dependency1", "test-dependency2"), get("topology_template", "node_templates", "test-node", "interfaces",
             "test-interface2", "test-operation", "implementation", "dependencies"));
     }
@@ -97,9 +96,9 @@ public class ServiceModelIT extends BaseIntegrationTest {
     public void capabilityTest() throws Exception {
         currentFile = CAPABILITY;
         assertEquals("test-property-value", get("topology_template", "node_templates", "test-node",
-            "capabilities", "test-capability", "properties", "test-property-name"));
+            "capabilities", "test-capability", "properties", "test-property-key"));
         assertEquals("test-property-value", get("topology_template", "node_templates", "test-node",
-            "capabilities", "test-capability", "properties", "test-property-name"));
+            "capabilities", "test-capability", "properties", "test-property-key"));
         assertEquals("test-attribute-value", get("topology_template", "node_templates", "test-node",
             "capabilities", "test-capability", "attributes", "test-attribute", "value"));
         assertEquals("test-description", get("topology_template", "node_templates", "test-node",
@@ -109,10 +108,10 @@ public class ServiceModelIT extends BaseIntegrationTest {
     @Test
     public void requirementTest() throws Exception {
         currentFile = REQUIREMENT;
-        Optional<BaseEntity<QName>> fulfiller = getModel().getEntity(Lists.newArrayList("topology_template",
-            "node_templates", "test-node", "requirements", "test-requirement1"));
+        Optional<BaseEntity<RootNode>> fulfiller = getModel().getEntity(Lists.newArrayList("topology_template",
+            "node_templates", "test-node", "requirements", "test-requirement1", "node"));
         assertTrue(fulfiller.isPresent());
-        Optional<BaseEntity<QName>> fulfiller2 = getModel().getEntity(Lists.newArrayList("topology_template",
+        Optional<BaseEntity<RootNode>> fulfiller2 = getModel().getEntity(Lists.newArrayList("topology_template",
             "node_templates", "test-node", "requirements", "test-requirement2", "node"));
         assertTrue(fulfiller2.isPresent());
         assertEquals("DatabaseEndpoint", get("topology_template", "node_templates", "test-node", "requirements",
@@ -128,14 +127,12 @@ public class ServiceModelIT extends BaseIntegrationTest {
         currentFile = NODE;
         assertEquals("WebServer", get("topology_template", "node_templates", "test-node", "type"));
         assertEquals("test-property-value", get("topology_template", "node_templates", "test-node", "properties",
-            "test-property-name"));
+            "test-property-key"));
         assertEquals("test-attribute-value", get("topology_template", "node_templates", "test-node", "attributes",
-            "test-attribute-name"));
+            "test-attribute-key"));
         assertEquals("test-description", get("topology_template", "node_templates", "test-node", "description"));
         assertEquals("test-file", get("topology_template", "node_templates", "test-node", "artifacts",
             "test-artifact", "file"));
-        assertEquals("test-repository", get("topology_template", "node_templates", "test-node", "artifacts",
-            "test-artifact", "repository"));
         assertEquals("test-artifact-description", get("topology_template", "node_templates", "test-node", "artifacts",
             "test-artifact", "description"));
         assertEquals("test-deploy-path", get("topology_template", "node_templates", "test-node", "artifacts",

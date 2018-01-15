@@ -63,20 +63,16 @@ public class LinkResolver {
             if (requirementsEntity.isPresent()) {
                 Set<BaseEntity<?>> requirements = requirementsEntity.get().getChildren();
                 for (BaseEntity requirement : requirements) {
-                    if (requirement instanceof ScalarEntity) {
-                        ScalarEntity explicitRequirement = (ScalarEntity) requirement;
-                        String fulfillerName = explicitRequirement.get();
-                        EntityId fulfillerId = ToscaStructure.NODE_TEMPLATES.descend(fulfillerName);
-                        BaseEntity<Object> fulfiller = model.getEntity(fulfillerId).orElseThrow(
-                            () -> new IllegalStateException(String.format(
-                                "No node with name '%s' found, but required as fulfiller in requirement", fulfillerName)
-                            ));
-                        MappingEntity resolvedRequirement = new MappingEntity(requirement.getId(), graph);
-                        graph.replaceEntity(requirement, resolvedRequirement);
-                        graph.addConnection(resolvedRequirement, fulfiller, Requirement.NODE_NAME);
-                    } else {
-                        throw new UnsupportedOperationException("Extended (implicit) notation for requirement assignment not supported yet");
-                    }
+                    MappingEntity mappingRequirement = (MappingEntity) requirement;
+                    ScalarEntity fulfillerEntity = (ScalarEntity) mappingRequirement.getChild(Requirement.NODE_NAME).get();
+                    String fulfillerName = fulfillerEntity.get();
+                    EntityId fulfillerId = ToscaStructure.NODE_TEMPLATES.descend(fulfillerName);
+                    BaseEntity<Object> fulfiller = model.getEntity(fulfillerId).orElseThrow(
+                        () -> new IllegalStateException(String.format(
+                            "No node with name '%s' found, but required as fulfiller in requirement", fulfillerName)
+                        ));
+                    graph.removeVertex(fulfillerEntity);
+                    graph.addConnection(mappingRequirement, fulfiller, Requirement.NODE_NAME);
                 }
             }
         }
