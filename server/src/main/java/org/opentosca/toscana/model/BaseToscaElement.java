@@ -16,7 +16,7 @@ import lombok.ToString;
 @ToString
 public abstract class BaseToscaElement {
 
-    // TODO what kind of class is SimpleProperty and Attribute?
+    // TODO what kind of class is Properties and Attributes?
     public static ToscaKey<Set<Object>> PROPERTIES = new ToscaKey<>("properties")
         .type(Object.class);
     public static ToscaKey<Set<Object>> ATTRIBUTES = new ToscaKey<>("attributes")

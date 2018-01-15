@@ -18,15 +18,6 @@ public abstract class BaseEntity<T> implements Comparable<BaseEntity<T>> {
         this.graph = graph;
     }
 
-    /**
-     Establishes a link between this instance's property (defined by sourceKey) and the targets targetKey.
-     In other words, the linked property now behaves like a symbolic link.
-     */
-    public <E> void link(ToscaKey<E> sourceKey, BaseEntity target, ToscaKey<E> targetKey) {
-        // TODO move link to graph.
-//        content.link(sourceKey, target, targetKey);
-    }
-
     public <V> void set(ToscaKey<V> key, V value) {
         EntityId newId = id.descend(key);
         BaseEntity entity;
@@ -36,7 +27,6 @@ public abstract class BaseEntity<T> implements Comparable<BaseEntity<T>> {
             entity = new ScalarEntity(value.toString(), newId, graph);
         }
         graph.addEntity(entity);
-        // TODO rewrite
         return;
     }
 
