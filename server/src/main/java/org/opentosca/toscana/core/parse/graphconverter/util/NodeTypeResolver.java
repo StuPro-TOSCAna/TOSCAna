@@ -24,8 +24,8 @@ import org.opentosca.toscana.model.node.WordPress;
 
 public class NodeTypeResolver {
 
+    public static final String TOSCA_PREFIX = "tosca.nodes.";
     private static final Map<String, Class<? extends RootNode>> TYPE_MAP = new HashMap<>();
-    private static final String TOSCA_PREFIX = "tosca.nodes.";
 
     static {
         put("Compute", Compute.class);
