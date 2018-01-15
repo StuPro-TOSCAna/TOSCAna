@@ -35,9 +35,9 @@ public class TypeConverter {
     }
 
     private <T> T convert(String string, Class targetType) {
-        if (targetType.getSimpleName().equals("String")) {
+        if (String.class.isAssignableFrom(targetType)) {
             return (T) string;
-        } else if (targetType.getSimpleName().equals("Integer")) {
+        } else if (Integer.class.isAssignableFrom(targetType)) {
             return (T) Integer.valueOf(string);
         } else if (Boolean.class.isAssignableFrom(targetType)) {
             return (T) Boolean.valueOf(string);
@@ -50,6 +50,5 @@ public class TypeConverter {
             throw new UnsupportedOperationException(String.format(
                 "Cannot convert value of type %s: currently unsupported", targetType.getSimpleName()));
         }
-        // TODO support for Credential
     }
 }
