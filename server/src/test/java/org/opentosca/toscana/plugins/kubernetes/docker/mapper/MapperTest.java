@@ -17,6 +17,7 @@ import org.opentosca.toscana.plugins.kubernetes.docker.mapper.util.DataContainer
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import org.apache.commons.io.IOUtils;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,7 +41,7 @@ public class MapperTest extends BaseUnitTest {
     private static final Logger logger = LoggerFactory.getLogger(MapperTest.class);
     private static BaseImageMapper baseImageMapper;
     private static EntityId entityId = new EntityId(Lists.newArrayList("my", "id"));
-    private static MappingEntity entity = new MappingEntity(entityId, new ServiceGraph());
+    private static MappingEntity entity;
 
     private String name;
     private OsCapability capability;
@@ -94,40 +95,48 @@ public class MapperTest extends BaseUnitTest {
             {
                 {
                     "Empty Capability",
-                    new OsCapability(entity),
+                    new OsCapability(getEntity()),
                     DEFAULT_IMAGE_PATH
                 },
                 {
                     "Specific Version",
-                    new OsCapability(entity).setType(LINUX).setDistribution(Distribution.DEBIAN).setVersion("9.2"),
+                    new OsCapability(getEntity()).setType(LINUX).setDistribution(Distribution.DEBIAN).setVersion("9.2"),
                     "library/debian:9.2"
                 },
                 {
                     "Version too specific",
-                    new OsCapability(entity).setType(LINUX).setDistribution(Distribution.UBUNTU).setVersion("16.04.3"),
+                    new OsCapability(getEntity()).setType(LINUX).setDistribution(Distribution.UBUNTU).setVersion("16.04.3"),
                     "library/ubuntu:16.04"
                 },
                 {
                     "Version not found but newer fix version available",
-                    new OsCapability(entity).setType(LINUX).setDistribution(Distribution.UBUNTU).setVersion("12.04.3"),
+                    new OsCapability(getEntity()).setType(LINUX).setDistribution(Distribution.UBUNTU).setVersion("12.04.3"),
                     "library/ubuntu:12.04.5"
                 },
                 {
                     "Specific Version not found (Expect later version)",
-                    new OsCapability(entity).setType(LINUX).setDistribution(Distribution.UBUNTU).setVersion("17.09"),
+                    new OsCapability(getEntity()).setType(LINUX).setDistribution(Distribution.UBUNTU).setVersion("17.09"),
                     "library/ubuntu:17.10"
                 },
                 {
                     "Architecture Only",
-                    new OsCapability(entity).setArchitecture(x86_64),
+                    new OsCapability(getEntity()).setArchitecture(x86_64),
                     DEFAULT_IMAGE_PATH
                 },
                 {
                     "Missing Distribution",
-                    new OsCapability(entity).setType(LINUX).setVersion("17.09"),
+                    new OsCapability(getEntity()).setType(LINUX).setVersion("17.09"),
                     DEFAULT_IMAGE_PATH
                 },
             }
         );
     }
+    
+    public static MappingEntity getEntity() {
+        ServiceGraph graph = new ServiceGraph();
+        MappingEntity entity = new MappingEntity(entityId, graph);
+        graph.addEntity(entity);
+        return entity;
+    }
+
 }

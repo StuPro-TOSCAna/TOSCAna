@@ -22,7 +22,7 @@ public class MappingEntity extends BaseEntity<Map<String, String>> {
 
     @Override
     public String toString() {
-        return (String.format("MappingEntity (id=%s", getId()));
+        return (String.format("MappingEntity (id='%s')", getId()));
     }
 
     public <V> V get(ToscaKey<V> key) {
