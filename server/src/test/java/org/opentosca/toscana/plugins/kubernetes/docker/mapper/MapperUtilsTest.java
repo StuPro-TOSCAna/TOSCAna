@@ -7,6 +7,7 @@ import org.opentosca.toscana.model.EntityId;
 import org.opentosca.toscana.model.capability.OsCapability;
 
 import com.google.common.collect.Lists;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;
@@ -17,8 +18,15 @@ import static org.opentosca.toscana.plugins.kubernetes.docker.mapper.MapperUtils
 public class MapperUtilsTest extends BaseUnitTest {
 
     private static EntityId entityId = new EntityId(Lists.newArrayList("my", "id"));
-    private static MappingEntity entity = new MappingEntity(entityId, new ServiceGraph());
-    
+    private static MappingEntity entity;
+
+    @Before
+    public void setUp() {
+        ServiceGraph graph = new ServiceGraph();
+        entity = new MappingEntity(entityId, graph);
+        graph.addEntity(entity);
+    }
+
     @Test
     public void testNoneSet() throws Exception {
         assertFalse(anythingSet(new OsCapability(entity)));

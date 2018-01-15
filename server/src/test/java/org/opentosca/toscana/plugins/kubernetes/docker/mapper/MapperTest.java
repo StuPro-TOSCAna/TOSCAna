@@ -17,7 +17,6 @@ import org.opentosca.toscana.plugins.kubernetes.docker.mapper.util.DataContainer
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import org.apache.commons.io.IOUtils;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -131,12 +130,11 @@ public class MapperTest extends BaseUnitTest {
             }
         );
     }
-    
+
     public static MappingEntity getEntity() {
         ServiceGraph graph = new ServiceGraph();
         MappingEntity entity = new MappingEntity(entityId, graph);
         graph.addEntity(entity);
         return entity;
     }
-
 }
