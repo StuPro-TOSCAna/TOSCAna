@@ -1,4 +1,6 @@
+import { PlatformsService } from './api/api/platforms.service';
 import { Component } from '@angular/core';
+import { log } from 'util';
 
 @Component({
     selector: 'app-root',
@@ -7,4 +9,7 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
     title = 'app';
+    test = '';
+    constructor() {
+    }
 }
