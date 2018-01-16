@@ -30,6 +30,7 @@ public class Parameter extends DescribableEntity implements Property {
     public Parameter(MappingEntity mappingEntity) {
         super(mappingEntity);
         setDefault(REQUIRED, true);
+        getDefaultValue().ifPresent(defaultValue -> setDefault(VALUE, defaultValue));
     }
 
     @Override

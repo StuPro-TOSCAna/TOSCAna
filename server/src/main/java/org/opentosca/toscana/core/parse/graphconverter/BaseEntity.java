@@ -77,4 +77,12 @@ public abstract class BaseEntity<T> implements Comparable<BaseEntity<T>> {
     public Set<BaseEntity<?>> getChildren() {
         return graph.getChildren(this);
     }
+
+    public ServiceGraph getGraph() {
+        return graph;
+    }
+
+    public BaseEntity getParent() {
+        return graph.getParent(this);
+    }
 }

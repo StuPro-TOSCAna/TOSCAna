@@ -11,10 +11,12 @@ public class TypeConverter {
 
     private final Logger logger;
     private final ToscaFactory toscaFactory;
+    private final IntrinsicFunctionResolver functionResolver;
 
     public TypeConverter(Logger logger) {
         this.logger = logger;
         this.toscaFactory = new ToscaFactory(logger);
+        this.functionResolver = new IntrinsicFunctionResolver(logger);
     }
 
     public TypeConverter() {
@@ -28,9 +30,12 @@ public class TypeConverter {
         } else if (BaseToscaElement.class.isAssignableFrom(key.getType())) {
             MappingEntity mappingEntity = (MappingEntity) entity;
             return toscaFactory.wrapEntity(mappingEntity, key.getType());
+        } else if (this.functionResolver.holdsFunction(entity)) {
+            BaseEntity resolvedEntity = this.functionResolver.resolveFunction(entity);
+            return convert(resolvedEntity, key);
         } else {
-            // TODO currently intrinsic functions get here --> finally implement intrinsic function support.
-            throw new UnsupportedOperationException();
+            throw new IllegalStateException(
+                String.format("Cannot get value of type '%s' from entity '%s'", key.getType(), entity));
         }
     }
 

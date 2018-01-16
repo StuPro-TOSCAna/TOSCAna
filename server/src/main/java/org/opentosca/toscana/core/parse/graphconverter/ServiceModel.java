@@ -43,6 +43,7 @@ public class ServiceModel {
             new LinkResolver(this).resolveLinks();
         } catch (FileNotFoundException e) {
             logger.error(String.format("Template '%s' does not exist - failed to construct ServiceModel", template, e));
+            throw new IllegalStateException();
         }
     }
 
