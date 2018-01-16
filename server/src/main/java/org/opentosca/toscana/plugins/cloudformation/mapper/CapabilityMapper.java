@@ -64,8 +64,7 @@ public class CapabilityMapper {
                 new Filter("root-device-type").withValues("ebs"))
             .withOwners("099720109477");
         if (osCapability.getType().isPresent() && osCapability.getType().get().equals(OsCapability.Type.WINDOWS)) {
-                describeImagesRequest.withFilters(new Filter("platform").withValues("windows"));
-            
+            describeImagesRequest.withFilters(new Filter("platform").withValues("windows"));
         }
         if (osCapability.getDistribution().isPresent()) {
             if (osCapability.getDistribution().get().equals(OsCapability.Distribution.UBUNTU)) {
@@ -191,42 +190,40 @@ public class CapabilityMapper {
         }
     }
 
-    private String findCombination(Integer numCpus, Integer memSize, ImmutableList<InstanceType> instanceTypes, List<Integer> allNumCpus, List<Integer> allMemSizes) {
+    private String findCombination(Integer numCpus, Integer memSize, ImmutableList<InstanceType> instanceTypes, List<Integer> allNumCpus, List<Integer> allMemSizes) throws TransformationFailureException {
         String instanceType = getInstanceType(numCpus, memSize, instanceTypes);
         if ("".equals(instanceType)) {
+            Integer newNumCpus = numCpus;
+            Integer newMemSize = memSize;
             //the combination does not exist
             //try to scale cpu
-            logger.debug("The combination of numCpus: " + numCpus + " and memSize: " + memSize + " does not exist");
+            logger.debug("The combination of numCpus: " + newNumCpus + " and memSize: " + newMemSize + " does not exist");
             logger.debug("Try to scale cpu");
             for (Integer num : allNumCpus) {
-                if (num > numCpus) {
-                    if (getMemByCpu(num, instanceTypes).contains(memSize)) {
-                        numCpus = num;
-                        break;
-                    }
+                if (num > newNumCpus && getMemByCpu(num, instanceTypes).contains(newMemSize)) {
+                    newNumCpus = num;
+                    break;
                 }
             }
-            instanceType = getInstanceType(numCpus, memSize, instanceTypes);
+            instanceType = getInstanceType(newNumCpus, newMemSize, instanceTypes);
             if ("".equals(instanceType)) {
                 logger.debug("Scaling cpu failed");
                 logger.debug("Try to scale memory");
                 //try to scale mem
                 for (Integer mem : allMemSizes) {
-                    if (mem > memSize) {
-                        if (getCpuByMem(mem, instanceTypes).contains(numCpus)) {
-                            memSize = mem;
-                            break;
-                        }
+                    if (mem > newMemSize && getCpuByMem(mem, instanceTypes).contains(newNumCpus)) {
+                        newMemSize = mem;
+                        break;
                     }
                 }
-                instanceType = getInstanceType(numCpus, memSize, instanceTypes);
+                instanceType = getInstanceType(newNumCpus, newMemSize, instanceTypes);
                 if ("".equals(instanceType)) {
                     throw new TransformationFailureException("No combination of numCpus and memSize found");
                 } else {
-                    logger.debug("Scaling memSize succeeded, memSize: " + memSize);
+                    logger.debug("Scaling memSize succeeded, memSize: " + newMemSize);
                 }
             } else {
-                logger.debug("Scaling numCpus succeeded, numCpus: " + numCpus);
+                logger.debug("Scaling numCpus succeeded, numCpus: " + newNumCpus);
             }
         }
         return instanceType;
