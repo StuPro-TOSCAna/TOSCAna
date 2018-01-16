@@ -77,11 +77,8 @@ public class FileCreator {
     }
 
     private void addPathToApplication() throws IOException {
-        //String mainApplicationPath = app.getPathToApplication();
-        //if (mainApplicationPath != null) {
         String pathAddition = String.format("  %s: ../%s", PATH.getName(), APPLICATION_FOLDER + app.getApplicationNumber());
         fileAccess.access(MANIFEST_PATH).appendln(pathAddition).close();
-        //}
     }
 
     private void createEnvironmentVariables() throws IOException {
