@@ -1,6 +1,7 @@
 package org.opentosca.toscana.plugins.cloudformation.visitor;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.opentosca.toscana.model.capability.ComputeCapability;
 import org.opentosca.toscana.model.capability.OsCapability;
@@ -173,6 +174,10 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             Operation configure = node.getStandardLifecycle().getConfigure().get();
             handleOperation(configure, serverName, CONFIG_CONFIGURE);
         }
+        //we add restart apache2 command to the configscript
+        cfnModule.getCFNInit(serverName)
+            .getOrAddConfig(CONFIG_SETS, CONFIG_CONFIGURE)
+            .putCommand(new CFNCommand("restart apache2", "service apache2 restart"));
     }
 
     @Override
@@ -235,8 +240,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                 cfnModule.getCFNInit(serverName)
                     .getOrAddConfig(CONFIG_SETS, config)
                     .putFile(cfnFile);
-//            } catch (IOException e) {
-            } catch (Exception e) {
+            } catch (IOException e) {
                 logger.error("Problem with reading file " + dependency);
                 e.printStackTrace();
             }
@@ -263,19 +267,17 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                     .setCwd(cfnFilePath + new File(artifact).getParent());
                 // add inputs to environment, but where to get other needed variables?
                 for (OperationVariable input : operation.getInputs()) {
-                    Object value = input.getValue().orElse("");
+                    Object value = input.getValue().orElse(""); //TODO add default
                     if (("127.0.0.1".equals(value) || "localhost".equals(value)) && input.getKey().contains("host")) {
-                        value = cfnModule.fnGetAtt("mydb", "Endpoint.Address");
+                        value = cfnModule.fnGetAtt("mydb", "Endpoint.Address"); //TODO how to handle this? with the new model we should be able to get the reference
                     }
-                    cfnCommand.addEnv(input.getKey(), value); //TODO add default
+                    cfnCommand.addEnv(input.getKey(), value);
                 }
                 cfnModule.getCFNInit(serverName)
                     .getOrAddConfig(CONFIG_SETS, config)
                     .putFile(cfnFile)
-                    .putCommand(cfnCommand)
-                    .putCommand(new CFNCommand("restart apache2", "service apache2 restart")); //put commands
-//            } catch (IOException e) {
-            } catch (Exception e) {
+                    .putCommand(cfnCommand);
+            } catch (IOException e) {
                 logger.error("Problem with reading file " + artifact);
                 e.printStackTrace();
             }
