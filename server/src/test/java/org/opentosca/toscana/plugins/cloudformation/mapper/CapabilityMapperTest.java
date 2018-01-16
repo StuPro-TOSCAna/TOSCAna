@@ -72,7 +72,7 @@ public class CapabilityMapperTest extends BaseUnitTest {
     public void testSingle() {
         Set<RootNode> computeNodeSet = new HashSet<>();
         computeNodeSet.add(createComputeNode(numCpus, memSize));
-        singleComputeNode = new EffectiveModel(computeNodeSet);
+        singleComputeNode = new EffectiveModel(computeNodeSet, new HashSet<>());
         Set<RootNode> nodes = singleComputeNode.getNodes();
         for (VisitableNode node : nodes) {
             node.accept(cfnNodeVisitor);

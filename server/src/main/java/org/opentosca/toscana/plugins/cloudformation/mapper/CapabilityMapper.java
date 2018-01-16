@@ -63,10 +63,9 @@ public class CapabilityMapper {
                 new Filter("virtualization-type").withValues("hvm"),
                 new Filter("root-device-type").withValues("ebs"))
             .withOwners("099720109477");
-        if (osCapability.getType().isPresent()) {
-            if (osCapability.getType().get().equals(OsCapability.Type.WINDOWS)) {
+        if (osCapability.getType().isPresent() && osCapability.getType().get().equals(OsCapability.Type.WINDOWS)) {
                 describeImagesRequest.withFilters(new Filter("platform").withValues("windows"));
-            }
+            
         }
         if (osCapability.getDistribution().isPresent()) {
             if (osCapability.getDistribution().get().equals(OsCapability.Distribution.UBUNTU)) {
@@ -117,14 +116,14 @@ public class CapabilityMapper {
         } catch (SdkClientException se) {
             logger.error("Cannot connect to AWS to request image Ids, defaulting to old ubuntu 16.04 image");
             imageId = "ami-0def3275";
-            //TODO maybe not defaulting but throwing a transfromation failed exception?
+            //TODO maybe not defaulting but throwing a transformation failed exception?
         }
         logger.debug("ImageId is: " + imageId);
         return imageId;
     }
 
     public String mapComputeCapabilityToInstanceType(ComputeCapability computeCapability, String distinction) throws TransformationFailureException {
-        //TODO what to do with disksize?
+        //TODO what to do with disk size?
         Integer numCpus = computeCapability.getNumCpus().orElse(0);
         Integer memSize = computeCapability.getMemSizeInMB().orElse(0);
         //default type the smallest
