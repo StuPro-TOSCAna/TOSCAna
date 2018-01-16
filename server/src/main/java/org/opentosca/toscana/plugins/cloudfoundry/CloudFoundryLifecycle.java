@@ -8,11 +8,11 @@ import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.visitor.VisitableNode;
-import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryApplication;
-import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryProvider;
-import org.opentosca.toscana.plugins.cloudfoundry.client.CloudFoundryConnection;
-import org.opentosca.toscana.plugins.cloudfoundry.client.CloudFoundryInjectionHandler;
-import org.opentosca.toscana.plugins.cloudfoundry.visitors.CloudFoundryNodeVisitor;
+import org.opentosca.toscana.plugins.cloudfoundry.application.Application;
+import org.opentosca.toscana.plugins.cloudfoundry.application.Provider;
+import org.opentosca.toscana.plugins.cloudfoundry.client.Connection;
+import org.opentosca.toscana.plugins.cloudfoundry.client.InjectionHandler;
+import org.opentosca.toscana.plugins.cloudfoundry.visitors.NodeVisitors;
 import org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle;
 
 import org.json.JSONException;
@@ -25,8 +25,8 @@ import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin.CF_P
 
 public class CloudFoundryLifecycle extends AbstractLifecycle {
 
-    private CloudFoundryProvider provider;
-    private CloudFoundryConnection cloudFoundryConnection;
+    private Provider provider;
+    private Connection connection;
 
     public CloudFoundryLifecycle(TransformationContext context) throws IOException {
         super(context);
@@ -51,12 +51,12 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
 
             if (isNotNull(username, password, organization, space, apiHost)) {
 
-                cloudFoundryConnection = new CloudFoundryConnection(username, password,
+                connection = new Connection(username, password,
                     apiHost, organization, space);
 
                 //TODO: check how to get used provider or figure out whether it is necessary to know it?
-                provider = new CloudFoundryProvider(CloudFoundryProvider.CloudFoundryProviderType.PIVOTAL);
-                provider.setOfferedService(cloudFoundryConnection.getServices());
+                provider = new Provider(Provider.CloudFoundryProviderType.PIVOTAL);
+                provider.setOfferedService(connection.getServices());
             }
         }
     }
@@ -72,11 +72,11 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
 
     @Override
     public void transform() {
-        CloudFoundryApplication myApp = new CloudFoundryApplication();
+        Application myApp = new Application();
         PluginFileAccess fileAccess = context.getPluginFileAccess();
         myApp.setProvider(provider);
-        myApp.setConnection(cloudFoundryConnection);
-        CloudFoundryNodeVisitor visitor = new CloudFoundryNodeVisitor(myApp);
+        myApp.setConnection(connection);
+        NodeVisitors visitor = new NodeVisitors(myApp);
         Set<RootNode> nodes = context.getModel().getNodes();
 
         for (VisitableNode node : nodes) {
@@ -85,10 +85,10 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
         myApp = visitor.getFilledApp();
 
         try {
-            CloudFoundryFileCreator fileCreator = new CloudFoundryFileCreator(fileAccess, myApp);
+            FileCreator fileCreator = new FileCreator(fileAccess, myApp);
             fileCreator.createFiles();
-            if (cloudFoundryConnection != null) {
-                CloudFoundryInjectionHandler injectionHandler = new CloudFoundryInjectionHandler(fileAccess, myApp);
+            if (connection != null) {
+                InjectionHandler injectionHandler = new InjectionHandler(fileAccess, myApp);
                 injectionHandler.injectServiceCredentials();
                 fileCreator.updateManifest();
             }

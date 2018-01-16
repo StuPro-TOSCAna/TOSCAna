@@ -10,8 +10,8 @@ import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.visitor.VisitableNode;
-import org.opentosca.toscana.plugins.cloudfoundry.application.CloudFoundryApplication;
-import org.opentosca.toscana.plugins.cloudfoundry.visitors.CloudFoundryNodeVisitor;
+import org.opentosca.toscana.plugins.cloudfoundry.application.Application;
+import org.opentosca.toscana.plugins.cloudfoundry.visitors.NodeVisitors;
 import org.opentosca.toscana.plugins.testdata.TestEffectiveModels;
 
 import org.apache.commons.io.FileUtils;
@@ -24,19 +24,19 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.CLI_CREATE_SERVICE_DEFAULT;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.CLI_PATH_TO_MANIFEST;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.CLI_PUSH;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.FILEPRAEFIX_DEPLOY;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.FILESUFFIX_DEPLOY;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.MANIFEST_NAME;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryFileCreator.MANIFEST_PATH;
+import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.CLI_CREATE_SERVICE_DEFAULT;
+import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.CLI_PATH_TO_MANIFEST;
+import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.CLI_PUSH;
+import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.FILEPRAEFIX_DEPLOY;
+import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.FILESUFFIX_DEPLOY;
+import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.MANIFEST_NAME;
+import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.MANIFEST_PATH;
 
 public class CloudFoundryPluginTest extends BaseUnitTest {
 
     private final static EffectiveModel lamp = TestEffectiveModels.getLampModel();
-    private static CloudFoundryApplication myApp = new CloudFoundryApplication();
-    private final static CloudFoundryNodeVisitor visitor = new CloudFoundryNodeVisitor(myApp);
+    private static Application myApp = new Application();
+    private final static NodeVisitors visitor = new NodeVisitors(myApp);
 
     @Mock
     private Log log;
@@ -65,7 +65,7 @@ public class CloudFoundryPluginTest extends BaseUnitTest {
             node.accept(visitor);
         }
         myApp = visitor.getFilledApp();
-        CloudFoundryFileCreator fileCreator = new CloudFoundryFileCreator(fileAccess, myApp);
+        FileCreator fileCreator = new FileCreator(fileAccess, myApp);
         fileCreator.createFiles();
     }
 
