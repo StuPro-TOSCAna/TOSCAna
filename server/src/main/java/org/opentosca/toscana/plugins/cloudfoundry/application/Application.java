@@ -14,7 +14,10 @@ import org.opentosca.toscana.plugins.cloudfoundry.client.Connection;
  */
 public class Application {
 
+    private static int counter;
+
     private String name;
+    private int applicationNumber;
     private final ArrayList<String> filePaths = new ArrayList<>();
     private final Map<String, String> environmentVariables = new HashMap<>();
     private final Map<String, String> attributes = new HashMap<>();
@@ -29,9 +32,17 @@ public class Application {
 
     public Application(String name) {
         this.name = name;
+        counter += 1;
+        this.applicationNumber = counter;
     }
-    
+
     public Application() {
+        counter += 1;
+        this.applicationNumber = counter;
+    }
+
+    public int getApplicationNumber() {
+        return this.applicationNumber;
     }
 
     public void setConnection(Connection connection) {

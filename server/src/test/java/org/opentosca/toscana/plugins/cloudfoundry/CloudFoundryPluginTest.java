@@ -56,11 +56,11 @@ public class CloudFoundryPluginTest extends BaseUnitTest {
         PluginFileAccess fileAccess = new PluginFileAccess(sourceDir, targetDir, log);
         Set<RootNode> nodes = lamp.getNodes();
 
-        paths.add("my_app/myphpapp.php");
-        paths.add("my_app/mysql-credentials.php");
-        paths.add("my_app/create_myphpapp.sh");
-        paths.add("my_app/configure_myphpapp.sh");
-        paths.add("my_db/createtable.sql");
+        paths.add("app1/my_app/myphpapp.php");
+        paths.add("app1/my_app/mysql-credentials.php");
+        paths.add("app1/my_app/create_myphpapp.sh");
+        paths.add("app1/my_app/configure_myphpapp.sh");
+        paths.add("app1/my_db/createtable.sql");
 
         for (VisitableNode node : nodes) {
             node.accept(visitor);

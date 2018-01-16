@@ -41,6 +41,7 @@ public class FileCreator {
     public static final String CLI_PATH_TO_MANIFEST = " -f ../";
     public static final String FILEPRAEFIX_DEPLOY = "deploy_";
     public static final String FILESUFFIX_DEPLOY = ".sh";
+    public static final String APPLICATION_FOLDER = "app";
 
     private final PluginFileAccess fileAccess;
     private final Application app;
@@ -54,7 +55,7 @@ public class FileCreator {
         createManifest();
         createBuildpackAdditionsFile();
         createDeployScript();
-        insertFiles();
+        insertFiles(APPLICATION_FOLDER + app.getApplicationNumber());
     }
 
     private void createManifest() throws IOException {
@@ -76,11 +77,11 @@ public class FileCreator {
     }
 
     private void addPathToApplication() throws IOException {
-        String mainApplicationPath = app.getPathToApplication();
-        if (mainApplicationPath != null) {
-            String pathAddition = String.format("  %s: ../%s", PATH.getName(), app.getPathToApplication());
-            fileAccess.access(MANIFEST_PATH).appendln(pathAddition).close();
-        }
+        //String mainApplicationPath = app.getPathToApplication();
+        //if (mainApplicationPath != null) {
+        String pathAddition = String.format("  %s: ../%s", PATH.getName(), APPLICATION_FOLDER + app.getApplicationNumber());
+        fileAccess.access(MANIFEST_PATH).appendln(pathAddition).close();
+        //}
     }
 
     private void createEnvironmentVariables() throws IOException {
@@ -207,9 +208,10 @@ public class FileCreator {
         }
     }
 
-    private void insertFiles() throws IOException {
+    private void insertFiles(String applicationFolder) throws IOException {
         for (String filePath : app.getFilePaths()) {
-            fileAccess.copy(filePath);
+            String path = applicationFolder + "/" + filePath;
+            fileAccess.copy(filePath, path);
         }
     }
 
@@ -234,6 +236,6 @@ public class FileCreator {
             }
             deployScript.append(String.format("# %-20s %-40s %-50s ", service.getLabel(), plans, service.getDescription()));
         }
-        deployScript.append("\n* These service plans have an associated cost. Creating a service instance will incur this cost.");
+        deployScript.append("\n# * These service plans have an associated cost. Creating a service instance will incur this cost.");
     }
 }

@@ -1,7 +1,7 @@
 ---
 applications:
 - name: my-app
-  path: ../my_app
+  path: ../app1
   disk_quota: 2000MB
   mem_size: 1024MB
   random-route: true
