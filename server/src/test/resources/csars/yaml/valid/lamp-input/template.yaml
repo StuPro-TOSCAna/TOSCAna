@@ -92,6 +92,17 @@ topology_template:
             type: linux
             distribution: ubuntu
             version: 16.04
+            
+  inputs:
+    database_password:
+      type: string
+      description: Password for the database
+    database_name:
+      type: string
+      description: Name for the database
+    database_port:
+      description: Port for the database
+      type: integer
 
   outputs:
     public_address:
@@ -99,6 +110,7 @@ topology_template:
       description: Public address of the server
       value: { get_attribute: [ server, public_address ] }
     port:
+      type: string
       description: Port of the server
       type: string
       value: { get_attribute: [ server, port ] }

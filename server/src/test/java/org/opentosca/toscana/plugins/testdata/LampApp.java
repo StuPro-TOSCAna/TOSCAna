@@ -3,6 +3,9 @@ package org.opentosca.toscana.plugins.testdata;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.opentosca.toscana.core.transformation.properties.Property;
+import org.opentosca.toscana.core.transformation.properties.PropertyType;
+import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.model.artifact.Artifact;
 import org.opentosca.toscana.model.capability.ContainerCapability;
 import org.opentosca.toscana.model.capability.ContainerCapability.ContainerCapabilityBuilder;
@@ -22,19 +25,22 @@ import org.opentosca.toscana.model.requirement.WebServerRequirement;
 
 public class LampApp {
 
-    private final Set<RootNode> testNodes = new HashSet<>();
-
-    private Set<RootNode> createLampApp() {
-        createLampModel();
-        return testNodes;
+    public static EffectiveModel getLampApp() {
+        return new EffectiveModel(createLampNodes(), createLampInputs());
     }
 
-    public static Set<RootNode> getLampModel() {
-        return new LampApp().createLampApp();
+    private static Set<Property> createLampInputs() {
+        Set<Property> inputs = new HashSet<>();
+        inputs.add(new Property("database_name", PropertyType.TEXT));
+        inputs.add(new Property("database_port", PropertyType.INTEGER));
+        inputs.add(new Property("database_password", PropertyType.TEXT));
+        inputs.add(new Property("database_user", PropertyType.TEXT));
+
+        return inputs;
     }
 
-    private void createLampModel() {
-
+    private static Set<RootNode> createLampNodes() {
+        Set<RootNode> testNodes = new HashSet<>();
         Compute compute = createComputeNode();
         Apache webserver = createApache(compute);
         MysqlDbms dbms = createMysqlDbms(compute);
@@ -46,9 +52,10 @@ public class LampApp {
         testNodes.add(dbms);
         testNodes.add(database);
         testNodes.add(webApplication);
+        return testNodes;
     }
 
-    private Compute createComputeNode() {
+    private static Compute createComputeNode() {
         OsCapability osCapability = OsCapability
             .builder()
             .distribution(OsCapability.Distribution.UBUNTU)
@@ -63,7 +70,7 @@ public class LampApp {
         return computeNode;
     }
 
-    private ContainerCapability createContainerCapability() {
+    private static ContainerCapability createContainerCapability() {
         Set<Class<? extends RootNode>> validSourceTypes = new HashSet<>();
         validSourceTypes.add(Compute.class);
         validSourceTypes.add(MysqlDbms.class);
@@ -77,7 +84,7 @@ public class LampApp {
         return containerCapabilityBuilder.build();
     }
 
-    private MysqlDbms createMysqlDbms(Compute compute) {
+    private static MysqlDbms createMysqlDbms(Compute compute) {
         return MysqlDbms.builder(
             "mysql_dbms",
             "geheim12")
@@ -86,7 +93,7 @@ public class LampApp {
             .build();
     }
 
-    private MysqlDatabase createMysqlDatabase(MysqlDbms dbms) {
+    private static MysqlDatabase createMysqlDatabase(MysqlDbms dbms) {
         Operation databaseConfigureOperation = Operation.builder()
             .artifact(Artifact.builder("artifact", "my_db/createtable.sql").build())
             .build();
@@ -94,7 +101,6 @@ public class LampApp {
         StandardLifecycle lifecycle = StandardLifecycle.builder()
             .configure(databaseConfigureOperation)
             .build();
-
         MysqlDatabase mydb = MysqlDatabase
             .builder("my_db", "DBNAME")
             .user("root")
@@ -107,7 +113,7 @@ public class LampApp {
         return mydb;
     }
 
-    private Apache createApache(Compute compute) {
+    private static Apache createApache(Compute compute) {
         ContainerCapability containerCapability = createContainerCapability();
         Operation apacheConfigureOperation = Operation.builder()
             .artifact(Artifact.builder("artifact", "my_apache/install_php.sh").build())
@@ -123,7 +129,7 @@ public class LampApp {
             .build();
     }
 
-    private WebApplication createWebApplication(Apache webserver, MysqlDatabase database) {
+    private static WebApplication createWebApplication(Apache webserver, MysqlDatabase database) {
         Set<String> appDependencies = new HashSet<>();
         appDependencies.add("my_app/myphpapp.php");
         appDependencies.add("my_app/mysql-credentials.php");
@@ -158,7 +164,7 @@ public class LampApp {
         return webApplication;
     }
 
-    private HostRequirement getHostedOnServerRequirement(Compute compute) {
+    private static HostRequirement getHostedOnServerRequirement(Compute compute) {
         ContainerCapability hostCapability = ContainerCapability.builder().resourceName("server").build();
 
         return HostRequirement.builder()
