@@ -73,7 +73,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             //check what host should be taken
             // we only support t2.micro atm since its free for student accounts
             ComputeCapability computeCompute = node.getHost();
-            String instanceType = capabilityMapper.mapComputeCapabilityToInstanceType(computeCompute);
+            String instanceType = capabilityMapper.mapComputeCapabilityToInstanceType(computeCompute, "EC2");
             //create CFN init and store it
             CFNInit init = new CFNInit(CONFIG_SETS);
             cfnModule.putCFNInit(nodeName, init);
@@ -97,11 +97,13 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
 
             //get the name of the server where the dbms this node is hosted on, is hosted on
             String serverName;
+            ComputeCapability hostedOnComputeCapability;
             if (exactlyOneFulfiller(node.host)) {
                 Dbms dbms = node.host.getFulfillers().iterator().next();
                 if (exactlyOneFulfiller(dbms.getHost())) {
                     Compute compute = dbms.getHost().getFulfillers().iterator().next();
                     serverName = toAlphanumerical(compute.getNodeName());
+                    hostedOnComputeCapability = compute.getHost();
                 } else {
                     throw new IllegalStateException("Got " + dbms.getHost().getFulfillers().size() + " instead of one" +
                         " fulfiller");
@@ -111,14 +113,15 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                     "fulfiller");
             }
             String dbName = node.getDatabaseName();
-            //throw error, take default or generate random?
             String masterUser = node.getUser().orElseThrow(() -> new IllegalArgumentException("Database user not set"));
             String masterPassword = node.getPassword().orElseThrow(() -> new IllegalArgumentException("Database " +
                 "password not set"));
             Integer port = node.getPort().orElse(3306);
             //TODO check downwards to compute and take its values
-            String dBInstanceClass = "db.t2.micro";
-            Integer allocatedStorage = 20;
+            //check what values should be taken
+            CapabilityMapper capabilityMapper = new CapabilityMapper();
+            String dBInstanceClass = capabilityMapper.mapComputeCapabilityToInstanceType(hostedOnComputeCapability, "RDS");
+            Integer allocatedStorage = capabilityMapper.mapComputeCapabilityToAllocatedStorage(hostedOnComputeCapability);
             String storageType = "gp2"; //SSD
 
             String securityGroupName = nodeName + SECURITY_GROUP;

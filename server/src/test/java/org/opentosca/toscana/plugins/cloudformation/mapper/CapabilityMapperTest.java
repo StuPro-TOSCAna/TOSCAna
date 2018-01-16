@@ -56,7 +56,7 @@ public class CapabilityMapperTest extends BaseUnitTest {
     @Parameters
     public static Collection data() {
         return asList(new Object[][]{
-            {1, 1024, "t2.micro"}, {1, 2048, "t2.small"}
+            {1, 1024, "t2.micro"}, {1, 2048, "t2.small"}, {2, 1024, "t2.medium"}, {3, 7500, "t2.xlarge"}, {1, 5000, "t2.large"}, {1, 17000, "t2.2xlarge"}
         });
     }
 

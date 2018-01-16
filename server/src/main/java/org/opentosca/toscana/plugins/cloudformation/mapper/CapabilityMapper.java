@@ -30,7 +30,7 @@ public class CapabilityMapper {
 
     private final static Logger logger = LoggerFactory.getLogger(CapabilityMapper.class);
 
-    private final ImmutableList<InstanceType> INSTANCE_TYPES = ImmutableList.<InstanceType>builder()
+    private final ImmutableList<InstanceType> EC2_INSTANCE_TYPES = ImmutableList.<InstanceType>builder()
         .add(new InstanceType("t2.nano", 1, 512))
         .add(new InstanceType("t2.micro", 1, 1024))
         .add(new InstanceType("t2.small", 1, 2048))
@@ -39,20 +39,17 @@ public class CapabilityMapper {
         .add(new InstanceType("t2.xlarge", 4, 16384))
         .add(new InstanceType("t2.2xlarge", 8, 32768))
         .build();
-    //need to be sorted !!
-    private final ImmutableList<Integer> NUM_CPUS = ImmutableList.<Integer>builder()
-        .addAll(INSTANCE_TYPES.stream()
-            .map(InstanceType::getNumCpus)
-            .sorted()
-            .collect(Collectors.toList()))
-        .build();
 
-    //need to be sorted !!
-    private final ImmutableList<Integer> MEM_SIZE = ImmutableList.<Integer>builder()
-        .addAll(INSTANCE_TYPES.stream()
-            .map(InstanceType::getMemSize)
-            .sorted()
-            .collect(Collectors.toList()))
+    private final ImmutableList<InstanceType> RDS_INSTANCE_CLASSES = ImmutableList.<InstanceType>builder()
+        .add(new InstanceType("db.t2.micro", 1, 1024))
+        .add(new InstanceType("db.t2.small", 1, 2048))
+        .add(new InstanceType("db.t2.medium", 2, 4096))
+        .add(new InstanceType("db.t2.large", 2, 8192))
+        .add(new InstanceType("db.t2.xlarge", 4, 16384))
+        .add(new InstanceType("db.t2.2xlarge", 8, 32768))
+        .add(new InstanceType("db.m4.4xlarge", 16, 65536))
+        .add(new InstanceType("db.m4.10xlarge", 40, 163840))
+        .add(new InstanceType("db.m4.16xlarge", 64, 262144))
         .build();
 
     public String mapOsCapabilityToImageId(OsCapability osCapability) {
@@ -119,95 +116,132 @@ public class CapabilityMapper {
         return imageId;
     }
 
-    public String mapComputeCapabilityToInstanceType(ComputeCapability computeCapability) {
+    public String mapComputeCapabilityToInstanceType(ComputeCapability computeCapability, String distinction) throws TransformationFailureException {
         //TODO what to do with disksize?
         Integer numCpus = computeCapability.getNumCpus().orElse(0);
         Integer memSize = computeCapability.getMemSizeInMB().orElse(0);
-        //default type is t2.micro
-        String instanceType;
+        //default type the smallest
+        final ImmutableList<InstanceType> instanceTypes;
+        if ("EC2".equals(distinction)) {
+            instanceTypes = EC2_INSTANCE_TYPES;
+        } else if ("RDS".equals(distinction)) {
+            instanceTypes = RDS_INSTANCE_CLASSES;
+        } else {
+            throw new IllegalArgumentException("Distinguisher not supported");
+        }
+        List<Integer> allNumCpus = instanceTypes.stream()
+            .map(InstanceType::getNumCpus)
+            .sorted()
+            .collect(Collectors.toList());
+        List<Integer> allMemSizes = instanceTypes.stream()
+            .map(InstanceType::getMemSize)
+            .sorted()
+            .collect(Collectors.toList());
         // if numcpu not key1 or mem not key2 scale upwards!
-        if (!NUM_CPUS.contains(numCpus)) {
-            for (Integer num : NUM_CPUS) {
-                if (num > numCpus) {
-                    numCpus = num;
-                    break;
-                }
-            }
-        }
-        if (!MEM_SIZE.contains(memSize)) {
-            for (Integer size : MEM_SIZE) {
-                if (size > memSize) {
-                    memSize = size;
-                    break;
-                }
-            }
-        }
-        //if its still not in there its to big
-        if (!NUM_CPUS.contains(numCpus) || !MEM_SIZE.contains(memSize)) {
-            String errorMessage = "Values numCpus: " + numCpus + " and memSize: " + memSize + " are to big. No " +
+        try {
+            logger.debug("Check numCpus: " + numCpus);
+            numCpus = checkValue(numCpus, allNumCpus);
+            logger.debug("Check memSize: " + memSize);
+            memSize = checkValue(memSize, allMemSizes);
+        } catch (IllegalArgumentException ie) {
+            String errorMessage = "Values numCpus: " + numCpus + " and/or memSize: " + memSize + " are to big. No " +
                 "InstanceType found";
             logger.error(errorMessage);
-            throw new TransformationFailureException(errorMessage);
+            throw new TransformationFailureException(errorMessage, ie);
         }
         //get instanceType from combination
-        instanceType = findCombination(numCpus, memSize);
+        String instanceType = findCombination(numCpus, memSize, instanceTypes, allNumCpus, allMemSizes);
         logger.debug("InstanceType is: " + instanceType);
         return instanceType;
     }
 
-    private String findCombination(Integer numCpus, Integer memSize) {
-        String instanceType = getInstanceType(numCpus, memSize);
+    public Integer mapComputeCapabilityToAllocatedStorage(ComputeCapability computeCapability) {
+        final Integer minSize = 20;
+        final Integer maxSize = 6144;
+        Integer diskSize = computeCapability.getDiskSizeInMB().orElse(minSize * 1000);
+        diskSize = diskSize / 1000;
+        if (diskSize > maxSize) {
+            logger.debug("Disk size: " + maxSize);
+            return maxSize;
+        }
+        if (diskSize < minSize) {
+            logger.debug("Disk size: " + minSize);
+            return minSize;
+        }
+        logger.debug("Disk size: " + diskSize);
+        return diskSize;
+    }
+
+    private Integer checkValue(Integer value, List<Integer> checker) throws IllegalArgumentException {
+        if (!checker.contains(value)) {
+            for (Integer num : checker) {
+                if (num > value) {
+                    return num;
+                }
+            }
+            throw new IllegalArgumentException("Can't support value: " + value);
+        } else {
+            return value;
+        }
+    }
+
+    private String findCombination(Integer numCpus, Integer memSize, ImmutableList<InstanceType> instanceTypes, List<Integer> allNumCpus, List<Integer> allMemSizes) {
+        String instanceType = getInstanceType(numCpus, memSize, instanceTypes);
         if ("".equals(instanceType)) {
             //the combination does not exist
             //try to scale cpu
             logger.debug("The combination of numCpus: " + numCpus + " and memSize: " + memSize + " does not exist");
             logger.debug("Try to scale cpu");
-            for (Integer num : NUM_CPUS) {
+            for (Integer num : allNumCpus) {
                 if (num > numCpus) {
-                    if (getMemByCpu(num).contains(memSize)) {
+                    if (getMemByCpu(num, instanceTypes).contains(memSize)) {
                         numCpus = num;
                         break;
                     }
                 }
             }
-            instanceType = getInstanceType(numCpus, memSize);
+            instanceType = getInstanceType(numCpus, memSize, instanceTypes);
             if ("".equals(instanceType)) {
                 logger.debug("Scaling cpu failed");
                 logger.debug("Try to scale memory");
                 //try to scale mem
-                for (Integer mem : MEM_SIZE) {
+                for (Integer mem : allMemSizes) {
                     if (mem > memSize) {
-                        if (getCpuByMem(mem).contains(numCpus)) {
+                        if (getCpuByMem(mem, instanceTypes).contains(numCpus)) {
                             memSize = mem;
                             break;
                         }
                     }
                 }
-                instanceType = getInstanceType(numCpus, memSize);
+                instanceType = getInstanceType(numCpus, memSize, instanceTypes);
                 if ("".equals(instanceType)) {
                     throw new TransformationFailureException("No combination of numCpus and memSize found");
+                } else {
+                    logger.debug("Scaling memSize succeeded, memSize: " + memSize);
                 }
+            } else {
+                logger.debug("Scaling numCpus succeeded, numCpus: " + numCpus);
             }
         }
         return instanceType;
     }
 
-    private List<Integer> getMemByCpu(Integer numCpus) {
-        return INSTANCE_TYPES.stream()
+    private List<Integer> getMemByCpu(Integer numCpus, ImmutableList<InstanceType> instanceTypes) {
+        return instanceTypes.stream()
             .filter(u -> u.getNumCpus().equals(numCpus))
             .map(InstanceType::getMemSize)
             .collect(Collectors.toList());
     }
 
-    private List<Integer> getCpuByMem(Integer memSize) {
-        return INSTANCE_TYPES.stream()
+    private List<Integer> getCpuByMem(Integer memSize, ImmutableList<InstanceType> instanceTypes) {
+        return instanceTypes.stream()
             .filter(u -> u.getMemSize().equals(memSize))
             .map(InstanceType::getNumCpus)
             .collect(Collectors.toList());
     }
 
-    private String getInstanceType(Integer numCpus, Integer memSize) {
-        Optional<InstanceType> instanceType = INSTANCE_TYPES.stream()
+    private String getInstanceType(Integer numCpus, Integer memSize, ImmutableList<InstanceType> instanceTypes) {
+        Optional<InstanceType> instanceType = instanceTypes.stream()
             .filter(u -> u.getNumCpus().equals(numCpus) && u.getMemSize().equals(memSize))
             .findAny();
         if (instanceType.isPresent()) {
@@ -228,15 +262,15 @@ public class CapabilityMapper {
             this.memSize = memSize;
         }
 
-        String getType() {
+        protected String getType() {
             return type;
         }
 
-        Integer getMemSize() {
+        protected Integer getMemSize() {
             return memSize;
         }
 
-        Integer getNumCpus() {
+        protected Integer getNumCpus() {
             return numCpus;
         }
     }
