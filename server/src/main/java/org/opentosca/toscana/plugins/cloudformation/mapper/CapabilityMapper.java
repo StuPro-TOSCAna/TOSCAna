@@ -15,6 +15,7 @@ import org.opentosca.toscana.model.capability.ComputeCapability;
 import org.opentosca.toscana.model.capability.OsCapability;
 import org.opentosca.toscana.plugins.util.TransformationFailureException;
 
+import com.amazonaws.SdkClientException;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.ec2.AmazonEC2;
 import com.amazonaws.services.ec2.AmazonEC2ClientBuilder;
@@ -88,29 +89,35 @@ public class CapabilityMapper {
                 describeImagesRequest.withFilters(new Filter("architecture").withValues("i386"));
             }
         }
-        DescribeImagesResult describeImagesResult = ec2.describeImages(describeImagesRequest);
-        Integer numReceivedImages = describeImagesResult.getImages().size();
-        logger.debug("Got " + numReceivedImages + " images from aws");
         String imageId;
-        if (numReceivedImages > 0) {
-            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-            Map<Date, Image> creationDateMap = new HashMap<>();
-            for (Image image : describeImagesResult.getImages()) {
-                try {
-                    Date date = dateFormat.parse(image.getCreationDate());
-                    creationDateMap.put(date, image);
-                } catch (ParseException pE) {
-                    logger.error("Error parsing dateformat");
-                    pE.printStackTrace();
+        try {
+            DescribeImagesResult describeImagesResult = ec2.describeImages(describeImagesRequest);
+            Integer numReceivedImages = describeImagesResult.getImages().size();
+            logger.debug("Got " + numReceivedImages + " images from aws");
+            if (numReceivedImages > 0) {
+                DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                Map<Date, Image> creationDateMap = new HashMap<>();
+                for (Image image : describeImagesResult.getImages()) {
+                    try {
+                        Date date = dateFormat.parse(image.getCreationDate());
+                        creationDateMap.put(date, image);
+                    } catch (ParseException pE) {
+                        logger.error("Error parsing dateformat");
+                        pE.printStackTrace();
+                    }
                 }
+                Image latest = creationDateMap.get(Collections.max(creationDateMap.keySet()));
+                logger.debug("Latest image received: " + latest.toString());
+                imageId = latest.getImageId();
+            } else {
+                logger.warn("No images received defaulting to old ubuntu 16.04 image");
+                imageId = "ami-0def3275";
+                //TODO maybe not defaulting but throwing a transformation failed exception?
             }
-            Image latest = creationDateMap.get(Collections.max(creationDateMap.keySet()));
-            logger.debug("Latest image received: " + latest.toString());
-            imageId = latest.getImageId();
-        } else {
-            logger.warn("No images received defaulting to old ubuntu 16.04 image");
+        } catch (SdkClientException se) {
+            logger.error("Cannot connect to AWS to request image Ids, defaulting to old ubuntu 16.04 image");
             imageId = "ami-0def3275";
-            //TODO maybe not defaulting but throwing a transformation failed exception?
+            //TODO maybe not defaulting but throwing a transfromation failed exception?
         }
         logger.debug("ImageId is: " + imageId);
         return imageId;
