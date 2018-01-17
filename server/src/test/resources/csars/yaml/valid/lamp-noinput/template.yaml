@@ -19,9 +19,8 @@ topology_template:
             implementation:
               primary: my_app/create_myphpapp.sh
               dependencies:
-                - myphpapp.php
-                - mysql-credentials.php
-
+                - my_app/myphpapp.php
+                - my_app/mysql-credentials.php
     apache_web_server:
       type: tosca.nodes.WebServer.Apache
       requirements:
@@ -59,7 +58,7 @@ topology_template:
         host:
           properties:
             num_cpus: 1
-            disk_size: 25 GB
+            disk_size: 4 GB
             mem_size: 1024 MB
         os:
           properties:

@@ -2,13 +2,7 @@
 applications:
 - name: my_app
   path: ../my_app
-  disk_quota: 2000MB
+  disk_quota: 4000MB
   mem_size: 1024MB
-  env:
-    database_user: root
-    database_name: DBNAME
-    database_host: 127.0.0.1
-    database_port: 3306
-    database_password: geheim12
   services:
     - my_db

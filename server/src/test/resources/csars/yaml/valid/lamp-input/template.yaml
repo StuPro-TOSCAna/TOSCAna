@@ -89,7 +89,7 @@ topology_template:
         host:
           properties:
             num_cpus: 1
-            disk_size: 25 GB
+            disk_size: 4 GB
             mem_size: 1024 MB
         os:
           properties:
