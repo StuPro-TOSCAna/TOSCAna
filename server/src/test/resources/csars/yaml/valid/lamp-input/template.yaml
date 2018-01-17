@@ -96,7 +96,7 @@ topology_template:
             type: linux
             distribution: ubuntu
             version: 16.04
-            
+
   outputs:
     public_address:
       type: string

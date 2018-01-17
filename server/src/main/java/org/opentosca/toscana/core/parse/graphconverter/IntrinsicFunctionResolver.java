@@ -81,11 +81,13 @@ public class IntrinsicFunctionResolver {
                     String.format("Input '%s' is referenced but its value is not set", inputName)
                 ));
             case GET_PROPERTY:
+            case GET_ATTRIBUTE:
+                ToscaKey location = function.location;
                 // todo refactor
                 Collection<BaseEntity> targetAddress = functionEntity.getChildren();
                 if (targetAddress.size() < 2) {
                     throw new IllegalStateException(
-                        String.format("Illegal parameters for get_property function at '%s'", functionEntity.getId()));
+                        String.format("Illegal amount of parameters for function at '%s'", functionEntity.getId()));
                 }
                 Iterator<BaseEntity> it = targetAddress.iterator();
                 String targetNodeName = ((ScalarEntity) it.next()).get();
@@ -95,17 +97,17 @@ public class IntrinsicFunctionResolver {
                 } else {
                     targetNode = graph.getEntityOrThrow(ToscaStructure.NODE_TEMPLATES.descend(targetNodeName));
                 }
-                List<BaseEntity> possiblePropertyLocations = new ArrayList<>();
-                ToscaKey capabilityProperties = new ToscaKey(RootNode.CAPABILITIES, RootNode.PROPERTIES.name);
-                ToscaKey requirementProperties = new ToscaKey(RootNode.REQUIREMENTS, RootNode.PROPERTIES.name);
-                for (ToscaKey key : new ToscaKey[]{RootNode.PROPERTIES, capabilityProperties, requirementProperties}) {
-                    targetNode.getChild(key).ifPresent(e -> possiblePropertyLocations.add(e));
+                List<BaseEntity> possibleLocations = new ArrayList<>();
+                ToscaKey capabilityLocation = new ToscaKey(RootNode.CAPABILITIES, location.name);
+                ToscaKey requirementLocation = new ToscaKey(RootNode.REQUIREMENTS, location.name);
+                for (ToscaKey key : new ToscaKey[]{location, capabilityLocation, requirementLocation}) {
+                    targetNode.getChild(key).ifPresent(e -> possibleLocations.add(e));
                 }
-                if (possiblePropertyLocations.isEmpty()) {
+                if (possibleLocations.isEmpty()) {
                     throw illegalTargetException;
                 }
-                for (BaseEntity possiblePropertyLocation : possiblePropertyLocations) {
-                    BaseEntity current = findTarget(possiblePropertyLocation, it);
+                for (BaseEntity possibleLocation : possibleLocations) {
+                    BaseEntity current = findTarget(possibleLocation, it);
                     if (current != null) {
                         return current;
                     }
@@ -125,7 +127,7 @@ public class IntrinsicFunctionResolver {
             current = parent;
             parent = current.getParent();
         } while (!ToscaStructure.NODE_TEMPLATES.equals(parent.getId()));
-        
+
         return current;
     }
 
@@ -144,13 +146,19 @@ public class IntrinsicFunctionResolver {
 
     public static enum ToscaFunction {
         GET_INPUT("get_input"),
-        GET_PROPERTY("get_property"),
-        GET_ATTRIBUTE("get_attribute");
+        GET_PROPERTY("get_property", RootNode.PROPERTIES),
+        GET_ATTRIBUTE("get_attribute", RootNode.ATTRIBUTES);
 
         private final String name;
+        private ToscaKey location;
 
         ToscaFunction(String name) {
             this.name = name;
+        }
+
+        ToscaFunction(String name, ToscaKey location) {
+            this(name);
+            this.location = location;
         }
 
         public static ToscaFunction getFunction(String name) {
