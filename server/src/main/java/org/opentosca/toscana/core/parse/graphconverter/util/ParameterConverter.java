@@ -10,8 +10,6 @@ Util class for converting parameters defined in a service template to intances o
  */
 public class ParameterConverter {
 
-    private final static Logger logger = LoggerFactory.getLogger(ParameterConverter.class.getName());
-
     public static PropertyType convertType(String type) {
         switch (type) {
             case "string":

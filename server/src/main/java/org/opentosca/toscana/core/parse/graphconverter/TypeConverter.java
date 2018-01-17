@@ -10,42 +10,26 @@ import org.opentosca.toscana.model.operation.OperationVariable;
 import org.opentosca.toscana.model.util.ToscaKey;
 
 import org.apache.commons.lang3.EnumUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class TypeConverter {
 
-    private final Logger logger;
-    private final ToscaFactory toscaFactory;
-    private final IntrinsicFunctionResolver functionResolver;
-
-    public TypeConverter(Logger logger) {
-        this.logger = logger;
-        this.toscaFactory = new ToscaFactory(logger);
-        this.functionResolver = new IntrinsicFunctionResolver(logger);
-    }
-
-    public TypeConverter() {
-        this(LoggerFactory.getLogger(TypeConverter.class));
-    }
-
-    public <T> T convert(BaseEntity entity, ToscaKey<T> key) {
-        if (this.functionResolver.holdsFunction(entity)) {
-            BaseEntity resolvedEntity = this.functionResolver.resolveFunction(entity);
+    public static <T> T convert(BaseEntity entity, ToscaKey<T> key) {
+        if (IntrinsicFunctionResolver.holdsFunction(entity)) {
+            BaseEntity resolvedEntity = IntrinsicFunctionResolver.resolveFunction(entity);
             return convert(resolvedEntity, key);
         } else if (entity instanceof ScalarEntity) {
             ScalarEntity scalarEntity = (ScalarEntity) entity;
             return convertScalarEntity(scalarEntity, key);
         } else if (BaseToscaElement.class.isAssignableFrom(key.getType())) {
             MappingEntity mappingEntity = (MappingEntity) entity;
-            return toscaFactory.wrapEntity(mappingEntity, key.getType());
+            return ToscaFactory.wrapEntity(mappingEntity, key.getType());
         } else {
             throw new IllegalStateException(
                 String.format("Cannot get value of type '%s' from entity '%s'", key.getType(), entity));
         }
     }
 
-    private <T> T convertScalarEntity(ScalarEntity scalarEntity, ToscaKey<T> key) {
+    private static <T> T convertScalarEntity(ScalarEntity scalarEntity, ToscaKey<T> key) {
         String value = scalarEntity.get();
         Class targetType = key.getType();
         if (String.class.isAssignableFrom(targetType)) {

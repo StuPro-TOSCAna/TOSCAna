@@ -5,14 +5,7 @@ import java.util.Optional;
 import org.opentosca.toscana.model.EntityId;
 import org.opentosca.toscana.model.util.ToscaKey;
 
-import org.yaml.snakeyaml.nodes.MappingNode;
-
 public class MappingEntity extends BaseEntity {
-
-    public MappingEntity(MappingNode node, EntityId id, ServiceGraph graph) {
-        // TODO what to do with node?
-        super(id, graph);
-    }
 
     public MappingEntity(EntityId id, ServiceGraph graph) {
         super(id, graph);

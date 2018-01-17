@@ -1,7 +1,5 @@
 package org.opentosca.toscana.plugins.kubernetes;
 
-import java.io.File;
-
 import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.transformation.TransformationContext;

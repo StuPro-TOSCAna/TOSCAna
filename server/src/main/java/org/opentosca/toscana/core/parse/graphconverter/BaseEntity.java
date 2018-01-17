@@ -26,7 +26,6 @@ public abstract class BaseEntity implements Comparable<BaseEntity> {
             entity = new ScalarEntity(value.toString(), newId, graph);
         }
         graph.addEntity(entity);
-        return;
     }
 
     public String getName() {

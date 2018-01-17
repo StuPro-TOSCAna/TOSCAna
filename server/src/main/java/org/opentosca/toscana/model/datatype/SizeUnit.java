@@ -15,11 +15,10 @@ public class SizeUnit {
     // useful to set directives in a ToscaKey
     public static final String TO = "to";
     public static final String FROM = "from";
-    
+
     private final static Logger logger = LoggerFactory.getLogger(SizeUnit.class);
 
     private final static Map<Unit, Long> SIZE_MAP = new HashMap<>();
-    
 
     static {
         SIZE_MAP.put(Unit.B, 1L);

@@ -80,7 +80,7 @@ public class ServiceModel {
             inputs = new HashMap<>();
             Set<BaseEntity> inputEntities = graph.getChildren(ToscaStructure.INPUTS);
             for (BaseEntity inputEntity : inputEntities) {
-                Parameter input = new ToscaFactory(logger).wrapEntity((MappingEntity) inputEntity, Parameter.class);
+                Parameter input = ToscaFactory.wrapEntity((MappingEntity) inputEntity, Parameter.class);
                 inputs.put(input.getEntityName(), input);
             }
         }

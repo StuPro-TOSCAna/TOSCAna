@@ -7,7 +7,6 @@ import java.util.Optional;
 import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.properties.Property;
-import org.opentosca.toscana.core.transformation.properties.SimpleProperty;
 import org.opentosca.toscana.model.EffectiveModel;
 
 public interface Csar {

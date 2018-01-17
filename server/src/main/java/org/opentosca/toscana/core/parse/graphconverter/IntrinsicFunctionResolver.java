@@ -12,25 +12,17 @@ import org.opentosca.toscana.model.Parameter;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.util.ToscaKey;
 
-import org.slf4j.Logger;
-
 /**
  Can recognize and resolve TOSCA intrinsic functions.
  */
 public class IntrinsicFunctionResolver {
-
-    private final Logger logger;
-
-    public IntrinsicFunctionResolver(Logger logger) {
-        this.logger = logger;
-    }
 
     /**
      @param entity holds function if it's a MappingEntity and has a child entity with its name exactly matching
      one of the intrinsic function names.
      @return true if given entity holds a tosca intrinsic function,  false otherwise
      */
-    public boolean holdsFunction(BaseEntity entity) {
+    public static boolean holdsFunction(BaseEntity entity) {
         if (entity instanceof MappingEntity) {
             MappingEntity mappingEntity = (MappingEntity) entity;
             Collection<BaseEntity> children = mappingEntity.getChildren();
@@ -51,7 +43,7 @@ public class IntrinsicFunctionResolver {
      @throws IllegalStateException if call to {@link #holdsFunction(BaseEntity)}
      with same entity as argument comes out as false
      */
-    public BaseEntity resolveFunction(BaseEntity functionHolder) {
+    public static BaseEntity resolveFunction(BaseEntity functionHolder) {
         if (!holdsFunction(functionHolder)) {
             throw new IllegalStateException(String.format(
                 "Given entity '%s' does not hold a function - illegal call to resolveFunction", functionHolder));
@@ -65,7 +57,7 @@ public class IntrinsicFunctionResolver {
         return functionTarget;
     }
 
-    private BaseEntity getTarget(MappingEntity functionHolder) {
+    private static BaseEntity getTarget(MappingEntity functionHolder) {
         BaseEntity functionEntity = functionHolder.getChildren().iterator().next();
         ToscaFunction function = ToscaFunction.getFunction(functionEntity.getName());
         ServiceGraph graph = functionHolder.getGraph();
@@ -121,7 +113,7 @@ public class IntrinsicFunctionResolver {
     /**
      @return the node entity referenced by 'SELF'
      */
-    private BaseEntity resolveSelfKeyword(BaseEntity current) {
+    private static BaseEntity resolveSelfKeyword(BaseEntity current) {
         BaseEntity parent = current;
         do {
             current = parent;
@@ -131,7 +123,7 @@ public class IntrinsicFunctionResolver {
         return current;
     }
 
-    private BaseEntity findTarget(BaseEntity current, Iterator<BaseEntity> it) {
+    private static BaseEntity findTarget(BaseEntity current, Iterator<BaseEntity> it) {
         while (it.hasNext()) {
             BaseEntity next = it.next();
             Optional<BaseEntity> child = current.getChild(((ScalarEntity) next).get());

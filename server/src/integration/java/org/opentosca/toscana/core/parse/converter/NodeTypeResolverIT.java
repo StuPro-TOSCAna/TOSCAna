@@ -33,7 +33,6 @@ public class NodeTypeResolverIT extends BaseIntegrationTest {
 
     @Test
     public void supportForAllWineryNodeTypes() {
-        ToscaFactory factory = new ToscaFactory(logger);
         Set<String> wineryNodeTypes = getWineryNodeTypes();
         for (String nodeType : wineryNodeTypes) {
             logger.info("Testing conversion of type '{}'", nodeType);
@@ -42,7 +41,7 @@ public class NodeTypeResolverIT extends BaseIntegrationTest {
             graph.addEntity(nodeEntity);
             ScalarEntity typeEntity = new ScalarEntity(nodeType, nodeEntity.getId().descend("type"), graph);
             graph.addEntity(typeEntity);
-            RootNode node = factory.wrapNode(nodeEntity);
+            RootNode node = ToscaFactory.wrapNode(nodeEntity);
             assertNotNull(node);
             logger.info("Node Type '{}': known", nodeType);
             System.out.println();

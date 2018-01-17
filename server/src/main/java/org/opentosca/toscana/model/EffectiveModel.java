@@ -47,7 +47,7 @@ public class EffectiveModel {
     }
 
     private void init() {
-        nodeMap = new ToscaFactory(logger).wrapNodes(serviceModel);
+        nodeMap = ToscaFactory.wrapNodes(serviceModel);
         nodeMap.forEach((name, node) -> topology.addVertex(node));
         initEdges();
         inputs = serviceModel.getInputs();

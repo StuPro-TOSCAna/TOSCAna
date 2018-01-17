@@ -11,24 +11,13 @@ import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.util.ToscaKey;
 
 import org.apache.commons.lang.reflect.ConstructorUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ToscaFactory {
 
     // todo move to rootnode or similar ?
     private static final ToscaKey<String> TYPE = new ToscaKey<>("type");
-    private final Logger logger;
 
-    public ToscaFactory(Logger logger) {
-        this.logger = logger;
-    }
-
-    public ToscaFactory() {
-        this.logger = LoggerFactory.getLogger(getClass());
-    }
-
-    public Map<String, RootNode> wrapNodes(ServiceModel serviceModel) {
+    public static Map<String, RootNode> wrapNodes(ServiceModel serviceModel) {
         Map<String, RootNode> nodes = new HashMap<>();
         Iterator<MappingEntity> it = serviceModel.iterator(ToscaStructure.NODE_TEMPLATES);
         while (it.hasNext()) {
@@ -38,18 +27,17 @@ public class ToscaFactory {
         return nodes;
     }
 
-    public <T> T wrapNode(MappingEntity nodeEntity) {
+    public static <T> T wrapNode(MappingEntity nodeEntity) {
         String typeString = nodeEntity.get(TYPE);
         Class nodeType = NodeTypeResolver.resolve(typeString);
         if (nodeType != null) {
             return wrap(nodeEntity, nodeType);
         } else {
-            logger.error(String.format("NodeType '%s' is not supported", typeString));
-            throw new UnsupportedOperationException();
+            throw new UnsupportedOperationException(String.format("NodeType '%s' is not supported", typeString));
         }
     }
 
-    public <T> T wrapEntity(MappingEntity entity, Class type) {
+    public static <T> T wrapEntity(MappingEntity entity, Class type) {
         if (entity == null) {
             return null;
         }
@@ -60,13 +48,12 @@ public class ToscaFactory {
         }
     }
 
-    private <T> T wrap(MappingEntity entity, Class type) {
+    private static <T> T wrap(MappingEntity entity, Class type) {
         try {
             T node = (T) ConstructorUtils.invokeConstructor(type, entity);
             return node;
-        } catch (NoSuchMethodException | IllegalAccessException  | InvocationTargetException  | InstantiationException e) {
-            logger.error(String.format("Failed to wrap up entity '%s' in type '%s'", entity, type));
-            throw new IllegalStateException(e);
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
+            throw new IllegalStateException(String.format("Failed to wrap up entity '%s' in type '%s'", entity, type, e));
         }
     }
 }

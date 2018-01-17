@@ -44,7 +44,7 @@ public class ServiceGraph extends SimpleDirectedGraph<BaseEntity, Connection> {
             addEntity(scalarEntity);
         } else if (node instanceof MappingNode) {
             MappingNode mappingNode = (MappingNode) node;
-            MappingEntity mappingEntity = new MappingEntity(mappingNode, id, this);
+            MappingEntity mappingEntity = new MappingEntity(id, this);
             addEntity(mappingEntity);
             for (NodeTuple tuple : mappingNode.getValue()) {
                 String key = ((ScalarNode) tuple.getKeyNode()).getValue();

@@ -40,7 +40,6 @@ public class MapperTest extends BaseUnitTest {
     private static final Logger logger = LoggerFactory.getLogger(MapperTest.class);
     private static BaseImageMapper baseImageMapper;
     private static EntityId entityId = new EntityId(Lists.newArrayList("my", "id"));
-    private static MappingEntity entity;
 
     private String name;
     private OsCapability capability;
