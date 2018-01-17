@@ -118,7 +118,7 @@ public class FileCreator {
 
         Deployment deployment = new Deployment(deployScript, app, fileAccess);
         deployment.treatServices(true);
-        deployment.addConfigureSql();
+        //deployment.addConfigureSql();
 
         deployScript.append(CLI_PUSH + app.getName() + CLI_PATH_TO_MANIFEST + MANIFEST_NAME);
     }
