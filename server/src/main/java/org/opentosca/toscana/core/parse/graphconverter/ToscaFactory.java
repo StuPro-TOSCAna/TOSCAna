@@ -1,5 +1,6 @@
 package org.opentosca.toscana.core.parse.graphconverter;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -63,7 +64,7 @@ public class ToscaFactory {
         try {
             T node = (T) ConstructorUtils.invokeConstructor(type, entity);
             return node;
-        } catch (Exception e) {
+        } catch (NoSuchMethodException | IllegalAccessException  | InvocationTargetException  | InstantiationException e) {
             logger.error(String.format("Failed to wrap up entity '%s' in type '%s'", entity, type));
             throw new IllegalStateException(e);
         }

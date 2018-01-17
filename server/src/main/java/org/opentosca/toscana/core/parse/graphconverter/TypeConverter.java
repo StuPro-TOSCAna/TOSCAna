@@ -1,5 +1,9 @@
 package org.opentosca.toscana.core.parse.graphconverter;
 
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+
 import org.opentosca.toscana.model.BaseToscaElement;
 import org.opentosca.toscana.model.operation.OperationVariable;
 import org.opentosca.toscana.model.util.ToscaKey;
@@ -50,9 +54,13 @@ public class TypeConverter {
             return (T) Boolean.valueOf(value);
             // TODO handle values besides true/false
         } else if (targetType.isEnum()) {
-            T result = (T) EnumUtils.getEnum(targetType, value);
-            // TODO handle wrong values
-            return result;
+            Map<String, T> enumMap = EnumUtils.getEnumMap(targetType);
+            Optional<T> result = enumMap.entrySet().stream()
+                .filter(entry -> value.equalsIgnoreCase(entry.getKey()))
+                .map(entry -> entry.getValue())
+                .findAny();
+            return result.orElseThrow(() -> new NoSuchElementException(
+                String.format("No value with name '%s' in enum '%s'", value, targetType.getSimpleName())));
         } else if (OperationVariable.class.isAssignableFrom(targetType)) {
             return (T) new OperationVariable(scalarEntity);
         } else {
