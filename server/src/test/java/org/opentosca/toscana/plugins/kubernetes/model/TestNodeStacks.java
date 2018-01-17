@@ -20,7 +20,7 @@ public class TestNodeStacks {
     }
 
     private HashSet<NodeStack> createLampNodeStacks() {
-        Map<String, RootNode> map = new EffectiveModel(TestCsars.VALID_LAMP_INPUT_TEMPLATE).getNodeMap();
+        Map<String, RootNode> map = new EffectiveModel(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE).getNodeMap();
 
         List<KubernetesNodeContainer> webAppNodes = new LinkedList<>();
         KubernetesNodeContainer computeContainer = new KubernetesNodeContainer(map.get("server"));

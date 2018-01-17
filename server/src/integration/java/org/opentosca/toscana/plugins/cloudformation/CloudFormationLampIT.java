@@ -14,13 +14,13 @@ import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 
 public class CloudFormationLampIT extends BaseTransformTest {
-    public CloudFormationLampIT() throws Exception {
+    public CloudFormationLampIT() {
         super(new CloudFormationPlugin());
     }
 
     @Override
     protected EffectiveModel getModel() {
-        return new EffectiveModel(TestCsars.VALID_LAMP_INPUT_TEMPLATE);
+        return new EffectiveModel(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE);
     }
 
     @Override
@@ -35,7 +35,7 @@ public class CloudFormationLampIT extends BaseTransformTest {
 
     @Override
     protected void copyArtifacts(File contentDir) throws Exception {
-        File inputDir = new File(getClass().getResource("/csars/yaml/valid/lamp-input").getFile());
+        File inputDir = new File(getClass().getResource("/csars/yaml/valid/lamp-noinput").getFile());
         FileUtils.copyDirectory(inputDir, contentDir);
     }
 

@@ -41,7 +41,7 @@ public class CloudFoundryLampIT extends BaseTransformTest {
 
     @Override
     protected EffectiveModel getModel() throws Exception {
-        return new EffectiveModel(TestCsars.VALID_LAMP_INPUT_TEMPLATE);
+        return new EffectiveModel(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE);
     }
 
     @Override
@@ -69,7 +69,7 @@ public class CloudFoundryLampIT extends BaseTransformTest {
 
     @Override
     protected void copyArtifacts(File contentDir) throws Exception {
-        File inputDir = new File(getClass().getResource("/csars/yaml/valid/lamp-input").getFile());
+        File inputDir = new File(getClass().getResource("/csars/yaml/valid/lamp-noinput").getFile());
         FileUtils.copyDirectory(inputDir, contentDir);
     }
 
