@@ -122,7 +122,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             //check what values should be taken
             CapabilityMapper capabilityMapper = new CapabilityMapper();
             String dBInstanceClass = capabilityMapper.mapComputeCapabilityToInstanceType(hostedOnComputeCapability, "RDS");
-            Integer allocatedStorage = capabilityMapper.mapComputeCapabilityToAllocatedStorage(hostedOnComputeCapability);
+            Integer allocatedStorage = capabilityMapper.mapComputeCapabilityToDiskSize(hostedOnComputeCapability);
             String storageType = "gp2"; //SSD
 
             String securityGroupName = nodeName + SECURITY_GROUP;

@@ -53,6 +53,13 @@ public class CapabilityMapper {
         .add(new InstanceType("db.m4.16xlarge", 64, 262144))
         .build();
 
+    /**
+     This method requests the AWS server for ImageIds with filters which are filled based on
+     the values of the OsCapability. The image with the latest creation date is picked and its imageId returned.
+
+     @param osCapability The OsCapability to map.
+     @return A String that contains a valid ImageId that can be added to the properties of an ec2.
+     */
     public String mapOsCapabilityToImageId(OsCapability osCapability) {
         AmazonEC2 ec2 = AmazonEC2ClientBuilder.standard()
             .withRegion(Regions.US_WEST_2) //TODO get this from user
@@ -62,7 +69,7 @@ public class CapabilityMapper {
             .withFilters(
                 new Filter("virtualization-type").withValues("hvm"),
                 new Filter("root-device-type").withValues("ebs"))
-            .withOwners("099720109477");
+            .withOwners("099720109477"); //this is the ownerId of amazon itself
         if (osCapability.getType().isPresent() && osCapability.getType().get().equals(OsCapability.Type.WINDOWS)) {
             describeImagesRequest.withFilters(new Filter("platform").withValues("windows"));
         }
@@ -86,6 +93,9 @@ public class CapabilityMapper {
             } else if (osCapability.getArchitecture().get().equals(OsCapability.Architecture.x86_32)) {
                 describeImagesRequest.withFilters(new Filter("architecture").withValues("i386"));
             }
+        } else {
+            //defaulting to 64 bit architecture
+            describeImagesRequest.withFilters(new Filter("architecture").withValues("x86_64"));
         }
         String imageId;
         try {
@@ -121,7 +131,18 @@ public class CapabilityMapper {
         return imageId;
     }
 
-    public String mapComputeCapabilityToInstanceType(ComputeCapability computeCapability, String distinction) throws TransformationFailureException {
+    /**
+     Finds the best InstanceType based on the values contained in the ComputeCapability.
+     If necessary the values are scaled upwards till they meet the requirement.
+
+     @param computeCapability The ComputeCapability to map.
+     @param distinction       A distinction string. Can either be "EC2" or "RDS".
+     @return A valid InstanceType / InstanceClass string.
+     @throws TransformationFailureException Gets thrown if the values numCpus and memSize are too big and there is no
+     valid InstanceType.
+     */
+    public String mapComputeCapabilityToInstanceType(ComputeCapability computeCapability, String distinction) throws
+        TransformationFailureException {
         //TODO what to do with disk size?
         Integer numCpus = computeCapability.getNumCpus().orElse(0);
         Integer memSize = computeCapability.getMemSizeInMB().orElse(0);
@@ -142,7 +163,7 @@ public class CapabilityMapper {
             .map(InstanceType::getMemSize)
             .sorted()
             .collect(Collectors.toList());
-        // if numcpu not key1 or mem not key2 scale upwards!
+        // scale numCpus and memSize upwards if they are not represented in the lists
         try {
             logger.debug("Check numCpus: " + numCpus);
             numCpus = checkValue(numCpus, allNumCpus);
@@ -160,7 +181,13 @@ public class CapabilityMapper {
         return instanceType;
     }
 
-    public Integer mapComputeCapabilityToAllocatedStorage(ComputeCapability computeCapability) {
+    /**
+     The value is taken from the Capability but turned into GB. The minimum is 20 GB the maximum 6144 GB
+
+     @param computeCapability The ComputeCapability to map.
+     @return An integer representing the diskSize that should be taken.
+     */
+    public Integer mapComputeCapabilityToDiskSize(ComputeCapability computeCapability) {
         final Integer minSize = 20;
         final Integer maxSize = 6144;
         Integer diskSize = computeCapability.getDiskSizeInMB().orElse(minSize * 1000);
@@ -190,14 +217,17 @@ public class CapabilityMapper {
         }
     }
 
-    private String findCombination(Integer numCpus, Integer memSize, ImmutableList<InstanceType> instanceTypes, List<Integer> allNumCpus, List<Integer> allMemSizes) throws TransformationFailureException {
+    private String findCombination(Integer numCpus, Integer memSize, ImmutableList<InstanceType> instanceTypes,
+                                   List<Integer> allNumCpus, List<Integer> allMemSizes) throws
+        TransformationFailureException {
         String instanceType = getInstanceType(numCpus, memSize, instanceTypes);
         if ("".equals(instanceType)) {
             Integer newNumCpus = numCpus;
             Integer newMemSize = memSize;
             //the combination does not exist
             //try to scale cpu
-            logger.debug("The combination of numCpus: " + newNumCpus + " and memSize: " + newMemSize + " does not exist");
+            logger.debug("The combination of numCpus: " + newNumCpus + " and memSize: " + newMemSize + " does not " +
+                "exist");
             logger.debug("Try to scale cpu");
             for (Integer num : allNumCpus) {
                 if (num > newNumCpus && getMemByCpu(num, instanceTypes).contains(newMemSize)) {
