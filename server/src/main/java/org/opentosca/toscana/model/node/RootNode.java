@@ -37,6 +37,7 @@ public abstract class RootNode extends DescribableEntity implements VisitableNod
 
     public RootNode(MappingEntity mappingEntity) {
         super(mappingEntity);
+        setDefault(STANDARD_LIFECYCLE, new StandardLifecycle(getChildEntity(STANDARD_LIFECYCLE)));
     }
 
     /**
