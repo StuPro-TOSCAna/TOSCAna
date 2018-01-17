@@ -2,9 +2,7 @@ package org.opentosca.toscana.model.operation;
 
 import java.util.Optional;
 
-import org.opentosca.toscana.core.parse.graphconverter.MappingEntity;
-import org.opentosca.toscana.model.BaseToscaElement;
-import org.opentosca.toscana.model.util.ToscaKey;
+import org.opentosca.toscana.core.parse.graphconverter.ScalarEntity;
 
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -16,26 +14,23 @@ import lombok.ToString;
  */
 @EqualsAndHashCode
 @ToString
-public class OperationVariable extends BaseToscaElement {
+public class OperationVariable {
 
-    public final static ToscaKey<String> VALUE = new ToscaKey("value");
+    private ScalarEntity backingEntity;
 
-    public OperationVariable(MappingEntity entity) {
-        super(entity);
+    public OperationVariable(ScalarEntity entity) {
+        this.backingEntity = entity;
     }
 
-    /**
-     @return {@link #VALUE}
-     */
     public Optional<String> getValue() {
-        return Optional.ofNullable(get(VALUE));
+        return Optional.ofNullable(backingEntity.get());
     }
 
     public void setValue(String value) {
-        set(VALUE, value);
+        backingEntity.set(value);
     }
 
     public String getKey() {
-        return getEntityName();
+        return backingEntity.getName();
     }
 }

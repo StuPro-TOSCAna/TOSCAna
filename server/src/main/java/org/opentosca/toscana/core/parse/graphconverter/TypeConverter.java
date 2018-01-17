@@ -1,6 +1,7 @@
 package org.opentosca.toscana.core.parse.graphconverter;
 
 import org.opentosca.toscana.model.BaseToscaElement;
+import org.opentosca.toscana.model.operation.OperationVariable;
 import org.opentosca.toscana.model.util.ToscaKey;
 
 import org.apache.commons.lang3.EnumUtils;
@@ -24,33 +25,36 @@ public class TypeConverter {
     }
 
     public <T> T convert(BaseEntity entity, ToscaKey<T> key) {
-        if (entity instanceof ScalarEntity) {
+        if (this.functionResolver.holdsFunction(entity)) {
+            BaseEntity resolvedEntity = this.functionResolver.resolveFunction(entity);
+            return convert(resolvedEntity, key);
+        } else if (entity instanceof ScalarEntity) {
             ScalarEntity scalarEntity = (ScalarEntity) entity;
-            return convert(scalarEntity.get(), key.getType());
+            return convertScalarEntity(scalarEntity, key.getType());
         } else if (BaseToscaElement.class.isAssignableFrom(key.getType())) {
             MappingEntity mappingEntity = (MappingEntity) entity;
             return toscaFactory.wrapEntity(mappingEntity, key.getType());
-        } else if (this.functionResolver.holdsFunction(entity)) {
-            BaseEntity resolvedEntity = this.functionResolver.resolveFunction(entity);
-            return convert(resolvedEntity, key);
         } else {
             throw new IllegalStateException(
                 String.format("Cannot get value of type '%s' from entity '%s'", key.getType(), entity));
         }
     }
 
-    private <T> T convert(String string, Class targetType) {
+    private <T> T convertScalarEntity(ScalarEntity scalarEntity, Class targetType) {
+        String value = scalarEntity.get();
         if (String.class.isAssignableFrom(targetType)) {
-            return (T) string;
+            return (T) value;
         } else if (Integer.class.isAssignableFrom(targetType)) {
-            return (T) Integer.valueOf(string);
+            return (T) Integer.valueOf(value);
         } else if (Boolean.class.isAssignableFrom(targetType)) {
-            return (T) Boolean.valueOf(string);
+            return (T) Boolean.valueOf(value);
             // TODO handle values besides true/false
         } else if (targetType.isEnum()) {
-            T result = (T) EnumUtils.getEnum(targetType, string);
+            T result = (T) EnumUtils.getEnum(targetType, value);
             // TODO handle wrong values
             return result;
+        } else if (OperationVariable.class.isAssignableFrom(targetType)) {
+            return (T) new OperationVariable(scalarEntity);
         } else {
             throw new UnsupportedOperationException(String.format(
                 "Cannot convert value of type %s: currently unsupported", targetType.getSimpleName()));

@@ -8,6 +8,7 @@ import java.util.Set;
 import org.opentosca.toscana.core.parse.graphconverter.BaseEntity;
 import org.opentosca.toscana.core.parse.graphconverter.MappingEntity;
 import org.opentosca.toscana.core.parse.graphconverter.ToscaFactory;
+import org.opentosca.toscana.core.parse.graphconverter.TypeConverter;
 import org.opentosca.toscana.model.util.ToscaKey;
 
 import lombok.EqualsAndHashCode;
@@ -38,11 +39,10 @@ public abstract class BaseToscaElement {
 
     public <T> Set<T> getCollection(ToscaKey<T> key) {
         Set<T> values = new HashSet<>();
-        ToscaFactory factory = new ToscaFactory();
         Optional<BaseEntity> entity = mappingEntity.getChild(key.name);
         if (entity.isPresent()) {
             for (BaseEntity child : entity.get().getChildren()) {
-                T value = factory.wrapEntity((MappingEntity) child, key.getType());
+                T value = new TypeConverter().convert(child, key);
                 values.add(value);
             }
         }

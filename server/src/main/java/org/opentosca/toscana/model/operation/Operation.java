@@ -22,12 +22,14 @@ public class Operation extends DescribableEntity {
      inputs which shall be injected into the artifacts environment before execution.
      Might be empty.
      */
-    public static final ToscaKey<OperationVariable> INPUTS = new ToscaKey<>("inputs");
+    public static final ToscaKey<OperationVariable> INPUTS = new ToscaKey<>("inputs")
+        .type(OperationVariable.class);
     /**
      outputs which are supposed to be available in the environment after execution of the operation.
      Might be empty.
      */
-    public static final ToscaKey<OperationVariable> OUTPUTS = new ToscaKey<>("outputs");
+    public static final ToscaKey<OperationVariable> OUTPUTS = new ToscaKey<>("outputs")
+        .type(OperationVariable.class);
     /**
      The optional primary deployment artifact.
      */
