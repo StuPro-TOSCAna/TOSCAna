@@ -18,11 +18,11 @@ import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin.CF_P
 import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin.CF_PROPERTY_KEY_PASSWORD;
 import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin.CF_PROPERTY_KEY_SPACE;
 import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin.CF_PROPERTY_KEY_USERNAME;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryServiceTest.CF_ENVIRONMENT_HOST;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryServiceTest.CF_ENVIRONMENT_ORGA;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryServiceTest.CF_ENVIRONMENT_PW;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryServiceTest.CF_ENVIRONMENT_SPACE;
-import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryServiceTest.CF_ENVIRONMENT_USER;
+import static org.opentosca.toscana.plugins.cloudfoundry.ServiceTest.CF_ENVIRONMENT_HOST;
+import static org.opentosca.toscana.plugins.cloudfoundry.ServiceTest.CF_ENVIRONMENT_ORGA;
+import static org.opentosca.toscana.plugins.cloudfoundry.ServiceTest.CF_ENVIRONMENT_PW;
+import static org.opentosca.toscana.plugins.cloudfoundry.ServiceTest.CF_ENVIRONMENT_SPACE;
+import static org.opentosca.toscana.plugins.cloudfoundry.ServiceTest.CF_ENVIRONMENT_USER;
 
 /**
  Created by jensmuller on 03.01.18.

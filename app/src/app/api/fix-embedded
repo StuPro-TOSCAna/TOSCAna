@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# usage: this script replaces all embedded fields with _embedded to fix the rest response mapping
+
+find model/ -type f | xargs sed -i 's/embedded/_embedded/g'
