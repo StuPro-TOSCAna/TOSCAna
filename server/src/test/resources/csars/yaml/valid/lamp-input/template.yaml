@@ -90,7 +90,7 @@ topology_template:
           properties:
             num_cpus: 1
             disk_size: 25 GB
-            mem_size: 2048 MB
+            mem_size: 1024 MB
         os:
           properties:
             type: linux

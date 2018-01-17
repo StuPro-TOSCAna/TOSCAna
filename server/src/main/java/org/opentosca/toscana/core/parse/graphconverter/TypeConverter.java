@@ -5,6 +5,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.opentosca.toscana.model.BaseToscaElement;
+import org.opentosca.toscana.model.datatype.SizeUnit;
 import org.opentosca.toscana.model.operation.OperationVariable;
 import org.opentosca.toscana.model.util.ToscaKey;
 
@@ -34,7 +35,7 @@ public class TypeConverter {
             return convert(resolvedEntity, key);
         } else if (entity instanceof ScalarEntity) {
             ScalarEntity scalarEntity = (ScalarEntity) entity;
-            return convertScalarEntity(scalarEntity, key.getType());
+            return convertScalarEntity(scalarEntity, key);
         } else if (BaseToscaElement.class.isAssignableFrom(key.getType())) {
             MappingEntity mappingEntity = (MappingEntity) entity;
             return toscaFactory.wrapEntity(mappingEntity, key.getType());
@@ -44,8 +45,9 @@ public class TypeConverter {
         }
     }
 
-    private <T> T convertScalarEntity(ScalarEntity scalarEntity, Class targetType) {
+    private <T> T convertScalarEntity(ScalarEntity scalarEntity, ToscaKey<T> key) {
         String value = scalarEntity.get();
+        Class targetType = key.getType();
         if (String.class.isAssignableFrom(targetType)) {
             return (T) value;
         } else if (Integer.class.isAssignableFrom(targetType)) {
@@ -63,6 +65,14 @@ public class TypeConverter {
                 String.format("No value with name '%s' in enum '%s'", value, targetType.getSimpleName())));
         } else if (OperationVariable.class.isAssignableFrom(targetType)) {
             return (T) new OperationVariable(scalarEntity);
+        } else if (SizeUnit.class.isAssignableFrom(targetType)) {
+            SizeUnit.Unit fromDefaultUnit = (SizeUnit.Unit) key.getDirectives().get(SizeUnit.FROM);
+            SizeUnit.Unit toUnit = (SizeUnit.Unit) key.getDirectives().get(SizeUnit.TO);
+            if (fromDefaultUnit == null || toUnit == null) {
+                throw new IllegalStateException(
+                    "ToscaKey defining a SizeUnit is illegal: No directive set for source and target units");
+            }
+            return (T) SizeUnit.convert(value, fromDefaultUnit, toUnit);
         } else {
             throw new UnsupportedOperationException(String.format(
                 "Cannot convert value of type %s: currently unsupported", targetType.getSimpleName()));

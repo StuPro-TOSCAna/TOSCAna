@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.opentosca.toscana.core.parse.graphconverter.MappingEntity;
 import org.opentosca.toscana.model.capability.AttachmentCapability;
+import org.opentosca.toscana.model.datatype.SizeUnit;
 import org.opentosca.toscana.model.util.ToscaKey;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 
@@ -42,7 +43,7 @@ public class BlockStorage extends RootNode {
      (TOSCA Simple Profile in YAML Version 1.1, p. 175)
      */
     public static ToscaKey<Integer> SIZE_IN_MB = new ToscaKey<>(PROPERTIES, "size")
-        .type(Integer.class);
+        .type(Integer.class).directive(SizeUnit.FROM, SizeUnit.Unit.MB).directive(SizeUnit.TO, SizeUnit.Unit.MB);;
 
     /**
      Optional ID of an existing volume (that is in the accessible scope of the requesting application).

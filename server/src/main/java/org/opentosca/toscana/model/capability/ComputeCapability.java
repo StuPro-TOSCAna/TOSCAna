@@ -3,6 +3,7 @@ package org.opentosca.toscana.model.capability;
 import java.util.Optional;
 
 import org.opentosca.toscana.core.parse.graphconverter.MappingEntity;
+import org.opentosca.toscana.model.datatype.SizeUnit;
 import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.util.ToscaKey;
 import org.opentosca.toscana.model.visitor.CapabilityVisitor;
@@ -45,14 +46,14 @@ public class ComputeCapability extends Capability {
      (TOSCA Simple Profile in YAML Version 1.1, p. 150)
      */
     public static ToscaKey<Integer> DISK_SIZE_IN_MB = new ToscaKey<>(PROPERTIES, "disk_size")
-        .type(Integer.class);
+        .type(SizeUnit.class).directive(SizeUnit.FROM, SizeUnit.Unit.MB).directive(SizeUnit.TO, SizeUnit.Unit.MB);
 
     /**
      Optional size of memory available to applications running on the {@link Compute} node, specified in MB.
      (TOSCA Simple Profile in YAML Version 1.1, p. 150)
      */
     public static ToscaKey<Integer> MEM_SIZE_IN_MB = new ToscaKey<>(PROPERTIES, "mem_size")
-        .type(Integer.class);
+        .type(SizeUnit.class).directive(SizeUnit.FROM, SizeUnit.Unit.MB).directive(SizeUnit.TO, SizeUnit.Unit.MB);
 
     public ComputeCapability(MappingEntity mappingEntity) {
         super(mappingEntity);

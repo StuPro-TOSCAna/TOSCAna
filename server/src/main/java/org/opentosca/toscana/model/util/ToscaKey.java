@@ -1,5 +1,7 @@
 package org.opentosca.toscana.model.util;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import lombok.EqualsAndHashCode;
@@ -12,6 +14,10 @@ import lombok.ToString;
 public class ToscaKey<T> {
 
     public final String name;
+    /**
+     Directives can be used in order to enrich the semantics of the key (e.g., used to specify unit sizes)
+     */
+    private final Map<String, Object> directives = new HashMap<>();
     private ToscaKey<?> predecessor;
     private boolean required;
     private Class type;
@@ -45,6 +51,16 @@ public class ToscaKey<T> {
     }
 
     /**
+     Sets a directive
+
+     @see #directives
+     */
+    public <T> ToscaKey<T> directive(String key, Object value) {
+        directives.put(key, value);
+        return (ToscaKey<T>) this;
+    }
+
+    /**
      @return {@link #predecessor}
      */
     public Optional<ToscaKey<?>> getPredecessor() {
@@ -53,5 +69,9 @@ public class ToscaKey<T> {
 
     public boolean hasPredecessor() {
         return (predecessor != null);
+    }
+
+    public Map<String, Object> getDirectives() {
+        return directives;
     }
 }

@@ -1,4 +1,4 @@
-package org.opentosca.toscana.core.parse.graphconverter.util;
+package org.opentosca.toscana.model.datatype;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -6,11 +6,20 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SizeConverter {
+/**
+ A scalar size unit as defined in the TOSCA spec
+ This class only serves as indicator and has no actual functionality
+ */
+public class SizeUnit {
 
-    private final static Logger logger = LoggerFactory.getLogger(SizeConverter.class);
+    // useful to set directives in a ToscaKey
+    public static final String TO = "to";
+    public static final String FROM = "from";
+    
+    private final static Logger logger = LoggerFactory.getLogger(SizeUnit.class);
 
     private final static Map<Unit, Long> SIZE_MAP = new HashMap<>();
+    
 
     static {
         SIZE_MAP.put(Unit.B, 1L);
@@ -31,7 +40,7 @@ public class SizeConverter {
      @param to   target size unit
      @return the size in MB or null, if parsing failed
      */
-    public Integer convert(Object size, Unit from, Unit to) {
+    public static Integer convert(Object size, Unit from, Unit to) {
         Integer result = null;
         Double number = null;
         try {
