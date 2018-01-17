@@ -39,7 +39,7 @@ public abstract class BaseToscaElement {
 
     public <T> Set<T> getCollection(ToscaKey<T> key) {
         Set<T> values = new HashSet<>();
-        Optional<BaseEntity> entity = mappingEntity.getChild(key.name);
+        Optional<BaseEntity> entity = mappingEntity.getChild(key);
         if (entity.isPresent()) {
             for (BaseEntity child : entity.get().getChildren()) {
                 T value = new TypeConverter().convert(child, key);
