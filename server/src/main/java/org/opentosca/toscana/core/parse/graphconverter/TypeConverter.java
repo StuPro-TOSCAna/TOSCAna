@@ -30,7 +30,7 @@ public class TypeConverter {
     }
 
     private static <T> T convertScalarEntity(ScalarEntity scalarEntity, ToscaKey<T> key) {
-        String value = scalarEntity.get();
+        String value = scalarEntity.getValue();
         Class targetType = key.getType();
         if (String.class.isAssignableFrom(targetType)) {
             return (T) value;

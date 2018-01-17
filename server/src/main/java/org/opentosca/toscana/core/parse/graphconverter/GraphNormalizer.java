@@ -64,7 +64,7 @@ public class GraphNormalizer {
             for (String referencedKey : referencedKeys) {
                 referencedId = referencedId.descend(referencedKey);
             }
-            ScalarEntity referencedEntity = new ScalarEntity(shortEntity.get(), referencedId, graph);
+            ScalarEntity referencedEntity = new ScalarEntity(shortEntity.getValue(), referencedId, graph);
             graph.replaceEntity(shortEntity, normalizedEntity);
             graph.addEntity(referencedEntity);
         }

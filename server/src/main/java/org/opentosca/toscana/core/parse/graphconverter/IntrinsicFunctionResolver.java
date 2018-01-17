@@ -66,7 +66,7 @@ public class IntrinsicFunctionResolver {
         switch (function) {
             case GET_INPUT:
                 ScalarEntity inputFunctionEntity = (ScalarEntity) functionEntity;
-                String inputName = inputFunctionEntity.get();
+                String inputName = inputFunctionEntity.getValue();
                 BaseEntity inputEntity = graph.getEntityOrThrow(ToscaStructure.INPUTS.descend(inputName));
                 Optional<BaseEntity> inputValue = inputEntity.getChild(Parameter.VALUE);
                 return inputValue.orElseThrow(() -> new IllegalStateException(
@@ -82,7 +82,7 @@ public class IntrinsicFunctionResolver {
                         String.format("Illegal amount of parameters for function at '%s'", functionEntity.getId()));
                 }
                 Iterator<BaseEntity> it = targetAddress.iterator();
-                String targetNodeName = ((ScalarEntity) it.next()).get();
+                String targetNodeName = ((ScalarEntity) it.next()).getValue();
                 BaseEntity targetNode;
                 if ("SELF".equals(targetNodeName)) {
                     targetNode = resolveSelfKeyword(functionEntity);
@@ -126,7 +126,7 @@ public class IntrinsicFunctionResolver {
     private static BaseEntity findTarget(BaseEntity current, Iterator<BaseEntity> it) {
         while (it.hasNext()) {
             BaseEntity next = it.next();
-            Optional<BaseEntity> child = current.getChild(((ScalarEntity) next).get());
+            Optional<BaseEntity> child = current.getChild(((ScalarEntity) next).getValue());
             if (child.isPresent()) {
                 current = child.get();
             } else {

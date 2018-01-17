@@ -145,13 +145,13 @@ public class ServiceModelIT extends BaseIntegrationTest {
     private String get(String... context) throws Exception {
         ServiceModel model = getModel();
         BaseEntity entity = model.getEntityOrThrow(new EntityId(Lists.newArrayList(context)));
-        return ((ScalarEntity) entity).get(); 
+        return ((ScalarEntity) entity).getValue(); 
     }
 
     private List<String> getList(String... context) throws Exception {
         ServiceModel model = getModel();
         BaseEntity entity = model.getEntityOrThrow(new EntityId(Lists.newArrayList(context)));
-        return ((SequenceEntity) entity).get();
+        return ((SequenceEntity) entity).getValues();
     }
 
     private ServiceModel getModel() throws Exception {

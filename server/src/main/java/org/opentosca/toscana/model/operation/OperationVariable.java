@@ -23,11 +23,11 @@ public class OperationVariable {
     }
 
     public Optional<String> getValue() {
-        return Optional.ofNullable(backingEntity.get());
+        return Optional.ofNullable(backingEntity.getValue());
     }
 
     public void setValue(String value) {
-        backingEntity.set(value);
+        backingEntity.setValue(value);
     }
 
     public String getKey() {

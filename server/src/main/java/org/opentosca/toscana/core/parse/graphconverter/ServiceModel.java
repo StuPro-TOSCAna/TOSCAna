@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.opentosca.toscana.core.parse.graphconverter.util.ToscaStructure;
 import org.opentosca.toscana.core.transformation.logging.Log;
@@ -59,7 +58,7 @@ public class ServiceModel {
         return graph.getEntityOrThrow(entityId);
     }
 
-    public void add(BaseEntity entity) {
+    public void addEntity(BaseEntity entity) {
         graph.addEntity(entity);
     }
 
@@ -67,12 +66,9 @@ public class ServiceModel {
      Returns an iterator for a set of entities referenced by given EntityId.
      */
     // TODO what if EntityId describes a ScalarEntity/ SequenceEntity?
-    public Iterator<MappingEntity> iterator(EntityId id) {
-        MappingEntity entities = (MappingEntity) this.<Map<String, String>>getEntity(id).get();
-        Set<MappingEntity> map = entities.getChildren().stream()
-            .map(e -> (MappingEntity) e)
-            .collect(Collectors.toSet());
-        return map.iterator();
+    public Iterator<BaseEntity> iterator(EntityId id) {
+        BaseEntity entities = this.getEntityOrThrow(id);
+        return entities.getChildren().iterator();
     }
 
     public Map<String, Property> getInputs() {

@@ -21,10 +21,8 @@ import org.yaml.snakeyaml.nodes.SequenceNode;
 
 public class ServiceGraph extends SimpleDirectedGraph<BaseEntity, Connection> {
 
-    // TODO 
     private final MappingEntity root = new MappingEntity(ToscaStructure.SERVICE_TEMPLATE, this);
 
-    @Deprecated
     public ServiceGraph() {
         super((sourceVertex, targetVertex) -> new Connection(targetVertex.getName(), sourceVertex, targetVertex));
         addVertex(root);
@@ -63,8 +61,6 @@ public class ServiceGraph extends SimpleDirectedGraph<BaseEntity, Connection> {
             }
         }
     }
-
-    // TODO documentation
 
     /**
      Adds a new entity to the graph. Also adds the edge to its parent entity.

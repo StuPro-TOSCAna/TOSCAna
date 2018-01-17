@@ -16,7 +16,7 @@ public class MappingEntity extends BaseEntity {
         return (String.format("MappingEntity (id='%s')", getId()));
     }
 
-    public <V> V get(ToscaKey<V> key) {
+    public <V> V getValue(ToscaKey<V> key) {
         Optional<BaseEntity> entity = graph.getChild(this, key);
         if (entity.isPresent()) {
             return new TypeConverter().convert(entity.get(), key);

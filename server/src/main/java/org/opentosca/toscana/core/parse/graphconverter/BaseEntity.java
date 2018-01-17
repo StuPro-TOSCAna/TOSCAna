@@ -17,7 +17,7 @@ public abstract class BaseEntity implements Comparable<BaseEntity> {
         this.graph = graph;
     }
     
-    public <V> void set(ToscaKey<V> key, V value) {
+    public <V> void setValue(ToscaKey<V> key, V value) {
         EntityId newId = id.descend(key);
         BaseEntity entity;
         if (BaseToscaElement.class.isAssignableFrom(key.getType())) {
@@ -62,8 +62,8 @@ public abstract class BaseEntity implements Comparable<BaseEntity> {
     }
 
     @Override
-    public int compareTo(BaseEntity tBaseEntity) {
-        return id.compareTo(tBaseEntity.id);
+    public int compareTo(BaseEntity other) {
+        return id.compareTo(other.id);
     }
 
     public Collection<BaseEntity> getChildren() {

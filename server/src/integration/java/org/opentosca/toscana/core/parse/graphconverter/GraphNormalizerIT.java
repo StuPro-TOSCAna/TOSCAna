@@ -34,7 +34,7 @@ public class GraphNormalizerIT extends BaseIntegrationTest {
         BaseEntity repository = repositories.iterator().next();
         Optional<BaseEntity> url = repository.getChild("url");
         assertTrue(url.isPresent());
-        assertEquals("http://test.repo.com/", ((ScalarEntity) url.get()).get());
+        assertEquals("http://test.repo.com/", ((ScalarEntity) url.get()).getValue());
     }
 
     @Test

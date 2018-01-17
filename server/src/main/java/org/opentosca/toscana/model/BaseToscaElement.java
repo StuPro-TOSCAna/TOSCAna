@@ -33,7 +33,7 @@ public abstract class BaseToscaElement {
     }
 
     public <T> T get(ToscaKey<T> key) {
-        T value = mappingEntity.get(key);
+        T value = mappingEntity.getValue(key);
         return value;
     }
 
@@ -61,7 +61,7 @@ public abstract class BaseToscaElement {
     }
 
     public <T> void set(ToscaKey<T> key, T value) {
-        mappingEntity.set(key, value);
+        mappingEntity.setValue(key, value);
     }
 
     /**
@@ -69,8 +69,8 @@ public abstract class BaseToscaElement {
      Else, does nothing.
      */
     public <T> void setDefault(ToscaKey<T> key, T value) {
-        if (mappingEntity.get(key) == null) {
-            mappingEntity.set(key, value);
+        if (mappingEntity.getValue(key) == null) {
+            mappingEntity.setValue(key, value);
         }
     }
 

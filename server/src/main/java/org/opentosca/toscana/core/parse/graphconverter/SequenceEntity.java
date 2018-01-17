@@ -21,7 +21,7 @@ public class SequenceEntity extends BaseEntity {
         this.sequenceNode = node;
     }
 
-    public List<String> get() {
+    public List<String> getValues() {
         List<String> values = new ArrayList<>();
         for (Node node : sequenceNode.getValue()) {
             String value = ((ScalarNode) node).getValue();
@@ -53,5 +53,3 @@ public class SequenceEntity extends BaseEntity {
         return (String.format("SequenceEntity (id=%s", getId()));
     }
 }
-
-

@@ -13,14 +13,14 @@ public class ScalarEntity extends BaseEntity {
 
     @Override
     public String toString() {
-        return String.format("ScalarEntity (id='%s', value='%s')", getId(), get());
+        return String.format("ScalarEntity (id='%s', value='%s')", getId(), getValue());
     }
 
-    public String get() {
+    public String getValue() {
         return value;
     }
 
-    public ScalarEntity set(String value) {
+    public ScalarEntity setValue(String value) {
         this.value = value;
         return this;
     }

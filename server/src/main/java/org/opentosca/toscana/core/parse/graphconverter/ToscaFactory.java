@@ -19,16 +19,16 @@ public class ToscaFactory {
 
     public static Map<String, RootNode> wrapNodes(ServiceModel serviceModel) {
         Map<String, RootNode> nodes = new HashMap<>();
-        Iterator<MappingEntity> it = serviceModel.iterator(ToscaStructure.NODE_TEMPLATES);
+        Iterator<BaseEntity> it = serviceModel.iterator(ToscaStructure.NODE_TEMPLATES);
         while (it.hasNext()) {
-            RootNode node = wrapNode(it.next());
+            RootNode node = wrapNode((MappingEntity) it.next());
             nodes.put(node.getEntityName(), node);
         }
         return nodes;
     }
 
     public static <T> T wrapNode(MappingEntity nodeEntity) {
-        String typeString = nodeEntity.get(TYPE);
+        String typeString = nodeEntity.getValue(TYPE);
         Class nodeType = NodeTypeResolver.resolve(typeString);
         if (nodeType != null) {
             return wrap(nodeEntity, nodeType);

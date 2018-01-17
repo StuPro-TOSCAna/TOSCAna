@@ -43,7 +43,7 @@ public class LinkResolver {
                 MappingEntity artifactEntity = artifact.getBackingEntity();
                 Optional<BaseEntity> repository = artifactEntity.getChild(Artifact.REPOSITORY.name);
                 if (repository.isPresent()) {
-                    String url = ((ScalarEntity) repository.get()).get();
+                    String url = ((ScalarEntity) repository.get()).getValue();
                     EntityId targetId = ToscaStructure.REPOSITORIES.descend(url);
                     Optional<BaseEntity> target = graph.getEntity(targetId);
                     target.ifPresent(baseEntity -> graph.replaceEntity(repository.get(), baseEntity));
@@ -53,16 +53,16 @@ public class LinkResolver {
     }
 
     private void resolveRequirements() {
-        Iterator<MappingEntity> nodeIt = model.iterator(ToscaStructure.NODE_TEMPLATES);
+        Iterator<BaseEntity> nodeIt = model.iterator(ToscaStructure.NODE_TEMPLATES);
         while (nodeIt.hasNext()) {
-            MappingEntity nodeEntity = nodeIt.next();
+            BaseEntity nodeEntity = nodeIt.next();
             Optional<BaseEntity> requirementsEntity = nodeEntity.getChild(RootNode.REQUIREMENTS.name);
             if (requirementsEntity.isPresent()) {
                 Collection<BaseEntity> requirements = requirementsEntity.get().getChildren();
                 for (BaseEntity requirement : requirements) {
                     MappingEntity mappingRequirement = (MappingEntity) requirement;
                     ScalarEntity fulfillerEntity = (ScalarEntity) mappingRequirement.getChild(Requirement.NODE_NAME).get();
-                    String fulfillerName = fulfillerEntity.get();
+                    String fulfillerName = fulfillerEntity.getValue();
                     EntityId fulfillerId = ToscaStructure.NODE_TEMPLATES.descend(fulfillerName);
                     BaseEntity fulfiller = model.getEntity(fulfillerId).orElseThrow(
                         () -> new IllegalStateException(String.format(
