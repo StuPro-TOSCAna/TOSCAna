@@ -33,24 +33,28 @@ public class EndpointCapability extends Capability {
      <p>
      Defaults to NetworkProtocol.TCP.
      */
-    public static ToscaKey<NetworkProtocol> PROTOCOL = new ToscaKey<>(PROPERTIES, "protocol");
+    public static ToscaKey<NetworkProtocol> PROTOCOL = new ToscaKey<>(PROPERTIES, "protocol")
+        .type(NetworkProtocol.class);
     /**
      The optional port of the endpoint.
      (TOSCA Simple Profile in YAML Version 1.1, p. 153)
      */
-    public static ToscaKey<Port> PORT = new ToscaKey<>(PROPERTIES, "port");
+    public static ToscaKey<Port> PORT = new ToscaKey<>(PROPERTIES, "port")
+        .type(Port.class);
     /**
      Requests for this endpoint to be secure and use credentials supplied on the node's {@link ConnectsTo} relationship.
      (TOSCA Simple Profile in YAML Version 1.1, p. 153)
      <p>
      Defaults to false.
      */
-    public static ToscaKey<Boolean> SECURE = new ToscaKey<>(PROPERTIES, "secure");
+    public static ToscaKey<Boolean> SECURE = new ToscaKey<>(PROPERTIES, "secure")
+        .type(Boolean.class);
     /**
      The optional URL path of this endpoint’s address if applicable for the protocol.
      (TOSCA Simple Profile in YAML Version 1.1, p. 153)
      */
-    public static ToscaKey<URL> URL_PATH = new ToscaKey<>(PROPERTIES, "url_path");
+    public static ToscaKey<URL> URL_PATH = new ToscaKey<>(PROPERTIES, "url_path")
+        .type(URL.class);
     /**
      The optional name (or ID) of the network port this endpoint should be bound to.
      (TOSCA Simple Profile in YAML Version 1.1, p. 153)
@@ -72,12 +76,14 @@ public class EndpointCapability extends Capability {
      <p>
      Defaults to Initiator.SOURCE
      */
-    public static ToscaKey<Initiator> INITIATOR = new ToscaKey<>(PROPERTIES, "initiator");
+    public static ToscaKey<Initiator> INITIATOR = new ToscaKey<>(PROPERTIES, "initiator")
+        .type(Initiator.class);
     /**
      The optional map of supportedPorts the Endpoint supports (if more than one)
      (TOSCA Simple Profile in YAML Version 1.1, p. 153)
      */
-    public static ToscaKey<Set<PortSpec>> SUPPORTED_PORTS = new ToscaKey<>(PROPERTIES, "supported_ports");
+    public static ToscaKey<Set<PortSpec>> SUPPORTED_PORTS = new ToscaKey<>(PROPERTIES, "supported_ports")
+        .type(PortSpec.class);
     /**
      The optional IP address as propagated up by the associated node’s host ({@link Compute}) container.
      (TOSCA Simple Profile in YAML Version 1.1, p. 153)

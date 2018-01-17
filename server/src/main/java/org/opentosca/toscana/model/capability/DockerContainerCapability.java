@@ -28,20 +28,23 @@ public class DockerContainerCapability extends ContainerCapability {
      Indicates that all ports (ranges) listed in the dockerfile using the EXPOSE keyword shall be published.
      (TOSCA Simple Profile in YAML Version 1.1, p. 220)
      */
-    public static ToscaKey<Boolean> PUBLISH_ALL = new ToscaKey<>(PROPERTIES, "publish_all");
+    public static ToscaKey<Boolean> PUBLISH_ALL = new ToscaKey<>(PROPERTIES, "publish_all")
+        .type(Boolean.class);
 
     /**
      Set of port mappings from source (Docker container) to target (host) ports to publish.
      (TOSCA Simple Profile in YAML Version 1.1, p. 220)
      */
-    public static ToscaKey<Set<PortSpec>> PUBLISH_PORTS = new ToscaKey<>(PROPERTIES, "publish_ports");
+    public static ToscaKey<Set<PortSpec>> PUBLISH_PORTS = new ToscaKey<>(PROPERTIES, "publish_ports")
+        .type(PortSpec.class);
 
     /**
      Set of port mappings from source (Docker container) to expose to other Docker containers
      (not accessible outside host).
      (TOSCA Simple Profile in YAML Version 1.1, p. 220)
      */
-    public static ToscaKey<Set<PortSpec>> EXPOSE_PORTS = new ToscaKey<>(PROPERTIES, "expose_ports");
+    public static ToscaKey<Set<PortSpec>> EXPOSE_PORTS = new ToscaKey<>(PROPERTIES, "expose_ports")
+        .type(PortSpec.class);
 
     /**
      The dockerfile VOLUME command which is used to enable access from the Docker container
@@ -95,13 +98,6 @@ public class DockerContainerCapability extends ContainerCapability {
     public DockerContainerCapability setVolumeId(String volumeId) {
         set(VOLUME_ID, volumeId);
         return this;
-    }
-
-    /**
-     @return {@link #VERSIONS}
-     */
-    public Set<String> getVERSIONS() {
-        return get(VERSIONS);
     }
 
     /**

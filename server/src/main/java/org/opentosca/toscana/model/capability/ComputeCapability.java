@@ -29,26 +29,30 @@ public class ComputeCapability extends Capability {
      Optional number of (actual or virtual) CPUs associated with the {@link Compute} node.
      (TOSCA Simple Profile in YAML Version 1.1, p. 150)
      */
-    public static ToscaKey<Integer> NUM_CPUS = new ToscaKey<>(PROPERTIES, "num_cpus");
+    public static ToscaKey<Integer> NUM_CPUS = new ToscaKey<>(PROPERTIES, "num_cpus")
+        .type(Integer.class);
 
     /**
      Optional operating frequency of CPU's core.
      This property expresses the expected frequency of one CPU as provided by {@link #NUM_CPUS}
      (TOSCA Simple Profile in YAML Version 1.1, p. 150)
      */
-    public static ToscaKey<Double> CPU_FREQUENCY_IN_GHZ = new ToscaKey<>(PROPERTIES, "cpu_frequency");
+    public static ToscaKey<Double> CPU_FREQUENCY_IN_GHZ = new ToscaKey<>(PROPERTIES, "cpu_frequency")
+        .type(Double.class);
 
     /**
      Optional size of the local disk space available to applications running on the {@link Compute} node, specified in MB.
      (TOSCA Simple Profile in YAML Version 1.1, p. 150)
      */
-    public static ToscaKey<Integer> DISK_SIZE_IN_MB = new ToscaKey<>(PROPERTIES, "disk_size");
+    public static ToscaKey<Integer> DISK_SIZE_IN_MB = new ToscaKey<>(PROPERTIES, "disk_size")
+        .type(Integer.class);
 
     /**
      Optional size of memory available to applications running on the {@link Compute} node, specified in MB.
      (TOSCA Simple Profile in YAML Version 1.1, p. 150)
      */
-    public static ToscaKey<Integer> MEM_SIZE_IN_MB = new ToscaKey<>(PROPERTIES, "mem_size");
+    public static ToscaKey<Integer> MEM_SIZE_IN_MB = new ToscaKey<>(PROPERTIES, "mem_size")
+        .type(Integer.class);
 
     public ComputeCapability(MappingEntity mappingEntity) {
         super(mappingEntity);
