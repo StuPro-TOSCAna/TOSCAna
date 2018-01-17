@@ -1,5 +1,6 @@
 package org.opentosca.toscana.model;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -38,7 +39,7 @@ public abstract class BaseToscaElement {
     public <T> Set<T> getCollection(ToscaKey<T> key) {
         Set<T> values = new HashSet<>();
         ToscaFactory factory = new ToscaFactory();
-        Optional<BaseEntity<?>> entity = mappingEntity.getChild(key.name);
+        Optional<BaseEntity> entity = mappingEntity.getChild(key.name);
         if (entity.isPresent()) {
             for (BaseEntity child : entity.get().getChildren()) {
                 T value = factory.wrapEntity((MappingEntity) child, key.getType());
@@ -50,7 +51,7 @@ public abstract class BaseToscaElement {
 
     protected <T> Set<T> getThisAsSet(Class<T> type) {
         ToscaFactory factory = new ToscaFactory();
-        Set<BaseEntity<?>> values = mappingEntity.getChildren();
+        Collection<BaseEntity> values = mappingEntity.getChildren();
         Set<T> results = new HashSet<>();
         for (BaseEntity v : values) {
             T result = factory.wrapEntity((MappingEntity) v, type);

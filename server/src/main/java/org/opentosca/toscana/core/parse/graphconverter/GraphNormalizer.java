@@ -30,14 +30,14 @@ public class GraphNormalizer {
 
     private static void normalizeOperations(ServiceGraph graph) {
         for (BaseEntity node : graph.getChildren(ToscaStructure.NODE_TEMPLATES)) {
-            Optional<BaseEntity<?>> interfaces = node.getChild(RootNode.INTERFACES.name);
+            Optional<BaseEntity> interfaces = node.getChild(RootNode.INTERFACES.name);
             if (interfaces.isPresent()) {
-                for (BaseEntity<?> thisInterface : interfaces.get().getChildren()) {
+                for (BaseEntity thisInterface : interfaces.get().getChildren()) {
                     for (BaseEntity operation : thisInterface.getChildren()) {
                         normalize(graph, operation, Operation.IMPLEMENTATION.name, Operation.PRIMARY.name);
-                        Optional<BaseEntity<Object>> implementation = graph.getEntity(operation.getId().descend(Operation.IMPLEMENTATION.name));
+                        Optional<BaseEntity> implementation = graph.getEntity(operation.getId().descend(Operation.IMPLEMENTATION.name));
                         implementation.ifPresent(e -> normalize(graph, e, Operation.PRIMARY.name));
-                        Optional<BaseEntity<Object>> shortArtifact = graph.getEntity(operation.getId().descend(Operation.PRIMARY));
+                        Optional<BaseEntity> shortArtifact = graph.getEntity(operation.getId().descend(Operation.PRIMARY));
                         normalize(graph, shortArtifact.get(), Artifact.FILE_PATH.name);
                     }
                 }
@@ -47,9 +47,9 @@ public class GraphNormalizer {
 
     private static void normalizeRequirements(ServiceGraph graph) {
         for (BaseEntity node : graph.getChildren(ToscaStructure.NODE_TEMPLATES)) {
-            Optional<BaseEntity<?>> requirements = node.getChild(RootNode.REQUIREMENTS);
+            Optional<BaseEntity> requirements = node.getChild(RootNode.REQUIREMENTS);
             if (requirements.isPresent()) {
-                for (BaseEntity<?> requirement : requirements.get().getChildren()) {
+                for (BaseEntity requirement : requirements.get().getChildren()) {
                     normalize(graph, requirement, Requirement.NODE_NAME);
                 }
             }

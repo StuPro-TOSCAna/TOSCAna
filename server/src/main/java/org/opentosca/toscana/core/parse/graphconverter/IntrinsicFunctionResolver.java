@@ -1,11 +1,16 @@
 package org.opentosca.toscana.core.parse.graphconverter;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.Set;
 
 import org.opentosca.toscana.core.parse.graphconverter.util.ToscaStructure;
 import org.opentosca.toscana.model.Parameter;
+import org.opentosca.toscana.model.node.RootNode;
+import org.opentosca.toscana.model.util.ToscaKey;
 
 import org.slf4j.Logger;
 
@@ -28,7 +33,7 @@ public class IntrinsicFunctionResolver {
     public boolean holdsFunction(BaseEntity entity) {
         if (entity instanceof MappingEntity) {
             MappingEntity mappingEntity = (MappingEntity) entity;
-            Set<BaseEntity<?>> children = mappingEntity.getChildren();
+            Collection<BaseEntity> children = mappingEntity.getChildren();
             if (children.size() == 1) {
                 BaseEntity child = children.iterator().next();
                 for (ToscaFunction toscaFunction : ToscaFunction.values()) {
@@ -64,22 +69,61 @@ public class IntrinsicFunctionResolver {
         BaseEntity functionEntity = functionHolder.getChildren().iterator().next();
         ToscaFunction function = ToscaFunction.getFunction(functionEntity.getName());
         ServiceGraph graph = functionHolder.getGraph();
+        IllegalStateException illegalTargetException = new IllegalStateException(String.format("Function at '%s' points to non-existent target",
+            functionEntity.getId()));
         switch (function) {
             case GET_INPUT:
                 ScalarEntity inputFunctionEntity = (ScalarEntity) functionEntity;
                 String inputName = inputFunctionEntity.get();
-                Optional<BaseEntity<String>> optionalInputEntity = graph.getEntity(ToscaStructure.INPUTS.descend(inputName));
-                BaseEntity inputEntity = optionalInputEntity.orElseThrow(() -> new IllegalStateException(
-                    String.format("Illegal function at '%s': Input '%s' is referenced but never declared"
-                        , functionEntity.getId(), inputName)
-                ));
-                Optional<BaseEntity<?>> inputValue = inputEntity.getChild(Parameter.VALUE);
+                BaseEntity inputEntity = graph.getEntityOrThrow(ToscaStructure.INPUTS.descend(inputName));
+                Optional<BaseEntity> inputValue = inputEntity.getChild(Parameter.VALUE);
                 return inputValue.orElseThrow(() -> new IllegalStateException(
-                   String.format("Input '%s' is referenced but its value is not set", inputName) 
+                    String.format("Input '%s' is referenced but its value is not set", inputName)
                 ));
+            case GET_PROPERTY:
+                Collection<BaseEntity> targetAddress = functionEntity.getChildren();
+                if (targetAddress.size() < 2) {
+                    throw new IllegalStateException(
+                        String.format("Illegal parameters for get_property function at '%s'", functionEntity.getId()));
+                }
+                Iterator<BaseEntity> it = targetAddress.iterator();
+                String targetNodeName = ((ScalarEntity) it.next()).get();
+//                BaseEntity node = graph.getEntityOrThrow(ToscaStructure.NODE_TEMPLATES).getChildOrThrow(targetNodeName);
+                // todo move on after generic shit
+                BaseEntity targetNode = graph.getEntityOrThrow(ToscaStructure.NODE_TEMPLATES.descend(targetNodeName));
+                List<BaseEntity> possiblePropertyLocations = new ArrayList<>();
+                ToscaKey capabilityProperties = new ToscaKey(RootNode.CAPABILITIES, RootNode.PROPERTIES.name);
+                ToscaKey requirementProperties = new ToscaKey(RootNode.REQUIREMENTS, RootNode.PROPERTIES.name);
+                for (ToscaKey key : new ToscaKey[]{RootNode.PROPERTIES, capabilityProperties, requirementProperties}) {
+                    targetNode.getChild(key).ifPresent(e -> possiblePropertyLocations.add(e));
+                }
+                if (possiblePropertyLocations.isEmpty()) {
+                    throw illegalTargetException;
+                }
+                for (BaseEntity possiblePropertyLocation : possiblePropertyLocations) {
+                    BaseEntity current = findTarget(possiblePropertyLocation, it);
+                    if (current != null) {
+                        return current;
+                    }
+                }
+                throw illegalTargetException;
+
             default:
-                throw new UnsupportedOperationException(String.format("Function %s not yet supported", function));
+                throw new UnsupportedOperationException(String.format("Function %s not supported yet", function));
         }
+    }
+
+    private BaseEntity findTarget(BaseEntity current, Iterator<BaseEntity> it) {
+        while (it.hasNext()) {
+            BaseEntity next = it.next();
+            Optional<BaseEntity> child = current.getChild(((ScalarEntity) next).get());
+            if (child.isPresent()) {
+                current = child.get();
+            } else {
+                return null;
+            }
+        }
+        return current;
     }
 
     public static enum ToscaFunction {

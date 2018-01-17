@@ -2,13 +2,16 @@ package org.opentosca.toscana.core.parse.converter.servicemodel;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import org.opentosca.toscana.core.BaseIntegrationTest;
 import org.opentosca.toscana.core.parse.graphconverter.BaseEntity;
+import org.opentosca.toscana.core.parse.graphconverter.ScalarEntity;
+import org.opentosca.toscana.core.parse.graphconverter.SequenceEntity;
 import org.opentosca.toscana.core.parse.graphconverter.ServiceModel;
-import org.opentosca.toscana.model.node.RootNode;
+import org.opentosca.toscana.model.EntityId;
 
 import com.google.common.collect.Lists;
 import org.junit.Test;
@@ -88,7 +91,7 @@ public class ServiceModelIT extends BaseIntegrationTest {
 
         assertEquals("test-implementation2", get("topology_template", "node_templates", "test-node", "interfaces",
             "test-interface2", "test-operation", "implementation", "primary", "file"));
-        assertEquals(Lists.newArrayList("test-dependency1", "test-dependency2"), get("topology_template", "node_templates", "test-node", "interfaces",
+        assertEquals(Lists.newArrayList("test-dependency1", "test-dependency2"), getList("topology_template", "node_templates", "test-node", "interfaces",
             "test-interface2", "test-operation", "implementation", "dependencies"));
     }
 
@@ -108,17 +111,17 @@ public class ServiceModelIT extends BaseIntegrationTest {
     @Test
     public void requirementTest() throws Exception {
         currentFile = REQUIREMENT;
-        Optional<BaseEntity<RootNode>> fulfiller = getModel().getEntity(Lists.newArrayList("topology_template",
+        Optional<BaseEntity> fulfiller = getModel().getEntity(Lists.newArrayList("topology_template",
             "node_templates", "test-node", "requirements", "test-requirement1", "node"));
         assertTrue(fulfiller.isPresent());
-        Optional<BaseEntity<RootNode>> fulfiller2 = getModel().getEntity(Lists.newArrayList("topology_template",
+        Optional<BaseEntity> fulfiller2 = getModel().getEntity(Lists.newArrayList("topology_template",
             "node_templates", "test-node", "requirements", "test-requirement2", "node"));
         assertTrue(fulfiller2.isPresent());
         assertEquals("DatabaseEndpoint", get("topology_template", "node_templates", "test-node", "requirements",
             "test-requirement2", "capability"));
         assertEquals("ConnectsTo", get("topology_template", "node_templates", "test-node", "requirements",
             "test-requirement2", "relationship"));
-        assertEquals(Lists.newArrayList("1", "2"), get("topology_template", "node_templates", "test-node", "requirements",
+        assertEquals(Lists.newArrayList("1", "2"), getList("topology_template", "node_templates", "test-node", "requirements",
             "test-requirement2", "occurrences"));
     }
 
@@ -139,9 +142,16 @@ public class ServiceModelIT extends BaseIntegrationTest {
             "test-artifact", "deploy_path"));
     }
 
-    private <T> T get(String... context) throws Exception {
+    private String get(String... context) throws Exception {
         ServiceModel model = getModel();
-        return (T) model.get(Lists.newArrayList(context));
+        BaseEntity entity = model.getEntityOrThrow(new EntityId(Lists.newArrayList(context)));
+        return ((ScalarEntity) entity).get(); 
+    }
+
+    private List<String> getList(String... context) throws Exception {
+        ServiceModel model = getModel();
+        BaseEntity entity = model.getEntityOrThrow(new EntityId(Lists.newArrayList(context)));
+        return ((SequenceEntity) entity).get();
     }
 
     private ServiceModel getModel() throws Exception {

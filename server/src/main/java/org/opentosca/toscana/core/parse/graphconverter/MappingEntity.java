@@ -1,15 +1,13 @@
 package org.opentosca.toscana.core.parse.graphconverter;
 
-import java.util.Map;
 import java.util.Optional;
 
-import org.opentosca.toscana.model.BaseToscaElement;
 import org.opentosca.toscana.model.EntityId;
 import org.opentosca.toscana.model.util.ToscaKey;
 
 import org.yaml.snakeyaml.nodes.MappingNode;
 
-public class MappingEntity extends BaseEntity<Map<String, String>> {
+public class MappingEntity extends BaseEntity {
 
     public MappingEntity(MappingNode node, EntityId id, ServiceGraph graph) {
         // TODO what to do with node?
@@ -26,7 +24,7 @@ public class MappingEntity extends BaseEntity<Map<String, String>> {
     }
 
     public <V> V get(ToscaKey<V> key) {
-        Optional<BaseEntity<?>> entity = graph.getChild(this, key);
+        Optional<BaseEntity> entity = graph.getChild(this, key);
         if (entity.isPresent()) {
             return new TypeConverter().convert(entity.get(), key);
         } else {
@@ -37,9 +35,9 @@ public class MappingEntity extends BaseEntity<Map<String, String>> {
     /**
      Returns the child entity specified by given key. If the child entity does not exist yet, creates the entity.
      */
-    public MappingEntity getOrNewChild(ToscaKey<? extends BaseToscaElement> key) {
+    public MappingEntity getOrNewChild(ToscaKey key) {
         MappingEntity child;
-        Optional<BaseEntity<?>> entity = getChild(key);
+        Optional<BaseEntity> entity = getChild(key);
         if (entity.isPresent()) {
             child = (MappingEntity) entity.get();
         } else {

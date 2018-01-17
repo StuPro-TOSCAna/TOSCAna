@@ -1,8 +1,8 @@
 package org.opentosca.toscana.core.parse.graphconverter;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.Optional;
-import java.util.Set;
 
 import org.opentosca.toscana.core.BaseIntegrationTest;
 import org.opentosca.toscana.core.parse.graphconverter.util.ToscaStructure;
@@ -30,11 +30,11 @@ public class GraphNormalizerIT extends BaseIntegrationTest {
     @Test
     public void repositoryNormalization() {
         ServiceModel model = new ServiceModel(REPOSITORY);
-        Set<BaseEntity<?>> repositories = model.getEntity(ToscaStructure.REPOSITORIES).get().getChildren();
+        Collection<BaseEntity> repositories = model.getEntity(ToscaStructure.REPOSITORIES).get().getChildren();
         BaseEntity repository = repositories.iterator().next();
         Optional<BaseEntity> url = repository.getChild("url");
         assertTrue(url.isPresent());
-        assertEquals("http://test.repo.com/", url.get().get());
+        assertEquals("http://test.repo.com/", ((ScalarEntity) url.get()).get());
     }
 
     @Test

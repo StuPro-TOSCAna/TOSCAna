@@ -71,7 +71,7 @@ public class ServiceGraph extends SimpleDirectedGraph<BaseEntity, Connection> {
      If one ore more parent entities do not exist, automatically adds intermediate entities.
      IF equivalent entity already exists, does nothing.
      */
-    public <T> void addEntity(BaseEntity<T> entity) {
+    public void addEntity(BaseEntity entity) {
         BaseEntity parent = root;
         BaseEntity child;
         EntityId id = entity.getId();
@@ -94,9 +94,9 @@ public class ServiceGraph extends SimpleDirectedGraph<BaseEntity, Connection> {
         }
     }
 
-    public Optional<BaseEntity<?>> getChild(BaseEntity source, ToscaKey<?> key) {
+    public Optional<BaseEntity> getChild(BaseEntity source, ToscaKey<?> key) {
         if (key.getPredecessor().isPresent()) {
-            Optional<BaseEntity<?>> intermediateEntity = getChild(source, key.getPredecessor().get());
+            Optional<BaseEntity> intermediateEntity = getChild(source, key.getPredecessor().get());
             if (intermediateEntity.isPresent()) {
                 source = intermediateEntity.get();
             } else {
@@ -111,10 +111,10 @@ public class ServiceGraph extends SimpleDirectedGraph<BaseEntity, Connection> {
 
      @return null if no child associated with given name was found
      */
-    public Optional<BaseEntity<?>> getChild(BaseEntity source, String key) {
+    public Optional<BaseEntity> getChild(BaseEntity source, String key) {
         for (Connection connection : outgoingEdgesOf(source)) {
             if (source instanceof SequenceEntity) {
-                Optional<BaseEntity<?>> child = getChild(connection.getTarget(), key);
+                Optional<BaseEntity> child = getChild(connection.getTarget(), key);
                 if (child.isPresent()) {
                     return child;
                 }
@@ -125,10 +125,17 @@ public class ServiceGraph extends SimpleDirectedGraph<BaseEntity, Connection> {
         return Optional.empty();
     }
 
-    public <T> Optional<BaseEntity<T>> getEntity(List<String> path) {
+    public BaseEntity getChildOrThrow(BaseEntity source, String key) {
+        Optional<BaseEntity> optionalEntity = getChild(source, key);
+        return optionalEntity.orElseThrow(() -> new IllegalStateException(
+            String.format("Entity '%s' is referenced but does not exist", source.getId().descend(key))
+        ));
+    }
+
+    public Optional<BaseEntity> getEntity(List<String> path) {
         BaseEntity current = root;
         for (String segment : path) {
-            Optional<BaseEntity<?>> child = getChild(current, segment);
+            Optional<BaseEntity> child = getChild(current, segment);
             if (child.isPresent()) {
                 current = child.get();
             }
@@ -136,12 +143,19 @@ public class ServiceGraph extends SimpleDirectedGraph<BaseEntity, Connection> {
         return Optional.of(current);
     }
 
-    public <T> Optional<BaseEntity<T>> getEntity(EntityId id) {
+    public BaseEntity getEntityOrThrow(EntityId id) {
+        Optional<BaseEntity> optionalEntity = getEntity(id);
+        return optionalEntity.orElseThrow(() -> new IllegalStateException(
+            String.format("Entity '%s' is referenced but does not exist", id)
+        ));
+    }
+
+    public Optional<BaseEntity> getEntity(EntityId id) {
         return getEntity(id.getPath());
     }
 
-    public Set<BaseEntity<?>> getChildren(BaseEntity entity) {
-        Set<BaseEntity<?>> children = new HashSet<>();
+    public Set<BaseEntity> getChildren(BaseEntity entity) {
+        Set<BaseEntity> children = new HashSet<>();
         if (entity != null) {
             for (Connection connection : outgoingEdgesOf(entity)) {
                 children.add(connection.getTarget());
@@ -150,8 +164,8 @@ public class ServiceGraph extends SimpleDirectedGraph<BaseEntity, Connection> {
         return children;
     }
 
-    public Set<BaseEntity<?>> getChildren(EntityId id) {
-        Optional<BaseEntity<Object>> entity = getEntity(id);
+    public Set<BaseEntity> getChildren(EntityId id) {
+        Optional<BaseEntity> entity = getEntity(id);
         return getChildren(entity.orElse(null));
     }
 

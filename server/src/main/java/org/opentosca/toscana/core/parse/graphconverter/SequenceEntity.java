@@ -1,8 +1,9 @@
 package org.opentosca.toscana.core.parse.graphconverter;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Comparator;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -12,7 +13,7 @@ import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.ScalarNode;
 import org.yaml.snakeyaml.nodes.SequenceNode;
 
-public class SequenceEntity extends BaseEntity<List<String>> {
+public class SequenceEntity extends BaseEntity {
 
     private final SequenceNode sequenceNode;
 
@@ -21,7 +22,6 @@ public class SequenceEntity extends BaseEntity<List<String>> {
         this.sequenceNode = node;
     }
 
-    @Override
     public List<String> get() {
         List<String> values = new ArrayList<>();
         for (Node node : sequenceNode.getValue()) {
@@ -32,13 +32,19 @@ public class SequenceEntity extends BaseEntity<List<String>> {
     }
 
     @Override
-    public Set<BaseEntity<?>> getChildren() {
-        Set<BaseEntity<?>> children = new HashSet<>();
-        Set<BaseEntity<?>> entities = graph.getChildren(this);
-        for (BaseEntity entity : entities) {
-            Iterator<BaseEntity> it = entity.getChildren().iterator();
-            BaseEntity child = it.next();
-            children.add(child);
+    public List<BaseEntity> getChildren() {
+        List<BaseEntity> children = new ArrayList<>();
+        Set<BaseEntity> entities = graph.getChildren(this);
+        List<BaseEntity> orderedEntities = new LinkedList<>(entities);
+        orderedEntities.sort((b1, b2) -> b1.getName().compareTo(b2.getName()));
+        for (BaseEntity entity : orderedEntities) {
+            if (entity instanceof ScalarEntity) {
+                children.add(entity);
+            } else {
+                Iterator<BaseEntity> it = entity.getChildren().iterator();
+                BaseEntity child = it.next();
+                children.add(child);
+            }
         }
         return children;
     }

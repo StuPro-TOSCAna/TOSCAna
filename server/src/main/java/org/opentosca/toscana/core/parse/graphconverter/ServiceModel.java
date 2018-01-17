@@ -47,28 +47,19 @@ public class ServiceModel {
         }
     }
 
-    /**
-     Returns the value associated with the entity matching given context.
-     */
-    public <T> T get(List<String> context) {
-        // TODO handle unsafe use of generics
-        Optional<BaseEntity<T>> target = graph.getEntity(context);
-        if (target.isPresent()) {
-            return target.get().get();
-        } else {
-            throw new IllegalStateException(String.format("No BaseEntity found for context %s", context));
-        }
-    }
-
-    public <T> Optional<BaseEntity<T>> getEntity(List<String> context) {
+    public Optional<BaseEntity> getEntity(List<String> context) {
         return graph.getEntity(context);
     }
 
-    public <T> Optional<BaseEntity<T>> getEntity(EntityId context) {
+    public Optional<BaseEntity> getEntity(EntityId context) {
         return graph.getEntity(context);
     }
 
-    public <T> void add(BaseEntity<T> entity) {
+    public BaseEntity getEntityOrThrow(EntityId entityId) {
+        return graph.getEntityOrThrow(entityId);
+    }
+
+    public void add(BaseEntity entity) {
         graph.addEntity(entity);
     }
 
@@ -87,7 +78,7 @@ public class ServiceModel {
     public Map<String, Property> getInputs() {
         if (inputs == null) {
             inputs = new HashMap<>();
-            Set<BaseEntity<?>> inputEntities = graph.getChildren(ToscaStructure.INPUTS);
+            Set<BaseEntity> inputEntities = graph.getChildren(ToscaStructure.INPUTS);
             for (BaseEntity inputEntity : inputEntities) {
                 Parameter input = new ToscaFactory(logger).wrapEntity((MappingEntity) inputEntity, Parameter.class);
                 inputs.put(input.getEntityName(), input);
