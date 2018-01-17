@@ -75,7 +75,7 @@ public class ServiceTest extends BaseUnitTest {
         envOrga = System.getenv(CF_ENVIRONMENT_ORGA);
         envSpace = System.getenv(CF_ENVIRONMENT_SPACE);
 
-        app = new Application(appName);
+        app = new Application(appName, 1);
         app.setProvider(provider);
         connection = createConnection();
         app.setConnection(connection);

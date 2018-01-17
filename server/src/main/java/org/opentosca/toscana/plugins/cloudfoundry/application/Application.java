@@ -14,7 +14,7 @@ import org.opentosca.toscana.plugins.cloudfoundry.client.Connection;
  */
 public class Application {
 
-    private static int counter;
+    //private static int counter;
 
     private String name;
     private int applicationNumber;
@@ -30,15 +30,16 @@ public class Application {
 
     private Connection connection;
 
-    public Application(String name) {
+    public Application(String name, int applicationNumber) {
         this.name = name;
-        counter += 1;
-        this.applicationNumber = counter;
+        this.applicationNumber = applicationNumber;
+        //counter += 1;
+        //this.applicationNumber = counter;
     }
 
     public Application() {
-        counter += 1;
-        this.applicationNumber = counter;
+        //counter += 1;
+        //this.applicationNumber = counter;
     }
 
     public int getApplicationNumber() {

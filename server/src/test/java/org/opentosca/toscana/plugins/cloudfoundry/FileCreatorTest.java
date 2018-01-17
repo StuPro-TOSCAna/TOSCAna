@@ -52,7 +52,7 @@ public class FileCreatorTest extends BaseUnitTest {
     @Before
     public void setUp() {
         appName = "testApp";
-        testApp = new Application();
+        testApp = new Application("testApp", 1);
         testApp.setName(appName);
         File sourceDir = new File(tmpdir, "sourceDir");
         targetDir = new File(tmpdir, "targetDir");
