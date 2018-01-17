@@ -73,7 +73,7 @@ public class EntityId implements Comparable<EntityId> {
     public EntityId ascend() {
         int pathSize = this.path.size();
         pathSize = (pathSize < 2) ? 2 : pathSize;
-        List<String> parentPath = this.path.subList(0, pathSize - 2);
+        List<String> parentPath = this.path.subList(0, pathSize - 1);
         return new EntityId(parentPath);
     }
 

@@ -81,6 +81,7 @@ public class IntrinsicFunctionResolver {
                     String.format("Input '%s' is referenced but its value is not set", inputName)
                 ));
             case GET_PROPERTY:
+                // todo refactor
                 Collection<BaseEntity> targetAddress = functionEntity.getChildren();
                 if (targetAddress.size() < 2) {
                     throw new IllegalStateException(
@@ -88,9 +89,12 @@ public class IntrinsicFunctionResolver {
                 }
                 Iterator<BaseEntity> it = targetAddress.iterator();
                 String targetNodeName = ((ScalarEntity) it.next()).get();
-//                BaseEntity node = graph.getEntityOrThrow(ToscaStructure.NODE_TEMPLATES).getChildOrThrow(targetNodeName);
-                // todo move on after generic shit
-                BaseEntity targetNode = graph.getEntityOrThrow(ToscaStructure.NODE_TEMPLATES.descend(targetNodeName));
+                BaseEntity targetNode;
+                if ("SELF".equals(targetNodeName)) {
+                    targetNode = resolveSelfKeyword(functionEntity);
+                } else {
+                    targetNode = graph.getEntityOrThrow(ToscaStructure.NODE_TEMPLATES.descend(targetNodeName));
+                }
                 List<BaseEntity> possiblePropertyLocations = new ArrayList<>();
                 ToscaKey capabilityProperties = new ToscaKey(RootNode.CAPABILITIES, RootNode.PROPERTIES.name);
                 ToscaKey requirementProperties = new ToscaKey(RootNode.REQUIREMENTS, RootNode.PROPERTIES.name);
@@ -107,10 +111,22 @@ public class IntrinsicFunctionResolver {
                     }
                 }
                 throw illegalTargetException;
-
             default:
                 throw new UnsupportedOperationException(String.format("Function %s not supported yet", function));
         }
+    }
+
+    /**
+     @return the node entity referenced by 'SELF'
+     */
+    private BaseEntity resolveSelfKeyword(BaseEntity current) {
+        BaseEntity parent = current;
+        do {
+            current = parent;
+            parent = current.getParent();
+        } while (!ToscaStructure.NODE_TEMPLATES.equals(parent.getId()));
+        
+        return current;
     }
 
     private BaseEntity findTarget(BaseEntity current, Iterator<BaseEntity> it) {
