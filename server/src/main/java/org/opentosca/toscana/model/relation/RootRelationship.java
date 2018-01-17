@@ -1,7 +1,5 @@
 package org.opentosca.toscana.model.relation;
 
-import java.util.UUID;
-
 import org.opentosca.toscana.core.parse.graphconverter.MappingEntity;
 import org.opentosca.toscana.model.DescribableEntity;
 import org.opentosca.toscana.model.visitor.RelationshipVisitor;
@@ -18,14 +16,12 @@ import lombok.ToString;
 @ToString
 public class RootRelationship extends DescribableEntity implements VisitableRelationship {
 
-    // todo still needed?
-    private final String uid = UUID.randomUUID().toString();
-
     public RootRelationship(MappingEntity entity) {
         super(entity);
     }
 
     @Override
     public void accept(RelationshipVisitor v) {
+        v.visit(this);
     }
 }

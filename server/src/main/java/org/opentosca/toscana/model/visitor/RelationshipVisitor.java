@@ -4,6 +4,7 @@ import org.opentosca.toscana.model.relation.AttachesTo;
 import org.opentosca.toscana.model.relation.ConnectsTo;
 import org.opentosca.toscana.model.relation.DependsOn;
 import org.opentosca.toscana.model.relation.HostedOn;
+import org.opentosca.toscana.model.relation.RootRelationship;
 import org.opentosca.toscana.model.relation.RoutesTo;
 
 public interface RelationshipVisitor {
@@ -26,5 +27,9 @@ public interface RelationshipVisitor {
 
     default void visit(RoutesTo relation) {
         // noop
+    }
+
+    default void visit(RootRelationship relation) {
+        // noop;
     }
 }
