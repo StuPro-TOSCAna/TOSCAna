@@ -16,6 +16,9 @@ toscana:
 ################################
 
 spring:
+    resources:
+        chain:
+            enabled: true
     main:
         banner-mode: "off"
     http:
