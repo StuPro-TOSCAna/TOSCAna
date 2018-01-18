@@ -24,8 +24,8 @@ import org.opentosca.toscana.model.util.ToscaKey;
 public class IntrinsicFunctionResolver {
 
     /**
-     @param entity holds function if it's a MappingEntity and has a child entity with its name exactly matching
-     one of the intrinsic function names.
+     @param entity holds function if entity is a MappingEntity and has a child entity with its name exactly matching
+     one of the supported intrinsic function names.
      @return true if given entity holds a tosca intrinsic function,  false otherwise
      */
     public static boolean holdsFunction(Entity entity) {
@@ -69,52 +69,67 @@ public class IntrinsicFunctionResolver {
     private static Entity getTarget(MappingEntity functionHolder) throws AttributeNotSetException {
         Entity functionEntity = functionHolder.getChildren().iterator().next();
         ToscaFunction function = ToscaFunction.getFunction(functionEntity.getName());
-        ServiceGraph graph = functionHolder.getGraph();
         switch (function) {
             case GET_INPUT:
-                ScalarEntity inputFunctionEntity = (ScalarEntity) functionEntity;
-                String inputName = inputFunctionEntity.getValue();
-                Entity inputEntity = graph.getEntityOrThrow(ToscaStructure.INPUTS.descend(inputName));
-                Optional<Entity> inputValue = inputEntity.getChild(Parameter.VALUE);
-                return inputValue.orElseThrow(() -> new IllegalStateException(
-                    String.format("Input '%s' is referenced but its value is not set", inputName)
-                ));
+                return getInputTarget(functionEntity);
             case GET_PROPERTY:
             case GET_ATTRIBUTE:
-                ToscaKey location = function.location;
-                // todo refactor
-                Collection<Entity> targetAddress = functionEntity.getChildren();
-                if (targetAddress.size() < 2) {
-                    throw new IllegalStateException(
-                        String.format("Illegal amount of parameters for function at '%s'", functionEntity.getId()));
-                }
-                Iterator<Entity> it = targetAddress.iterator();
-                String targetNodeName = ((ScalarEntity) it.next()).getValue();
-                Entity targetNode;
-                if ("SELF".equals(targetNodeName)) {
-                    targetNode = NavigationUtil.getEnclosingNode(functionEntity);
-                } else {
-                    targetNode = graph.getEntityOrThrow(ToscaStructure.NODE_TEMPLATES.descend(targetNodeName));
-                }
-                List<Entity> possibleLocations = new ArrayList<>();
-                ToscaKey capabilityLocation = new ToscaKey(RootNode.CAPABILITIES, location.name);
-                ToscaKey requirementLocation = new ToscaKey(RootNode.REQUIREMENTS, location.name);
-                for (ToscaKey key : new ToscaKey[]{location, capabilityLocation, requirementLocation}) {
-                    targetNode.getChild(key).ifPresent(e -> possibleLocations.add(e));
-                }
-                if (possibleLocations.isEmpty()) {
-                    return noTargetFound(function, functionEntity);
-                }
-                for (Entity possibleLocation : possibleLocations) {
-                    Entity current = findTarget(possibleLocation, it);
-                    if (current != null) {
-                        return current;
-                    }
-                }
-                return (noTargetFound(function, functionEntity));
+                return getPropertyOrAtributeTarget(functionEntity, function);
             default:
                 throw new UnsupportedOperationException(String.format("Function %s not supported yet", function));
         }
+    }
+
+    private static Entity getInputTarget(Entity functionEntity) {
+        ServiceGraph graph = functionEntity.getGraph();
+        ScalarEntity inputFunctionEntity = (ScalarEntity) functionEntity;
+        String inputName = inputFunctionEntity.getValue();
+        Entity inputEntity = graph.getEntityOrThrow(ToscaStructure.INPUTS.descend(inputName));
+        Optional<Entity> inputValue = inputEntity.getChild(Parameter.VALUE);
+        return inputValue.orElseThrow(() -> new IllegalStateException(
+            String.format("Input '%s' is referenced but its value is not set", inputName)
+        ));
+    }
+
+    private static Entity getPropertyOrAtributeTarget(Entity functionEntity, ToscaFunction function) throws AttributeNotSetException {
+        Collection<Entity> targetAddress = functionEntity.getChildren();
+        if (targetAddress.size() < 2) {
+            throw new IllegalStateException(
+                String.format("Illegal amount of parameters for function at '%s'", functionEntity.getId()));
+        }
+        Iterator<Entity> it = targetAddress.iterator();
+        Entity targetNode = getTargetNodeEntity(it.next(), functionEntity);
+        List<Entity> possibleLocations = getPossibleTargetLocations(function.location, targetNode);
+        if (possibleLocations.isEmpty()) {
+            return noTargetFound(function, functionEntity);
+        }
+        for (Entity possibleLocation : possibleLocations) {
+            Entity current = findTarget(possibleLocation, it);
+            if (current != null) {
+                return current;
+            }
+        }
+        return (noTargetFound(function, functionEntity));
+    }
+
+    private static Entity getTargetNodeEntity(Entity targetNodeNameEntity, Entity functionEntity) {
+        ServiceGraph graph = targetNodeNameEntity.getGraph();
+        String targetNodeName = ((ScalarEntity) targetNodeNameEntity).getValue();
+        if ("SELF".equals(targetNodeName)) {
+            return NavigationUtil.getEnclosingNode(functionEntity);
+        } else {
+            return graph.getEntityOrThrow(ToscaStructure.NODE_TEMPLATES.descend(targetNodeName));
+        }
+    }
+
+    private static List<Entity> getPossibleTargetLocations(ToscaKey location, Entity targetNode) {
+        List<Entity> possibleLocations = new ArrayList<>();
+        ToscaKey capabilityLocation = new ToscaKey<>(RootNode.CAPABILITIES, location.name);
+        ToscaKey requirementLocation = new ToscaKey<>(RootNode.REQUIREMENTS, location.name);
+        for (ToscaKey key : new ToscaKey[]{location, capabilityLocation, requirementLocation}) {
+            targetNode.getChild(key).ifPresent(possibleLocations::add);
+        }
+        return possibleLocations;
     }
 
     private static Entity noTargetFound(ToscaFunction function, Entity functionEntity) throws AttributeNotSetException {
