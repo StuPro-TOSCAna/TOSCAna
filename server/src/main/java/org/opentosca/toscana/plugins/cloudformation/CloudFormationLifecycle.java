@@ -1,7 +1,6 @@
 package org.opentosca.toscana.plugins.cloudformation;
 
 import java.io.IOException;
-import java.util.Hashtable;
 import java.util.Set;
 
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
@@ -57,12 +56,14 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
             logger.error("Transformation to CloudFormation unsuccessful. Please check the StackTrace for more Info.");
             e.printStackTrace();
         }
-
-        // Create scripts for the deployment of the template
-        logger.info("Creating CloudFormation scripts.");
+        
         try {
-            CloudFormationScriptCreator fileCreator = new CloudFormationScriptCreator(logger, cfnModule);
+            // Create scripts for the deployment of the template
+            CloudFormationFileCreator fileCreator = new CloudFormationFileCreator(logger, cfnModule);
+            logger.info("Creating CloudFormation scripts.");
             fileCreator.createScripts();
+            logger.info("Copying files to the target artifact.");
+            
         } catch (IOException e) {
             e.printStackTrace();
             logger.error("Transformation to CloudFormation unsuccessful. Please check the StackTrace for more Info.");

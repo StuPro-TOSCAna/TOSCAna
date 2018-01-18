@@ -14,9 +14,9 @@ import org.opentosca.toscana.plugins.scripts.EnvironmentCheck;
 import org.slf4j.Logger;
 
 /**
- * Class for building scripts needed for deployment of cloudformation templates.
+ * Class for building scripts and copying files needed for deployment of cloudformation templates.
  */
-public class CloudFormationScriptCreator {
+public class CloudFormationFileCreator {
     private static final String CLI_COMMAND_CREATESTACK = "aws cloudformation deploy ";
     private static final String CLI_PARAM_STACKNAME = "--stack-name ";
     private static final String CLI_PARAM_TEMPLATEFILE = "--template-file ";
@@ -31,14 +31,23 @@ public class CloudFormationScriptCreator {
     private CloudFormationModule cfnModule;
 
     /**
-     * Creates a <tt>CloudFormationScriptCreator<tt> in order to build a deployment scripts.
+     * Creates a <tt>CloudFormationFileCreator<tt> in order to build deployment scripts and copy files.
      *
      * @param cfnModule Module to get the necessary CloudFormation information
      * @param logger    standard logger
      */
-    public CloudFormationScriptCreator(Logger logger, CloudFormationModule cfnModule) {
+    public CloudFormationFileCreator(Logger logger, CloudFormationModule cfnModule) {
         this.logger = logger;
         this.cfnModule = cfnModule;
+    }
+
+    /**
+     * Copies all files that need to be uploaded to the target artifact.
+     */
+    private void copyFiles() throws IOException {
+        for (String filePath : cfnModule.getFilesToBeUploaded().values()) {
+            cfnModule.getFileAccess().copy(filePath);
+        }
     }
 
     /**
@@ -85,8 +94,8 @@ public class CloudFormationScriptCreator {
                 uploadIterator.remove();
             }
         } else {
-            logger.info("No files to be uploaded found.");
-            logger.info("Skipping creation of file upload script.");
+            logger.debug("No files to be uploaded found.");
+            logger.debug("Skipping creation of file upload script.");
         }
     }
 
