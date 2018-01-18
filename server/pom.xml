@@ -41,7 +41,7 @@
         <dependency>
             <groupId>com.github.StuPro-TOSCAna</groupId>
             <artifactId>cloudformation-builder</artifactId>
-            <version>72c1e0c2e80808d69b4aeb185a7533ebfa2ac3da</version>
+            <version>5b856331b4d8718e83bc715be4a827adbc1db61c</version>
         </dependency>
 
         <!--CloudFoundry Plugin-->

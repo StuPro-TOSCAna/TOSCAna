@@ -230,9 +230,9 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                 String cfnFileMode = "000644"; //TODO Check what mode is needed (only read?)
                 String cfnFileOwner = "root"; //TODO Check what Owner is needed
                 String cfnFileGroup = "root"; //TODO Check what Group is needed
-
+                
                 CFNFile cfnFile = new CFNFile(cfnFilePath + dependency)
-                    .setContent(cfnModule.getFileAccess().read(dependency))
+                    .setSource(dependency)
                     .setMode(cfnFileMode)
                     .setOwner(cfnFileOwner)
                     .setGroup(cfnFileGroup);
@@ -257,7 +257,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
 
             try {
                 CFNFile cfnFile = new CFNFile(cfnFilePath + artifact)
-                    .setContent(cfnModule.getFileAccess().read(artifact))
+                    .setSource(artifact)
                     .setMode(cfnFileMode)
                     .setOwner(cfnFileOwner)
                     .setGroup(cfnFileGroup);
