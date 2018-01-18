@@ -52,7 +52,7 @@ public class ToscaFactory {
             T node = (T) ConstructorUtils.invokeConstructor(type, entity);
             return node;
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
-            throw new IllegalStateException(String.format("Failed to wrap up entity '%s' in type '%s'", entity, type, e));
+            throw new IllegalStateException(String.format("Failed to wrap up entity '%s' in type '%s'", entity, type), e);
         }
     }
 }

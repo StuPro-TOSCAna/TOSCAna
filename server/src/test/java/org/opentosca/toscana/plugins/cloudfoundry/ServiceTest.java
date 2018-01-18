@@ -9,8 +9,6 @@ import java.util.Set;
 import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.core.testdata.TestCsars;
-import org.opentosca.toscana.core.testutils.TestUtils;
-import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.visitor.VisitableNode;
@@ -28,7 +26,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
 
 import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertThat;
@@ -56,8 +53,6 @@ public class ServiceTest extends BaseUnitTest {
     private String envOrga;
     private String envSpace;
 
-    @Mock
-    private Log log;
     private File targetDir;
     private final String appName = "testapp";
     private final String expectedDeployContent = "cf create-service cleardb spark my_db";
@@ -158,14 +153,13 @@ public class ServiceTest extends BaseUnitTest {
 
     private void setUpMyApp() throws IOException, JSONException {
         NodeVisitors visitor = new NodeVisitors(myApp);
-        EffectiveModel lamp = new EffectiveModel(TestCsars.VALID_LAMP_INPUT_TEMPLATE, log);
+        EffectiveModel lamp = new EffectiveModel(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, log);
         ArrayList<String> paths = new ArrayList<>();
         String resourcesPath = "src/test/resources/";
-        File sourceDir = new File(resourcesPath + "csars/yaml/valid/lamp-input/");
+        File sourceDir = new File(resourcesPath + "csars/yaml/valid/lamp-noinput/");
         targetDir = new File(tmpdir, "targetDir");
         sourceDir.mkdir();
         targetDir.mkdir();
-        log = TestUtils.getMockLog();
         PluginFileAccess fileAccess = new PluginFileAccess(sourceDir, targetDir, log);
         Set<RootNode> nodes = lamp.getNodes();
 
