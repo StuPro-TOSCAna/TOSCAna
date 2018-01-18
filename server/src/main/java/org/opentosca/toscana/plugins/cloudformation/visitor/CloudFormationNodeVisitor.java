@@ -74,7 +74,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             //check what host should be taken
             // we only support t2.micro atm since its free for student accounts
             ComputeCapability computeCompute = node.getHost();
-            String instanceType = capabilityMapper.mapComputeCapabilityToInstanceType(computeCompute, "EC2");
+            String instanceType = capabilityMapper.mapComputeCapabilityToInstanceType(computeCompute, CapabilityMapper.EC2_DISTINCTION);
             //create CFN init and store it
             CFNInit init = new CFNInit(CONFIG_SETS);
             cfnModule.putCFNInit(nodeName, init);
@@ -121,7 +121,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             //TODO check downwards to compute and take its values
             //check what values should be taken
             CapabilityMapper capabilityMapper = new CapabilityMapper();
-            String dBInstanceClass = capabilityMapper.mapComputeCapabilityToInstanceType(hostedOnComputeCapability, "RDS");
+            String dBInstanceClass = capabilityMapper.mapComputeCapabilityToInstanceType(hostedOnComputeCapability, CapabilityMapper.RDS_DISTINCTION);
             Integer allocatedStorage = capabilityMapper.mapComputeCapabilityToDiskSize(hostedOnComputeCapability);
             String storageType = "gp2"; //SSD
 

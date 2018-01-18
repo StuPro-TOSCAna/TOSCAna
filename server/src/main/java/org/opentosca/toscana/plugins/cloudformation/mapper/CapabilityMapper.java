@@ -29,7 +29,11 @@ import org.slf4j.LoggerFactory;
 
 public class CapabilityMapper {
 
-    private final static Logger logger = LoggerFactory.getLogger(CapabilityMapper.class);
+    public static final String EC2_DISTINCTION = "EC2";
+    public static final String RDS_DISTINCTION = "RDS";
+    private static final Logger logger = LoggerFactory.getLogger(CapabilityMapper.class);
+    private static final String ARCH_x86_32 = "i386";
+    private static final String ARCH_x86_64 = "x86_64";
 
     private final ImmutableList<InstanceType> EC2_INSTANCE_TYPES = ImmutableList.<InstanceType>builder()
         .add(new InstanceType("t2.nano", 1, 512))
@@ -89,13 +93,13 @@ public class CapabilityMapper {
         }
         if (osCapability.getArchitecture().isPresent()) {
             if (osCapability.getArchitecture().get().equals(OsCapability.Architecture.x86_64)) {
-                describeImagesRequest.withFilters(new Filter("architecture").withValues("x86_64"));
+                describeImagesRequest.withFilters(new Filter("architecture").withValues(ARCH_x86_64));
             } else if (osCapability.getArchitecture().get().equals(OsCapability.Architecture.x86_32)) {
-                describeImagesRequest.withFilters(new Filter("architecture").withValues("i386"));
+                describeImagesRequest.withFilters(new Filter("architecture").withValues(ARCH_x86_32));
             }
         } else {
             //defaulting to 64 bit architecture
-            describeImagesRequest.withFilters(new Filter("architecture").withValues("x86_64"));
+            describeImagesRequest.withFilters(new Filter("architecture").withValues(ARCH_x86_64));
         }
         String imageId;
         try {
@@ -148,9 +152,9 @@ public class CapabilityMapper {
         Integer memSize = computeCapability.getMemSizeInMB().orElse(0);
         //default type the smallest
         final ImmutableList<InstanceType> instanceTypes;
-        if ("EC2".equals(distinction)) {
+        if (EC2_DISTINCTION.equals(distinction)) {
             instanceTypes = EC2_INSTANCE_TYPES;
-        } else if ("RDS".equals(distinction)) {
+        } else if (RDS_DISTINCTION.equals(distinction)) {
             instanceTypes = RDS_INSTANCE_CLASSES;
         } else {
             throw new IllegalArgumentException("Distinguisher not supported");
