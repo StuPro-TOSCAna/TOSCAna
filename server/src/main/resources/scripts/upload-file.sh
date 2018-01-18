@@ -3,6 +3,7 @@
 # $2: objectKey for the file
 # $3: filepath
 function uploadFile () {
-# TODO implementation
-  echo "Uploading the file "$2"."
+# TODO catch exception?
+  echo "Uploading file "$2"."
+  aws s3api put-object --bucket $1 --key $2 --body $3
 }

@@ -123,7 +123,8 @@ public class CloudFormationFileCreator {
      * Wraps resources/cloudformation.scripts/create-bucket.sh
      */
     private String createBucket() {
-        return "createBucket \"" + cfnModule.getBucketName() + "\"";
+        // TODO get region, currently defaults to us-west-2
+        return "createBucket \"" + cfnModule.getBucketName() + "\"" + "\"" + " " + "\"" + " us-west-2";
     }
 
     /**
