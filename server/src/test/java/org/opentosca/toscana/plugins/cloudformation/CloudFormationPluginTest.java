@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.opentosca.toscana.plugins.cloudformation.CloudFormationPlugin.AWS_REGION_DEFAULT;
 
 public class CloudFormationPluginTest extends BaseUnitTest {
     private final static Logger logger = LoggerFactory.getLogger(CloudFormationPluginTest.class);
@@ -35,7 +36,7 @@ public class CloudFormationPluginTest extends BaseUnitTest {
     public void setUp() throws Exception {
         when(log.getLogger(any(Class.class))).thenReturn(LoggerFactory.getLogger("Test logger"));
         fileAccess = new PluginFileAccess(new File("src/test/resources/csars/yaml/valid/lamp-input/"), tmpdir, log);
-        cfnModule = new CloudFormationModule(fileAccess);
+        cfnModule = new CloudFormationModule(fileAccess, AWS_REGION_DEFAULT);
         cfnNodeVisitor = new CloudFormationNodeVisitor(logger, cfnModule);
     }
 
