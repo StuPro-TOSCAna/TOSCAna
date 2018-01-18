@@ -1,6 +1,5 @@
 package org.opentosca.toscana.core.parse.converter;
 
-import java.io.File;
 import java.util.Set;
 
 import org.opentosca.toscana.core.BaseUnitTest;

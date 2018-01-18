@@ -2,8 +2,8 @@ package org.opentosca.toscana.model;
 
 import java.util.Optional;
 
-import org.opentosca.toscana.core.parse.model.MappingEntity;
 import org.opentosca.toscana.core.parse.converter.ParameterConverter;
+import org.opentosca.toscana.core.parse.model.MappingEntity;
 import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.core.transformation.properties.PropertyType;
 import org.opentosca.toscana.model.util.ToscaKey;

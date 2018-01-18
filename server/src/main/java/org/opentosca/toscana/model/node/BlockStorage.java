@@ -43,7 +43,7 @@ public class BlockStorage extends RootNode {
      (TOSCA Simple Profile in YAML Version 1.1, p. 175)
      */
     public static ToscaKey<Integer> SIZE_IN_MB = new ToscaKey<>(PROPERTIES, "size")
-        .type(Integer.class).directive(SizeUnit.FROM, SizeUnit.Unit.MB).directive(SizeUnit.TO, SizeUnit.Unit.MB);;
+        .type(Integer.class).directive(SizeUnit.FROM, SizeUnit.Unit.MB).directive(SizeUnit.TO, SizeUnit.Unit.MB);
 
     /**
      Optional ID of an existing volume (that is in the accessible scope of the requesting application).

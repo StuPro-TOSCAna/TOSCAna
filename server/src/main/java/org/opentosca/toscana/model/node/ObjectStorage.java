@@ -39,7 +39,7 @@ public class ObjectStorage extends RootNode {
      (TOSCA Simple Profile in YAML Version 1.1, p. 174)
      */
     public static ToscaKey<Integer> MAX_SIZE_IN_GB = new ToscaKey<>(PROPERTIES, "maxsize")
-        .type(Integer.class).directive(SizeUnit.FROM, SizeUnit.Unit.GB).directive(SizeUnit.TO, SizeUnit.Unit.GB);;
+        .type(Integer.class).directive(SizeUnit.FROM, SizeUnit.Unit.GB).directive(SizeUnit.TO, SizeUnit.Unit.GB);
 
     public static ToscaKey<EndpointCapability> STORAGE_ENDPOINT = new ToscaKey<>(CAPABILITIES, "storage_endpoint")
         .type(EndpointCapability.class);

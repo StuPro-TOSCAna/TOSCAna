@@ -25,7 +25,8 @@ public abstract class DescribableEntity extends BaseToscaElement {
     }
 
     /**
-     @return {@link #DESCRIPTION} */
+     @return {@link #DESCRIPTION}
+     */
     public Optional<String> getDescription() {
         return Optional.ofNullable(get(DESCRIPTION));
     }
