@@ -1,6 +1,8 @@
 package org.opentosca.toscana.plugins.cloudfoundry;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -26,6 +28,7 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
 
     private Provider provider;
     private Connection connection;
+    private List<Application> applications;
 
     public CloudFoundryLifecycle(TransformationContext context) throws IOException {
         super(context);
@@ -58,6 +61,14 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
                 provider.setOfferedService(connection.getServices());
             }
         }
+
+        //TODO: check how many different applications there are and fill list with them
+        //probably there must be a combination of application and set of nodes
+        applications = new ArrayList<>();
+        Application myApp = new Application();
+        myApp.setProvider(provider);
+        myApp.setConnection(connection);
+        applications.add(myApp);
     }
 
     private boolean isNotNull(String... elements) {
@@ -71,20 +82,22 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
 
     @Override
     public void transform() {
-        Application myApp = new Application();
         PluginFileAccess fileAccess = context.getPluginFileAccess();
-        myApp.setProvider(provider);
-        myApp.setConnection(connection);
-        NodeVisitors visitor = new NodeVisitors(myApp);
         Set<RootNode> nodes = context.getModel().getNodes();
-
-        for (VisitableNode node : nodes) {
-            node.accept(visitor);
+        List<Application> filledApplications = new ArrayList<>();
+        for (Application application : applications) {
+            NodeVisitors visitor = new NodeVisitors(application);
+            for (VisitableNode node : nodes) {
+                node.accept(visitor);
+            }
+            
+            Application filledApplication = visitor.getFilledApp();
+            filledApplications.add(application);
         }
-        myApp = visitor.getFilledApp();
+        
 
         try {
-            FileCreator fileCreator = new FileCreator(fileAccess, myApp);
+            FileCreator fileCreator = new FileCreator(fileAccess, filledApplications);
             fileCreator.createFiles();
         } catch (IOException | JSONException e) {
             e.printStackTrace();

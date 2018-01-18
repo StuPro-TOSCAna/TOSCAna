@@ -2,6 +2,7 @@ package org.opentosca.toscana.plugins.cloudfoundry;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import org.opentosca.toscana.core.BaseUnitTest;
@@ -27,6 +28,7 @@ import static org.mockito.Mockito.when;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.CLI_CREATE_SERVICE_DEFAULT;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.CLI_PATH_TO_MANIFEST;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.CLI_PUSH;
+import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.DEPLOY_NAME;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.FILEPRAEFIX_DEPLOY;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.FILESUFFIX_DEPLOY;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.MANIFEST_NAME;
@@ -66,7 +68,9 @@ public class CloudFoundryPluginTest extends BaseUnitTest {
             node.accept(visitor);
         }
         myApp = visitor.getFilledApp();
-        FileCreator fileCreator = new FileCreator(fileAccess, myApp);
+        List<Application> applications = new ArrayList<>();
+        applications.add(myApp);
+        FileCreator fileCreator = new FileCreator(fileAccess, applications);
         fileCreator.createFiles();
     }
 
@@ -100,7 +104,7 @@ public class CloudFoundryPluginTest extends BaseUnitTest {
 
     @Test
     public void getDeployScript() throws Exception {
-        File targetFile = new File(targetDir + "/output/scripts/", FILEPRAEFIX_DEPLOY + appNameClearedUp +
+        File targetFile = new File(targetDir + "/output/scripts/", FILEPRAEFIX_DEPLOY + DEPLOY_NAME +
             FILESUFFIX_DEPLOY);
         String deployScript = FileUtils.readFileToString(targetFile);
         String expectedOutput = String.format("#!/bin/sh\nsource util/*\ncheck \"cf\"\n%smy_db\n%s%s%s%s\n",

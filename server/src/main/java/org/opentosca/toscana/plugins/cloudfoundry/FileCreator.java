@@ -2,6 +2,7 @@ package org.opentosca.toscana.plugins.cloudfoundry;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
@@ -29,7 +30,7 @@ public class FileCreator {
 
     public static final String MANIFEST_NAME = "manifest.yml";
     public static final String MANIFEST_PATH = OUTPUT_DIR + MANIFEST_NAME;
-    public static final String MANIFESTHEAD = "---\napplications:\n";
+    public static final String MANIFESTHEAD = "---\napplications:";
     public static final String NAMEBLOCK = "name";
     public static final String CLI_CREATE_SERVICE_DEFAULT = "cf create-service {plan} {service} ";
     public static final String CLI_CREATE_SERVICE = "cf create-service ";
@@ -38,28 +39,35 @@ public class FileCreator {
     public static final String FILEPRAEFIX_DEPLOY = "deploy_";
     public static final String FILESUFFIX_DEPLOY = ".sh";
     public static final String APPLICATION_FOLDER = "app";
+    public static String DEPLOY_NAME = "application";
 
     private final PluginFileAccess fileAccess;
-    private final Application app;
+    private List<Application> applications;
 
-    public FileCreator(PluginFileAccess fileAccess, Application app) {
+    public FileCreator(PluginFileAccess fileAccess, List<Application> applications) {
         this.fileAccess = fileAccess;
-        this.app = app;
+        this.applications = applications;
     }
 
     public void createFiles() throws IOException, JSONException {
         createManifest();
-        createBuildpackAdditionsFile();
         createDeployScript();
-        insertFiles(APPLICATION_FOLDER + app.getApplicationNumber());
+
+        for (Application application : applications) {
+            createBuildpackAdditionsFile(application);
+            insertFiles(application);
+        }
     }
 
     private void createManifest() throws IOException {
         createManifestHead();
-        addPathToApplication();
-        createAttributes();
-        createEnvironmentVariables();
-        createService();
+        for (Application application : applications) {
+            addNameToManifest(application);
+            addPathToApplication(application);
+            createAttributes(application);
+            createEnvironmentVariables(application);
+            createService(application);
+        }
     }
 
     public void updateManifest() throws IOException {
@@ -68,17 +76,22 @@ public class FileCreator {
     }
 
     private void createManifestHead() throws IOException {
-        String manifestHead = String.format("%s- %s: %s", MANIFESTHEAD, NAMEBLOCK, app.getName());
+        String manifestHead = String.format(MANIFESTHEAD);
         fileAccess.access(MANIFEST_PATH).appendln(manifestHead).close();
     }
 
-    private void addPathToApplication() throws IOException {
-        String pathAddition = String.format("  %s: ../%s", PATH.getName(), APPLICATION_FOLDER + app.getApplicationNumber());
+    private void addNameToManifest(Application application) throws IOException {
+        String nameBlock = String.format("- %s: %s", NAMEBLOCK, application.getName());
+        fileAccess.access(MANIFEST_PATH).appendln(nameBlock).close();
+    }
+
+    private void addPathToApplication(Application application) throws IOException {
+        String pathAddition = String.format("  %s: ../%s", PATH.getName(), APPLICATION_FOLDER + application.getApplicationNumber());
         fileAccess.access(MANIFEST_PATH).appendln(pathAddition).close();
     }
 
-    private void createEnvironmentVariables() throws IOException {
-        Map<String, String> envVariables = app.getEnvironmentVariables();
+    private void createEnvironmentVariables(Application application) throws IOException {
+        Map<String, String> envVariables = application.getEnvironmentVariables();
         if (!envVariables.isEmpty()) {
             ArrayList<String> environmentVariables = new ArrayList<>();
             environmentVariables.add(String.format("  %s:", ENVIRONMENT.getName()));
@@ -95,8 +108,8 @@ public class FileCreator {
      creates a service which depends on the template
      add it to the manifest
      */
-    private void createService() throws IOException {
-        Map<String, ServiceTypes> appServices = app.getServices();
+    private void createService(Application application) throws IOException {
+        Map<String, ServiceTypes> appServices = application.getServices();
         if (!appServices.isEmpty()) {
             ArrayList<String> services = new ArrayList<>();
             services.add(String.format("  %s:", SERVICE.getName()));
@@ -113,30 +126,43 @@ public class FileCreator {
      creates a deploy shell script
      */
     private void createDeployScript() throws IOException {
-        BashScript deployScript = new BashScript(fileAccess, FILEPRAEFIX_DEPLOY + app.getName());
+        if (applications.size() > 1) {
+            DEPLOY_NAME += "s";
+        }
+        BashScript deployScript = new BashScript(fileAccess, FILEPRAEFIX_DEPLOY + DEPLOY_NAME);
         deployScript.append(EnvironmentCheck.checkEnvironment("cf"));
 
-        Deployment deployment = new Deployment(deployScript, app, fileAccess);
-        deployment.treatServices(true);
-        //deployment.addConfigureSql();
+        int counter = 0;
+        for (Application application : applications) {
+            counter += 1;
+            Deployment deployment = new Deployment(deployScript, application, fileAccess);
 
-        deployScript.append(CLI_PUSH + app.getName() + CLI_PATH_TO_MANIFEST + MANIFEST_NAME);
+            if (counter == 1) {
+                deployment.treatServices(true);
+            } else {
+                deployment.treatServices(false);
+            }
+        }
+
+        for (Application application : applications) {
+            deployScript.append(CLI_PUSH + application.getName() + CLI_PATH_TO_MANIFEST + MANIFEST_NAME);
+        }
     }
 
     /**
      detect if additional buildpacks are needed and add them
      */
-    private void createBuildpackAdditionsFile() throws IOException, JSONException {
-        BuildpackDetector buildpackDetection = new BuildpackDetector(app, fileAccess);
+    private void createBuildpackAdditionsFile(Application application) throws IOException, JSONException {
+        BuildpackDetector buildpackDetection = new BuildpackDetector(application, fileAccess);
         buildpackDetection.detectBuildpackAdditions();
     }
 
-    private void createAttributes() throws IOException {
+    private void createAttributes(Application application) throws IOException {
 
-        if (!app.getAttributes().isEmpty()) {
+        if (!application.getAttributes().isEmpty()) {
             ArrayList<String> attributes = new ArrayList<>();
             boolean containsDomain = false;
-            for (Map.Entry<String, String> attribute : app.getAttributes().entrySet()) {
+            for (Map.Entry<String, String> attribute : application.getAttributes().entrySet()) {
                 attributes.add(String.format("  %s: %s", attribute.getKey(), attribute.getValue()));
                 if (attribute.getKey().equals(DOMAIN.getName())) {
                     containsDomain = true;
@@ -154,9 +180,9 @@ public class FileCreator {
         }
     }
 
-    private void insertFiles(String applicationFolder) throws IOException {
-        for (String filePath : app.getFilePaths()) {
-            String path = applicationFolder + "/" + filePath;
+    private void insertFiles(Application application) throws IOException {
+        for (String filePath : application.getFilePaths()) {
+            String path = APPLICATION_FOLDER + application.getApplicationNumber() + "/" + filePath;
             fileAccess.copy(filePath, path);
         }
     }

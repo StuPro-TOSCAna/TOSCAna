@@ -1,6 +1,8 @@
 package org.opentosca.toscana.plugins.cloudfoundry;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
@@ -18,6 +20,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.APPLICATION_FOLDER;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.CLI_PATH_TO_MANIFEST;
+import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.DEPLOY_NAME;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.FILEPRAEFIX_DEPLOY;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.FILESUFFIX_DEPLOY;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.MANIFEST_NAME;
@@ -48,6 +51,7 @@ public class FileCreatorTest extends BaseUnitTest {
     private final String service1 = "cleardb";
     private final String service2 = "p-mysql";
     private final String mainApplicationPath = "myapp/main/myphpapp.php";
+    private PluginFileAccess fileAccess;
 
     @Before
     public void setUp() {
@@ -58,8 +62,10 @@ public class FileCreatorTest extends BaseUnitTest {
         targetDir = new File(tmpdir, "targetDir");
         sourceDir.mkdir();
         targetDir.mkdir();
-        PluginFileAccess fileAccess = new PluginFileAccess(sourceDir, targetDir, log);
-        fileCreator = new FileCreator(fileAccess, testApp);
+        fileAccess = new PluginFileAccess(sourceDir, targetDir, log);
+        List<Application> applications = new ArrayList<>();
+        applications.add(testApp);
+        fileCreator = new FileCreator(fileAccess, applications);
     }
 
     @Test
@@ -69,7 +75,7 @@ public class FileCreatorTest extends BaseUnitTest {
         testApp.setPathToApplication(mainApplicationPath);
         fileCreator.createFiles();
         File targetFile = new File(targetDir, MANIFEST_PATH);
-        File deployFile = new File(targetDir, outputPath + FILEPRAEFIX_DEPLOY + appName + FILESUFFIX_DEPLOY);
+        File deployFile = new File(targetDir, outputPath + FILEPRAEFIX_DEPLOY + DEPLOY_NAME + FILESUFFIX_DEPLOY);
         File buildPackAdditions = new File(targetDir, "/" + APPLICATION_FOLDER + testApp.getApplicationNumber() + "/myapp/main" + "/" + BUILDPACK_FILEPATH_PHP);
 
         assertTrue(targetFile.exists());
@@ -111,7 +117,7 @@ public class FileCreatorTest extends BaseUnitTest {
     @Test
     public void contentDeploy() throws Exception {
         fileCreator.createFiles();
-        File targetFile = new File(targetDir, outputPath + FILEPRAEFIX_DEPLOY + appName + FILESUFFIX_DEPLOY);
+        File targetFile = new File(targetDir, outputPath + FILEPRAEFIX_DEPLOY + DEPLOY_NAME + FILESUFFIX_DEPLOY);
         String manifestContent = FileUtils.readFileToString(targetFile);
         String expectedDeployContent = "#!/bin/sh\n" +
             "source util/*\ncheck \"cf\"\ncf push " + appName + CLI_PATH_TO_MANIFEST + MANIFEST_NAME + "\n";
@@ -156,5 +162,75 @@ public class FileCreatorTest extends BaseUnitTest {
             service1);
 
         assertEquals(expectedManifestContent, manifestContent);
+    }
+
+    @Test
+    public void checkMultipleApplicationsManifest() throws Exception {
+        Application app1 = new Application("app1",1);
+        Application app2 = new Application("app2",2);
+
+        app1.addService(service1, ServiceTypes.MYSQL);
+        app2.addService(service2, ServiceTypes.MYSQL);
+        app1.addAttribute("attr1", "value1");
+        app1.addAttribute("attr2", "value2");
+        app2.addAttribute("attr1", "value1");
+        app2.addAttribute("attr2", "value2");
+        app1.addEnvironmentVariables("EnvTest","5");
+        
+        List<Application> applications = new ArrayList<>();
+        applications.add(app1);
+        applications.add(app2);
+        
+        FileCreator fileCreatorMult = new FileCreator(fileAccess, applications);
+        fileCreatorMult.createFiles();
+        File targetFile = new File(targetDir, MANIFEST_PATH);
+        String manifestContent = FileUtils.readFileToString(targetFile);
+        String expectedContent = "---\n" +
+            "applications:\n" +
+            "- name: app1\n" +
+            "  path: ../app1\n" +
+            "  attr2: value2\n" +
+            "  attr1: value1\n" +
+            "  random-route: true\n" +
+            "  env:\n" +
+            "    EnvTest: 5\n" +
+            "  services:\n" +
+            "    - cleardb\n" +
+            "- name: app2\n" +
+            "  path: ../app2\n" +
+            "  attr2: value2\n" +
+            "  attr1: value1\n" +
+            "  random-route: true\n" +
+            "  services:\n" +
+            "    - p-mysql\n";
+       
+        assertEquals(expectedContent, manifestContent);
+    }
+
+    @Test
+    public void checkMultipleApplicationsDeployScript() throws Exception {
+        Application app1 = new Application("app1",1);
+        Application app2 = new Application("app2",2);
+
+        app1.addService(service1, ServiceTypes.MYSQL);
+        app2.addService(service2, ServiceTypes.MYSQL);
+
+        List<Application> applications = new ArrayList<>();
+        applications.add(app1);
+        applications.add(app2);
+
+        FileCreator fileCreatorMult = new FileCreator(fileAccess, applications);
+        fileCreatorMult.createFiles();
+        File targetFile = new File(targetDir, outputPath + FILEPRAEFIX_DEPLOY + DEPLOY_NAME + FILESUFFIX_DEPLOY);
+        String deployscriptContent = FileUtils.readFileToString(targetFile);
+        String expectedContent = "#!/bin/sh\n" +
+            "source util/*\n" +
+            "check \"cf\"\n" +
+            "cf create-service {plan} {service} cleardb\n" +
+            "cf create-service {plan} {service} p-mysql\n" +
+            "cf push app1 -f ../manifest.yml\n" +
+            "cf push app2 -f ../manifest.yml\n";
+
+        assertEquals(expectedContent, deployscriptContent);
     }
 }

@@ -3,6 +3,7 @@ package org.opentosca.toscana.plugins.cloudfoundry;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -35,6 +36,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeNotNull;
 import static org.junit.Assume.assumeTrue;
+import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.DEPLOY_NAME;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.FILEPRAEFIX_DEPLOY;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.FILESUFFIX_DEPLOY;
 
@@ -92,10 +94,12 @@ public class ServiceTest extends BaseUnitTest {
         assumeNotNull(envUser, envHost, envOrga, envPw, envSpace);
 
         app.addService("my_db", ServiceTypes.MYSQL);
-        fileCreator = new FileCreator(fileAccess, app);
+        List<Application> applications = new ArrayList<>();
+        applications.add(app);
+        fileCreator = new FileCreator(fileAccess, applications);
 
         fileCreator.createFiles();
-        File targetFile = new File(targetDir, outputPath + FILEPRAEFIX_DEPLOY + appName + FILESUFFIX_DEPLOY);
+        File targetFile = new File(targetDir, outputPath + FILEPRAEFIX_DEPLOY + DEPLOY_NAME + FILESUFFIX_DEPLOY);
         String deployContent = FileUtils.readFileToString(targetFile);
         assertThat(deployContent, CoreMatchers.containsString(expectedDeployContent));
     }
@@ -183,7 +187,9 @@ public class ServiceTest extends BaseUnitTest {
         myApp.setProvider(provider);
         String pathToApplication = myApp.getPathToApplication();
         myApp.setPathToApplication(targetDir + "/" + pathToApplication + "/");
-        FileCreator fileCreator = new FileCreator(fileAccess, myApp);
+        List<Application> applications = new ArrayList<>();
+        applications.add(myApp);
+        FileCreator fileCreator = new FileCreator(fileAccess,applications);
         fileCreator.createFiles();
     }
 }
