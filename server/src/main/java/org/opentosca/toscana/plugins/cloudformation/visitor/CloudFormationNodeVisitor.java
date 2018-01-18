@@ -71,8 +71,6 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
 
             OsCapability computeOs = node.getOs();
             String imageId = capabilityMapper.mapOsCapabilityToImageId(computeOs);
-            //check what host should be taken
-            // we only support t2.micro atm since its free for student accounts
             ComputeCapability computeCompute = node.getHost();
             String instanceType = capabilityMapper.mapComputeCapabilityToInstanceType(computeCompute, CapabilityMapper.EC2_DISTINCTION);
             //create CFN init and store it
@@ -118,7 +116,6 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             String masterPassword = node.getPassword().orElseThrow(() -> new IllegalArgumentException("Database " +
                 "password not set"));
             Integer port = node.getPort().orElse(3306);
-            //TODO check downwards to compute and take its values
             //check what values should be taken
             CapabilityMapper capabilityMapper = new CapabilityMapper(cfnModule.getAWSRegion());
             String dBInstanceClass = capabilityMapper.mapComputeCapabilityToInstanceType(hostedOnComputeCapability, CapabilityMapper.RDS_DISTINCTION);
