@@ -2,6 +2,7 @@ package org.opentosca.toscana.plugins.cloudformation.visitor;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.UUID;
 
 import org.opentosca.toscana.model.capability.ComputeCapability;
 import org.opentosca.toscana.model.capability.OsCapability;
@@ -41,7 +42,10 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
 
     private final Logger logger;
     private CloudFormationModule cfnModule;
-
+    
+    private static final String URL_HTTP = "http://";
+    private static final String URL_S3_AMAZONAWS = ".s3.amazonaws.com";
+    
     /**
      Creates a <tt>CloudFormationNodeVisitor<tt> in order to build a template with the given
      <tt>CloudFormationModule<tt>.
@@ -226,85 +230,80 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
 
         //Add dependencies
         for (String dependency : operation.getDependencies()) {
-            try {
-                String cfnFileMode = "000644"; //TODO Check what mode is needed (only read?)
-                String cfnFileOwner = "root"; //TODO Check what Owner is needed
-                String cfnFileGroup = "root"; //TODO Check what Group is needed
-                
-                CFNFile cfnFile = new CFNFile(cfnFilePath + dependency)
-                    .setSource(dependency)
-                    .setMode(cfnFileMode)
-                    .setOwner(cfnFileOwner)
-                    .setGroup(cfnFileGroup);
+            String cfnFileMode = "000644"; //TODO Check what mode is needed (only read?)
+            String cfnFileOwner = "root"; //TODO Check what Owner is needed
+            String cfnFileGroup = "root"; //TODO Check what Group is needed
+            String cfnSource = getFileURL(getRandomBucketName(), dependency);
 
-                // Add file to install
-                cfnModule.getCFNInit(serverName)
-                    .getOrAddConfig(CONFIG_SETS, config)
-                    .putFile(cfnFile);
-            } catch (IOException e) {
-                logger.error("Problem with reading file " + dependency);
-                e.printStackTrace();
-            }
+            CFNFile cfnFile = new CFNFile(cfnFilePath + dependency)
+                .setSource(cfnSource)
+                .setMode(cfnFileMode)
+                .setOwner(cfnFileOwner)
+                .setGroup(cfnFileGroup);
+
+            // Add file to install
+            cfnModule.getCFNInit(serverName)
+                .getOrAddConfig(CONFIG_SETS, config)
+                .putFile(cfnFile);
         }
 
         //Add artifact
         if (operation.getArtifact().isPresent()) {
             String artifact = operation.getArtifact().get().getFilePath();
-
             String cfnFileMode = "000500"; //TODO Check what mode is needed (read? + execute?)
             String cfnFileOwner = "root"; //TODO Check what Owner is needed
             String cfnFileGroup = "root"; //TODO Check what Group is needed
+            String cfnSource = getFileURL(getRandomBucketName(), artifact);
 
-            try {
-                CFNFile cfnFile = new CFNFile(cfnFilePath + artifact)
-                    .setSource(artifact)
-                    .setMode(cfnFileMode)
-                    .setOwner(cfnFileOwner)
-                    .setGroup(cfnFileGroup);
+            CFNFile cfnFile = new CFNFile(cfnFilePath + artifact)
+                .setSource(cfnSource)
+                .setMode(cfnFileMode)
+                .setOwner(cfnFileOwner)
+                .setGroup(cfnFileGroup);
 
-                CFNCommand cfnCommand = new CFNCommand(artifact,
-                    cfnFilePath + artifact) //file is the full path, so need for "./"
-                    .setCwd(cfnFilePath + new File(artifact).getParent());
-                // add inputs to environment, but where to get other needed variables?
-                for (OperationVariable input : operation.getInputs()) {
-                    Object value = input.getValue().orElse("");
-                    if (("127.0.0.1".equals(value) || "localhost".equals(value)) && input.getKey().contains("host")) {
-                        value = cfnModule.fnGetAtt("mydb", "Endpoint.Address");
-                    }
-                    cfnCommand.addEnv(input.getKey(), value); //TODO add default
+            CFNCommand cfnCommand = new CFNCommand(artifact,
+                cfnFilePath + artifact) //file is the full path, so need for "./"
+                .setCwd(cfnFilePath + new File(artifact).getParent());
+            // add inputs to environment, but where to get other needed variables?
+            for (OperationVariable input : operation.getInputs()) {
+                Object value = input.getValue().orElse("");
+                if (("127.0.0.1".equals(value) || "localhost".equals(value)) && input.getKey().contains("host")) {
+                    value = cfnModule.fnGetAtt("mydb", "Endpoint.Address");
                 }
-                cfnModule.getCFNInit(serverName)
-                    .getOrAddConfig(CONFIG_SETS, config)
-                    .putFile(cfnFile)
-                    .putCommand(cfnCommand)
-                    .putCommand(new CFNCommand("restart apache2", "service apache2 restart")); //put commands
-            } catch (IOException e) {
-                logger.error("Problem with reading file " + artifact);
-                e.printStackTrace();
+                cfnCommand.addEnv(input.getKey(), value); //TODO add default
             }
+            cfnModule.getCFNInit(serverName)
+                .getOrAddConfig(CONFIG_SETS, config)
+                .putFile(cfnFile)
+                .putCommand(cfnCommand)
+                .putCommand(new CFNCommand("restart apache2", "service apache2 restart")); //put commands
         }
     }
 
     /**
-     * Generates a valid URL for a file on a S3Bucket.
+     * Returns the URL to the file in the given S3Bucket.
      *
-     * @param bucketName name of the bucket containg the file
-     * @param region     where the bucket is hosted
-     * @param objectKey  belonging to the file in the bucket
+     * @param bucketName name of the bucket containing the file
+     * @param objectKey  key belonging to the file in the bucket
      * @return URL for the file
      */
-    private String generateFileURL(String bucketName, String region, String objectKey) {
-        //TODO implementation
-        return "";
+    private String getFileURL(String bucketName, String objectKey) {
+        StringBuilder url = new StringBuilder();
+        url.append(URL_HTTP);
+        url.append(bucketName);
+        url.append(URL_S3_AMAZONAWS);
+        url.append("/");
+        url.append(objectKey);
+        return url.toString();
     }
 
     /**
-     * Returns a random bucket name.
+     * Returns a random DNS-compliant bucket name.
      *
      * @return random bucket name
      */
-    private String generateBucketName() {
-        //TODO implementation
-        return "";
+    private String getRandomBucketName() {
+        String bucketName = "toscana-" + UUID.randomUUID();
+        return bucketName;
     }
 }
