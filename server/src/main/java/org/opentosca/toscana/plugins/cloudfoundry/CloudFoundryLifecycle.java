@@ -11,7 +11,6 @@ import org.opentosca.toscana.model.visitor.VisitableNode;
 import org.opentosca.toscana.plugins.cloudfoundry.application.Application;
 import org.opentosca.toscana.plugins.cloudfoundry.application.Provider;
 import org.opentosca.toscana.plugins.cloudfoundry.client.Connection;
-import org.opentosca.toscana.plugins.cloudfoundry.client.InjectionHandler;
 import org.opentosca.toscana.plugins.cloudfoundry.visitors.NodeVisitors;
 import org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle;
 
@@ -87,11 +86,6 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
         try {
             FileCreator fileCreator = new FileCreator(fileAccess, myApp);
             fileCreator.createFiles();
-            if (connection != null) {
-                InjectionHandler injectionHandler = new InjectionHandler(fileAccess, myApp);
-                injectionHandler.injectServiceCredentials();
-                fileCreator.updateManifest();
-            }
         } catch (IOException | JSONException e) {
             e.printStackTrace();
         }

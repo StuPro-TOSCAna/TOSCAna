@@ -19,6 +19,7 @@ public class Deployment {
     private Application application;
     private PluginFileAccess fileAccess;
     private Class clazz;
+    private boolean pythonIsChecked;
 
     private final String PYTHON_SCRIPTS_TARGET = SCRIPTS_DIR_PATH;
 
@@ -39,7 +40,7 @@ public class Deployment {
         this.application = application;
         this.fileAccess = fileAccess;
         clazz = Deployment.class;
-        deploymentScript.append("check python");
+        this.pythonIsChecked = false;
     }
 
     /**
@@ -61,6 +62,7 @@ public class Deployment {
      */
     public void configureSql(String relativePathToSQLConfigureFile) throws IOException {
         copyFile(PYTHON_CONFIGURE_SQL_FILENAME, PYTHON_CONFIGURE_SQL_SOURCE);
+        checkPython();
         deploymentScript.append(String.format("python %s %s", PYTHON_CONFIGURE_SQL_FILENAME, relativePathToSQLConfigureFile));
     }
 
@@ -73,6 +75,7 @@ public class Deployment {
      */
     public void executeFile(String appName, String pathToFileOnContainer) throws IOException {
         copyFile(PYTHON_EXECUTE_FILENAME, PYTHON_EXECUTE_SOURCE);
+        checkPython();
         deploymentScript.append(String.format("python %s %s %s", PYTHON_EXECUTE_FILENAME, appName, pathToFileOnContainer));
     }
 
@@ -86,6 +89,7 @@ public class Deployment {
      */
     public void readCredentials(String appName, String serviceName, ServiceTypes serviceType) throws IOException {
         copyFile(PYTHON_READ_CREDENTIALS_FILENAME, PYTHON_READ_CREDENTIALS_SOURCE);
+        checkPython();
         deploymentScript.append(String.format("python %s %s %s %s", PYTHON_READ_CREDENTIALS_FILENAME, appName, serviceName, serviceType.getName()));
     }
 
@@ -98,6 +102,7 @@ public class Deployment {
      */
     public void replaceStrings(String pathToLocalFile, String findStr, String replaceStr) throws IOException {
         copyFile(PYTHON_REPLACE_STRINGS_FILENAME, PYTHON_REPLACE_STRINGS_SOURCE);
+        checkPython();
         deploymentScript.append(String.format("python %s %s %s %s", PYTHON_REPLACE_STRINGS_FILENAME, pathToLocalFile, findStr, replaceStr));
     }
 
@@ -117,5 +122,12 @@ public class Deployment {
             return false;
         }
         return true;
+    }
+
+    private void checkPython() throws IOException {
+        if (!pythonIsChecked) {
+            this.pythonIsChecked = true;
+            deploymentScript.append("check python");
+        }
     }
 }
