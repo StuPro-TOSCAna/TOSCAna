@@ -229,7 +229,10 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             String cfnFileOwner = "root"; //TODO Check what Owner is needed
             String cfnFileGroup = "root"; //TODO Check what Group is needed
             String cfnSource = getFileURL(cfnModule.getBucketName(), dependency);
-
+            
+            logger.debug("Marking " + dependency + " as file to be uploaded.");
+            cfnModule.putFileToBeUploaded(dependency, dependency);
+            
             CFNFile cfnFile = new CFNFile(cfnFilePath + dependency)
                 .setSource(cfnSource)
                 .setMode(cfnFileMode)
@@ -249,7 +252,10 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             String cfnFileOwner = "root"; //TODO Check what Owner is needed
             String cfnFileGroup = "root"; //TODO Check what Group is needed
             String cfnSource = getFileURL(cfnModule.getBucketName(), artifact);
-
+            
+            logger.debug("Marking " + artifact + " as file to be uploaded.");
+            cfnModule.putFileToBeUploaded(artifact, artifact);
+            
             CFNFile cfnFile = new CFNFile(cfnFilePath + artifact)
                 .setSource(cfnSource)
                 .setMode(cfnFileMode)

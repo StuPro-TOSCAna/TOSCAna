@@ -45,9 +45,25 @@ public class CloudFormationFileCreator {
      * Copies all files that need to be uploaded to the target artifact.
      */
     public void copyFiles() throws IOException {
-        for (String filePath : cfnModule.getFilesToBeUploaded().values()) {
-            logger.debug("Copying " + filePath + "to target artifact.");
-            cfnModule.getFileAccess().copy(filePath);
+
+        Map<String, String> filesToBeUploaded = cfnModule.getFilesToBeUploaded();
+
+        logger.debug("Checking if files need to be copied.");
+        if (!filesToBeUploaded.isEmpty()) {
+            logger.debug("Files to be copied found.");
+            logger.debug("Copying files to the target artifact.");
+            cfnModule.getFilesToBeUploaded().forEach((objectKey, filePath) -> {
+                try {
+                    cfnModule.getFileAccess().copy(filePath);
+                } catch (IOException e) {
+                    logger.error("Copying of files to the target artifact failed.");
+                    logger.error("See the stack trace for more info.");
+                    e.printStackTrace();
+                }
+            });
+        } else {
+            logger.debug("No files to be copied found.");
+            logger.debug("Skipping copying of files.");
         }
     }
 
@@ -86,15 +102,16 @@ public class CloudFormationFileCreator {
             BashScript fileUploadScript = new BashScript(cfnModule.getFileAccess(), FILENAME_UPLOAD);
             fileUploadScript.append(createBucket());
 
-            Iterator uploadIterator = filesToBeUploaded.entrySet().iterator();
-            while (uploadIterator.hasNext()) {
-                Map.Entry fileToBeUploaded = (Map.Entry) uploadIterator.next();
-                String objectKey = (String) fileToBeUploaded.getKey();
-                String filePath = (String) fileToBeUploaded.getValue();
-                logger.debug("Adding file upload command for " + filePath + ".");
-                fileUploadScript.append(uploadFile(objectKey, filePath));
-                uploadIterator.remove();
-            }
+            logger.debug("Adding file upload commands.");
+            filesToBeUploaded.forEach((objectKey, filePath) -> {
+                try {
+                    fileUploadScript.append(uploadFile(objectKey, filePath));
+                } catch (IOException e) {
+                    logger.error("Adding file uploads failed.");
+                    logger.error("See the stack trace for more info.");
+                    e.printStackTrace();
+                }
+            });
         } else {
             logger.debug("No files to be uploaded found.");
             logger.debug("Skipping creation of file upload script.");
@@ -114,6 +131,6 @@ public class CloudFormationFileCreator {
      * Wraps resources/cloudformation.scripts/upload-file.sh
      */
     private String uploadFile(String objectKey, String filePath) {
-        return "uploadFile \"" + cfnModule.getBucketName() + "\"" + "\"" + objectKey + "\"" + filePath + "\"";
+        return "uploadFile \"" + cfnModule.getBucketName() + "\"" + " " + "\"" + objectKey + "\"" + " " + filePath + "\"";
     }
 }
