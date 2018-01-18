@@ -69,7 +69,8 @@ public class CapabilityMapper {
      @param osCapability The OsCapability to map.
      @return A String that contains a valid ImageId that can be added to the properties of an ec2.
      */
-    public String mapOsCapabilityToImageId(OsCapability osCapability) {
+    public String mapOsCapabilityToImageId(OsCapability osCapability) throws SdkClientException, ParseException,
+        IllegalArgumentException {
         AmazonEC2 ec2 = AmazonEC2ClientBuilder.standard()
             .withRegion(awsRegion)
             .build();
@@ -106,38 +107,46 @@ public class CapabilityMapper {
             //defaulting to 64 bit architecture
             describeImagesRequest.withFilters(new Filter("architecture").withValues(ARCH_x86_64));
         }
-        String imageId;
         try {
             DescribeImagesResult describeImagesResult = ec2.describeImages(describeImagesRequest);
-            Integer numReceivedImages = describeImagesResult.getImages().size();
-            logger.debug("Got {} images from aws", numReceivedImages);
-            if (numReceivedImages > 0) {
-                DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-                Map<Date, Image> creationDateMap = new HashMap<>();
-                for (Image image : describeImagesResult.getImages()) {
-                    try {
-                        Date date = dateFormat.parse(image.getCreationDate());
-                        creationDateMap.put(date, image);
-                    } catch (ParseException pE) {
-                        logger.error("Error parsing dateformat");
-                        pE.printStackTrace();
-                    }
-                }
-                Image latest = creationDateMap.get(Collections.max(creationDateMap.keySet()));
-                logger.debug("Latest image received: {}", latest);
-                imageId = latest.getImageId();
-            } else {
-                logger.warn("No images received defaulting to old ubuntu 16.04 image");
-                imageId = "ami-0def3275";
-                //TODO maybe not defaulting but throwing a transformation failed exception?
-            }
+            String imageId = processResult(describeImagesResult);
+            logger.debug("ImageId is: {}", imageId);
+            return imageId;
         } catch (SdkClientException se) {
-            logger.error("Cannot connect to AWS to request image Ids, defaulting to old ubuntu 16.04 image");
-            imageId = "ami-0def3275";
-            //TODO maybe not defaulting but throwing a transformation failed exception?
+            logger.error("Cannot connect to AWS to request image Ids");
+            throw se;
+        } catch (ParseException pe) {
+            logger.error("Error parsing date format of image creation dates");
+            throw pe;
+        } catch (IllegalArgumentException ie) {
+            logger.error("With the filters created from the OsCapability there are no valid images received");
+            throw ie;
         }
-        logger.debug("ImageId is: {}", imageId);
-        return imageId;
+    }
+
+    /**
+     Process the result of an DescribeImagesRequest and return the imageId of the latest image.
+
+     @param describeImagesResult The result received from aws.
+     @return The latest imageId.
+     */
+    private String processResult(DescribeImagesResult describeImagesResult) throws ParseException,
+        IllegalArgumentException {
+        Integer numReceivedImages = describeImagesResult.getImages().size();
+        logger.debug("Got {} images from aws", numReceivedImages);
+        if (numReceivedImages > 0) {
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+            Map<Date, Image> creationDateMap = new HashMap<>();
+            for (Image image : describeImagesResult.getImages()) {
+                Date date = dateFormat.parse(image.getCreationDate());
+                creationDateMap.put(date, image);
+            }
+            Image latest = creationDateMap.get(Collections.max(creationDateMap.keySet()));
+            logger.debug("Latest image received: {}", latest);
+            return latest.getImageId();
+        } else {
+            throw new IllegalArgumentException("No images received");
+        }
     }
 
     /**
@@ -151,7 +160,7 @@ public class CapabilityMapper {
      valid InstanceType.
      */
     public String mapComputeCapabilityToInstanceType(ComputeCapability computeCapability, String distinction) throws
-        TransformationFailureException {
+        IllegalArgumentException {
         //TODO what to do with disk size?
         Integer numCpus = computeCapability.getNumCpus().orElse(0);
         Integer memSize = computeCapability.getMemSizeInMB().orElse(0);
@@ -180,7 +189,7 @@ public class CapabilityMapper {
             memSize = checkValue(memSize, allMemSizes);
         } catch (IllegalArgumentException ie) {
             logger.error("Values numCpus: {} and/or memSize: are too big. No InstanceType found", numCpus, memSize);
-            throw new TransformationFailureException("No valid InstanceType found", ie);
+            throw ie;
         }
         //get instanceType from combination
         String instanceType = findCombination(numCpus, memSize, instanceTypes, allNumCpus, allMemSizes);
@@ -211,6 +220,15 @@ public class CapabilityMapper {
         return diskSize;
     }
 
+    /**
+     Check if the value is in the list checker, if not take the next bigger. If there is none throw an
+     IllegalArgumentException
+
+     @param value   The value to check.
+     @param checker The List to check in.
+     @return A valid value of the checker list.
+     @throws IllegalArgumentException If the value is too big
+     */
     private Integer checkValue(Integer value, List<Integer> checker) throws IllegalArgumentException {
         if (!checker.contains(value)) {
             for (Integer num : checker) {
@@ -223,7 +241,7 @@ public class CapabilityMapper {
             return value;
         }
     }
-
+    
     private String findCombination(Integer numCpus, Integer memSize, ImmutableList<InstanceType> instanceTypes,
                                    List<Integer> allNumCpus, List<Integer> allMemSizes) throws
         TransformationFailureException {
