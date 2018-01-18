@@ -11,7 +11,7 @@ import org.opentosca.toscana.plugins.scripts.BashScript;
 
 import org.apache.commons.io.IOUtils;
 
-import static org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle.OUTPUT_DIR;
+import static org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle.SCRIPTS_DIR_PATH;
 
 public class Deployment {
 
@@ -20,7 +20,7 @@ public class Deployment {
     private PluginFileAccess fileAccess;
     private Class clazz;
 
-    private final String PYTHON_SCRIPTS_TARGET = "scripts/";
+    private final String PYTHON_SCRIPTS_TARGET = SCRIPTS_DIR_PATH;
 
     private final String PYTHON_CONFIGURE_SQL_FILENAME = "configureMysql.py";
     private final String PYTHON_CONFIGURE_SQL_SOURCE = "/cloudFoundry/deployment_scripts/";
@@ -59,7 +59,7 @@ public class Deployment {
      @param relativePathToSQLConfigureFile must be the relative path started from the output/scripts folder to the .sql
      file
      */
-    public void addConfigureSql(String relativePathToSQLConfigureFile) throws IOException {
+    public void configureSql(String relativePathToSQLConfigureFile) throws IOException {
         copyFile(PYTHON_CONFIGURE_SQL_FILENAME, PYTHON_CONFIGURE_SQL_SOURCE);
         deploymentScript.append(String.format("python %s %s", PYTHON_CONFIGURE_SQL_FILENAME, relativePathToSQLConfigureFile));
     }
@@ -71,7 +71,7 @@ public class Deployment {
      @param pathToFileOnContainer must be the path on the warden container. Probably something like that:
      "/home/vcap/app..."
      */
-    public void addExecuteFile(String appName, String pathToFileOnContainer) throws IOException {
+    public void executeFile(String appName, String pathToFileOnContainer) throws IOException {
         copyFile(PYTHON_EXECUTE_FILENAME, PYTHON_EXECUTE_SOURCE);
         deploymentScript.append(String.format("python %s %s %s", PYTHON_EXECUTE_FILENAME, appName, pathToFileOnContainer));
     }
@@ -84,9 +84,9 @@ public class Deployment {
      @param serviceName must be the service name of the provider not the service instance name
      @param serviceType e.g. "mysql" for a mysql service
      */
-    public void addReadCredentials(String appName, String serviceName, ServiceTypes serviceType) throws IOException {
+    public void readCredentials(String appName, String serviceName, ServiceTypes serviceType) throws IOException {
         copyFile(PYTHON_READ_CREDENTIALS_FILENAME, PYTHON_READ_CREDENTIALS_SOURCE);
-        deploymentScript.append(String.format("python %s %s %s", PYTHON_READ_CREDENTIALS_FILENAME, serviceName, serviceType.getName()));
+        deploymentScript.append(String.format("python %s %s %s %s", PYTHON_READ_CREDENTIALS_FILENAME, appName, serviceName, serviceType.getName()));
     }
 
     /**
@@ -96,23 +96,23 @@ public class Deployment {
      @param findStr         String which will be replaced
      @param replaceStr      String which replaces the findStr
      */
-    public void addReplaceStrings(String pathToLocalFile, String findStr, String replaceStr) throws IOException {
+    public void replaceStrings(String pathToLocalFile, String findStr, String replaceStr) throws IOException {
         copyFile(PYTHON_REPLACE_STRINGS_FILENAME, PYTHON_REPLACE_STRINGS_SOURCE);
         deploymentScript.append(String.format("python %s %s %s %s", PYTHON_REPLACE_STRINGS_FILENAME, pathToLocalFile, findStr, replaceStr));
     }
 
     private void copyFile(String fileName, String source) throws IOException {
-        if (!isAlreadyCopied(fileName, source)) {
+        if (!isAlreadyCopied(fileName)) {
             InputStream inputStream = clazz.getResourceAsStream(source + fileName);
             String contentFile = IOUtils.toString(inputStream);
             inputStream.close();
-            fileAccess.access(OUTPUT_DIR + PYTHON_SCRIPTS_TARGET + fileName).appendln(contentFile).close();
+            fileAccess.access(PYTHON_SCRIPTS_TARGET + fileName).appendln(contentFile).close();
         }
     }
 
-    private boolean isAlreadyCopied(String fileName, String source) {
+    private boolean isAlreadyCopied(String fileName) {
         try {
-            fileAccess.getAbsolutePath(OUTPUT_DIR + PYTHON_SCRIPTS_TARGET + fileName);
+            fileAccess.getAbsolutePath(PYTHON_SCRIPTS_TARGET + fileName);
         } catch (FileNotFoundException e) {
             return false;
         }
