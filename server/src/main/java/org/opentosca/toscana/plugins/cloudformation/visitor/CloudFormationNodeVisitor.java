@@ -1,8 +1,6 @@
 package org.opentosca.toscana.plugins.cloudformation.visitor;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.UUID;
 
 import org.opentosca.toscana.model.capability.ComputeCapability;
 import org.opentosca.toscana.model.capability.OsCapability;
@@ -35,25 +33,22 @@ import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.SECURITY_GROUP;
 
 /**
- Class for building a CloudFormation template from an effective model instance via the visitor pattern. Currently only
- supports LAMP-stacks built with Compute, WebApplication, Apache, MySQL, MySQL nodes.
+ * Class for building a CloudFormation template from an effective model instance via the visitor pattern. Currently only
+ * supports LAMP-stacks built with Compute, WebApplication, Apache, MySQL, MySQL nodes.
  */
 public class CloudFormationNodeVisitor implements StrictNodeVisitor {
 
     private final Logger logger;
     private CloudFormationModule cfnModule;
-    
-    private static final String URL_HTTP = "http://";
-    private static final String URL_S3_AMAZONAWS = ".s3.amazonaws.com";
-    
-    /**
-     Creates a <tt>CloudFormationNodeVisitor<tt> in order to build a template with the given
-     <tt>CloudFormationModule<tt>.
 
-     @param logger    Logger for logging visitor behaviour
-     @param cfnModule Module to build the template model
+    /**
+     * Creates a <tt>CloudFormationNodeVisitor<tt> in order to build a template with the given
+     * <tt>CloudFormationModule<tt>.
+     *
+     * @param logger    Logger for logging visitor behaviour
+     * @param cfnModule Module to build the template model
      */
-    public CloudFormationNodeVisitor(Logger logger, CloudFormationModule cfnModule) throws Exception {
+    public CloudFormationNodeVisitor(Logger logger, CloudFormationModule cfnModule) {
         this.logger = logger;
         this.cfnModule = cfnModule;
     }
@@ -233,7 +228,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             String cfnFileMode = "000644"; //TODO Check what mode is needed (only read?)
             String cfnFileOwner = "root"; //TODO Check what Owner is needed
             String cfnFileGroup = "root"; //TODO Check what Group is needed
-            String cfnSource = getFileURL(getRandomBucketName(), dependency);
+            String cfnSource = getFileURL(cfnModule.getBucketName(), dependency);
 
             CFNFile cfnFile = new CFNFile(cfnFilePath + dependency)
                 .setSource(cfnSource)
@@ -253,7 +248,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             String cfnFileMode = "000500"; //TODO Check what mode is needed (read? + execute?)
             String cfnFileOwner = "root"; //TODO Check what Owner is needed
             String cfnFileGroup = "root"; //TODO Check what Group is needed
-            String cfnSource = getFileURL(getRandomBucketName(), artifact);
+            String cfnSource = getFileURL(cfnModule.getBucketName(), artifact);
 
             CFNFile cfnFile = new CFNFile(cfnFilePath + artifact)
                 .setSource(cfnSource)
@@ -282,28 +277,13 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
 
     /**
      * Returns the URL to the file in the given S3Bucket.
+     * e.g. http://bucketName.s3.amazonaws.com/objectKey
      *
      * @param bucketName name of the bucket containing the file
      * @param objectKey  key belonging to the file in the bucket
      * @return URL for the file
      */
     private String getFileURL(String bucketName, String objectKey) {
-        StringBuilder url = new StringBuilder();
-        url.append(URL_HTTP);
-        url.append(bucketName);
-        url.append(URL_S3_AMAZONAWS);
-        url.append("/");
-        url.append(objectKey);
-        return url.toString();
-    }
-
-    /**
-     * Returns a random DNS-compliant bucket name.
-     *
-     * @return random bucket name
-     */
-    private String getRandomBucketName() {
-        String bucketName = "toscana-" + UUID.randomUUID();
-        return bucketName;
+        return CloudFormationModule.URL_HTTP + bucketName + CloudFormationModule.URL_S3_AMAZONAWS + "/" + objectKey;
     }
 }

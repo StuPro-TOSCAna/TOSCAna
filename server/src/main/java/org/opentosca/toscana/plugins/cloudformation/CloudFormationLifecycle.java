@@ -61,13 +61,7 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
         // Create scripts for the deployment of the template
         logger.info("Creating CloudFormation scripts.");
         try {
-            // TODO get file uploads
-            Hashtable<String, String> filesToBeUploaded = new Hashtable<>();
-            CloudFormationScriptCreator fileCreator = new CloudFormationScriptCreator(fileAccess,
-                "lampstatic",
-                "bucket-name",
-                filesToBeUploaded,
-                logger);
+            CloudFormationScriptCreator fileCreator = new CloudFormationScriptCreator(logger, cfnModule);
             fileCreator.createScripts();
         } catch (IOException e) {
             e.printStackTrace();

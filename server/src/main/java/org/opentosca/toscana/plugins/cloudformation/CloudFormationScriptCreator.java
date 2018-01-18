@@ -1,7 +1,10 @@
 package org.opentosca.toscana.plugins.cloudformation;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
@@ -23,29 +26,19 @@ public class CloudFormationScriptCreator {
     private static final String FILENAME_UPLOAD = "file-upload";
     private static final String TEMPLATE_PATH = "template.yaml ";
     private static final String CHANGE_TO_PARENT_DIRECTORY = "cd ..";
-    
-    private final String stackName;
-    private final String bucketName;
-    private final Hashtable<String, String> filesToBeUploaded;
-    private final PluginFileAccess fileAccess;
+
     private final Logger logger;
+    private CloudFormationModule cfnModule;
 
     /**
      * Creates a <tt>CloudFormationScriptCreator<tt> in order to build a deployment scripts.
      *
-     * @param fileAccess        access to the file system to write scripts
-     * @param stackName         name of the stack to be created
-     * @param bucketName        where the files will be stored
-     * @param filesToBeUploaded all files that need to be uploaded
-     * @param logger            standard logger
+     * @param cfnModule Module to get the necessary CloudFormation information
+     * @param logger    standard logger
      */
-    public CloudFormationScriptCreator(PluginFileAccess fileAccess, String stackName, String bucketName,
-                                       Hashtable<String, String> filesToBeUploaded, Logger logger) {
-        this.fileAccess = fileAccess;
-        this.stackName = stackName;
-        this.bucketName = bucketName;
-        this.filesToBeUploaded = filesToBeUploaded;
+    public CloudFormationScriptCreator(Logger logger, CloudFormationModule cfnModule) {
         this.logger = logger;
+        this.cfnModule = cfnModule;
     }
 
     /**
@@ -62,11 +55,11 @@ public class CloudFormationScriptCreator {
     private void createDeployScript() throws IOException {
         //Create Deployment script for the template
         // TODO maybe add the execution of the fileUploadScript
-        BashScript deployScript = new BashScript(fileAccess, FILENAME_DEPLOY);
+        BashScript deployScript = new BashScript(cfnModule.getFileAccess(), FILENAME_DEPLOY);
         deployScript.append(EnvironmentCheck.checkEnvironment("aws"));
         deployScript.append(CHANGE_TO_PARENT_DIRECTORY);
         deployScript.append(CLI_COMMAND_CREATESTACK
-            + CLI_PARAM_STACKNAME + stackName + " "
+            + CLI_PARAM_STACKNAME + cfnModule.getStackName() + " "
             + CLI_PARAM_TEMPLATEFILE + TEMPLATE_PATH);
     }
 
@@ -74,15 +67,22 @@ public class CloudFormationScriptCreator {
      * Creates the script for File Uploads if files need to be uploaded.
      */
     private void createFileUploadScript() throws IOException {
-        if (!filesToBeUploaded.isEmpty()) {
-            Set<String> objectKeys = filesToBeUploaded.keySet();
+        Map<String, String> filesToBeUploaded = cfnModule.getFilesToBeUploaded();
 
-            BashScript fileUploadScript = new BashScript(fileAccess, FILENAME_UPLOAD);
+        // Check if files need to be uploaded
+        if (!filesToBeUploaded.isEmpty()) {
+            // Add create Bucket command
+            BashScript fileUploadScript = new BashScript(cfnModule.getFileAccess(), FILENAME_UPLOAD);
             fileUploadScript.append(createBucket());
 
             // Add upload commands for all files to be uploaded
-            for (String objectKey : objectKeys) {
-                fileUploadScript.append(uploadFile(objectKey, filesToBeUploaded.get(objectKey)));
+            Iterator uploadIterator = filesToBeUploaded.entrySet().iterator();
+            while (uploadIterator.hasNext()) {
+                Map.Entry fileToBeUploaded = (Map.Entry) uploadIterator.next();
+                String objectKey = (String) fileToBeUploaded.getKey();
+                String filePath = (String) fileToBeUploaded.getValue();
+                fileUploadScript.append(uploadFile(objectKey, filePath));
+                uploadIterator.remove();
             }
         } else {
             logger.info("No files to be uploaded found.");
@@ -95,7 +95,7 @@ public class CloudFormationScriptCreator {
      * Wraps resources/cloudformation.scripts/create-bucket.sh
      */
     private String createBucket() {
-        return "createBucket \"" + bucketName + "\"";
+        return "createBucket \"" + cfnModule.getBucketName() + "\"";
     }
 
     /**
@@ -103,6 +103,6 @@ public class CloudFormationScriptCreator {
      * Wraps resources/cloudformation.scripts/upload-file.sh
      */
     private String uploadFile(String objectKey, String filePath) {
-        return "uploadFile \"" + bucketName + "\"" + "\"" + objectKey + "\"" + filePath + "\"";
+        return "uploadFile \"" + cfnModule.getBucketName() + "\"" + "\"" + objectKey + "\"" + filePath + "\"";
     }
 }

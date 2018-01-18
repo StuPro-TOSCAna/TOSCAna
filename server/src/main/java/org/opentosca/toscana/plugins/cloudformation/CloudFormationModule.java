@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 
@@ -43,46 +44,69 @@ public class CloudFormationModule extends Module {
         "# Install the files and packages from the metadata\n",
         "/usr/local/bin/cfn-init -v ",
         "         --stack "};
-    
+    public static final String URL_HTTP = "http://";
+    public static final String URL_S3_AMAZONAWS = ".s3.amazonaws.com";
+
     private Object keyNameVar;
-
     private Map<String, CFNInit> cfnInitMap;
-
+    private Map<String, String> filesToBeUploaded;
     private PluginFileAccess fileAccess;
+    private String bucketName;
+    private String stackName;
 
     /**
-     Create a Module which uses the cloudformation-builder to build an AWS CloudFormation template
-
-     @param fileAccess fileAccess to append the content of files to the template
+     * Create a Module which uses the cloudformation-builder to build an AWS CloudFormation template
+     *
+     * @param fileAccess fileAccess to append the content of files to the template
      */
     public CloudFormationModule(PluginFileAccess fileAccess) {
         this.id("").template(new Template());
         strParam(KEYNAME).type(KEYNAME_TYPE).description(KEYNAME_DESCRIPTION).constraintDescription(KEYNAME_CONSTRAINT_DESCRIPTION);
         keyNameVar = template.ref(KEYNAME);
         cfnInitMap = new HashMap<>();
+        filesToBeUploaded = new HashMap<>();
         this.fileAccess = fileAccess;
+        this.bucketName = getRandomBucketName();
+        this.stackName = getRandomStackName();
     }
 
     /**
-     Put a CFNInit into a map which will be added to the resource at build time
-     @param resource resource to add CFNInit to
-     @param init CNFInit to add
+     * Put a CFNInit into a map which will be added to the resource at build time
+     *
+     * @param resource resource to add CFNInit to
+     * @param init     CNFInit to add
      */
     public void putCFNInit(String resource, CFNInit init) {
         cfnInitMap.put(resource, init);
     }
 
     /**
-     Get the CFNInit which belongs to a specific resource
-
-     @param resource String id of a resource
+     * Get the CFNInit which belongs to a specific resource
+     *
+     * @param resource String id of a resource
      */
     public CFNInit getCFNInit(String resource) {
         return this.cfnInitMap.get(resource);
     }
 
+    public Map<String, String> getFilesToBeUploaded() {
+        return filesToBeUploaded;
+    }
+
+    public void putFileToBeUploaded(String objectKey, String filePath) {
+        this.filesToBeUploaded.put(objectKey, filePath);
+    }
+
+    public String getBucketName() {
+        return bucketName;
+    }
+
+    public String getStackName() {
+        return stackName;
+    }
+
     /**
-     Get a ref to the KeyName of this template
+     * Get a ref to the KeyName of this template
      */
     public Object getKeyNameVar() {
         return this.keyNameVar;
@@ -105,7 +129,7 @@ public class CloudFormationModule extends Module {
             "         --region ",
             template.ref("AWS::Region"),
             "\n"};
-        
+
         // Combine constant params with ref params
         List params = new ArrayList<Object>();
         Collections.addAll(params, USERDATA_CONSTANT_PARAMS);
@@ -126,16 +150,35 @@ public class CloudFormationModule extends Module {
     }
 
     /**
-     Get the fileAccess of this module
-     @return
+     * Get the fileAccess of this module
      */
     public PluginFileAccess getFileAccess() {
         return fileAccess;
     }
 
     /**
-     Build the template
-     1. Add CFNInit to corresponding instance resource
+     * Returns a random DNS-compliant bucket name.
+     *
+     * @return random bucket name
+     */
+    private String getRandomBucketName() {
+        String bucketName = "toscana-bucket-" + UUID.randomUUID();
+        return bucketName;
+    }
+
+    /**
+     * Returns a random DNS-compliant stack name.
+     *
+     * @return random stack name
+     */
+    private String getRandomStackName() {
+        String stackName = "toscana-stack-" + UUID.randomUUID();
+        return stackName;
+    }
+
+    /**
+     * Build the template
+     * 1. Add CFNInit to corresponding instance resource
      */
     public void build() {
         for (Map.Entry<String, CFNInit> pair : cfnInitMap.entrySet()) {
