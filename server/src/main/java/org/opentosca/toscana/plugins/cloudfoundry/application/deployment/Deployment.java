@@ -18,7 +18,7 @@ public class Deployment {
     private BashScript deploymentScript;
     private Application application;
     private PluginFileAccess fileAccess;
-    private Class clazz;
+    private Class deploymentClass;
     private boolean pythonIsChecked;
 
     private final String PYTHON_SCRIPTS_TARGET = SCRIPTS_DIR_PATH;
@@ -39,7 +39,7 @@ public class Deployment {
         this.deploymentScript = deploymentScript;
         this.application = application;
         this.fileAccess = fileAccess;
-        clazz = Deployment.class;
+        deploymentClass = Deployment.class;
         this.pythonIsChecked = false;
     }
 
@@ -108,7 +108,7 @@ public class Deployment {
 
     private void copyFile(String fileName, String source) throws IOException {
         if (!isAlreadyCopied(fileName)) {
-            InputStream inputStream = clazz.getResourceAsStream(source + fileName);
+            InputStream inputStream = deploymentClass.getResourceAsStream(source + fileName);
             String contentFile = IOUtils.toString(inputStream);
             inputStream.close();
             fileAccess.access(PYTHON_SCRIPTS_TARGET + fileName).appendln(contentFile).close();
