@@ -14,7 +14,7 @@ public class NodeConverterSoftwareComponentIT extends BaseIntegrationTest {
 
     @Test
     public void softwareComponent() {
-        EffectiveModel model = new EffectiveModel(SOFTWARE_COMPONENT);
+        EffectiveModel model = new EffectiveModel(SOFTWARE_COMPONENT, log);
         SoftwareComponent softwareComponent = (SoftwareComponent) model.getNodes().iterator().next();
         Credential credential = softwareComponent.getAdminCredential().get();
         assertEquals("securePassword", credential.getToken());

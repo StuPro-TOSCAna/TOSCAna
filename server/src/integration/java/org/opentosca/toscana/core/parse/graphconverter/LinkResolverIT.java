@@ -28,7 +28,7 @@ public class LinkResolverIT extends BaseIntegrationTest {
 
     @Test
     public void resolveRequirementLink() {
-        EffectiveModel model = new EffectiveModel(REQUIREMENT);
+        EffectiveModel model = new EffectiveModel(REQUIREMENT, log);
         WebServer node = (WebServer) model.getNodeMap().get("test-node1");
         HostRequirement requirement = node.getHost();
         assertNotNull(requirement);
@@ -40,7 +40,7 @@ public class LinkResolverIT extends BaseIntegrationTest {
 
     @Test
     public void resolveRepositoryLink() {
-        EffectiveModel model = new EffectiveModel(REPOSITORY);
+        EffectiveModel model = new EffectiveModel(REPOSITORY, log);
         WebServer node = (WebServer) model.getNodeMap().get("test-node");
         Set<Artifact> artifacts = node.getArtifacts();
         Artifact artifact = artifacts.iterator().next();
@@ -52,7 +52,7 @@ public class LinkResolverIT extends BaseIntegrationTest {
     
     @Test
     public void resolveImplementationLink() {
-        EffectiveModel model = new EffectiveModel(ARTIFACT);
+        EffectiveModel model = new EffectiveModel(ARTIFACT, log);
         WebServer node = (WebServer) model.getNodeMap().get("test-node");
         Optional<Operation> create = node.getStandardLifecycle().getCreate();
         assertTrue(create.isPresent());

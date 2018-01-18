@@ -36,7 +36,7 @@ public class NodeTypeResolverIT extends BaseIntegrationTest {
         Set<String> wineryNodeTypes = getWineryNodeTypes();
         for (String nodeType : wineryNodeTypes) {
             logger.info("Testing conversion of type '{}'", nodeType);
-            ServiceGraph graph = new ServiceGraph();
+            ServiceGraph graph = new ServiceGraph(log);
             MappingEntity nodeEntity = new MappingEntity(new EntityId(Lists.newArrayList("my", "id")), graph);
             graph.addEntity(nodeEntity);
             ScalarEntity typeEntity = new ScalarEntity(nodeType, nodeEntity.getId().descend("type"), graph);

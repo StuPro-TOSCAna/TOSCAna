@@ -36,13 +36,13 @@ public class EffectiveModel {
         CsarEntrypointDetector entrypointDetector = new CsarEntrypointDetector(log);
         logger = log.getLogger(getClass());
         File template = entrypointDetector.findEntryPoint(csarContentRoot);
-        this.serviceModel = new ServiceModel(template);
+        this.serviceModel = new ServiceModel(template, csar.getLog());
         init();
     }
 
-    public EffectiveModel(File template) {
+    public EffectiveModel(File template, Log log) {
         logger = LoggerFactory.getLogger(getClass());
-        this.serviceModel = new ServiceModel(template);
+        this.serviceModel = new ServiceModel(template, log);
         init();
     }
 

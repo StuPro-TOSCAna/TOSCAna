@@ -8,11 +8,13 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.opentosca.toscana.core.parse.graphconverter.util.ToscaStructure;
+import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.model.EntityId;
 import org.opentosca.toscana.model.util.ToscaKey;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.jgrapht.graph.SimpleDirectedGraph;
+import org.slf4j.Logger;
 import org.yaml.snakeyaml.nodes.MappingNode;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.NodeTuple;
@@ -21,16 +23,20 @@ import org.yaml.snakeyaml.nodes.SequenceNode;
 
 public class ServiceGraph extends SimpleDirectedGraph<BaseEntity, Connection> {
 
-    private final MappingEntity root = new MappingEntity(ToscaStructure.SERVICE_TEMPLATE, this);
+    private final MappingEntity root;
+    private final Log log;
+    private final Logger logger;
 
-    public ServiceGraph() {
+    public ServiceGraph(Log log) {
         super((sourceVertex, targetVertex) -> new Connection(targetVertex.getName(), sourceVertex, targetVertex));
+        this.log = log;
+        this.logger = log.getLogger(getClass());
+        root = new MappingEntity(ToscaStructure.SERVICE_TEMPLATE, this);
         addVertex(root);
     }
 
-    public ServiceGraph(Node snakeNode) {
-        super((sourceVertex, targetVertex) -> new Connection(targetVertex.getName(), sourceVertex, targetVertex));
-        addVertex(root);
+    public ServiceGraph(Node snakeNode, Log log) {
+        this(log);
         EntityId id = new EntityId(new ArrayList<>());
         populateGraph(snakeNode, id);
     }
@@ -127,7 +133,7 @@ public class ServiceGraph extends SimpleDirectedGraph<BaseEntity, Connection> {
             String.format("Entity '%s' is referenced but does not exist", source.getId().descend(key))
         ));
     }
-    
+
     public BaseEntity getChildOrThrow(BaseEntity source, ToscaKey key) {
         Optional<BaseEntity> optionalEntity = getChild(source, key);
         return optionalEntity.orElseThrow(() -> new IllegalStateException(
@@ -146,15 +152,15 @@ public class ServiceGraph extends SimpleDirectedGraph<BaseEntity, Connection> {
         return Optional.of(current);
     }
 
+    public Optional<BaseEntity> getEntity(EntityId id) {
+        return getEntity(id.getPath());
+    }
+
     public BaseEntity getEntityOrThrow(EntityId id) {
         Optional<BaseEntity> optionalEntity = getEntity(id);
         return optionalEntity.orElseThrow(() -> new IllegalStateException(
             String.format("Entity '%s' is referenced but does not exist", id)
         ));
-    }
-
-    public Optional<BaseEntity> getEntity(EntityId id) {
-        return getEntity(id.getPath());
     }
 
     public Set<BaseEntity> getChildren(BaseEntity entity) {
@@ -197,5 +203,25 @@ public class ServiceGraph extends SimpleDirectedGraph<BaseEntity, Connection> {
     public void addConnection(BaseEntity source, BaseEntity target, String connectionName) {
         Connection connection = new Connection(connectionName, source, target);
         addEdge(source, target, connection);
+    }
+
+    public <T> Set<T> getCollection(BaseEntity entity, ToscaKey<T> key) {
+        Set<T> values = new HashSet<>();
+        Optional<BaseEntity> child = getChild(entity, key);
+        if (child.isPresent()) {
+            for (BaseEntity grandChild : child.get().getChildren()) {
+                try {
+                    T value = TypeConverter.convert(grandChild, key);
+                    values.add(value);
+                } catch (AttributeNotSetException e) {
+                    logger.warn("Trying to access an unset attribute - skipping.", e);
+                }
+            }
+        }
+        return values;
+    }
+
+    public Log getLog() {
+        return log;
     }
 }

@@ -17,26 +17,23 @@ import org.opentosca.toscana.model.EntityId;
 import org.opentosca.toscana.model.Parameter;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.nodes.Node;
 
 public class ServiceModel {
 
-    private Logger logger = LoggerFactory.getLogger(getClass());
-    private ServiceGraph graph;
+    private final Log log;
+    private final Logger logger;
+    private final ServiceGraph graph;
     private Map<String, Property> inputs;
 
     public ServiceModel(File template, Log log) {
-        this(template);
+        this.log = log;
         this.logger = log.getLogger(getClass());
-    }
-
-    public ServiceModel(File template) {
         Yaml yaml = new Yaml();
         try {
             Node snakeNode = yaml.compose(new FileReader(template));
-            this.graph = new ServiceGraph(snakeNode);
+            this.graph = new ServiceGraph(snakeNode, log);
             ToscaStructure.buildBasicStructure(this.graph); // in case this has not already been established
             GraphNormalizer.normalize(this);
             new LinkResolver(this).resolveLinks();

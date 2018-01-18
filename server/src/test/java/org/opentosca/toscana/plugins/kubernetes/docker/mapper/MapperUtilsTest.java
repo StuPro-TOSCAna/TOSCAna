@@ -22,18 +22,18 @@ public class MapperUtilsTest extends BaseUnitTest {
 
     @Before
     public void setUp() {
-        ServiceGraph graph = new ServiceGraph();
+        ServiceGraph graph = new ServiceGraph(log);
         entity = new MappingEntity(entityId, graph);
         graph.addEntity(entity);
     }
 
     @Test
-    public void testNoneSet() throws Exception {
+    public void testNoneSet() {
         assertFalse(anythingSet(new OsCapability(entity)));
     }
 
     @Test
-    public void testOneSet() throws Exception {
+    public void testOneSet() {
         assertTrue(anythingSet(new OsCapability(entity).setType(Type.LINUX)));
     }
 }

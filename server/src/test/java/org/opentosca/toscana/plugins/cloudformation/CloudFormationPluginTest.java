@@ -33,7 +33,7 @@ public class CloudFormationPluginTest extends BaseUnitTest {
 
     @Before
     public void setUp() throws Exception {
-        lamp = new EffectiveModel(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE);
+        lamp = new EffectiveModel(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, log);
         when(log.getLogger(any(Class.class))).thenReturn(LoggerFactory.getLogger("Test logger"));
         fileAccess = new PluginFileAccess(new File("src/test/resources/csars/yaml/valid/lamp-noinput/"), tmpdir, log);
         cfnModule = new CloudFormationModule(fileAccess);

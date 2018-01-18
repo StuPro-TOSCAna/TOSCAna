@@ -29,7 +29,7 @@ public class GraphNormalizerIT extends BaseIntegrationTest {
 
     @Test
     public void repositoryNormalization() {
-        ServiceModel model = new ServiceModel(REPOSITORY);
+        ServiceModel model = new ServiceModel(REPOSITORY, log);
         Collection<BaseEntity> repositories = model.getEntity(ToscaStructure.REPOSITORIES).get().getChildren();
         BaseEntity repository = repositories.iterator().next();
         Optional<BaseEntity> url = repository.getChild("url");
@@ -39,7 +39,7 @@ public class GraphNormalizerIT extends BaseIntegrationTest {
 
     @Test
     public void operationNormalization() {
-        ServiceModel model = new ServiceModel(OPERATION);
+        ServiceModel model = new ServiceModel(OPERATION, log);
         EntityId lifecycleId = ToscaStructure.NODE_TEMPLATES.descend("test-node")
             .descend(RootNode.INTERFACES.name)
             .descend(RootNode.STANDARD_LIFECYCLE.name);

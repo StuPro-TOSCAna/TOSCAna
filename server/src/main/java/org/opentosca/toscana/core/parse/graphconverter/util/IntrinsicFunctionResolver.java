@@ -1,4 +1,4 @@
-package org.opentosca.toscana.core.parse.graphconverter;
+package org.opentosca.toscana.core.parse.graphconverter.util;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -7,8 +7,11 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import org.opentosca.toscana.core.parse.graphconverter.util.NavigationUtil;
-import org.opentosca.toscana.core.parse.graphconverter.util.ToscaStructure;
+import org.opentosca.toscana.core.parse.graphconverter.AttributeNotSetException;
+import org.opentosca.toscana.core.parse.graphconverter.BaseEntity;
+import org.opentosca.toscana.core.parse.graphconverter.MappingEntity;
+import org.opentosca.toscana.core.parse.graphconverter.ScalarEntity;
+import org.opentosca.toscana.core.parse.graphconverter.ServiceGraph;
 import org.opentosca.toscana.model.Parameter;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.util.ToscaKey;
@@ -41,29 +44,30 @@ public class IntrinsicFunctionResolver {
 
     /**
      @param functionHolder the outcome of a call to {@link #holdsFunction(BaseEntity)} with this entity must be true
+     @return returns the resolved target. Returns null if target does not exist and function type allows missing target
      @throws IllegalStateException if call to {@link #holdsFunction(BaseEntity)}
      with same entity as argument comes out as false
      */
-    public static BaseEntity resolveFunction(BaseEntity functionHolder) {
+    public static BaseEntity resolveFunction(BaseEntity functionHolder) throws AttributeNotSetException {
         if (!holdsFunction(functionHolder)) {
             throw new IllegalStateException(String.format(
                 "Given entity '%s' does not hold a function - illegal call to resolveFunction", functionHolder));
         }
         BaseEntity parent = functionHolder.getParent();
         BaseEntity functionTarget = getTarget((MappingEntity) functionHolder);
-        ServiceGraph graph = functionHolder.getGraph();
-        // only removing connection - the actual function entities stay in the graph; might be easier for debugging
-        graph.removeEdge(parent, functionHolder);
-        graph.addConnection(parent, functionTarget, functionHolder.getName());
+        if (functionTarget != null) {
+            ServiceGraph graph = functionHolder.getGraph();
+            // only removing connection - the actual function entities stay in the graph; might be easier for debugging
+            graph.removeEdge(parent, functionHolder);
+            graph.addConnection(parent, functionTarget, functionHolder.getName());
+        }
         return functionTarget;
     }
 
-    private static BaseEntity getTarget(MappingEntity functionHolder) {
+    private static BaseEntity getTarget(MappingEntity functionHolder) throws AttributeNotSetException {
         BaseEntity functionEntity = functionHolder.getChildren().iterator().next();
         ToscaFunction function = ToscaFunction.getFunction(functionEntity.getName());
         ServiceGraph graph = functionHolder.getGraph();
-        IllegalStateException illegalTargetException = new IllegalStateException(String.format("Function at '%s' points to non-existent target",
-            functionEntity.getId()));
         switch (function) {
             case GET_INPUT:
                 ScalarEntity inputFunctionEntity = (ScalarEntity) functionEntity;
@@ -97,7 +101,7 @@ public class IntrinsicFunctionResolver {
                     targetNode.getChild(key).ifPresent(e -> possibleLocations.add(e));
                 }
                 if (possibleLocations.isEmpty()) {
-                    throw illegalTargetException;
+                    return noTargetFound(function, functionEntity);
                 }
                 for (BaseEntity possibleLocation : possibleLocations) {
                     BaseEntity current = findTarget(possibleLocation, it);
@@ -105,13 +109,20 @@ public class IntrinsicFunctionResolver {
                         return current;
                     }
                 }
-                throw illegalTargetException;
+                return (noTargetFound(function, functionEntity));
             default:
                 throw new UnsupportedOperationException(String.format("Function %s not supported yet", function));
         }
     }
 
-    
+    private static BaseEntity noTargetFound(ToscaFunction function, BaseEntity functionEntity) throws AttributeNotSetException {
+        String message = String.format("Function at '%s' points to non-existent target", functionEntity.getId());
+        if (function == ToscaFunction.GET_ATTRIBUTE) {
+            throw new AttributeNotSetException(message);
+        } else {
+            throw new IllegalStateException(message);
+        }
+    }
 
     private static BaseEntity findTarget(BaseEntity current, Iterator<BaseEntity> it) {
         while (it.hasNext()) {
@@ -126,7 +137,7 @@ public class IntrinsicFunctionResolver {
         return current;
     }
 
-    public static enum ToscaFunction {
+    public enum ToscaFunction {
         GET_INPUT("get_input"),
         GET_PROPERTY("get_property", RootNode.PROPERTIES),
         GET_ATTRIBUTE("get_attribute", RootNode.ATTRIBUTES);

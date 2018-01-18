@@ -27,7 +27,7 @@ public class KubernetesLampIT extends BaseTransformTest {
 
     @Override
     protected EffectiveModel getModel() {
-        return new EffectiveModel(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE);
+        return new EffectiveModel(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, log);
     }
 
     @Override

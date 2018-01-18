@@ -157,7 +157,7 @@ public class ServiceModelIT extends BaseIntegrationTest {
     private ServiceModel getModel() throws Exception {
         ServiceModel model = modelMap.get(currentFile);
         if (model == null) {
-            model = new ServiceModel(currentFile);
+            model = new ServiceModel(currentFile, log);
             modelMap.put(currentFile, model);
         }
         return model;

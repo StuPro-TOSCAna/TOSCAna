@@ -5,10 +5,15 @@ import java.util.Optional;
 import org.opentosca.toscana.model.EntityId;
 import org.opentosca.toscana.model.util.ToscaKey;
 
+import org.slf4j.Logger;
+
 public class MappingEntity extends BaseEntity {
+
+    private final Logger logger;
 
     public MappingEntity(EntityId id, ServiceGraph graph) {
         super(id, graph);
+        this.logger = graph.getLog().getLogger(getClass());
     }
 
     @Override
@@ -19,10 +24,13 @@ public class MappingEntity extends BaseEntity {
     public <V> V getValue(ToscaKey<V> key) {
         Optional<BaseEntity> entity = graph.getChild(this, key);
         if (entity.isPresent()) {
-            return new TypeConverter().convert(entity.get(), key);
-        } else {
-            return null;
+            try {
+                return TypeConverter.convert(entity.get(), key);
+            } catch (AttributeNotSetException e) {
+                logger.warn("Accessing an unset attribute", e);
+            }
         }
+        return null;
     }
 
     /**

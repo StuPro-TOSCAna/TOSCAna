@@ -1,5 +1,6 @@
 package org.opentosca.toscana.core.parse.converter;
 
+import org.opentosca.toscana.core.BaseIntegrationTest;
 import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.model.node.DockerApplication;
@@ -12,11 +13,11 @@ import static org.junit.Assert.assertNotNull;
 /**
  Tests the conversion of the minimal-docker csar to an effective model
  */
-public class ModelInstanceConverterIT {
+public class ModelInstanceConverterIT extends BaseIntegrationTest {
 
     @Test
-    public void dockerConverter() throws Exception {
-        EffectiveModel model = new EffectiveModel(TestCsars.VALID_MINIMAL_DOCKER_TEMPLATE);
+    public void dockerConverter() {
+        EffectiveModel model = new EffectiveModel(TestCsars.VALID_MINIMAL_DOCKER_TEMPLATE, log);
         assertNotNull(model);
         DockerApplication dockerApp = (DockerApplication) model.getNodeMap().get("simpleTaskApp");
         DockerHostRequirement host = dockerApp.getDockerHost();
@@ -24,8 +25,8 @@ public class ModelInstanceConverterIT {
     }
 
     @Test
-    public void lampNoInputConverter() throws Exception {
-        EffectiveModel model = new EffectiveModel(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE);
+    public void lampNoInputConverter() {
+        EffectiveModel model = new EffectiveModel(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, log);
         assertNotNull(model);
     }
 

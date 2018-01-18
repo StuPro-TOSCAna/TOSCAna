@@ -158,7 +158,7 @@ public class ServiceTest extends BaseUnitTest {
 
     private void setUpMyApp() throws IOException, JSONException {
         NodeVisitors visitor = new NodeVisitors(myApp);
-        EffectiveModel lamp = new EffectiveModel(TestCsars.VALID_LAMP_INPUT_TEMPLATE);
+        EffectiveModel lamp = new EffectiveModel(TestCsars.VALID_LAMP_INPUT_TEMPLATE, log);
         ArrayList<String> paths = new ArrayList<>();
         String resourcesPath = "src/test/resources/";
         File sourceDir = new File(resourcesPath + "csars/yaml/valid/lamp-input/");

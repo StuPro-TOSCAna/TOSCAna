@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import org.opentosca.toscana.core.parse.graphconverter.util.IntrinsicFunctionResolver;
 import org.opentosca.toscana.model.BaseToscaElement;
 import org.opentosca.toscana.model.datatype.SizeUnit;
 import org.opentosca.toscana.model.operation.OperationVariable;
@@ -13,10 +14,14 @@ import org.apache.commons.lang3.EnumUtils;
 
 public class TypeConverter {
 
-    public static <T> T convert(BaseEntity entity, ToscaKey<T> key) {
+    public static <T> T convert(BaseEntity entity, ToscaKey<T> key) throws AttributeNotSetException {
         if (IntrinsicFunctionResolver.holdsFunction(entity)) {
             BaseEntity resolvedEntity = IntrinsicFunctionResolver.resolveFunction(entity);
-            return convert(resolvedEntity, key);
+            if (resolvedEntity == null) {
+                return null;
+            } else {
+                return convert(resolvedEntity, key);
+            }
         } else if (entity instanceof ScalarEntity) {
             ScalarEntity scalarEntity = (ScalarEntity) entity;
             return convertScalarEntity(scalarEntity, key);

@@ -1,7 +1,9 @@
 package org.opentosca.toscana.core.parse.graphconverter;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import org.opentosca.toscana.model.BaseToscaElement;
 import org.opentosca.toscana.model.EntityId;
@@ -73,6 +75,10 @@ public abstract class BaseEntity implements Comparable<BaseEntity> {
 
     public Collection<BaseEntity> getChildren() {
         return graph.getChildren(this);
+    }
+    
+    public <T> Set<T> getCollection(ToscaKey<T> key) {
+        return graph.getCollection(this, key);
     }
 
     public ServiceGraph getGraph() {

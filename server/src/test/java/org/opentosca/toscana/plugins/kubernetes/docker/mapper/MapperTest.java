@@ -1,6 +1,8 @@
 package org.opentosca.toscana.plugins.kubernetes.docker.mapper;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collection;
@@ -8,6 +10,7 @@ import java.util.Collection;
 import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.core.parse.graphconverter.MappingEntity;
 import org.opentosca.toscana.core.parse.graphconverter.ServiceGraph;
+import org.opentosca.toscana.core.transformation.logging.LogImpl;
 import org.opentosca.toscana.core.util.Preferences;
 import org.opentosca.toscana.model.EntityId;
 import org.opentosca.toscana.model.capability.OsCapability;
@@ -88,7 +91,7 @@ public class MapperTest extends BaseUnitTest {
     }
 
     @Parameterized.Parameters(name = "{index}: {0}")
-    public static Collection<Object[]> data() {
+    public static Collection<Object[]> data() throws IOException {
         return Arrays.asList(new Object[][]
             {
                 {
@@ -130,8 +133,10 @@ public class MapperTest extends BaseUnitTest {
         );
     }
 
-    public static MappingEntity getEntity() {
-        ServiceGraph graph = new ServiceGraph();
+    public static MappingEntity getEntity() throws IOException {
+        File logFile = File.createTempFile("testlog", "log", PROJECT_ROOT);
+        logFile.deleteOnExit();
+        ServiceGraph graph = new ServiceGraph(new LogImpl(logFile));
         MappingEntity entity = new MappingEntity(entityId, graph);
         graph.addEntity(entity);
         return entity;

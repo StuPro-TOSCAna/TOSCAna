@@ -41,7 +41,7 @@ public class CloudFoundryLampIT extends BaseTransformTest {
 
     @Override
     protected EffectiveModel getModel() throws Exception {
-        return new EffectiveModel(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE);
+        return new EffectiveModel(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, log);
     }
 
     @Override

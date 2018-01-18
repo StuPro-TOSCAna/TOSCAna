@@ -29,7 +29,7 @@ public class CloudFormationLifecycleTest extends BaseUnitTest {
     @Before
     public void setUp() throws Exception {
         PluginFileAccess access = new PluginFileAccess(new File(""), tmpdir, mock(Log.class));
-        EffectiveModel effectiveModel = new EffectiveModel(TestCsars.VALID_MINIMAL_DOCKER_TEMPLATE);
+        EffectiveModel effectiveModel = new EffectiveModel(TestCsars.VALID_MINIMAL_DOCKER_TEMPLATE, log);
 
         when(context.getPluginFileAccess()).thenReturn(access);
         when(context.getLogger((Class<?>) any(Class.class))).thenReturn(LoggerFactory.getLogger("Dummy Logger"));

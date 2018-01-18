@@ -23,28 +23,28 @@ public class ToscaFunctionIT extends BaseIntegrationTest {
 
     @Test
     public void getInputTest() {
-        EffectiveModel model = new EffectiveModel(GET_INPUT);
+        EffectiveModel model = new EffectiveModel(GET_INPUT, log);
         Database database = (Database) model.getNodeMap().get("my_db");
         assertEquals("my_db_name", database.getDatabaseName());
     }
 
     @Test
     public void getPropertyTest() {
-        EffectiveModel model = new EffectiveModel(GET_PROPERTY);
+        EffectiveModel model = new EffectiveModel(GET_PROPERTY, log);
         Database database = (Database) model.getNodeMap().get("my_second_db");
         assertEquals("my_db_name", database.getDatabaseName());
     }
 
     @Test
     public void getPropertySelfTest() {
-        EffectiveModel model = new EffectiveModel(GET_PROPERTY_SELF);
+        EffectiveModel model = new EffectiveModel(GET_PROPERTY_SELF, log);
         Database database = (Database) model.getNodeMap().get("my_db");
         assertEquals("my_user_name", database.getDatabaseName());
     }
 
     @Test
     public void getPropertyInInterfaceTest() {
-        EffectiveModel model = new EffectiveModel(GET_PROPERTY_IN_INTERFACE);
+        EffectiveModel model = new EffectiveModel(GET_PROPERTY_IN_INTERFACE, log);
         Database database = (Database) model.getNodeMap().get("my_db");
         Set<OperationVariable> inputs = database.getStandardLifecycle().getConfigure().get().getInputs();
         OperationVariable input = inputs.stream().findFirst().orElse(null);
