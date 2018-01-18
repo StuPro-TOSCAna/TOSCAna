@@ -62,6 +62,7 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
         try {
             CloudFormationFileCreator fileCreator = new CloudFormationFileCreator(logger, cfnModule);
             logger.info("Creating CloudFormation scripts.");
+            fileCreator.copyUtilScripts();
             fileCreator.createScripts();
             fileCreator.copyFiles();
         } catch (IOException e) {

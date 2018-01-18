@@ -1,16 +1,17 @@
 package org.opentosca.toscana.plugins.cloudformation;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
+import java.io.InputStreamReader;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.plugins.scripts.BashScript;
 import org.opentosca.toscana.plugins.scripts.EnvironmentCheck;
 
+import org.apache.commons.io.Charsets;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 
 /**
@@ -26,6 +27,7 @@ public class CloudFormationFileCreator {
     private static final String FILENAME_UPLOAD = "file-upload";
     private static final String TEMPLATE_PATH = "template.yaml ";
     private static final String CHANGE_TO_PARENT_DIRECTORY = "cd ..";
+    private static final String CHANGE_TO_FILE_DIRECTORY = "cd files";
 
     private final Logger logger;
     private CloudFormationModule cfnModule;
@@ -44,7 +46,7 @@ public class CloudFormationFileCreator {
     /**
      * Copies all files that need to be uploaded to the target artifact.
      */
-    public void copyFiles() throws IOException {
+    public void copyFiles() {
 
         Map<String, String> filesToBeUploaded = cfnModule.getFilesToBeUploaded();
 
@@ -53,8 +55,9 @@ public class CloudFormationFileCreator {
             logger.debug("Files to be copied found.");
             logger.debug("Copying files to the target artifact.");
             cfnModule.getFilesToBeUploaded().forEach((objectKey, filePath) -> {
+                String targetPath = CloudFormationModule.FILE_PATH_TARGET + " " + filePath;
                 try {
-                    cfnModule.getFileAccess().copy(filePath);
+                    cfnModule.getFileAccess().copy(filePath, targetPath);
                 } catch (IOException e) {
                     logger.error("Copying of files to the target artifact failed.");
                     logger.error("See the stack trace for more info.");
@@ -101,6 +104,9 @@ public class CloudFormationFileCreator {
             logger.debug("Creating file upload script.");
             BashScript fileUploadScript = new BashScript(cfnModule.getFileAccess(), FILENAME_UPLOAD);
             fileUploadScript.append(createBucket());
+            
+            fileUploadScript.append(CHANGE_TO_PARENT_DIRECTORY);
+            fileUploadScript.append(CHANGE_TO_FILE_DIRECTORY);
 
             logger.debug("Adding file upload commands.");
             filesToBeUploaded.forEach((objectKey, filePath) -> {
@@ -124,7 +130,7 @@ public class CloudFormationFileCreator {
      */
     private String createBucket() {
         // TODO get region, currently defaults to us-west-2
-        return "createBucket \"" + cfnModule.getBucketName() + "\"" + "\"" + " " + "\"" + " us-west-2";
+        return "createBucket \"" + cfnModule.getBucketName() + "\"" + " \"us-west-2\"";
     }
 
     /**
@@ -132,6 +138,39 @@ public class CloudFormationFileCreator {
      * Wraps resources/cloudformation.scripts/upload-file.sh
      */
     private String uploadFile(String objectKey, String filePath) {
-        return "uploadFile \"" + cfnModule.getBucketName() + "\"" + " " + "\"" + objectKey + "\"" + " " + filePath + "\"";
+        return "uploadFile \"" + cfnModule.getBucketName() + "\" \"" + objectKey + "\" \"" + filePath + "\"";
+    }
+
+    /**
+     * Copies all needed cloudformation utility scripts into the target artifact.
+     *
+     * @throws IOException if scripts cannot be found
+     */
+    public void copyUtilScripts() throws IOException {
+        //TODO extract duplicate code or add to setUpDirectories?
+        String resourcePath = "/cloudformation/scripts/util/";
+        String outputPath = "output/scripts/util/";
+        PluginFileAccess fileAccess = cfnModule.getFileAccess();
+
+        //Iterate over all files in the script list
+        List<String> utilScripts = IOUtils.readLines(
+            getClass().getResourceAsStream(resourcePath + "scripts-list"),
+            Charsets.UTF_8
+        );
+
+        logger.debug("Copying util scripts to the target artifact.");
+        for (String utilScript : utilScripts) {
+            if (!utilScript.isEmpty()) {
+                //Copy the file into the desired directory
+                logger.debug("Adding " + utilScript + " to the target artifact.");
+                InputStreamReader input = new InputStreamReader(
+                    getClass().getResourceAsStream(resourcePath + utilScript)
+                );
+                BufferedWriter output = fileAccess.access(outputPath + utilScript);
+                IOUtils.copy(input, output);
+                input.close();
+                output.close();
+            }
+        }
     }
 }

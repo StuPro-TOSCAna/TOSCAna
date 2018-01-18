@@ -23,6 +23,10 @@ public class CloudFormationModule extends Module {
     public final static String CONFIG_INSTALL = "Install";
     public final static String CONFIG_CONFIGURE = "Configure";
     public final static String SECURITY_GROUP = "SecurityGroup";
+    public static final String URL_HTTP = "http://";
+    public static final String URL_S3_AMAZONAWS = ".s3.amazonaws.com";
+    public static final String FILE_PATH_TARGET = "output/files/";
+    
     // KeyName is a default input value
     private static final String KEYNAME_DESCRIPTION = "Name of an existing EC2 KeyPair to enable SSH access to the instances";
     private static final String KEYNAME_TYPE = "AWS::EC2::KeyPair::KeyName";
@@ -44,8 +48,6 @@ public class CloudFormationModule extends Module {
         "# Install the files and packages from the metadata\n",
         "/usr/local/bin/cfn-init -v ",
         "         --stack "};
-    public static final String URL_HTTP = "http://";
-    public static final String URL_S3_AMAZONAWS = ".s3.amazonaws.com";
 
     private Object keyNameVar;
     private Map<String, CFNInit> cfnInitMap;
