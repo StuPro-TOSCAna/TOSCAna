@@ -43,6 +43,11 @@ public abstract class BaseEntity implements Comparable<BaseEntity> {
     public BaseEntity getChildOrThrow(String key) {
         return graph.getChildOrThrow(this, key);
     }
+    
+    public BaseEntity getChildOrThrow(ToscaKey key) {
+        return graph.getChildOrThrow(this, key);
+    }
+
 
     public EntityId getId() {
         return id;

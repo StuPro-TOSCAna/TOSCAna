@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import org.opentosca.toscana.core.parse.graphconverter.util.NavigationUtil;
 import org.opentosca.toscana.core.parse.graphconverter.util.ToscaStructure;
 import org.opentosca.toscana.model.Parameter;
 import org.opentosca.toscana.model.node.RootNode;
@@ -85,7 +86,7 @@ public class IntrinsicFunctionResolver {
                 String targetNodeName = ((ScalarEntity) it.next()).getValue();
                 BaseEntity targetNode;
                 if ("SELF".equals(targetNodeName)) {
-                    targetNode = resolveSelfKeyword(functionEntity);
+                    targetNode = NavigationUtil.getEnclosingNode(functionEntity);
                 } else {
                     targetNode = graph.getEntityOrThrow(ToscaStructure.NODE_TEMPLATES.descend(targetNodeName));
                 }
@@ -110,18 +111,7 @@ public class IntrinsicFunctionResolver {
         }
     }
 
-    /**
-     @return the node entity referenced by 'SELF'
-     */
-    private static BaseEntity resolveSelfKeyword(BaseEntity current) {
-        BaseEntity parent = current;
-        do {
-            current = parent;
-            parent = current.getParent();
-        } while (!ToscaStructure.NODE_TEMPLATES.equals(parent.getId()));
-
-        return current;
-    }
+    
 
     private static BaseEntity findTarget(BaseEntity current, Iterator<BaseEntity> it) {
         while (it.hasNext()) {

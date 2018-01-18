@@ -127,6 +127,13 @@ public class ServiceGraph extends SimpleDirectedGraph<BaseEntity, Connection> {
             String.format("Entity '%s' is referenced but does not exist", source.getId().descend(key))
         ));
     }
+    
+    public BaseEntity getChildOrThrow(BaseEntity source, ToscaKey key) {
+        Optional<BaseEntity> optionalEntity = getChild(source, key);
+        return optionalEntity.orElseThrow(() -> new IllegalStateException(
+            String.format("Entity '%s' is referenced but does not exist", source.getId().descend(key))
+        ));
+    }
 
     public Optional<BaseEntity> getEntity(List<String> path) {
         BaseEntity current = root;

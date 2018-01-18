@@ -1,6 +1,7 @@
 package org.opentosca.toscana.core.parse.graphconverter;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -8,14 +9,13 @@ import java.util.Map;
 import org.opentosca.toscana.core.parse.graphconverter.util.NodeTypeResolver;
 import org.opentosca.toscana.core.parse.graphconverter.util.ToscaStructure;
 import org.opentosca.toscana.model.node.RootNode;
-import org.opentosca.toscana.model.util.ToscaKey;
+import org.opentosca.toscana.model.util.KeyReflector;
 
 import org.apache.commons.lang.reflect.ConstructorUtils;
 
-public class ToscaFactory {
+import static org.opentosca.toscana.model.node.RootNode.TYPE;
 
-    // todo move to rootnode or similar ?
-    private static final ToscaKey<String> TYPE = new ToscaKey<>("type");
+public class ToscaFactory {
 
     public static Map<String, RootNode> wrapNodes(ServiceModel serviceModel) {
         Map<String, RootNode> nodes = new HashMap<>();
@@ -30,11 +30,7 @@ public class ToscaFactory {
     public static <T> T wrapNode(MappingEntity nodeEntity) {
         String typeString = nodeEntity.getValue(TYPE);
         Class nodeType = NodeTypeResolver.resolve(typeString);
-        if (nodeType != null) {
-            return wrap(nodeEntity, nodeType);
-        } else {
-            throw new UnsupportedOperationException(String.format("NodeType '%s' is not supported", typeString));
-        }
+        return wrap(nodeEntity, nodeType);
     }
 
     public static <T> T wrapEntity(MappingEntity entity, Class type) {
@@ -50,6 +46,9 @@ public class ToscaFactory {
 
     private static <T> T wrap(MappingEntity entity, Class type) {
         try {
+            if (Modifier.isAbstract(type.getModifiers())) {
+                type = KeyReflector.detectRealCapabilityType(entity, type);
+            }
             T node = (T) ConstructorUtils.invokeConstructor(type, entity);
             return node;
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {

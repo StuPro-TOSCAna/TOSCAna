@@ -64,7 +64,7 @@ public class Compute extends RootNode {
         .type(ScalableCapability.class);
     public static ToscaKey<BindableCapability> BINDING = new ToscaKey<>(CAPABILITIES, "binding")
         .type(BindableCapability.class);
-    public static ToscaKey<BlockStorageRequirement> LOCAL_STORAGE = new ToscaKey<>(CAPABILITIES, "local_storage")
+    public static ToscaKey<BlockStorageRequirement> LOCAL_STORAGE = new ToscaKey<>(REQUIREMENTS, "local_storage")
         .required(true).type(BlockStorageRequirement.class);
 
     public Compute(MappingEntity mappingEntity) {

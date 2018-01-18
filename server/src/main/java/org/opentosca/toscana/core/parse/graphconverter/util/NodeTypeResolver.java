@@ -48,7 +48,12 @@ public class NodeTypeResolver {
     }
 
     public static Class<? extends RootNode> resolve(String nodeType) {
-        return TYPE_MAP.get(nodeType);
+        Class<? extends RootNode> type = TYPE_MAP.get(nodeType);
+        if (type != null){
+            return type;
+        } else {
+            throw new UnsupportedOperationException(String.format("NodeType '%s' is not supported", nodeType));
+        }
     }
 
     private static void put(String shorthandName, Class<? extends RootNode> clazz) {
