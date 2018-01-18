@@ -1,6 +1,6 @@
 package org.opentosca.toscana.model.node;
 
-import org.opentosca.toscana.core.parse.graphconverter.MappingEntity;
+import org.opentosca.toscana.core.parse.model.MappingEntity;
 import org.opentosca.toscana.model.capability.ContainerCapability;
 import org.opentosca.toscana.model.capability.ScalableCapability;
 import org.opentosca.toscana.model.util.ToscaKey;

@@ -5,10 +5,8 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import org.opentosca.toscana.core.BaseUnitTest;
-import org.opentosca.toscana.model.EntityId;
 import org.opentosca.toscana.model.capability.OsCapability;
 
-import com.google.common.collect.Lists;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;

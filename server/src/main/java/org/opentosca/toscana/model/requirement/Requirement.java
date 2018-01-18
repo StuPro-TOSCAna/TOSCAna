@@ -3,7 +3,7 @@ package org.opentosca.toscana.model.requirement;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.opentosca.toscana.core.parse.graphconverter.MappingEntity;
+import org.opentosca.toscana.core.parse.model.MappingEntity;
 import org.opentosca.toscana.model.BaseToscaElement;
 import org.opentosca.toscana.model.capability.Capability;
 import org.opentosca.toscana.model.datatype.Range;

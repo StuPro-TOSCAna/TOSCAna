@@ -1,6 +1,6 @@
 package org.opentosca.toscana.model.relation;
 
-import org.opentosca.toscana.core.parse.graphconverter.MappingEntity;
+import org.opentosca.toscana.core.parse.model.MappingEntity;
 import org.opentosca.toscana.model.DescribableEntity;
 import org.opentosca.toscana.model.visitor.RelationshipVisitor;
 import org.opentosca.toscana.model.visitor.VisitableRelationship;

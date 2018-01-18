@@ -14,18 +14,14 @@ import org.opentosca.toscana.retrofit.util.TOSCAnaServerException;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static junit.framework.TestCase.assertTrue;
 
 /**
  Tests setting model specific properties.
- Involved components are: REST API, core, converter.
+ Involved components are: REST API, core, rename.
  */
 public class ModelSpecificPropertyIT extends BaseSpringIntegrationTest {
-
-    private final static Logger logger = LoggerFactory.getLogger(ModelSpecificPropertyIT.class.getName());
 
     private static final String[] KEYS = {"string-input", "boolean-input", "integer-input", "float-input"};
     private static final String[] TYPES = {"text", "boolean", "integer", "float"};

@@ -31,6 +31,7 @@ public class TestCsars {
     public final static File VALID_LAMP_INPUT = new File(YAML_DIR, "valid/lamp-input.csar");
     public final static File VALID_LAMP_INPUT_TEMPLATE = new File(YAML_DIR, "valid/lamp-input/template.yaml");
     public final static File VALID_INPUTS = new File(YAML_DIR, "valid/inputs.csar");
+    public final static File VALID_INPUTS_TEMPLATE = new File(YAML_DIR, "valid/inputs/inputs.yaml");
     public static final File VALID_SINGLE_COMPUTE_TEMPLATE = new File(YAML_DIR, "valid/single-compute/single-compute.yaml");
     public final static File INVALID_DEPENDENCIES_MISSING = new File(YAML_DIR, "invalid/dependencies_missing.csar");
     public final static File INVALID_DOCKERAPP_MISSING = new File(YAML_DIR, "invalid/dockerapp_missing.csar");

@@ -3,7 +3,7 @@ package org.opentosca.toscana.model.node;
 import java.util.Optional;
 import java.util.Set;
 
-import org.opentosca.toscana.core.parse.graphconverter.MappingEntity;
+import org.opentosca.toscana.core.parse.model.MappingEntity;
 import org.opentosca.toscana.model.capability.AdminEndpointCapability;
 import org.opentosca.toscana.model.capability.BindableCapability;
 import org.opentosca.toscana.model.capability.ContainerCapability;

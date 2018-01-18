@@ -6,10 +6,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.opentosca.toscana.core.csar.Csar;
-import org.opentosca.toscana.core.parse.CsarEntrypointDetector;
+import org.opentosca.toscana.core.parse.EntrypointDetector;
 import org.opentosca.toscana.core.parse.InvalidCsarException;
-import org.opentosca.toscana.core.parse.graphconverter.ServiceModel;
-import org.opentosca.toscana.core.parse.graphconverter.ToscaFactory;
+import org.opentosca.toscana.core.parse.model.ServiceModel;
+import org.opentosca.toscana.core.parse.converter.TypeWrapper;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.model.node.RootNode;
@@ -33,7 +33,7 @@ public class EffectiveModel {
 
     public EffectiveModel(Csar csar, File csarContentRoot) throws InvalidCsarException {
         Log log = csar.getLog();
-        CsarEntrypointDetector entrypointDetector = new CsarEntrypointDetector(log);
+        EntrypointDetector entrypointDetector = new EntrypointDetector(log);
         logger = log.getLogger(getClass());
         File template = entrypointDetector.findEntryPoint(csarContentRoot);
         this.serviceModel = new ServiceModel(template, csar.getLog());
@@ -47,7 +47,7 @@ public class EffectiveModel {
     }
 
     private void init() {
-        nodeMap = ToscaFactory.wrapNodes(serviceModel);
+        nodeMap = TypeWrapper.wrapNodes(serviceModel);
         nodeMap.forEach((name, node) -> topology.addVertex(node));
         initEdges();
         inputs = serviceModel.getInputs();

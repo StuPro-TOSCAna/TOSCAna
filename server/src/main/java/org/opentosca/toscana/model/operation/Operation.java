@@ -3,7 +3,7 @@ package org.opentosca.toscana.model.operation;
 import java.util.Optional;
 import java.util.Set;
 
-import org.opentosca.toscana.core.parse.graphconverter.MappingEntity;
+import org.opentosca.toscana.core.parse.model.MappingEntity;
 import org.opentosca.toscana.model.DescribableEntity;
 import org.opentosca.toscana.model.artifact.Artifact;
 import org.opentosca.toscana.model.util.ToscaKey;

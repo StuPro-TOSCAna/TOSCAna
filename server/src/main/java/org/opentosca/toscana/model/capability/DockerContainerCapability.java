@@ -3,7 +3,7 @@ package org.opentosca.toscana.model.capability;
 import java.util.Optional;
 import java.util.Set;
 
-import org.opentosca.toscana.core.parse.graphconverter.MappingEntity;
+import org.opentosca.toscana.core.parse.model.MappingEntity;
 import org.opentosca.toscana.model.datatype.PortSpec;
 import org.opentosca.toscana.model.util.ToscaKey;
 

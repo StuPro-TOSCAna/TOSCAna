@@ -2,7 +2,7 @@ package org.opentosca.toscana.model.requirement;
 
 import java.util.Optional;
 
-import org.opentosca.toscana.core.parse.graphconverter.MappingEntity;
+import org.opentosca.toscana.core.parse.model.MappingEntity;
 import org.opentosca.toscana.model.capability.DatabaseEndpointCapability;
 import org.opentosca.toscana.model.node.Database;
 import org.opentosca.toscana.model.relation.ConnectsTo;

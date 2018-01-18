@@ -2,7 +2,7 @@ package org.opentosca.toscana.model.node;
 
 import java.util.Set;
 
-import org.opentosca.toscana.core.parse.graphconverter.MappingEntity;
+import org.opentosca.toscana.core.parse.model.MappingEntity;
 import org.opentosca.toscana.model.capability.ContainerCapability;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 

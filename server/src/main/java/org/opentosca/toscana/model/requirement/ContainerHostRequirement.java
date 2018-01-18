@@ -2,7 +2,7 @@ package org.opentosca.toscana.model.requirement;
 
 import java.util.Optional;
 
-import org.opentosca.toscana.core.parse.graphconverter.MappingEntity;
+import org.opentosca.toscana.core.parse.model.MappingEntity;
 import org.opentosca.toscana.model.capability.ContainerCapability;
 import org.opentosca.toscana.model.node.ContainerRuntime;
 import org.opentosca.toscana.model.relation.HostedOn;

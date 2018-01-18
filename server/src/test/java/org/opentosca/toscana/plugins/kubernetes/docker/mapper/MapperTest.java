@@ -8,8 +8,8 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import org.opentosca.toscana.core.BaseUnitTest;
-import org.opentosca.toscana.core.parse.graphconverter.MappingEntity;
-import org.opentosca.toscana.core.parse.graphconverter.ServiceGraph;
+import org.opentosca.toscana.core.parse.model.MappingEntity;
+import org.opentosca.toscana.core.parse.model.ServiceGraph;
 import org.opentosca.toscana.core.transformation.logging.LogImpl;
 import org.opentosca.toscana.core.util.Preferences;
 import org.opentosca.toscana.model.EntityId;

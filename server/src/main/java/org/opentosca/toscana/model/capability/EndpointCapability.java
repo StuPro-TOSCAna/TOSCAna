@@ -4,7 +4,7 @@ import java.net.URL;
 import java.util.Optional;
 import java.util.Set;
 
-import org.opentosca.toscana.core.parse.graphconverter.MappingEntity;
+import org.opentosca.toscana.core.parse.model.MappingEntity;
 import org.opentosca.toscana.model.datatype.NetworkProtocol;
 import org.opentosca.toscana.model.datatype.Port;
 import org.opentosca.toscana.model.datatype.PortSpec;

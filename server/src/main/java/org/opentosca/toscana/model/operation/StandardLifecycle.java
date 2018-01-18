@@ -2,7 +2,7 @@ package org.opentosca.toscana.model.operation;
 
 import java.util.Optional;
 
-import org.opentosca.toscana.core.parse.graphconverter.MappingEntity;
+import org.opentosca.toscana.core.parse.model.MappingEntity;
 import org.opentosca.toscana.model.util.ToscaKey;
 
 import lombok.EqualsAndHashCode;

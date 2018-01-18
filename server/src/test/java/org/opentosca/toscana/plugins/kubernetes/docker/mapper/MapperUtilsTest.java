@@ -1,8 +1,8 @@
 package org.opentosca.toscana.plugins.kubernetes.docker.mapper;
 
 import org.opentosca.toscana.core.BaseUnitTest;
-import org.opentosca.toscana.core.parse.graphconverter.MappingEntity;
-import org.opentosca.toscana.core.parse.graphconverter.ServiceGraph;
+import org.opentosca.toscana.core.parse.model.MappingEntity;
+import org.opentosca.toscana.core.parse.model.ServiceGraph;
 import org.opentosca.toscana.model.EntityId;
 import org.opentosca.toscana.model.capability.OsCapability;
 

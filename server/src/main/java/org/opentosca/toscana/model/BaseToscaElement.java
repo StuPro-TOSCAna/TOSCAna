@@ -4,9 +4,9 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.opentosca.toscana.core.parse.graphconverter.BaseEntity;
-import org.opentosca.toscana.core.parse.graphconverter.MappingEntity;
-import org.opentosca.toscana.core.parse.graphconverter.ToscaFactory;
+import org.opentosca.toscana.core.parse.model.Entity;
+import org.opentosca.toscana.core.parse.model.MappingEntity;
+import org.opentosca.toscana.core.parse.converter.TypeWrapper;
 import org.opentosca.toscana.model.util.ToscaKey;
 
 import lombok.EqualsAndHashCode;
@@ -41,10 +41,10 @@ public abstract class BaseToscaElement {
     }
 
     protected <T> Set<T> getThisAsSet(Class<T> type) {
-        ToscaFactory factory = new ToscaFactory();
-        Collection<BaseEntity> values = mappingEntity.getChildren();
+        TypeWrapper factory = new TypeWrapper();
+        Collection<Entity> values = mappingEntity.getChildren();
         Set<T> results = new HashSet<>();
-        for (BaseEntity v : values) {
+        for (Entity v : values) {
             T result = factory.wrapEntity((MappingEntity) v, type);
             results.add(result);
         }
@@ -71,7 +71,7 @@ public abstract class BaseToscaElement {
 
     /**
      Returns the underlying raw entity.
-     Danger: Do not use this outside of the converter.
+     Danger: Do not use this outside of the rename.
      Your fellow developers will find you and hunt you down.
      */
     public MappingEntity getBackingEntity() {

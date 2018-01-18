@@ -2,7 +2,7 @@ package org.opentosca.toscana.model.requirement;
 
 import java.util.Optional;
 
-import org.opentosca.toscana.core.parse.graphconverter.MappingEntity;
+import org.opentosca.toscana.core.parse.model.MappingEntity;
 import org.opentosca.toscana.model.capability.AttachmentCapability;
 import org.opentosca.toscana.model.node.BlockStorage;
 import org.opentosca.toscana.model.relation.AttachesTo;
