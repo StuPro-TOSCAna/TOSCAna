@@ -44,8 +44,9 @@ public class CloudFormationFileCreator {
     /**
      * Copies all files that need to be uploaded to the target artifact.
      */
-    private void copyFiles() throws IOException {
+    public void copyFiles() throws IOException {
         for (String filePath : cfnModule.getFilesToBeUploaded().values()) {
+            logger.debug("Copying " + filePath + "to target artifact.");
             cfnModule.getFileAccess().copy(filePath);
         }
     }
@@ -62,8 +63,8 @@ public class CloudFormationFileCreator {
      * Creates a deploy script for deploying the cloudformation template.
      */
     private void createDeployScript() throws IOException {
-        //Create Deployment script for the template
         // TODO maybe add the execution of the fileUploadScript
+        logger.debug("Creating deploy script.");
         BashScript deployScript = new BashScript(cfnModule.getFileAccess(), FILENAME_DEPLOY);
         deployScript.append(EnvironmentCheck.checkEnvironment("aws"));
         deployScript.append(CHANGE_TO_PARENT_DIRECTORY);
@@ -78,18 +79,19 @@ public class CloudFormationFileCreator {
     private void createFileUploadScript() throws IOException {
         Map<String, String> filesToBeUploaded = cfnModule.getFilesToBeUploaded();
 
-        // Check if files need to be uploaded
+        logger.debug("Checking if files need to be uploaded.");
         if (!filesToBeUploaded.isEmpty()) {
-            // Add create Bucket command
+            logger.debug("Files to be uploaded found.");
+            logger.debug("Creating file upload script.");
             BashScript fileUploadScript = new BashScript(cfnModule.getFileAccess(), FILENAME_UPLOAD);
             fileUploadScript.append(createBucket());
 
-            // Add upload commands for all files to be uploaded
             Iterator uploadIterator = filesToBeUploaded.entrySet().iterator();
             while (uploadIterator.hasNext()) {
                 Map.Entry fileToBeUploaded = (Map.Entry) uploadIterator.next();
                 String objectKey = (String) fileToBeUploaded.getKey();
                 String filePath = (String) fileToBeUploaded.getValue();
+                logger.debug("Adding file upload command for " + filePath + ".");
                 fileUploadScript.append(uploadFile(objectKey, filePath));
                 uploadIterator.remove();
             }

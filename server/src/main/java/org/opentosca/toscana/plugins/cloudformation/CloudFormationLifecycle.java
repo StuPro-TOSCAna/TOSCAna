@@ -51,22 +51,24 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
                     node.accept(cfnNodeVisitor);
                 }
             }
+            logger.debug("Creating CloudFormation template.");
             fileAccess.access("output/template.yaml").appendln(cfnModule.toString()).close();
         } catch (Exception e) {
-            logger.error("Transformation to CloudFormation unsuccessful. Please check the StackTrace for more Info.");
+            logger.error("Transformation to CloudFormation failed during template creation." +
+                " Please check the StackTrace for more Info.");
             e.printStackTrace();
         }
         
         try {
-            // Create scripts for the deployment of the template
             CloudFormationFileCreator fileCreator = new CloudFormationFileCreator(logger, cfnModule);
-            logger.info("Creating CloudFormation scripts.");
+            logger.debug("Creating CloudFormation scripts.");
             fileCreator.createScripts();
-            logger.info("Copying files to the target artifact.");
-            
+            logger.debug("Copying files to the target artifact.");
+            fileCreator.copyFiles();
         } catch (IOException e) {
+            logger.error("Transformation to CloudFormation failed during file creation." +
+                " Please check the StackTrace for more Info.");
             e.printStackTrace();
-            logger.error("Transformation to CloudFormation unsuccessful. Please check the StackTrace for more Info.");
         }
 
         logger.info("Transformation to CloudFormation successful.");
