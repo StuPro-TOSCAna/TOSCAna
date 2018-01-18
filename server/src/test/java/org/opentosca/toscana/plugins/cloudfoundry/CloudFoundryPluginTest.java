@@ -41,7 +41,7 @@ public class CloudFoundryPluginTest extends BaseUnitTest {
     @Before
     public void setUp() throws Exception {
         lamp = new EffectiveModel(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, log);
-        File sourceDir = new File(resourcesPath + "csars/yaml/valid/lamp-noinput/");
+        File sourceDir = new File(resourcesPath, "csars/yaml/valid/lamp-noinput");
         targetDir = new File(tmpdir, "targetDir");
         sourceDir.mkdir();
         targetDir.mkdir();
