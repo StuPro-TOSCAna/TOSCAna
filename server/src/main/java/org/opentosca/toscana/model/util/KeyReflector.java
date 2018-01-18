@@ -14,8 +14,8 @@ import org.opentosca.toscana.model.node.RootNode;
 
 /**
  Util class for detecting real subtypes for wrapping entities.
- Initially developed because of {@link RootNode#getCapabilities()} - 
- the corresponding ToscaKey {@link RootNode#CAPABILITIES} does only contain the type information 'Capability' 
+ Initially developed because of {@link RootNode#getCapabilities()} -
+ the corresponding ToscaKey {@link RootNode#CAPABILITIES} does only contain the type information 'Capability'
  (which is abstract), and not the subtypes of the members of the collection. In order to detect the real type,
  reflection had to be used.
  */
@@ -29,15 +29,15 @@ public class KeyReflector {
         return keys.stream()
             .filter(key -> key.getName().equals(entity.getName()))
             .map(key -> key.getType())
-        .findFirst().orElseThrow(() -> new IllegalStateException(
-            (String.format("No matching wrapper class found for entity '%s'", entity))));
+            .findFirst().orElseThrow(() -> new IllegalStateException(
+                (String.format("No matching wrapper class found for entity '%s'", entity))));
     }
 
     private static Set<ToscaKey> reflectKeys(Class keyContainer, Class filter) {
         Field[] fields = keyContainer.getFields();
         Map<ToscaKey, Field> tmpKeyMap = new HashMap<>();
         for (Field field : fields) {
-            if (field.getType() == ToscaKey.class && Modifier.isStatic(field.getModifiers())) {
+            if (field.getType().equals(ToscaKey.class) && Modifier.isStatic(field.getModifiers())) {
                 try {
                     ToscaKey toscaKey = (ToscaKey) field.get(null);
                     if (filter.isAssignableFrom(toscaKey.getType())) {
@@ -56,15 +56,13 @@ public class KeyReflector {
                 Field otherField = otherEntry.getValue();
                 ToscaKey key = entry.getKey();
                 ToscaKey otherKey = otherEntry.getKey();
-                if (field != otherField) {
-                    if (key.hasSameShape(otherKey)) {
-                        // find out which field should not be considered (due to "tosca shadowing")
-                        Class clazz = field.getDeclaringClass();
-                        Class otherClazz = otherField.getDeclaringClass();
-                        if (clazz.isAssignableFrom(otherClazz)) {
-                            continue;
-                        }
-                    }
+                if (field != otherField && key.hasSameShape(otherKey)) {
+                    // find out which field should not be considered (due to "tosca shadowing")
+                    Class clazz = field.getDeclaringClass();
+                    Class otherClazz = otherField.getDeclaringClass();
+                    if (clazz.isAssignableFrom(otherClazz)) {
+                        continue;
+                   }
                 }
                 keys.add(key);
             }

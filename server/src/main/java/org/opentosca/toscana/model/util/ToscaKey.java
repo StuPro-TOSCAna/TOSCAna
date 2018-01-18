@@ -74,8 +74,8 @@ public class ToscaKey<T> {
     public Map<String, Object> getDirectives() {
         return directives;
     }
-    
-    public boolean hasSameShape(ToscaKey<?> other){
+
+    public boolean hasSameShape(ToscaKey<?> other) {
         boolean sameName = getName().equals(other.getName());
         boolean samePredecessorShape = getPredecessor().isPresent() && other.getPredecessor().isPresent()
             && getPredecessor().get().hasSameShape(other.getPredecessor().get());

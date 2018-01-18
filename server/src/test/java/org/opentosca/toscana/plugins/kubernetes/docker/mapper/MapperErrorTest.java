@@ -5,8 +5,6 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import org.opentosca.toscana.core.BaseUnitTest;
-import org.opentosca.toscana.core.parse.graphconverter.MappingEntity;
-import org.opentosca.toscana.core.parse.graphconverter.ServiceGraph;
 import org.opentosca.toscana.model.EntityId;
 import org.opentosca.toscana.model.capability.OsCapability;
 
@@ -33,7 +31,6 @@ public class MapperErrorTest extends BaseUnitTest {
 
     private static final Logger logger = LoggerFactory.getLogger(MapperErrorTest.class);
     private static BaseImageMapper baseImageMapper;
-    private static EntityId entityId = new EntityId(Lists.newArrayList("my", "id"));
 
     private String name;
     private OsCapability capability;

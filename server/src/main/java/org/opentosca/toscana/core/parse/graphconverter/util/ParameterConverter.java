@@ -2,11 +2,8 @@ package org.opentosca.toscana.core.parse.graphconverter.util;
 
 import org.opentosca.toscana.core.transformation.properties.PropertyType;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
-Util class for converting parameters defined in a service template to intances of Parameter.class
+ Util class for converting parameters defined in a service template to intances of Parameter.class
  */
 public class ParameterConverter {
 

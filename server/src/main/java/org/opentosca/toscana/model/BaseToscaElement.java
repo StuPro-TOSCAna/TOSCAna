@@ -2,13 +2,11 @@ package org.opentosca.toscana.model;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 
 import org.opentosca.toscana.core.parse.graphconverter.BaseEntity;
 import org.opentosca.toscana.core.parse.graphconverter.MappingEntity;
 import org.opentosca.toscana.core.parse.graphconverter.ToscaFactory;
-import org.opentosca.toscana.core.parse.graphconverter.TypeConverter;
 import org.opentosca.toscana.model.util.ToscaKey;
 
 import lombok.EqualsAndHashCode;
@@ -17,6 +15,7 @@ import lombok.ToString;
 @EqualsAndHashCode
 @ToString
 public abstract class BaseToscaElement {
+    
 
     // TODO what kind of class is Properties and Attributes?
     public static ToscaKey<Set<Object>> PROPERTIES = new ToscaKey<>("properties")

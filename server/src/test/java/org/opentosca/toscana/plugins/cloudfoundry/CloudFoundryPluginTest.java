@@ -36,11 +36,10 @@ public class CloudFoundryPluginTest extends BaseUnitTest {
     private final String appName = "my_app";
     private final ArrayList<String> paths = new ArrayList<>();
     private final String resourcesPath = "src/test/resources/";
-    private EffectiveModel lamp;
 
     @Before
     public void setUp() throws Exception {
-        lamp = new EffectiveModel(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, log);
+        EffectiveModel lamp = new EffectiveModel(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, log);
         File sourceDir = new File(resourcesPath, "csars/yaml/valid/lamp-noinput");
         targetDir = new File(tmpdir, "targetDir");
         sourceDir.mkdir();
