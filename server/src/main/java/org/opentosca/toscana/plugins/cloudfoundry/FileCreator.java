@@ -76,6 +76,9 @@ public class FileCreator {
         fileAccess.access(MANIFEST_PATH).appendln(manifestHead).close();
     }
 
+    /**
+     adds the relative path of the application folder to the manifest
+     */
     private void addPathToApplication() throws IOException {
         String pathAddition = String.format("  %s: ../%s", PATH.getName(), APPLICATION_FOLDER + app.getApplicationNumber());
         fileAccess.access(MANIFEST_PATH).appendln(pathAddition).close();
@@ -186,14 +189,10 @@ public class FileCreator {
 
         if (!app.getAttributes().isEmpty()) {
             ArrayList<String> attributes = new ArrayList<>();
-            boolean containsDomain = false;
             for (Map.Entry<String, String> attribute : app.getAttributes().entrySet()) {
                 attributes.add(String.format("  %s: %s", attribute.getKey(), attribute.getValue()));
-                if (attribute.getKey().equals(DOMAIN.getName())) {
-                    containsDomain = true;
-                }
             }
-            if (!containsDomain) {
+            if (!app.getAttributes().containsKey(DOMAIN.getName())) {
                 attributes.add(String.format("  %s: %s", RANDOM_ROUTE.getName(), "true"));
             }
             for (String attribute : attributes) {

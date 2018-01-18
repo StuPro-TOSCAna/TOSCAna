@@ -33,13 +33,10 @@ public class Application {
     public Application(String name, int applicationNumber) {
         this.name = name;
         this.applicationNumber = applicationNumber;
-        //counter += 1;
-        //this.applicationNumber = counter;
     }
 
-    public Application() {
-        //counter += 1;
-        //this.applicationNumber = counter;
+    public Application(int applicationNumber) {
+        this.applicationNumber = applicationNumber;
     }
 
     public int getApplicationNumber() {
