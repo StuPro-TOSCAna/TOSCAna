@@ -12,12 +12,22 @@ import org.opentosca.toscana.model.visitor.VisitableNode;
 import org.opentosca.toscana.plugins.cloudformation.visitor.CloudFormationNodeVisitor;
 import org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle;
 
+import static org.opentosca.toscana.plugins.cloudformation.CloudFormationPlugin.AWS_REGION_DEFAULT;
+import static org.opentosca.toscana.plugins.cloudformation.CloudFormationPlugin.AWS_REGION_KEY;
+
 public class CloudFormationLifecycle extends AbstractLifecycle {
     private final EffectiveModel model;
-
+    private String awsRegion;
+    
     public CloudFormationLifecycle(TransformationContext context) throws IOException {
         super(context);
         model = context.getModel();
+        if (context.getProperties() == null) {
+            //lifecycle test failes because getProperties is null
+            awsRegion = AWS_REGION_DEFAULT;
+            return;
+        }
+        awsRegion = context.getProperties().getPropertyValue(AWS_REGION_KEY).orElse(AWS_REGION_DEFAULT);
     }
 
     @Override
