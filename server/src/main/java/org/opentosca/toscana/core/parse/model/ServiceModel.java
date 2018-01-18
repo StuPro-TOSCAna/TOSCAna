@@ -65,7 +65,6 @@ public class ServiceModel {
     /**
      Returns an iterator for a set of entities referenced by given EntityId.
      */
-    // TODO what if EntityId describes a ScalarEntity/ SequenceEntity?
     public Iterator<Entity> iterator(EntityId id) {
         Entity entities = this.getEntityOrThrow(id);
         return entities.getChildren().iterator();

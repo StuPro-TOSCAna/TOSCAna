@@ -4,9 +4,9 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.opentosca.toscana.core.parse.converter.TypeWrapper;
 import org.opentosca.toscana.core.parse.model.Entity;
 import org.opentosca.toscana.core.parse.model.MappingEntity;
-import org.opentosca.toscana.core.parse.converter.TypeWrapper;
 import org.opentosca.toscana.model.util.ToscaKey;
 
 import lombok.EqualsAndHashCode;
@@ -15,12 +15,10 @@ import lombok.ToString;
 @EqualsAndHashCode
 @ToString
 public abstract class BaseToscaElement {
-    
 
-    // TODO what kind of class is Properties and Attributes?
-    public static ToscaKey<Set<Object>> PROPERTIES = new ToscaKey<>("properties")
+    public static ToscaKey<Set<?>> PROPERTIES = new ToscaKey<>("properties")
         .type(Object.class);
-    public static ToscaKey<Set<Object>> ATTRIBUTES = new ToscaKey<>("attributes")
+    public static ToscaKey<Set<?>> ATTRIBUTES = new ToscaKey<>("attributes")
         .type(Object.class);
 
     private final MappingEntity mappingEntity;

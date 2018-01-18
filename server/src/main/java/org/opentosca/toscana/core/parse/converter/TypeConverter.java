@@ -46,7 +46,7 @@ public class TypeConverter {
             return (T) Integer.valueOf(value);
         } else if (Boolean.class.isAssignableFrom(targetType)) {
             return (T) Boolean.valueOf(value);
-            // TODO handle values besides true/false
+            // TODO handle values besides true/false (later, when doing error handling)
         } else if (targetType.isEnum()) {
             Map<String, T> enumMap = EnumUtils.getEnumMap(targetType);
             Optional<T> result = enumMap.entrySet().stream()

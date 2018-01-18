@@ -24,7 +24,6 @@ public abstract class RootNode extends DescribableEntity implements VisitableNod
 
     public static final ToscaKey<String> TYPE = new ToscaKey<>("type");
 
-    // TODO what kind of class is SimpleProperty and Attribute?
     public static ToscaKey<Requirement> REQUIREMENTS = new ToscaKey<>("requirements")
         .type(Requirement.class);
     public static ToscaKey<Capability> CAPABILITIES = new ToscaKey<>("capabilities")
@@ -53,9 +52,6 @@ public abstract class RootNode extends DescribableEntity implements VisitableNod
      @return {@link #CAPABILITIES}
      */
     public Set<Capability> getCapabilities() {
-        // TODO rework this. Client needs to get specific types of capabilities -- but toscafactory instanciates plain Capabilities..?
-        // needs to be done in order for capability visitor to work properly
-        // in theory, type information is stored in the toscakeys..
         return getCollection(CAPABILITIES);
     }
 
