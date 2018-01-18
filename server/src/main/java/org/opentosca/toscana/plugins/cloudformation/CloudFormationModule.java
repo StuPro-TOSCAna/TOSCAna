@@ -43,6 +43,7 @@ public class CloudFormationModule extends Module {
         "# Install the files and packages from the metadata\n",
         "/usr/local/bin/cfn-init -v ",
         "         --stack "};
+    private String awsRegion;
 
     private Object keyNameVar;
 
@@ -55,12 +56,13 @@ public class CloudFormationModule extends Module {
 
      @param fileAccess fileAccess to append the content of files to the template
      */
-    public CloudFormationModule(PluginFileAccess fileAccess) {
+    public CloudFormationModule(PluginFileAccess fileAccess, String awsRegion) {
         this.id("").template(new Template());
         strParam(KEYNAME).type(KEYNAME_TYPE).description(KEYNAME_DESCRIPTION).constraintDescription(KEYNAME_CONSTRAINT_DESCRIPTION);
         keyNameVar = template.ref(KEYNAME);
         cfnInitMap = new HashMap<>();
         this.fileAccess = fileAccess;
+        this.awsRegion = awsRegion;
     }
 
     /**
@@ -87,6 +89,13 @@ public class CloudFormationModule extends Module {
      */
     public Object getKeyNameVar() {
         return this.keyNameVar;
+    }
+
+    /**
+     Get the awsRegion set for this Module
+     */
+    public String getAWSRegion() {
+        return this.awsRegion;
     }
 
     private Fn getUserDataFn(String resource, String configsets) {

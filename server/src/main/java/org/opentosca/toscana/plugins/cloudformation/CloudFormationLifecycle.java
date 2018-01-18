@@ -45,7 +45,7 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
     public void transform() {
         logger.info("Begin transformation to CloudFormation.");
         PluginFileAccess fileAccess = context.getPluginFileAccess();
-        CloudFormationModule cfnModule = new CloudFormationModule(fileAccess);
+        CloudFormationModule cfnModule = new CloudFormationModule(fileAccess, awsRegion);
         Set<RootNode> nodes = model.getNodes();
 
         try {

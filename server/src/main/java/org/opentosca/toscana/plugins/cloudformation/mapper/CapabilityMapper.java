@@ -16,7 +16,6 @@ import org.opentosca.toscana.model.capability.OsCapability;
 import org.opentosca.toscana.plugins.util.TransformationFailureException;
 
 import com.amazonaws.SdkClientException;
-import com.amazonaws.regions.Regions;
 import com.amazonaws.services.ec2.AmazonEC2;
 import com.amazonaws.services.ec2.AmazonEC2ClientBuilder;
 import com.amazonaws.services.ec2.model.DescribeImagesRequest;
@@ -57,6 +56,12 @@ public class CapabilityMapper {
         .add(new InstanceType("db.m4.16xlarge", 64, 262144))
         .build();
 
+    private String awsRegion;
+
+    public CapabilityMapper(String awsRegion) {
+        this.awsRegion = awsRegion;
+    }
+
     /**
      This method requests the AWS server for ImageIds with filters which are filled based on
      the values of the OsCapability. The image with the latest creation date is picked and its imageId returned.
@@ -66,7 +71,7 @@ public class CapabilityMapper {
      */
     public String mapOsCapabilityToImageId(OsCapability osCapability) {
         AmazonEC2 ec2 = AmazonEC2ClientBuilder.standard()
-            .withRegion(Regions.US_WEST_2) //TODO get this from user
+            .withRegion(awsRegion)
             .build();
         //need to set these, owner are self and amazon
         DescribeImagesRequest describeImagesRequest = new DescribeImagesRequest()

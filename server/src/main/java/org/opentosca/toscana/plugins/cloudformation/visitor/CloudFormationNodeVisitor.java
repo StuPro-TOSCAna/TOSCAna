@@ -67,7 +67,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                 .ingress(ingress -> ingress.cidrIp(cidrIp), "tcp", 80, 22);
 
             // check what image id should be taken
-            CapabilityMapper capabilityMapper = new CapabilityMapper();
+            CapabilityMapper capabilityMapper = new CapabilityMapper(cfnModule.getAWSRegion());
 
             OsCapability computeOs = node.getOs();
             String imageId = capabilityMapper.mapOsCapabilityToImageId(computeOs);
@@ -120,7 +120,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             Integer port = node.getPort().orElse(3306);
             //TODO check downwards to compute and take its values
             //check what values should be taken
-            CapabilityMapper capabilityMapper = new CapabilityMapper();
+            CapabilityMapper capabilityMapper = new CapabilityMapper(cfnModule.getAWSRegion());
             String dBInstanceClass = capabilityMapper.mapComputeCapabilityToInstanceType(hostedOnComputeCapability, CapabilityMapper.RDS_DISTINCTION);
             Integer allocatedStorage = capabilityMapper.mapComputeCapabilityToDiskSize(hostedOnComputeCapability);
             String storageType = "gp2"; //SSD
