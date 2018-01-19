@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.opentosca.toscana.core.BaseSpringIntegrationTest;
 import org.opentosca.toscana.core.testdata.TestCsars;
+import org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin;
 import org.opentosca.toscana.retrofit.TOSCAnaAPI;
 import org.opentosca.toscana.retrofit.model.Csar;
 import org.opentosca.toscana.retrofit.model.Transformation;
@@ -21,22 +22,17 @@ import org.slf4j.LoggerFactory;
  */
 public class UserInputIT extends BaseSpringIntegrationTest {
 
-    private final static Logger logger = LoggerFactory.getLogger(UserInputIT.class.getName());
-    
     @Test
     public void transformationWithModelInputs() throws IOException, TOSCAnaServerException {
         TOSCAnaAPI api = new TOSCAnaAPI(getHttpUrl());
         String csarName = "lamp";
         api.uploadCsar(csarName, TestCsars.VALID_LAMP_INPUT);
-        String platformId = api.getPlatforms().getContent().iterator().next().getId();
+        String platformId = new CloudFoundryPlugin().getPlatform().id;
         api.createTransformation(csarName, platformId);
         TransformationProperties properties = api.getProperties(csarName, platformId);
         for (TransformationProperty property : properties.getProperties()){
             property.setValue("1");
         }
-        Map<String, Boolean> result = api.updateProperties(csarName, platformId, properties);
         api.startTransformation(csarName, platformId);
-        
-        
     }
 }

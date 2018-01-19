@@ -103,6 +103,7 @@ public class PropertyInstance {
         for (Property p : properties) {
             if (p.getKey().equals(key)) {
                 if (p.getType().validate(value)) {
+                    p.setValue(value);
                     this.propertyValues.put(key, value);
                     return;
                 } else {
