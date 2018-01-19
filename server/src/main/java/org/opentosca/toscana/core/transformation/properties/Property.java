@@ -1,79 +1,19 @@
 package org.opentosca.toscana.core.transformation.properties;
 
-/**
- This class describes the model of a property, this means it defines the expected key name and the type the value
- has to be of.
- <p>
- The values get stored in the @PropertyInstance class
- */
-public class Property {
-    private final String key;
-    private final PropertyType type;
+import java.util.Optional;
 
-    private final String description;
-    private final boolean required;
+public interface Property {
+    Optional<String> getValue();
 
-    private final String defaultValue;
+    void setValue(String value);
 
-    /**
-     Constructs a new property object, describing the key of a property and the type of the value.
+    String getKey();
 
-     @param key         the unique key of the property
-     @param type        the expected data type of the property value
-     @param description a short description of the property (should not exceed 200 characters, does not get
-     checked tough)
-     @param required    determines if the property is required or not
-     */
-    public Property(
-        String key,
-        PropertyType type,
-        String description,
-        boolean required
-    ) {
-        this(key, type, description, required, null);
-    }
+    PropertyType getType();
 
-    public Property(
-        String key,
-        PropertyType type,
-        String description,
-        boolean required,
-        String defaultValue
-    ) {
-        this.key = key;
-        this.type = type;
-        this.description = description;
-        this.required = required;
-        this.defaultValue = defaultValue;
-    }
+    Optional<String> getDescription();
 
-    /**
-     This constructor creates a Property with no description and the created property is required
+    boolean isRequired();
 
-     @param key  the unique key of the property
-     @param type the expected data type of the property value
-     */
-    public Property(String key, PropertyType type) {
-        this(key, type, "", true);
-    }
-
-    public String getKey() {
-        return key;
-    }
-
-    public PropertyType getType() {
-        return type;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public boolean isRequired() {
-        return required;
-    }
-
-    public String getDefaultValue() {
-        return defaultValue;
-    }
+    Optional<String> getDefaultValue();
 }

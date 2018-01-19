@@ -1,0 +1,24 @@
+tosca_definitions_version: tosca_simple_yaml_1_1
+
+description: template for testing node conversion
+metadata:
+  template_name: node
+  template_author: stupro-toscana
+  template_version: 1.0
+
+topology_template:
+  node_templates:
+    test-node:
+      type: WebServer
+      description: test-description
+      properties: 
+        test-property-key: test-property-value
+      attributes:
+        test-attribute-key: test-attribute-value
+      artifacts:
+        test-artifact:
+          file: test-file
+          description: test-artifact-description
+          deploy_path: test-deploy-path
+      
+

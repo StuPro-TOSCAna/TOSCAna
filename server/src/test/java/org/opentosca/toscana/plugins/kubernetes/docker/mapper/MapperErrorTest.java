@@ -1,5 +1,6 @@
 package org.opentosca.toscana.plugins.kubernetes.docker.mapper;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -21,7 +22,7 @@ import static org.opentosca.toscana.model.capability.OsCapability.Distribution.R
 import static org.opentosca.toscana.model.capability.OsCapability.Distribution.UBUNTU;
 import static org.opentosca.toscana.model.capability.OsCapability.Type.LINUX;
 import static org.opentosca.toscana.model.capability.OsCapability.Type.WINDOWS;
-import static org.opentosca.toscana.model.capability.OsCapability.builder;
+import static org.opentosca.toscana.plugins.kubernetes.docker.mapper.MapperTest.getEntity;
 
 @RunWith(Parameterized.class)
 public class MapperErrorTest extends BaseUnitTest {
@@ -44,7 +45,7 @@ public class MapperErrorTest extends BaseUnitTest {
     }
 
     @Test
-    public void execute() throws Exception {
+    public void execute() {
         try {
             logger.info("Executing test {}", name);
             logger.info("Trying to map {}", capability.toString());
@@ -67,45 +68,45 @@ public class MapperErrorTest extends BaseUnitTest {
     }
 
     @Parameterized.Parameters(name = "{index}: {0}")
-    public static Collection<Object[]> data() {
+    public static Collection<Object[]> data() throws IOException {
         return Arrays.asList(new Object[][]
+            {
                 {
-                    {
-                        "Invalid Type",
-                        builder().type(WINDOWS).build(),
-                        UnsupportedOperationException.class
-                    },
-                    {
-                        "Missing Type, Invalid Distribution",
-                        builder().distribution(RHEL).build(),
-                        UnsupportedOperationException.class
-                    },
-                    {
-                        "Vaild Type, Invalid Distribution",
-                        builder().type(LINUX).distribution(RHEL).build(),
-                        UnsupportedOperationException.class
-                    },
-                    {
-                        "Vaild Type, Valid Distribution, Unknown Version",
-                        builder().distribution(DEBIAN).type(LINUX).version("123456").build(),
-                        UnsupportedOperationException.class
-                    },
-                    {
-                        "Vaild Type, Valid Distribution, Unknown Version(With dots)",
-                        builder().distribution(DEBIAN).type(LINUX).version("12345.6").build(),
-                        UnsupportedOperationException.class
-                    },
-                    {
-                        "Vaild Type, Valid Distribution, No Applicable minor version",
-                        builder().type(LINUX).distribution(UBUNTU).version("17.11").build(),
-                        UnsupportedOperationException.class
-                    },
-                    {
-                        "Vaild Type, Valid Distribution, Invalid Architecture",
-                        builder().architecture(POWER_PC).type(LINUX).distribution(UBUNTU).build(),
-                        UnsupportedOperationException.class
-                    }
+                    "Invalid Type",
+                    new OsCapability(getEntity()).setType(WINDOWS),
+                    UnsupportedOperationException.class
+                },
+                {
+                    "Missing Type, Invalid Distribution",
+                    new OsCapability(getEntity()).setDistribution(RHEL),
+                    UnsupportedOperationException.class
+                },
+                {
+                    "Vaild Type, Invalid Distribution",
+                    new OsCapability(getEntity()).setType(LINUX).setDistribution(RHEL),
+                    UnsupportedOperationException.class
+                },
+                {
+                    "Vaild Type, Valid Distribution, Unknown Version",
+                    new OsCapability(getEntity()).setDistribution(DEBIAN).setType(LINUX).setVersion("123456"),
+                    UnsupportedOperationException.class
+                },
+                {
+                    "Vaild Type, Valid Distribution, Unknown Version(With dots)",
+                    new OsCapability(getEntity()).setDistribution(DEBIAN).setType(LINUX).setVersion("12345.6"),
+                    UnsupportedOperationException.class
+                },
+                {
+                    "Vaild Type, Valid Distribution, No Applicable minor version",
+                    new OsCapability(getEntity()).setType(LINUX).setDistribution(UBUNTU).setVersion("17.11"),
+                    UnsupportedOperationException.class
+                },
+                {
+                    "Vaild Type, Valid Distribution, Invalid Architecture",
+                    new OsCapability(getEntity()).setArchitecture(POWER_PC).setType(LINUX).setDistribution(UBUNTU),
+                    UnsupportedOperationException.class
                 }
+            }
         );
     }
 }

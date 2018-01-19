@@ -28,7 +28,7 @@ public class PropertyInstanceTest extends BaseUnitTest {
     public void init() throws Exception {
         HashSet<Property> properties = new HashSet<>();
         for (int i = 0; i < 10; i++) {
-            properties.add(new Property("p-" + i, PropertyType.INTEGER, "", i < 5));
+            properties.add(new SimpleProperty("p-" + i, PropertyType.INTEGER, "", i < 5));
         }
         Platform testPlatform = new Platform("test", "test", properties);
 
