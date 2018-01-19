@@ -27,7 +27,7 @@ public class CloudFormationFileCreator {
     private static final String FILENAME_UPLOAD = "file-upload";
     private static final String TEMPLATE_PATH = "template.yaml ";
     private static final String CHANGE_TO_PARENT_DIRECTORY = "cd ..";
-    private static final String RELATIVE_DIRECTORY_PREFIX = "../";
+    private static final String RELATIVE_DIRECTORY_PREFIX = "../files/";
 
     private final Logger logger;
     private CloudFormationModule cfnModule;
@@ -55,7 +55,7 @@ public class CloudFormationFileCreator {
             logger.debug("Files to be copied found.");
             logger.debug("Copying files to the target artifact.");
             cfnModule.getFilesToBeUploaded().forEach((objectKey, filePath) -> {
-                String targetPath = CloudFormationModule.FILE_PATH_TARGET + " " + filePath;
+                String targetPath = CloudFormationModule.FILE_PATH_TARGET + filePath;
                 try {
                     cfnModule.getFileAccess().copy(filePath, targetPath);
                 } catch (IOException e) {
