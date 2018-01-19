@@ -1,5 +1,8 @@
 package org.opentosca.toscana.core.parse.model;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -25,6 +28,7 @@ import org.opentosca.toscana.model.util.ToscaKey;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jgrapht.graph.SimpleDirectedGraph;
 import org.slf4j.Logger;
+import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.nodes.MappingNode;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.NodeTuple;
@@ -49,13 +53,19 @@ public class ServiceGraph extends SimpleDirectedGraph<Entity, Connection> {
         addVertex(root);
     }
 
-    public ServiceGraph(Node snakeNode, Log log) {
+    public ServiceGraph(File template, Log log) {
         this(log);
-        EntityId id = new EntityId(new ArrayList<>());
-        populateGraph(snakeNode, id);
-        ToscaStructure.buildBasicStructure(this); // in case this has not already been established automatically
-        if (requiredInputsSet()) {
-            finalizeGraph();
+        try {
+            Node snakeNode = new Yaml().compose(new FileReader(template));
+            EntityId id = new EntityId(new ArrayList<>());
+            ToscaStructure.buildBasicStructure(this); // in case this has not already been established automatically
+            populateGraph(snakeNode, id);
+            if (requiredInputsSet()) {
+                finalizeGraph();
+            }
+        } catch (FileNotFoundException e) {
+            logger.error(String.format("Template '%s' does not exist - failed to construct ServiceGraph", template), e);
+            throw new IllegalStateException();
         }
     }
 

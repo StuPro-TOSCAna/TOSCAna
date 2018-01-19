@@ -11,7 +11,6 @@ import org.opentosca.toscana.core.parse.converter.util.ToscaStructure;
 import org.opentosca.toscana.core.parse.model.Entity;
 import org.opentosca.toscana.core.parse.model.MappingEntity;
 import org.opentosca.toscana.core.parse.model.ServiceGraph;
-import org.opentosca.toscana.core.parse.model.ServiceModel;
 import org.opentosca.toscana.model.node.RootNode;
 
 import org.apache.commons.lang.reflect.ConstructorUtils;
