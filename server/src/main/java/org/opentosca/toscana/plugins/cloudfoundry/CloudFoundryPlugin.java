@@ -7,6 +7,7 @@ import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.core.transformation.properties.PropertyType;
+import org.opentosca.toscana.core.transformation.properties.SimpleProperty;
 import org.opentosca.toscana.plugins.lifecycle.LifecycleAwarePlugin;
 
 import org.slf4j.Logger;
@@ -38,19 +39,19 @@ public class CloudFoundryPlugin extends LifecycleAwarePlugin<CloudFoundryLifecyc
         String platformName = "CloudFoundry";
         Set<Property> platformProperties = new HashSet<>();
 
-        Property cfUserName = new Property(CF_PROPERTY_KEY_USERNAME, PropertyType.TEXT,
+        SimpleProperty cfUserName = new SimpleProperty(CF_PROPERTY_KEY_USERNAME, PropertyType.TEXT,
             "Username of CloudFoundry provideraccount",
             false);
-        Property cfUserPw = new Property(CF_PROPERTY_KEY_PASSWORD, PropertyType.SECRET,
+        SimpleProperty cfUserPw = new SimpleProperty(CF_PROPERTY_KEY_PASSWORD, PropertyType.SECRET,
             "Password of CloudFoundry provideraccount",
             false);
-        Property cfEndpoint = new Property(CF_PROPERTY_KEY_API, PropertyType.TEXT,
+        SimpleProperty cfEndpoint = new SimpleProperty(CF_PROPERTY_KEY_API, PropertyType.TEXT,
             "The endpoint of the provider",
             false);
-        Property cfSpace = new Property(CF_PROPERTY_KEY_SPACE, PropertyType.TEXT,
+        SimpleProperty cfSpace = new SimpleProperty(CF_PROPERTY_KEY_SPACE, PropertyType.TEXT,
             "The space of the useraccount which should be used to deploy",
             false);
-        Property cfOrganization = new Property(CF_PROPERTY_KEY_ORGANIZATION, PropertyType.TEXT,
+        SimpleProperty cfOrganization = new SimpleProperty(CF_PROPERTY_KEY_ORGANIZATION, PropertyType.TEXT,
             "The space of the useraccount which should be used to deploy",
             false);
 

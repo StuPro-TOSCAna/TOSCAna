@@ -8,8 +8,6 @@ import java.util.Random;
 
 import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
-import org.opentosca.toscana.core.testutils.TestUtils;
-import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.plugins.kubernetes.docker.dockerfile.builder.DockerfileBuilder;
 import org.opentosca.toscana.plugins.kubernetes.docker.dockerfile.builder.DockerfileBuilderTest;
 
@@ -48,9 +46,7 @@ public abstract class BaseDockerfileTest extends BaseUnitTest {
         inputDir.mkdirs();
         workDir.mkdirs();
 
-        Log mockLog = TestUtils.getMockLog();
-
-        access = new PluginFileAccess(inputDir, workDir, mockLog);
+        access = new PluginFileAccess(inputDir, workDir, log);
         builder = new DockerfileBuilder("library/ubuntu:latest", WORKING_DIR_SUBFOLDER_NAME, access);
     }
 

@@ -1,11 +1,9 @@
 package org.opentosca.toscana.core.csar;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.logging.Log;
@@ -54,9 +52,9 @@ public class CsarImpl implements Csar {
     }
 
     @Override
-    public Set<Property> getModelSpecificProperties() {
+    public Map<String, Property> getModelSpecificProperties() {
         if (model == null) {
-            return new HashSet<>();
+            return new HashMap<>();
         } else {
             return model.getInputs();
         }

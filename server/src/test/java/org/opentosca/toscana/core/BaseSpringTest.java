@@ -20,7 +20,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
- Extend from this class in order to inherit important configurations Sets up Spring Test Context regarding to the Test
+ Extend from this class in order to inherit important configurations Sets up Spring Test EntityContext regarding to the Test
  Configuration After every test method, refreshes the context.
  If disk access is needed, use {@link #tmpdir}
  */
@@ -50,7 +50,7 @@ public abstract class BaseSpringTest extends BaseTest {
     public final void startupPrepareDisk() throws IOException {
         FileUtils.deleteDirectory(tmpdir);
         tmpdir.mkdirs();
-        logger.info("Cleaned up disk");
+        logger.info("Clean up disk");
     }
 
     @After

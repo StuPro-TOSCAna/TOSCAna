@@ -611,7 +611,7 @@ public class TransformationController {
     }
 
     /**
-     Returns a list of properties (key-value pairs) that might have to be set (if they are required) in order to start
+     Returns a list of properties (name-value pairs) that might have to be set (if they are required) in order to start
      the transformation <p>
      Accessed with http call <code>GET /csars/{csar}/transformations/{platform}/properties</code>
      <table summary="">
@@ -676,7 +676,7 @@ public class TransformationController {
             propertyWrapList.add(new PropertyWrap(
                     property.getKey(),
                     property.getType().getTypeName(),
-                    property.getDescription(),
+                    property.getDescription().orElse(null),
                     instance.getPropertyValues().get(property.getKey()),
                     property.isRequired()
                 )

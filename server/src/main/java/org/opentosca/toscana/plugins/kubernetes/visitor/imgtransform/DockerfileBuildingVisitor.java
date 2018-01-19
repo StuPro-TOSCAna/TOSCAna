@@ -93,7 +93,7 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
                             try {
                                 builder.copyFromCsar(path, "", filename);
                             } catch (IOException ex) {
-                                logger.error("Copying dependencies of node {} has failed!", node.getNodeName(), ex);
+                                logger.error("Copying dependencies of node {} has failed!", node.getEntityName(), ex);
                                 throw new TransformationFailureException("Copying dependencies failed", ex);
                             }
                         }
@@ -107,7 +107,7 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
 
     private void handleDefault(RootNode node) {
         try {
-            addToDockerfile(node.getNodeName(), node.getStandardLifecycle());
+            addToDockerfile(node.getEntityName(), node.getStandardLifecycle());
         } catch (IOException e) {
             throw new UnsupportedOperationException("Transformation failed while copying artifacts", e);
         }
@@ -123,7 +123,7 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
         if (optionalOperation.isPresent()) {
             optionalOperation.get().getInputs().forEach(e -> {
                 if (e.getValue().isPresent()) {
-                    builder.env(e.key, e.getValue().get());
+                    builder.env(e.getKey(), e.getValue().get());
                 }
             });
             logger.debug("{} - {} is present", nodeName, opName);
@@ -163,7 +163,7 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
     public void buildAndWriteDockerfile() throws IOException {
         logger.debug("Visiting nodes");
         stack.forEachNode(node -> {
-            logger.debug("Visitng node: {}", node.getNode().getNodeName());
+            logger.debug("Visitng node: {}", node.getNode().getEntityName());
             node.getNode().accept(this);
         });
         builder.write();
