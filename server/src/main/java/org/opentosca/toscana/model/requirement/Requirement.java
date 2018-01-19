@@ -8,6 +8,7 @@ import org.opentosca.toscana.model.BaseToscaElement;
 import org.opentosca.toscana.model.capability.Capability;
 import org.opentosca.toscana.model.datatype.Range;
 import org.opentosca.toscana.model.node.RootNode;
+import org.opentosca.toscana.model.relation.DependsOn;
 import org.opentosca.toscana.model.relation.RootRelationship;
 import org.opentosca.toscana.model.util.ToscaKey;
 
@@ -68,7 +69,7 @@ public class Requirement<CapabilityT extends Capability, NodeT extends RootNode,
 
     public Requirement(MappingEntity mappingEntity) {
         super(mappingEntity);
-        setDefault(RELATIONSHIP, new RootRelationship(getChildEntity(RELATIONSHIP)));
+        setDefault(RELATIONSHIP, new DependsOn(getChildEntity(RELATIONSHIP)));
     }
 
     public Range getOccurrence() {

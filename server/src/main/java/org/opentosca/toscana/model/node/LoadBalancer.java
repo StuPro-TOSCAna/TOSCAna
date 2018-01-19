@@ -3,9 +3,12 @@ package org.opentosca.toscana.model.node;
 import java.util.Optional;
 
 import org.opentosca.toscana.core.parse.model.MappingEntity;
+import org.opentosca.toscana.model.capability.EndpointCapability;
 import org.opentosca.toscana.model.capability.PublicEndpointCapability;
 import org.opentosca.toscana.model.datatype.Range;
+import org.opentosca.toscana.model.relation.DependsOn;
 import org.opentosca.toscana.model.requirement.NetworkRequirement;
+import org.opentosca.toscana.model.util.RequirementKey;
 import org.opentosca.toscana.model.util.ToscaKey;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 
@@ -28,8 +31,8 @@ public class LoadBalancer extends RootNode {
     public static ToscaKey<String> ALGORITHM = new ToscaKey<>(PROPERTIES, "algorithm");
     public static ToscaKey<PublicEndpointCapability> CLIENT = new ToscaKey<>(CAPABILITIES, "client")
         .type(PublicEndpointCapability.class);
-    public static ToscaKey<NetworkRequirement> APPLICATION = new ToscaKey<>(REQUIREMENTS, "application")
-        .type(NetworkRequirement.class);
+    public static ToscaKey<NetworkRequirement> APPLICATION = new RequirementKey<>("application")
+        .types(EndpointCapability.class, RootNode.class, DependsOn.class);
 
     public LoadBalancer(MappingEntity mappingEntity) {
         super(mappingEntity);

@@ -1,7 +1,10 @@
 package org.opentosca.toscana.model.node;
 
 import org.opentosca.toscana.core.parse.model.MappingEntity;
+import org.opentosca.toscana.model.capability.DatabaseEndpointCapability;
+import org.opentosca.toscana.model.relation.ConnectsTo;
 import org.opentosca.toscana.model.requirement.DatabaseEndpointRequirement;
+import org.opentosca.toscana.model.util.RequirementKey;
 import org.opentosca.toscana.model.util.ToscaKey;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 
@@ -21,8 +24,8 @@ public class WordPress extends WebApplication {
 
     public static ToscaKey<String> DB_HOST = new ToscaKey<>(PROPERTIES, "db_host").required(true);
 
-    public static ToscaKey<DatabaseEndpointRequirement> DATABASE_ENDPOINT = new ToscaKey<>(REQUIREMENTS, "database_endpoint")
-        .type(DatabaseEndpointRequirement.class);
+    public static ToscaKey<DatabaseEndpointRequirement> DATABASE_ENDPOINT = new RequirementKey<>("database_endpoint")
+        .types(DatabaseEndpointCapability.class, Database.class, ConnectsTo.class);
 
     public WordPress(MappingEntity mappingEntity) {
         super(mappingEntity);

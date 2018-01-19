@@ -5,13 +5,16 @@ import java.util.Set;
 
 import org.opentosca.toscana.core.parse.model.MappingEntity;
 import org.opentosca.toscana.model.capability.AdminEndpointCapability;
+import org.opentosca.toscana.model.capability.AttachmentCapability;
 import org.opentosca.toscana.model.capability.BindableCapability;
 import org.opentosca.toscana.model.capability.ContainerCapability;
 import org.opentosca.toscana.model.capability.OsCapability;
 import org.opentosca.toscana.model.capability.ScalableCapability;
 import org.opentosca.toscana.model.datatype.NetworkInfo;
 import org.opentosca.toscana.model.datatype.PortInfo;
+import org.opentosca.toscana.model.relation.AttachesTo;
 import org.opentosca.toscana.model.requirement.BlockStorageRequirement;
+import org.opentosca.toscana.model.util.RequirementKey;
 import org.opentosca.toscana.model.util.ToscaKey;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 
@@ -64,8 +67,8 @@ public class Compute extends RootNode {
         .type(ScalableCapability.class);
     public static ToscaKey<BindableCapability> BINDING = new ToscaKey<>(CAPABILITIES, "binding")
         .type(BindableCapability.class);
-    public static ToscaKey<BlockStorageRequirement> LOCAL_STORAGE = new ToscaKey<>(REQUIREMENTS, "local_storage")
-        .required(true).type(BlockStorageRequirement.class);
+    public static ToscaKey<BlockStorageRequirement> LOCAL_STORAGE = new RequirementKey<>("local_storage")
+        .types(AttachmentCapability.class, BlockStorage.class, AttachesTo.class);
 
     public Compute(MappingEntity mappingEntity) {
         super(mappingEntity);

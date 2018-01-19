@@ -3,8 +3,11 @@ package org.opentosca.toscana.model.node;
 import java.util.Optional;
 
 import org.opentosca.toscana.core.parse.model.MappingEntity;
+import org.opentosca.toscana.model.capability.ContainerCapability;
 import org.opentosca.toscana.model.capability.EndpointCapability;
+import org.opentosca.toscana.model.relation.HostedOn;
 import org.opentosca.toscana.model.requirement.WebServerRequirement;
+import org.opentosca.toscana.model.util.RequirementKey;
 import org.opentosca.toscana.model.util.ToscaKey;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 
@@ -28,8 +31,8 @@ public class WebApplication extends RootNode {
 
     public static ToscaKey<EndpointCapability> APP_ENDPOINT = new ToscaKey<>(CAPABILITIES, "app_endpoint")
         .type(EndpointCapability.class);
-    public static ToscaKey<WebServerRequirement> HOST = new ToscaKey<>(REQUIREMENTS, "host")
-        .type(WebServerRequirement.class);
+    public static ToscaKey<WebServerRequirement> HOST = new RequirementKey<>("host")
+        .types(ContainerCapability.class, WebServer.class, HostedOn.class);
 
     public WebApplication(MappingEntity mappingEntity) {
         super(mappingEntity);

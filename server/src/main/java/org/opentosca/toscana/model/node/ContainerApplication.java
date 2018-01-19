@@ -1,9 +1,15 @@
 package org.opentosca.toscana.model.node;
 
 import org.opentosca.toscana.core.parse.model.MappingEntity;
+import org.opentosca.toscana.model.capability.ContainerCapability;
+import org.opentosca.toscana.model.capability.EndpointCapability;
+import org.opentosca.toscana.model.capability.StorageCapability;
+import org.opentosca.toscana.model.relation.DependsOn;
+import org.opentosca.toscana.model.relation.HostedOn;
 import org.opentosca.toscana.model.requirement.ContainerHostRequirement;
 import org.opentosca.toscana.model.requirement.NetworkRequirement;
 import org.opentosca.toscana.model.requirement.StorageRequirement;
+import org.opentosca.toscana.model.util.RequirementKey;
 import org.opentosca.toscana.model.util.ToscaKey;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 
@@ -18,12 +24,12 @@ import lombok.ToString;
 @ToString
 public class ContainerApplication extends RootNode {
 
-    public static ToscaKey<ContainerHostRequirement> HOST = new ToscaKey<>(REQUIREMENTS, "host")
-        .type(ContainerHostRequirement.class);
-    public static ToscaKey<StorageRequirement> STORAGE = new ToscaKey<>(REQUIREMENTS, "storage")
-        .type(StorageRequirement.class);
-    public static ToscaKey<NetworkRequirement> NETWORK = new ToscaKey<>(REQUIREMENTS, "network")
-        .type(NetworkRequirement.class);
+    public static ToscaKey<ContainerHostRequirement> HOST = new RequirementKey<>("host")
+        .types(ContainerCapability.class, ContainerRuntime.class, HostedOn.class);
+    public static ToscaKey<StorageRequirement> STORAGE = new RequirementKey<>("storage")
+        .types(StorageCapability.class, RootNode.class, DependsOn.class);
+    public static ToscaKey<NetworkRequirement> NETWORK = new RequirementKey<>("network")
+        .types(EndpointCapability.class, RootNode.class, DependsOn.class);
 
     public ContainerApplication(MappingEntity mappingEntity) {
         super(mappingEntity);
