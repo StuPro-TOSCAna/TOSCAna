@@ -15,11 +15,7 @@ import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.opentosca.toscana.plugins.cloudformation.CloudFormationFileCreator.FILENAME_DEPLOY;
-import static org.opentosca.toscana.plugins.cloudformation.CloudFormationFileCreator.FILENAME_UPLOAD;
-import static org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle.OUTPUT_DIR;
 import static org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle.SCRIPTS_DIR_PATH;
 import static org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle.UTIL_DIR_PATH;
 
@@ -27,7 +23,7 @@ public class CloudFormationFileCreatorTest extends BaseUnitTest {
     private CloudFormationFileCreator fileCreator;
     private CloudFormationModule cfnModule;
     private final static Logger logger = LoggerFactory.getLogger(CloudFormationPluginTest.class);
-    
+
     @Mock
     private Log log;
     private File targetDir;
@@ -39,48 +35,48 @@ public class CloudFormationFileCreatorTest extends BaseUnitTest {
     private final String PATH_TO_TEST_FILE = tmpdir + "sourceDir" + "test-file.txt";
     private static final String FILENAME_DEPLOY = "deploy";
     private static final String FILENAME_UPLOAD = "file-upload";
-    
+
     @Before
-    public void setUp() throws Exception{
+    public void setUp() throws Exception {
         File sourceDir = new File(tmpdir, "sourceDir");
         targetDir = new File(tmpdir, "targetDir");
         sourceDir.mkdir();
         targetDir.mkdir();
-        
+
         // Write a sample file to be copied
         Writer writer = new OutputStreamWriter(new FileOutputStream(new File(PATH_TO_TEST_FILE)));
         writer.write("abcdefghijklmnopqrstuvwxyz\n");
         writer.close();
-            
+
         PluginFileAccess fileAccess = new PluginFileAccess(sourceDir, targetDir, log);
         cfnModule = new CloudFormationModule(fileAccess);
         fileCreator = new CloudFormationFileCreator(logger, cfnModule);
     }
-    
+
     @Test
     public void createScripts() throws Exception {
         cfnModule.putFileToBeUploaded("", "");
         fileCreator.createScripts();
-        
-        File deployScript = new File(targetDir, 
+
+        File deployScript = new File(targetDir,
             SCRIPTS_DIR_PATH + FILENAME_DEPLOY + BASH_FILE_ENDING);
-        File fileUploadScript = new File (targetDir, 
+        File fileUploadScript = new File(targetDir,
             SCRIPTS_DIR_PATH + FILENAME_UPLOAD + BASH_FILE_ENDING);
-        File createBucketUtilScript = new File (targetDir, 
+        File createBucketUtilScript = new File(targetDir,
             UTIL_DIR_PATH + FILENAME_CREATE_BUCKET + BASH_FILE_ENDING);
-        File uploadFileUtilScript = new File (targetDir, 
+        File uploadFileUtilScript = new File(targetDir,
             UTIL_DIR_PATH + FILENAME_UPLOAD_FILE + BASH_FILE_ENDING);
-        
+
         assertTrue(deployScript.exists());
         assertTrue(fileUploadScript.exists());
         assertTrue(createBucketUtilScript.exists());
         assertTrue(uploadFileUtilScript.exists());
     }
-    
+
     @Test
     public void copyFiles() throws Exception {
         cfnModule.putFileToBeUploaded(PATH_TO_TEST_FILE, PATH_TO_TEST_FILE);
         fileCreator.copyFiles();
-        
+
     }
 }
