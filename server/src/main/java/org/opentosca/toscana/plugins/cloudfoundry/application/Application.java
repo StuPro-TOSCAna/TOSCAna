@@ -21,7 +21,7 @@ public class Application {
     private String name;
     private int applicationNumber;
     private final ArrayList<String> configMysqlWithSql = new ArrayList<>();
-    private final ArrayList<String> executeCommand = new ArrayList<>();
+    private final Map<String, String> executeCommand = new HashMap<>();
     private final ArrayList<String> filePaths = new ArrayList<>();
     private final Map<String, String> environmentVariables = new HashMap<>();
     private final Map<String, String> attributes = new HashMap<>();
@@ -52,7 +52,7 @@ public class Application {
      @param pathToFile must be the path inside the csar. The method will create a relative path from it
      */
     public void addConfigMysql(String pathToFile) {
-        String relativePath = "../" + APPLICATION_FOLDER + this.applicationNumber + pathToFile;
+        String relativePath = "../../" + APPLICATION_FOLDER + this.applicationNumber + pathToFile;
         configMysqlWithSql.add(relativePath);
     }
 
@@ -69,11 +69,11 @@ public class Application {
         if (parentTopNode instanceof WebApplication) {
             pathToFileOnContainer = "/home/vcap/app/htdocs/" + APPLICATION_FOLDER + this.applicationNumber + pathToFile;
         }
-        executeCommand.add(pathToFileOnContainer + pathToFile);
+        executeCommand.put("../../" + APPLICATION_FOLDER + this.getApplicationNumber() + pathToFile, pathToFileOnContainer + pathToFile);
     }
 
     /**
-     returns a list with paths which should be executed with the python script configMysql
+     returns a list with realtive paths which should be executed with the python script configMysql
      */
     public List<String> getConfigMysql() {
         return configMysqlWithSql;
@@ -81,8 +81,10 @@ public class Application {
 
     /**
      returns a list with paths which should be executed with the python script executeCommand
+
+     @return Key is the path to File and value is path to file on container
      */
-    public List<String> getExecuteCommands() {
+    public Map<String, String> getExecuteCommands() {
         return executeCommand;
     }
 

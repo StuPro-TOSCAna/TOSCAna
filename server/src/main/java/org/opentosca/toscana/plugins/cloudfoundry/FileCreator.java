@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.plugins.cloudfoundry.application.Application;
+import org.opentosca.toscana.plugins.cloudfoundry.application.Service;
 import org.opentosca.toscana.plugins.cloudfoundry.application.ServiceTypes;
 import org.opentosca.toscana.plugins.cloudfoundry.application.buildpacks.BuildpackDetector;
 import org.opentosca.toscana.plugins.cloudfoundry.application.deployment.Deployment;
@@ -133,6 +134,8 @@ public class FileCreator {
         deployScript.append(EnvironmentCheck.checkEnvironment("cf"));
 
         int counter = 0;
+
+        //create services
         for (Application application : applications) {
             counter += 1;
             Deployment deployment = new Deployment(deployScript, application, fileAccess);
@@ -144,8 +147,50 @@ public class FileCreator {
             }
         }
 
+        //replace
+        for (Application application : applications) {
+            Deployment deployment = new Deployment(deployScript, application, fileAccess);
+            if (!application.getExecuteCommands().isEmpty()) {
+                Map<String, String> executeCommands = application.getExecuteCommands();
+
+                for (Map.Entry<String, String> command : executeCommands.entrySet()) {
+                    //TODO: add lists which should be replaced
+                    deployment.replaceStrings(command.getKey(), "/var/www/html/", "/home/vcap/app/htdocs/");
+                }
+            }
+        }
+
+        //push applications
         for (Application application : applications) {
             deployScript.append(CLI_PUSH + application.getName() + CLI_PATH_TO_MANIFEST + MANIFEST_NAME);
+        }
+
+        //read credentials, replace, executeScript, configureMysql
+        for (Application application : applications) {
+            Deployment deployment = new Deployment(deployScript, application, fileAccess);
+
+            //read credentials
+            if (application.getServicesMatchedToProvider() != null && !application.getServicesMatchedToProvider().isEmpty()) {
+                for (Service service : application.getServicesMatchedToProvider()) {
+                    deployment.readCredentials(application.getName(), service.getServiceName(), service.getServiceType());
+                }
+            }
+
+            //execute
+            if (!application.getExecuteCommands().isEmpty()) {
+                Map<String, String> executeCommands = application.getExecuteCommands();
+
+                for (Map.Entry<String, String> command : executeCommands.entrySet()) {
+                    deployment.executeFile(application.getName(), command.getValue());
+                }
+            }
+
+            //configureSql
+            if (!application.getConfigMysql().isEmpty()) {
+                for (String file : application.getConfigMysql()) {
+                    deployment.configureSql(file);
+                }
+            }
         }
     }
 
