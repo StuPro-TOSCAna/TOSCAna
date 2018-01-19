@@ -18,7 +18,9 @@ import org.opentosca.toscana.model.requirement.Requirement;
 import org.opentosca.toscana.model.visitor.StrictNodeVisitor;
 import org.opentosca.toscana.plugins.cloudformation.CloudFormationModule;
 import org.opentosca.toscana.plugins.cloudformation.mapper.CapabilityMapper;
+import org.opentosca.toscana.plugins.util.TransformationFailureException;
 
+import com.amazonaws.SdkClientException;
 import com.scaleset.cfbuilder.ec2.Instance;
 import com.scaleset.cfbuilder.ec2.SecurityGroup;
 import com.scaleset.cfbuilder.ec2.metadata.CFNCommand;
@@ -72,7 +74,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             OsCapability computeOs = node.getOs();
             String imageId = capabilityMapper.mapOsCapabilityToImageId(computeOs);
             ComputeCapability computeCompute = node.getHost();
-            String instanceType = capabilityMapper.mapComputeCapabilityToInstanceType(computeCompute, 
+            String instanceType = capabilityMapper.mapComputeCapabilityToInstanceType(computeCompute,
                 CapabilityMapper.EC2_DISTINCTION);
             //create CFN init and store it
             CFNInit init = new CFNInit(CONFIG_SETS);
@@ -83,6 +85,9 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                 .securityGroupIds(webServerSecurityGroup)
                 .imageId(imageId)
                 .instanceType(instanceType);
+        } catch (SdkClientException se) {
+            logger.error("Probably no internet connection");
+            throw new TransformationFailureException("Failed", se);
         } catch (Exception e) {
             logger.error("Error while creating EC2Instance resource.");
             e.printStackTrace();
@@ -119,7 +124,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             Integer port = node.getPort().orElse(3306);
             //check what values should be taken
             CapabilityMapper capabilityMapper = new CapabilityMapper(cfnModule.getAWSRegion());
-            String dBInstanceClass = capabilityMapper.mapComputeCapabilityToInstanceType(hostedOnComputeCapability, 
+            String dBInstanceClass = capabilityMapper.mapComputeCapabilityToInstanceType(hostedOnComputeCapability,
                 CapabilityMapper.RDS_DISTINCTION);
             Integer allocatedStorage = capabilityMapper.mapComputeCapabilityToRDSAllocatedStorage
                 (hostedOnComputeCapability);

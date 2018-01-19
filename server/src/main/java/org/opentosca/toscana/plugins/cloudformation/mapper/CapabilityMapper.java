@@ -74,7 +74,7 @@ public class CapabilityMapper {
         AmazonEC2 ec2 = AmazonEC2ClientBuilder.standard()
             .withRegion(awsRegion)
             .build();
-        //need to set these, owner are self and amazon
+        //need to set these
         DescribeImagesRequest describeImagesRequest = new DescribeImagesRequest()
             .withFilters(
                 new Filter("virtualization-type").withValues("hvm"),
