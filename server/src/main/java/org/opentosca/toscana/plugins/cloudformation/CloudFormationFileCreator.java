@@ -109,7 +109,7 @@ public class CloudFormationFileCreator {
             filesToBeUploaded.forEach((objectKey, filePath) -> {
                 String localFilePath = RELATIVE_DIRECTORY_PREFIX + filePath;
                 try {
-                    fileUploadScript.append(uploadFile(objectKey, filePath));
+                    fileUploadScript.append(uploadFile(objectKey, localFilePath));
                 } catch (IOException e) {
                     logger.error("Adding file uploads failed.");
                     logger.error("See the stack trace for more info.");
