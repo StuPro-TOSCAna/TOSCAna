@@ -10,7 +10,6 @@ import org.opentosca.toscana.core.parse.model.Entity;
 import org.opentosca.toscana.core.parse.model.MappingEntity;
 import org.opentosca.toscana.core.parse.model.ScalarEntity;
 import org.opentosca.toscana.core.parse.model.ServiceGraph;
-import org.opentosca.toscana.core.parse.model.ServiceModel;
 import org.opentosca.toscana.model.EntityId;
 import org.opentosca.toscana.model.artifact.Artifact;
 import org.opentosca.toscana.model.node.RootNode;
@@ -24,25 +23,17 @@ import org.opentosca.toscana.model.requirement.Requirement;
  */
 public class LinkResolver {
 
-    private final ServiceModel model;
-    private final ServiceGraph graph;
-
-    public LinkResolver(ServiceModel model) {
-        this.model = model;
-        this.graph = model.getGraph();
-    }
-
     /**
      For every encountered TOSCA symbolic link, removes link and creates an appropriate edge.
      */
-    public void resolveLinks() {
-        resolveRequirements();
-        resolveRepositories();
-        resolveImplementationArtifacts();
+    public static synchronized void resolveLinks(ServiceGraph graph) {
+        resolveRequirements(graph);
+        resolveRepositories(graph);
+        resolveImplementationArtifacts(graph);
     }
 
-    private void resolveRepositories() {
-        Map<String, RootNode> nodes = new TypeWrapper().wrapNodes(model);
+    private static void resolveRepositories(ServiceGraph graph) {
+        Map<String, RootNode> nodes = new TypeWrapper().wrapNodes(graph);
         for (RootNode node : nodes.values()) {
             for (Artifact artifact : node.getArtifacts()) {
                 MappingEntity artifactEntity = artifact.getBackingEntity();
@@ -57,8 +48,8 @@ public class LinkResolver {
         }
     }
 
-    private void resolveRequirements() {
-        Iterator<Entity> nodeIt = model.iterator(ToscaStructure.NODE_TEMPLATES);
+    private static void resolveRequirements(ServiceGraph graph) {
+        Iterator<Entity> nodeIt = graph.iterator(ToscaStructure.NODE_TEMPLATES);
         while (nodeIt.hasNext()) {
             Entity nodeEntity = nodeIt.next();
             Optional<Entity> requirementsEntity = nodeEntity.getChild(RootNode.REQUIREMENTS.name);
@@ -69,7 +60,7 @@ public class LinkResolver {
                     ScalarEntity fulfillerEntity = (ScalarEntity) mappingRequirement.getChild(Requirement.NODE_NAME).get();
                     String fulfillerName = fulfillerEntity.getValue();
                     EntityId fulfillerId = ToscaStructure.NODE_TEMPLATES.descend(fulfillerName);
-                    Entity fulfiller = model.getEntity(fulfillerId).orElseThrow(
+                    Entity fulfiller = graph.getEntity(fulfillerId).orElseThrow(
                         () -> new IllegalStateException(String.format(
                             "No node with name '%s' found, but required as fulfiller in requirement", fulfillerName)
                         ));
@@ -80,8 +71,8 @@ public class LinkResolver {
         }
     }
 
-    private void resolveImplementationArtifacts() {
-        Map<String, RootNode> nodes = new TypeWrapper().wrapNodes(model);
+    private static void resolveImplementationArtifacts(ServiceGraph graph) {
+        Map<String, RootNode> nodes = new TypeWrapper().wrapNodes(graph);
         for (RootNode node : nodes.values()) {
             for (Interface thisInterface : node.getInterfaces()) {
                 for (Operation operation : thisInterface.getOperations()) {

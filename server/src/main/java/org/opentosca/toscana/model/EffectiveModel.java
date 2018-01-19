@@ -29,7 +29,6 @@ public class EffectiveModel {
         new DefaultDirectedGraph<>(RootRelationship.class);
     private final ServiceModel serviceModel;
     private Map<String, RootNode> nodeMap;
-    private Map<String, Property> inputs;
 
     public EffectiveModel(Csar csar, File csarContentRoot) throws InvalidCsarException {
         Log log = csar.getLog();
@@ -47,10 +46,9 @@ public class EffectiveModel {
     }
 
     private void init() {
-        nodeMap = TypeWrapper.wrapNodes(serviceModel);
+        nodeMap = TypeWrapper.wrapNodes(serviceModel.getGraph());
         nodeMap.forEach((name, node) -> topology.addVertex(node));
         initEdges();
-        inputs = serviceModel.getInputs();
     }
 
     private void initEdges() {
@@ -77,7 +75,7 @@ public class EffectiveModel {
     }
 
     public Map<String, Property> getInputs() {
-        return inputs;
+        return serviceModel.getInputs();
     }
 }
 

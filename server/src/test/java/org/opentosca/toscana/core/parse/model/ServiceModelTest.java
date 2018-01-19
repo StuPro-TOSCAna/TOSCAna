@@ -14,9 +14,11 @@ import org.junit.Test;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.opentosca.toscana.core.parse.TestTemplates.ToscaElements.CAPABILITY;
 import static org.opentosca.toscana.core.parse.TestTemplates.ToscaElements.CREDENTIAL;
 import static org.opentosca.toscana.core.parse.TestTemplates.ToscaElements.INPUT;
+import static org.opentosca.toscana.core.parse.TestTemplates.ToscaElements.INPUT_NO_VALUE;
 import static org.opentosca.toscana.core.parse.TestTemplates.ToscaElements.INTERFACE;
 import static org.opentosca.toscana.core.parse.TestTemplates.ToscaElements.NODE;
 import static org.opentosca.toscana.core.parse.TestTemplates.ToscaElements.OUTPUT;
@@ -132,6 +134,16 @@ public class ServiceModelTest extends BaseUnitTest {
             "test-artifact", "description"));
         assertEquals("test-deploy-path", get("topology_template", "node_templates", "test-node", "artifacts",
             "test-artifact", "deploy_path"));
+    }
+
+    @Test
+    public void allInputsSetTest() {
+        currentFile = INPUT_NO_VALUE;
+        ServiceModel model = getModel();
+        assertFalse(model.getGraph().requiredInputsSet());
+        currentFile = INPUT;
+        model = getModel();
+        assertTrue(model.getGraph().requiredInputsSet());
     }
 
     private String get(String... context) {
