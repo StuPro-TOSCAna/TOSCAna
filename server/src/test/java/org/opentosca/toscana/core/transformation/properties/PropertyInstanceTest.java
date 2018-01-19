@@ -1,6 +1,7 @@
 package org.opentosca.toscana.core.transformation.properties;
 
 import java.util.HashSet;
+import java.util.stream.Collectors;
 
 import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.core.csar.CsarImpl;
@@ -26,9 +27,9 @@ public class PropertyInstanceTest extends BaseUnitTest {
 
     @Before
     public void init() throws Exception {
-        HashSet<Property> properties = new HashSet<>();
+        HashSet<PlatformProperty> properties = new HashSet<>();
         for (int i = 0; i < 10; i++) {
-            properties.add(new SimpleProperty("p-" + i, PropertyType.INTEGER, "", i < 5));
+            properties.add(new PlatformProperty("p-" + i, PropertyType.INTEGER, "", i < 5));
         }
         Platform testPlatform = new Platform("test", "test", properties);
 
@@ -38,7 +39,7 @@ public class PropertyInstanceTest extends BaseUnitTest {
             mock(Log.class)
         );
 
-        this.instance = new PropertyInstance(properties, transformation);
+        this.instance = new PropertyInstance(new HashSet<>(properties), transformation);
     }
 
     @Test

@@ -1,9 +1,12 @@
 package org.opentosca.toscana.plugins.kubernetes;
 
 import java.io.File;
+import java.util.HashSet;
+import java.util.stream.Collectors;
 
 import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.transformation.Transformation;
+import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
 import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.plugins.BaseTransformTest;
@@ -50,7 +53,7 @@ public class KubernetesLampIT extends BaseTransformTest {
 
     @Override
     protected PropertyInstance getProperties() {
-        PropertyInstance props = new PropertyInstance(plugin.getPlatform().properties, mock(Transformation.class));
+        PropertyInstance props = new PropertyInstance(new HashSet<>(plugin.getPlatform().properties), mock(Transformation.class));
 
         if (System.getenv("DH_USERNAME") != null) {
             //This Transformation is performed by pushing to a registry

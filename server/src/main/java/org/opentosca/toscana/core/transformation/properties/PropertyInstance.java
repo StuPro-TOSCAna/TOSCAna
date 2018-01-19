@@ -44,7 +44,7 @@ public class PropertyInstance {
 
      @throws IllegalArgumentException if a property with the given key cannot be found or if the entered value is invalid
      */
-    public void setPropertyValue(SimpleProperty property, String value) {
+    public void setPropertyValue(PlatformProperty property, String value) {
         this.setPropertyValue(property.getKey(), value);
     }
 

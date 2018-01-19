@@ -10,7 +10,7 @@ import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.core.transformation.properties.PropertyType;
-import org.opentosca.toscana.core.transformation.properties.SimpleProperty;
+import org.opentosca.toscana.core.transformation.properties.PlatformProperty;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -33,10 +33,10 @@ public class TransformationPropertyHandlingTest extends BaseUnitTest {
     public void setUp() throws Exception {
         Csar csar = new CsarImpl(MOCK_CSAR_NAME, log);
 
-        HashSet<Property> props = new HashSet<>();
+        HashSet<PlatformProperty> props = new HashSet<>();
         for (int i = 0; i < 10; i++) {
             props.add(
-                new SimpleProperty(
+                new PlatformProperty(
                     "prop-" + i,
                     PropertyType.UNSIGNED_INTEGER,
                     "No real Description",

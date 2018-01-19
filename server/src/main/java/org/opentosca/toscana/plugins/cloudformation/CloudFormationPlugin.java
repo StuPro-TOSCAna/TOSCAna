@@ -7,7 +7,7 @@ import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.core.transformation.properties.PropertyType;
-import org.opentosca.toscana.core.transformation.properties.SimpleProperty;
+import org.opentosca.toscana.core.transformation.properties.PlatformProperty;
 import org.opentosca.toscana.plugins.lifecycle.LifecycleAwarePlugin;
 
 import org.slf4j.Logger;
@@ -28,8 +28,8 @@ public class CloudFormationPlugin extends LifecycleAwarePlugin<CloudFormationLif
     private static Platform getPlatformDetails() {
         String platformId = "cloudformation";
         String platformName = "AWS CloudFormation";
-        Set<Property> platformProperties = new HashSet<>();
-        platformProperties.add(new SimpleProperty(
+        Set<PlatformProperty> platformProperties = new HashSet<>();
+        platformProperties.add(new PlatformProperty(
             AWS_REGION_KEY,
             PropertyType.TEXT,
             "The AWS Region this should be transformed to. (The imageId of possible EC2 machines depend on this)",

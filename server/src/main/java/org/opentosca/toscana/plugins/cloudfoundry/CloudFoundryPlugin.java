@@ -5,9 +5,9 @@ import java.util.Set;
 
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.core.transformation.platform.Platform;
+import org.opentosca.toscana.core.transformation.properties.PlatformProperty;
 import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.core.transformation.properties.PropertyType;
-import org.opentosca.toscana.core.transformation.properties.SimpleProperty;
 import org.opentosca.toscana.plugins.lifecycle.LifecycleAwarePlugin;
 
 import org.slf4j.Logger;
@@ -37,21 +37,21 @@ public class CloudFoundryPlugin extends LifecycleAwarePlugin<CloudFoundryLifecyc
     private static Platform getPlatformDetails() {
         String platformId = "cloud-foundry";
         String platformName = "CloudFoundry";
-        Set<Property> platformProperties = new HashSet<>();
+        Set<PlatformProperty> platformProperties = new HashSet<>();
 
-        SimpleProperty cfUserName = new SimpleProperty(CF_PROPERTY_KEY_USERNAME, PropertyType.TEXT,
+        PlatformProperty cfUserName = new PlatformProperty(CF_PROPERTY_KEY_USERNAME, PropertyType.TEXT,
             "Username of CloudFoundry provideraccount",
             false);
-        SimpleProperty cfUserPw = new SimpleProperty(CF_PROPERTY_KEY_PASSWORD, PropertyType.SECRET,
+        PlatformProperty cfUserPw = new PlatformProperty(CF_PROPERTY_KEY_PASSWORD, PropertyType.SECRET,
             "Password of CloudFoundry provideraccount",
             false);
-        SimpleProperty cfEndpoint = new SimpleProperty(CF_PROPERTY_KEY_API, PropertyType.TEXT,
+        PlatformProperty cfEndpoint = new PlatformProperty(CF_PROPERTY_KEY_API, PropertyType.TEXT,
             "The endpoint of the provider",
             false);
-        SimpleProperty cfSpace = new SimpleProperty(CF_PROPERTY_KEY_SPACE, PropertyType.TEXT,
+        PlatformProperty cfSpace = new PlatformProperty(CF_PROPERTY_KEY_SPACE, PropertyType.TEXT,
             "The space of the useraccount which should be used to deploy",
             false);
-        SimpleProperty cfOrganization = new SimpleProperty(CF_PROPERTY_KEY_ORGANIZATION, PropertyType.TEXT,
+        PlatformProperty cfOrganization = new PlatformProperty(CF_PROPERTY_KEY_ORGANIZATION, PropertyType.TEXT,
             "The space of the useraccount which should be used to deploy",
             false);
 

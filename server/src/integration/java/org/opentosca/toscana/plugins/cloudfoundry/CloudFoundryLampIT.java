@@ -1,9 +1,12 @@
 package org.opentosca.toscana.plugins.cloudfoundry;
 
 import java.io.File;
+import java.util.HashSet;
+import java.util.stream.Collectors;
 
 import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.transformation.Transformation;
+import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
 import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.plugins.BaseTransformTest;
@@ -57,7 +60,7 @@ public class CloudFoundryLampIT extends BaseTransformTest {
 
     @Override
     protected PropertyInstance getProperties() throws Exception {
-        PropertyInstance props = new PropertyInstance(plugin.getPlatform().properties, mock(Transformation.class));
+        PropertyInstance props = new PropertyInstance(new HashSet<>(plugin.getPlatform().properties), mock(Transformation.class));
         props.setPropertyValue(CF_PROPERTY_KEY_USERNAME, envUser);
         props.setPropertyValue(CF_PROPERTY_KEY_PASSWORD, envPw);
         props.setPropertyValue(CF_PROPERTY_KEY_API, envHost);
