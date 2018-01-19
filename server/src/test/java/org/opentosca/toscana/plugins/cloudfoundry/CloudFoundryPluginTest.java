@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
+import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.model.node.RootNode;
@@ -33,6 +34,7 @@ import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.FILEPRAEFIX
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.FILESUFFIX_DEPLOY;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.MANIFEST_NAME;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.MANIFEST_PATH;
+import static org.opentosca.toscana.plugins.util.TestUtil.setUpMockTransformationContext;
 
 public class CloudFoundryPluginTest extends BaseUnitTest {
 
@@ -111,5 +113,12 @@ public class CloudFoundryPluginTest extends BaseUnitTest {
             CLI_CREATE_SERVICE_DEFAULT, CLI_PUSH, appNameClearedUp, CLI_PATH_TO_MANIFEST, MANIFEST_NAME);
 
         assertEquals(expectedOutput, deployScript);
+    }
+
+    @Test
+    public void checkNodeTypes() throws Exception {
+        TransformationContext context = setUpMockTransformationContext(TestEffectiveModels.getLampModel());
+        CloudFoundryLifecycle cloudFoundry = new CloudFoundryLifecycle(context);
+        assertTrue(cloudFoundry.checkModel());
     }
 }

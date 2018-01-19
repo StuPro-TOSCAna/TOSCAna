@@ -2,17 +2,20 @@ package org.opentosca.toscana.plugins.cloudfoundry;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.core.transformation.TransformationContext;
+import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.visitor.VisitableNode;
 import org.opentosca.toscana.plugins.cloudfoundry.application.Application;
 import org.opentosca.toscana.plugins.cloudfoundry.application.Provider;
 import org.opentosca.toscana.plugins.cloudfoundry.client.Connection;
+import org.opentosca.toscana.plugins.cloudfoundry.visitors.NodeSupported;
 import org.opentosca.toscana.plugins.cloudfoundry.visitors.NodeVisitors;
 import org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle;
 
@@ -29,19 +32,41 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
     private Provider provider;
     private Connection connection;
     private List<Application> applications;
+    private final EffectiveModel model;
+    private Map<Application, Set<RootNode>> applicationNodes = new HashMap<>();
 
     public CloudFoundryLifecycle(TransformationContext context) throws IOException {
         super(context);
+        model = context.getModel();
     }
 
     @Override
     public boolean checkModel() {
-        //throw new UnsupportedOperationException();
+        logger.info("Begin check for supported Node Types.");
+        Set<RootNode> nodes = model.getNodes();
+        return checkNodeTypes(nodes);
+    }
+
+    /**
+     checks a Set of Nodes for support of its Type
+
+     @param nodes the set which gets checked
+     @return true if supported
+     */
+    private boolean checkNodeTypes(Set<RootNode> nodes) {
+        for (RootNode node : nodes)
+            try {
+                node.accept(new NodeSupported());
+            } catch (UnsupportedOperationException e) {
+                logger.warn("Node of the type {} not supported", node.getClass().getName(), e);
+                return false;
+            }
         return true;
     }
 
     @Override
     public void prepare() {
+        logger.info("Begin preparation for transformation to Cloud Foundry.");
         Map<String, String> properties = context.getProperties().getPropertyValues();
 
         if (!properties.isEmpty()) {
@@ -82,19 +107,19 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
 
     @Override
     public void transform() {
+        logger.info("Begin transformation to Cloud Foundry.");
         PluginFileAccess fileAccess = context.getPluginFileAccess();
-        Set<RootNode> nodes = context.getModel().getNodes();
+        Set<RootNode> nodes = model.getNodes();
         List<Application> filledApplications = new ArrayList<>();
         for (Application application : applications) {
             NodeVisitors visitor = new NodeVisitors(application);
             for (VisitableNode node : nodes) {
                 node.accept(visitor);
             }
-            
+
             Application filledApplication = visitor.getFilledApp();
-            filledApplications.add(application);
+            filledApplications.add(filledApplication);
         }
-        
 
         try {
             FileCreator fileCreator = new FileCreator(fileAccess, filledApplications);
