@@ -15,6 +15,7 @@ import org.opentosca.toscana.model.util.ToscaKey;
 
 import org.apache.commons.lang3.EnumUtils;
 
+@SuppressWarnings("unchecked")
 public class TypeConverter {
 
     public static <T> T convert(Entity entity, ToscaKey<T> key) throws AttributeNotSetException {
@@ -51,7 +52,7 @@ public class TypeConverter {
             Map<String, T> enumMap = EnumUtils.getEnumMap(targetType);
             Optional<T> result = enumMap.entrySet().stream()
                 .filter(entry -> value.equalsIgnoreCase(entry.getKey()))
-                .map(entry -> entry.getValue())
+                .map(Map.Entry::getValue)
                 .findAny();
             return result.orElseThrow(() -> new NoSuchElementException(
                 String.format("No value with name '%s' in enum '%s'", value, targetType.getSimpleName())));
