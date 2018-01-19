@@ -37,7 +37,7 @@ public class BashScript {
         access.delete(scriptPath);
 
         access.access(scriptPath).append(SHEBANG + "\n")
-            .append("source " + UTIL_DIR_NAME + "*\n")
+            .append("for file in $(ls util); do source util/$file; done\n")
             .close();
     }
 
