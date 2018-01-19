@@ -69,6 +69,13 @@
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-ec2</artifactId>
         </dependency>
+        <!--Apache Http Client -->
+        <!-- needed for AWS Java SDK-->
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.5.4</version>
+        </dependency>
         <!--CloudFoundry Plugin-->
         <!--CloudFoundry java-client-->
         <dependency>
@@ -189,13 +196,6 @@
             <artifactId>retrofit-wrapper</artifactId>
             <version>1.0-SNAPSHOT</version>
             <scope>test</scope>
-        </dependency>
-        <!--Apache Http Client -->
-        <!-- needed for AWS Java SDK-->
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>4.5.4</version>
         </dependency>
     </dependencies>
     <build>
