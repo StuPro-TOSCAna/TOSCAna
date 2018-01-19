@@ -11,7 +11,7 @@ import static org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle.SCRIPTS_
 import static org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle.UTIL_DIR_NAME;
 
 public class BashScript {
-    public static final String SHEBANG = "#!/bin/sh";
+    public static final String SHEBANG = "#!/bin/bash";
     private final static Logger logger = LoggerFactory.getLogger(BashScript.class);
     private String name;
     private PluginFileAccess access;
