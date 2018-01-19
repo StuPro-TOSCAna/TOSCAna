@@ -27,7 +27,7 @@ public class CloudFormationFileCreator {
     private static final String FILENAME_UPLOAD = "file-upload";
     private static final String TEMPLATE_PATH = "template.yaml ";
     private static final String CHANGE_TO_PARENT_DIRECTORY = "cd ..";
-    private static final String CHANGE_TO_FILE_DIRECTORY = "cd files";
+    private static final String RELATIVE_DIRECTORY_PREFIX = "../";
 
     private final Logger logger;
     private CloudFormationModule cfnModule;
@@ -105,11 +105,9 @@ public class CloudFormationFileCreator {
             BashScript fileUploadScript = new BashScript(cfnModule.getFileAccess(), FILENAME_UPLOAD);
             fileUploadScript.append(createBucket());
             
-            fileUploadScript.append(CHANGE_TO_PARENT_DIRECTORY);
-            fileUploadScript.append(CHANGE_TO_FILE_DIRECTORY);
-
             logger.debug("Adding file upload commands.");
             filesToBeUploaded.forEach((objectKey, filePath) -> {
+                String localFilePath = RELATIVE_DIRECTORY_PREFIX + filePath;
                 try {
                     fileUploadScript.append(uploadFile(objectKey, filePath));
                 } catch (IOException e) {
