@@ -90,11 +90,10 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
             for (VisitableNode node : nodes) {
                 node.accept(visitor);
             }
-            
+
             Application filledApplication = visitor.getFilledApp();
-            filledApplications.add(application);
+            filledApplications.add(filledApplication);
         }
-        
 
         try {
             FileCreator fileCreator = new FileCreator(fileAccess, filledApplications);
