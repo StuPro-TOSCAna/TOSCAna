@@ -72,7 +72,8 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             OsCapability computeOs = node.getOs();
             String imageId = capabilityMapper.mapOsCapabilityToImageId(computeOs);
             ComputeCapability computeCompute = node.getHost();
-            String instanceType = capabilityMapper.mapComputeCapabilityToInstanceType(computeCompute, CapabilityMapper.EC2_DISTINCTION);
+            String instanceType = capabilityMapper.mapComputeCapabilityToInstanceType(computeCompute, 
+                CapabilityMapper.EC2_DISTINCTION);
             //create CFN init and store it
             CFNInit init = new CFNInit(CONFIG_SETS);
             cfnModule.putCFNInit(nodeName, init);
@@ -118,8 +119,10 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             Integer port = node.getPort().orElse(3306);
             //check what values should be taken
             CapabilityMapper capabilityMapper = new CapabilityMapper(cfnModule.getAWSRegion());
-            String dBInstanceClass = capabilityMapper.mapComputeCapabilityToInstanceType(hostedOnComputeCapability, CapabilityMapper.RDS_DISTINCTION);
-            Integer allocatedStorage = capabilityMapper.mapComputeCapabilityToDiskSize(hostedOnComputeCapability);
+            String dBInstanceClass = capabilityMapper.mapComputeCapabilityToInstanceType(hostedOnComputeCapability, 
+                CapabilityMapper.RDS_DISTINCTION);
+            Integer allocatedStorage = capabilityMapper.mapComputeCapabilityToRDSAllocatedStorage
+                (hostedOnComputeCapability);
             String storageType = "gp2"; //SSD
 
             String securityGroupName = nodeName + SECURITY_GROUP;
@@ -266,7 +269,8 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                 for (OperationVariable input : operation.getInputs()) {
                     Object value = input.getValue().orElse(""); //TODO add default
                     if (("127.0.0.1".equals(value) || "localhost".equals(value)) && input.getKey().contains("host")) {
-                        value = cfnModule.fnGetAtt("mydb", "Endpoint.Address"); //TODO how to handle this? with the new model we should be able to get the reference
+                        value = cfnModule.fnGetAtt("mydb", "Endpoint.Address"); //TODO how to handle this? with the 
+                        // new model we should be able to get the reference
                     }
                     cfnCommand.addEnv(input.getKey(), value);
                 }

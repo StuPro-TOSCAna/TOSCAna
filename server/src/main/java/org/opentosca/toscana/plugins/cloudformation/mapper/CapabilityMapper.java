@@ -203,7 +203,7 @@ public class CapabilityMapper {
      @param computeCapability The ComputeCapability to map.
      @return An integer representing the diskSize that should be taken.
      */
-    public Integer mapComputeCapabilityToDiskSize(ComputeCapability computeCapability) {
+    public Integer mapComputeCapabilityToRDSAllocatedStorage(ComputeCapability computeCapability) {
         final Integer minSize = 20;
         final Integer maxSize = 6144;
         Integer diskSize = computeCapability.getDiskSizeInMB().orElse(minSize * 1000);
@@ -241,7 +241,7 @@ public class CapabilityMapper {
             return value;
         }
     }
-    
+
     private String findCombination(Integer numCpus, Integer memSize, ImmutableList<InstanceType> instanceTypes,
                                    List<Integer> allNumCpus, List<Integer> allMemSizes) throws
         TransformationFailureException {

@@ -1,22 +1,17 @@
 package org.opentosca.toscana.plugins.cloudformation.mapper;
 
-import java.io.File;
+import java.text.ParseException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.opentosca.toscana.core.BaseUnitTest;
-import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.core.transformation.logging.Log;
-import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.model.capability.ContainerCapability;
 import org.opentosca.toscana.model.capability.OsCapability;
 import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.MysqlDbms;
 import org.opentosca.toscana.model.node.RootNode;
-import org.opentosca.toscana.model.visitor.VisitableNode;
-import org.opentosca.toscana.plugins.cloudformation.CloudFormationModule;
-import org.opentosca.toscana.plugins.cloudformation.visitor.CloudFormationNodeVisitor;
 
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
@@ -33,82 +28,98 @@ import static java.util.Arrays.asList;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationPlugin.AWS_REGION_DEFAULT;
+import static org.opentosca.toscana.plugins.cloudformation.mapper.CapabilityMapper.EC2_DISTINCTION;
+import static org.opentosca.toscana.plugins.cloudformation.mapper.CapabilityMapper.RDS_DISTINCTION;
 
 @RunWith(Parameterized.class)
 public class CapabilityMapperTest extends BaseUnitTest {
     private final static Logger logger = LoggerFactory.getLogger(CapabilityMapperTest.class);
-    private static EffectiveModel singleComputeNode;
-    private static CloudFormationNodeVisitor cfnNodeVisitor;
-    private static CloudFormationModule cfnModule;
-    private static PluginFileAccess fileAccess;
     @Mock
     private Log log;
 
     private Integer numCpus;
     private Integer memSize;
-    private String expectedResult;
+    private Integer diskSize;
+    private String expectedEC2;
+    private String expectedRDS;
+    private Integer expectedDiskSize;
+    private CapabilityMapper capabilityMapper;
 
-    public CapabilityMapperTest(Integer numCpus, Integer memSize, String expectedResult) {
+    public CapabilityMapperTest(Integer numCpus, Integer memSize, Integer diskSize, String expectedEC2, String
+        expectedRDS, Integer expectedDiskSize) {
         this.numCpus = numCpus;
         this.memSize = memSize;
-        this.expectedResult = expectedResult;
+        this.diskSize = diskSize;
+        this.expectedEC2 = expectedEC2;
+        this.expectedRDS = expectedRDS;
+        this.expectedDiskSize = expectedDiskSize;
+        logger.debug("{}, {}, {}, {}, {}, {}", numCpus, memSize, diskSize, expectedEC2, expectedRDS, expectedDiskSize);
     }
 
     @Parameters
     public static Collection data() {
         return asList(new Object[][]{
-            {1, 1024, "t2.micro"}, {1, 2048, "t2.small"}, {2, 1024, "t2.medium"}, {3, 7500, "t2.xlarge"}, {1, 5000, "t2.large"}, {1, 17000, "t2.2xlarge"}
+            {1, 1024, 20000, "t2.micro", "db.t2.micro", 20}, {1, 2048, 40000, "t2.small", "db.t2.small", 40}, {2, 
+            1024, 6144001, "t2.medium", "db" +
+            ".t2.medium", 6144}, {3, 7500, 3, "t2.xlarge", "db.t2.xlarge", 20}, {1, 5000, 10000, "t2.large", "db" +
+            ".t2.large", 20}, {1, 17000, 100000, "t2.2xlarge", "db.t2.2xlarge", 100}
         });
     }
 
     @Before
     public void setUp() throws Exception {
         when(log.getLogger(any(Class.class))).thenReturn(LoggerFactory.getLogger("Test logger"));
-        fileAccess = new PluginFileAccess(new File("src/test/resources/csars/yaml/valid/lamp-input/"), tmpdir, log);
-        cfnModule = new CloudFormationModule(fileAccess, AWS_REGION_DEFAULT);
-        cfnNodeVisitor = new CloudFormationNodeVisitor(logger, cfnModule);
+        this.capabilityMapper = new CapabilityMapper(AWS_REGION_DEFAULT);
     }
 
     @Test
-    public void testSingle() {
-        Set<RootNode> computeNodeSet = new HashSet<>();
-        computeNodeSet.add(createComputeNode(numCpus, memSize));
-        singleComputeNode = new EffectiveModel(computeNodeSet, new HashSet<>());
-        Set<RootNode> nodes = singleComputeNode.getNodes();
-        for (VisitableNode node : nodes) {
-            node.accept(cfnNodeVisitor);
-        }
-        String template = cfnModule.toString();
-        Assert.assertThat(template, CoreMatchers.containsString(expectedResult));
-        System.err.println(template);
+    public void testMapOsCapabilityToImageId() throws ParseException {
+        String imageId = capabilityMapper.mapOsCapabilityToImageId(createOSCapability());
+        Assert.assertThat(imageId, CoreMatchers.containsString("ami-"));
     }
 
-    private Compute createComputeNode(Integer numCpus, Integer memSize) {
-        OsCapability osCapability = OsCapability
-            .builder()
-            .distribution(OsCapability.Distribution.UBUNTU)
-            .type(OsCapability.Type.LINUX)
-            .version("16.04")
-            .build();
-        Compute computeNode = Compute
-            .builder("server")
-            .os(osCapability)
-            .host(createContainerCapability(numCpus, memSize))
-            .build();
-        return computeNode;
+    @Test
+    public void testMapComputeCapabilityToInstanceTypeEC2() {
+        String instanceType = capabilityMapper.mapComputeCapabilityToInstanceType(createContainerCapability(numCpus,
+            memSize, diskSize), EC2_DISTINCTION);
+        Assert.assertEquals(instanceType, expectedEC2);
     }
 
-    private ContainerCapability createContainerCapability(Integer numCpus, Integer memSize) {
+    @Test
+    public void testMapComputeCapabilityToInstanceTypeRDS() {
+        String instanceType = capabilityMapper.mapComputeCapabilityToInstanceType(createContainerCapability(numCpus,
+            memSize, diskSize), RDS_DISTINCTION);
+        Assert.assertEquals(instanceType, expectedRDS);
+    }
+
+    @Test
+    public void testMapComputeCapabilityToRDSAllocatedStorage() {
+        Integer newDiskSize = capabilityMapper.mapComputeCapabilityToRDSAllocatedStorage(createContainerCapability
+            (numCpus,
+            memSize, diskSize));
+        Assert.assertEquals(newDiskSize, expectedDiskSize);
+    }
+
+    private ContainerCapability createContainerCapability(Integer numCpus, Integer memSize, Integer diskSize) {
         Set<Class<? extends RootNode>> validSourceTypes = new HashSet<>();
         validSourceTypes.add(Compute.class);
         validSourceTypes.add(MysqlDbms.class);
 
         ContainerCapability.ContainerCapabilityBuilder containerCapabilityBuilder = ContainerCapability.builder()
             .memSizeInMB(memSize)
-            .diskSizeInMB(2000)
+            .diskSizeInMB(diskSize)
             .numCpus(numCpus)
             .validSourceTypes(validSourceTypes);
 
         return containerCapabilityBuilder.build();
+    }
+
+    private OsCapability createOSCapability() {
+        return OsCapability
+            .builder()
+            .distribution(OsCapability.Distribution.UBUNTU)
+            .type(OsCapability.Type.LINUX)
+            .version("16.04")
+            .build();
     }
 }
