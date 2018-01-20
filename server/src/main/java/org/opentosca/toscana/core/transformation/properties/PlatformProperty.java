@@ -70,7 +70,7 @@ public class PlatformProperty implements Property {
     public Optional<String> getDefaultValue() {
         return Optional.ofNullable(defaultValue);
     }
-    
+
     public PlatformProperty copy() {
         PlatformProperty p = new PlatformProperty(
             key,

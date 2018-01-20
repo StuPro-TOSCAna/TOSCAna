@@ -31,7 +31,7 @@ public class UserInputIT extends BaseSpringIntegrationTest {
         api.updateProperties(csarName, platformId, properties);
         // if call does not fail, inputs have been correctly set and propagated
         api.startTransformation(csarName, platformId);
-       
+
         // wait for transformation is completed - else cleanup will kill transformation
         while ("TRANSFORMING".matches(api.getTransformation(csarName, platformId).getStatus())) {
             Thread.sleep(20);
