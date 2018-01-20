@@ -231,7 +231,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             String cfnSource = getFileURL(cfnModule.getBucketName(), dependency);
             
             logger.debug("Marking " + dependency + " as file to be uploaded.");
-            cfnModule.putFileToBeUploaded(dependency, dependency);
+            cfnModule.putFileToBeUploaded(dependency);
             
             CFNFile cfnFile = new CFNFile(cfnFilePath + dependency)
                 .setSource(cfnSource)
@@ -254,7 +254,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             String cfnSource = getFileURL(cfnModule.getBucketName(), artifact);
             
             logger.debug("Marking " + artifact + " as file to be uploaded.");
-            cfnModule.putFileToBeUploaded(artifact, artifact);
+            cfnModule.putFileToBeUploaded(artifact);
             
             CFNFile cfnFile = new CFNFile(cfnFilePath + artifact)
                 .setSource(cfnSource)

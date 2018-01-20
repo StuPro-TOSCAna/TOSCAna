@@ -51,7 +51,7 @@ public class CloudFormationModule extends Module {
 
     private Object keyNameVar;
     private Map<String, CFNInit> cfnInitMap;
-    private Map<String, String> filesToBeUploaded;
+    private ArrayList<String> filesToBeUploaded;
     private PluginFileAccess fileAccess;
     private String bucketName;
     private String stackName;
@@ -66,7 +66,7 @@ public class CloudFormationModule extends Module {
         strParam(KEYNAME).type(KEYNAME_TYPE).description(KEYNAME_DESCRIPTION).constraintDescription(KEYNAME_CONSTRAINT_DESCRIPTION);
         keyNameVar = template.ref(KEYNAME);
         cfnInitMap = new HashMap<>();
-        filesToBeUploaded = new HashMap<>();
+        filesToBeUploaded = new ArrayList<>();
         this.fileAccess = fileAccess;
         this.bucketName = getRandomBucketName();
         this.stackName = getRandomStackName();
@@ -91,12 +91,12 @@ public class CloudFormationModule extends Module {
         return this.cfnInitMap.get(resource);
     }
 
-    public Map<String, String> getFilesToBeUploaded() {
+    public ArrayList<String> getFilesToBeUploaded() {
         return filesToBeUploaded;
     }
 
-    public void putFileToBeUploaded(String objectKey, String filePath) {
-        this.filesToBeUploaded.put(objectKey, filePath);
+    public void putFileToBeUploaded(String filePath) {
+        this.filesToBeUploaded.add(filePath);
     }
 
     public String getBucketName() {
@@ -133,7 +133,7 @@ public class CloudFormationModule extends Module {
             "\n"};
 
         // Combine constant params with ref params
-        List params = new ArrayList<Object>();
+        List params = new ArrayList<>();
         Collections.addAll(params, USERDATA_CONSTANT_PARAMS);
         Collections.addAll(params, userdataRefParams);
 
@@ -164,8 +164,7 @@ public class CloudFormationModule extends Module {
      * @return random bucket name
      */
     private String getRandomBucketName() {
-        String bucketName = "toscana-bucket-" + UUID.randomUUID();
-        return bucketName;
+        return "toscana-bucket-" + UUID.randomUUID();
     }
 
     /**
@@ -174,8 +173,7 @@ public class CloudFormationModule extends Module {
      * @return random stack name
      */
     private String getRandomStackName() {
-        String stackName = "toscana-stack-" + UUID.randomUUID();
-        return stackName;
+        return "toscana-stack-" + UUID.randomUUID();
     }
 
     /**

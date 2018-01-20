@@ -3,8 +3,8 @@ package org.opentosca.toscana.plugins.cloudformation;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.plugins.scripts.BashScript;
@@ -48,13 +48,13 @@ public class CloudFormationFileCreator {
      */
     public void copyFiles() {
 
-        Map<String, String> filesToBeUploaded = cfnModule.getFilesToBeUploaded();
+        ArrayList<String> filesToBeUploaded = cfnModule.getFilesToBeUploaded();
 
         logger.debug("Checking if files need to be copied.");
         if (!filesToBeUploaded.isEmpty()) {
             logger.debug("Files to be copied found.");
             logger.debug("Copying files to the target artifact.");
-            cfnModule.getFilesToBeUploaded().forEach((objectKey, filePath) -> {
+            filesToBeUploaded.forEach((filePath) -> {
                 String targetPath = CloudFormationModule.FILE_PATH_TARGET + filePath;
                 try {
                     cfnModule.getFileAccess().copy(filePath, targetPath);
@@ -96,7 +96,7 @@ public class CloudFormationFileCreator {
      * Creates the script for File Uploads if files need to be uploaded.
      */
     private void createFileUploadScript() throws IOException {
-        Map<String, String> filesToBeUploaded = cfnModule.getFilesToBeUploaded();
+        ArrayList<String> filesToBeUploaded = cfnModule.getFilesToBeUploaded();
 
         logger.debug("Checking if files need to be uploaded.");
         if (!filesToBeUploaded.isEmpty()) {
@@ -106,10 +106,10 @@ public class CloudFormationFileCreator {
             fileUploadScript.append(createBucket());
             
             logger.debug("Adding file upload commands.");
-            filesToBeUploaded.forEach((objectKey, filePath) -> {
+            filesToBeUploaded.forEach((filePath) -> {
                 String localFilePath = RELATIVE_DIRECTORY_PREFIX + filePath;
                 try {
-                    fileUploadScript.append(uploadFile(objectKey, localFilePath));
+                    fileUploadScript.append(uploadFile(filePath, localFilePath));
                 } catch (IOException e) {
                     logger.error("Adding file uploads failed.");
                     logger.error("See the stack trace for more info.");
