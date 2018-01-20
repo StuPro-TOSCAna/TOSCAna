@@ -1,31 +1,75 @@
 package org.opentosca.toscana.model.requirement;
 
-import java.util.Set;
+import java.util.Optional;
 
+import org.opentosca.toscana.core.parse.model.MappingEntity;
 import org.opentosca.toscana.model.capability.ContainerCapability;
-import org.opentosca.toscana.model.datatype.Range;
 import org.opentosca.toscana.model.node.Dbms;
 import org.opentosca.toscana.model.relation.HostedOn;
+import org.opentosca.toscana.model.util.ToscaKey;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.Singular;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
-@Data
+@EqualsAndHashCode
+@ToString
 public class DbmsRequirement extends Requirement<ContainerCapability, Dbms, HostedOn> {
 
-    @Builder
-    protected DbmsRequirement(ContainerCapability capability,
-                              Range occurrence,
-                              @Singular Set<Dbms> fulfillers,
-                              HostedOn relationship) {
-        super(capability, occurrence, fulfillers, HostedOn.getFallback(relationship));
+    public ToscaKey<ContainerCapability> CAPABILITY = new ToscaKey<>(CAPABILITY_NAME)
+        .type(ContainerCapability.class);
+    public ToscaKey<Dbms> NODE = new ToscaKey<>(NODE_NAME)
+        .type(Dbms.class);
+    public ToscaKey<HostedOn> RELATIONSHIP = new ToscaKey<>(RELATIONSHIP_NAME)
+        .type(HostedOn.class);
+
+    public DbmsRequirement(MappingEntity mappingEntity) {
+        super(mappingEntity);
+        setDefault(RELATIONSHIP, new HostedOn(getChildEntity(RELATIONSHIP)));
     }
 
-    public static Requirement<ContainerCapability, Dbms, HostedOn> getFallback(Requirement<ContainerCapability, Dbms, HostedOn> host) {
-        return (host == null) ? DbmsRequirement.builder().build() : host;
+    /**
+     @return {@link #CAPABILITY}
+     */
+    public ContainerCapability getCapability() {
+        return get(CAPABILITY);
     }
 
-    public static class DbmsRequirementBuilder extends RequirementBuilder<ContainerCapability, Dbms, HostedOn> {
+    /**
+     Sets {@link #CAPABILITY}
+     */
+    public DbmsRequirement setCapability(ContainerCapability capability) {
+        set(CAPABILITY, capability);
+        return this;
+    }
+
+    /**
+     @return {@link #NODE}
+     */
+    public Optional<Dbms> getNode() {
+        return Optional.ofNullable(get(NODE));
+    }
+
+    /**
+     Sets {@link #NODE}
+     */
+    public DbmsRequirement setNode(Dbms node) {
+        set(NODE, node);
+        return this;
+    }
+
+    /**
+     @return {@link #RELATIONSHIP}
+     */
+    public Optional<HostedOn> getRelationship() {
+        return Optional.ofNullable(get(RELATIONSHIP));
+    }
+
+    /**
+     Sets {@link #RELATIONSHIP}
+     */
+    @Override
+    public DbmsRequirement setRelationship(HostedOn relationship) {
+        set(RELATIONSHIP, relationship);
+        return this;
     }
 }

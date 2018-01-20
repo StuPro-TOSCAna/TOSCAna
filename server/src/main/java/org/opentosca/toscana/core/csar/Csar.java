@@ -3,7 +3,6 @@ package org.opentosca.toscana.core.csar;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.logging.Log;
@@ -40,7 +39,7 @@ public interface Csar {
      Returns model specific properties as a set. If there are none a empty set has to be returned. this must not
      return null to prevent problematic behaviour of the PropertyInstance class
      */
-    Set<Property> getModelSpecificProperties();
+    Map<String, Property> getModelSpecificProperties();
 
     void setModel(EffectiveModel model);
 

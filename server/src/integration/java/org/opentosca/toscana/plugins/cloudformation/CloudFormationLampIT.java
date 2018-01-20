@@ -2,11 +2,11 @@ package org.opentosca.toscana.plugins.cloudformation;
 
 import java.io.File;
 
+import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
 import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.plugins.BaseTransformTest;
-import org.opentosca.toscana.plugins.testdata.TestEffectiveModels;
 
 import org.apache.commons.io.FileUtils;
 
@@ -14,13 +14,13 @@ import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 
 public class CloudFormationLampIT extends BaseTransformTest {
-    public CloudFormationLampIT() throws Exception {
+    public CloudFormationLampIT() {
         super(new CloudFormationPlugin());
     }
 
     @Override
     protected EffectiveModel getModel() {
-        return TestEffectiveModels.getLampModel();
+        return new EffectiveModel(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, log);
     }
 
     @Override
@@ -35,7 +35,7 @@ public class CloudFormationLampIT extends BaseTransformTest {
 
     @Override
     protected void copyArtifacts(File contentDir) throws Exception {
-        File inputDir = new File(getClass().getResource("/csars/yaml/valid/lamp-input").getFile());
+        File inputDir = new File(getClass().getResource("/csars/yaml/valid/lamp-noinput").getFile());
         FileUtils.copyDirectory(inputDir, contentDir);
     }
 

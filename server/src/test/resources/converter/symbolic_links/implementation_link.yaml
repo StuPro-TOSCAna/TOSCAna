@@ -1,0 +1,22 @@
+tosca_definitions_version: tosca_simple_yaml_1_1
+
+description: template for testing resolving of symbolic links to artifacts in operations
+metadata:
+  template_name: implementation_link
+  template_author: stupro-toscana
+  template_version: 1.0
+
+topology_template:
+  node_templates:
+    test-node:
+      type: WebServer
+      artifacts:
+        test-artifact:
+          file: test-file
+          type: tosca.artifacts.Deployment.Image.Container.Docker
+          
+      interfaces:
+        Standard:
+          create:
+            implementation: test-artifact
+

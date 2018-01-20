@@ -47,6 +47,7 @@ public class Platform {
         return Collections.unmodifiableSet(properties);
     }
 
+    @Override
     public String toString() {
         return String.format("Platform [id='%s', name='%s', properties='%s']", id, name, properties);
     }

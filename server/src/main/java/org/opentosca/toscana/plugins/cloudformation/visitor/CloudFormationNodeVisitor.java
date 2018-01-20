@@ -56,8 +56,8 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
     @Override
     public void visit(Compute node) {
         try {
-            logger.debug("Visit Compute node " + node.getNodeName() + ".");
-            String nodeName = toAlphanumerical(node.getNodeName());
+            logger.debug("Visit Compute node " + node.getEntityName() + ".");
+            String nodeName = toAlphanumerical(node.getEntityName());
             //default security group the EC2 Instance opens for port 80 and 22 to the whole internet
             Object cidrIp = "0.0.0.0/0";
             SecurityGroup webServerSecurityGroup = cfnModule.resource(SecurityGroup.class,
@@ -84,7 +84,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             String instanceType;
             //here should be a check for isPresent, but what to do if not present?
             if (computeCompute.getNumCpus().get().equals(1) &&
-                computeCompute.getMemSizeInMB().get().equals(1024)) {
+                computeCompute.getMemSizeInMb().get().equals(1024)) {
                 instanceType = "t2.micro";
             } else {
                 throw new UnsupportedTypeException("Only 1 CPU and 1024 MB memory supported.");
@@ -107,16 +107,16 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
     @Override
     public void visit(MysqlDatabase node) {
         try {
-            logger.debug("Visit MysqlDatabase node " + node.getNodeName() + ".");
-            String nodeName = toAlphanumerical(node.getNodeName());
+            logger.debug("Visit MysqlDatabase node " + node.getEntityName() + ".");
+            String nodeName = toAlphanumerical(node.getEntityName());
 
             //get the name of the server where the dbms this node is hosted on, is hosted on
             String serverName;
-            if (exactlyOneFulfiller(node.host)) {
-                Dbms dbms = node.host.getFulfillers().iterator().next();
+            if (exactlyOneFulfiller(node.getHost())) {
+                Dbms dbms = node.getHost().getFulfillers().iterator().next();
                 if (exactlyOneFulfiller(dbms.getHost())) {
                     Compute compute = dbms.getHost().getFulfillers().iterator().next();
-                    serverName = toAlphanumerical(compute.getNodeName());
+                    serverName = toAlphanumerical(compute.getEntityName());
                 } else {
                     throw new IllegalStateException("Got " + dbms.getHost().getFulfillers().size() + " instead of one fulfiller");
                 }
@@ -156,17 +156,17 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
 
     @Override
     public void visit(MysqlDbms node) {
-        logger.debug("Visit MysqlDbms node " + node.getNodeName() + ".");
+        logger.debug("Visit MysqlDbms node " + node.getEntityName() + ".");
         // TODO handle sql artifact if present
     }
 
     @Override
     public void visit(Apache node) {
-        logger.debug("Visit Apache node " + node.getNodeName() + ".");
+        logger.debug("Visit Apache node " + node.getEntityName() + ".");
         String serverName;
         if (exactlyOneFulfiller(node.getHost())) {
             Compute compute = node.getHost().getFulfillers().iterator().next();
-            serverName = toAlphanumerical(compute.getNodeName());
+            serverName = toAlphanumerical(compute.getEntityName());
         } else {
             throw new IllegalStateException("Got " + node.getHost().getFulfillers().size() + " instead of one fulfiller");
         }
@@ -185,7 +185,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
 
     @Override
     public void visit(WebApplication node) {
-        logger.debug("Visit WebApplication node " + node.getNodeName() + ".");
+        logger.debug("Visit WebApplication node " + node.getEntityName() + ".");
 
         //get the name of the server where this node is hosted on
         String serverName;
@@ -193,7 +193,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             WebServer webServer = node.getHost().getFulfillers().iterator().next();
             if (exactlyOneFulfiller(webServer.getHost())) {
                 Compute compute = webServer.getHost().getFulfillers().iterator().next();
-                serverName = toAlphanumerical(compute.getNodeName());
+                serverName = toAlphanumerical(compute.getEntityName());
             } else {
                 throw new IllegalStateException("Got " + webServer.getHost().getFulfillers().size() + " instead of one fulfiller");
             }

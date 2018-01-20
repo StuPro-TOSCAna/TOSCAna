@@ -42,12 +42,12 @@ public class NodeVisitors implements StrictNodeVisitor {
             myApp.addAttribute(DOMAIN.getName(), node.getPublicAddress().get());
         }
 
-        if (node.getHost().getDiskSizeInMB().isPresent()) {
-            myApp.addAttribute(DISKSIZE.getName(), node.getHost().getDiskSizeInMB().get() + "MB");
+        if (node.getHost().getDiskSizeInMb().isPresent()) {
+            myApp.addAttribute(DISKSIZE.getName(), node.getHost().getDiskSizeInMb().get() + "MB");
         }
 
-        if (node.getHost().getMemSizeInMB().isPresent()) {
-            myApp.addAttribute(MEMORY.getName(), node.getHost().getMemSizeInMB().get() + "MB");
+        if (node.getHost().getMemSizeInMb().isPresent()) {
+            myApp.addAttribute(MEMORY.getName(), node.getHost().getMemSizeInMb().get() + "MB");
         }
     }
 
@@ -58,7 +58,7 @@ public class NodeVisitors implements StrictNodeVisitor {
         ignore password and port
          */
         handleStandardLifecycle(node, false);
-        myApp.addService(node.getNodeName(), ServiceTypes.MYSQL);
+        myApp.addService(node.getEntityName(), ServiceTypes.MYSQL);
     }
 
     @Override
@@ -74,7 +74,7 @@ public class NodeVisitors implements StrictNodeVisitor {
 
     @Override
     public void visit(WebApplication node) {
-        myApp.setName(node.getNodeName());
+        myApp.setName(node.getEntityName());
         handleStandardLifecycle(node, true);
     }
 
