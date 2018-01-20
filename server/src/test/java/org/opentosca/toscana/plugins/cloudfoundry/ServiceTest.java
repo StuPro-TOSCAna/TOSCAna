@@ -19,7 +19,7 @@ import org.opentosca.toscana.plugins.cloudfoundry.application.Provider;
 import org.opentosca.toscana.plugins.cloudfoundry.application.ServiceTypes;
 import org.opentosca.toscana.plugins.cloudfoundry.client.Connection;
 import org.opentosca.toscana.plugins.cloudfoundry.client.InjectionHandler;
-import org.opentosca.toscana.plugins.cloudfoundry.visitors.NodeVisitors;
+import org.opentosca.toscana.plugins.cloudfoundry.transformation.visitors.NodeVisitors;
 import org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle;
 import org.opentosca.toscana.plugins.testdata.TestEffectiveModels;
 
@@ -189,7 +189,7 @@ public class ServiceTest extends BaseUnitTest {
         myApp.setPathToApplication(targetDir + "/" + pathToApplication + "/");
         List<Application> applications = new ArrayList<>();
         applications.add(myApp);
-        FileCreator fileCreator = new FileCreator(fileAccess,applications);
+        FileCreator fileCreator = new FileCreator(fileAccess, applications);
         fileCreator.createFiles();
     }
 }

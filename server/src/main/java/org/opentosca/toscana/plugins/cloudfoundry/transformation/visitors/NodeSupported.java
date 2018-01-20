@@ -1,4 +1,4 @@
-package org.opentosca.toscana.plugins.cloudfoundry.visitors;
+package org.opentosca.toscana.plugins.cloudfoundry.transformation.visitors;
 
 import org.opentosca.toscana.model.node.Apache;
 import org.opentosca.toscana.model.node.Compute;

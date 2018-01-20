@@ -1,22 +1,30 @@
-package org.opentosca.toscana.plugins.cloudfoundry;
+package org.opentosca.toscana.plugins.cloudfoundry.transformation;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.model.EffectiveModel;
+import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.visitor.VisitableNode;
+import org.opentosca.toscana.plugins.cloudfoundry.FileCreator;
 import org.opentosca.toscana.plugins.cloudfoundry.application.Application;
 import org.opentosca.toscana.plugins.cloudfoundry.application.Provider;
 import org.opentosca.toscana.plugins.cloudfoundry.client.Connection;
-import org.opentosca.toscana.plugins.cloudfoundry.visitors.NodeSupported;
-import org.opentosca.toscana.plugins.cloudfoundry.visitors.NodeVisitors;
+import org.opentosca.toscana.plugins.cloudfoundry.transformation.sort.CloudFoundryNode;
+import org.opentosca.toscana.plugins.cloudfoundry.transformation.sort.CloudFoundryStack;
+import org.opentosca.toscana.plugins.cloudfoundry.transformation.sort.GraphSort;
+import org.opentosca.toscana.plugins.cloudfoundry.transformation.visitors.NodeSupported;
+import org.opentosca.toscana.plugins.cloudfoundry.transformation.visitors.NodeVisitors;
+import org.opentosca.toscana.plugins.kubernetes.visitor.util.ComputeNodeFindingVisitor;
 import org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle;
 
 import org.json.JSONException;
@@ -33,7 +41,9 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
     private Connection connection;
     private List<Application> applications;
     private final EffectiveModel model;
-    private Map<Application, Set<RootNode>> applicationNodes = new HashMap<>();
+    private Map<String, CloudFoundryNode> applicationNodes = new HashMap<>();
+    private Set<CloudFoundryNode> computeNodes = new HashSet<>();
+    private Set<CloudFoundryStack> stacks = new HashSet<>();
 
     public CloudFoundryLifecycle(TransformationContext context) throws IOException {
         super(context);
@@ -69,6 +79,7 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
         logger.info("Begin preparation for transformation to Cloud Foundry.");
         Map<String, String> properties = context.getProperties().getPropertyValues();
 
+        logger.debug("Checking for Properties");
         if (!properties.isEmpty()) {
             String username = properties.get(CF_PROPERTY_KEY_USERNAME);
             String password = properties.get(CF_PROPERTY_KEY_PASSWORD);
@@ -86,6 +97,25 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
                 provider.setOfferedService(connection.getServices());
             }
         }
+
+        logger.debug("Collecting Compute Nodes in Topology");
+        ComputeNodeFindingVisitor computeFinder = new ComputeNodeFindingVisitor();
+        model.getNodes().forEach(e -> {
+            e.accept(computeFinder);
+            CloudFoundryNode container = new CloudFoundryNode(e);
+            applicationNodes.put(e.getNodeName(), container);
+        });
+        computeFinder.getComputeNodes().forEach(e -> computeNodes.add(applicationNodes.get(e.getNodeName())));
+
+        logger.debug("Finding top Level Nodes");
+        GraphSort graph = new GraphSort(model);
+        Set<RootNode> topLevelNodes = graph.getTopLevelNode(
+            computeFinder.getComputeNodes().stream().map(Compute.class::cast).collect(Collectors.toList()),
+            e -> applicationNodes.get(e.getNodeName()).activateParentComputeNode()
+        );
+
+        logger.debug("Building complete Topology Stacks");
+        this.stacks.addAll(graph.buildStacks(topLevelNodes, applicationNodes));
 
         //TODO: check how many different applications there are and fill list with them
         //probably there must be a combination of application and set of nodes
