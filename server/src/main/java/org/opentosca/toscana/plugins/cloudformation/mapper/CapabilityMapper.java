@@ -16,6 +16,8 @@ import org.opentosca.toscana.model.capability.OsCapability;
 import org.opentosca.toscana.plugins.util.TransformationFailureException;
 
 import com.amazonaws.SdkClientException;
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.services.ec2.AmazonEC2;
 import com.amazonaws.services.ec2.AmazonEC2ClientBuilder;
 import com.amazonaws.services.ec2.model.DescribeImagesRequest;
@@ -57,9 +59,11 @@ public class CapabilityMapper {
         .build();
 
     private String awsRegion;
+    private AWSCredentials awsCredentials;
 
-    public CapabilityMapper(String awsRegion) {
+    public CapabilityMapper(String awsRegion, AWSCredentials awsCredentials) {
         this.awsRegion = awsRegion;
+        this.awsCredentials = awsCredentials;
     }
 
     /**
@@ -72,6 +76,7 @@ public class CapabilityMapper {
     public String mapOsCapabilityToImageId(OsCapability osCapability) throws SdkClientException, ParseException,
         IllegalArgumentException {
         AmazonEC2 ec2 = AmazonEC2ClientBuilder.standard()
+            .withCredentials(new AWSStaticCredentialsProvider(awsCredentials))
             .withRegion(awsRegion)
             .build();
         //need to set these
@@ -102,6 +107,9 @@ public class CapabilityMapper {
                 describeImagesRequest.withFilters(new Filter("architecture").withValues(ARCH_x86_64));
             } else if (osCapability.getArchitecture().get().equals(OsCapability.Architecture.x86_32)) {
                 describeImagesRequest.withFilters(new Filter("architecture").withValues(ARCH_x86_32));
+            } else {
+                throw new UnsupportedOperationException("This architecture is not supported " + osCapability
+                    .getArchitecture());
             }
         } else {
             //defaulting to 64 bit architecture
@@ -260,7 +268,7 @@ public class CapabilityMapper {
                 }
             }
             instanceType = getInstanceType(newNumCpus, newMemSize, instanceTypes);
-            if ("".equals(instanceType)) {
+            if (instanceType.isEmpty()) {
                 logger.debug("Scaling cpu failed");
                 logger.debug("Try to scale memory");
                 //try to scale mem
@@ -271,7 +279,7 @@ public class CapabilityMapper {
                     }
                 }
                 instanceType = getInstanceType(newNumCpus, newMemSize, instanceTypes);
-                if ("".equals(instanceType)) {
+                if (instanceType.isEmpty()) {
                     throw new TransformationFailureException("No combination of numCpus and memSize found");
                 } else {
                     logger.debug("Scaling memSize succeeded, memSize: {}", newMemSize);

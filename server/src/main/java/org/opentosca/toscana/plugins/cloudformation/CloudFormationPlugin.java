@@ -9,6 +9,8 @@ import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.core.transformation.properties.PropertyType;
 import org.opentosca.toscana.plugins.lifecycle.LifecycleAwarePlugin;
 
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -17,8 +19,8 @@ import org.springframework.stereotype.Component;
 public class CloudFormationPlugin extends LifecycleAwarePlugin<CloudFormationLifecycle> {
     public static final String AWS_REGION_KEY = "AWS Region";
     public static final String AWS_REGION_DEFAULT = "us-west-2";
-    public static final String AWS_KEY_ID_KEY = "AWS Access Key ID";
-    public static final String AWS_KEY_SECRET_KEY = "AWS Access Key Secret";
+    public static final String AWS_ACCESS_KEY_ID_KEY = "AWS Access Key ID";
+    public static final String AWS_SECRET_KEY_KEY = "AWS Secret Key";
     private final static Logger logger = LoggerFactory.getLogger(CloudFormationPlugin.class);
 
     public CloudFormationPlugin() {
@@ -29,30 +31,40 @@ public class CloudFormationPlugin extends LifecycleAwarePlugin<CloudFormationLif
         String platformId = "cloudformation";
         String platformName = "AWS CloudFormation";
         Set<Property> platformProperties = new HashSet<>();
-        /*String defaultKeyId = searchInCredentials();
-        String defaultKeySecret = searchInCredentials();
-        String defaultRegion = searchInConfig();*/
+        String defaultKeyId = "";
+        String defaultKeySecret = "";
+        try {
+            ProfileCredentialsProvider profileCredentialsProvider = new ProfileCredentialsProvider();
+            AWSCredentials awsCredentials = profileCredentialsProvider.getCredentials();
+            defaultKeyId = awsCredentials.getAWSAccessKeyId();
+            defaultKeySecret = awsCredentials.getAWSAccessKeyId();
+            System.out.println(awsCredentials.getAWSAccessKeyId());
+            System.out.println(awsCredentials.getAWSSecretKey());
+        } catch (Exception e) {
+            logger.debug("Did not find credentials on the system");
+        }
+        String defaultRegion = AWS_REGION_DEFAULT;
         platformProperties.add(new Property(
             AWS_REGION_KEY,
             PropertyType.TEXT,
             "The AWS Region this should be transformed to. (The imageId of possible EC2 machines depend on this)",
             true,
-            AWS_REGION_DEFAULT
-        ));/*
+            defaultRegion
+        ));
         platformProperties.add(new Property(
-            AWS_KEY_ID_KEY,
+            AWS_ACCESS_KEY_ID_KEY,
             PropertyType.TEXT,
             "The Access key id",
             true,
             defaultKeyId
         ));
         platformProperties.add(new Property(
-            AWS_KEY_SECRET_KEY,
+            AWS_SECRET_KEY_KEY,
             PropertyType.SECRET,
             "The Access key secret",
             true,
             defaultKeySecret
-        ));*/
+        ));
         return new Platform(platformId, platformName, platformProperties);
     }
 

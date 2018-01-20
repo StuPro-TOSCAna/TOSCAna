@@ -69,7 +69,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                 .ingress(ingress -> ingress.cidrIp(cidrIp), "tcp", 80, 22);
 
             // check what image id should be taken
-            CapabilityMapper capabilityMapper = new CapabilityMapper(cfnModule.getAWSRegion());
+            CapabilityMapper capabilityMapper = createCapabilityMapper();
 
             OsCapability computeOs = node.getOs();
             String imageId = capabilityMapper.mapOsCapabilityToImageId(computeOs);
@@ -86,7 +86,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                 .imageId(imageId)
                 .instanceType(instanceType);
         } catch (SdkClientException se) {
-            logger.error("Probably no internet connection");
+            logger.error("SDKClient failed, no valid credentials or no internet connection");
             throw new TransformationFailureException("Failed", se);
         } catch (Exception e) {
             logger.error("Error while creating EC2Instance resource.");
@@ -123,7 +123,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                 "password not set"));
             Integer port = node.getPort().orElse(3306);
             //check what values should be taken
-            CapabilityMapper capabilityMapper = new CapabilityMapper(cfnModule.getAWSRegion());
+            CapabilityMapper capabilityMapper = createCapabilityMapper();
             String dBInstanceClass = capabilityMapper.mapComputeCapabilityToInstanceType(hostedOnComputeCapability,
                 CapabilityMapper.RDS_DISTINCTION);
             Integer allocatedStorage = capabilityMapper.mapComputeCapabilityToRDSAllocatedStorage
@@ -288,5 +288,9 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                 e.printStackTrace();
             }
         }
+    }
+
+    public CapabilityMapper createCapabilityMapper() {
+        return new CapabilityMapper(cfnModule.getAWSRegion(), cfnModule.getAwsCredentials());
     }
 }

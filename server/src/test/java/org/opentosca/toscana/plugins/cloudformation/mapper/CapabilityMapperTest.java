@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.opentosca.toscana.core.BaseUnitTest;
-import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.model.capability.ContainerCapability;
 import org.opentosca.toscana.model.capability.OsCapability;
 import org.opentosca.toscana.model.node.Compute;
@@ -14,6 +13,7 @@ import org.opentosca.toscana.model.node.MysqlDbms;
 import org.opentosca.toscana.model.node.RootNode;
 
 import com.amazonaws.SdkClientException;
+import com.amazonaws.auth.BasicAWSCredentials;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Before;
@@ -21,30 +21,27 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import org.mockito.Mock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.util.Arrays.asList;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-import static org.opentosca.toscana.plugins.cloudformation.CloudFormationPlugin.AWS_REGION_DEFAULT;
+import static org.mockito.MockitoAnnotations.initMocks;
 import static org.opentosca.toscana.plugins.cloudformation.mapper.CapabilityMapper.EC2_DISTINCTION;
 import static org.opentosca.toscana.plugins.cloudformation.mapper.CapabilityMapper.RDS_DISTINCTION;
 
 @RunWith(Parameterized.class)
 public class CapabilityMapperTest extends BaseUnitTest {
     private final static Logger logger = LoggerFactory.getLogger(CapabilityMapperTest.class);
-    private Integer numCpus;
-    private Integer memSize;
-    private Integer diskSize;
+    private int numCpus;
+    private int memSize;
+    private int diskSize;
     private String expectedEC2;
     private String expectedRDS;
-    private Integer expectedDiskSize;
+    private int expectedDiskSize;
     private CapabilityMapper capabilityMapper;
 
     public CapabilityMapperTest(Integer numCpus, Integer memSize, Integer diskSize, String expectedEC2, String
-        expectedRDS, Integer expectedDiskSize) {
+        expectedRDS, Integer expectedDiskSize) throws ParseException {
         this.numCpus = numCpus;
         this.memSize = memSize;
         this.diskSize = diskSize;
@@ -52,6 +49,7 @@ public class CapabilityMapperTest extends BaseUnitTest {
         this.expectedRDS = expectedRDS;
         this.expectedDiskSize = expectedDiskSize;
         logger.debug("{}, {}, {}, {}, {}, {}", numCpus, memSize, diskSize, expectedEC2, expectedRDS, expectedDiskSize);
+        this.capabilityMapper = new CapabilityMapper("us-west-2", new BasicAWSCredentials("", ""));
     }
 
     @Parameters
@@ -65,12 +63,14 @@ public class CapabilityMapperTest extends BaseUnitTest {
     }
 
     @Before
-    public void setUp() throws Exception {
-        this.capabilityMapper = new CapabilityMapper(AWS_REGION_DEFAULT);
+    public void setUp() {
+        initMocks(this);
     }
 
     @Test
     public void testMapOsCapabilityToImageId() throws ParseException {
+        // This is useless because it returns "ami-testami" everytime, but maybe it will become valid if we test with
+        // credentials
         try {
             String imageId = capabilityMapper.mapOsCapabilityToImageId(createOSCapability());
             Assert.assertThat(imageId, CoreMatchers.containsString("ami-"));
@@ -95,7 +95,7 @@ public class CapabilityMapperTest extends BaseUnitTest {
 
     @Test
     public void testMapComputeCapabilityToRDSAllocatedStorage() {
-        Integer newDiskSize = capabilityMapper.mapComputeCapabilityToRDSAllocatedStorage(createContainerCapability
+        int newDiskSize = capabilityMapper.mapComputeCapabilityToRDSAllocatedStorage(createContainerCapability
             (numCpus,
                 memSize, diskSize));
         Assert.assertEquals(newDiskSize, expectedDiskSize);
