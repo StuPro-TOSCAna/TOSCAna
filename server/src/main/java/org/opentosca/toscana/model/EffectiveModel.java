@@ -45,7 +45,7 @@ public class EffectiveModel {
     }
 
     private void init() {
-        if (!serviceGraph.requiredInputsSet()){
+        if (!serviceGraph.requiredInputsSet()) {
             throw new IllegalStateException("Must not initialize backing model: Not all required inputs are set");
         }
         nodeMap = TypeWrapper.wrapNodes(serviceGraph);
@@ -66,21 +66,21 @@ public class EffectiveModel {
     }
 
     public Set<RootNode> getNodes() {
-        if (!initialized){
+        if (!initialized) {
             init();
         }
         return topology.vertexSet();
     }
 
     public Map<String, RootNode> getNodeMap() {
-        if (!initialized){
+        if (!initialized) {
             init();
         }
         return Collections.unmodifiableMap(nodeMap);
     }
 
     public Graph<RootNode, RootRelationship> getTopology() {
-        if (!initialized){
+        if (!initialized) {
             init();
         }
         return topology;

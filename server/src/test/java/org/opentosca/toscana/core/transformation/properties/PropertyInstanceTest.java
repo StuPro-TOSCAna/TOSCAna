@@ -1,7 +1,6 @@
 package org.opentosca.toscana.core.transformation.properties;
 
 import java.util.HashSet;
-import java.util.stream.Collectors;
 
 import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.core.csar.CsarImpl;
@@ -26,7 +25,7 @@ public class PropertyInstanceTest extends BaseUnitTest {
     private Transformation transformation;
 
     @Before
-    public void init() throws Exception {
+    public void init() {
         HashSet<PlatformProperty> properties = new HashSet<>();
         for (int i = 0; i < 10; i++) {
             properties.add(new PlatformProperty("p-" + i, PropertyType.INTEGER, "", i < 5));
@@ -43,12 +42,12 @@ public class PropertyInstanceTest extends BaseUnitTest {
     }
 
     @Test
-    public void checkStateNoPropsSet() throws Exception {
+    public void checkStateNoPropsSet() {
         assertEquals(INPUT_REQUIRED, this.transformation.getState());
     }
 
     @Test
-    public void checkStateAllRequiredPropsSet() throws Exception {
+    public void checkStateAllRequiredPropsSet() {
         for (int i = 0; i < 5; i++) {
             assertEquals(INPUT_REQUIRED, this.transformation.getState());
             this.instance.setPropertyValue("p-" + i, "" + i);
@@ -59,7 +58,7 @@ public class PropertyInstanceTest extends BaseUnitTest {
     }
 
     @Test
-    public void checkAllPropsSet() throws Exception {
+    public void checkAllPropsSet() {
         for (int i = 0; i < 10; i++) {
             if (i < 5) {
                 assertEquals(INPUT_REQUIRED, this.transformation.getState());
@@ -73,7 +72,7 @@ public class PropertyInstanceTest extends BaseUnitTest {
     }
 
     @Test
-    public void checkSetInvalidProperty() throws Exception {
+    public void checkSetInvalidProperty() {
         for (int i = 0; i < 4; i++) {
             assertEquals(INPUT_REQUIRED, this.transformation.getState());
             this.instance.setPropertyValue("p-" + i, "" + i);

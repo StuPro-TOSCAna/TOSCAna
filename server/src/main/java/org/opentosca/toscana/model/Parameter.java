@@ -72,7 +72,7 @@ public class Parameter extends DescribableEntity implements Property {
 
     private void finalizeGraph() {
         ServiceGraph graph = getBackingEntity().getGraph();
-        if (graph.requiredInputsSet()){
+        if (graph.requiredInputsSet()) {
             graph.finalizeGraph();
         }
     }

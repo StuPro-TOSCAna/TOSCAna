@@ -2,11 +2,9 @@ package org.opentosca.toscana.plugins.cloudformation;
 
 import java.io.File;
 import java.util.HashSet;
-import java.util.stream.Collectors;
 
 import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.transformation.Transformation;
-import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
 import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.plugins.BaseTransformTest;
