@@ -26,7 +26,7 @@ public class LinkResolver {
     /**
      For every encountered TOSCA symbolic link, removes link and creates an appropriate edge.
      */
-    public static synchronized void resolveLinks(ServiceGraph graph) {
+    public static void resolveLinks(ServiceGraph graph) {
         resolveRequirements(graph);
         resolveRepositories(graph);
         resolveImplementationArtifacts(graph);
