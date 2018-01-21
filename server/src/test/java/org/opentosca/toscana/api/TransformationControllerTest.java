@@ -28,9 +28,8 @@ import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.logging.LogEntry;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.platform.PlatformService;
-import org.opentosca.toscana.core.transformation.properties.Property;
+import org.opentosca.toscana.core.transformation.properties.PlatformProperty;
 import org.opentosca.toscana.core.transformation.properties.PropertyType;
-import org.opentosca.toscana.core.transformation.properties.SimpleProperty;
 
 import ch.qos.logback.classic.Level;
 import com.jayway.jsonpath.JsonPath;
@@ -188,13 +187,13 @@ public class TransformationControllerTest extends BaseSpringTest {
         Set<Platform> platforms = new HashSet<>();
 
         for (int i = 0; i < 5; i++) {
-            HashSet<Property> properties = new HashSet<>();
+            HashSet<PlatformProperty> properties = new HashSet<>();
             for (PropertyType type : PropertyType.values()) {
-                properties.add(new SimpleProperty(type.getTypeName() + "_property", type));
+                properties.add(new PlatformProperty(type.getTypeName() + "_property", type));
             }
             char[] chars = "abcdefghijklmnopqrstuvwxyz".toCharArray();
             if (i == 0) {
-                properties.add(new SimpleProperty(
+                properties.add(new PlatformProperty(
                     PROPERTY_TEST_DEFAULT_VALUE_KEY,
                     PropertyType.TEXT,
                     "",

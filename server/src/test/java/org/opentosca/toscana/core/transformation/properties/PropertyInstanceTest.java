@@ -25,10 +25,10 @@ public class PropertyInstanceTest extends BaseUnitTest {
     private Transformation transformation;
 
     @Before
-    public void init() throws Exception {
-        HashSet<Property> properties = new HashSet<>();
+    public void init() {
+        HashSet<PlatformProperty> properties = new HashSet<>();
         for (int i = 0; i < 10; i++) {
-            properties.add(new SimpleProperty("p-" + i, PropertyType.INTEGER, "", i < 5));
+            properties.add(new PlatformProperty("p-" + i, PropertyType.INTEGER, "", i < 5));
         }
         Platform testPlatform = new Platform("test", "test", properties);
 
@@ -38,16 +38,16 @@ public class PropertyInstanceTest extends BaseUnitTest {
             mock(Log.class)
         );
 
-        this.instance = new PropertyInstance(properties, transformation);
+        this.instance = new PropertyInstance(new HashSet<>(properties), transformation);
     }
 
     @Test
-    public void checkStateNoPropsSet() throws Exception {
+    public void checkStateNoPropsSet() {
         assertEquals(INPUT_REQUIRED, this.transformation.getState());
     }
 
     @Test
-    public void checkStateAllRequiredPropsSet() throws Exception {
+    public void checkStateAllRequiredPropsSet() {
         for (int i = 0; i < 5; i++) {
             assertEquals(INPUT_REQUIRED, this.transformation.getState());
             this.instance.setPropertyValue("p-" + i, "" + i);
@@ -58,7 +58,7 @@ public class PropertyInstanceTest extends BaseUnitTest {
     }
 
     @Test
-    public void checkAllPropsSet() throws Exception {
+    public void checkAllPropsSet() {
         for (int i = 0; i < 10; i++) {
             if (i < 5) {
                 assertEquals(INPUT_REQUIRED, this.transformation.getState());
@@ -72,7 +72,7 @@ public class PropertyInstanceTest extends BaseUnitTest {
     }
 
     @Test
-    public void checkSetInvalidProperty() throws Exception {
+    public void checkSetInvalidProperty() {
         for (int i = 0; i < 4; i++) {
             assertEquals(INPUT_REQUIRED, this.transformation.getState());
             this.instance.setPropertyValue("p-" + i, "" + i);

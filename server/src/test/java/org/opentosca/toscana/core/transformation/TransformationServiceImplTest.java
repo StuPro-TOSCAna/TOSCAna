@@ -12,9 +12,9 @@ import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.transformation.artifacts.TargetArtifact;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.platform.Platform;
+import org.opentosca.toscana.core.transformation.properties.PlatformProperty;
 import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.core.transformation.properties.PropertyType;
-import org.opentosca.toscana.core.transformation.properties.SimpleProperty;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -100,7 +100,7 @@ public class TransformationServiceImplTest extends BaseSpringTest {
 
         //Generate Mock SimpleProperty
         Map<String, Property> propMap = new HashMap<>();
-        propMap.put("mock_prop", new SimpleProperty("mock_prop", PropertyType.NAME));
+        propMap.put("mock_prop", new PlatformProperty("mock_prop", PropertyType.NAME));
 
         when(csar.getModelSpecificProperties()).thenReturn(propMap);
 

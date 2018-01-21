@@ -4,13 +4,14 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.opentosca.toscana.core.transformation.properties.PlatformProperty;
 import org.opentosca.toscana.core.transformation.properties.Property;
 
 public class Platform {
 
     public final String id;
     public final String name;
-    public final Set<Property> properties;
+    public final Set<PlatformProperty> properties;
 
     /**
      Creates a new platform.
@@ -19,7 +20,7 @@ public class Platform {
      @param name       displayable name of platform. must not be an empty string
      @param properties the properties the platform requires.
      */
-    public Platform(String id, String name, Set<Property> properties) {
+    public Platform(String id, String name, Set<PlatformProperty> properties) {
         this.id = id;
         this.name = name;
         this.properties = properties;
@@ -44,7 +45,9 @@ public class Platform {
      @return a list of properties which are necessary for a transformation to this platform.
      */
     public Set<Property> getProperties() {
-        return Collections.unmodifiableSet(properties);
+        Set<Property> props = new HashSet<>();
+        this.properties.forEach(e -> props.add(e.copy()));
+        return Collections.unmodifiableSet(props);
     }
 
     @Override

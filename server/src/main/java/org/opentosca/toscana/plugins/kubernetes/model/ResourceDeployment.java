@@ -29,7 +29,7 @@ public class ResourceDeployment {
                 .withName(e.getCleanStackName())
                 .addAllToPorts(e.getOpenPorts().stream().map(Port::toContainerPort).collect(Collectors.toList()))
                 .build();
-            
+
             containers.add(container);
         });
 

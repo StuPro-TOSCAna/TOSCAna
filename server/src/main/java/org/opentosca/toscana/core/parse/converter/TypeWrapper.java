@@ -10,7 +10,7 @@ import org.opentosca.toscana.core.parse.converter.util.NodeTypeResolver;
 import org.opentosca.toscana.core.parse.converter.util.ToscaStructure;
 import org.opentosca.toscana.core.parse.model.Entity;
 import org.opentosca.toscana.core.parse.model.MappingEntity;
-import org.opentosca.toscana.core.parse.model.ServiceModel;
+import org.opentosca.toscana.core.parse.model.ServiceGraph;
 import org.opentosca.toscana.model.node.RootNode;
 
 import org.apache.commons.lang.reflect.ConstructorUtils;
@@ -19,9 +19,9 @@ import static org.opentosca.toscana.model.node.RootNode.TYPE;
 
 public class TypeWrapper {
 
-    public static Map<String, RootNode> wrapNodes(ServiceModel serviceModel) {
+    public static Map<String, RootNode> wrapNodes(ServiceGraph graph) {
         Map<String, RootNode> nodes = new HashMap<>();
-        Iterator<Entity> it = serviceModel.iterator(ToscaStructure.NODE_TEMPLATES);
+        Iterator<Entity> it = graph.iterator(ToscaStructure.NODE_TEMPLATES);
         while (it.hasNext()) {
             RootNode node = wrapNode((MappingEntity) it.next());
             nodes.put(node.getEntityName(), node);
