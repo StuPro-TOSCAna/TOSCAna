@@ -51,7 +51,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
      @param logger    Logger for logging visitor behaviour
      @param cfnModule Module to build the template model
      */
-    public CloudFormationNodeVisitor(Logger logger, CloudFormationModule cfnModule) throws Exception {
+    public CloudFormationNodeVisitor(Logger logger, CloudFormationModule cfnModule) {
         this.logger = logger;
         this.cfnModule = cfnModule;
     }
@@ -103,11 +103,11 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             //get the name of the server where the dbms this node is hosted on, is hosted on
             String serverName;
             ComputeCapability hostedOnComputeCapability;
-            if (exactlyOneFulfiller(node.host)) {
-                Dbms dbms = node.host.getFulfillers().iterator().next();
+            if (exactlyOneFulfiller(node.getHost())) {
+                Dbms dbms = node.getHost().getFulfillers().iterator().next();
                 if (exactlyOneFulfiller(dbms.getHost())) {
                     Compute compute = dbms.getHost().getFulfillers().iterator().next();
-                    serverName = toAlphanumerical(compute.getNodeName());
+                    serverName = toAlphanumerical(compute.getEntityName());
                     hostedOnComputeCapability = compute.getHost();
                 } else {
                     throw new IllegalStateException("Got " + dbms.getHost().getFulfillers().size() + " instead of one" +
@@ -291,6 +291,6 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
     }
 
     public CapabilityMapper createCapabilityMapper() {
-        return new CapabilityMapper(cfnModule.getAWSRegion(), cfnModule.getAwsCredentials());
+        return new CapabilityMapper(cfnModule.getAWSRegion(), cfnModule.getAwsCredentials(), logger);
     }
 }

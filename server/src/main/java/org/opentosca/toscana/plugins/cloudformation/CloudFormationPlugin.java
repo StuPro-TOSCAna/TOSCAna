@@ -31,7 +31,7 @@ public class CloudFormationPlugin extends LifecycleAwarePlugin<CloudFormationLif
     private static Platform getPlatformDetails() {
         String platformId = "cloudformation";
         String platformName = "AWS CloudFormation";
-        Set<Property> platformProperties = new HashSet<>();
+        Set<PlatformProperty> platformProperties = new HashSet<>();
         String defaultKeyId = "";
         String defaultKeySecret = "";
         try {

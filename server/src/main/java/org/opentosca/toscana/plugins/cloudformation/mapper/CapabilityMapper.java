@@ -26,13 +26,12 @@ import com.amazonaws.services.ec2.model.Filter;
 import com.amazonaws.services.ec2.model.Image;
 import com.google.common.collect.ImmutableList;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class CapabilityMapper {
 
     public static final String EC2_DISTINCTION = "EC2";
     public static final String RDS_DISTINCTION = "RDS";
-    private static final Logger logger = LoggerFactory.getLogger(CapabilityMapper.class);
+    private final Logger logger;
     private static final String ARCH_x86_32 = "i386";
     private static final String ARCH_x86_64 = "x86_64";
 
@@ -61,9 +60,10 @@ public class CapabilityMapper {
     private String awsRegion;
     private AWSCredentials awsCredentials;
 
-    public CapabilityMapper(String awsRegion, AWSCredentials awsCredentials) {
+    public CapabilityMapper(String awsRegion, AWSCredentials awsCredentials, Logger logger) {
         this.awsRegion = awsRegion;
         this.awsCredentials = awsCredentials;
+        this.logger = logger;
     }
 
     /**
@@ -171,7 +171,7 @@ public class CapabilityMapper {
         IllegalArgumentException {
         //TODO what to do with disk size?
         Integer numCpus = computeCapability.getNumCpus().orElse(0);
-        Integer memSize = computeCapability.getMemSizeInMB().orElse(0);
+        Integer memSize = computeCapability.getMemSizeInMb().orElse(0);
         //default type the smallest
         final ImmutableList<InstanceType> instanceTypes;
         if (EC2_DISTINCTION.equals(distinction)) {
@@ -214,7 +214,7 @@ public class CapabilityMapper {
     public Integer mapComputeCapabilityToRDSAllocatedStorage(ComputeCapability computeCapability) {
         final Integer minSize = 20;
         final Integer maxSize = 6144;
-        Integer diskSize = computeCapability.getDiskSizeInMB().orElse(minSize * 1000);
+        Integer diskSize = computeCapability.getDiskSizeInMb().orElse(minSize * 1000);
         diskSize = diskSize / 1000;
         if (diskSize > maxSize) {
             logger.debug("Disk size: {}", maxSize);
@@ -254,7 +254,7 @@ public class CapabilityMapper {
                                    List<Integer> allNumCpus, List<Integer> allMemSizes) throws
         TransformationFailureException {
         String instanceType = getInstanceType(numCpus, memSize, instanceTypes);
-        if ("".equals(instanceType)) {
+        if (instanceType.isEmpty()) {
             Integer newNumCpus = numCpus;
             Integer newMemSize = memSize;
             //the combination does not exist
