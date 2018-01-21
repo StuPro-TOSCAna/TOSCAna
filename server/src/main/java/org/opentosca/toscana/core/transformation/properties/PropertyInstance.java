@@ -31,7 +31,7 @@ public class PropertyInstance {
         this.propertyValues = new HashMap<>();
         this.properties = properties;
         properties.forEach(e -> {
-            propertyValues.put(e.getKey(), e.getDefaultValue());
+            propertyValues.put(e.getKey(), e.getDefaultValue().orElse(null));
         });
         //Set state to input required if there are required properties
         if (properties.stream().anyMatch(Property::isRequired)) {
@@ -44,7 +44,7 @@ public class PropertyInstance {
 
      @throws IllegalArgumentException if a property with the given key cannot be found or if the entered value is invalid
      */
-    public void setPropertyValue(Property property, String value) {
+    public void setPropertyValue(PlatformProperty property, String value) {
         this.setPropertyValue(property.getKey(), value);
     }
 
@@ -103,10 +103,11 @@ public class PropertyInstance {
         for (Property p : properties) {
             if (p.getKey().equals(key)) {
                 if (p.getType().validate(value)) {
+                    p.setValue(value);
                     this.propertyValues.put(key, value);
                     return;
                 } else {
-                    throw new IllegalArgumentException("The Property value is invalid");
+                    throw new IllegalArgumentException("The SimpleProperty value is invalid");
                 }
             }
         }

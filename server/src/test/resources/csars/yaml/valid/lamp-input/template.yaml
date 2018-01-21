@@ -14,13 +14,17 @@ topology_template:
   inputs:
     database_name:
       type: string
+      description: Name for the database
     database_port:
       type: integer
+      description: Port for the database
     database_password:
       type: string
+      description: Password for the database
     database_user:
       type: string
-
+      description: User name for the database
+      
   node_templates:
     my_app:
       type: tosca.nodes.WebApplication
@@ -68,7 +72,7 @@ topology_template:
         - host: mysql_dbms
       artifacts:
         my_sql_table:
-          file: mysql/createtable.sql
+          file: my_db/createtable.sql
           type: SQL
 
     mysql_dbms:
@@ -85,24 +89,13 @@ topology_template:
         host:
           properties:
             num_cpus: 1
-            disk_size: 25 GB
-            mem_size: 2048 MB
+            disk_size: 4 GB
+            mem_size: 1024 MB
         os:
           properties:
             type: linux
             distribution: ubuntu
             version: 16.04
-            
-  inputs:
-    database_password:
-      type: string
-      description: Password for the database
-    database_name:
-      type: string
-      description: Name for the database
-    database_port:
-      description: Port for the database
-      type: integer
 
   outputs:
     public_address:
@@ -112,5 +105,4 @@ topology_template:
     port:
       type: string
       description: Port of the server
-      type: string
       value: { get_attribute: [ server, port ] }

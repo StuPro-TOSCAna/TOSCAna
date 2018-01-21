@@ -33,7 +33,7 @@ public class HALRelationUtils {
                     break;
             }
             System.err.println(entry.getKey() + ": " + found);
-            //assertTrue("Could not find link in Relations of the json response: " + entry.getKey(), );
+            //assertTrue("Could not find link in Relations of the json response: " + entry.getName(), );
         }
     }
 }

@@ -35,7 +35,7 @@ public class TransformationImpl implements Transformation {
 
         //Collect Possible Properties From the Platform and the Model
         Set<Property> properties = new HashSet<>();
-        properties.addAll(csar.getModelSpecificProperties());
+        properties.addAll(csar.getModelSpecificProperties().values());
         properties.addAll(targetPlatform.getProperties());
 
         // transformationState can get set to INPUT_REQUIRED by this call
@@ -65,7 +65,6 @@ public class TransformationImpl implements Transformation {
     /**
      @return if this transformation object's state is <code>DONE</code>, returns the target artifact of the
      transformation wrapped in an Optional. Else returns empty Optional.
-     // TODO change to Optional
      */
     @Override
     public Optional<TargetArtifact> getTargetArtifact() {

@@ -1,21 +1,16 @@
 package org.opentosca.toscana.model.node;
 
-import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 
-import org.opentosca.toscana.model.capability.Capability;
-import org.opentosca.toscana.model.capability.EndpointCapability;
+import org.opentosca.toscana.core.parse.model.MappingEntity;
 import org.opentosca.toscana.model.capability.PublicEndpointCapability;
 import org.opentosca.toscana.model.datatype.Range;
-import org.opentosca.toscana.model.operation.StandardLifecycle;
-import org.opentosca.toscana.model.relation.RoutesTo;
-import org.opentosca.toscana.model.requirement.ApplicationRequirement;
-import org.opentosca.toscana.model.requirement.Requirement;
+import org.opentosca.toscana.model.requirement.NetworkRequirement;
+import org.opentosca.toscana.model.util.ToscaKey;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  Represents logical function that be used in conjunction with a Floating Address
@@ -23,60 +18,76 @@ import lombok.Data;
  (e.g., for a clustered or scaled application).
  (TOSCA Simple Profile in YAML Version 1.1, p.177)
  */
-@Data
+@EqualsAndHashCode
+@ToString
 public class LoadBalancer extends RootNode {
 
-    private final String algorithm;
-
-    private final PublicEndpointCapability client;
-
-    private final Requirement<EndpointCapability, RootNode, RoutesTo> application;
-
-    @Builder
-    public LoadBalancer(String algorithm,
-                        PublicEndpointCapability client,
-                        Requirement<EndpointCapability, RootNode, RoutesTo> application,
-                        String nodeName,
-                        StandardLifecycle standardLifecycle,
-                        Set<Requirement> requirements,
-                        Set<Capability> capabilities,
-                        String description) {
-        super(nodeName, standardLifecycle, requirements, capabilities, description);
-        client.setOccurrence(Range.ANY);
-        this.client = Objects.requireNonNull(client);
-        application.setOccurrence(Range.ANY);
-        this.application = ApplicationRequirement.getFallback(application);
-        this.algorithm = Objects.requireNonNull(algorithm);
-
-        this.capabilities.add(this.client);
-        this.requirements.add(this.application);
-    }
-
     /**
-     @param nodeName {@link #nodeName}
-     @param client   {@link #client}
+     The optional algorithm for this load balancer. Experimental.
      */
-    public static LoadBalancerBuilder builder(String nodeName,
-                                              PublicEndpointCapability client) {
-        return new LoadBalancerBuilder()
-            .nodeName(nodeName)
-            .client(client);
+    public static ToscaKey<String> ALGORITHM = new ToscaKey<>(PROPERTIES, "algorithm");
+    public static ToscaKey<PublicEndpointCapability> CLIENT = new ToscaKey<>(CAPABILITIES, "client")
+        .type(PublicEndpointCapability.class);
+    public static ToscaKey<NetworkRequirement> APPLICATION = new ToscaKey<>(REQUIREMENTS, "application")
+        .type(NetworkRequirement.class);
+
+    public LoadBalancer(MappingEntity mappingEntity) {
+        super(mappingEntity);
+        init();
+    }
+
+    private void init() {
+        setDefault(CLIENT, (PublicEndpointCapability) new PublicEndpointCapability(getChildEntity(CLIENT)).setOccurrence(Range.ANY));
+        setDefault(APPLICATION, new NetworkRequirement(getChildEntity(APPLICATION)));
     }
 
     /**
-     @return {@link #algorithm}
+     @return {@link #CLIENT}
+     */
+    public PublicEndpointCapability getClient() {
+        return get(CLIENT);
+    }
+
+    /**
+     Sets {@link #CLIENT}
+     */
+    public LoadBalancer setClient(PublicEndpointCapability client) {
+        set(CLIENT, client);
+        return this;
+    }
+
+    /**
+     @return {@link #APPLICATION}
+     */
+    public NetworkRequirement getApplication() {
+        return get(APPLICATION);
+    }
+
+    /**
+     Sets {@link #APPLICATION}
+     */
+    public LoadBalancer setApplication(NetworkRequirement application) {
+        set(APPLICATION, application);
+        return this;
+    }
+
+    /**
+     @return {@link #ALGORITHM}
      */
     public Optional<String> getAlgorithm() {
-        return Optional.ofNullable(algorithm);
+        return Optional.ofNullable(get(ALGORITHM));
+    }
+
+    /**
+     Sets {@link #ALGORITHM}
+     */
+    public LoadBalancer setAlgorithm(String algorithm) {
+        set(ALGORITHM, algorithm);
+        return this;
     }
 
     @Override
     public void accept(NodeVisitor v) {
         v.visit(this);
-    }
-
-    public static class LoadBalancerBuilder extends RootNodeBuilder {
-        protected Set<Requirement> requirements = super.requirements;
-        protected Set<Capability> capabilities = super.capabilities;
     }
 }

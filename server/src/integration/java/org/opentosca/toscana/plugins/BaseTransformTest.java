@@ -13,8 +13,6 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.opentosca.toscana.core.testutils.TestUtils.getMockLog;
-
 /**
  This class represents a integration test that tries to transform a Transformation of a model using
  a plugin.
@@ -100,7 +98,7 @@ public abstract class BaseTransformTest extends BaseIntegrationTest {
      initializes the transformation context
      */
     protected TransformationContext initContext() throws Exception {
-        return new TransformationContext(contentDir, workingDir, getMockLog(), model, getProperties());
+        return new TransformationContext(contentDir, workingDir, log, model, getProperties());
     }
 
     /**
@@ -121,7 +119,7 @@ public abstract class BaseTransformTest extends BaseIntegrationTest {
     protected void checkAssumptions() {
         // No assumptions by default
     }
-    
+
     /**
      This method is intended to build and return the effective model used in this test
      */

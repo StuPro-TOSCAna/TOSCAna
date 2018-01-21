@@ -18,7 +18,7 @@ import static org.opentosca.toscana.plugins.cloudformation.CloudFormationPlugin.
 public class CloudFormationLifecycle extends AbstractLifecycle {
     private final EffectiveModel model;
     private String awsRegion;
-    
+
     public CloudFormationLifecycle(TransformationContext context) throws IOException {
         super(context);
         model = context.getModel();

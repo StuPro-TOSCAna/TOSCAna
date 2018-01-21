@@ -1,81 +1,93 @@
 package org.opentosca.toscana.model.node;
 
-import java.util.Set;
-
+import org.opentosca.toscana.core.parse.model.MappingEntity;
 import org.opentosca.toscana.model.capability.AdminEndpointCapability;
-import org.opentosca.toscana.model.capability.Capability;
 import org.opentosca.toscana.model.capability.ContainerCapability;
-import org.opentosca.toscana.model.capability.DatabaseEndpointCapability;
 import org.opentosca.toscana.model.capability.EndpointCapability;
-import org.opentosca.toscana.model.datatype.Credential;
-import org.opentosca.toscana.model.operation.StandardLifecycle;
-import org.opentosca.toscana.model.relation.HostedOn;
-import org.opentosca.toscana.model.requirement.Requirement;
+import org.opentosca.toscana.model.util.ToscaKey;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  Represents an abstract software component or service that is capable of hosting and providing management operations
  for one or more {@link WebApplication} nodes.
  <p>
- This node SHALL export both a secure endpoint capability ({@link #adminEndpoint}), typically for
- administration, as well as a regular endpoint ({@link #dataEndpoint}) for serving data.
+ This node SHALL export both a secure endpoint capability ({@link #ADMIN_ENDPOINT}), typically for
+ administration, as well as a regular endpoint ({@link #DATA_ENDPOINT}) for serving data.
  (TOSCA Simple Profile in YAML Version 1.1, p.171)
  */
-@Data
+@EqualsAndHashCode
+@ToString
 public class WebServer extends SoftwareComponent {
 
-    private final EndpointCapability dataEndpoint;
+    public static ToscaKey<EndpointCapability> DATA_ENDPOINT = new ToscaKey<>(CAPABILITIES, "data_endpoint")
+        .type(EndpointCapability.class);
 
-    private final AdminEndpointCapability adminEndpoint;
+    public static ToscaKey<AdminEndpointCapability> ADMIN_ENDPOINT = new ToscaKey<>(CAPABILITIES, "admin_endpoint")
+        .type(AdminEndpointCapability.class);
+    public static ToscaKey<ContainerCapability> CONTAINER_HOST = new ToscaKey<>(CAPABILITIES, "host")
+        .type(ContainerCapability.class);
 
-    private final ContainerCapability containerHost;
+    public WebServer(MappingEntity mappingEntity) {
+        super(mappingEntity);
+        init();
+    }
 
-    @Builder
-    protected WebServer(String componentVersion,
-                        Credential adminCredential,
-                        Requirement<ContainerCapability, Compute, HostedOn> host,
-                        ContainerCapability containerHost,
-                        EndpointCapability dataEndpoint,
-                        AdminEndpointCapability adminEndpoint,
-                        String nodeName,
-                        StandardLifecycle standardLifecycle,
-                        Set<Requirement> requirements,
-                        Set<Capability> capabilities,
-                        String description) {
-        super(componentVersion, adminCredential, host, nodeName, standardLifecycle, requirements, capabilities, description);
-        this.containerHost = ContainerCapability.getFallback(containerHost);
-        this.dataEndpoint = DatabaseEndpointCapability.getFallback(dataEndpoint);
-        this.adminEndpoint = AdminEndpointCapability.getFallback(adminEndpoint);
-
-        this.capabilities.add(this.containerHost);
-        this.capabilities.add(this.dataEndpoint);
-        this.capabilities.add(this.adminEndpoint);
+    private void init() {
+        setDefault(DATA_ENDPOINT, new EndpointCapability(getChildEntity(DATA_ENDPOINT)));
+        setDefault(ADMIN_ENDPOINT, new AdminEndpointCapability(getChildEntity(ADMIN_ENDPOINT)));
+        setDefault(CONTAINER_HOST, new ContainerCapability(getChildEntity(CONTAINER_HOST)));
     }
 
     /**
-     @param nodeName      {@link #nodeName}
-     @param dataEndpoint  {@link #dataEndpoint}
-     @param adminEndpoint {@link #adminEndpoint}
+     @return {@link #DATA_ENDPOINT}
      */
-    public static WebServerBuilder builder(String nodeName,
-                                           EndpointCapability dataEndpoint,
-                                           AdminEndpointCapability adminEndpoint) {
-        return new WebServerBuilder()
-            .nodeName(nodeName)
-            .dataEndpoint(dataEndpoint)
-            .adminEndpoint(adminEndpoint);
+    public EndpointCapability getDataEndpoint() {
+        return get(DATA_ENDPOINT);
+    }
+
+    /**
+     Sets {@link #DATA_ENDPOINT}
+     */
+    public WebServer setDataEndpoint(EndpointCapability dataEndpoint) {
+        set(DATA_ENDPOINT, dataEndpoint);
+        return this;
+    }
+
+    /**
+     @return {@link #ADMIN_ENDPOINT}
+     */
+    public AdminEndpointCapability getAdminEndpoint() {
+        return get(ADMIN_ENDPOINT);
+    }
+
+    /**
+     Sets {@link #ADMIN_ENDPOINT}
+     */
+    public WebServer setAdminEndpoint(AdminEndpointCapability adminEndpoint) {
+        set(ADMIN_ENDPOINT, adminEndpoint);
+        return this;
+    }
+
+    /**
+     @return {@link #CONTAINER_HOST}
+     */
+    public ContainerCapability getContainerHost() {
+        return get(CONTAINER_HOST);
+    }
+
+    /**
+     Sets {@link #CONTAINER_HOST}
+     */
+    public WebServer setContainerHost(ContainerCapability containerHost) {
+        set(CONTAINER_HOST, containerHost);
+        return this;
     }
 
     @Override
     public void accept(NodeVisitor v) {
         v.visit(this);
-    }
-
-    public static class WebServerBuilder extends SoftwareComponentBuilder {
-        protected Set<Requirement> requirements = super.requirements;
-        protected Set<Capability> capabilities = super.capabilities;
     }
 }

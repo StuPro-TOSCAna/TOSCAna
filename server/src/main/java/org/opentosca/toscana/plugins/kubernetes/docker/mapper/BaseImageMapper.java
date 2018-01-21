@@ -49,7 +49,7 @@ public class BaseImageMapper {
     private final DockerBaseImages[] baseImages;
 
     private MapperEngine engine;
-    
+
     @Autowired
     public BaseImageMapper(DockerBaseImages[] dockerBaseImages, TagStorage tagStorage) {
         this.baseImages = dockerBaseImages;

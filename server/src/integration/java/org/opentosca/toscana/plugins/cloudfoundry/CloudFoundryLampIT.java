@@ -1,12 +1,13 @@
 package org.opentosca.toscana.plugins.cloudfoundry;
 
 import java.io.File;
+import java.util.HashSet;
 
+import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
 import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.plugins.BaseTransformTest;
-import org.opentosca.toscana.plugins.testdata.TestEffectiveModels;
 
 import org.apache.commons.io.FileUtils;
 
@@ -41,7 +42,7 @@ public class CloudFoundryLampIT extends BaseTransformTest {
 
     @Override
     protected EffectiveModel getModel() throws Exception {
-        return TestEffectiveModels.getLampModel();
+        return new EffectiveModel(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, log);
     }
 
     @Override
@@ -57,7 +58,7 @@ public class CloudFoundryLampIT extends BaseTransformTest {
 
     @Override
     protected PropertyInstance getProperties() throws Exception {
-        PropertyInstance props = new PropertyInstance(plugin.getPlatform().properties, mock(Transformation.class));
+        PropertyInstance props = new PropertyInstance(new HashSet<>(plugin.getPlatform().properties), mock(Transformation.class));
         props.setPropertyValue(CF_PROPERTY_KEY_USERNAME, envUser);
         props.setPropertyValue(CF_PROPERTY_KEY_PASSWORD, envPw);
         props.setPropertyValue(CF_PROPERTY_KEY_API, envHost);
@@ -69,7 +70,7 @@ public class CloudFoundryLampIT extends BaseTransformTest {
 
     @Override
     protected void copyArtifacts(File contentDir) throws Exception {
-        File inputDir = new File(getClass().getResource("/csars/yaml/valid/lamp-input").getFile());
+        File inputDir = new File(getClass().getResource("/csars/yaml/valid/lamp-noinput").getFile());
         FileUtils.copyDirectory(inputDir, contentDir);
     }
 
