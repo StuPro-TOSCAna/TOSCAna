@@ -7,7 +7,6 @@ import org.opentosca.toscana.core.parse.model.Entity;
 import org.opentosca.toscana.core.parse.model.MappingEntity;
 import org.opentosca.toscana.core.parse.model.ScalarEntity;
 import org.opentosca.toscana.core.parse.model.ServiceGraph;
-import org.opentosca.toscana.core.parse.model.ServiceModel;
 import org.opentosca.toscana.model.EntityId;
 import org.opentosca.toscana.model.artifact.Artifact;
 import org.opentosca.toscana.model.artifact.Repository;
@@ -20,8 +19,7 @@ import org.opentosca.toscana.model.requirement.Requirement;
  */
 public class GraphNormalizer {
 
-    public static void normalize(ServiceModel serviceModel) {
-        ServiceGraph graph = serviceModel.getGraph();
+    public static void normalize(ServiceGraph graph) {
         normalizeRepositories(graph);
         normalizeOperations(graph);
         normalizeRequirements(graph);

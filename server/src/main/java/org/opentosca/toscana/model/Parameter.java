@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.opentosca.toscana.core.parse.converter.ParameterConverter;
 import org.opentosca.toscana.core.parse.model.MappingEntity;
+import org.opentosca.toscana.core.parse.model.ServiceGraph;
 import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.core.transformation.properties.PropertyType;
 import org.opentosca.toscana.model.util.ToscaKey;
@@ -66,6 +67,14 @@ public class Parameter extends DescribableEntity implements Property {
     @Override
     public void setValue(String value) {
         set(VALUE, value);
+        finalizeGraph();
+    }
+
+    private void finalizeGraph() {
+        ServiceGraph graph = getBackingEntity().getGraph();
+        if (graph.requiredInputsSet()) {
+            graph.finalizeGraph();
+        }
     }
 
     /**

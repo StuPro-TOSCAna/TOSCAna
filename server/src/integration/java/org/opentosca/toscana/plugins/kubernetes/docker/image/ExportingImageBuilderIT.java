@@ -26,9 +26,9 @@ public class ExportingImageBuilderIT extends BaseDockerfileTest {
     private static final String SHA_TEST_FILE_NAME = "sha-test.tar.gz";
 
     protected String shaDigest;
-    
+
     protected ImageBuilder imageBuilder;
-    
+
     @Test
     public void testBuildShaImage() throws Exception {
         assumeTrue(DockerTestUtils.isDockerAvailable());
@@ -36,21 +36,21 @@ public class ExportingImageBuilderIT extends BaseDockerfileTest {
         shaDigest = buildSHADockerfile();
 
         init();
-        
+
         TransformationContext ctx = mock(TransformationContext.class);
         when(ctx.getPluginFileAccess()).thenReturn(access);
         when(ctx.getLogger((Class<?>) any(Class.class))).thenReturn(LoggerFactory.getLogger("Mock Logger"));
-        
+
         imageBuilder = instantiateImageBuilder(ctx);
         logger.info("Building Image");
         imageBuilder.buildImage();
         logger.info("Storing Image");
         imageBuilder.storeImage();
-        
+
         validate(imageBuilder.getTag());
     }
-    
-    public void init() throws Exception{
+
+    public void init() throws Exception {
         // noop for this test
     }
 
@@ -68,7 +68,7 @@ public class ExportingImageBuilderIT extends BaseDockerfileTest {
             context
         );
     }
-    
+
     public void validate(String tag) throws Exception {
         File d = new File(access.getAbsolutePath(SHA_TEST_FILE_NAME));
 

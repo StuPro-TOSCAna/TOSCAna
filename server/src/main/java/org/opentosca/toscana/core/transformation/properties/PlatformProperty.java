@@ -5,7 +5,7 @@ import java.util.Optional;
 import lombok.Data;
 
 @Data
-public class SimpleProperty implements Property {
+public class PlatformProperty implements Property {
 
     private final String key;
     private final PropertyType type;
@@ -22,7 +22,7 @@ public class SimpleProperty implements Property {
      @param description a short description of the property (should not exceed 200 characters, does not get checked tough
      @param required    determines if the property is required or not
      */
-    public SimpleProperty(
+    public PlatformProperty(
         String key,
         PropertyType type,
         String description,
@@ -31,7 +31,7 @@ public class SimpleProperty implements Property {
         this(key, type, description, required, null);
     }
 
-    public SimpleProperty(
+    public PlatformProperty(
         String key,
         PropertyType type,
         String description,
@@ -52,7 +52,7 @@ public class SimpleProperty implements Property {
      @param key  the unique name of the property
      @param type the expected data type of the property value
      */
-    public SimpleProperty(String key, PropertyType type) {
+    public PlatformProperty(String key, PropertyType type) {
         this(key, type, "", true);
     }
 
@@ -69,5 +69,17 @@ public class SimpleProperty implements Property {
     @Override
     public Optional<String> getDefaultValue() {
         return Optional.ofNullable(defaultValue);
+    }
+
+    public PlatformProperty copy() {
+        PlatformProperty p = new PlatformProperty(
+            key,
+            type,
+            description,
+            required,
+            defaultValue
+        );
+        p.setValue(value);
+        return p;
     }
 }

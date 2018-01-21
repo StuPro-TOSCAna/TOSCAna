@@ -14,10 +14,9 @@ public class MockDockerApp {
     private String[] tag;
     private String[] identifier;
 
-
     public MockDockerApp() {
-        tag = new String[] {"tag for docker image", "simple-task-app"};
-        identifier = new String[] {"identifier of docker container", "simple-task-app-1"};
+        tag = new String[]{"tag for docker image", "simple-task-app"};
+        identifier = new String[]{"identifier of docker container", "simple-task-app-1"};
         dependencies = new LinkedList<>();
         dependencies.add("simple-task-app/Dockerfile");
         dependencies.add("simple-task-app/createdb.sql");

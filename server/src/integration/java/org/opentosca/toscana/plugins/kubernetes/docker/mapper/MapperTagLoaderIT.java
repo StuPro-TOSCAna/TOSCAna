@@ -53,17 +53,16 @@ public class MapperTagLoaderIT extends BaseTest {
     private static File logFile;
     private static Log log;
     private static MappingEntity entity;
-    
+
     @Autowired
     private BaseImageMapper mapper;
-    
+
     @BeforeClass
     public static void setUp() throws IOException {
         logFile = File.createTempFile("testlog", "log", PROJECT_ROOT);
         logFile.deleteOnExit();
         log = new LogImpl(logFile);
         entity = new MappingEntity(entityId, new ServiceGraph(log));
-
     }
 
     @Test

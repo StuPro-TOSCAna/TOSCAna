@@ -14,18 +14,20 @@ import org.junit.Test;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.opentosca.toscana.core.parse.TestTemplates.ToscaElements.CAPABILITY;
 import static org.opentosca.toscana.core.parse.TestTemplates.ToscaElements.CREDENTIAL;
 import static org.opentosca.toscana.core.parse.TestTemplates.ToscaElements.INPUT;
+import static org.opentosca.toscana.core.parse.TestTemplates.ToscaElements.INPUT_NO_VALUE;
 import static org.opentosca.toscana.core.parse.TestTemplates.ToscaElements.INTERFACE;
 import static org.opentosca.toscana.core.parse.TestTemplates.ToscaElements.NODE;
 import static org.opentosca.toscana.core.parse.TestTemplates.ToscaElements.OUTPUT;
 import static org.opentosca.toscana.core.parse.TestTemplates.ToscaElements.REPOSITORY;
 import static org.opentosca.toscana.core.parse.TestTemplates.ToscaElements.REQUIREMENT;
 
-public class ServiceModelTest extends BaseUnitTest {
+public class ServiceGraphTest extends BaseUnitTest {
 
-    private final static Map<File, ServiceModel> modelMap = new HashMap<>();
+    private final static Map<File, ServiceGraph> graphMap = new HashMap<>();
     private File currentFile;
 
     @Test
@@ -103,10 +105,10 @@ public class ServiceModelTest extends BaseUnitTest {
     @Test
     public void requirementTest() {
         currentFile = REQUIREMENT;
-        Optional<Entity> fulfiller = getModel().getEntity(Lists.newArrayList("topology_template",
+        Optional<Entity> fulfiller = getGraph().getEntity(Lists.newArrayList("topology_template",
             "node_templates", "test-node", "requirements", "test-requirement1", "node"));
         assertTrue(fulfiller.isPresent());
-        Optional<Entity> fulfiller2 = getModel().getEntity(Lists.newArrayList("topology_template",
+        Optional<Entity> fulfiller2 = getGraph().getEntity(Lists.newArrayList("topology_template",
             "node_templates", "test-node", "requirements", "test-requirement2", "node"));
         assertTrue(fulfiller2.isPresent());
         assertEquals("DatabaseEndpoint", get("topology_template", "node_templates", "test-node", "requirements",
@@ -134,24 +136,34 @@ public class ServiceModelTest extends BaseUnitTest {
             "test-artifact", "deploy_path"));
     }
 
+    @Test
+    public void allInputsSetTest() {
+        currentFile = INPUT_NO_VALUE;
+        ServiceGraph graph = getGraph();
+        assertFalse(graph.requiredInputsSet());
+        currentFile = INPUT;
+        graph = getGraph();
+        assertTrue(graph.requiredInputsSet());
+    }
+
     private String get(String... context) {
-        ServiceModel model = getModel();
-        Entity entity = model.getEntityOrThrow(new EntityId(Lists.newArrayList(context)));
+        ServiceGraph graph = getGraph();
+        Entity entity = graph.getEntityOrThrow(new EntityId(Lists.newArrayList(context)));
         return ((ScalarEntity) entity).getValue();
     }
 
     private List<String> getList(String... context) {
-        ServiceModel model = getModel();
-        Entity entity = model.getEntityOrThrow(new EntityId(Lists.newArrayList(context)));
+        ServiceGraph graph = getGraph();
+        Entity entity = graph.getEntityOrThrow(new EntityId(Lists.newArrayList(context)));
         return ((SequenceEntity) entity).getValues();
     }
 
-    private ServiceModel getModel() {
-        ServiceModel model = modelMap.get(currentFile);
-        if (model == null) {
-            model = new ServiceModel(currentFile, log);
-            modelMap.put(currentFile, model);
+    private ServiceGraph getGraph() {
+        ServiceGraph graph = graphMap.get(currentFile);
+        if (graph == null) {
+            graph = new ServiceGraph(currentFile, log);
+            graphMap.put(currentFile, graph);
         }
-        return model;
+        return graph;
     }
 }

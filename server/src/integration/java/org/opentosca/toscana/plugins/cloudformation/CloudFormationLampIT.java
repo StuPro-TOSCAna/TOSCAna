@@ -1,6 +1,7 @@
 package org.opentosca.toscana.plugins.cloudformation;
 
 import java.io.File;
+import java.util.HashSet;
 
 import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.transformation.Transformation;
@@ -41,6 +42,6 @@ public class CloudFormationLampIT extends BaseTransformTest {
 
     @Override
     protected PropertyInstance getProperties() {
-        return new PropertyInstance(plugin.getPlatform().properties, mock(Transformation.class));
+        return new PropertyInstance(new HashSet<>(plugin.getPlatform().properties), mock(Transformation.class));
     }
 }
