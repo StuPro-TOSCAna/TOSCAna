@@ -82,6 +82,7 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
 
     @Override
     public void transform() {
+        Application myApp = new Application(1);
         PluginFileAccess fileAccess = context.getPluginFileAccess();
         Set<RootNode> nodes = context.getModel().getNodes();
         List<Application> filledApplications = new ArrayList<>();

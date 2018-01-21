@@ -61,7 +61,7 @@ public class ServiceTest extends BaseUnitTest {
     private final String outputPath = AbstractLifecycle.SCRIPTS_DIR_PATH;
     private final Provider provider = new Provider(Provider
         .CloudFoundryProviderType.PIVOTAL);
-    private Application myApp = new Application();
+    private Application myApp = new Application(1);
     private PluginFileAccess fileAccess;
 
     @Before

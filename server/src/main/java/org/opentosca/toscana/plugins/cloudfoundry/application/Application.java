@@ -39,11 +39,6 @@ public class Application {
         this.applicationNumber = applicationNumber;
     }
 
-    public Application() {
-        //counter += 1;
-        //this.applicationNumber = counter;
-    }
-
     /**
      add in the deploy script the command to execute a sql file to the connected mysql database
      must be a .sql File
@@ -87,6 +82,12 @@ public class Application {
      */
     public Map<String, String> getExecuteCommands() {
         return executeCommand;
+    }
+
+    }
+
+    public Application(int applicationNumber) {
+        this.applicationNumber = applicationNumber;
     }
 
     public int getApplicationNumber() {

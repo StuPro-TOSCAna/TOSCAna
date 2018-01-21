@@ -28,7 +28,9 @@ import org.mockito.Mock;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+
 import static org.junit.Assume.assumeNotNull;
+
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.APPLICATION_FOLDER;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.CLI_PATH_TO_MANIFEST;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.DEPLOY_NAME;
