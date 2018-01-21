@@ -71,7 +71,7 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
 
     @Override
     public void transform() {
-        Application myApp = new Application();
+        Application myApp = new Application(1);
         PluginFileAccess fileAccess = context.getPluginFileAccess();
         myApp.setProvider(provider);
         myApp.setConnection(connection);
