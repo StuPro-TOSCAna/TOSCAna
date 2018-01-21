@@ -9,7 +9,7 @@ import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.parse.EntrypointDetector;
 import org.opentosca.toscana.core.parse.InvalidCsarException;
 import org.opentosca.toscana.core.parse.converter.TypeWrapper;
-import org.opentosca.toscana.core.parse.model.ServiceModel;
+import org.opentosca.toscana.core.parse.model.ServiceGraph;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.model.node.RootNode;
@@ -27,30 +27,30 @@ public class EffectiveModel {
 
     private final Graph<RootNode, RootRelationship> topology =
         new DefaultDirectedGraph<>(RootRelationship.class);
-    private final ServiceModel serviceModel;
+    private final ServiceGraph serviceGraph;
     private Map<String, RootNode> nodeMap;
-    private Map<String, Property> inputs;
+    private boolean initialized = false;
 
     public EffectiveModel(Csar csar, File csarContentRoot) throws InvalidCsarException {
         Log log = csar.getLog();
         EntrypointDetector entrypointDetector = new EntrypointDetector(log);
         logger = log.getLogger(getClass());
         File template = entrypointDetector.findEntryPoint(csarContentRoot);
-        this.serviceModel = new ServiceModel(template, csar.getLog());
-        init();
+        this.serviceGraph = new ServiceGraph(template, csar.getLog());
     }
 
     public EffectiveModel(File template, Log log) {
         logger = LoggerFactory.getLogger(getClass());
-        this.serviceModel = new ServiceModel(template, log);
-        init();
+        this.serviceGraph = new ServiceGraph(template, log);
     }
 
     private void init() {
-        nodeMap = TypeWrapper.wrapNodes(serviceModel);
+        if (!serviceGraph.requiredInputsSet()) {
+            throw new IllegalStateException("Must not initialize backing model: Not all required inputs are set");
+        }
+        nodeMap = TypeWrapper.wrapNodes(serviceGraph);
         nodeMap.forEach((name, node) -> topology.addVertex(node));
         initEdges();
-        inputs = serviceModel.getInputs();
     }
 
     private void initEdges() {
@@ -62,22 +62,32 @@ public class EffectiveModel {
                 }
             }
         }
+        initialized = true;
     }
 
     public Set<RootNode> getNodes() {
+        if (!initialized) {
+            init();
+        }
         return topology.vertexSet();
     }
 
     public Map<String, RootNode> getNodeMap() {
+        if (!initialized) {
+            init();
+        }
         return Collections.unmodifiableMap(nodeMap);
     }
 
     public Graph<RootNode, RootRelationship> getTopology() {
+        if (!initialized) {
+            init();
+        }
         return topology;
     }
 
     public Map<String, Property> getInputs() {
-        return inputs;
+        return serviceGraph.getInputs();
     }
 }
 

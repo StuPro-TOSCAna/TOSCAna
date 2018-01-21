@@ -6,11 +6,8 @@ import java.util.HashMap;
 import org.opentosca.toscana.plugins.kubernetes.model.Pod;
 import org.opentosca.toscana.plugins.kubernetes.model.ResourceDeployment;
 import org.opentosca.toscana.plugins.kubernetes.model.ResourceService;
-import org.opentosca.toscana.plugins.kubernetes.util.NodeStack;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ResourceFileCreator {
 

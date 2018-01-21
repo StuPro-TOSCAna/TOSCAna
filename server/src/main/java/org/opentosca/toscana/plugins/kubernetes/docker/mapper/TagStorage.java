@@ -28,7 +28,6 @@ public class TagStorage {
     private static final Logger logger = LoggerFactory.getLogger(TagStorage.class);
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
-
     private final File file;
 
     private TagBaseData data = new TagBaseData();
@@ -104,5 +103,4 @@ public class TagStorage {
         public long lastUpdateTime = 0;
         public final Map<String, DockerImage> map = new HashMap<>();
     }
-
 }

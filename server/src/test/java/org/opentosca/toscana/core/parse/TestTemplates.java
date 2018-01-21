@@ -37,6 +37,7 @@ public class TestTemplates {
         public static final File REPOSITORY = new File(TOSCA_ELEMENTS, "repository.yaml");
         public static final File CREDENTIAL = new File(TOSCA_ELEMENTS, "credential.yaml");
         public static final File INPUT = new File(TOSCA_ELEMENTS, "input.yaml");
+        public static final File INPUT_NO_VALUE = new File(TOSCA_ELEMENTS, "input_no-value.yaml");
         public static final File OUTPUT = new File(TOSCA_ELEMENTS, "output.yaml");
         public static final File INTERFACE = new File(TOSCA_ELEMENTS, "interface.yaml");
         public static final File CAPABILITY = new File(TOSCA_ELEMENTS, "capability.yaml");
