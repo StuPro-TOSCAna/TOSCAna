@@ -149,6 +149,7 @@ public class Connection {
                     .path(pathToApplication)
                     .name(name)
                     .service(serviceInstanceNames)
+                    .randomRoute(true)
                     .build())
                 .noStart(TRUE)
                 .build())

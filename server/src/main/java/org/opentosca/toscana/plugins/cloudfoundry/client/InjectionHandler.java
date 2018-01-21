@@ -14,6 +14,8 @@ import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.APPLICATION_FOLDER;
+
 /**
  inject service credentials to the environment variables
  depends on the service type
@@ -48,7 +50,8 @@ public class InjectionHandler {
         boolean succeed = false;
         try {
             if (connection != null) {
-                Path pathToApplication = Paths.get(fileAccess.getAbsolutePath(app.getPathToApplication()));
+                Path pathToApplication = Paths.get(fileAccess.getAbsolutePath(APPLICATION_FOLDER + 
+                    app.getApplicationNumber() + "/" + app.getPathToApplication()));
                 succeed = connection.pushApplication(pathToApplication,
                     app.getName(), app.getServicesMatchedToProvider());
             }
