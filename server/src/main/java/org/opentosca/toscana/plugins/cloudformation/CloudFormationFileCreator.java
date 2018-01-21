@@ -18,16 +18,16 @@ import org.slf4j.Logger;
  * Class for building scripts and copying files needed for deployment of cloudformation templates.
  */
 public class CloudFormationFileCreator {
-    private static final String CLI_COMMAND_CREATESTACK = "aws cloudformation deploy ";
-    private static final String CLI_PARAM_STACKNAME = "--stack-name ";
-    private static final String CLI_PARAM_TEMPLATEFILE = "--template-file ";
+    static final String CLI_COMMAND_CREATESTACK = "aws cloudformation deploy ";
+    static final String CLI_PARAM_STACKNAME = "--stack-name ";
+    static final String CLI_PARAM_TEMPLATEFILE = "--template-file ";
     //TODO check if PARAMOVERRIDES are needed and get said parameters
     // private static final String CLI_PARAM_PARAMOVERRIDES = "--parameter-overrides ";
-    private static final String FILENAME_DEPLOY = "deploy";
-    private static final String FILENAME_UPLOAD = "file-upload";
-    private static final String TEMPLATE_PATH = "template.yaml ";
-    private static final String CHANGE_TO_PARENT_DIRECTORY = "cd ..";
-    private static final String RELATIVE_DIRECTORY_PREFIX = "../files/";
+    static final String FILENAME_DEPLOY = "deploy";
+    static final String FILENAME_UPLOAD = "file-upload";
+    static final String TEMPLATE_PATH = "template.yaml ";
+    static final String CHANGE_TO_PARENT_DIRECTORY = "cd ..";
+    static final String RELATIVE_DIRECTORY_PREFIX = "../files/";
 
     private final Logger logger;
     private CloudFormationModule cfnModule;
