@@ -15,6 +15,8 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.APPLICATION_FOLDER;
+
 /**
  detect which language is used and add additional buildpacks which are not default
  checks the combination of used services and language
@@ -65,7 +67,7 @@ public class BuildpackDetector {
             buildPackAdditionsJson.put(BUILDPACK_OBJECT_PHP, buildPacks);
             String path;
             if (application.getPathToApplication() != null) {
-                path = String.format("%s/%s", application.getPathToApplication(), BUILDPACK_FILEPATH_PHP);
+                path = String.format("%s%s/%s/%s", APPLICATION_FOLDER, application.getApplicationNumber(), application.getPathToApplication(), BUILDPACK_FILEPATH_PHP);
             } else {
                 path = BUILDPACK_FILEPATH_PHP;
             }

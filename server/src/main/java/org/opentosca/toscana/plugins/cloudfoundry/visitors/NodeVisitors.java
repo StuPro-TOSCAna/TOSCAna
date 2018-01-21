@@ -1,5 +1,6 @@
 package org.opentosca.toscana.plugins.cloudfoundry.visitors;
 
+import org.opentosca.toscana.model.artifact.Artifact;
 import org.opentosca.toscana.model.node.Apache;
 import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.MysqlDatabase;
@@ -82,6 +83,12 @@ public class NodeVisitors implements StrictNodeVisitor {
         // get StandardLifecycle inputs
         for (OperationVariable lifecycleInput : node.getStandardLifecycle().getInputs()) {
             addEnvironmentVariable(lifecycleInput);
+        }
+
+        // read artifact file paths
+        for (Artifact artifact : node.getArtifacts()) {
+            String path = artifact.getFilePath();
+            myApp.addFilePath(path);
         }
 
         // get operation inputs

@@ -59,7 +59,7 @@ public class ServiceTest extends BaseUnitTest {
     private final String outputPath = AbstractLifecycle.SCRIPTS_DIR_PATH;
     private final Provider provider = new Provider(Provider
         .CloudFoundryProviderType.PIVOTAL);
-    private Application myApp = new Application();
+    private Application myApp = new Application(1);
     private PluginFileAccess fileAccess;
 
     @Before
@@ -70,7 +70,7 @@ public class ServiceTest extends BaseUnitTest {
         envOrga = System.getenv(CF_ENVIRONMENT_ORGA);
         envSpace = System.getenv(CF_ENVIRONMENT_SPACE);
 
-        app = new Application(appName);
+        app = new Application(appName, 1);
         app.setProvider(provider);
         connection = createConnection();
         app.setConnection(connection);
@@ -99,7 +99,6 @@ public class ServiceTest extends BaseUnitTest {
     public void checkPushApplication() throws Exception {
         assumeNotNull(envUser, envHost, envOrga, envPw, envSpace);
         setUpMyApp();
-
         InjectionHandler injectionHandler = new InjectionHandler(fileAccess, myApp);
         boolean isPushed = injectionHandler.deploy();
 

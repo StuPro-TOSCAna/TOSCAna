@@ -1,9 +1,10 @@
 ---
 applications:
-- name: my_app
-  path: ../my_app
+- name: my-app
+  path: ../app1
   disk_quota: 4000MB
   mem_size: 1024MB
+  random-route: true
   env:
     password: abc
     port: 3306
