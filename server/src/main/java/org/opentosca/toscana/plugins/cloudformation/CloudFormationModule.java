@@ -25,7 +25,7 @@ public class CloudFormationModule extends Module {
     public final static String SECURITY_GROUP = "SecurityGroup";
     public static final String URL_HTTP = "http://";
     public static final String URL_S3_AMAZONAWS = ".s3.amazonaws.com";
-    public static final String FILE_PATH_TARGET = "output/files/";
+    public static final String FILEPATH_TARGET = "output/files/";
     
     // KeyName is a default input value
     private static final String KEYNAME_DESCRIPTION = "Name of an existing EC2 KeyPair to enable SSH access to the instances";
