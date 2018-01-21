@@ -38,4 +38,4 @@ to execute scripts on the container it is needed to create a ssh connection to t
 6. `python configureMysql.py $sqlFile` or 12Factor: `python executeScript.py $appName $dbInitScript`
 
 ## Summary
-the AWS Cloudfourmation CLI needs python anyways so we could use it too. We think for "bigger" script implementation python is the best way to do it.
+the AWS Cloudformation CLI needs python anyways so we could use it too. We think for "bigger" script implementation python is the best way to do it.

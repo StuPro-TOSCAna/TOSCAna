@@ -15,25 +15,25 @@ import static org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle.SCRIPTS_
 
 public class Deployment {
 
+    private final static String PYTHON_SCRIPTS_TARGET = SCRIPTS_DIR_PATH;
+
+    private final static String PYTHON_CONFIGURE_SQL_FILENAME = "configureMysql.py";
+    private final static String PYTHON_CONFIGURE_SQL_SOURCE = "/cloudFoundry/deployment_scripts/";
+
+    private final static String PYTHON_EXECUTE_FILENAME = "executeCommand.py";
+    private final static String PYTHON_EXECUTE_SOURCE = "/cloudFoundry/deployment_scripts/";
+
+    private final static String PYTHON_READ_CREDENTIALS_FILENAME = "readCredentials.py";
+    private final static String PYTHON_READ_CREDENTIALS_SOURCE = "/cloudFoundry/deployment_scripts/";
+
+    private final static String PYTHON_REPLACE_STRINGS_FILENAME = "replace.py";
+    private final static String PYTHON_REPLACE_STRINGS_SOURCE = "/cloudFoundry/deployment_scripts/";
+
     private BashScript deploymentScript;
     private Application application;
     private PluginFileAccess fileAccess;
     private Class deploymentClass;
     private boolean pythonIsChecked;
-
-    private final String PYTHON_SCRIPTS_TARGET = SCRIPTS_DIR_PATH;
-
-    private final String PYTHON_CONFIGURE_SQL_FILENAME = "configureMysql.py";
-    private final String PYTHON_CONFIGURE_SQL_SOURCE = "/cloudFoundry/deployment_scripts/";
-
-    private final String PYTHON_EXECUTE_FILENAME = "executeCommand.py";
-    private final String PYTHON_EXECUTE_SOURCE = "/cloudFoundry/deployment_scripts/";
-
-    private final String PYTHON_READ_CREDENTIALS_FILENAME = "readCredentials.py";
-    private final String PYTHON_READ_CREDENTIALS_SOURCE = "/cloudFoundry/deployment_scripts/";
-
-    private final String PYTHON_REPLACE_STRINGS_FILENAME = "replace.py";
-    private final String PYTHON_REPLACE_STRINGS_SOURCE = "/cloudFoundry/deployment_scripts/";
 
     public Deployment(BashScript deploymentScript, Application application, PluginFileAccess fileAccess) throws IOException {
         this.deploymentScript = deploymentScript;
@@ -102,7 +102,6 @@ public class Deployment {
      */
     public void replaceStrings(String pathToLocalFile, String findStr, String replaceStr) throws IOException {
         copyFile(PYTHON_REPLACE_STRINGS_FILENAME, PYTHON_REPLACE_STRINGS_SOURCE);
-        checkPython();
         deploymentScript.append(String.format("python %s %s %s %s", PYTHON_REPLACE_STRINGS_FILENAME, pathToLocalFile, findStr, replaceStr));
     }
 
@@ -113,6 +112,7 @@ public class Deployment {
             inputStream.close();
             fileAccess.access(PYTHON_SCRIPTS_TARGET + fileName).appendln(contentFile).close();
         }
+        checkPython();
     }
 
     private boolean isAlreadyCopied(String fileName) {
