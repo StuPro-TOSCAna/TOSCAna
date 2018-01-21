@@ -12,6 +12,7 @@ import static org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle.UTIL_DIR
 
 public class BashScript {
     public static final String SHEBANG = "#!/bin/bash";
+    public static final String SOURCE_UTIL_ALL = "for file in $(ls util); do source util/$file; done";
     private final static Logger logger = LoggerFactory.getLogger(BashScript.class);
     private String name;
     private PluginFileAccess access;
@@ -37,7 +38,7 @@ public class BashScript {
         access.delete(scriptPath);
 
         access.access(scriptPath).append(SHEBANG + "\n")
-            .append("for file in $(ls util); do source util/$file; done\n")
+            .append(SOURCE_UTIL_ALL + "\n")
             .close();
     }
 
