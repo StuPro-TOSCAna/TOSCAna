@@ -31,10 +31,9 @@ public class CapabilityMapper {
 
     public static final String EC2_DISTINCTION = "EC2";
     public static final String RDS_DISTINCTION = "RDS";
-    private final Logger logger;
     private static final String ARCH_x86_32 = "i386";
     private static final String ARCH_x86_64 = "x86_64";
-
+    private final Logger logger;
     private final ImmutableList<InstanceType> EC2_INSTANCE_TYPES = ImmutableList.<InstanceType>builder()
         .add(new InstanceType("t2.nano", 1, 512))
         .add(new InstanceType("t2.micro", 1, 1024))

@@ -35,9 +35,6 @@ import static org.opentosca.toscana.plugins.cloudformation.mapper.CapabilityMapp
 @RunWith(Parameterized.class)
 public class CapabilityMapperTest {
     private final static Logger logger = LoggerFactory.getLogger(CapabilityMapperTest.class);
-    private int numCpus;
-    private int memSize;
-    private int diskSize;
     private String expectedEC2;
     private String expectedRDS;
     private int expectedDiskSize;
@@ -51,9 +48,6 @@ public class CapabilityMapperTest {
         expectedRDS, Integer expectedDiskSize) {
         initMocks(this);
         when(log.getLogger(any(Class.class))).thenReturn(LoggerFactory.getLogger("Test logger"));
-        this.numCpus = numCpus;
-        this.memSize = memSize;
-        this.diskSize = diskSize;
         this.expectedEC2 = expectedEC2;
         this.expectedRDS = expectedRDS;
         this.expectedDiskSize = expectedDiskSize;
