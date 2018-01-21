@@ -133,32 +133,11 @@ public class FileCreator {
         BashScript deployScript = new BashScript(fileAccess, FILEPRAEFIX_DEPLOY + DEPLOY_NAME);
         deployScript.append(EnvironmentCheck.checkEnvironment("cf"));
 
-        int counter = 0;
-
-        //create services
-        for (Application application : applications) {
-            counter += 1;
-            Deployment deployment = new Deployment(deployScript, application, fileAccess);
-
-            if (counter == 1) {
-                deployment.treatServices(true);
-            } else {
-                deployment.treatServices(false);
-            }
-        }
+        //handle services
+        handleServices(deployScript);
 
         //replace
-        for (Application application : applications) {
-            Deployment deployment = new Deployment(deployScript, application, fileAccess);
-            if (!application.getExecuteCommands().isEmpty()) {
-                Map<String, String> executeCommands = application.getExecuteCommands();
-
-                for (Map.Entry<String, String> command : executeCommands.entrySet()) {
-                    //TODO: add lists which should be replaced
-                    deployment.replaceStrings(command.getKey(), "/var/www/html/", "/home/vcap/app/htdocs/");
-                }
-            }
-        }
+        replaceStrings(deployScript);
 
         //push applications
         for (Application application : applications) {
@@ -170,25 +149,88 @@ public class FileCreator {
             Deployment deployment = new Deployment(deployScript, application, fileAccess);
 
             //read credentials
-            if (application.getServicesMatchedToProvider() != null && !application.getServicesMatchedToProvider().isEmpty()) {
-                for (Service service : application.getServicesMatchedToProvider()) {
-                    deployment.readCredentials(application.getName(), service.getServiceName(), service.getServiceType());
-                }
-            }
+            readCredentials(deployment, application);
 
             //execute
+            executeFiles(deployment, application);
+
+            //configureSql
+            configureSql(deployment, application);
+        }
+    }
+
+    /**
+     the files in the application which are signed as sql and config scripts will be executed in the database
+     */
+    private void configureSql(Deployment deployment, Application application) throws IOException {
+        if (!application.getConfigMysql().isEmpty()) {
+            for (String file : application.getConfigMysql()) {
+                deployment.configureSql(file);
+            }
+        }
+    }
+
+    /**
+     adds to deploy script a command which will execute the files which are in the application signed to execute
+     */
+    private void executeFiles(Deployment deployment, Application application) throws IOException {
+        if (!application.getExecuteCommands().isEmpty()) {
+            Map<String, String> executeCommands = application.getExecuteCommands();
+
+            for (Map.Entry<String, String> command : executeCommands.entrySet()) {
+                deployment.executeFile(application.getName(), command.getValue());
+            }
+        }
+    }
+
+    /**
+     adds for each service a command to the deploy script which reads the credentials from the service which will be
+     created
+     */
+    private void readCredentials(Deployment deployment, Application application) throws IOException {
+        if (application.getServicesMatchedToProvider() != null && !application.getServicesMatchedToProvider().isEmpty()) {
+            for (Service service : application.getServicesMatchedToProvider()) {
+                deployment.readCredentials(application.getName(), service.getServiceName(), service.getServiceType());
+            }
+        }
+    }
+
+    /**
+     looks for a suitable service of the provider which matches to the needed service
+     adds the creation command to the deployscript
+
+     @param deployScript script the commands will be written in
+     */
+    private void handleServices(BashScript deployScript) throws IOException {
+        int counter = 0;
+        for (Application application : applications) {
+            counter += 1;
+            Deployment deployment = new Deployment(deployScript, application, fileAccess);
+
+            if (counter == 1) {
+                deployment.treatServices(true);
+            } else {
+                deployment.treatServices(false);
+            }
+        }
+    }
+
+    /**
+     replaces strings in files with suitable strings.
+     If a path is not suitable to the path in the warden container
+     A replace command will be added to the deployscript which replaces the Strings locally.
+
+     @param deployScript script the commands will be written in
+     */
+    private void replaceStrings(BashScript deployScript) throws IOException {
+        for (Application application : applications) {
+            Deployment deployment = new Deployment(deployScript, application, fileAccess);
             if (!application.getExecuteCommands().isEmpty()) {
                 Map<String, String> executeCommands = application.getExecuteCommands();
 
                 for (Map.Entry<String, String> command : executeCommands.entrySet()) {
-                    deployment.executeFile(application.getName(), command.getValue());
-                }
-            }
-
-            //configureSql
-            if (!application.getConfigMysql().isEmpty()) {
-                for (String file : application.getConfigMysql()) {
-                    deployment.configureSql(file);
+                    //TODO: add lists which strings should be replaced. In 12 Factor it is probably not necessary.
+                    deployment.replaceStrings(command.getKey(), "/var/www/html/", "/home/vcap/app/htdocs/");
                 }
             }
         }

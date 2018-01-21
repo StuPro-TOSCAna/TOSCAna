@@ -31,7 +31,7 @@ import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.MANIFEST_PA
 
 public class CloudFoundryPluginTest extends BaseUnitTest {
 
-    private final static EffectiveModel lamp = TestEffectiveModels.getLampModel();
+    private EffectiveModel lamp;
     private static Application myApp = new Application("my_app", 1);
     private final static NodeVisitors visitor = new NodeVisitors(myApp);
 
@@ -43,7 +43,7 @@ public class CloudFoundryPluginTest extends BaseUnitTest {
 
     @Before
     public void setUp() throws Exception {
-        EffectiveModel lamp = new EffectiveModel(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, log);
+        lamp = new EffectiveModel(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, log);
         File sourceDir = new File(resourcesPath, "csars/yaml/valid/lamp-noinput");
         targetDir = new File(tmpdir, "targetDir");
         sourceDir.mkdir();
