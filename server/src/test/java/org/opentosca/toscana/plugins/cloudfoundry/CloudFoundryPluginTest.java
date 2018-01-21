@@ -100,7 +100,7 @@ public class CloudFoundryPluginTest extends BaseUnitTest {
         String deployScript = FileUtils.readFileToString(targetFile);
         String format = SHEBANG + "\n" + SOURCE_UTIL_ALL + "\n" + "check \"cf\"\n%smy_db\n%s%s%s%s\n";
         String expectedOutput = String.format(format,
-            CLI_CREATE_SERVICE_DEFAULT, CLI_PUSH, appName, CLI_PATH_TO_MANIFEST, MANIFEST_NAME);
+            CLI_CREATE_SERVICE_DEFAULT, CLI_PUSH, appNameClearedUp, CLI_PATH_TO_MANIFEST, MANIFEST_NAME);
 
         assertEquals(expectedOutput, deployScript);
     }
