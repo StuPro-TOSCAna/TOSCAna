@@ -10,6 +10,8 @@ import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.model.EffectiveModel;
+import org.opentosca.toscana.model.node.Compute;
+import org.opentosca.toscana.model.node.MysqlDatabase;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.node.WebApplication;
 import org.opentosca.toscana.plugins.cloudfoundry.application.Application;
@@ -265,38 +267,56 @@ public class FileCreatorTest extends BaseUnitTest {
 
         connection = createConnection();
         Application app = new Application("app", 1);
+        Application secondApp = new Application("appSec", 2);
         app.setProvider(new Provider(Provider
             .CloudFoundryProviderType.PIVOTAL));
         app.setConnection(connection);
 
+        secondApp.setProvider(new Provider(Provider
+            .CloudFoundryProviderType.PIVOTAL));
+        secondApp.setConnection(connection);
+
         app.addService(service1, ServiceTypes.MYSQL);
+        secondApp.addService("mydb", ServiceTypes.MYSQL);
 
         EffectiveModel lamp = new EffectiveModel(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, log);
         RootNode webApplicationNode = null;
+        RootNode mysqlDatabaseNode = null;
         for (RootNode node : lamp.getNodes()) {
             if (node instanceof WebApplication) {
                 webApplicationNode = node;
-                break;
+            }
+            if ( node instanceof MysqlDatabase) {
+                mysqlDatabaseNode = node;
             }
         }
 
         app.addConfigMysql("my_db/configSql.sql");
         app.addExecuteFile("my_app/configure_myphpapp.sh", webApplicationNode);
+        
+        secondApp.addConfigMysql("database/config.sql");
+        secondApp.addExecuteFile("database/dbinit.sh", mysqlDatabaseNode);
 
         List<Application> applications = new ArrayList<>();
         applications.add(app);
+        applications.add(secondApp);
         FileCreator fileCreator = new FileCreator(fileAccess, applications);
         fileCreator.createFiles();
 
         File targetFile = new File(targetDir, outputPath + FILEPRAEFIX_DEPLOY + DEPLOY_NAME + FILESUFFIX_DEPLOY);
         String deployscriptContent = FileUtils.readFileToString(targetFile);
-        String expectedContent = "cf create-service cleardb spark cleardb\n" +
+        String expectedContent =
             "check python\n" +
             "python replace.py ../../app1/my_app/configure_myphpapp.sh /var/www/html/ /home/vcap/app/htdocs/\n" +
+            "python replace.py ../../app2/database/dbinit.sh /var/www/html/ /home/vcap/app/htdocs/\n" +
             "cf push app -f ../manifest.yml\n" +
+            "cf push appSec -f ../manifest.yml\n" +
             "python readCredentials.py app cleardb mysql\n" +
             "python executeCommand.py app /home/vcap/app/htdocs/app1/my_app/configure_myphpapp.sh\n" +
-            "python configureMysql.py ../../app1/my_db/configSql.sql";
+            "python configureMysql.py ../../app1/my_db/configSql.sql\n" +
+            "python readCredentials.py appSec cleardb mysql\n" +
+            "python executeCommand.py appSec /home/vcap/app/app2/database/dbinit.sh\n" +
+            "python configureMysql.py ../../app2/database/config.sql\n";
 
         assertTrue(deployscriptContent.contains(expectedContent));
         //assertEquals(expectedContent, deployscriptContent);

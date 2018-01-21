@@ -49,7 +49,6 @@ public class ServiceHandler {
         if (application.getProvider() != null && !application.getServices().isEmpty() && application.getConnection() != null) {
             Provider provider = application.getProvider();
             provider.setOfferedService(application.getConnection().getServices());
-            addProviderServiceOfferings();
 
             for (Map.Entry<String, ServiceTypes> service : application.getServices().entrySet()) {
                 String description = service.getValue().getName();

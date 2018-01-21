@@ -41,7 +41,6 @@ public class FileCreator {
     public static final String FILESUFFIX_DEPLOY = ".sh";
     public static final String APPLICATION_FOLDER = "app";
     public static String DEPLOY_NAME = "application";
-    private static boolean showAllServiceOfferings = true;
 
     private final PluginFileAccess fileAccess;
     private List<Application> applications;
@@ -210,8 +209,7 @@ public class FileCreator {
             Deployment deployment = new Deployment(deployScript, application, fileAccess);
 
             //only one time all service offerings should be printed to the deploy script
-            deployment.treatServices(showAllServiceOfferings);
-            showAllServiceOfferings = false;
+            deployment.treatServices();
         }
     }
 

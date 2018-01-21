@@ -45,12 +45,19 @@ public class Deployment {
 
     /**
      look for suitable services which match to the requirements of the user
-
-     @param showAllServiceOfferings if yes in the deployment script will be all offered services added
      */
-    public void treatServices(Boolean showAllServiceOfferings) {
+    public void treatServices() throws IOException {
         ServiceHandler serviceHandler = new ServiceHandler(application, deploymentScript);
-        serviceHandler.addServiceCommands(showAllServiceOfferings);
+
+        String scriptPath = deploymentScript.getScriptPath();
+        File scriptFile = new File(scriptPath);
+        String contentScript = FileUtils.readFileToString(scriptFile);
+
+        if (!contentScript.contains("cf create-service")) {
+            serviceHandler.addServiceCommands(true);
+        } else {
+            serviceHandler.addServiceCommands(false);
+        }
     }
 
     /**
