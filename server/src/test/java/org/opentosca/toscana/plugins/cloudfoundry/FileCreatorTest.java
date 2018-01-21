@@ -16,6 +16,7 @@ import org.mockito.Mock;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.APPLICATION_FOLDER;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.CLI_PATH_TO_MANIFEST;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.FILEPRAEFIX_DEPLOY;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.FILESUFFIX_DEPLOY;
@@ -25,6 +26,7 @@ import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.NAMEBLOCK;
 import static org.opentosca.toscana.plugins.cloudfoundry.application.ManifestAttributes.APPLICATIONS_SECTION;
 import static org.opentosca.toscana.plugins.cloudfoundry.application.ManifestAttributes.ENVIRONMENT;
 import static org.opentosca.toscana.plugins.cloudfoundry.application.ManifestAttributes.PATH;
+import static org.opentosca.toscana.plugins.cloudfoundry.application.ManifestAttributes.RANDOM_ROUTE;
 import static org.opentosca.toscana.plugins.cloudfoundry.application.ManifestAttributes.SERVICE;
 import static org.opentosca.toscana.plugins.cloudfoundry.application.buildpacks.BuildpackDetector.BUILDPACK_FILEPATH_PHP;
 import static org.opentosca.toscana.plugins.cloudfoundry.application.buildpacks.BuildpackDetector.BUILDPACK_OBJECT_PHP;
@@ -52,7 +54,7 @@ public class FileCreatorTest extends BaseUnitTest {
     @Before
     public void setUp() {
         appName = "testApp";
-        testApp = new Application();
+        testApp = new Application("testApp", 1);
         testApp.setName(appName);
         File sourceDir = new File(tmpdir, "sourceDir");
         targetDir = new File(tmpdir, "targetDir");
@@ -70,7 +72,7 @@ public class FileCreatorTest extends BaseUnitTest {
         fileCreator.createFiles();
         File targetFile = new File(targetDir, MANIFEST_PATH);
         File deployFile = new File(targetDir, outputPath + FILEPRAEFIX_DEPLOY + appName + FILESUFFIX_DEPLOY);
-        File buildPackAdditions = new File(targetDir, "/myapp/main" + "/" + BUILDPACK_FILEPATH_PHP);
+        File buildPackAdditions = new File(targetDir, "/" + APPLICATION_FOLDER + testApp.getApplicationNumber() + "/myapp/main" + "/" + BUILDPACK_FILEPATH_PHP);
 
         assertTrue(targetFile.exists());
         assertTrue(deployFile.exists());
@@ -80,12 +82,12 @@ public class FileCreatorTest extends BaseUnitTest {
     @Test
     public void contentManifest() throws Exception {
         testApp.setPathToApplication(mainApplicationPath);
-        String expectedPath = "../myapp/main";
+        String expectedPath = String.format("../%s%s", APPLICATION_FOLDER, testApp.getApplicationNumber());
         fileCreator.createFiles();
         File targetFile = new File(targetDir, MANIFEST_PATH);
         String manifestContent = FileUtils.readFileToString(targetFile);
-        String expectedManifestContent = String.format("---\n%s:\n- %s: %s\n  %s: %s\n",
-            APPLICATIONS_SECTION.getName(), NAMEBLOCK, appName, PATH.getName(), expectedPath);
+        String expectedManifestContent = String.format("---\n%s:\n- %s: %s\n  %s: %s\n  %s: %s\n",
+            APPLICATIONS_SECTION.getName(), NAMEBLOCK, appName, PATH.getName(), expectedPath, RANDOM_ROUTE.getName(), "true");
 
         assertEquals(expectedManifestContent, manifestContent);
     }
@@ -97,8 +99,10 @@ public class FileCreatorTest extends BaseUnitTest {
         fileCreator.createFiles();
         File targetFile = new File(targetDir, MANIFEST_PATH);
         String manifestContent = FileUtils.readFileToString(targetFile);
-        String expectedManifestContent = String.format("---\n%s:\n- %s: %s\n  %s:\n    %s: %s\n    %s: %s\n",
+        String expectedManifestContent = String.format("---\n%s:\n- %s: %s\n  %s: ../%s%s\n  %s: %s\n  %s:\n    %s: %s\n    %s: %s\n",
             APPLICATIONS_SECTION.getName(), NAMEBLOCK, appName,
+            PATH.getName(), APPLICATION_FOLDER, testApp.getApplicationNumber(),
+            RANDOM_ROUTE.getName(), "true",
             ENVIRONMENT.getName(),
             envVariable1, "TODO",
             envVariable2, envValue);
@@ -120,7 +124,7 @@ public class FileCreatorTest extends BaseUnitTest {
 
     @Test
     public void buildpackAdditons() throws Exception {
-        String expectedPath = "/myapp/main" + "/" + BUILDPACK_FILEPATH_PHP;
+        String expectedPath = "/" + APPLICATION_FOLDER + testApp.getApplicationNumber() + "/myapp/main" + "/" + BUILDPACK_FILEPATH_PHP;
         testApp.setPathToApplication(mainApplicationPath);
         testApp.addService(service1, ServiceTypes.MYSQL);
         String expectedBuildpackcontent = "{\n" +
@@ -147,8 +151,10 @@ public class FileCreatorTest extends BaseUnitTest {
         fileCreator.createFiles();
         File targetFile = new File(targetDir, MANIFEST_PATH);
         String manifestContent = FileUtils.readFileToString(targetFile);
-        String expectedManifestContent = String.format("---\n%s:\n- %s: %s\n  %s:\n    - %s\n    - %s\n",
+        String expectedManifestContent = String.format("---\n%s:\n- %s: %s\n  %s: ../%s%s\n  %s: %s\n  %s:\n    - %s\n    - %s\n",
             APPLICATIONS_SECTION.getName(), NAMEBLOCK, appName,
+            PATH.getName(), APPLICATION_FOLDER, testApp.getApplicationNumber(),
+            RANDOM_ROUTE.getName(), "true",
             SERVICE.getName(),
             service2,
             service1);

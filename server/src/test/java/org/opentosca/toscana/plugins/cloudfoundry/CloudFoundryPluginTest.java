@@ -31,17 +31,19 @@ import static org.opentosca.toscana.plugins.scripts.BashScript.SOURCE_UTIL_ALL;
 
 public class CloudFoundryPluginTest extends BaseUnitTest {
 
-    private static Application myApp = new Application();
+    private EffectiveModel lamp;
+    private static Application myApp = new Application("my_app", 1);
     private final static NodeVisitors visitor = new NodeVisitors(myApp);
 
     private File targetDir;
     private final String appName = "my_app";
+    private final String appNameClearedUp = "my-app";
     private final ArrayList<String> paths = new ArrayList<>();
     private final String resourcesPath = "src/test/resources/";
 
     @Before
     public void setUp() throws Exception {
-        EffectiveModel lamp = new EffectiveModel(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, log);
+        lamp = new EffectiveModel(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, log);
         File sourceDir = new File(resourcesPath, "csars/yaml/valid/lamp-noinput");
         targetDir = new File(tmpdir, "targetDir");
         sourceDir.mkdir();
@@ -49,12 +51,11 @@ public class CloudFoundryPluginTest extends BaseUnitTest {
         PluginFileAccess fileAccess = new PluginFileAccess(sourceDir, targetDir, log);
         Set<RootNode> nodes = lamp.getNodes();
 
-        paths.add("my_app/myphpapp.php");
-        paths.add("my_app/mysql-credentials.php");
-        paths.add("my_app/create_myphpapp.sh");
-        paths.add("my_app/configure_myphpapp.sh");
-        // TODO createtable.sql is not part of the output artifact, needs to get fixed
-//        paths.add("my_db/createtable.sql");
+        paths.add("app1/my_app/myphpapp.php");
+        paths.add("app1/my_app/mysql-credentials.php");
+        paths.add("app1/my_app/create_myphpapp.sh");
+        paths.add("app1/my_app/configure_myphpapp.sh");
+        paths.add("app1/my_db/createtable.sql");
 
         for (VisitableNode node : nodes) {
             node.accept(visitor);
@@ -66,7 +67,7 @@ public class CloudFoundryPluginTest extends BaseUnitTest {
 
     @Test
     public void getName() {
-        assertEquals(appName, myApp.getName());
+        assertEquals(appNameClearedUp, myApp.getName());
     }
 
     @Test
@@ -94,7 +95,7 @@ public class CloudFoundryPluginTest extends BaseUnitTest {
 
     @Test
     public void getDeployScript() throws Exception {
-        File targetFile = new File(targetDir + "/output/scripts/", FILEPRAEFIX_DEPLOY + appName +
+        File targetFile = new File(targetDir + "/output/scripts/", FILEPRAEFIX_DEPLOY + appNameClearedUp +
             FILESUFFIX_DEPLOY);
         String deployScript = FileUtils.readFileToString(targetFile);
         String format = SHEBANG + "\n" + SOURCE_UTIL_ALL + "\n" + "check \"cf\"\n%smy_db\n%s%s%s%s\n";
