@@ -1,9 +1,9 @@
 package org.opentosca.toscana.core.transformation;
 
 import java.io.FileNotFoundException;
-import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 import org.opentosca.toscana.api.exceptions.PlatformNotFoundException;
 import org.opentosca.toscana.core.BaseSpringTest;
@@ -12,6 +12,7 @@ import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.transformation.artifacts.TargetArtifact;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.platform.Platform;
+import org.opentosca.toscana.core.transformation.properties.PlatformProperty;
 import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.core.transformation.properties.PropertyType;
 
@@ -97,11 +98,11 @@ public class TransformationServiceImplTest extends BaseSpringTest {
     public void transformationCreationInputNeeded() throws Exception {
         Csar csar = spy(this.csar);
 
-        //Generate Mock Property
-        Set<Property> propSet = new HashSet<>();
-        propSet.add(new Property("mock_prop", PropertyType.NAME));
+        //Generate Mock SimpleProperty
+        Map<String, Property> propMap = new HashMap<>();
+        propMap.put("mock_prop", new PlatformProperty("mock_prop", PropertyType.NAME));
 
-        when(csar.getModelSpecificProperties()).thenReturn(propSet);
+        when(csar.getModelSpecificProperties()).thenReturn(propMap);
 
         Transformation t = service.createTransformation(csar, PLATFORM_PASSING_DUMMY);
         assertTrue(csar.getTransformation(PLATFORM_PASSING_DUMMY.id).isPresent());

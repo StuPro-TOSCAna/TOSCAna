@@ -110,15 +110,15 @@ public class KubernetesLifecycle extends AbstractLifecycle {
         model.getNodes().forEach(e -> {
             e.accept(computeFinder);
             KubernetesNodeContainer container = new KubernetesNodeContainer(e);
-            nodes.put(e.getNodeName(), container);
+            nodes.put(e.getEntityName(), container);
         });
-        computeFinder.getComputeNodes().forEach(e -> computeNodes.add(nodes.get(e.getNodeName())));
+        computeFinder.getComputeNodes().forEach(e -> computeNodes.add(nodes.get(e.getEntityName())));
 
         logger.debug("Finding top Level Nodes");
         Set<RootNode> topLevelNodes = determineTopLevelNodes(
             context.getModel(),
             computeFinder.getComputeNodes().stream().map(Compute.class::cast).collect(Collectors.toList()),
-            e -> nodes.get(e.getNodeName()).activateParentComputeNode()
+            e -> nodes.get(e.getEntityName()).activateParentComputeNode()
         );
 
         logger.debug("Building complete Topology stacks");

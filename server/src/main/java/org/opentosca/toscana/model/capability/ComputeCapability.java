@@ -1,134 +1,157 @@
 package org.opentosca.toscana.model.capability;
 
 import java.util.Optional;
-import java.util.Set;
 
-import javax.validation.constraints.DecimalMin;
-import javax.validation.constraints.Min;
-
-import org.opentosca.toscana.model.datatype.Range;
+import org.opentosca.toscana.core.parse.model.MappingEntity;
+import org.opentosca.toscana.model.datatype.SizeUnit;
 import org.opentosca.toscana.model.node.Compute;
-import org.opentosca.toscana.model.node.RootNode;
+import org.opentosca.toscana.model.util.ToscaKey;
 import org.opentosca.toscana.model.visitor.CapabilityVisitor;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  Indicates that the node can provide hosting on a named compute resource.
  (TOSCA Simple Profile in YAML Version 1.1, p. 150)
  */
 
-@Data
+@EqualsAndHashCode
+@ToString
 public class ComputeCapability extends Capability {
 
     /**
      Optional name (or identifier) of a specific compute resource for hosting.
      (TOSCA Simple Profile in YAML Version 1.1, p. 150)
      */
-    private final String resourceName;
+    public static ToscaKey<String> RESOURCE_NAME = new ToscaKey<>(PROPERTIES, "name");
 
     /**
      Optional number of (actual or virtual) CPUs associated with the {@link Compute} node.
      (TOSCA Simple Profile in YAML Version 1.1, p. 150)
      */
-    @Min(1)
-    private final Integer numCpus;
+    public static ToscaKey<Integer> NUM_CPUS = new ToscaKey<>(PROPERTIES, "num_cpus")
+        .type(Integer.class);
 
     /**
      Optional operating frequency of CPU's core.
-     This property expresses the expected frequency of one CPU as provided by {@link #numCpus}
+     This property expresses the expected frequency of one CPU as provided by {@link #NUM_CPUS}
      (TOSCA Simple Profile in YAML Version 1.1, p. 150)
      */
-    @DecimalMin("0.1")
-    private final Double cpuFrequencyInGhz;
+    public static ToscaKey<Double> CPU_FREQUENCY_IN_GHZ = new ToscaKey<>(PROPERTIES, "cpu_frequency")
+        .type(Double.class);
 
     /**
      Optional size of the local disk space available to applications running on the {@link Compute} node, specified in MB.
      (TOSCA Simple Profile in YAML Version 1.1, p. 150)
      */
-    @Min(0)
-    private final Integer diskSizeInMB;
+    public static ToscaKey<Integer> DISK_SIZE_IN_MB = new ToscaKey<>(PROPERTIES, "disk_size")
+        .type(SizeUnit.class).directive(SizeUnit.FROM, SizeUnit.Unit.MB).directive(SizeUnit.TO, SizeUnit.Unit.MB);
 
     /**
      Optional size of memory available to applications running on the {@link Compute} node, specified in MB.
      (TOSCA Simple Profile in YAML Version 1.1, p. 150)
      */
-    @Min(0)
-    private final Integer memSizeInMB;
+    public static ToscaKey<Integer> MEM_SIZE_IN_MB = new ToscaKey<>(PROPERTIES, "mem_size")
+        .type(SizeUnit.class).directive(SizeUnit.FROM, SizeUnit.Unit.MB).directive(SizeUnit.TO, SizeUnit.Unit.MB);
 
-    @Builder
-    protected ComputeCapability(String resourceName,
-                                Integer numCpus,
-                                Double cpuFrequencyInGhz,
-                                Integer diskSizeInMB,
-                                Integer memSizeInMB,
-                                Set<Class<? extends RootNode>> validSourceTypes,
-                                Range occurrence) {
-        super(validSourceTypes, occurrence);
-        if (numCpus != null && numCpus < 1) {
+    public ComputeCapability(MappingEntity mappingEntity) {
+        super(mappingEntity);
+    }
+
+    /**
+     @return {@link #RESOURCE_NAME}
+     */
+    public Optional<String> getResourceName() {
+        return Optional.ofNullable(get(RESOURCE_NAME));
+    }
+
+    /**
+     Sets {@link #RESOURCE_NAME}
+     */
+    public ComputeCapability setResourceName(String resourceName) {
+        set(RESOURCE_NAME, resourceName);
+        return this;
+    }
+
+    /**
+     @return {@link #NUM_CPUS}
+     */
+    public Optional<Integer> getNumCpus() {
+        return Optional.ofNullable(get(NUM_CPUS));
+    }
+
+    /**
+     Sets {@link #NUM_CPUS}
+     */
+    public ComputeCapability setNumCpus(Integer numCpus) {
+        if (numCpus < 1) {
             throw new IllegalArgumentException(String.format(
                 "numCpus must be greater than 0, but was %d", numCpus));
         }
-        if (cpuFrequencyInGhz != null && cpuFrequencyInGhz < 0.1) {
+        set(NUM_CPUS, numCpus);
+        return this;
+    }
+
+    /**
+     @return {@link #CPU_FREQUENCY_IN_GHZ}
+     */
+    public Optional<Double> getCpuFrequencyInGhz() {
+        return Optional.ofNullable(get(CPU_FREQUENCY_IN_GHZ));
+    }
+
+    /**
+     Sets {@link #CPU_FREQUENCY_IN_GHZ}
+     */
+    public ComputeCapability setCpuFrequencyInGhz(Double cpuFrequencyInGhz) {
+        if (cpuFrequencyInGhz < 0.1) {
             throw new IllegalArgumentException(String.format(
                 "cpuFrequency min value is 0.1, but was %s", cpuFrequencyInGhz));
         }
-        if (diskSizeInMB != null && diskSizeInMB < 0) {
+        set(CPU_FREQUENCY_IN_GHZ, cpuFrequencyInGhz);
+        return this;
+    }
+
+    /**
+     @return {@link #DISK_SIZE_IN_MB}
+     */
+    public Optional<Integer> getDiskSizeInMb() {
+        return Optional.ofNullable(get(DISK_SIZE_IN_MB));
+    }
+
+    /**
+     Sets {@link #DISK_SIZE_IN_MB}
+     */
+    public ComputeCapability setDiskSizeInMb(Integer diskSizeInMb) {
+        if (diskSizeInMb < 0) {
             throw new IllegalArgumentException(String.format(
-                "diskSize min value is 0, but was %d", diskSizeInMB));
+                "diskSize min value is 0, but was %d", diskSizeInMb));
         }
-        if (memSizeInMB != null && memSizeInMB < 0) {
+        set(DISK_SIZE_IN_MB, diskSizeInMb);
+        return this;
+    }
+
+    /**
+     @return {@link #MEM_SIZE_IN_MB}
+     */
+    public Optional<Integer> getMemSizeInMb() {
+        return Optional.ofNullable(get(MEM_SIZE_IN_MB));
+    }
+
+    /**
+     Sets {@link #MEM_SIZE_IN_MB}
+     */
+    public ComputeCapability setMemSizeInMb(Integer memSizeInMb) {
+        if (memSizeInMb < 0) {
             throw new IllegalArgumentException(String.format(
-                "memSize min value is 0, but was %d", memSizeInMB));
+                "memSize min value is 0, but was %d", memSizeInMb));
         }
-        this.resourceName = resourceName;
-        this.numCpus = numCpus;
-        this.cpuFrequencyInGhz = cpuFrequencyInGhz;
-        this.diskSizeInMB = diskSizeInMB;
-        this.memSizeInMB = memSizeInMB;
-    }
-
-    /**
-     @return {@link #resourceName}
-     */
-    public Optional<String> getResourceName() {
-        return Optional.ofNullable(resourceName);
-    }
-
-    /**
-     @return {@link #numCpus}
-     */
-    public Optional<Integer> getNumCpus() {
-        return Optional.ofNullable(numCpus);
-    }
-
-    /**
-     @return {@link #cpuFrequencyInGhz}
-     */
-    public Optional<Double> getCpuFrequencyInGhz() {
-        return Optional.ofNullable(cpuFrequencyInGhz);
-    }
-
-    /**
-     @return {@link #diskSizeInMB}
-     */
-    public Optional<Integer> getDiskSizeInMB() {
-        return Optional.ofNullable(diskSizeInMB);
-    }
-
-    /**
-     @return {@link #memSizeInMB}
-     */
-    public Optional<Integer> getMemSizeInMB() {
-        return Optional.ofNullable(memSizeInMB);
+        set(MEM_SIZE_IN_MB, memSizeInMb);
+        return this;
     }
 
     @Override
     public void accept(CapabilityVisitor v) {
         v.visit(this);
-    }
-
-    public static class ComputeCapabilityBuilder extends CapabilityBuilder {
     }
 }

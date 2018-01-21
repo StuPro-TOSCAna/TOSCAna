@@ -1,34 +1,24 @@
 package org.opentosca.toscana.model.relation;
 
+import org.opentosca.toscana.core.parse.model.MappingEntity;
 import org.opentosca.toscana.model.visitor.RelationshipVisitor;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  Represents a general dependency relationship between two nodes.
  */
-@Data
+@EqualsAndHashCode
+@ToString
 public class DependsOn extends RootRelationship {
 
-    public DependsOn() {
-        super(null);
-    }
-
-    @Builder
-    protected DependsOn(String description) {
-        super(description);
-    }
-
-    public static RootRelationship getFallback(RootRelationship rel) {
-        return (rel == null) ? builder().build() : rel;
+    public DependsOn(MappingEntity entity) {
+        super(entity);
     }
 
     @Override
     public void accept(RelationshipVisitor v) {
         v.visit(this);
-    }
-
-    public static class DependsOnBuilder extends RootRelationshipBuilder {
     }
 }

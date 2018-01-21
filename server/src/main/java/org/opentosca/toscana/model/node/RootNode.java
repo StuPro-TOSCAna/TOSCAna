@@ -1,94 +1,87 @@
 package org.opentosca.toscana.model.node;
 
-import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
+import org.opentosca.toscana.core.parse.model.MappingEntity;
 import org.opentosca.toscana.model.DescribableEntity;
+import org.opentosca.toscana.model.artifact.Artifact;
 import org.opentosca.toscana.model.capability.Capability;
-import org.opentosca.toscana.model.capability.NodeCapability;
-import org.opentosca.toscana.model.datatype.Range;
+import org.opentosca.toscana.model.operation.Interface;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
-import org.opentosca.toscana.model.requirement.Dependency;
 import org.opentosca.toscana.model.requirement.Requirement;
+import org.opentosca.toscana.model.util.ToscaKey;
 import org.opentosca.toscana.model.visitor.VisitableNode;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  The base node. Every other node will derive from this class.
  */
-@Data
+@EqualsAndHashCode
+@ToString
 public abstract class RootNode extends DescribableEntity implements VisitableNode {
 
-    protected final Set<Requirement> requirements = new HashSet<>();
-    protected final Set<Capability> capabilities = new HashSet<>();
+    public static final ToscaKey<String> TYPE = new ToscaKey<>("type");
 
-    /**
-     The symbolic name (node_type_name) of this node.
-     (TOSCA Simple Profile in YAML Version 1.1, p. 93)
-     */
-    private final String nodeName;
+    public static ToscaKey<Requirement> REQUIREMENTS = new ToscaKey<>("requirements")
+        .type(Requirement.class);
+    public static ToscaKey<Capability> CAPABILITIES = new ToscaKey<>("capabilities")
+        .type(Capability.class);
+    public static ToscaKey<Interface> INTERFACES = new ToscaKey<>("interfaces")
+        .type(Interface.class);
+    public static ToscaKey<StandardLifecycle> STANDARD_LIFECYCLE = new ToscaKey<>(INTERFACES, "Standard")
+        .type(StandardLifecycle.class);
 
-    /**
-     Every node has the capability of a node.
-     */
-    private final NodeCapability feature = NodeCapability.builder().occurrence(Range.EXACTLY_ONCE).build();
-    private final StandardLifecycle standardLifecycle;
-    /**
-     Dependencies are generic requirements that can be used to express timing dependencies between nodes.
-     (TOSCA Simple Profile in YAML Version 1.1, p. 23)
-     */
-    private Set<Dependency> dependencies = new HashSet<>();
+    public static ToscaKey<Artifact> ARTIFACTS = new ToscaKey<>("artifacts")
+        .type(Artifact.class);
 
-    @Builder
-    protected RootNode(String nodeName,
-                       StandardLifecycle standardLifecycle,
-                       Set<Requirement> requirements,
-                       Set<Capability> capabilities,
-                       String description) {
-        super(description);
-        this.nodeName = Objects.requireNonNull(nodeName);
-        if (nodeName.isEmpty()) {
-            throw new IllegalArgumentException("name must not be empty");
-        }
-        this.standardLifecycle = (standardLifecycle == null) ? StandardLifecycle.builder().build() : standardLifecycle;
-        this.capabilities.add(this.feature);
-        this.requirements.addAll(this.dependencies);
-        if (capabilities != null) this.capabilities.addAll(capabilities);
-        if (requirements != null) this.requirements.addAll(requirements);
+    public RootNode(MappingEntity mappingEntity) {
+        super(mappingEntity);
+        setDefault(STANDARD_LIFECYCLE, new StandardLifecycle(getChildEntity(STANDARD_LIFECYCLE)));
     }
 
     /**
-     @param nodeName {@link #nodeName}
+     @return {@link #REQUIREMENTS}
      */
-    public static RootNodeBuilder builder(String nodeName) {
-        return new RootNodeBuilder().nodeName(nodeName);
+    public Set<Requirement> getRequirements() {
+        return getCollection(REQUIREMENTS);
     }
 
-    public static class RootNodeBuilder extends DescribableEntityBuilder {
+    /**
+     @return {@link #CAPABILITIES}
+     */
+    public Set<Capability> getCapabilities() {
+        return getCollection(CAPABILITIES);
+    }
 
-        protected Set<Requirement> requirements = new HashSet<>();
-        protected Set<Capability> capabilities = new HashSet<>();
+    /**
+     @return {@link #STANDARD_LIFECYCLE}
+     */
+    public StandardLifecycle getStandardLifecycle() {
+        return get(STANDARD_LIFECYCLE);
+    }
 
-        protected RootNodeBuilder() {
-        }
+    /**
+     Sets {@link #STANDARD_LIFECYCLE}
+     */
+    public RootNode setStandardLifecycle(StandardLifecycle standardLifecycle) {
+        set(STANDARD_LIFECYCLE, standardLifecycle);
+        return this;
+    }
 
-        public RootNodeBuilder requirement(Requirement requirement) {
-            requirements.add(requirement);
-            return this;
-        }
+    /**
+     @return {@link #ARTIFACTS}
+     */
+    public Set<Artifact> getArtifacts() {
+        return getCollection(ARTIFACTS);
+    }
 
-        public RootNodeBuilder capability(Capability capability) {
-            capabilities.add(capability);
-            return this;
-        }
-
-        @Override
-        public RootNode build() {
-            // should never be called (RootNode is abstract)
-            throw new UnsupportedOperationException();
-        }
+    /**
+     @return {@link #INTERFACES}
+     */
+    public Set<Interface> getInterfaces() {
+        return getCollection(INTERFACES);
     }
 }
+

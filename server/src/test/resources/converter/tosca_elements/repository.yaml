@@ -1,0 +1,20 @@
+tosca_definitions_version: tosca_simple_yaml_1_1
+
+description: template for testing repository conversion
+metadata:
+  template_name: repositories
+  template_author: stupro-toscana
+  template_version: 1.0
+
+repositories:
+  first_repo: https://first-url.com/
+  
+  second_repo: 
+    description: test-description
+    url: https://second-url.com/
+    credential:
+      token: test-token
+  
+  
+  
+

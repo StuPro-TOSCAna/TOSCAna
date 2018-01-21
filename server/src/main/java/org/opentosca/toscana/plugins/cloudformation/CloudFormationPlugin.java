@@ -5,7 +5,7 @@ import java.util.Set;
 
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.core.transformation.platform.Platform;
-import org.opentosca.toscana.core.transformation.properties.Property;
+import org.opentosca.toscana.core.transformation.properties.PlatformProperty;
 import org.opentosca.toscana.core.transformation.properties.PropertyType;
 import org.opentosca.toscana.plugins.lifecycle.LifecycleAwarePlugin;
 
@@ -21,6 +21,7 @@ public class CloudFormationPlugin extends LifecycleAwarePlugin<CloudFormationLif
     public static final String AWS_REGION_DEFAULT = "us-west-2";
     public static final String AWS_ACCESS_KEY_ID_KEY = "AWS Access Key ID";
     public static final String AWS_SECRET_KEY_KEY = "AWS Secret Key";
+
     private final static Logger logger = LoggerFactory.getLogger(CloudFormationPlugin.class);
 
     public CloudFormationPlugin() {
@@ -44,21 +45,21 @@ public class CloudFormationPlugin extends LifecycleAwarePlugin<CloudFormationLif
             logger.debug("Did not find credentials on the system");
         }
         String defaultRegion = AWS_REGION_DEFAULT;
-        platformProperties.add(new Property(
+        platformProperties.add(new PlatformProperty(
             AWS_REGION_KEY,
             PropertyType.TEXT,
             "The AWS Region this should be transformed to. (The imageId of possible EC2 machines depend on this)",
             true,
             defaultRegion
         ));
-        platformProperties.add(new Property(
+        platformProperties.add(new PlatformProperty(
             AWS_ACCESS_KEY_ID_KEY,
             PropertyType.TEXT,
             "The Access key id",
             true,
             defaultKeyId
         ));
-        platformProperties.add(new Property(
+        platformProperties.add(new PlatformProperty(
             AWS_SECRET_KEY_KEY,
             PropertyType.SECRET,
             "The Access key secret",

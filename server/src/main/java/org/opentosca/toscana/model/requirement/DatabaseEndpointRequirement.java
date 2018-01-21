@@ -1,36 +1,74 @@
 package org.opentosca.toscana.model.requirement;
 
-import java.util.Set;
+import java.util.Optional;
 
+import org.opentosca.toscana.core.parse.model.MappingEntity;
 import org.opentosca.toscana.model.capability.DatabaseEndpointCapability;
-import org.opentosca.toscana.model.datatype.Range;
 import org.opentosca.toscana.model.node.Database;
 import org.opentosca.toscana.model.relation.ConnectsTo;
+import org.opentosca.toscana.model.util.ToscaKey;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.Singular;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
-@Data
+@EqualsAndHashCode
+@ToString
 public class DatabaseEndpointRequirement extends Requirement<DatabaseEndpointCapability, Database, ConnectsTo> {
+    public ToscaKey<DatabaseEndpointCapability> CAPABILITY = new ToscaKey<>(CAPABILITY_NAME)
+        .type(DatabaseEndpointCapability.class);
+    public ToscaKey<Database> NODE = new ToscaKey<>(NODE_NAME)
+        .type(Database.class);
+    public ToscaKey<ConnectsTo> RELATIONSHIP = new ToscaKey<>(RELATIONSHIP_NAME)
+        .type(ConnectsTo.class);
 
-    @Builder
-    protected DatabaseEndpointRequirement(DatabaseEndpointCapability capability,
-                                          Range occurrence,
-                                          @Singular Set<Database> fulfillers,
-                                          ConnectsTo relationship) {
-        super(capability, occurrence, fulfillers, relationship);
+    public DatabaseEndpointRequirement(MappingEntity mappingEntity) {
+        super(mappingEntity);
+        setDefault(RELATIONSHIP, new ConnectsTo(getChildEntity(RELATIONSHIP)));
     }
 
-    public static DatabaseEndpointRequirementBuilder builder(ConnectsTo relationship) {
-        return new DatabaseEndpointRequirementBuilder()
-            .relationship(relationship);
+    /**
+     @return {@link #CAPABILITY}
+     */
+    public DatabaseEndpointCapability getCapability() {
+        return get(CAPABILITY);
     }
 
-    public static Requirement<DatabaseEndpointCapability, Database, ConnectsTo> getFallback(Requirement<DatabaseEndpointCapability, Database, ConnectsTo> databaseEndpoint) {
-        return (databaseEndpoint == null) ? DatabaseEndpointRequirement.builder(new ConnectsTo()).build() : databaseEndpoint;
+    /**
+     Sets {@link #CAPABILITY}
+     */
+    public DatabaseEndpointRequirement setCapability(DatabaseEndpointCapability capability) {
+        set(CAPABILITY, capability);
+        return this;
     }
 
-    public static class DatabaseEndpointRequirementBuilder extends RequirementBuilder<DatabaseEndpointCapability, Database, ConnectsTo> {
+    /**
+     @return {@link #NODE}
+     */
+    public Optional<Database> getNode() {
+        return Optional.ofNullable(get(NODE));
+    }
+
+    /**
+     Sets {@link #NODE}
+     */
+    public DatabaseEndpointRequirement setNode(Database node) {
+        set(NODE, node);
+        return this;
+    }
+
+    /**
+     @return {@link #RELATIONSHIP}
+     */
+    public Optional<ConnectsTo> getRelationship() {
+        return Optional.ofNullable(get(RELATIONSHIP));
+    }
+
+    /**
+     Sets {@link #RELATIONSHIP}
+     */
+    @Override
+    public DatabaseEndpointRequirement setRelationship(ConnectsTo relationship) {
+        set(RELATIONSHIP, relationship);
+        return this;
     }
 }

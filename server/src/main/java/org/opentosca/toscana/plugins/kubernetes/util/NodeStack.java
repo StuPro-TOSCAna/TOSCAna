@@ -96,7 +96,7 @@ public class NodeStack {
     }
 
     public String getStackName() {
-        return stackNodes.get(0).getNode().getNodeName();
+        return stackNodes.get(0).getNode().getEntityName();
     }
 
     public String getCleanStackName() {
@@ -113,7 +113,7 @@ public class NodeStack {
         StringBuilder builder = new StringBuilder();
         builder.append("NodeStack (name = '").append(getStackName()).append("', topology = ");
         stackNodes.forEach(e -> {
-            builder.append(e.getNode().getNodeName());
+            builder.append(e.getNode().getEntityName());
             if (!e.getNode().equals(getRootNode().getNode())) {
                 builder.append(" -> ");
             }

@@ -28,7 +28,7 @@ import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.logging.LogEntry;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.platform.PlatformService;
-import org.opentosca.toscana.core.transformation.properties.Property;
+import org.opentosca.toscana.core.transformation.properties.PlatformProperty;
 import org.opentosca.toscana.core.transformation.properties.PropertyType;
 
 import ch.qos.logback.classic.Level;
@@ -187,13 +187,13 @@ public class TransformationControllerTest extends BaseSpringTest {
         Set<Platform> platforms = new HashSet<>();
 
         for (int i = 0; i < 5; i++) {
-            HashSet<Property> properties = new HashSet<>();
+            HashSet<PlatformProperty> properties = new HashSet<>();
             for (PropertyType type : PropertyType.values()) {
-                properties.add(new Property(type.getTypeName() + "_property", type));
+                properties.add(new PlatformProperty(type.getTypeName() + "_property", type));
             }
             char[] chars = "abcdefghijklmnopqrstuvwxyz".toCharArray();
             if (i == 0) {
-                properties.add(new Property(
+                properties.add(new PlatformProperty(
                     PROPERTY_TEST_DEFAULT_VALUE_KEY,
                     PropertyType.TEXT,
                     "",
@@ -260,7 +260,7 @@ public class TransformationControllerTest extends BaseSpringTest {
 
     //</editor-fold>
 
-    //<editor-fold desc="Property tests">
+    //<editor-fold desc="SimpleProperty tests">
     @Test
     public void setTransformationProperties() throws Exception {
         preInitNonCreationTests();
@@ -332,7 +332,7 @@ public class TransformationControllerTest extends BaseSpringTest {
     @Test
     public void getTransformationPropertyValues() throws Exception {
         preInitNonCreationTests();
-        //Set a Property value
+        //Set a SimpleProperty value
         csarService.getCsar(VALID_CSAR_NAME)
             .get().getTransformation(VALID_PLATFORM_NAME).get()
             .getProperties().setPropertyValue("secret_property", "geheim");
