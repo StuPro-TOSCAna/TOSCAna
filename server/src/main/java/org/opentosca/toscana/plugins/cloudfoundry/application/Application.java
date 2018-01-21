@@ -52,7 +52,7 @@ public class Application {
      @param pathToFile must be the path inside the csar. The method will create a relative path from it
      */
     public void addConfigMysql(String pathToFile) {
-        String relativePath = "../../" + APPLICATION_FOLDER + this.applicationNumber + pathToFile;
+        String relativePath = "../../" + APPLICATION_FOLDER + this.applicationNumber + "/" + pathToFile;
         configMysqlWithSql.add(relativePath);
     }
 
@@ -67,9 +67,10 @@ public class Application {
         String pathToFileOnContainer = "/home/vcap/app/";
         //TODO: expand with more NodeType
         if (parentTopNode instanceof WebApplication) {
-            pathToFileOnContainer = "/home/vcap/app/htdocs/" + APPLICATION_FOLDER + this.applicationNumber + pathToFile;
+            pathToFileOnContainer = "/home/vcap/app/htdocs/" + APPLICATION_FOLDER + this.applicationNumber;
         }
-        executeCommand.put("../../" + APPLICATION_FOLDER + this.getApplicationNumber() + pathToFile, pathToFileOnContainer + pathToFile);
+        executeCommand.put("../../" + APPLICATION_FOLDER + this.getApplicationNumber() + "/" + pathToFile,
+            pathToFileOnContainer + "/" + pathToFile);
     }
 
     /**

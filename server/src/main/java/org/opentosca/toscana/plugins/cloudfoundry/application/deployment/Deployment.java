@@ -15,11 +15,12 @@ import static org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle.SCRIPTS_
 
 public class Deployment {
 
+    private static boolean pythonIsChecked = false;
+    
     private BashScript deploymentScript;
     private Application application;
     private PluginFileAccess fileAccess;
     private Class deploymentClass;
-    private boolean pythonIsChecked;
 
     private final String PYTHON_SCRIPTS_TARGET = SCRIPTS_DIR_PATH;
 
@@ -40,7 +41,6 @@ public class Deployment {
         this.application = application;
         this.fileAccess = fileAccess;
         deploymentClass = Deployment.class;
-        this.pythonIsChecked = false;
     }
 
     /**
@@ -126,7 +126,7 @@ public class Deployment {
 
     private void checkPython() throws IOException {
         if (!pythonIsChecked) {
-            this.pythonIsChecked = true;
+            pythonIsChecked = true;
             deploymentScript.append("check python");
         }
     }

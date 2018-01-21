@@ -41,6 +41,7 @@ public class FileCreator {
     public static final String FILESUFFIX_DEPLOY = ".sh";
     public static final String APPLICATION_FOLDER = "app";
     public static String DEPLOY_NAME = "application";
+    private static boolean showAllServiceOfferings = true;
 
     private final PluginFileAccess fileAccess;
     private List<Application> applications;
@@ -202,16 +203,12 @@ public class FileCreator {
      @param deployScript script the commands will be written in
      */
     private void handleServices(BashScript deployScript) throws IOException {
-        int counter = 0;
         for (Application application : applications) {
-            counter += 1;
             Deployment deployment = new Deployment(deployScript, application, fileAccess);
 
-            if (counter == 1) {
-                deployment.treatServices(true);
-            } else {
-                deployment.treatServices(false);
-            }
+            //only one time all service offerings should be printed to the deploy script
+            deployment.treatServices(showAllServiceOfferings);
+            showAllServiceOfferings = false;
         }
     }
 

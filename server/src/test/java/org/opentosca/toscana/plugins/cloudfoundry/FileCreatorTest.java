@@ -1,23 +1,34 @@
 package org.opentosca.toscana.plugins.cloudfoundry;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.opentosca.toscana.core.BaseUnitTest;
+import org.opentosca.toscana.core.parse.model.MappingEntity;
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
+import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.transformation.logging.Log;
+import org.opentosca.toscana.model.EffectiveModel;
+import org.opentosca.toscana.model.EntityId;
+import org.opentosca.toscana.model.node.RootNode;
+import org.opentosca.toscana.model.node.WebApplication;
 import org.opentosca.toscana.plugins.cloudfoundry.application.Application;
+import org.opentosca.toscana.plugins.cloudfoundry.application.Provider;
 import org.opentosca.toscana.plugins.cloudfoundry.application.ServiceTypes;
+import org.opentosca.toscana.plugins.cloudfoundry.client.Connection;
 import org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle;
 
 import org.apache.commons.io.FileUtils;
+import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeNotNull;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.APPLICATION_FOLDER;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.CLI_PATH_TO_MANIFEST;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.DEPLOY_NAME;
@@ -26,6 +37,11 @@ import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.FILESUFFIX_
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.MANIFEST_NAME;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.MANIFEST_PATH;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.NAMEBLOCK;
+import static org.opentosca.toscana.plugins.cloudfoundry.ServiceTest.CF_ENVIRONMENT_HOST;
+import static org.opentosca.toscana.plugins.cloudfoundry.ServiceTest.CF_ENVIRONMENT_ORGA;
+import static org.opentosca.toscana.plugins.cloudfoundry.ServiceTest.CF_ENVIRONMENT_PW;
+import static org.opentosca.toscana.plugins.cloudfoundry.ServiceTest.CF_ENVIRONMENT_SPACE;
+import static org.opentosca.toscana.plugins.cloudfoundry.ServiceTest.CF_ENVIRONMENT_USER;
 import static org.opentosca.toscana.plugins.cloudfoundry.application.ManifestAttributes.APPLICATIONS_SECTION;
 import static org.opentosca.toscana.plugins.cloudfoundry.application.ManifestAttributes.ENVIRONMENT;
 import static org.opentosca.toscana.plugins.cloudfoundry.application.ManifestAttributes.PATH;
@@ -52,6 +68,13 @@ public class FileCreatorTest extends BaseUnitTest {
     private final String service2 = "p-mysql";
     private final String mainApplicationPath = "myapp/main/myphpapp.php";
     private PluginFileAccess fileAccess;
+
+    private Connection connection;
+    private String envUser;
+    private String envPw;
+    private String envHost;
+    private String envOrga;
+    private String envSpace;
 
     @Before
     public void setUp() {
@@ -233,4 +256,63 @@ public class FileCreatorTest extends BaseUnitTest {
 
         assertEquals(expectedContent, deployscriptContent);
     }
+    
+    @Test
+    public void checkMultipleApplicationServices() throws IOException, JSONException {
+        envUser = System.getenv(CF_ENVIRONMENT_USER);
+        envPw = System.getenv(CF_ENVIRONMENT_PW);
+        envHost = System.getenv(CF_ENVIRONMENT_HOST);
+        envOrga = System.getenv(CF_ENVIRONMENT_ORGA);
+        envSpace = System.getenv(CF_ENVIRONMENT_SPACE);
+        
+        connection = createConnection();
+        Application app = new Application("app",1);
+        app.setProvider(new Provider(Provider
+            .CloudFoundryProviderType.PIVOTAL));
+        app.setConnection(connection);
+        
+        app.addService(service1, ServiceTypes.MYSQL);
+
+        EffectiveModel lamp = new EffectiveModel(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, log);
+        RootNode webApplicationNode = null;
+        for (RootNode node : lamp.getNodes()) {
+            if (node instanceof WebApplication) {
+                webApplicationNode = node;
+                break;
+            }
+        }
+        
+        app.addConfigMysql("my_db/configSql.sql");
+        app.addExecuteFile("my_app/configure_myphpapp.sh", webApplicationNode);
+        
+        List<Application> applications = new ArrayList<>();
+        applications.add(app);
+        FileCreator fileCreator = new FileCreator(fileAccess, applications);
+        fileCreator.createFiles();
+
+        File targetFile = new File(targetDir, outputPath + FILEPRAEFIX_DEPLOY + DEPLOY_NAME + FILESUFFIX_DEPLOY);
+        String deployscriptContent = FileUtils.readFileToString(targetFile);
+        String expectedContent = "check python\n" +
+            "python replace.py ../../app1/my_app/configure_myphpapp.sh /var/www/html/ /home/vcap/app/htdocs/\n" +
+            "cf push app -f ../manifest.yml\n" +
+            "python readCredentials.py app cleardb mysql\n" +
+            "python executeCommand.py app /home/vcap/app/htdocs/app1/my_app/configure_myphpapp.sh\n" +
+            "python configureMysql.py ../../app1/my_db/configSql.sql\n";
+
+        assertTrue(deployscriptContent.contains(expectedContent));
+        
+        
+    }
+
+    private Connection createConnection() {
+        assumeNotNull(envUser, envHost, envOrga, envPw, envSpace);
+        connection = new Connection(envUser,
+            envPw,
+            envHost,
+            envOrga,
+            envSpace);
+
+        return connection;
+    }
+
 }
