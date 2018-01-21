@@ -8,8 +8,6 @@ import org.opentosca.toscana.core.csar.CsarDao;
 import org.opentosca.toscana.core.csar.CsarFilesystemDao;
 import org.opentosca.toscana.core.csar.CsarService;
 import org.opentosca.toscana.core.csar.CsarServiceImpl;
-import org.opentosca.toscana.core.parse.CsarParseService;
-import org.opentosca.toscana.core.parse.CsarParseServiceImpl;
 import org.opentosca.toscana.core.plugin.PluginService;
 import org.opentosca.toscana.core.plugin.PluginServiceImpl;
 import org.opentosca.toscana.core.testdata.TestCsars;
@@ -68,14 +66,8 @@ public class TestCoreConfiguration extends CoreConfiguration {
     }
 
     @Bean
-    public CsarParseService csarParser() {
-        CsarParseServiceImpl bean = new CsarParseServiceImpl();
-        return bean;
-    }
-
-    @Bean
-    public CsarService csarService(CsarDao repo, CsarParseService parser) {
-        return new CsarServiceImpl(repo, parser);
+    public CsarService csarService(CsarDao repo) {
+        return new CsarServiceImpl(repo);
     }
 
     @Bean

@@ -1,19 +1,13 @@
 package org.opentosca.toscana.model.capability;
 
-import java.net.URL;
 import java.util.Optional;
-import java.util.Set;
 
-import org.opentosca.toscana.model.datatype.NetworkProtocol;
-import org.opentosca.toscana.model.datatype.Port;
-import org.opentosca.toscana.model.datatype.PortSpec;
-import org.opentosca.toscana.model.datatype.Range;
-import org.opentosca.toscana.model.node.RootNode;
+import org.opentosca.toscana.core.parse.model.MappingEntity;
+import org.opentosca.toscana.model.util.ToscaKey;
 import org.opentosca.toscana.model.visitor.CapabilityVisitor;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.Singular;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  Represents a public endpoint which is accessible to the general internet (and its public IP
@@ -29,15 +23,9 @@ import lombok.Singular;
  (i.e., has non-public IP address ranges assigned to it), then TOSCA orchestrators SHALL treat this as an error.
  (TOSCA Simple Profile in YAML Version 1.1, p. 155)
  */
-@Data
+@EqualsAndHashCode
+@ToString
 public class PublicEndpointCapability extends EndpointCapability {
-
-    /**
-     indicates that the public address should be allocated from a pool of floating IPs
-     that are associated with the network
-     (TOSCA Simple Profile in YAML Version 1.1, p. 155)
-     */
-    private final boolean floating;
 
     /**
      The optional name to register with DNS (experimental)
@@ -47,42 +35,49 @@ public class PublicEndpointCapability extends EndpointCapability {
      <p>
      (TOSCA Simple Profile in YAML Version 1.1, p. 155)
      */
-    private final String dnsName;
+    public static final ToscaKey<String> DNS_NAME = new ToscaKey<>(PROPERTIES, "dnsName");
+    /**
+     indicates that the public address should be allocated from a pool of floating IPs
+     that are associated with the network.
+     (TOSCA Simple Profile in YAML Version 1.1, p. 155)
+     <p>
+     Defaults to false.
+     */
+    public static ToscaKey<Boolean> FLOATING = new ToscaKey<>(PROPERTIES, "floating");
 
-    @Builder
-    protected PublicEndpointCapability(boolean floating,
-                                       String dnsName,
-                                       NetworkProtocol protocol,
-                                       Port port,
-                                       boolean secure,
-                                       URL urlPath,
-                                       String portName,
-                                       String networkName,
-                                       Initiator initiator,
-                                       @Singular Set<PortSpec> supportedPorts,
-                                       Set<Class<? extends RootNode>> validSourceTypes,
-                                       Range occurrence) {
-        super(protocol, port, secure, urlPath, portName, (networkName != null ? networkName : "PUBLIC"),
-            initiator, supportedPorts, validSourceTypes, occurrence);
-        if (networkName.equalsIgnoreCase("private")) {
-            throw new IllegalArgumentException("Constraint violation: network name must not equal 'private'");
-        }
-        this.floating = floating;
-        this.dnsName = dnsName;
+    public PublicEndpointCapability(MappingEntity mappingEntity) {
+        super(mappingEntity);
+        init();
+    }
+
+    private void init() {
+        setDefault(FLOATING, false);
     }
 
     /**
-     @return {@link #dnsName}
+     @return {@link #DNS_NAME}
      */
     public Optional<String> getDnsName() {
-        return Optional.ofNullable(dnsName);
+        return Optional.ofNullable(get(DNS_NAME));
+    }
+
+    /**
+     @return {@link #FLOATING}
+     */
+    public Boolean getFloating() {
+        return get(FLOATING);
+    }
+
+    /**
+     Sets {@link #FLOATING}
+     */
+    public PublicEndpointCapability setFloating(Boolean floating) {
+        set(FLOATING, floating);
+        return this;
     }
 
     @Override
     public void accept(CapabilityVisitor v) {
         v.visit(this);
-    }
-
-    public static class PublicEndpointCapabilityBuilder extends EndpointCapabilityBuilder {
     }
 }

@@ -6,24 +6,19 @@ import java.util.Set;
 
 import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
-import org.opentosca.toscana.core.transformation.logging.Log;
+import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.visitor.VisitableNode;
 import org.opentosca.toscana.plugins.cloudfoundry.application.Application;
 import org.opentosca.toscana.plugins.cloudfoundry.visitors.NodeVisitors;
-import org.opentosca.toscana.plugins.testdata.TestEffectiveModels;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.CLI_CREATE_SERVICE_DEFAULT;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.CLI_PATH_TO_MANIFEST;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.CLI_PUSH;
@@ -38,8 +33,6 @@ public class CloudFoundryPluginTest extends BaseUnitTest {
     private static Application myApp = new Application("my_app", 1);
     private final static NodeVisitors visitor = new NodeVisitors(myApp);
 
-    @Mock
-    private Log log;
     private File targetDir;
     private final String appName = "my_app";
     private final String appNameClearedUp = "my-app";
@@ -48,11 +41,11 @@ public class CloudFoundryPluginTest extends BaseUnitTest {
 
     @Before
     public void setUp() throws Exception {
-        File sourceDir = new File(resourcesPath + "csars/yaml/valid/lamp-input/");
+        EffectiveModel lamp = new EffectiveModel(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, log);
+        File sourceDir = new File(resourcesPath, "csars/yaml/valid/lamp-noinput");
         targetDir = new File(tmpdir, "targetDir");
         sourceDir.mkdir();
         targetDir.mkdir();
-        when(log.getLogger(any(Class.class))).thenReturn(LoggerFactory.getLogger("Test logger"));
         PluginFileAccess fileAccess = new PluginFileAccess(sourceDir, targetDir, log);
         Set<RootNode> nodes = lamp.getNodes();
 

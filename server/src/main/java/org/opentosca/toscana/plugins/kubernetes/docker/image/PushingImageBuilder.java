@@ -7,8 +7,6 @@ import com.spotify.docker.client.DefaultDockerClient;
 import com.spotify.docker.client.DockerCertificateException;
 import com.spotify.docker.client.DockerClient;
 
-import static org.opentosca.toscana.plugins.kubernetes.docker.mapper.MapperConstants.DOCKER_HUB_URL;
-
 public class PushingImageBuilder extends ImageBuilder {
     private final DockerRegistryCredentials credentials;
 

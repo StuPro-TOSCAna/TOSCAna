@@ -1,37 +1,37 @@
 package org.opentosca.toscana.model.requirement;
 
-import java.util.Set;
-
+import org.opentosca.toscana.core.parse.model.MappingEntity;
 import org.opentosca.toscana.model.capability.StorageCapability;
-import org.opentosca.toscana.model.datatype.Range;
 import org.opentosca.toscana.model.node.RootNode;
-import org.opentosca.toscana.model.relation.DependsOn;
 import org.opentosca.toscana.model.relation.RootRelationship;
+import org.opentosca.toscana.model.util.ToscaKey;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.Singular;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
-@Data
+@EqualsAndHashCode
+@ToString
 public class StorageRequirement extends Requirement<StorageCapability, RootNode, RootRelationship> {
+    public ToscaKey<StorageCapability> CAPABILITY = new ToscaKey<>(CAPABILITY_NAME)
+        .type(StorageCapability.class);
 
-    @Builder
-    protected StorageRequirement(StorageCapability capability,
-                                 Range occurrence,
-                                 @Singular Set<RootNode> fulfillers,
-                                 RootRelationship relationship) {
-        super(capability, occurrence, fulfillers, relationship);
+    public StorageRequirement(MappingEntity mappingEntity) {
+        super(mappingEntity);
+        setDefault(RELATIONSHIP, new RootRelationship(getChildEntity(RELATIONSHIP)));
     }
 
-    public static StorageRequirementBuilder builder(RootRelationship relationship) {
-        return new StorageRequirementBuilder()
-            .relationship(relationship);
+    /**
+     @return {@link #CAPABILITY}
+     */
+    public StorageCapability getCapability() {
+        return get(CAPABILITY);
     }
 
-    public static Requirement<StorageCapability, RootNode, RootRelationship> getFallback(Requirement<StorageCapability, RootNode, RootRelationship> s) {
-        return (s == null) ? StorageRequirement.builder((RootRelationship) new DependsOn()).build() : s;
-    }
-
-    public static class StorageRequirementBuilder extends RequirementBuilder<StorageCapability, RootNode, RootRelationship> {
+    /**
+     Sets {@link #CAPABILITY}
+     */
+    public StorageRequirement setCapability(StorageCapability capability) {
+        set(CAPABILITY, capability);
+        return this;
     }
 }

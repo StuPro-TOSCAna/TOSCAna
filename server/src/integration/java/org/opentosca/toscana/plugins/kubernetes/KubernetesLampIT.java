@@ -1,13 +1,14 @@
 package org.opentosca.toscana.plugins.kubernetes;
 
 import java.io.File;
+import java.util.HashSet;
 
+import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
 import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.plugins.BaseTransformTest;
 import org.opentosca.toscana.plugins.kubernetes.docker.mapper.MapperTest;
-import org.opentosca.toscana.plugins.testdata.LampApp;
 
 import org.apache.commons.io.FileUtils;
 
@@ -27,28 +28,30 @@ public class KubernetesLampIT extends BaseTransformTest {
 
     @Override
     protected EffectiveModel getModel() {
-        return LampApp.getLampApp();
+        return new EffectiveModel(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, log);
     }
 
     @Override
     protected void onSuccess(File outputDir) throws Exception {
+        Thread.sleep(10000);
         //Do Nothing
     }
 
     @Override
-    protected void onFailure(File outputDir, Exception e) {
+    protected void onFailure(File outputDir, Exception e) throws InterruptedException {
+        Thread.sleep(10000);
         fail();
     }
 
     @Override
     protected void copyArtifacts(File contentDir) throws Exception {
-        File inputDir = new File(getClass().getResource("/csars/yaml/valid/lamp-input").getFile());
+        File inputDir = new File(getClass().getResource("/csars/yaml/valid/lamp-noinput").getFile());
         FileUtils.copyDirectory(inputDir, contentDir);
     }
 
     @Override
     protected PropertyInstance getProperties() {
-        PropertyInstance props = new PropertyInstance(plugin.getPlatform().properties, mock(Transformation.class));
+        PropertyInstance props = new PropertyInstance(new HashSet<>(plugin.getPlatform().properties), mock(Transformation.class));
 
         if (System.getenv("DH_USERNAME") != null) {
             //This Transformation is performed by pushing to a registry

@@ -1,15 +1,15 @@
 package org.opentosca.toscana.model.relation;
 
-import java.util.Objects;
+import java.util.Optional;
 
-import javax.validation.constraints.Size;
-
+import org.opentosca.toscana.core.parse.model.MappingEntity;
 import org.opentosca.toscana.model.capability.StorageCapability;
 import org.opentosca.toscana.model.node.Compute;
+import org.opentosca.toscana.model.util.ToscaKey;
 import org.opentosca.toscana.model.visitor.RelationshipVisitor;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  Represents an attachment relationship between two nodes.
@@ -19,7 +19,8 @@ import lombok.Data;
  <p>
  (TOSCA Simple Profile in YAML Version 1.1, p. 161)
  */
-@Data
+@EqualsAndHashCode
+@ToString
 public class AttachesTo extends RootRelationship {
 
     /**
@@ -30,8 +31,7 @@ public class AttachesTo extends RootRelationship {
      <p>
      (TOSCA Simple Profile in YAML Version 1.1, p. 161)
      */
-    @Size(min = 1)
-    private final String mountPoint;
+    public static ToscaKey<String> MOUNT_POINT = new ToscaKey<>(PROPERTIES, "mount_point");
 
     /**
      The optional logical device name which for the attached device (which is represented by the target node in the
@@ -41,29 +41,44 @@ public class AttachesTo extends RootRelationship {
      <p>
      (TOSCA Simple Profile in YAML Version 1.1, p. 161)
      */
-    private final String device;
+    public static ToscaKey<String> DEVICE = new ToscaKey<>(PROPERTIES, "device");
 
-    @Builder
-    protected AttachesTo(String mountPoint,
-                         String device,
-                         String description) {
-        super(description);
-        this.mountPoint = Objects.requireNonNull(mountPoint);
-        this.device = device;
+    public AttachesTo(MappingEntity entity) {
+        super(entity);
     }
 
     /**
-     @param mountPoint {@link #mountPoint}
+     @return {@link #MOUNT_POINT}
      */
-    public static AttachesToBuilder builder(String mountPoint) {
-        return new AttachesToBuilder().mountPoint(mountPoint);
+    public String getMountPoint() {
+        return get(MOUNT_POINT);
+    }
+
+    /**
+     Sets {@link #MOUNT_POINT}
+     */
+    public void setMountPoint(String mountPoint) {
+        set(MOUNT_POINT, mountPoint);
+    }
+
+    /**
+     @return {@link #DEVICE}
+     */
+
+    public Optional<String> getDevice() {
+
+        return Optional.ofNullable(get(DEVICE));
+    }
+
+    /**
+     Sets {@link #DEVICE}
+     */
+    public void setDevice(String device) {
+        set(DEVICE, device);
     }
 
     @Override
     public void accept(RelationshipVisitor v) {
         v.visit(this);
-    }
-
-    public static class AttachesToBuilder extends RootRelationshipBuilder {
     }
 }

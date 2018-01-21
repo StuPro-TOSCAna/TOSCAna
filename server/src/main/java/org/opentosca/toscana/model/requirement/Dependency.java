@@ -1,32 +1,41 @@
 package org.opentosca.toscana.model.requirement;
 
-import java.util.Set;
+import java.util.Optional;
 
+import org.opentosca.toscana.core.parse.model.MappingEntity;
 import org.opentosca.toscana.model.capability.Capability;
-import org.opentosca.toscana.model.datatype.Range;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.relation.DependsOn;
+import org.opentosca.toscana.model.util.ToscaKey;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.Singular;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
-@Data
+@EqualsAndHashCode
+@ToString
 public class Dependency extends Requirement<Capability, RootNode, DependsOn> {
 
-    @Builder
-    protected Dependency(Capability capability,
-                         Range occurrence,
-                         @Singular Set<RootNode> fulfillers,
-                         DependsOn relationship) {
-        super(capability, occurrence, fulfillers, relationship);
+    public ToscaKey<DependsOn> RELATIONSHIP = new ToscaKey<>(RELATIONSHIP_NAME)
+        .type(DependsOn.class);
+
+    public Dependency(MappingEntity mappingEntity) {
+        super(mappingEntity);
+        setDefault(RELATIONSHIP, new DependsOn(getChildEntity(RELATIONSHIP)));
     }
 
-    public static DependencyBuilder builder(DependsOn relationship) {
-        return new DependencyBuilder()
-            .relationship(relationship);
+    /**
+     @return {@link #RELATIONSHIP}
+     */
+    public Optional<DependsOn> getRelationship() {
+        return Optional.ofNullable(get(RELATIONSHIP));
     }
 
-    public static class DependencyBuilder extends RequirementBuilder<Capability, RootNode, DependsOn> {
+    /**
+     Sets {@link #RELATIONSHIP}
+     */
+    @Override
+    public Dependency setRelationship(DependsOn relationship) {
+        set(RELATIONSHIP, relationship);
+        return this;
     }
 }

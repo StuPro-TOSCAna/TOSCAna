@@ -22,7 +22,7 @@ public class ResourceFileCreatorTest extends BaseUnitTest {
 
     @Test
     public void testReplicationControllerCreation() {
-        ResourceFileCreator resourceFileCreator = new ResourceFileCreator(Pod.getPods(TestNodeStacks.getLampNodeStacks()));
+        ResourceFileCreator resourceFileCreator = new ResourceFileCreator(Pod.getPods(TestNodeStacks.getLampNodeStacks(log)));
 
         HashMap<String, String> result = null;
         try {

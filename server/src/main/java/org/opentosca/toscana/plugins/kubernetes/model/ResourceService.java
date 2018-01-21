@@ -2,8 +2,6 @@ package org.opentosca.toscana.plugins.kubernetes.model;
 
 import java.util.stream.Collectors;
 
-import org.opentosca.toscana.plugins.kubernetes.util.NodeStack;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.fabric8.kubernetes.api.model.Service;
 import io.fabric8.kubernetes.api.model.ServiceBuilder;

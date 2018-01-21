@@ -1,65 +1,71 @@
 package org.opentosca.toscana.model.node;
 
-import java.util.Set;
-
-import org.opentosca.toscana.model.capability.Capability;
+import org.opentosca.toscana.core.parse.model.MappingEntity;
 import org.opentosca.toscana.model.capability.ContainerCapability;
 import org.opentosca.toscana.model.capability.ScalableCapability;
-import org.opentosca.toscana.model.datatype.Credential;
-import org.opentosca.toscana.model.operation.StandardLifecycle;
-import org.opentosca.toscana.model.relation.HostedOn;
-import org.opentosca.toscana.model.requirement.Requirement;
+import org.opentosca.toscana.model.util.ToscaKey;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  Represents operating system-level virtualization technology used to run
  multiple application services on a single {@link Compute} host.
  (TOSCA Simple Profile in YAML Version 1.1, p. 176)
  */
-@Data
+@EqualsAndHashCode
+@ToString
 public class ContainerRuntime extends SoftwareComponent {
 
-    private final ContainerCapability containerHost;
+    public static ToscaKey<ContainerCapability> CONTAINER_HOST = new ToscaKey<>(CAPABILITIES, "host")
+        .type(ContainerCapability.class);
+    public static ToscaKey<ScalableCapability> SCALABLE = new ToscaKey<>(CAPABILITIES, "scalable")
+        .type(ScalableCapability.class);
 
-    private final ScalableCapability scalable;
+    public ContainerRuntime(MappingEntity mappingEntity) {
+        super(mappingEntity);
+        init();
+    }
 
-    @Builder
-    private ContainerRuntime(Requirement<ContainerCapability, Compute, HostedOn> host,
-                             ContainerCapability containerHost,
-                             ScalableCapability scalable,
-                             String componentVersion,
-                             Credential adminCredential,
-                             String nodeName,
-                             StandardLifecycle standardLifecycle,
-                             Set<Requirement> requirements,
-                             Set<Capability> capabilities,
-                             String description) {
-        super(componentVersion, adminCredential, host, nodeName, standardLifecycle, requirements, capabilities, description);
-        this.containerHost = (containerHost == null) ? ContainerCapability.builder().build() : containerHost;
-        this.scalable = (scalable == null) ? ScalableCapability.builder().build() : scalable;
-
-        this.capabilities.add(containerHost);
-        this.capabilities.add(scalable);
+    private void init() {
+        setDefault(CONTAINER_HOST, new ContainerCapability(getChildEntity(CONTAINER_HOST)));
+        setDefault(SCALABLE, new ScalableCapability(getChildEntity(SCALABLE)));
     }
 
     /**
-     @param nodeName {@link #nodeName}
+     @return {@link #CONTAINER_HOST}
      */
-    public static ContainerRuntimeBuilder builder(String nodeName) {
-        return new ContainerRuntimeBuilder()
-            .nodeName(nodeName);
+    public ContainerCapability getContainerHost() {
+
+        return get(CONTAINER_HOST);
+    }
+
+    /**
+     Sets {@link #CONTAINER_HOST}
+     */
+    public ContainerRuntime setContainerHost(ContainerCapability containerHost) {
+        set(CONTAINER_HOST, containerHost);
+        return this;
+    }
+
+    /**
+     @return {@link #SCALABLE}
+     */
+    public ScalableCapability getScalable() {
+        return get(SCALABLE);
+    }
+
+    /**
+     Sets {@link #SCALABLE}
+     */
+    public ContainerRuntime setScalable(ScalableCapability scalable) {
+        set(SCALABLE, scalable);
+        return this;
     }
 
     @Override
     public void accept(NodeVisitor v) {
         v.visit(this);
-    }
-
-    public static class ContainerRuntimeBuilder extends SoftwareComponentBuilder {
-        protected Set<Requirement> requirements = super.requirements;
-        protected Set<Capability> capabilities = super.capabilities;
     }
 }
