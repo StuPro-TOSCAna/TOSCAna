@@ -6,12 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.opentosca.toscana.core.BaseUnitTest;
-import org.opentosca.toscana.core.parse.model.MappingEntity;
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.model.EffectiveModel;
-import org.opentosca.toscana.model.EntityId;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.node.WebApplication;
 import org.opentosca.toscana.plugins.cloudfoundry.application.Application;
@@ -28,9 +26,7 @@ import org.mockito.Mock;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
 import static org.junit.Assume.assumeNotNull;
-
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.APPLICATION_FOLDER;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.CLI_PATH_TO_MANIFEST;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.DEPLOY_NAME;
@@ -191,8 +187,8 @@ public class FileCreatorTest extends BaseUnitTest {
 
     @Test
     public void checkMultipleApplicationsManifest() throws Exception {
-        Application app1 = new Application("app1",1);
-        Application app2 = new Application("app2",2);
+        Application app1 = new Application("app1", 1);
+        Application app2 = new Application("app2", 2);
 
         app1.addService(service1, ServiceTypes.MYSQL);
         app2.addService(service2, ServiceTypes.MYSQL);
@@ -200,12 +196,12 @@ public class FileCreatorTest extends BaseUnitTest {
         app1.addAttribute("attr2", "value2");
         app2.addAttribute("attr1", "value1");
         app2.addAttribute("attr2", "value2");
-        app1.addEnvironmentVariables("EnvTest","5");
-        
+        app1.addEnvironmentVariables("EnvTest", "5");
+
         List<Application> applications = new ArrayList<>();
         applications.add(app1);
         applications.add(app2);
-        
+
         FileCreator fileCreatorMult = new FileCreator(fileAccess, applications);
         fileCreatorMult.createFiles();
         File targetFile = new File(targetDir, MANIFEST_PATH);
@@ -228,14 +224,14 @@ public class FileCreatorTest extends BaseUnitTest {
             "  random-route: true\n" +
             "  services:\n" +
             "    - p-mysql\n";
-       
+
         assertEquals(expectedContent, manifestContent);
     }
 
     @Test
     public void checkMultipleApplicationsDeployScript() throws Exception {
-        Application app1 = new Application("app1",1);
-        Application app2 = new Application("app2",2);
+        Application app1 = new Application("app1", 1);
+        Application app2 = new Application("app2", 2);
 
         app1.addService(service1, ServiceTypes.MYSQL);
         app2.addService(service2, ServiceTypes.MYSQL);
@@ -258,7 +254,7 @@ public class FileCreatorTest extends BaseUnitTest {
 
         assertEquals(expectedContent, deployscriptContent);
     }
-    
+
     @Test
     public void checkMultipleApplicationServices() throws IOException, JSONException {
         envUser = System.getenv(CF_ENVIRONMENT_USER);
@@ -266,13 +262,13 @@ public class FileCreatorTest extends BaseUnitTest {
         envHost = System.getenv(CF_ENVIRONMENT_HOST);
         envOrga = System.getenv(CF_ENVIRONMENT_ORGA);
         envSpace = System.getenv(CF_ENVIRONMENT_SPACE);
-        
+
         connection = createConnection();
-        Application app = new Application("app",1);
+        Application app = new Application("app", 1);
         app.setProvider(new Provider(Provider
             .CloudFoundryProviderType.PIVOTAL));
         app.setConnection(connection);
-        
+
         app.addService(service1, ServiceTypes.MYSQL);
 
         EffectiveModel lamp = new EffectiveModel(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, log);
@@ -283,10 +279,10 @@ public class FileCreatorTest extends BaseUnitTest {
                 break;
             }
         }
-        
+
         app.addConfigMysql("my_db/configSql.sql");
         app.addExecuteFile("my_app/configure_myphpapp.sh", webApplicationNode);
-        
+
         List<Application> applications = new ArrayList<>();
         applications.add(app);
         FileCreator fileCreator = new FileCreator(fileAccess, applications);
@@ -294,16 +290,17 @@ public class FileCreatorTest extends BaseUnitTest {
 
         File targetFile = new File(targetDir, outputPath + FILEPRAEFIX_DEPLOY + DEPLOY_NAME + FILESUFFIX_DEPLOY);
         String deployscriptContent = FileUtils.readFileToString(targetFile);
-        String expectedContent = "check python\n" +
+        String expectedContent = "cf create-service cleardb spark cleardb\n" +
+            "check python\n" +
             "python replace.py ../../app1/my_app/configure_myphpapp.sh /var/www/html/ /home/vcap/app/htdocs/\n" +
             "cf push app -f ../manifest.yml\n" +
             "python readCredentials.py app cleardb mysql\n" +
             "python executeCommand.py app /home/vcap/app/htdocs/app1/my_app/configure_myphpapp.sh\n" +
-            "python configureMysql.py ../../app1/my_db/configSql.sql\n";
+            "python configureMysql.py ../../app1/my_db/configSql.sql";
 
         assertTrue(deployscriptContent.contains(expectedContent));
-        
-        
+        //assertEquals(expectedContent, deployscriptContent);
+
     }
 
     private Connection createConnection() {
@@ -316,5 +313,4 @@ public class FileCreatorTest extends BaseUnitTest {
 
         return connection;
     }
-
 }

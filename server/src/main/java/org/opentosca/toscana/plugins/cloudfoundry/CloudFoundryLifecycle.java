@@ -65,7 +65,7 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
         //TODO: check how many different applications there are and fill list with them
         //probably there must be a combination of application and set of nodes
         applications = new ArrayList<>();
-        Application myApp = new Application();
+        Application myApp = new Application(1);
         myApp.setProvider(provider);
         myApp.setConnection(connection);
         applications.add(myApp);

@@ -248,17 +248,10 @@ public class FileCreator {
 
         if (!application.getAttributes().isEmpty()) {
             ArrayList<String> attributes = new ArrayList<>();
-            boolean containsDomain = false;
             for (Map.Entry<String, String> attribute : application.getAttributes().entrySet()) {
                 attributes.add(String.format("  %s: %s", attribute.getKey(), attribute.getValue()));
-                if (attribute.getKey().equals(DOMAIN.getName())) {
-                    containsDomain = true;
-                }
             }
-            if (!containsDomain) {
-                attributes.add(String.format("  %s: %s", RANDOM_ROUTE.getName(), "true"));
-            }
-            if (!app.getAttributes().containsKey(DOMAIN.getName())) {
+            if (!application.getAttributes().containsKey(DOMAIN.getName())) {
                 attributes.add(String.format("  %s: %s", RANDOM_ROUTE.getName(), "true"));
             }
             for (String attribute : attributes) {

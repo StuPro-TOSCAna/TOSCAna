@@ -1,5 +1,6 @@
 package org.opentosca.toscana.plugins.cloudfoundry.application.deployment;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,14 +10,13 @@ import org.opentosca.toscana.plugins.cloudfoundry.application.Application;
 import org.opentosca.toscana.plugins.cloudfoundry.application.ServiceTypes;
 import org.opentosca.toscana.plugins.scripts.BashScript;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
 import static org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle.SCRIPTS_DIR_PATH;
 
 public class Deployment {
 
-    private static boolean pythonIsChecked = false;
-    
     private BashScript deploymentScript;
     private Application application;
     private PluginFileAccess fileAccess;
@@ -62,7 +62,6 @@ public class Deployment {
      */
     public void configureSql(String relativePathToSQLConfigureFile) throws IOException {
         copyFile(PYTHON_CONFIGURE_SQL_FILENAME, PYTHON_CONFIGURE_SQL_SOURCE);
-        checkPython();
         deploymentScript.append(String.format("python %s %s", PYTHON_CONFIGURE_SQL_FILENAME, relativePathToSQLConfigureFile));
     }
 
@@ -75,7 +74,6 @@ public class Deployment {
      */
     public void executeFile(String appName, String pathToFileOnContainer) throws IOException {
         copyFile(PYTHON_EXECUTE_FILENAME, PYTHON_EXECUTE_SOURCE);
-        checkPython();
         deploymentScript.append(String.format("python %s %s %s", PYTHON_EXECUTE_FILENAME, appName, pathToFileOnContainer));
     }
 
@@ -89,7 +87,6 @@ public class Deployment {
      */
     public void readCredentials(String appName, String serviceName, ServiceTypes serviceType) throws IOException {
         copyFile(PYTHON_READ_CREDENTIALS_FILENAME, PYTHON_READ_CREDENTIALS_SOURCE);
-        checkPython();
         deploymentScript.append(String.format("python %s %s %s %s", PYTHON_READ_CREDENTIALS_FILENAME, appName, serviceName, serviceType.getName()));
     }
 
@@ -102,7 +99,6 @@ public class Deployment {
      */
     public void replaceStrings(String pathToLocalFile, String findStr, String replaceStr) throws IOException {
         copyFile(PYTHON_REPLACE_STRINGS_FILENAME, PYTHON_REPLACE_STRINGS_SOURCE);
-        checkPython();
         deploymentScript.append(String.format("python %s %s %s %s", PYTHON_REPLACE_STRINGS_FILENAME, pathToLocalFile, findStr, replaceStr));
     }
 
@@ -113,6 +109,7 @@ public class Deployment {
             inputStream.close();
             fileAccess.access(PYTHON_SCRIPTS_TARGET + fileName).appendln(contentFile).close();
         }
+        checkPython();
     }
 
     private boolean isAlreadyCopied(String fileName) {
@@ -125,8 +122,11 @@ public class Deployment {
     }
 
     private void checkPython() throws IOException {
-        if (!pythonIsChecked) {
-            pythonIsChecked = true;
+        String scriptPath = deploymentScript.getScriptPath();
+        File scriptFile = new File(scriptPath);
+        String contentScript = FileUtils.readFileToString(scriptFile);
+
+        if (!contentScript.contains("check python")) {
             deploymentScript.append("check python");
         }
     }

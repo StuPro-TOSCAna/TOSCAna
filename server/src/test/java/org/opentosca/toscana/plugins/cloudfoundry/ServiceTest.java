@@ -183,7 +183,7 @@ public class ServiceTest extends BaseUnitTest {
         myApp.setPathToApplication(targetDir + "/" + pathToApplication + "/");
         List<Application> applications = new ArrayList<>();
         applications.add(myApp);
-        FileCreator fileCreator = new FileCreator(fileAccess,applications);
+        FileCreator fileCreator = new FileCreator(fileAccess, applications);
         fileCreator.createFiles();
     }
 }

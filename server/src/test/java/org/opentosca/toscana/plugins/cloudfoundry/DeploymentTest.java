@@ -57,6 +57,7 @@ public class DeploymentTest extends BaseUnitTest {
 
         String expectedDeployContent = String.format("#!/bin/sh\n" +
             "source util/*\n" +
+            "check python\n" +
             "python %s %s\n", pythonFilename, pathToSqlFile);
 
         assertTrue(targetFile.exists());
@@ -74,6 +75,7 @@ public class DeploymentTest extends BaseUnitTest {
 
         String expectedDeployContent = String.format("#!/bin/sh\n" +
             "source util/*\n" +
+            "check python\n" +
             "python %s %s %s %s\n", pythonFilename, appName, service, ServiceTypes.MYSQL.getName());
 
         assertTrue(targetFile.exists());
@@ -92,6 +94,7 @@ public class DeploymentTest extends BaseUnitTest {
 
         String expectedDeployContent = String.format("#!/bin/sh\n" +
             "source util/*\n" +
+            "check python\n" +
             "python %s %s %s\n", pythonFilename, appName, pathToFile);
 
         assertTrue(targetFile.exists());
@@ -112,6 +115,7 @@ public class DeploymentTest extends BaseUnitTest {
 
         String expectedDeployContent = String.format("#!/bin/sh\n" +
             "source util/*\n" +
+            "check python\n" +
             "python %s %s %s %s\n", pythonFilename, pathToFile, findStr, replaceStr);
 
         assertTrue(targetFile.exists());
