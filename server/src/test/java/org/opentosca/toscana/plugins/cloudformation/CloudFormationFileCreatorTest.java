@@ -56,15 +56,15 @@ public class CloudFormationFileCreatorTest extends BaseUnitTest {
 
     @Test
     public void createScripts() throws Exception {
-//        cfnModule.putFileToBeUploaded( "");
+        cfnModule.putFileToBeUploaded( "");
         fileCreator.createScripts();
 
         File deployScript = new File(targetDir,
             SCRIPTS_DIR_PATH + FILENAME_DEPLOY + BASH_FILE_ENDING);
-//        File fileUploadScript = new File(targetDir,
-//            SCRIPTS_DIR_PATH + FILENAME_UPLOAD + BASH_FILE_ENDING);
+        File fileUploadScript = new File(targetDir,
+            SCRIPTS_DIR_PATH + FILENAME_UPLOAD + BASH_FILE_ENDING);
         assertTrue(deployScript.exists());
-//        assertTrue(fileUploadScript.exists());
+        assertTrue(fileUploadScript.exists());
     }
     
     @Test
