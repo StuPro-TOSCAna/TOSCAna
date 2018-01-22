@@ -1,5 +1,6 @@
 package org.opentosca.toscana.plugins.cloudformation;
 
+import com.amazonaws.auth.BasicAWSCredentials;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -62,7 +63,7 @@ public class CloudFormationFileCreatorTest extends BaseUnitTest {
         
         when(log.getLogger(any(Class.class))).thenReturn(mock(Logger.class));
         PluginFileAccess fileAccess = new PluginFileAccess(sourceDir, targetDir, log);
-        cfnModule = new CloudFormationModule(fileAccess);
+        cfnModule = new CloudFormationModule(fileAccess, "us-west-2", new BasicAWSCredentials("", ""));
         fileCreator = new CloudFormationFileCreator(log.getLogger(CloudFormationFileCreator.class), cfnModule);
     }
 
