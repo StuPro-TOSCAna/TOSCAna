@@ -2,20 +2,16 @@ package org.opentosca.toscana.plugins.cloudfoundry;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.plugins.cloudfoundry.application.Application;
-import org.opentosca.toscana.plugins.cloudfoundry.application.Provider;
-import org.opentosca.toscana.plugins.cloudfoundry.application.Service;
 import org.opentosca.toscana.plugins.cloudfoundry.application.ServiceTypes;
 import org.opentosca.toscana.plugins.cloudfoundry.application.buildpacks.BuildpackDetector;
+import org.opentosca.toscana.plugins.cloudfoundry.application.deployment.Deployment;
 import org.opentosca.toscana.plugins.scripts.BashScript;
 import org.opentosca.toscana.plugins.scripts.EnvironmentCheck;
 
-import org.cloudfoundry.operations.services.ServiceOffering;
-import org.cloudfoundry.operations.services.ServicePlan;
 import org.json.JSONException;
 
 import static org.opentosca.toscana.plugins.cloudfoundry.application.ManifestAttributes.DOMAIN;
@@ -123,58 +119,11 @@ public class FileCreator {
         BashScript deployScript = new BashScript(fileAccess, FILEPRAEFIX_DEPLOY + app.getName());
         deployScript.append(EnvironmentCheck.checkEnvironment("cf"));
 
-        if (app.getProvider() != null && !app.getServices().isEmpty() && app.getConnection() != null) {
-            Provider provider = app.getProvider();
-            provider.setOfferedService(app.getConnection().getServices());
-            addProviderServiceOfferings(deployScript);
+        Deployment deployment = new Deployment(deployScript, app, fileAccess);
+        deployment.treatServices(true);
+        //deployment.addConfigureSql();
 
-            for (Map.Entry<String, ServiceTypes> service : app.getServices().entrySet()) {
-                String description = service.getValue().getName();
-                List<ServiceOffering> services = provider.getOfferedService();
-                boolean isSet;
-
-                //checks if a offered service of the provider contains the description of the needed service
-                //if yes then add the service to the script with a free plan
-                isSet = addMatchedServices(services, deployScript, description, service);
-
-                //if not then add the default create command to the deploy script
-                if (!isSet) {
-                    deployScript.append(CLI_CREATE_SERVICE_DEFAULT + service);
-                }
-            }
-        } else {
-            for (Map.Entry<String, ServiceTypes> service : app.getServices().entrySet()) {
-                deployScript.append(CLI_CREATE_SERVICE_DEFAULT + service.getKey());
-            }
-        }
         deployScript.append(CLI_PUSH + app.getName() + CLI_PATH_TO_MANIFEST + MANIFEST_NAME);
-    }
-
-    //checks if a service of a provider matches the needed service
-    private boolean addMatchedServices(List<ServiceOffering> services,
-                                       BashScript deployScript,
-                                       String description,
-                                       Map.Entry<String, ServiceTypes> service) throws IOException {
-        boolean isSet = false;
-
-        for (ServiceOffering offeredService : services) {
-            if (offeredService.getDescription().toLowerCase().indexOf(description.toLowerCase()) != -1) {
-                for (ServicePlan plan : offeredService.getServicePlans()) {
-                    if (plan.getFree()) {
-                        String serviceName = offeredService.getLabel();
-                        String planName = plan.getName();
-                        String serviceInstanceName = service.getKey();
-                        deployScript.append(String.format("%s%s %s %s", CLI_CREATE_SERVICE,
-                            serviceName, planName, serviceInstanceName));
-                        app.addMatchedService(
-                            new Service(serviceName, serviceInstanceName, planName, service.getValue()));
-                        isSet = true;
-                        break;
-                    }
-                }
-            }
-        }
-        return isSet;
     }
 
     /**
@@ -209,29 +158,5 @@ public class FileCreator {
             String path = applicationFolder + "/" + filePath;
             fileAccess.copy(filePath, path);
         }
-    }
-
-    private void addProviderServiceOfferings(BashScript deployScript) throws IOException {
-        Provider provider = app.getProvider();
-        List<ServiceOffering> services = provider.getOfferedService();
-
-        deployScript.append("# following services you could choose:");
-        deployScript.append(String.format("# %-20s %-40s %-50s\n", "Name", " Plans", "Description"));
-
-        for (ServiceOffering service : services) {
-            String plans = "";
-            for (ServicePlan plan : service.getServicePlans()) {
-                String currentPlan;
-                if (plan.getFree()) {
-                    currentPlan = plan.getName();
-                } else {
-                    currentPlan = plan.getName() + "*";
-                }
-
-                plans = String.format("%s %s ", plans, currentPlan);
-            }
-            deployScript.append(String.format("# %-20s %-40s %-50s ", service.getLabel(), plans, service.getDescription()));
-        }
-        deployScript.append("\n# * These service plans have an associated cost. Creating a service instance will incur this cost.");
     }
 }
