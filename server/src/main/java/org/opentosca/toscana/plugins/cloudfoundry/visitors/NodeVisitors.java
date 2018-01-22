@@ -1,5 +1,7 @@
 package org.opentosca.toscana.plugins.cloudfoundry.visitors;
 
+import java.util.Optional;
+
 import org.opentosca.toscana.model.artifact.Artifact;
 import org.opentosca.toscana.model.node.Apache;
 import org.opentosca.toscana.model.node.Compute;
@@ -9,6 +11,7 @@ import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.node.WebApplication;
 import org.opentosca.toscana.model.operation.Operation;
 import org.opentosca.toscana.model.operation.OperationVariable;
+import org.opentosca.toscana.model.operation.StandardLifecycle;
 import org.opentosca.toscana.model.visitor.StrictNodeVisitor;
 import org.opentosca.toscana.plugins.cloudfoundry.application.Application;
 import org.opentosca.toscana.plugins.cloudfoundry.application.ServiceTypes;
@@ -60,6 +63,13 @@ public class NodeVisitors implements StrictNodeVisitor {
          */
         handleStandardLifecycle(node, false);
         myApp.addService(node.getEntityName(), ServiceTypes.MYSQL);
+        for (Artifact artifact : node.getArtifacts()) {
+            String path = artifact.getFilePath();
+            myApp.addFilePath(path);
+            if (path.endsWith("sql")) {
+                myApp.addConfigMysql(path);
+            }
+        }
     }
 
     @Override
@@ -76,6 +86,27 @@ public class NodeVisitors implements StrictNodeVisitor {
     @Override
     public void visit(WebApplication node) {
         myApp.setName(node.getEntityName());
+
+        StandardLifecycle lifecycle = node.getStandardLifecycle();
+        Optional<Operation> configureOptional = lifecycle.getConfigure();
+        
+        //get configure script
+        if (configureOptional.isPresent()) {
+            Optional<Artifact> configureArtifact = configureOptional.get().getArtifact();
+            if (configureArtifact.isPresent()) {
+                myApp.addExecuteFile(configureArtifact.get().getFilePath(), node);
+            }
+        }
+
+        //get create script
+        Optional<Operation> createOptional = lifecycle.getCreate();
+        if (createOptional.isPresent()) {
+            Optional<Artifact> createArtifact = createOptional.get().getArtifact();
+            if (createArtifact.isPresent()) {
+                myApp.addExecuteFile(createArtifact.get().getFilePath(), node);
+            }
+        }
+
         handleStandardLifecycle(node, true);
     }
 
@@ -85,11 +116,13 @@ public class NodeVisitors implements StrictNodeVisitor {
             addEnvironmentVariable(lifecycleInput);
         }
 
+        /*
         // read artifact file paths
         for (Artifact artifact : node.getArtifacts()) {
             String path = artifact.getFilePath();
             myApp.addFilePath(path);
         }
+        */
 
         // get operation inputs
         for (Operation operation : node.getStandardLifecycle().getOperations()) {

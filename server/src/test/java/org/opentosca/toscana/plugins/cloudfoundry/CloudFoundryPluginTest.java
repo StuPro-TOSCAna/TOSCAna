@@ -31,10 +31,6 @@ import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.MANIFEST_PA
 
 public class CloudFoundryPluginTest extends BaseUnitTest {
 
-    private EffectiveModel lamp;
-    private static Application myApp = new Application("my_app", 1);
-    private final static NodeVisitors visitor = new NodeVisitors(myApp);
-
     private File targetDir;
     private final String appName = "my_app";
     private final String appNameClearedUp = "my-app";
@@ -43,7 +39,9 @@ public class CloudFoundryPluginTest extends BaseUnitTest {
 
     @Before
     public void setUp() throws Exception {
-        lamp = new EffectiveModel(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, log);
+        Application myApp = new Application(appName, 1);
+        NodeVisitors visitor = new NodeVisitors(myApp);
+        EffectiveModel lamp = new EffectiveModel(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, log);
         File sourceDir = new File(resourcesPath, "csars/yaml/valid/lamp-noinput");
         targetDir = new File(tmpdir, "targetDir");
         sourceDir.mkdir();
@@ -65,11 +63,6 @@ public class CloudFoundryPluginTest extends BaseUnitTest {
         applications.add(myApp);
         FileCreator fileCreator = new FileCreator(fileAccess, applications);
         fileCreator.createFiles();
-    }
-
-    @Test
-    public void getName() {
-        assertEquals(appNameClearedUp, myApp.getName());
     }
 
     @Test
@@ -100,8 +93,20 @@ public class CloudFoundryPluginTest extends BaseUnitTest {
         File targetFile = new File(targetDir + "/output/scripts/", FILEPRAEFIX_DEPLOY + DEPLOY_NAME +
             FILESUFFIX_DEPLOY);
         String deployScript = FileUtils.readFileToString(targetFile);
-        String expectedOutput = String.format("#!/bin/sh\nsource util/*\ncheck \"cf\"\n%smy_db\n%s%s%s%s\n",
-            CLI_CREATE_SERVICE_DEFAULT, CLI_PUSH, appNameClearedUp, CLI_PATH_TO_MANIFEST, MANIFEST_NAME);
+        String expectedOutput = "#!/bin/sh\n" +
+            "source util/*\n" +
+            "check \"cf\"\n" +
+            "cf create-service {plan} {service} my_db\n" +
+            "check python\n" +
+            "python replace.py ../../app1/my_app/configure_myphpapp.sh /var/www/html/ /home/vcap/app/htdocs/\n" +
+            "python replace.py ../../app1/my_app/create_myphpapp.sh /var/www/html/ /home/vcap/app/htdocs/\n" +
+            "cf push my-app -f ../manifest.yml\n" +
+            "python executeCommand.py my-app /home/vcap/app/htdocs/app1/my_app/configure_myphpapp.sh\n" +
+            "python executeCommand.py my-app /home/vcap/app/htdocs/app1/my_app/create_myphpapp.sh\n" +
+            "python configureMysql.py ../../app1/my_db/createtable.sql\n";
+        
+        //String expectedOutput = String.format("#!/bin/sh\nsource util/*\ncheck \"cf\"\n%smy_db\n%s%s%s%s\n",
+        //    CLI_CREATE_SERVICE_DEFAULT, CLI_PUSH, appNameClearedUp, CLI_PATH_TO_MANIFEST, MANIFEST_NAME);
 
         assertEquals(expectedOutput, deployScript);
     }
