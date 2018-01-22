@@ -88,8 +88,8 @@ public class CloudFormationFileCreatorTest extends BaseUnitTest {
             + TEMPLATE_PATH + "\n";
         String expectedFileUploadContent = SHEBANG + "\n" +
             SOURCE_UTIL_ALL + "\n" +
-            "createBucket \"" + cfnModule.getBucketName() + "\"" + " \"us-west-2\"" + "\n" +
-            "uploadFile \"" + cfnModule.getBucketName() + "\" \"" + FILENAME_TEST_FILE + "\" \"" + 
+            "createBucket " + cfnModule.getBucketName() + " " + cfnModule.getAWSRegion() + "\n" +
+            "uploadFile " + cfnModule.getBucketName() + " \"" + FILENAME_TEST_FILE + "\" \"" + 
             FILEPATH_TARGET_TEST_FILE_LOCAL + "\"" + "\n";
         String actualDeployContent = FileUtils.readFileToString(deployScript);
         String actualFileUploadContent = FileUtils.readFileToString(fileUploadScript);

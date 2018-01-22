@@ -127,8 +127,7 @@ public class CloudFormationFileCreator {
      * Wraps resources/cloudformation.scripts/create-bucket.sh
      */
     private String createBucket() {
-        // TODO get region, currently defaults to us-west-2
-        return "createBucket \"" + cfnModule.getBucketName() + "\"" + " \"us-west-2\"";
+        return "createBucket " + cfnModule.getBucketName() + " " + cfnModule.getAWSRegion();
     }
 
     /**
@@ -136,7 +135,7 @@ public class CloudFormationFileCreator {
      * Wraps resources/cloudformation.scripts/upload-file.sh
      */
     private String uploadFile(String objectKey, String filePath) {
-        return "uploadFile \"" + cfnModule.getBucketName() + "\" \"" + objectKey + "\" \"" + filePath + "\"";
+        return "uploadFile " + cfnModule.getBucketName() + " \"" + objectKey + "\" \"" + filePath + "\"";
     }
 
     /**
