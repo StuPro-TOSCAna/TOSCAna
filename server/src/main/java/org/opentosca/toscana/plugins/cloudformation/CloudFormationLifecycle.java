@@ -9,9 +9,12 @@ import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.RootNode;
+import org.opentosca.toscana.model.visitor.UnsupportedTypeException;
 import org.opentosca.toscana.model.visitor.VisitableNode;
+import org.opentosca.toscana.plugins.cloudformation.visitor.CheckModelVisitor;
 import org.opentosca.toscana.plugins.cloudformation.visitor.CloudFormationNodeVisitor;
 import org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle;
+import org.opentosca.toscana.plugins.util.TransformationFailureException;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
@@ -43,7 +46,16 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
 
     @Override
     public boolean checkModel() {
-//        TODO implement model checks
+        logger.info("Check model for compatibility to CloudFormation");
+        Set<RootNode> nodes = model.getNodes();
+        try {
+            CheckModelVisitor checkModelVisitor = new CheckModelVisitor(logger);
+            for (VisitableNode node : nodes) {
+                node.accept(checkModelVisitor);
+            }
+        } catch (UnsupportedTypeException ute) {
+            return false;
+        }
         return true;
     }
 
@@ -74,9 +86,16 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
 
             fileAccess.access("output/template.yaml").appendln(cfnModule.toString()).close();
             logger.info("Transformation to CloudFormation successful.");
-        } catch (Exception e) {
+        } catch (IOException ie) {
+            logger.error("File access error");
+            throw new TransformationFailureException("Could not write with fileAccess", ie);
+        } catch (TransformationFailureException tfe) {
             logger.error("Transformation to CloudFormation unsuccessful. Please check the StackTrace for more Info.");
-            e.printStackTrace();
+            tfe.printStackTrace();
+            throw tfe;
+        } catch (Exception e) {
+            logger.error("Transformation to CloudFormation unsuccessful. Random Exception should not appear here.");
+            throw new TransformationFailureException("Random exception", e);
         }
     }
 

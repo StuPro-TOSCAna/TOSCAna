@@ -31,8 +31,9 @@ import com.scaleset.cfbuilder.rds.DBInstance;
 import org.slf4j.Logger;
 
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.CONFIG_CONFIGURE;
-import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.CONFIG_INSTALL;
+import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.CONFIG_CREATE;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.CONFIG_SETS;
+import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.CONFIG_START;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.SECURITY_GROUP;
 
 /**
@@ -59,7 +60,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
     @Override
     public void visit(Compute node) {
         try {
-            logger.debug("Visit Compute node " + node.getEntityName() + ".");
+            logger.info("Visit Compute node {}.", node.getEntityName());
             String nodeName = toAlphanumerical(node.getEntityName());
             //default security group the EC2 Instance opens for port 80 and 22 to the whole internet
             Object cidrIp = "0.0.0.0/0";
@@ -97,7 +98,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
     @Override
     public void visit(MysqlDatabase node) {
         try {
-            logger.debug("Visit MysqlDatabase node " + node.getEntityName() + ".");
+            logger.info("Visit MysqlDatabase node {}.", node.getEntityName());
             String nodeName = toAlphanumerical(node.getEntityName());
 
             //get the name of the server where the dbms this node is hosted on, is hosted on
@@ -153,36 +154,43 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
 
     @Override
     public void visit(MysqlDbms node) {
-        logger.debug("Visit MysqlDbms node " + node.getEntityName() + ".");
+        logger.info("Visit MysqlDbms node {}.", node.getEntityName());
         // TODO handle sql artifact if present
     }
 
     @Override
     public void visit(Apache node) {
         try {
-            logger.debug("Visit Apache node " + node.getEntityName() + ".");
-            String serverName;
+            logger.info("Visit Apache node " + node.getEntityName() + ".");
+            String computeName;
             if (exactlyOneFulfiller(node.getHost())) {
                 Compute compute = node.getHost().getFulfillers().iterator().next();
-                serverName = toAlphanumerical(compute.getEntityName());
+                computeName = toAlphanumerical(compute.getEntityName());
             } else {
                 throw new IllegalStateException("Got " + node.getHost().getFulfillers().size() + " instead of one " +
                     "fulfiller");
             }
-            cfnModule.getCFNInit(serverName)
-                .getOrAddConfig(CONFIG_SETS, CONFIG_INSTALL)
+
+            //instead of lifecycle create we add the package apache2 to the configset
+            cfnModule.getCFNInit(computeName)
+                .getOrAddConfig(CONFIG_SETS, CONFIG_CREATE)
                 .putPackage(
                     //TODO apt only if linux
                     new CFNPackage("apt")
                         .addPackage("apache2"));
-            //instead of lifecycle create we add the package apache2 to the configset
+            //handle configure
             if (node.getStandardLifecycle().getConfigure().isPresent()) {
                 Operation configure = node.getStandardLifecycle().getConfigure().get();
-                handleOperation(configure, serverName, CONFIG_CONFIGURE);
+                handleOperation(configure, computeName, CONFIG_CONFIGURE);
+            }
+            //handle start
+            if (node.getStandardLifecycle().getStart().isPresent()) {
+                Operation start = node.getStandardLifecycle().getStart().get();
+                handleOperation(start, computeName, CONFIG_START);
             }
             //we add restart apache2 command to the configscript
-            cfnModule.getCFNInit(serverName)
-                .getOrAddConfig(CONFIG_SETS, CONFIG_CONFIGURE)
+            cfnModule.getCFNInit(computeName)
+                .getOrAddConfig(CONFIG_SETS, CONFIG_START)
                 .putCommand(new CFNCommand("restart apache2", "service apache2 restart"));
         } catch (Exception e) {
             logger.error("Error while creating Apache");
@@ -192,15 +200,15 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
 
     @Override
     public void visit(WebApplication node) {
-        logger.debug("Visit WebApplication node " + node.getEntityName() + ".");
+        logger.info("Visit WebApplication node {}.", node.getEntityName());
         try {
             //get the name of the server where this node is hosted on
-            String serverName;
+            String computeName;
             if (exactlyOneFulfiller(node.getHost())) {
                 WebServer webServer = node.getHost().getFulfillers().iterator().next();
                 if (exactlyOneFulfiller(webServer.getHost())) {
                     Compute compute = webServer.getHost().getFulfillers().iterator().next();
-                    serverName = toAlphanumerical(compute.getEntityName());
+                    computeName = toAlphanumerical(compute.getEntityName());
                 } else {
                     throw new IllegalStateException("Got " + webServer.getHost().getFulfillers().size() + " instead " +
                         "of one fulfiller");
@@ -209,15 +217,20 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                 throw new IllegalStateException("Got " + node.getHost().getFulfillers().size() + " instead of one " +
                     "fulfiller");
             }
-
+            //handle create
             if (node.getStandardLifecycle().getCreate().isPresent()) {
                 Operation create = node.getStandardLifecycle().getCreate().get();
-                handleOperation(create, serverName, CONFIG_INSTALL);
+                handleOperation(create, computeName, CONFIG_CREATE);
             }
-
+            //handle configure
             if (node.getStandardLifecycle().getConfigure().isPresent()) {
                 Operation configure = node.getStandardLifecycle().getConfigure().get();
-                handleOperation(configure, serverName, CONFIG_CONFIGURE);
+                handleOperation(configure, computeName, CONFIG_CONFIGURE);
+            }
+            //handle start
+            if (node.getStandardLifecycle().getStart().isPresent()) {
+                Operation start = node.getStandardLifecycle().getStart().get();
+                handleOperation(start, computeName, CONFIG_START);
             }
         } catch (Exception e) {
             logger.error("Error while creating WebApplication");

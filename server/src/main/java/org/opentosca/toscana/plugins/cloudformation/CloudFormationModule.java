@@ -19,9 +19,10 @@ import com.scaleset.cfbuilder.ec2.metadata.CFNInit;
 
 public class CloudFormationModule extends Module {
 
-    public final static String CONFIG_SETS = "InstallAndConfigure";
-    public final static String CONFIG_INSTALL = "Install";
+    public final static String CONFIG_SETS = "LifecycleOperations";
+    public final static String CONFIG_CREATE = "Install";
     public final static String CONFIG_CONFIGURE = "Configure";
+    public final static String CONFIG_START = "Start";
     public final static String SECURITY_GROUP = "SecurityGroup";
     // KeyName is a default input value
     private static final String KEYNAME_DESCRIPTION = "Name of an existing EC2 KeyPair to enable SSH access to the " +

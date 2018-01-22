@@ -38,9 +38,7 @@ public class CloudFormationPlugin extends LifecycleAwarePlugin<CloudFormationLif
             ProfileCredentialsProvider profileCredentialsProvider = new ProfileCredentialsProvider();
             AWSCredentials awsCredentials = profileCredentialsProvider.getCredentials();
             defaultKeyId = awsCredentials.getAWSAccessKeyId();
-            defaultKeySecret = awsCredentials.getAWSAccessKeyId();
-            System.out.println(awsCredentials.getAWSAccessKeyId());
-            System.out.println(awsCredentials.getAWSSecretKey());
+            defaultKeySecret = awsCredentials.getAWSSecretKey();
         } catch (Exception e) {
             logger.debug("Did not find credentials on the system");
         }

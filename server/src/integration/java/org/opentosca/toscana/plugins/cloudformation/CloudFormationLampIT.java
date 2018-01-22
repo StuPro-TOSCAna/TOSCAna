@@ -8,7 +8,9 @@ import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
 import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.plugins.BaseTransformTest;
+import org.opentosca.toscana.plugins.util.TransformationFailureException;
 
+import com.amazonaws.services.ec2.model.AmazonEC2Exception;
 import org.apache.commons.io.FileUtils;
 
 import static org.junit.Assert.fail;
@@ -31,7 +33,10 @@ public class CloudFormationLampIT extends BaseTransformTest {
 
     @Override
     protected void onFailure(File outputDir, Exception e) {
-        fail();
+        //if the cause for transformation failure is amazonEC2Exception its fine because of the credentials 
+        if (!(e instanceof TransformationFailureException && e.getCause() instanceof AmazonEC2Exception)) {
+            fail();
+        }
     }
 
     @Override
