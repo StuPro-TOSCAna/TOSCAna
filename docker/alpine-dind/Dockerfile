@@ -5,10 +5,10 @@ LABEL maintainer="Christian Müller <cmueller.dev@gmail.com>"
 ENV LANG=C.UTF-8
 WORKDIR /toscana
 ADD *.sh /toscana/
-RUN apk add --update --no-cache bash
-RUN ./install-deps.sh
-RUN ./build-toscana.sh
-RUN ./cleanup.sh
+RUN apk add --update --no-cache bash && \
+    ./install-deps.sh && \
+    ./build-toscana.sh && \
+    ./cleanup.sh
 EXPOSE 8080
 ENV DATADIR="/toscana/data"
 ENV SERVER_PORT="8080"

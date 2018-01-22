@@ -30,7 +30,7 @@ rm \
     "$ALPINE_GLIBC_I18N_PACKAGE_FILENAME"
 
 echo "Installing APK Packages"
-apk add --update --no-cache curl openjdk8 maven git python3 nodejs
+apk add --update --no-cache curl openjdk8 maven git python3 nodejs libstdc++
 
 echo "Installing AWS CLI"
 pip3 install awscli
