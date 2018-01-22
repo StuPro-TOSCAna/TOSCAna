@@ -90,7 +90,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             throw new TransformationFailureException("Failed", se);
         } catch (Exception e) {
             logger.error("Error while creating EC2Instance resource.");
-            e.printStackTrace();
+            throw new TransformationFailureException("Failed at Compute node", e);
         }
     }
 
@@ -147,7 +147,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                 .vPCSecurityGroups(cfnModule.fnGetAtt(securityGroupName, "GroupId"));
         } catch (Exception e) {
             logger.error("Error while creating DBInstance resource.");
-            e.printStackTrace();
+            throw new TransformationFailureException("Failed at MysqlDatabase node", e);
         }
     }
 
@@ -159,60 +159,69 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
 
     @Override
     public void visit(Apache node) {
-        logger.debug("Visit Apache node " + node.getEntityName() + ".");
-        String serverName;
-        if (exactlyOneFulfiller(node.getHost())) {
-            Compute compute = node.getHost().getFulfillers().iterator().next();
-            serverName = toAlphanumerical(compute.getEntityName());
-        } else {
-            throw new IllegalStateException("Got " + node.getHost().getFulfillers().size() + " instead of one " +
-                "fulfiller");
+        try {
+            logger.debug("Visit Apache node " + node.getEntityName() + ".");
+            String serverName;
+            if (exactlyOneFulfiller(node.getHost())) {
+                Compute compute = node.getHost().getFulfillers().iterator().next();
+                serverName = toAlphanumerical(compute.getEntityName());
+            } else {
+                throw new IllegalStateException("Got " + node.getHost().getFulfillers().size() + " instead of one " +
+                    "fulfiller");
+            }
+            cfnModule.getCFNInit(serverName)
+                .getOrAddConfig(CONFIG_SETS, CONFIG_INSTALL)
+                .putPackage(
+                    //TODO apt only if linux
+                    new CFNPackage("apt")
+                        .addPackage("apache2"));
+            //instead of lifecycle create we add the package apache2 to the configset
+            if (node.getStandardLifecycle().getConfigure().isPresent()) {
+                Operation configure = node.getStandardLifecycle().getConfigure().get();
+                handleOperation(configure, serverName, CONFIG_CONFIGURE);
+            }
+            //we add restart apache2 command to the configscript
+            cfnModule.getCFNInit(serverName)
+                .getOrAddConfig(CONFIG_SETS, CONFIG_CONFIGURE)
+                .putCommand(new CFNCommand("restart apache2", "service apache2 restart"));
+        } catch (Exception e) {
+            logger.error("Error while creating Apache");
+            throw new TransformationFailureException("Failed at Apache node", e);
         }
-        cfnModule.getCFNInit(serverName)
-            .getOrAddConfig(CONFIG_SETS, CONFIG_INSTALL)
-            .putPackage(
-                //TODO apt only if linux
-                new CFNPackage("apt")
-                    .addPackage("apache2"));
-        //instead of lifecycle create we add the package apache2 to the configset
-        if (node.getStandardLifecycle().getConfigure().isPresent()) {
-            Operation configure = node.getStandardLifecycle().getConfigure().get();
-            handleOperation(configure, serverName, CONFIG_CONFIGURE);
-        }
-        //we add restart apache2 command to the configscript
-        cfnModule.getCFNInit(serverName)
-            .getOrAddConfig(CONFIG_SETS, CONFIG_CONFIGURE)
-            .putCommand(new CFNCommand("restart apache2", "service apache2 restart"));
     }
 
     @Override
     public void visit(WebApplication node) {
         logger.debug("Visit WebApplication node " + node.getEntityName() + ".");
-
-        //get the name of the server where this node is hosted on
-        String serverName;
-        if (exactlyOneFulfiller(node.getHost())) {
-            WebServer webServer = node.getHost().getFulfillers().iterator().next();
-            if (exactlyOneFulfiller(webServer.getHost())) {
-                Compute compute = webServer.getHost().getFulfillers().iterator().next();
-                serverName = toAlphanumerical(compute.getEntityName());
+        try {
+            //get the name of the server where this node is hosted on
+            String serverName;
+            if (exactlyOneFulfiller(node.getHost())) {
+                WebServer webServer = node.getHost().getFulfillers().iterator().next();
+                if (exactlyOneFulfiller(webServer.getHost())) {
+                    Compute compute = webServer.getHost().getFulfillers().iterator().next();
+                    serverName = toAlphanumerical(compute.getEntityName());
+                } else {
+                    throw new IllegalStateException("Got " + webServer.getHost().getFulfillers().size() + " instead " +
+                        "of one fulfiller");
+                }
             } else {
-                throw new IllegalStateException("Got " + webServer.getHost().getFulfillers().size() + " instead of " +
-                    "one fulfiller");
+                throw new IllegalStateException("Got " + node.getHost().getFulfillers().size() + " instead of one " +
+                    "fulfiller");
             }
-        } else {
-            throw new IllegalStateException("Got " + node.getHost().getFulfillers().size() + " instead of one " +
-                "fulfiller");
-        }
 
-        if (node.getStandardLifecycle().getCreate().isPresent()) {
-            Operation create = node.getStandardLifecycle().getCreate().get();
-            handleOperation(create, serverName, CONFIG_INSTALL);
-        }
+            if (node.getStandardLifecycle().getCreate().isPresent()) {
+                Operation create = node.getStandardLifecycle().getCreate().get();
+                handleOperation(create, serverName, CONFIG_INSTALL);
+            }
 
-        if (node.getStandardLifecycle().getConfigure().isPresent()) {
-            Operation configure = node.getStandardLifecycle().getConfigure().get();
-            handleOperation(configure, serverName, CONFIG_CONFIGURE);
+            if (node.getStandardLifecycle().getConfigure().isPresent()) {
+                Operation configure = node.getStandardLifecycle().getConfigure().get();
+                handleOperation(configure, serverName, CONFIG_CONFIGURE);
+            }
+        } catch (Exception e) {
+            logger.error("Error while creating WebApplication");
+            throw new TransformationFailureException("Failed at WebApplication node", e);
         }
     }
 
@@ -224,12 +233,11 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
         return (requirement.getFulfillers().size() == 1);
     }
 
-    private void handleOperation(Operation operation, String serverName, String config) {
+    private void handleOperation(Operation operation, String serverName, String config) throws IOException {
         String cfnFilePath = "/home/ubuntu/"; // TODO Check what path is needed
 
         //Add dependencies
         for (String dependency : operation.getDependencies()) {
-            try {
                 String cfnFileMode = "000644"; //TODO Check what mode is needed (only read?)
                 String cfnFileOwner = "root"; //TODO Check what Owner is needed
                 String cfnFileGroup = "root"; //TODO Check what Group is needed
@@ -245,10 +253,6 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                 cfnModule.getCFNInit(serverName)
                     .getOrAddConfig(CONFIG_SETS, config)
                     .putFile(cfnFile);
-            } catch (IOException e) {
-                logger.error("Problem with reading file " + dependency);
-                e.printStackTrace();
-            }
         }
 
         //Add artifact
@@ -259,7 +263,6 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             String cfnFileOwner = "root"; //TODO Check what Owner is needed
             String cfnFileGroup = "root"; //TODO Check what Group is needed
 
-            try {
                 // TODO: re-allow content-dumping instead of source
                 CFNFile cfnFile = new CFNFile(cfnFilePath + artifact)
                     .setContent(cfnModule.getFileAccess().read(artifact))
@@ -283,10 +286,6 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                     .getOrAddConfig(CONFIG_SETS, config)
                     .putFile(cfnFile)
                     .putCommand(cfnCommand);
-            } catch (IOException e) {
-                logger.error("Problem with reading file " + artifact);
-                e.printStackTrace();
-            }
         }
     }
 
