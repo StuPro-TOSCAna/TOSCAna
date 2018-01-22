@@ -91,7 +91,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             throw new TransformationFailureException("Failed", se);
         } catch (Exception e) {
             logger.error("Error while creating EC2Instance resource.");
-            throw new TransformationFailureException("Failed at Compute node", e);
+            throw new TransformationFailureException("Failed at Compute node " + node.getEntityName(), e);
         }
     }
 
@@ -148,7 +148,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                 .vPCSecurityGroups(cfnModule.fnGetAtt(securityGroupName, "GroupId"));
         } catch (Exception e) {
             logger.error("Error while creating DBInstance resource.");
-            throw new TransformationFailureException("Failed at MysqlDatabase node", e);
+            throw new TransformationFailureException("Failed at MysqlDatabase node " + node.getEntityName(), e);
         }
     }
 
@@ -194,7 +194,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                 .putCommand(new CFNCommand("restart apache2", "service apache2 restart"));
         } catch (Exception e) {
             logger.error("Error while creating Apache");
-            throw new TransformationFailureException("Failed at Apache node", e);
+            throw new TransformationFailureException("Failed at Apache node " + node.getEntityName(), e);
         }
     }
 
@@ -234,7 +234,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             }
         } catch (Exception e) {
             logger.error("Error while creating WebApplication");
-            throw new TransformationFailureException("Failed at WebApplication node", e);
+            throw new TransformationFailureException("Failed at WebApplication node " + node.getEntityName(), e);
         }
     }
 

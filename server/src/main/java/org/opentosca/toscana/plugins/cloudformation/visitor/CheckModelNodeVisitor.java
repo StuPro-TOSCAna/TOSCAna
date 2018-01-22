@@ -14,11 +14,11 @@ import org.opentosca.toscana.model.visitor.UnsupportedTypeException;
 
 import org.slf4j.Logger;
 
-public class CheckModelVisitor implements StrictNodeVisitor {
+public class CheckModelNodeVisitor implements StrictNodeVisitor {
 
     private final Logger logger;
 
-    public CheckModelVisitor(Logger logger) {
+    public CheckModelNodeVisitor(Logger logger) {
         this.logger = logger;
     }
 
