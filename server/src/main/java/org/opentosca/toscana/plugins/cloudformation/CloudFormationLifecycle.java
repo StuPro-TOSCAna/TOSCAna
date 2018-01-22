@@ -1,6 +1,7 @@
 package org.opentosca.toscana.plugins.cloudformation;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Set;
 
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
@@ -12,22 +13,32 @@ import org.opentosca.toscana.model.visitor.VisitableNode;
 import org.opentosca.toscana.plugins.cloudformation.visitor.CloudFormationNodeVisitor;
 import org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle;
 
-import static org.opentosca.toscana.plugins.cloudformation.CloudFormationPlugin.AWS_REGION_DEFAULT;
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.BasicAWSCredentials;
+
+import static org.opentosca.toscana.plugins.cloudformation.CloudFormationPlugin.AWS_ACCESS_KEY_ID_KEY;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationPlugin.AWS_REGION_KEY;
+import static org.opentosca.toscana.plugins.cloudformation.CloudFormationPlugin.AWS_SECRET_KEY_KEY;
 
 public class CloudFormationLifecycle extends AbstractLifecycle {
     private final EffectiveModel model;
     private String awsRegion;
+    private AWSCredentials awsCredentials;
 
     public CloudFormationLifecycle(TransformationContext context) throws IOException {
         super(context);
         model = context.getModel();
         if (context.getProperties() == null) {
             //lifecycle test failes because getProperties is null
-            awsRegion = AWS_REGION_DEFAULT;
+            awsRegion = "us-west-2";
+            awsCredentials = new BasicAWSCredentials("", "");
             return;
         }
-        awsRegion = context.getProperties().getPropertyValue(AWS_REGION_KEY).orElse(AWS_REGION_DEFAULT);
+        Map<String, String> properties = context.getProperties().getPropertyValues();
+        awsRegion = properties.get(AWS_REGION_KEY);
+        String keyId = properties.get(AWS_ACCESS_KEY_ID_KEY);
+        String secretKey = properties.get(AWS_SECRET_KEY_KEY);
+        awsCredentials = new BasicAWSCredentials(keyId, secretKey);
     }
 
     @Override
@@ -45,7 +56,7 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
     public void transform() {
         logger.info("Begin transformation to CloudFormation.");
         PluginFileAccess fileAccess = context.getPluginFileAccess();
-        CloudFormationModule cfnModule = new CloudFormationModule(fileAccess);
+        CloudFormationModule cfnModule = new CloudFormationModule(fileAccess, awsRegion, awsCredentials);
         Set<RootNode> nodes = model.getNodes();
 
         try {

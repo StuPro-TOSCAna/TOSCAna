@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 
+import com.amazonaws.auth.AWSCredentials;
 import com.scaleset.cfbuilder.core.Fn;
 import com.scaleset.cfbuilder.core.Module;
 import com.scaleset.cfbuilder.core.Resource;
@@ -23,7 +24,8 @@ public class CloudFormationModule extends Module {
     public final static String CONFIG_CONFIGURE = "Configure";
     public final static String SECURITY_GROUP = "SecurityGroup";
     // KeyName is a default input value
-    private static final String KEYNAME_DESCRIPTION = "Name of an existing EC2 KeyPair to enable SSH access to the instances";
+    private static final String KEYNAME_DESCRIPTION = "Name of an existing EC2 KeyPair to enable SSH access to the " +
+        "instances";
     private static final String KEYNAME_TYPE = "AWS::EC2::KeyPair::KeyName";
     private static final String KEYNAME_CONSTRAINT_DESCRIPTION = "must be the name of an existing EC2 KeyPair.";
     private static final String KEYNAME = "KeyName";
@@ -32,7 +34,8 @@ public class CloudFormationModule extends Module {
     private static final String[] USERDATA_CONSTANT_PARAMS = {
         "#!/bin/bash -xe\n",
         "mkdir -p /tmp/aws-cfn-bootstrap-latest\n",
-        "curl https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz | tar xz -C /tmp/aws-cfn-bootstrap-latest --strip-components 1\n",
+        "curl https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz | tar xz -C " +
+            "/tmp/aws-cfn-bootstrap-latest --strip-components 1\n",
         "apt-get update\n",
         "DEBIAN_FRONTEND=noninteractive apt-get upgrade -yq\n",
         "apt-get -y install python-setuptools\n",
@@ -43,6 +46,8 @@ public class CloudFormationModule extends Module {
         "# Install the files and packages from the metadata\n",
         "/usr/local/bin/cfn-init -v ",
         "         --stack "};
+    private String awsRegion;
+    private AWSCredentials awsCredentials;
 
     private Object keyNameVar;
 
@@ -55,12 +60,15 @@ public class CloudFormationModule extends Module {
 
      @param fileAccess fileAccess to append the content of files to the template
      */
-    public CloudFormationModule(PluginFileAccess fileAccess) {
+    public CloudFormationModule(PluginFileAccess fileAccess, String awsRegion, AWSCredentials awsCredentials) {
         this.id("").template(new Template());
-        strParam(KEYNAME).type(KEYNAME_TYPE).description(KEYNAME_DESCRIPTION).constraintDescription(KEYNAME_CONSTRAINT_DESCRIPTION);
+        strParam(KEYNAME).type(KEYNAME_TYPE).description(KEYNAME_DESCRIPTION).constraintDescription
+            (KEYNAME_CONSTRAINT_DESCRIPTION);
         keyNameVar = template.ref(KEYNAME);
         cfnInitMap = new HashMap<>();
         this.fileAccess = fileAccess;
+        this.awsRegion = awsRegion;
+        this.awsCredentials = awsCredentials;
     }
 
     /**
@@ -89,6 +97,20 @@ public class CloudFormationModule extends Module {
         return this.keyNameVar;
     }
 
+    /**
+     Get the awsRegion set for this Module
+     */
+    public String getAWSRegion() {
+        return this.awsRegion;
+    }
+
+    /**
+     Get the awsCredentials for this Module
+     */
+    public AWSCredentials getAwsCredentials() {
+        return this.awsCredentials;
+    }
+
     private Fn getUserDataFn(String resource, String configsets) {
         // Initialise params that need refs
         Object[] userdataRefParams = {
@@ -108,7 +130,7 @@ public class CloudFormationModule extends Module {
             "\n"};
 
         // Combine constant params with ref params
-        List params = new ArrayList<Object>();
+        List<Object> params = new ArrayList<>();
         Collections.addAll(params, USERDATA_CONSTANT_PARAMS);
         Collections.addAll(params, userdataRefParams);
 

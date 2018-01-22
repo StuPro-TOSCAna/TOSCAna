@@ -23,6 +23,21 @@
             <url>https://jitpack.io</url>
         </repository>
     </repositories>
+
+    <dependencyManagement>
+        <dependencies>
+            <!--AWS Java SDK BOM-->
+            <!--this is needed to be able to import individual modules-->
+            <dependency>
+                <groupId>com.amazonaws</groupId>
+                <artifactId>aws-java-sdk-bom</artifactId>
+                <version>1.11.257</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+    
     <dependencies>
         <!-- web app -->
         <dependency>
@@ -43,10 +58,23 @@
             <version>1.1.0</version>
         </dependency>
         <!--Cloudformation plugin-->
+        <!--cloudformation-builder-->
         <dependency>
             <groupId>com.github.StuPro-TOSCAna</groupId>
             <artifactId>cloudformation-builder</artifactId>
-            <version>72c1e0c2e80808d69b4aeb185a7533ebfa2ac3da</version>
+            <version>06ce7113584a66632dfc439363d1a2c4bc999851</version>
+        </dependency>
+        <!--AWS Java SDK ec2 module-->
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-ec2</artifactId>
+        </dependency>
+        <!--Apache Http Client -->
+        <!-- needed for AWS Java SDK-->
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.5.4</version>
         </dependency>
         <!--CloudFoundry Plugin-->
         <!--CloudFoundry java-client-->
@@ -167,20 +195,6 @@
             <groupId>org.opentosca.toscana</groupId>
             <artifactId>retrofit-wrapper</artifactId>
             <version>1.0-SNAPSHOT</version>
-            <scope>test</scope>
-        </dependency>
-        <!--Apache Http Client (Might not be needed anymore.-->
-        <!--Did not remove it because its just a test dependency-->
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>4.5.3</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpmime</artifactId>
-            <version>4.5.1</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
