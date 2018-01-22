@@ -16,9 +16,11 @@ import org.opentosca.toscana.model.operation.Operation;
 import org.opentosca.toscana.model.operation.OperationVariable;
 import org.opentosca.toscana.model.requirement.Requirement;
 import org.opentosca.toscana.model.visitor.StrictNodeVisitor;
-import org.opentosca.toscana.model.visitor.UnsupportedTypeException;
 import org.opentosca.toscana.plugins.cloudformation.CloudFormationModule;
+import org.opentosca.toscana.plugins.cloudformation.mapper.CapabilityMapper;
+import org.opentosca.toscana.plugins.util.TransformationFailureException;
 
+import com.amazonaws.SdkClientException;
 import com.scaleset.cfbuilder.ec2.Instance;
 import com.scaleset.cfbuilder.ec2.SecurityGroup;
 import com.scaleset.cfbuilder.ec2.metadata.CFNCommand;
@@ -49,7 +51,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
      @param logger    Logger for logging visitor behaviour
      @param cfnModule Module to build the template model
      */
-    public CloudFormationNodeVisitor(Logger logger, CloudFormationModule cfnModule) throws Exception {
+    public CloudFormationNodeVisitor(Logger logger, CloudFormationModule cfnModule) {
         this.logger = logger;
         this.cfnModule = cfnModule;
     }
@@ -67,29 +69,13 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                 .ingress(ingress -> ingress.cidrIp(cidrIp), "tcp", 80, 22);
 
             // check what image id should be taken
-            // we only support linux ubuntu 16.04 but there should be a mapping of os properties to imageIds
-            // ImageIds different depending on the region you use this is us-west-2 atm
+            CapabilityMapper capabilityMapper = createCapabilityMapper();
+
             OsCapability computeOs = node.getOs();
-            String imageId;
-            //here should be a check for isPresent, but what to do if not present?
-            if (computeOs.getType().get().equals(OsCapability.Type.LINUX) &&
-                computeOs.getDistribution().get().equals(OsCapability.Distribution.UBUNTU) &&
-                computeOs.getVersion().get().equals("16.04")) {
-                imageId = "ami-0def3275";
-            } else {
-                throw new UnsupportedTypeException("Only Linux, Ubuntu 16.04 supported.");
-            }
-            //check what host should be taken
-            // we only support t2.micro atm since its free for student accounts
+            String imageId = capabilityMapper.mapOsCapabilityToImageId(computeOs);
             ComputeCapability computeCompute = node.getHost();
-            String instanceType;
-            //here should be a check for isPresent, but what to do if not present?
-            if (computeCompute.getNumCpus().get().equals(1) &&
-                computeCompute.getMemSizeInMb().get().equals(1024)) {
-                instanceType = "t2.micro";
-            } else {
-                throw new UnsupportedTypeException("Only 1 CPU and 1024 MB memory supported.");
-            }
+            String instanceType = capabilityMapper.mapComputeCapabilityToInstanceType(computeCompute,
+                CapabilityMapper.EC2_DISTINCTION);
             //create CFN init and store it
             CFNInit init = new CFNInit(CONFIG_SETS);
             cfnModule.putCFNInit(nodeName, init);
@@ -99,6 +85,9 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                 .securityGroupIds(webServerSecurityGroup)
                 .imageId(imageId)
                 .instanceType(instanceType);
+        } catch (SdkClientException se) {
+            logger.error("SDKClient failed, no valid credentials or no internet connection");
+            throw new TransformationFailureException("Failed", se);
         } catch (Exception e) {
             logger.error("Error while creating EC2Instance resource.");
             e.printStackTrace();
@@ -113,25 +102,32 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
 
             //get the name of the server where the dbms this node is hosted on, is hosted on
             String serverName;
+            ComputeCapability hostedOnComputeCapability;
             if (exactlyOneFulfiller(node.getHost())) {
                 Dbms dbms = node.getHost().getFulfillers().iterator().next();
                 if (exactlyOneFulfiller(dbms.getHost())) {
                     Compute compute = dbms.getHost().getFulfillers().iterator().next();
                     serverName = toAlphanumerical(compute.getEntityName());
+                    hostedOnComputeCapability = compute.getHost();
                 } else {
-                    throw new IllegalStateException("Got " + dbms.getHost().getFulfillers().size() + " instead of one fulfiller");
+                    throw new IllegalStateException("Got " + dbms.getHost().getFulfillers().size() + " instead of one" +
+                        " fulfiller");
                 }
             } else {
-                throw new IllegalStateException("Got " + node.getHost().getFulfillers().size() + " instead of one fulfiller");
+                throw new IllegalStateException("Got " + node.getHost().getFulfillers().size() + " instead of one " +
+                    "fulfiller");
             }
             String dbName = node.getDatabaseName();
-            //throw error, take default or generate random?
             String masterUser = node.getUser().orElseThrow(() -> new IllegalArgumentException("Database user not set"));
-            String masterPassword = node.getPassword().orElseThrow(() -> new IllegalArgumentException("Database password not set"));
+            String masterPassword = node.getPassword().orElseThrow(() -> new IllegalArgumentException("Database " +
+                "password not set"));
             Integer port = node.getPort().orElse(3306);
-            //TODO check downwards to compute and take its values
-            String dBInstanceClass = "db.t2.micro";
-            Integer allocatedStorage = 20;
+            //check what values should be taken
+            CapabilityMapper capabilityMapper = createCapabilityMapper();
+            String dBInstanceClass = capabilityMapper.mapComputeCapabilityToInstanceType(hostedOnComputeCapability,
+                CapabilityMapper.RDS_DISTINCTION);
+            Integer allocatedStorage = capabilityMapper.mapComputeCapabilityToRDSAllocatedStorage
+                (hostedOnComputeCapability);
             String storageType = "gp2"; //SSD
 
             String securityGroupName = nodeName + SECURITY_GROUP;
@@ -169,7 +165,8 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             Compute compute = node.getHost().getFulfillers().iterator().next();
             serverName = toAlphanumerical(compute.getEntityName());
         } else {
-            throw new IllegalStateException("Got " + node.getHost().getFulfillers().size() + " instead of one fulfiller");
+            throw new IllegalStateException("Got " + node.getHost().getFulfillers().size() + " instead of one " +
+                "fulfiller");
         }
         cfnModule.getCFNInit(serverName)
             .getOrAddConfig(CONFIG_SETS, CONFIG_INSTALL)
@@ -182,6 +179,10 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             Operation configure = node.getStandardLifecycle().getConfigure().get();
             handleOperation(configure, serverName, CONFIG_CONFIGURE);
         }
+        //we add restart apache2 command to the configscript
+        cfnModule.getCFNInit(serverName)
+            .getOrAddConfig(CONFIG_SETS, CONFIG_CONFIGURE)
+            .putCommand(new CFNCommand("restart apache2", "service apache2 restart"));
     }
 
     @Override
@@ -196,10 +197,12 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                 Compute compute = webServer.getHost().getFulfillers().iterator().next();
                 serverName = toAlphanumerical(compute.getEntityName());
             } else {
-                throw new IllegalStateException("Got " + webServer.getHost().getFulfillers().size() + " instead of one fulfiller");
+                throw new IllegalStateException("Got " + webServer.getHost().getFulfillers().size() + " instead of " +
+                    "one fulfiller");
             }
         } else {
-            throw new IllegalStateException("Got " + node.getHost().getFulfillers().size() + " instead of one fulfiller");
+            throw new IllegalStateException("Got " + node.getHost().getFulfillers().size() + " instead of one " +
+                "fulfiller");
         }
 
         if (node.getStandardLifecycle().getCreate().isPresent()) {
@@ -231,6 +234,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                 String cfnFileOwner = "root"; //TODO Check what Owner is needed
                 String cfnFileGroup = "root"; //TODO Check what Group is needed
 
+                // TODO: re-allow content-dumping instead of source
                 CFNFile cfnFile = new CFNFile(cfnFilePath + dependency)
                     .setContent(cfnModule.getFileAccess().read(dependency))
                     .setMode(cfnFileMode)
@@ -256,6 +260,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             String cfnFileGroup = "root"; //TODO Check what Group is needed
 
             try {
+                // TODO: re-allow content-dumping instead of source
                 CFNFile cfnFile = new CFNFile(cfnFilePath + artifact)
                     .setContent(cfnModule.getFileAccess().read(artifact))
                     .setMode(cfnFileMode)
@@ -267,21 +272,25 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                     .setCwd(cfnFilePath + new File(artifact).getParent());
                 // add inputs to environment, but where to get other needed variables?
                 for (OperationVariable input : operation.getInputs()) {
-                    Object value = input.getValue().orElse("");
+                    Object value = input.getValue().orElse(""); //TODO add default
                     if (("127.0.0.1".equals(value) || "localhost".equals(value)) && input.getKey().contains("host")) {
-                        value = cfnModule.fnGetAtt("mydb", "Endpoint.Address");
+                        value = cfnModule.fnGetAtt("mydb", "Endpoint.Address"); //TODO how to handle this? with the 
+                        // new model we should be able to get the reference
                     }
-                    cfnCommand.addEnv(input.getKey(), value); //TODO add default
+                    cfnCommand.addEnv(input.getKey(), value);
                 }
                 cfnModule.getCFNInit(serverName)
                     .getOrAddConfig(CONFIG_SETS, config)
                     .putFile(cfnFile)
-                    .putCommand(cfnCommand)
-                    .putCommand(new CFNCommand("restart apache2", "service apache2 restart")); //put commands
+                    .putCommand(cfnCommand);
             } catch (IOException e) {
                 logger.error("Problem with reading file " + artifact);
                 e.printStackTrace();
             }
         }
+    }
+
+    public CapabilityMapper createCapabilityMapper() {
+        return new CapabilityMapper(cfnModule.getAWSRegion(), cfnModule.getAwsCredentials(), logger);
     }
 }
