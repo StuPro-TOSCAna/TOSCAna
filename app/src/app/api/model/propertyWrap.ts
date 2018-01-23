@@ -13,6 +13,10 @@
 
 export interface PropertyWrap {
     /**
+     * the default value of the property
+     */
+    defaultValue: string;
+    /**
      * The description that should be displayed on the Frontend to describe the key
      */
     description: string;
@@ -25,7 +29,7 @@ export interface PropertyWrap {
      */
     required: boolean;
     /**
-     * The \"Datatype\" of a property. Supported Types are \"name\", \"text\", \"boolean\", \"integer\", \"unsigned_integer\", \"float\" and \"secret\"
+     * The 'Datatype' of a property. Supported Types are 'name', 'text', 'boolean', 'integer', 'unsigned_integer', 'float' and 'secret'. If you try to set a value of a non existant key. The type in the response will be 'invalid' however this type only occurs in that case
      */
     type: string;
     /**

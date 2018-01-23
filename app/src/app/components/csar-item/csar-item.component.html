@@ -1,0 +1,15 @@
+<div class="_container">
+    <div class="item btn btn-primary">
+        <div class="button" (click)="collapse(csar.name)">
+            <div class="icon">
+                <i class="fa fa-file-archive-o" aria-hidden="true"></i>
+            </div>
+            <div class="name">{{csar.name}}</div>
+        </div>
+        <div class="actions">
+            <i (click)="newTransformation()" class="fa fa-plus-circle" aria-hidden="true"></i>
+            <i (click)="deleteCsar()" class="fa fa-trash" aria-hidden="true"></i>
+        </div>
+    </div>
+    <app-csar-sub-item class="sub-item" [hidden]="isCollapsed(csar.name)" [csar]="csar"></app-csar-sub-item>
+</div>

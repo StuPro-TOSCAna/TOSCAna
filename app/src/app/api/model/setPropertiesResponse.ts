@@ -9,11 +9,12 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
+import { ValidationPropertyWrap } from './validationPropertyWrap';
 
 
 export interface SetPropertiesResponse {
     /**
-     * Key - Boolean map, telling you which values have been set properly (true) and which ones have failed (false).
+     * This value is true if the internal validation of the property was succesful, False otherwise
      */
-    validInputs: { [key: string]: boolean; };
+    properties: Array<ValidationPropertyWrap>;
 }

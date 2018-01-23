@@ -1,0 +1,11 @@
+@import "../../node_modules/bootstrap/scss/functions";
+@import "../../node_modules/bootstrap/scss/variables";
+
+nav {
+    margin-bottom: 10px;
+}
+
+.left {
+    border-right: 1px solid $secondary;
+}
+

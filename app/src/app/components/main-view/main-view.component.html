@@ -1,0 +1,31 @@
+<div *ngIf="!upload" class="header">
+    <div class="title">Available CSARs</div>
+    <div class="action">
+        <button type="button" role="button" (click)="toogle()" class="btn btn-outline-secondary">
+            <i class="fa fa-plus-circle" aria-hidden="true"></i>
+            Add CSAR
+        </button>
+    </div>
+</div>
+<div class="form" [ngStyle]="setFlexWrap()" *ngIf="upload">
+    <input type="text" placeholder="Enter name" class="form-control" id="name" name="name" [(ngModel)]="input"
+           required
+           [ngModelOptions]="{standalone: true}" #name="ngModel">
+   <!-- <div [hidden]="name.valid || name.pristine"
+         class="alert alert-danger">
+        Name is required
+    </div>-->
+    <button type="button" role="button" (filePick)="onFilePicked($event)" class="btn btn-outline-secondary"
+            ngFilePicker>
+        <i class="fa fa-upload" aria-hidden="true"></i>Select file
+    </button>
+    <button type="submit" role="button" (click)="submit()" [disabled]="disableButton(name.valid)"
+            class="btn btn-outline-success">
+        Submit
+    </button>
+    <button type="button" role="button" (click)="toogle()" class="btn btn-outline-danger">
+        Cancel
+    </button>
+</div>
+<div class="no-csars" *ngIf="csars.length === 0"><h1>No CSARs available.</h1></div>
+<app-csar-item *ngFor="let item of csars" [csar]="item"></app-csar-item>

@@ -1,0 +1,29 @@
+<form (ngSubmit)="submit()" #propertiesForm="ngForm">
+    <table class="table table-striped" *ngIf="properties.length > 0">
+        <thead>
+        <tr>
+            <th scope="col">key</th>
+            <th scope="col">type</th>
+            <th scope="col">required</th>
+            <th scope="col">value</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let item of properties">
+            <td>{{item.key}}</td>
+            <td>{{item.type}}</td>
+            <td>{{item.required}}</td>
+            <td><input [(ngModel)]="item.value" name="item.key"/></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div *ngIf="properties.length === 0">
+        <h5>No properties needed for the given CSAR and platform.</h5>
+    </div>
+    <div class="alert alert-danger" role="alert" *ngIf="errorMsg">Some inputs are invalid please recheck.</div>
+    <div class="actions">
+        <button type="button" class="btn btn-danger" (click)="exit()">Cancel</button>
+        <button type="submit" class="btn btn-success" [disabled]="!propertiesForm.form.valid">Transform</button>
+    </div>
+</form>
