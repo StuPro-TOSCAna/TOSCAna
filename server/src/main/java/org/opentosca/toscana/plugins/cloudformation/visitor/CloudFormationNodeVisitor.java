@@ -32,6 +32,9 @@ import org.slf4j.Logger;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.CONFIG_CONFIGURE;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.CONFIG_INSTALL;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.CONFIG_SETS;
+import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.MODE_500;
+import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.MODE_644;
+import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.OWNER_GROUP_ROOT;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.SECURITY_GROUP;
 
 /**
@@ -228,9 +231,9 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
 
         //Add dependencies
         for (String dependency : operation.getDependencies()) {
-            String cfnFileMode = "000644"; //TODO Check what mode is needed (only read?)
-            String cfnFileOwner = "root"; //TODO Check what Owner is needed
-            String cfnFileGroup = "root"; //TODO Check what Group is needed
+            String cfnFileMode = MODE_644; //TODO Check what mode is needed (only read?)
+            String cfnFileOwner = OWNER_GROUP_ROOT; //TODO Check what Owner is needed
+            String cfnFileGroup = OWNER_GROUP_ROOT; //TODO Check what Group is needed
             String cfnSource = getFileURL(cfnModule.getBucketName(), dependency);
             
             logger.debug("Marking " + dependency + " as file to be uploaded.");
@@ -251,9 +254,9 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
         //Add artifact
         if (operation.getArtifact().isPresent()) {
             String artifact = operation.getArtifact().get().getFilePath();
-            String cfnFileMode = "000500"; //TODO Check what mode is needed (read? + execute?)
-            String cfnFileOwner = "root"; //TODO Check what Owner is needed
-            String cfnFileGroup = "root"; //TODO Check what Group is needed
+            String cfnFileMode = MODE_500; //TODO Check what mode is needed (read? + execute?)
+            String cfnFileOwner = OWNER_GROUP_ROOT; //TODO Check what Owner is needed
+            String cfnFileGroup = OWNER_GROUP_ROOT; //TODO Check what Group is needed
             String cfnSource = getFileURL(cfnModule.getBucketName(), artifact);
             
             logger.debug("Marking " + artifact + " as file to be uploaded.");
