@@ -111,7 +111,7 @@ public class CloudFormationFileCreatorTest extends BaseUnitTest {
     }
     
     @Test
-    public void copyFiles() throws Exception {     
+    public void copyFiles() {     
         cfnModule.putFileToBeUploaded(FILENAME_TEST_FILE);
         fileCreator.copyFiles();
         assertTrue(FILEPATH_TARGET_TEST_FILE.exists());

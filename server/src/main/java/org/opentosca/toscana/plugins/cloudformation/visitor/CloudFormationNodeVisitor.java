@@ -231,9 +231,6 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
 
         //Add dependencies
         for (String dependency : operation.getDependencies()) {
-            String cfnFileMode = MODE_644; //TODO Check what mode is needed (only read?)
-            String cfnFileOwner = OWNER_GROUP_ROOT; //TODO Check what Owner is needed
-            String cfnFileGroup = OWNER_GROUP_ROOT; //TODO Check what Group is needed
             String cfnSource = getFileURL(cfnModule.getBucketName(), dependency);
             
             logger.debug("Marking " + dependency + " as file to be uploaded.");
@@ -241,9 +238,9 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             
             CFNFile cfnFile = new CFNFile(cfnFilePath + dependency)
                 .setSource(cfnSource)
-                .setMode(cfnFileMode)
-                .setOwner(cfnFileOwner)
-                .setGroup(cfnFileGroup);
+                .setMode(MODE_644) //TODO Check what mode is needed (only read?)
+                .setOwner(OWNER_GROUP_ROOT) //TODO Check what Owner is needed
+                .setGroup(OWNER_GROUP_ROOT); //TODO Check what Group is needed
 
             // Add file to install
             cfnModule.getCFNInit(serverName)
@@ -254,9 +251,6 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
         //Add artifact
         if (operation.getArtifact().isPresent()) {
             String artifact = operation.getArtifact().get().getFilePath();
-            String cfnFileMode = MODE_500; //TODO Check what mode is needed (read? + execute?)
-            String cfnFileOwner = OWNER_GROUP_ROOT; //TODO Check what Owner is needed
-            String cfnFileGroup = OWNER_GROUP_ROOT; //TODO Check what Group is needed
             String cfnSource = getFileURL(cfnModule.getBucketName(), artifact);
             
             logger.debug("Marking " + artifact + " as file to be uploaded.");
@@ -264,9 +258,9 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             
             CFNFile cfnFile = new CFNFile(cfnFilePath + artifact)
                 .setSource(cfnSource)
-                .setMode(cfnFileMode)
-                .setOwner(cfnFileOwner)
-                .setGroup(cfnFileGroup);
+                .setMode(MODE_500) //TODO Check what mode is needed (read? + execute?)
+                .setOwner(OWNER_GROUP_ROOT) //TODO Check what Owner is needed
+                .setGroup(OWNER_GROUP_ROOT); //TODO Check what Group is needed
 
             CFNCommand cfnCommand = new CFNCommand(artifact,
                 cfnFilePath + artifact) //file is the full path, so need for "./"
