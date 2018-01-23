@@ -1,0 +1,10 @@
+.log-entry {
+    width: 100%;
+    font-family: monospace;
+    padding:2px 0px 2px 5px;
+}
+
+.log-entry:nth-child(odd) {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+

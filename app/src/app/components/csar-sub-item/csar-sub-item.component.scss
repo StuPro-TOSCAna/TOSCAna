@@ -1,0 +1,24 @@
+.button {
+    display: inline-block;
+    border-radius: 0;
+    position: relative;
+    width: 98%;
+    float: right;
+    margin-top: 1px;
+    text-align: left;
+    div {
+        display: inline-block;
+    }
+
+    .icon {
+        margin-right: 5px;
+    }
+
+    .actions {
+        float: right;
+    }
+
+    .fa {
+        font-size: 22px;
+    }
+}

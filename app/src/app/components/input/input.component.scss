@@ -1,0 +1,18 @@
+@import "../../../../node_modules/bootstrap/scss/functions";
+@import "../../../../node_modules/bootstrap/scss/variables";
+
+form {
+    .alert {
+        margin: 0 auto;
+        width: 95%;
+    }
+    .actions {
+        margin: 10px 10px 10px 0;
+        display: flex;
+        justify-content: flex-end;
+
+        button {
+            margin: 2px;
+        }
+    }
+}

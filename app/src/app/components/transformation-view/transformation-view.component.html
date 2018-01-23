@@ -1,0 +1,19 @@
+<div *ngIf="transformation !== undefined">
+    <h3>{{csarId}}/{{transformation.fullName}}</h3>
+    <a *ngIf="transformationDone" class="btn btn-success"
+       href="http://localhost:8084/api/csars/test/transformations/kubernetes/artifact">Download</a>
+    <h5>Status: {{transformation.status}}</h5>
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link active">
+                Log
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link">Inputs</a>
+        </li>
+    </ul>
+    <app-log #Log [csarId]="csarId" [platformId]="platform" [status]="transformation.status"></app-log>
+</div>
+
+

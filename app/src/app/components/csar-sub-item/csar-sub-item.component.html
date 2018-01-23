@@ -1,0 +1,6 @@
+<div *ngFor="let item of csar.transformations" [class.active]="isActive(item.platform)"type="button" class="button btn btn-outline-secondary" (click)="gotoTransformation(item.platform)">
+    <div class="icon">
+        <i class="fa fa-exchange" aria-hidden="true"></i>
+    </div>
+    <div class="name">{{item.fullName}}</div>
+</div>

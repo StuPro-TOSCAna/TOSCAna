@@ -1,0 +1,38 @@
+.target-platforms {
+    margin: 20px 0 20px 0;
+    button {
+        border-radius: 0;
+    }
+}
+
+nav {
+    .back-button {
+        color: #ffffff;
+        font-size: 1.25rem;
+        flex-grow: 1;
+    }
+
+    .place-holder {
+        visibility: hidden;
+        font-size: 1.25rem;
+        flex-grow: 1;
+    }
+
+    .navbar-brand {
+        margin-right: 0;
+        flex-grow: 8;
+    }
+    align-items: center;
+    text-align: center;
+    justify-content: space-between;
+}
+
+.actions {
+    margin: 10px 10px 10px 0;
+    display: flex;
+    justify-content: flex-end;
+
+    button {
+        margin: 2px;
+    }
+}
