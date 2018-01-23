@@ -12,6 +12,7 @@ import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.visitor.VisitableNode;
 import org.opentosca.toscana.plugins.cloudformation.visitor.CloudFormationNodeVisitor;
 import org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle;
+import org.opentosca.toscana.plugins.util.TransformationFailureException;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
@@ -76,9 +77,8 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
             fileAccess.access(OUTPUT_DIR + CloudFormationFileCreator.TEMPLATE_YAML)
                 .appendln(cfnModule.toString()).close();
         } catch (Exception e) {
-            logger.error("Transformation to CloudFormation failed during template creation." +
-                " Please check the StackTrace for more Info.");
-            e.printStackTrace();
+            throw new TransformationFailureException("Transformation to CloudFormation failed " +
+                "during template creation.", e);
         }
 
         try {
@@ -88,9 +88,8 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
             fileCreator.createScripts();
             fileCreator.copyFiles();
         } catch (IOException e) {
-            logger.error("Transformation to CloudFormation failed during file creation." +
-                " Please check the StackTrace for more Info.");
-            e.printStackTrace();
+            throw new TransformationFailureException("Transformation to CloudFormation failed " +
+                "during file creation.", e);
         }
 
         logger.info("Transformation to CloudFormation successful.");

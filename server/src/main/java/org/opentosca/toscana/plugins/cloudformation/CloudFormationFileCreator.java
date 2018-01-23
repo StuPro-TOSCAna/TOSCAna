@@ -8,6 +8,7 @@ import java.util.List;
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.plugins.scripts.BashScript;
 import org.opentosca.toscana.plugins.scripts.EnvironmentCheck;
+import org.opentosca.toscana.plugins.util.TransformationFailureException;
 
 import org.apache.commons.io.Charsets;
 import org.apache.commons.io.IOUtils;
@@ -51,21 +52,17 @@ public class CloudFormationFileCreator {
 
         logger.debug("Checking if files need to be copied.");
         if (!filesToBeUploaded.isEmpty()) {
-            logger.debug("Files to be copied found.");
-            logger.debug("Copying files to the target artifact.");
+            logger.debug("Files to be copied found. Attempting to copy files to the target artifact.");
             filesToBeUploaded.forEach((filePath) -> {
                 String targetPath = CloudFormationModule.FILEPATH_TARGET + filePath;
                 try {
                     cfnModule.getFileAccess().copy(filePath, targetPath);
                 } catch (IOException e) {
-                    logger.error("Copying of files to the target artifact failed.");
-                    logger.error("See the stack trace for more info.");
-                    e.printStackTrace();
+                    throw new TransformationFailureException("Copying of files to the target artifact failed.", e);
                 }
             });
         } else {
-            logger.debug("No files to be copied found.");
-            logger.debug("Skipping copying of files.");
+            logger.debug("No files to be copied found. Skipping copying of files.");
         }
     }
 
@@ -99,8 +96,7 @@ public class CloudFormationFileCreator {
 
         logger.debug("Checking if files need to be uploaded.");
         if (!filesToBeUploaded.isEmpty()) {
-            logger.debug("Files to be uploaded found.");
-            logger.debug("Creating file upload script.");
+            logger.debug("Files to be uploaded found. Creating file upload script.");
             BashScript fileUploadScript = new BashScript(cfnModule.getFileAccess(), FILENAME_UPLOAD);
             fileUploadScript.append(createBucket());
             
@@ -110,14 +106,11 @@ public class CloudFormationFileCreator {
                 try {
                     fileUploadScript.append(uploadFile(filePath, localFilePath));
                 } catch (IOException e) {
-                    logger.error("Adding file uploads failed.");
-                    logger.error("See the stack trace for more info.");
-                    e.printStackTrace();
+                    throw new TransformationFailureException("Failed to add file uploads to the script.", e);
                 }
             });
         } else {
-            logger.debug("No files to be uploaded found.");
-            logger.debug("Skipping creation of file upload script.");
+            logger.debug("No files to be uploaded found. Skipping creation of file upload script.");
         }
     }
 
