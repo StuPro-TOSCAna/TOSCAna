@@ -77,8 +77,8 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
             fileAccess.access(OUTPUT_DIR + CloudFormationFileCreator.TEMPLATE_YAML)
                 .appendln(cfnModule.toString()).close();
         } catch (Exception e) {
-            throw new TransformationFailureException("Transformation to CloudFormation failed " +
-                "during template creation.", e);
+            logger.error("Transformation to CloudFormation failed during template creation.");
+            e.printStackTrace();
         }
 
         try {
