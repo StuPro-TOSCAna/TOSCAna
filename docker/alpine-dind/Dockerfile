@@ -8,8 +8,10 @@ RUN ./build-toscana.sh
 # This image is based on the Docker in Docker image (needs --privileged to work correctly)
 # If the privileged flag is missing this image will not support kubernetes based transformations
 FROM docker:dind
-ENV LANG=C.UTF-8
 WORKDIR /toscana
+VOLUME /toscana/data
+# Mount the AWS Directory as volume (used to store Credentials)
+VOLUME /root/.aws
 COPY --from=build /toscana-build/server.jar server.jar
 ADD *.sh /toscana/
 RUN apk add --update --no-cache bash && \
