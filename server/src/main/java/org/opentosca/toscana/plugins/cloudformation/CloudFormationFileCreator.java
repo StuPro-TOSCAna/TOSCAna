@@ -48,7 +48,7 @@ public class CloudFormationFileCreator {
      */
     public void copyFiles() {
 
-        ArrayList<String> filesToBeUploaded = cfnModule.getFilesToBeUploaded();
+        List<String> filesToBeUploaded = cfnModule.getFilesToBeUploaded();
 
         logger.debug("Checking if files need to be copied.");
         if (!filesToBeUploaded.isEmpty()) {
@@ -96,7 +96,7 @@ public class CloudFormationFileCreator {
      * Creates the script for File Uploads if files need to be uploaded.
      */
     private void createFileUploadScript() throws IOException {
-        ArrayList<String> filesToBeUploaded = cfnModule.getFilesToBeUploaded();
+        List<String> filesToBeUploaded = cfnModule.getFilesToBeUploaded();
 
         logger.debug("Checking if files need to be uploaded.");
         if (!filesToBeUploaded.isEmpty()) {

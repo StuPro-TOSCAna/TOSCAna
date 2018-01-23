@@ -56,7 +56,7 @@ public class CloudFormationModule extends Module {
 
     private Object keyNameVar;
     private Map<String, CFNInit> cfnInitMap;
-    private ArrayList<String> filesToBeUploaded;
+    private List<String> filesToBeUploaded;
     private PluginFileAccess fileAccess;
     private String bucketName;
     private String stackName;
@@ -99,7 +99,7 @@ public class CloudFormationModule extends Module {
         return this.cfnInitMap.get(resource);
     }
 
-    public ArrayList<String> getFilesToBeUploaded() {
+    public List<String> getFilesToBeUploaded() {
         return filesToBeUploaded;
     }
 
