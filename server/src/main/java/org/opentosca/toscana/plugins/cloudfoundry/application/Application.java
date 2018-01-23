@@ -66,12 +66,10 @@ public class Application {
         String pathToFileOnContainer = "/home/vcap/app/";
         //TODO: expand with more NodeType
         if (parentTopNode instanceof WebApplication) {
-            pathToFileOnContainer = "/home/vcap/app/htdocs/" + APPLICATION_FOLDER + this.applicationNumber;
-        } else {
-            pathToFileOnContainer = pathToFileOnContainer + APPLICATION_FOLDER + this.applicationNumber;
+            pathToFileOnContainer = "/home/vcap/app/htdocs/";
         }
         executeCommand.put("../../" + APPLICATION_FOLDER + this.getApplicationNumber() + "/" + pathToFile,
-            pathToFileOnContainer + "/" + pathToFile);
+            pathToFileOnContainer + pathToFile);
     }
 
     /**

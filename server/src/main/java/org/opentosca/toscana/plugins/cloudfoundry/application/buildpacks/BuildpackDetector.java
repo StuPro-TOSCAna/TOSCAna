@@ -65,12 +65,8 @@ public class BuildpackDetector {
             }
 
             buildPackAdditionsJson.put(BUILDPACK_OBJECT_PHP, buildPacks);
-            String path;
-            if (application.getPathToApplication() != null) {
-                path = String.format("%s%s/%s/%s", APPLICATION_FOLDER, application.getApplicationNumber(), application.getPathToApplication(), BUILDPACK_FILEPATH_PHP);
-            } else {
-                path = BUILDPACK_FILEPATH_PHP;
-            }
+            String path = String.format("%s%s/%s", APPLICATION_FOLDER, application.getApplicationNumber(), BUILDPACK_FILEPATH_PHP);
+
             fileAccess.access(path).append(buildPackAdditionsJson.toString(4)).close();
         }
     }
