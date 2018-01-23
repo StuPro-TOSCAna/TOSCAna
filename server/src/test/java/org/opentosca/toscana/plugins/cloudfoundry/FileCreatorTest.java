@@ -10,7 +10,6 @@ import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.model.EffectiveModel;
-import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.MysqlDatabase;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.node.WebApplication;
@@ -99,7 +98,7 @@ public class FileCreatorTest extends BaseUnitTest {
         fileCreator.createFiles();
         File targetFile = new File(targetDir, MANIFEST_PATH);
         File deployFile = new File(targetDir, outputPath + FILEPRAEFIX_DEPLOY + DEPLOY_NAME + FILESUFFIX_DEPLOY);
-        File buildPackAdditions = new File(targetDir, "/" + APPLICATION_FOLDER + testApp.getApplicationNumber() + "/myapp/main" + "/" + BUILDPACK_FILEPATH_PHP);
+        File buildPackAdditions = new File(targetDir, "/" + APPLICATION_FOLDER + testApp.getApplicationNumber() + "/" + BUILDPACK_FILEPATH_PHP);
 
         assertTrue(targetFile.exists());
         assertTrue(deployFile.exists());
@@ -149,7 +148,7 @@ public class FileCreatorTest extends BaseUnitTest {
 
     @Test
     public void buildpackAdditons() throws Exception {
-        String expectedPath = "/" + APPLICATION_FOLDER + testApp.getApplicationNumber() + "/myapp/main" + "/" + BUILDPACK_FILEPATH_PHP;
+        String expectedPath = "/" + APPLICATION_FOLDER + testApp.getApplicationNumber() + "/" + BUILDPACK_FILEPATH_PHP;
         testApp.setPathToApplication(mainApplicationPath);
         testApp.addService(service1, ServiceTypes.MYSQL);
         String expectedBuildpackcontent = "{\n" +
@@ -286,14 +285,14 @@ public class FileCreatorTest extends BaseUnitTest {
             if (node instanceof WebApplication) {
                 webApplicationNode = node;
             }
-            if ( node instanceof MysqlDatabase) {
+            if (node instanceof MysqlDatabase) {
                 mysqlDatabaseNode = node;
             }
         }
 
         app.addConfigMysql("my_db/configSql.sql");
         app.addExecuteFile("my_app/configure_myphpapp.sh", webApplicationNode);
-        
+
         secondApp.addConfigMysql("database/config.sql");
         secondApp.addExecuteFile("database/dbinit.sh", mysqlDatabaseNode);
 
@@ -307,16 +306,16 @@ public class FileCreatorTest extends BaseUnitTest {
         String deployscriptContent = FileUtils.readFileToString(targetFile);
         String expectedContent =
             "check python\n" +
-            "python replace.py ../../app1/my_app/configure_myphpapp.sh /var/www/html/ /home/vcap/app/htdocs/\n" +
-            "python replace.py ../../app2/database/dbinit.sh /var/www/html/ /home/vcap/app/htdocs/\n" +
-            "cf push app -f ../manifest.yml\n" +
-            "cf push appSec -f ../manifest.yml\n" +
-            "python readCredentials.py app cleardb mysql\n" +
-            "python executeCommand.py app /home/vcap/app/htdocs/app1/my_app/configure_myphpapp.sh\n" +
-            "python configureMysql.py ../../app1/my_db/configSql.sql\n" +
-            "python readCredentials.py appSec cleardb mysql\n" +
-            "python executeCommand.py appSec /home/vcap/app/app2/database/dbinit.sh\n" +
-            "python configureMysql.py ../../app2/database/config.sql\n";
+                "python replace.py ../../app1/my_app/configure_myphpapp.sh /var/www/html/ /home/vcap/app/htdocs/\n" +
+                "python replace.py ../../app2/database/dbinit.sh /var/www/html/ /home/vcap/app/htdocs/\n" +
+                "cf push app -f ../manifest.yml\n" +
+                "cf push appSec -f ../manifest.yml\n" +
+                "python readCredentials.py app cleardb mysql\n" +
+                "python executeCommand.py app /home/vcap/app/htdocs/my_app/configure_myphpapp.sh\n" +
+                "python configureMysql.py ../../app1/my_db/configSql.sql\n" +
+                "python readCredentials.py appSec cleardb mysql\n" +
+                "python executeCommand.py appSec /home/vcap/app/database/dbinit.sh\n" +
+                "python configureMysql.py ../../app2/database/config.sql\n";
 
         assertTrue(deployscriptContent.contains(expectedContent));
         //assertEquals(expectedContent, deployscriptContent);

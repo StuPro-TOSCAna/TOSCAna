@@ -20,13 +20,9 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.CLI_CREATE_SERVICE_DEFAULT;
-import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.CLI_PATH_TO_MANIFEST;
-import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.CLI_PUSH;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.DEPLOY_NAME;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.FILEPRAEFIX_DEPLOY;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.FILESUFFIX_DEPLOY;
-import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.MANIFEST_NAME;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.MANIFEST_PATH;
 
 public class CloudFoundryPluginTest extends BaseUnitTest {
@@ -101,13 +97,10 @@ public class CloudFoundryPluginTest extends BaseUnitTest {
             "python replace.py ../../app1/my_app/configure_myphpapp.sh /var/www/html/ /home/vcap/app/htdocs/\n" +
             "python replace.py ../../app1/my_app/create_myphpapp.sh /var/www/html/ /home/vcap/app/htdocs/\n" +
             "cf push my-app -f ../manifest.yml\n" +
-            "python executeCommand.py my-app /home/vcap/app/htdocs/app1/my_app/configure_myphpapp.sh\n" +
-            "python executeCommand.py my-app /home/vcap/app/htdocs/app1/my_app/create_myphpapp.sh\n" +
+            "python executeCommand.py my-app /home/vcap/app/htdocs/my_app/configure_myphpapp.sh\n" +
+            "python executeCommand.py my-app /home/vcap/app/htdocs/my_app/create_myphpapp.sh\n" +
             "python configureMysql.py ../../app1/my_db/createtable.sql\n";
         
-        //String expectedOutput = String.format("#!/bin/sh\nsource util/*\ncheck \"cf\"\n%smy_db\n%s%s%s%s\n",
-        //    CLI_CREATE_SERVICE_DEFAULT, CLI_PUSH, appNameClearedUp, CLI_PATH_TO_MANIFEST, MANIFEST_NAME);
-
         assertEquals(expectedOutput, deployScript);
     }
 }
