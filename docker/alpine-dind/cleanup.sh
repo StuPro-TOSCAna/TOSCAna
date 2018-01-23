@@ -1,4 +1,4 @@
 #!/bin/bash
 echo "Cleanup"
-apk del maven curl git nodejs
-rm -rf /root/.m2/ install-deps.sh build-toscana.sh cleanup.sh
+apk del curl
+rm install-deps.sh build-toscana.sh cleanup.sh
