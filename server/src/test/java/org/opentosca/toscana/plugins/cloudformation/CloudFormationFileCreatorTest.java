@@ -27,7 +27,7 @@ import static org.opentosca.toscana.plugins.cloudformation.CloudFormationFileCre
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationFileCreator.FILENAME_DEPLOY;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationFileCreator.FILENAME_UPLOAD;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationFileCreator.RELATIVE_DIRECTORY_PREFIX;
-import static org.opentosca.toscana.plugins.cloudformation.CloudFormationFileCreator.TEMPLATE_PATH;
+import static org.opentosca.toscana.plugins.cloudformation.CloudFormationFileCreator.TEMPLATE_YAML;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.FILEPATH_TARGET;
 import static org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle.SCRIPTS_DIR_PATH;
 import static org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle.UTIL_DIR_PATH;
@@ -85,7 +85,7 @@ public class CloudFormationFileCreatorTest extends BaseUnitTest {
             "check \"aws\"\n" +
             CHANGE_TO_PARENT_DIRECTORY + "\n" +
             CLI_COMMAND_CREATESTACK + CLI_PARAM_STACKNAME + cfnModule.getStackName() + " " + CLI_PARAM_TEMPLATEFILE 
-            + TEMPLATE_PATH + "\n";
+            + TEMPLATE_YAML + "\n";
         String expectedFileUploadContent = SHEBANG + "\n" +
             SOURCE_UTIL_ALL + "\n" +
             "createBucket " + cfnModule.getBucketName() + " " + cfnModule.getAWSRegion() + "\n" +

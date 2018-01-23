@@ -3,7 +3,6 @@ package org.opentosca.toscana.plugins.cloudformation;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
@@ -25,7 +24,7 @@ public class CloudFormationFileCreator {
     // private static final String CLI_PARAM_PARAMOVERRIDES = "--parameter-overrides ";
     static final String FILENAME_DEPLOY = "deploy";
     static final String FILENAME_UPLOAD = "file-upload";
-    static final String TEMPLATE_PATH = "template.yaml ";
+    static final String TEMPLATE_YAML = "template.yaml ";
     static final String CHANGE_TO_PARENT_DIRECTORY = "cd ..";
     static final String RELATIVE_DIRECTORY_PREFIX = "../files/";
 
@@ -89,7 +88,7 @@ public class CloudFormationFileCreator {
         deployScript.append(CHANGE_TO_PARENT_DIRECTORY);
         deployScript.append(CLI_COMMAND_CREATESTACK
             + CLI_PARAM_STACKNAME + cfnModule.getStackName() + " "
-            + CLI_PARAM_TEMPLATEFILE + TEMPLATE_PATH);
+            + CLI_PARAM_TEMPLATEFILE + TEMPLATE_YAML);
     }
 
     /**
