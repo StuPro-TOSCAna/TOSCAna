@@ -24,6 +24,8 @@ import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.deploy_name
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.FILEPRAEFIX_DEPLOY;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.FILESUFFIX_DEPLOY;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.MANIFEST_PATH;
+import static org.opentosca.toscana.plugins.scripts.BashScript.SHEBANG;
+import static org.opentosca.toscana.plugins.scripts.BashScript.SOURCE_UTIL_ALL;
 
 public class CloudFoundryPluginTest extends BaseUnitTest {
 
@@ -88,8 +90,7 @@ public class CloudFoundryPluginTest extends BaseUnitTest {
         File targetFile = new File(targetDir + "/output/scripts/", FILEPRAEFIX_DEPLOY + deploy_name +
             FILESUFFIX_DEPLOY);
         String deployScript = FileUtils.readFileToString(targetFile);
-        String expectedOutput = "#!/bin/sh\n" +
-            "source util/*\n" +
+        String expectedOutput = SHEBANG + "\n" + SOURCE_UTIL_ALL + "\n" +
             "check \"cf\"\n" +
             "cf create-service {plan} {service} my_db\n" +
             "check python\n" +
@@ -99,7 +100,7 @@ public class CloudFoundryPluginTest extends BaseUnitTest {
             "python executeCommand.py my-app /home/vcap/app/htdocs/my_app/configure_myphpapp.sh\n" +
             "python executeCommand.py my-app /home/vcap/app/htdocs/my_app/create_myphpapp.sh\n" +
             "python configureMysql.py ../../app1/my_db/createtable.sql\n";
-        
+
         assertEquals(expectedOutput, deployScript);
     }
 }

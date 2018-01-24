@@ -20,6 +20,7 @@ import static org.mockito.Mockito.mock;
 import static org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle.SCRIPTS_DIR_PATH;
 import static org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle.UTIL_DIR_NAME;
 import static org.opentosca.toscana.plugins.scripts.BashScript.SHEBANG;
+import static org.opentosca.toscana.plugins.scripts.BashScript.SOURCE_UTIL_ALL;
 
 public class BashScriptTest extends BaseUnitTest {
 
@@ -47,7 +48,7 @@ public class BashScriptTest extends BaseUnitTest {
         assertTrue(expectedGeneratedScript.exists());
         List<String> result = IOUtils.readLines(new FileInputStream(expectedGeneratedScript));
         assertEquals(SHEBANG, result.get(0));
-        assertEquals("source " + UTIL_DIR_NAME + "*", result.get(1));
+        assertEquals(SOURCE_UTIL_ALL, result.get(1));
     }
 
     @Test

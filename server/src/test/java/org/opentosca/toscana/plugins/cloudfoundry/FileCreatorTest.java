@@ -48,6 +48,8 @@ import static org.opentosca.toscana.plugins.cloudfoundry.application.ManifestAtt
 import static org.opentosca.toscana.plugins.cloudfoundry.application.ManifestAttributes.SERVICE;
 import static org.opentosca.toscana.plugins.cloudfoundry.application.buildpacks.BuildpackDetector.BUILDPACK_FILEPATH_PHP;
 import static org.opentosca.toscana.plugins.cloudfoundry.application.buildpacks.BuildpackDetector.BUILDPACK_OBJECT_PHP;
+import static org.opentosca.toscana.plugins.scripts.BashScript.SHEBANG;
+import static org.opentosca.toscana.plugins.scripts.BashScript.SOURCE_UTIL_ALL;
 
 public class FileCreatorTest extends BaseUnitTest {
     private FileCreator fileCreator;
@@ -141,8 +143,10 @@ public class FileCreatorTest extends BaseUnitTest {
         fileCreator.createFiles();
         File targetFile = new File(targetDir, outputPath + FILEPRAEFIX_DEPLOY + deploy_name + FILESUFFIX_DEPLOY);
         String manifestContent = FileUtils.readFileToString(targetFile);
-        String expectedDeployContent = "#!/bin/sh\n" +
-            "source util/*\ncheck \"cf\"\ncf push " + appName + CLI_PATH_TO_MANIFEST + MANIFEST_NAME + "\n";
+        String expectedDeployContent = SHEBANG + "\n" +
+            SOURCE_UTIL_ALL + "\n" + 
+            "check \"cf\"\n" +
+            "cf push " + appName + CLI_PATH_TO_MANIFEST + MANIFEST_NAME + "\n";
         assertEquals(expectedDeployContent, manifestContent);
     }
 
