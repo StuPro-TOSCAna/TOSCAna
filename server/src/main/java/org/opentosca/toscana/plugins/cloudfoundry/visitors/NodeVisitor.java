@@ -20,11 +20,11 @@ import static org.opentosca.toscana.plugins.cloudfoundry.application.ManifestAtt
 import static org.opentosca.toscana.plugins.cloudfoundry.application.ManifestAttributes.DOMAIN;
 import static org.opentosca.toscana.plugins.cloudfoundry.application.ManifestAttributes.MEMORY;
 
-public class NodeVisitors implements StrictNodeVisitor {
+public class NodeVisitor implements StrictNodeVisitor {
 
     private Application myApp;
 
-    public NodeVisitors(Application myApp) {
+    public NodeVisitor(Application myApp) {
         this.myApp = myApp;
     }
 
@@ -89,22 +89,18 @@ public class NodeVisitors implements StrictNodeVisitor {
 
         StandardLifecycle lifecycle = node.getStandardLifecycle();
         Optional<Operation> configureOptional = lifecycle.getConfigure();
-        
+
         //get configure script
         if (configureOptional.isPresent()) {
             Optional<Artifact> configureArtifact = configureOptional.get().getArtifact();
-            if (configureArtifact.isPresent()) {
-                myApp.addExecuteFile(configureArtifact.get().getFilePath(), node);
-            }
+            configureArtifact.ifPresent(artifact -> myApp.addExecuteFile(artifact.getFilePath(), node));
         }
 
         //get create script
         Optional<Operation> createOptional = lifecycle.getCreate();
         if (createOptional.isPresent()) {
             Optional<Artifact> createArtifact = createOptional.get().getArtifact();
-            if (createArtifact.isPresent()) {
-                myApp.addExecuteFile(createArtifact.get().getFilePath(), node);
-            }
+            createArtifact.ifPresent(artifact -> myApp.addExecuteFile(artifact.getFilePath(), node));
         }
 
         handleStandardLifecycle(node, true);

@@ -12,7 +12,7 @@ import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.visitor.VisitableNode;
 import org.opentosca.toscana.plugins.cloudfoundry.application.Application;
-import org.opentosca.toscana.plugins.cloudfoundry.visitors.NodeVisitors;
+import org.opentosca.toscana.plugins.cloudfoundry.visitors.NodeVisitor;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
@@ -20,7 +20,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.DEPLOY_NAME;
+import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.deploy_name;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.FILEPRAEFIX_DEPLOY;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.FILESUFFIX_DEPLOY;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.MANIFEST_PATH;
@@ -29,14 +29,13 @@ public class CloudFoundryPluginTest extends BaseUnitTest {
 
     private File targetDir;
     private final String appName = "my_app";
-    private final String appNameClearedUp = "my-app";
     private final ArrayList<String> paths = new ArrayList<>();
     private final String resourcesPath = "src/test/resources/";
 
     @Before
     public void setUp() throws Exception {
         Application myApp = new Application(appName, 1);
-        NodeVisitors visitor = new NodeVisitors(myApp);
+        NodeVisitor visitor = new NodeVisitor(myApp);
         EffectiveModel lamp = new EffectiveModel(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, log);
         File sourceDir = new File(resourcesPath, "csars/yaml/valid/lamp-noinput");
         targetDir = new File(tmpdir, "targetDir");
@@ -86,7 +85,7 @@ public class CloudFoundryPluginTest extends BaseUnitTest {
 
     @Test
     public void getDeployScript() throws Exception {
-        File targetFile = new File(targetDir + "/output/scripts/", FILEPRAEFIX_DEPLOY + DEPLOY_NAME +
+        File targetFile = new File(targetDir + "/output/scripts/", FILEPRAEFIX_DEPLOY + deploy_name +
             FILESUFFIX_DEPLOY);
         String deployScript = FileUtils.readFileToString(targetFile);
         String expectedOutput = "#!/bin/sh\n" +

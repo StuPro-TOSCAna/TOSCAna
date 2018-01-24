@@ -14,6 +14,7 @@ import org.opentosca.toscana.plugins.cloudfoundry.application.deployment.Deploym
 import org.opentosca.toscana.plugins.scripts.BashScript;
 import org.opentosca.toscana.plugins.scripts.EnvironmentCheck;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.json.JSONException;
 
 import static org.opentosca.toscana.plugins.cloudfoundry.application.ManifestAttributes.DOMAIN;
@@ -40,7 +41,7 @@ public class FileCreator {
     public static final String FILEPRAEFIX_DEPLOY = "deploy_";
     public static final String FILESUFFIX_DEPLOY = ".sh";
     public static final String APPLICATION_FOLDER = "app";
-    public static String DEPLOY_NAME = "application";
+    public static String deploy_name = "application";
 
     private final PluginFileAccess fileAccess;
     private List<Application> applications;
@@ -69,11 +70,6 @@ public class FileCreator {
             createEnvironmentVariables(application);
             createService(application);
         }
-    }
-
-    public void updateManifest() throws IOException {
-        fileAccess.delete(MANIFEST_PATH);
-        createManifest();
     }
 
     private void createManifestHead() throws IOException {
@@ -131,9 +127,9 @@ public class FileCreator {
      */
     private void createDeployScript() throws IOException {
         if (applications.size() > 1) {
-            DEPLOY_NAME += "s";
+            deploy_name += "s";
         }
-        BashScript deployScript = new BashScript(fileAccess, FILEPRAEFIX_DEPLOY + DEPLOY_NAME);
+        BashScript deployScript = new BashScript(fileAccess, FILEPRAEFIX_DEPLOY + deploy_name);
         deployScript.append(EnvironmentCheck.checkEnvironment("cf"));
 
         //handle services
@@ -191,7 +187,7 @@ public class FileCreator {
      created
      */
     private void readCredentials(Deployment deployment, Application application) throws IOException {
-        if (application.getServicesMatchedToProvider() != null && !application.getServicesMatchedToProvider().isEmpty()) {
+        if (!CollectionUtils.isEmpty(application.getServicesMatchedToProvider())) {
             for (Service service : application.getServicesMatchedToProvider()) {
                 deployment.readCredentials(application.getName(), service.getServiceName(), service.getServiceType());
             }

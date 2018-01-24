@@ -30,7 +30,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeNotNull;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.APPLICATION_FOLDER;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.CLI_PATH_TO_MANIFEST;
-import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.DEPLOY_NAME;
+import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.deploy_name;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.FILEPRAEFIX_DEPLOY;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.FILESUFFIX_DEPLOY;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.MANIFEST_NAME;
@@ -97,7 +97,7 @@ public class FileCreatorTest extends BaseUnitTest {
         testApp.setPathToApplication(mainApplicationPath);
         fileCreator.createFiles();
         File targetFile = new File(targetDir, MANIFEST_PATH);
-        File deployFile = new File(targetDir, outputPath + FILEPRAEFIX_DEPLOY + DEPLOY_NAME + FILESUFFIX_DEPLOY);
+        File deployFile = new File(targetDir, outputPath + FILEPRAEFIX_DEPLOY + deploy_name + FILESUFFIX_DEPLOY);
         File buildPackAdditions = new File(targetDir, "/" + APPLICATION_FOLDER + testApp.getApplicationNumber() + "/" + BUILDPACK_FILEPATH_PHP);
 
         assertTrue(targetFile.exists());
@@ -139,7 +139,7 @@ public class FileCreatorTest extends BaseUnitTest {
     @Test
     public void contentDeploy() throws Exception {
         fileCreator.createFiles();
-        File targetFile = new File(targetDir, outputPath + FILEPRAEFIX_DEPLOY + DEPLOY_NAME + FILESUFFIX_DEPLOY);
+        File targetFile = new File(targetDir, outputPath + FILEPRAEFIX_DEPLOY + deploy_name + FILESUFFIX_DEPLOY);
         String manifestContent = FileUtils.readFileToString(targetFile);
         String expectedDeployContent = "#!/bin/sh\n" +
             "source util/*\ncheck \"cf\"\ncf push " + appName + CLI_PATH_TO_MANIFEST + MANIFEST_NAME + "\n";
@@ -243,7 +243,7 @@ public class FileCreatorTest extends BaseUnitTest {
 
         FileCreator fileCreatorMult = new FileCreator(fileAccess, applications);
         fileCreatorMult.createFiles();
-        File targetFile = new File(targetDir, outputPath + FILEPRAEFIX_DEPLOY + DEPLOY_NAME + FILESUFFIX_DEPLOY);
+        File targetFile = new File(targetDir, outputPath + FILEPRAEFIX_DEPLOY + deploy_name + FILESUFFIX_DEPLOY);
         String deployscriptContent = FileUtils.readFileToString(targetFile);
         String expectedContent = "#!/bin/sh\n" +
             "source util/*\n" +
@@ -302,7 +302,7 @@ public class FileCreatorTest extends BaseUnitTest {
         FileCreator fileCreator = new FileCreator(fileAccess, applications);
         fileCreator.createFiles();
 
-        File targetFile = new File(targetDir, outputPath + FILEPRAEFIX_DEPLOY + DEPLOY_NAME + FILESUFFIX_DEPLOY);
+        File targetFile = new File(targetDir, outputPath + FILEPRAEFIX_DEPLOY + deploy_name + FILESUFFIX_DEPLOY);
         String deployscriptContent = FileUtils.readFileToString(targetFile);
         String expectedContent =
             "check python\n" +

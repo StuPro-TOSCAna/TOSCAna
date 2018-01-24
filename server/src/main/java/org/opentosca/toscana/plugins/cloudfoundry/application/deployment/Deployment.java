@@ -23,18 +23,12 @@ public class Deployment {
     private Class deploymentClass;
 
     private final String PYTHON_SCRIPTS_TARGET = SCRIPTS_DIR_PATH;
+    private final String PYTHON_SCRIPTS_SOURCE = "/cloudFoundry/deployment_scripts/";
 
     private final String PYTHON_CONFIGURE_SQL_FILENAME = "configureMysql.py";
-    private final String PYTHON_CONFIGURE_SQL_SOURCE = "/cloudFoundry/deployment_scripts/";
-
     private final String PYTHON_EXECUTE_FILENAME = "executeCommand.py";
-    private final String PYTHON_EXECUTE_SOURCE = "/cloudFoundry/deployment_scripts/";
-
     private final String PYTHON_READ_CREDENTIALS_FILENAME = "readCredentials.py";
-    private final String PYTHON_READ_CREDENTIALS_SOURCE = "/cloudFoundry/deployment_scripts/";
-
     private final String PYTHON_REPLACE_STRINGS_FILENAME = "replace.py";
-    private final String PYTHON_REPLACE_STRINGS_SOURCE = "/cloudFoundry/deployment_scripts/";
 
     public Deployment(BashScript deploymentScript, Application application, PluginFileAccess fileAccess) throws IOException {
         this.deploymentScript = deploymentScript;
@@ -53,11 +47,7 @@ public class Deployment {
         File scriptFile = new File(scriptPath);
         String contentScript = FileUtils.readFileToString(scriptFile);
 
-        if (!contentScript.contains("cf create-service")) {
-            serviceHandler.addServiceCommands(true);
-        } else {
-            serviceHandler.addServiceCommands(false);
-        }
+        serviceHandler.addServiceCommands(!contentScript.contains("cf create-service"));
     }
 
     /**
@@ -68,7 +58,7 @@ public class Deployment {
      file
      */
     public void configureSql(String relativePathToSQLConfigureFile) throws IOException {
-        copyFile(PYTHON_CONFIGURE_SQL_FILENAME, PYTHON_CONFIGURE_SQL_SOURCE);
+        copyFile(PYTHON_CONFIGURE_SQL_FILENAME, PYTHON_SCRIPTS_SOURCE);
         deploymentScript.append(String.format("python %s %s", PYTHON_CONFIGURE_SQL_FILENAME, relativePathToSQLConfigureFile));
     }
 
@@ -80,7 +70,7 @@ public class Deployment {
      "/home/vcap/app..."
      */
     public void executeFile(String appName, String pathToFileOnContainer) throws IOException {
-        copyFile(PYTHON_EXECUTE_FILENAME, PYTHON_EXECUTE_SOURCE);
+        copyFile(PYTHON_EXECUTE_FILENAME, PYTHON_SCRIPTS_SOURCE);
         deploymentScript.append(String.format("python %s %s %s", PYTHON_EXECUTE_FILENAME, appName, pathToFileOnContainer));
     }
 
@@ -93,7 +83,7 @@ public class Deployment {
      @param serviceType e.g. "mysql" for a mysql service
      */
     public void readCredentials(String appName, String serviceName, ServiceTypes serviceType) throws IOException {
-        copyFile(PYTHON_READ_CREDENTIALS_FILENAME, PYTHON_READ_CREDENTIALS_SOURCE);
+        copyFile(PYTHON_READ_CREDENTIALS_FILENAME, PYTHON_SCRIPTS_SOURCE);
         deploymentScript.append(String.format("python %s %s %s %s", PYTHON_READ_CREDENTIALS_FILENAME, appName, serviceName, serviceType.getName()));
     }
 
@@ -105,7 +95,7 @@ public class Deployment {
      @param replaceStr      String which replaces the findStr
      */
     public void replaceStrings(String pathToLocalFile, String findStr, String replaceStr) throws IOException {
-        copyFile(PYTHON_REPLACE_STRINGS_FILENAME, PYTHON_REPLACE_STRINGS_SOURCE);
+        copyFile(PYTHON_REPLACE_STRINGS_FILENAME, PYTHON_SCRIPTS_SOURCE);
         deploymentScript.append(String.format("python %s %s %s %s", PYTHON_REPLACE_STRINGS_FILENAME, pathToLocalFile, findStr, replaceStr));
     }
 

@@ -20,7 +20,7 @@ public class Application {
 
     private String name;
     private int applicationNumber;
-    private final ArrayList<String> configMysqlWithSql = new ArrayList<>();
+    private final ArrayList<String> configureSqlDatabase = new ArrayList<>();
     private final Map<String, String> executeCommand = new HashMap<>();
     private final ArrayList<String> filePaths = new ArrayList<>();
     private final Map<String, String> environmentVariables = new HashMap<>();
@@ -52,7 +52,7 @@ public class Application {
      */
     public void addConfigMysql(String pathToFile) {
         String relativePath = "../../" + APPLICATION_FOLDER + this.applicationNumber + "/" + pathToFile;
-        configMysqlWithSql.add(relativePath);
+        configureSqlDatabase.add(relativePath);
     }
 
     /**
@@ -76,7 +76,7 @@ public class Application {
      returns a list with realtive paths which should be executed with the python script configMysql
      */
     public List<String> getConfigMysql() {
-        return configMysqlWithSql;
+        return configureSqlDatabase;
     }
 
     /**

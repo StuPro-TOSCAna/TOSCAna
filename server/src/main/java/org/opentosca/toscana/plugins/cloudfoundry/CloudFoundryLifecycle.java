@@ -13,8 +13,9 @@ import org.opentosca.toscana.model.visitor.VisitableNode;
 import org.opentosca.toscana.plugins.cloudfoundry.application.Application;
 import org.opentosca.toscana.plugins.cloudfoundry.application.Provider;
 import org.opentosca.toscana.plugins.cloudfoundry.client.Connection;
-import org.opentosca.toscana.plugins.cloudfoundry.visitors.NodeVisitors;
+import org.opentosca.toscana.plugins.cloudfoundry.visitors.NodeVisitor;
 import org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle;
+import org.opentosca.toscana.plugins.util.TransformationFailureException;
 
 import org.json.JSONException;
 
@@ -87,7 +88,7 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
         Set<RootNode> nodes = context.getModel().getNodes();
         List<Application> filledApplications = new ArrayList<>();
         for (Application application : applications) {
-            NodeVisitors visitor = new NodeVisitors(application);
+            NodeVisitor visitor = new NodeVisitor(application);
             for (VisitableNode node : nodes) {
                 node.accept(visitor);
             }
@@ -100,7 +101,7 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
             FileCreator fileCreator = new FileCreator(fileAccess, filledApplications);
             fileCreator.createFiles();
         } catch (IOException | JSONException e) {
-            e.printStackTrace();
+            throw new TransformationFailureException("Something went wrong while creating the output files", e);
         }
     }
 
