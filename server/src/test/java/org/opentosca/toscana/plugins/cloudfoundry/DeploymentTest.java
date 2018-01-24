@@ -62,7 +62,6 @@ public class DeploymentTest extends BaseUnitTest {
             "check python\n" +
             "python %s %s\n", pythonFilename, pathToSqlFile);
 
-
         assertTrue(targetFile.exists());
         assertEquals(expectedDeployContent, contentDeploy);
     }

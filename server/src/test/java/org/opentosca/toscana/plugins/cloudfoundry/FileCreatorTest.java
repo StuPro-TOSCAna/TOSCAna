@@ -30,12 +30,12 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeNotNull;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.APPLICATION_FOLDER;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.CLI_PATH_TO_MANIFEST;
-import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.deploy_name;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.FILEPRAEFIX_DEPLOY;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.FILESUFFIX_DEPLOY;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.MANIFEST_NAME;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.MANIFEST_PATH;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.NAMEBLOCK;
+import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.deploy_name;
 import static org.opentosca.toscana.plugins.cloudfoundry.ServiceTest.CF_ENVIRONMENT_HOST;
 import static org.opentosca.toscana.plugins.cloudfoundry.ServiceTest.CF_ENVIRONMENT_ORGA;
 import static org.opentosca.toscana.plugins.cloudfoundry.ServiceTest.CF_ENVIRONMENT_PW;
@@ -144,7 +144,7 @@ public class FileCreatorTest extends BaseUnitTest {
         File targetFile = new File(targetDir, outputPath + FILEPRAEFIX_DEPLOY + deploy_name + FILESUFFIX_DEPLOY);
         String manifestContent = FileUtils.readFileToString(targetFile);
         String expectedDeployContent = SHEBANG + "\n" +
-            SOURCE_UTIL_ALL + "\n" + 
+            SOURCE_UTIL_ALL + "\n" +
             "check \"cf\"\n" +
             "cf push " + appName + CLI_PATH_TO_MANIFEST + MANIFEST_NAME + "\n";
         assertEquals(expectedDeployContent, manifestContent);
@@ -249,8 +249,8 @@ public class FileCreatorTest extends BaseUnitTest {
         fileCreatorMult.createFiles();
         File targetFile = new File(targetDir, outputPath + FILEPRAEFIX_DEPLOY + deploy_name + FILESUFFIX_DEPLOY);
         String deployscriptContent = FileUtils.readFileToString(targetFile);
-        String expectedContent = "#!/bin/sh\n" +
-            "source util/*\n" +
+        String expectedContent = SHEBANG + "\n" +
+            SOURCE_UTIL_ALL + "\n" +
             "check \"cf\"\n" +
             "cf create-service {plan} {service} cleardb\n" +
             "cf create-service {plan} {service} p-mysql\n" +
