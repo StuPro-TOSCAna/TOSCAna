@@ -99,6 +99,7 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
         CloudFormationModule cfnModule = new CloudFormationModule(fileAccess, awsRegion, awsCredentials);
         Set<RootNode> nodes = model.getNodes();
 
+        // Visit Compute nodes first, then all others
         try {
             CloudFormationNodeVisitor cfnNodeVisitor = new CloudFormationNodeVisitor(logger, cfnModule);
             for (VisitableNode node : nodes) {
@@ -111,9 +112,14 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
                     node.accept(cfnNodeVisitor);
                 }
             }
-
-            fileAccess.access("output/template.yaml").appendln(cfnModule.toString()).close();
-            logger.info("Transformation to CloudFormation successful.");
+            logger.info("Creating CloudFormation template.");
+            fileAccess.access(OUTPUT_DIR + CloudFormationFileCreator.TEMPLATE_YAML)
+                .appendln(cfnModule.toString()).close();
+            CloudFormationFileCreator fileCreator = new CloudFormationFileCreator(logger, cfnModule);
+            logger.info("Creating CloudFormation scripts.");
+            fileCreator.copyUtilScripts();
+            fileCreator.createScripts();
+            fileCreator.copyFiles();
         } catch (IOException ie) {
             logger.error("File access error");
             throw new TransformationFailureException("Could not write template with fileAccess", ie);
@@ -124,6 +130,7 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
             logger.error("Transformation to CloudFormation unsuccessful. Unexpected exception should not appear here.");
             throw new TransformationFailureException("Unexpected exception", e);
         }
+        logger.info("Transformation to CloudFormation successful.");
     }
 
     @Override

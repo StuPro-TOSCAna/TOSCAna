@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 
@@ -24,6 +25,13 @@ public class CloudFormationModule extends Module {
     public final static String CONFIG_CONFIGURE = "Configure";
     public final static String CONFIG_START = "Start";
     public final static String SECURITY_GROUP = "SecurityGroup";
+    public static final String URL_HTTP = "http://";
+    public static final String URL_S3_AMAZONAWS = ".s3.amazonaws.com";
+    public static final String FILEPATH_TARGET = "output/files/";
+    public static final String MODE_500 = "000500";
+    public static final String MODE_644 = "000644";
+    public static final String OWNER_GROUP_ROOT = "root";
+    
     // KeyName is a default input value
     private static final String KEYNAME_DESCRIPTION = "Name of an existing EC2 KeyPair to enable SSH access to the " +
         "instances";
@@ -47,19 +55,20 @@ public class CloudFormationModule extends Module {
         "# Install the files and packages from the metadata\n",
         "/usr/local/bin/cfn-init -v ",
         "         --stack "};
+    
     private String awsRegion;
     private AWSCredentials awsCredentials;
-
     private Object keyNameVar;
-
     private Map<String, CFNInit> cfnInitMap;
-
+    private List<String> filesToBeUploaded;
     private PluginFileAccess fileAccess;
+    private String bucketName;
+    private String stackName;
 
     /**
-     Create a Module which uses the cloudformation-builder to build an AWS CloudFormation template
-
-     @param fileAccess fileAccess to append the content of files to the template
+     * Create a Module which uses the cloudformation-builder to build an AWS CloudFormation template
+     *
+     * @param fileAccess fileAccess to append the content of files to the template
      */
     public CloudFormationModule(PluginFileAccess fileAccess, String awsRegion, AWSCredentials awsCredentials) {
         this.id("").template(new Template());
@@ -67,32 +76,51 @@ public class CloudFormationModule extends Module {
             (KEYNAME_CONSTRAINT_DESCRIPTION);
         keyNameVar = template.ref(KEYNAME);
         cfnInitMap = new HashMap<>();
+        filesToBeUploaded = new ArrayList<>();
         this.fileAccess = fileAccess;
+        this.bucketName = getRandomBucketName();
+        this.stackName = getRandomStackName();
         this.awsRegion = awsRegion;
         this.awsCredentials = awsCredentials;
     }
 
     /**
-     Put a CFNInit into a map which will be added to the resource at build time
-
-     @param resource resource to add CFNInit to
-     @param init     CNFInit to add
+     * Put a CFNInit into a map which will be added to the resource at build time
+     *
+     * @param resource resource to add CFNInit to
+     * @param init     CNFInit to add
      */
     public void putCFNInit(String resource, CFNInit init) {
         cfnInitMap.put(resource, init);
     }
 
     /**
-     Get the CFNInit which belongs to a specific resource
-
-     @param resource String id of a resource
+     * Get the CFNInit which belongs to a specific resource
+     *
+     * @param resource String id of a resource
      */
     public CFNInit getCFNInit(String resource) {
         return this.cfnInitMap.get(resource);
     }
 
+    public List<String> getFilesToBeUploaded() {
+        return filesToBeUploaded;
+    }
+
+    public void putFileToBeUploaded(String filePath) {
+        this.filesToBeUploaded.add(filePath);
+    }
+
+    public String getBucketName() {
+        return bucketName;
+    }
+
+    public String getStackName() {
+        return stackName;
+    }
+
     /**
-     Get a ref to the KeyName of this template
+     * Get a ref to the KeyName of this template
      */
     public Object getKeyNameVar() {
         return this.keyNameVar;
@@ -150,15 +178,33 @@ public class CloudFormationModule extends Module {
     }
 
     /**
-     Get the fileAccess of this module
+     * Get the fileAccess of this module
      */
     public PluginFileAccess getFileAccess() {
         return fileAccess;
     }
 
     /**
-     Build the template
-     1. Add CFNInit to corresponding instance resource
+     * Returns a random DNS-compliant bucket name.
+     *
+     * @return random bucket name
+     */
+    private String getRandomBucketName() {
+        return "toscana-bucket-" + UUID.randomUUID();
+    }
+
+    /**
+     * Returns a random DNS-compliant stack name.
+     *
+     * @return random stack name
+     */
+    private String getRandomStackName() {
+        return "toscana-stack-" + UUID.randomUUID();
+    }
+
+    /**
+     * Build the template
+     * 1. Add CFNInit to corresponding instance resource
      */
     public void build() {
         for (Map.Entry<String, CFNInit> pair : cfnInitMap.entrySet()) {
