@@ -220,8 +220,8 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             throw new TransformationFailureException("Failed at WebApplication node " + node.getEntityName(), e);
         }
     }
-    
-    private void handleOperation(Operation operation, String serverName, String config) throws IOException {
+
+    private void handleOperation(Operation operation, String serverName, String config) {
         String cfnFilePath = "/home/ubuntu/"; // TODO Check what path is needed
 
         //Add dependencies
@@ -272,7 +272,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             cfnModule.getCFNInit(serverName)
                 .getOrAddConfig(CONFIG_SETS, config)
                 .putFile(cfnFile)
-                .putCommand(cfnCommand)
+                .putCommand(cfnCommand);
         }
     }
 
