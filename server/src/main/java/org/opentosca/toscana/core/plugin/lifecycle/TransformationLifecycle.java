@@ -1,4 +1,4 @@
-package org.opentosca.toscana.plugins.lifecycle;
+package org.opentosca.toscana.core.plugin.lifecycle;
 
 /**
  The basic interface to implement the TransformationLifecycle
@@ -45,4 +45,11 @@ public interface TransformationLifecycle {
      Exceptions within this operation have to get caught, to prevent the failure of the transformation
      */
     void cleanup();
+    
+    /**
+     
+     */
+    default void deploy() {
+        throw new UnsupportedOperationException("This Plugin does not support deployments from within the TOSCAna Transformer!");
+    }
 }

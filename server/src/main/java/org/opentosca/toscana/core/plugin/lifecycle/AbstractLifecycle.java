@@ -1,4 +1,4 @@
-package org.opentosca.toscana.plugins.lifecycle;
+package org.opentosca.toscana.core.plugin.lifecycle;
 
 import java.io.BufferedWriter;
 import java.io.IOException;

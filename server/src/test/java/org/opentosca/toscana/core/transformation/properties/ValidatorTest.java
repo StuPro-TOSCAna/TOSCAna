@@ -31,19 +31,23 @@ public class ValidatorTest extends BaseUnitTest {
 
     @Parameterized.Parameters(name = "{index}: {0} of {2}")
     public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][]{
+        return Arrays.asList(new Object[][] {
             {new StringValidator(), true, "Hello world"},
+            {new StringValidator(), false, null},
             {new IntegerValidator(false), false, "Hello world"},
             {new IntegerValidator(false), true, "123456"},
             {new IntegerValidator(true), false, "-1"},
             {new IntegerValidator(true), true, "0"},
             {new IntegerValidator(true), true, "100"},
+            {new IntegerValidator(true), false, null},
             {new FloatValidator(), false, "Not a number"},
+            {new FloatValidator(), false, null},
             {new FloatValidator(), true, "10"},
             {new FloatValidator(), true, "10.1"},
             {new BooleanValidator(), true, "true"},
             {new BooleanValidator(), true, "TRUE"},
-            {new BooleanValidator(), false, "23"}
+            {new BooleanValidator(), false, "23"},
+            {new BooleanValidator(), false, null}
         });
     }
 
