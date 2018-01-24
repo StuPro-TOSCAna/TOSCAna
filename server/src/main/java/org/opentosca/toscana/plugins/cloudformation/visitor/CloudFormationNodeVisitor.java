@@ -1,7 +1,6 @@
 package org.opentosca.toscana.plugins.cloudformation.visitor;
 
 import java.io.File;
-import java.io.IOException;
 
 import org.opentosca.toscana.model.capability.ComputeCapability;
 import org.opentosca.toscana.model.capability.OsCapability;
@@ -33,11 +32,14 @@ import org.slf4j.Logger;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.CONFIG_CONFIGURE;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.CONFIG_INSTALL;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.CONFIG_SETS;
+import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.MODE_500;
+import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.MODE_644;
+import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.OWNER_GROUP_ROOT;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.SECURITY_GROUP;
 
 /**
- Class for building a CloudFormation template from an effective model instance via the visitor pattern. Currently only
- supports LAMP-stacks built with Compute, WebApplication, Apache, MySQL, MySQL nodes.
+ * Class for building a CloudFormation template from an effective model instance via the visitor pattern. Currently only
+ * supports LAMP-stacks built with Compute, WebApplication, Apache, MySQL, MySQL nodes.
  */
 public class CloudFormationNodeVisitor implements StrictNodeVisitor {
 
@@ -45,11 +47,11 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
     private CloudFormationModule cfnModule;
 
     /**
-     Creates a <tt>CloudFormationNodeVisitor<tt> in order to build a template with the given
-     <tt>CloudFormationModule<tt>.
-
-     @param logger    Logger for logging visitor behaviour
-     @param cfnModule Module to build the template model
+     * Creates a <tt>CloudFormationNodeVisitor<tt> in order to build a template with the given
+     * <tt>CloudFormationModule<tt>.
+     *
+     * @param logger    Logger for logging visitor behaviour
+     * @param cfnModule Module to build the template model
      */
     public CloudFormationNodeVisitor(Logger logger, CloudFormationModule cfnModule) {
         this.logger = logger;
@@ -229,65 +231,66 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
 
         //Add dependencies
         for (String dependency : operation.getDependencies()) {
-            try {
-                String cfnFileMode = "000644"; //TODO Check what mode is needed (only read?)
-                String cfnFileOwner = "root"; //TODO Check what Owner is needed
-                String cfnFileGroup = "root"; //TODO Check what Group is needed
+            String cfnSource = getFileURL(cfnModule.getBucketName(), dependency);
+            
+            logger.debug("Marking " + dependency + " as file to be uploaded.");
+            cfnModule.putFileToBeUploaded(dependency);
+            
+            CFNFile cfnFile = new CFNFile(cfnFilePath + dependency)
+                .setSource(cfnSource)
+                .setMode(MODE_644) //TODO Check what mode is needed (only read?)
+                .setOwner(OWNER_GROUP_ROOT) //TODO Check what Owner is needed
+                .setGroup(OWNER_GROUP_ROOT); //TODO Check what Group is needed
 
-                // TODO: re-allow content-dumping instead of source
-                CFNFile cfnFile = new CFNFile(cfnFilePath + dependency)
-                    .setContent(cfnModule.getFileAccess().read(dependency))
-                    .setMode(cfnFileMode)
-                    .setOwner(cfnFileOwner)
-                    .setGroup(cfnFileGroup);
-
-                // Add file to install
-                cfnModule.getCFNInit(serverName)
-                    .getOrAddConfig(CONFIG_SETS, config)
-                    .putFile(cfnFile);
-            } catch (IOException e) {
-                logger.error("Problem with reading file " + dependency);
-                e.printStackTrace();
-            }
+            // Add file to install
+            cfnModule.getCFNInit(serverName)
+                .getOrAddConfig(CONFIG_SETS, config)
+                .putFile(cfnFile);
         }
 
         //Add artifact
         if (operation.getArtifact().isPresent()) {
             String artifact = operation.getArtifact().get().getFilePath();
+            String cfnSource = getFileURL(cfnModule.getBucketName(), artifact);
+            
+            logger.debug("Marking " + artifact + " as file to be uploaded.");
+            cfnModule.putFileToBeUploaded(artifact);
+            
+            CFNFile cfnFile = new CFNFile(cfnFilePath + artifact)
+                .setSource(cfnSource)
+                .setMode(MODE_500) //TODO Check what mode is needed (read? + execute?)
+                .setOwner(OWNER_GROUP_ROOT) //TODO Check what Owner is needed
+                .setGroup(OWNER_GROUP_ROOT); //TODO Check what Group is needed
 
-            String cfnFileMode = "000500"; //TODO Check what mode is needed (read? + execute?)
-            String cfnFileOwner = "root"; //TODO Check what Owner is needed
-            String cfnFileGroup = "root"; //TODO Check what Group is needed
-
-            try {
-                // TODO: re-allow content-dumping instead of source
-                CFNFile cfnFile = new CFNFile(cfnFilePath + artifact)
-                    .setContent(cfnModule.getFileAccess().read(artifact))
-                    .setMode(cfnFileMode)
-                    .setOwner(cfnFileOwner)
-                    .setGroup(cfnFileGroup);
-
-                CFNCommand cfnCommand = new CFNCommand(artifact,
-                    cfnFilePath + artifact) //file is the full path, so need for "./"
-                    .setCwd(cfnFilePath + new File(artifact).getParent());
-                // add inputs to environment, but where to get other needed variables?
-                for (OperationVariable input : operation.getInputs()) {
-                    Object value = input.getValue().orElse(""); //TODO add default
-                    if (("127.0.0.1".equals(value) || "localhost".equals(value)) && input.getKey().contains("host")) {
-                        value = cfnModule.fnGetAtt("mydb", "Endpoint.Address"); //TODO how to handle this? with the 
-                        // new model we should be able to get the reference
-                    }
-                    cfnCommand.addEnv(input.getKey(), value);
+            CFNCommand cfnCommand = new CFNCommand(artifact,
+                cfnFilePath + artifact) //file is the full path, so need for "./"
+                .setCwd(cfnFilePath + new File(artifact).getParent());
+            // add inputs to environment, but where to get other needed variables?
+            for (OperationVariable input : operation.getInputs()) {
+                Object value = input.getValue().orElse("");
+                if (("127.0.0.1".equals(value) || "localhost".equals(value)) && input.getKey().contains("host")) {
+                    value = cfnModule.fnGetAtt("mydb", "Endpoint.Address");
                 }
-                cfnModule.getCFNInit(serverName)
-                    .getOrAddConfig(CONFIG_SETS, config)
-                    .putFile(cfnFile)
-                    .putCommand(cfnCommand);
-            } catch (IOException e) {
-                logger.error("Problem with reading file " + artifact);
-                e.printStackTrace();
+                cfnCommand.addEnv(input.getKey(), value); //TODO add default
             }
+            cfnModule.getCFNInit(serverName)
+                .getOrAddConfig(CONFIG_SETS, config)
+                .putFile(cfnFile)
+                .putCommand(cfnCommand)
+                .putCommand(new CFNCommand("restart apache2", "service apache2 restart")); //put commands
         }
+    }
+
+    /**
+     * Returns the URL to the file in the given S3Bucket.
+     * e.g. http://bucketName.s3.amazonaws.com/objectKey
+     *
+     * @param bucketName name of the bucket containing the file
+     * @param objectKey  key belonging to the file in the bucket
+     * @return URL for the file
+     */
+    private String getFileURL(String bucketName, String objectKey) {
+        return CloudFormationModule.URL_HTTP + bucketName + CloudFormationModule.URL_S3_AMAZONAWS + "/" + objectKey;
     }
 
     public CapabilityMapper createCapabilityMapper() {
