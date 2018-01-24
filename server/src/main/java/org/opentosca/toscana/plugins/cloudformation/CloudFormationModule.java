@@ -20,7 +20,7 @@ import com.scaleset.cfbuilder.ec2.metadata.CFNInit;
 public class CloudFormationModule extends Module {
 
     public final static String CONFIG_SETS = "LifecycleOperations";
-    public final static String CONFIG_CREATE = "Install";
+    public final static String CONFIG_CREATE = "Create";
     public final static String CONFIG_CONFIGURE = "Configure";
     public final static String CONFIG_START = "Start";
     public final static String SECURITY_GROUP = "SecurityGroup";

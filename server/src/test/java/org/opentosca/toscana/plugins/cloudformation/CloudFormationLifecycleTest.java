@@ -42,6 +42,6 @@ public class CloudFormationLifecycleTest extends BaseUnitTest {
         assertTrue(cloudFormationLifecycle.checkModel());
         cloudFormationLifecycle.prepare();
         //cloudFormationLifecycle.transform();
-        cloudFormationLifecycle.prepare();
+        cloudFormationLifecycle.cleanup();
     }
 }

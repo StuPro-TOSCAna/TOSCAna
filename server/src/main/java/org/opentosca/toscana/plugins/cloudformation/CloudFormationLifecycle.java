@@ -23,6 +23,7 @@ import org.opentosca.toscana.plugins.util.TransformationFailureException;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
+import org.jgrapht.Graph;
 
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationPlugin.AWS_ACCESS_KEY_ID_KEY;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationPlugin.AWS_REGION_KEY;
@@ -47,6 +48,10 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
         String keyId = properties.get(AWS_ACCESS_KEY_ID_KEY);
         String secretKey = properties.get(AWS_SECRET_KEY_KEY);
         awsCredentials = new BasicAWSCredentials(keyId, secretKey);
+    }
+
+    public static String toAlphanumerical(String inp) {
+        return inp.replaceAll("[^A-Za-z0-9]", "");
     }
 
     @Override
@@ -75,14 +80,14 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
     public void prepare() {
         logger.info("Prepare model for compatibility to CloudFormation");
         Set<RootNode> nodes = model.getNodes();
-        Set<RootRelationship> relationships = model.getTopology().edgeSet();
-        PrepareModelNodeVisitor prepareModelNodeVisitor = new PrepareModelNodeVisitor(logger);
+        Graph<RootNode, RootRelationship> topology = model.getTopology();
+        PrepareModelNodeVisitor prepareModelNodeVisitor = new PrepareModelNodeVisitor(logger, topology);
         for (VisitableNode node : nodes) {
             node.accept(prepareModelNodeVisitor);
         }
         PrepareModelRelationshipVisitor prepareModelRelationshipVisitor = new PrepareModelRelationshipVisitor(logger,
-            model.getTopology());
-        for (VisitableRelationship relationship : relationships) {
+            topology);
+        for (VisitableRelationship relationship : topology.edgeSet()) {
             relationship.accept(prepareModelRelationshipVisitor);
         }
     }

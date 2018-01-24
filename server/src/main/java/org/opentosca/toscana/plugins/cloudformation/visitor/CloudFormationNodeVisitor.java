@@ -29,6 +29,7 @@ import com.scaleset.cfbuilder.ec2.metadata.CFNPackage;
 import com.scaleset.cfbuilder.rds.DBInstance;
 import org.slf4j.Logger;
 
+import static org.opentosca.toscana.plugins.cloudformation.CloudFormationLifecycle.toAlphanumerical;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.CONFIG_CONFIGURE;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.CONFIG_CREATE;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.CONFIG_SETS;
@@ -217,10 +218,6 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             throw new TransformationFailureException("Failed at WebApplication node " + node.getEntityName(), e);
         }
     }
-
-    private String toAlphanumerical(String inp) {
-        return inp.replaceAll("[^A-Za-z0-9]", "");
-    }
     
     private void handleOperation(Operation operation, String serverName, String config) throws IOException {
         String cfnFilePath = "/home/ubuntu/"; // TODO Check what path is needed
@@ -264,11 +261,10 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                     .setCwd(cfnFilePath + new File(artifact).getParent());
                 // add inputs to environment, but where to get other needed variables?
                 for (OperationVariable input : operation.getInputs()) {
-                    Object value = input.getValue().orElse(""); //TODO add default
-                    if (("127.0.0.1".equals(value) || "localhost".equals(value)) && input.getKey().contains("host")) {
-                        value = cfnModule.fnGetAtt("mydb", "Endpoint.Address"); //TODO how to handle this? with the 
-                        // new model we should be able to get the reference
-                    }
+                    Object value = input.getValue().orElseThrow(
+                        () -> new IllegalArgumentException("Input value of " + input.getKey() + " expected to not be " +
+                            "null")
+                    );
                     cfnCommand.addEnv(input.getKey(), value);
                 }
                 cfnModule.getCFNInit(serverName)
