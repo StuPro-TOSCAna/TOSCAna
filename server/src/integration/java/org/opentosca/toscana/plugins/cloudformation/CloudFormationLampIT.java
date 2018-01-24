@@ -12,9 +12,14 @@ import org.opentosca.toscana.plugins.util.TransformationFailureException;
 
 import com.amazonaws.services.ec2.model.AmazonEC2Exception;
 import org.apache.commons.io.FileUtils;
+import org.junit.Assume;
 
+import static org.hamcrest.Matchers.isEmptyString;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
+import static org.opentosca.toscana.plugins.cloudformation.CloudFormationPlugin.AWS_ACCESS_KEY_ID_KEY;
+import static org.opentosca.toscana.plugins.cloudformation.CloudFormationPlugin.AWS_SECRET_KEY_KEY;
 
 public class CloudFormationLampIT extends BaseTransformTest {
     public CloudFormationLampIT() {
@@ -33,10 +38,7 @@ public class CloudFormationLampIT extends BaseTransformTest {
 
     @Override
     protected void onFailure(File outputDir, Exception e) {
-        //if the cause for transformation failure is amazonEC2Exception its fine because of the credentials 
-        if (!(e instanceof TransformationFailureException && e.getCause() instanceof AmazonEC2Exception)) {
-            fail();
-        }
+        fail();
     }
 
     @Override
@@ -48,5 +50,12 @@ public class CloudFormationLampIT extends BaseTransformTest {
     @Override
     protected PropertyInstance getProperties() {
         return new PropertyInstance(new HashSet<>(plugin.getPlatform().properties), mock(Transformation.class));
+    }
+
+    @Override
+    protected void checkAssumptions() {
+        PropertyInstance propertyInstance = getProperties();
+        Assume.assumeThat(propertyInstance.getPropertyValues().get(AWS_ACCESS_KEY_ID_KEY), not(isEmptyString()));
+        Assume.assumeThat(propertyInstance.getPropertyValues().get(AWS_SECRET_KEY_KEY), not(isEmptyString()));
     }
 }
