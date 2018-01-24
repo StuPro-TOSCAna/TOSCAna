@@ -8,9 +8,7 @@ import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
 import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.plugins.BaseTransformTest;
-import org.opentosca.toscana.plugins.util.TransformationFailureException;
 
-import com.amazonaws.services.ec2.model.AmazonEC2Exception;
 import org.apache.commons.io.FileUtils;
 import org.junit.Assume;
 

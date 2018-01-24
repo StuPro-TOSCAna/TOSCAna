@@ -14,7 +14,6 @@ import org.opentosca.toscana.model.node.WebApplication;
 import org.opentosca.toscana.model.node.WebServer;
 import org.opentosca.toscana.model.operation.Operation;
 import org.opentosca.toscana.model.operation.OperationVariable;
-import org.opentosca.toscana.model.requirement.Requirement;
 import org.opentosca.toscana.model.visitor.StrictNodeVisitor;
 import org.opentosca.toscana.plugins.cloudformation.CloudFormationModule;
 import org.opentosca.toscana.plugins.cloudformation.mapper.CapabilityMapper;
@@ -102,22 +101,14 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             String nodeName = toAlphanumerical(node.getEntityName());
 
             //get the name of the server where the dbms this node is hosted on, is hosted on
-            String serverName;
-            ComputeCapability hostedOnComputeCapability;
-            if (exactlyOneFulfiller(node.getHost())) {
-                Dbms dbms = node.getHost().getFulfillers().iterator().next();
-                if (exactlyOneFulfiller(dbms.getHost())) {
-                    Compute compute = dbms.getHost().getFulfillers().iterator().next();
-                    serverName = toAlphanumerical(compute.getEntityName());
-                    hostedOnComputeCapability = compute.getHost();
-                } else {
-                    throw new IllegalStateException("Got " + dbms.getHost().getFulfillers().size() + " instead of one" +
-                        " fulfiller");
-                }
-            } else {
-                throw new IllegalStateException("Got " + node.getHost().getFulfillers().size() + " instead of one " +
-                    "fulfiller");
-            }
+            Dbms dbms = node.getHost().getNode().orElseThrow(
+                () -> new IllegalStateException("MysqlDatabase is missing Dbms")
+            );
+            Compute compute = dbms.getHost().getNode().orElseThrow(
+                () -> new IllegalStateException("Dbms is missing Compute")
+            );
+            String serverName = toAlphanumerical(compute.getEntityName());
+            ComputeCapability hostedOnComputeCapability = compute.getHost();
             String dbName = node.getDatabaseName();
             String masterUser = node.getUser().orElseThrow(() -> new IllegalArgumentException("Database user not set"));
             String masterPassword = node.getPassword().orElseThrow(() -> new IllegalArgumentException("Database " +
@@ -162,15 +153,10 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
     public void visit(Apache node) {
         try {
             logger.info("Visit Apache node " + node.getEntityName() + ".");
-            String computeName;
-            if (exactlyOneFulfiller(node.getHost())) {
-                Compute compute = node.getHost().getFulfillers().iterator().next();
-                computeName = toAlphanumerical(compute.getEntityName());
-            } else {
-                throw new IllegalStateException("Got " + node.getHost().getFulfillers().size() + " instead of one " +
-                    "fulfiller");
-            }
-
+            Compute compute = node.getHost().getNode().orElseThrow(
+                () -> new IllegalStateException("Apache is missing compute")
+            );
+            String computeName = toAlphanumerical(compute.getEntityName());
             //instead of lifecycle create we add the package apache2 to the configset
             cfnModule.getCFNInit(computeName)
                 .getOrAddConfig(CONFIG_SETS, CONFIG_CREATE)
@@ -203,20 +189,14 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
         logger.info("Visit WebApplication node {}.", node.getEntityName());
         try {
             //get the name of the server where this node is hosted on
-            String computeName;
-            if (exactlyOneFulfiller(node.getHost())) {
-                WebServer webServer = node.getHost().getFulfillers().iterator().next();
-                if (exactlyOneFulfiller(webServer.getHost())) {
-                    Compute compute = webServer.getHost().getFulfillers().iterator().next();
-                    computeName = toAlphanumerical(compute.getEntityName());
-                } else {
-                    throw new IllegalStateException("Got " + webServer.getHost().getFulfillers().size() + " instead " +
-                        "of one fulfiller");
-                }
-            } else {
-                throw new IllegalStateException("Got " + node.getHost().getFulfillers().size() + " instead of one " +
-                    "fulfiller");
-            }
+            WebServer webServer = node.getHost().getNode().orElseThrow(
+                () -> new IllegalStateException("WebApplication is missing WebServer")
+            );
+            Compute compute = webServer.getHost().getNode().orElseThrow(
+                () -> new IllegalStateException("WebServer is missing Compute")
+            );
+            String computeName = toAlphanumerical(compute.getEntityName());
+
             //handle create
             if (node.getStandardLifecycle().getCreate().isPresent()) {
                 Operation create = node.getStandardLifecycle().getCreate().get();
@@ -241,11 +221,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
     private String toAlphanumerical(String inp) {
         return inp.replaceAll("[^A-Za-z0-9]", "");
     }
-
-    private boolean exactlyOneFulfiller(Requirement requirement) {
-        return (requirement.getFulfillers().size() == 1);
-    }
-
+    
     private void handleOperation(Operation operation, String serverName, String config) throws IOException {
         String cfnFilePath = "/home/ubuntu/"; // TODO Check what path is needed
 
