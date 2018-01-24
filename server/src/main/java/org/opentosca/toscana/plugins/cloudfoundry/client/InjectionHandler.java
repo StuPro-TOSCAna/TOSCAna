@@ -50,8 +50,8 @@ public class InjectionHandler {
         boolean succeed = false;
         try {
             if (connection != null) {
-                Path pathToApplication = Paths.get(fileAccess.getAbsolutePath(APPLICATION_FOLDER + 
-                    app.getApplicationNumber() + "/" + app.getPathToApplication()));
+                Path pathToApplication = Paths.get(fileAccess.getAbsolutePath(String.format("%s%s/%s", APPLICATION_FOLDER,
+                    app.getApplicationNumber(), app.getPathToApplication())));
                 succeed = connection.pushApplication(pathToApplication,
                     app.getName(), app.getServicesMatchedToProvider());
             }
