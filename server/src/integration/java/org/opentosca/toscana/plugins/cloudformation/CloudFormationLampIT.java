@@ -47,7 +47,10 @@ public class CloudFormationLampIT extends BaseTransformTest {
 
     @Override
     protected PropertyInstance getProperties() {
-        return new PropertyInstance(new HashSet<>(plugin.getPlatform().properties), mock(Transformation.class));
+        PropertyInstance props =  new PropertyInstance(new HashSet<>(plugin.getPlatform().properties), mock(Transformation.class));
+        props.setPropertyValue(AWS_ACCESS_KEY_ID_KEY, System.getenv("AWS_ACCESS_KEY"));
+        props.setPropertyValue(AWS_SECRET_KEY_KEY, System.getenv("AWS_SECRET_KEY"));
+        return props;
     }
 
     @Override
