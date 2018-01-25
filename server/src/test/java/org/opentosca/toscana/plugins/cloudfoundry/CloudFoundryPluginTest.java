@@ -20,12 +20,13 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.deploy_name;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.FILEPRAEFIX_DEPLOY;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.FILESUFFIX_DEPLOY;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.MANIFEST_PATH;
+import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.deploy_name;
 import static org.opentosca.toscana.plugins.scripts.BashScript.SHEBANG;
 import static org.opentosca.toscana.plugins.scripts.BashScript.SOURCE_UTIL_ALL;
+import static org.opentosca.toscana.plugins.scripts.BashScript.SUBCOMMAND_EXIT;
 
 public class CloudFoundryPluginTest extends BaseUnitTest {
 
@@ -91,6 +92,7 @@ public class CloudFoundryPluginTest extends BaseUnitTest {
             FILESUFFIX_DEPLOY);
         String deployScript = FileUtils.readFileToString(targetFile);
         String expectedOutput = SHEBANG + "\n" + SOURCE_UTIL_ALL + "\n" +
+            SUBCOMMAND_EXIT + "\n" +
             "check \"cf\"\n" +
             "cf create-service {plan} {service} my_db\n" +
             "check python\n" +

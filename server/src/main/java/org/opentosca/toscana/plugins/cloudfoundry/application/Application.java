@@ -11,12 +11,17 @@ import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.node.WebApplication;
 import org.opentosca.toscana.plugins.cloudfoundry.client.Connection;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.APPLICATION_FOLDER;
 
 /**
  This class should describe a Application with all needed information to deploy it
  */
 public class Application {
+
+    private final static Logger logger = LoggerFactory.getLogger(Application.class);
 
     private String name;
     private int applicationNumber;
@@ -52,6 +57,7 @@ public class Application {
      */
     public void addConfigMysql(String pathToFile) {
         String relativePath = "../../" + APPLICATION_FOLDER + this.applicationNumber + "/" + pathToFile;
+        logger.debug("Add a config mysql command to deploy script. Relative path to file is {}", relativePath);
         configureSqlDatabase.add(relativePath);
     }
 
@@ -68,6 +74,7 @@ public class Application {
         if (parentTopNode instanceof WebApplication) {
             pathToFileOnContainer = "/home/vcap/app/htdocs/";
         }
+        logger.debug("Add python script to execute {} on cloud foundry warden container", pathToFile);
         executeCommand.put("../../" + APPLICATION_FOLDER + this.getApplicationNumber() + "/" + pathToFile,
             pathToFileOnContainer + pathToFile);
     }
@@ -102,6 +109,7 @@ public class Application {
 
     public void setName(String name) {
         String clearedUpName = name.replaceAll("[:/?#@$&'()*+,;=_]", "-");
+        logger.debug("Replace all occurence of forbidden signs in the application name with \"-\"");
         this.name = clearedUpName;
     }
 
@@ -116,8 +124,10 @@ public class Application {
     public void addEnvironmentVariables(String environmentVariableName, String value) {
         if (value.isEmpty()) {
             this.addEnvironmentVariables(environmentVariableName);
+            logger.debug("Add environment variable {} to manifest", environmentVariableName);
         } else {
             this.environmentVariables.put(environmentVariableName, value);
+            logger.debug("Add environment variable {} with value {} to manifest", environmentVariableName, value);
         }
     }
 
@@ -143,6 +153,7 @@ public class Application {
 
     public void addAttribute(String attributeName, String attributeValue) {
         attributes.put(attributeName, attributeValue);
+        logger.debug("Add attribute variable {} with value {} to manifest", attributeName, attributeValue);
     }
 
     public Map<String, String> getAttributes() {

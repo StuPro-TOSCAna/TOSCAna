@@ -21,6 +21,7 @@ import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
 import static org.opentosca.toscana.plugins.scripts.BashScript.SHEBANG;
 import static org.opentosca.toscana.plugins.scripts.BashScript.SOURCE_UTIL_ALL;
+import static org.opentosca.toscana.plugins.scripts.BashScript.SUBCOMMAND_EXIT;
 
 public class DeploymentTest extends BaseUnitTest {
 
@@ -59,6 +60,7 @@ public class DeploymentTest extends BaseUnitTest {
 
         String expectedDeployContent = String.format(SHEBANG + "\n" +
             SOURCE_UTIL_ALL + "\n" +
+            SUBCOMMAND_EXIT + "\n" +
             "check python\n" +
             "python %s %s\n", pythonFilename, pathToSqlFile);
 
@@ -77,6 +79,7 @@ public class DeploymentTest extends BaseUnitTest {
 
         String expectedDeployContent = String.format(SHEBANG + "\n" +
             SOURCE_UTIL_ALL + "\n" +
+            SUBCOMMAND_EXIT + "\n" +
             "check python\n" +
             "python %s %s %s %s\n", pythonFilename, appName, service, ServiceTypes.MYSQL.getName());
 
@@ -96,6 +99,7 @@ public class DeploymentTest extends BaseUnitTest {
 
         String expectedDeployContent = String.format(SHEBANG + "\n" +
             SOURCE_UTIL_ALL + "\n" +
+            SUBCOMMAND_EXIT + "\n" +
             "check python\n" +
             "python %s %s %s\n", pythonFilename, appName, pathToFile);
 
@@ -117,6 +121,7 @@ public class DeploymentTest extends BaseUnitTest {
 
         String expectedDeployContent = String.format(SHEBANG + "\n" +
             SOURCE_UTIL_ALL + "\n" +
+            SUBCOMMAND_EXIT + "\n" +
             "check python\n" +
             "python %s %s %s %s\n", pythonFilename, pathToFile, findStr, replaceStr);
 

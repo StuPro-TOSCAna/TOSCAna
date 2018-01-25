@@ -12,10 +12,14 @@ import org.opentosca.toscana.plugins.scripts.BashScript;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle.SCRIPTS_DIR_PATH;
 
 public class Deployment {
+
+    private final static Logger logger = LoggerFactory.getLogger(Deployment.class);
 
     private BashScript deploymentScript;
     private Application application;
@@ -59,7 +63,9 @@ public class Deployment {
      */
     public void configureSql(String relativePathToSQLConfigureFile) throws IOException {
         copyFile(PYTHON_CONFIGURE_SQL_FILENAME, PYTHON_SCRIPTS_SOURCE);
-        deploymentScript.append(String.format("python %s %s", PYTHON_CONFIGURE_SQL_FILENAME, relativePathToSQLConfigureFile));
+        String command = String.format("python %s %s", PYTHON_CONFIGURE_SQL_FILENAME, relativePathToSQLConfigureFile);
+        logger.debug("Add \"{}\" to deploy script. This command will configure the sql database. File should be a .sql File", command);
+        deploymentScript.append(command);
     }
 
     /**
@@ -100,6 +106,7 @@ public class Deployment {
     }
 
     private void copyFile(String fileName, String source) throws IOException {
+        logger.debug("Copy python script {} to output folder", fileName);
         if (!isAlreadyCopied(fileName)) {
             InputStream inputStream = deploymentClass.getResourceAsStream(source + fileName);
             String contentFile = IOUtils.toString(inputStream);
@@ -113,8 +120,10 @@ public class Deployment {
         try {
             fileAccess.getAbsolutePath(PYTHON_SCRIPTS_TARGET + fileName);
         } catch (FileNotFoundException e) {
+            logger.debug("File {} is not in the output folder, will be copied", fileName);
             return false;
         }
+        logger.debug("File {} is already in the output folder", fileName);
         return true;
     }
 

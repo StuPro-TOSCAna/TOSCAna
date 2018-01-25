@@ -26,7 +26,7 @@ public class BuildpackDetector {
     public static final String BUILDPACK_OBJECT_PHP = "PHP_EXTENSIONS";
     public static final String BUILDPACK_FILEPATH_PHP = ".bp-config/options.json";
 
-    private final static Logger logger = LoggerFactory.getLogger(CloudFoundryPlugin.class);
+    private final static Logger logger = LoggerFactory.getLogger(BuildpackDetector.class);
 
     private Application application;
     private String applicationSuffix;
@@ -43,6 +43,7 @@ public class BuildpackDetector {
             logger.info("Application suffix is: " + applicationSuffix);
             if (applicationSuffix.equalsIgnoreCase("php")) {
                 try {
+                    logger.debug("Add PHP buildpacks");
                     addBuildpackAdditonsPHP();
                 } catch (JSONException | IOException e) {
                     throw new TransformationFailureException("Fail to add buildpacks", e);

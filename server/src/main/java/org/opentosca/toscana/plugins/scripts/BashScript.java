@@ -9,11 +9,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle.SCRIPTS_DIR_PATH;
-import static org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle.UTIL_DIR_NAME;
 
 public class BashScript {
     public static final String SHEBANG = "#!/bin/bash";
     public static final String SOURCE_UTIL_ALL = "for file in $(ls util); do source util/$file; done";
+    public static final String SUBCOMMAND_EXIT = "set -e";
     private final static Logger logger = LoggerFactory.getLogger(BashScript.class);
     private String name;
     private PluginFileAccess access;
@@ -40,6 +40,7 @@ public class BashScript {
 
         access.access(scriptPath).append(SHEBANG + "\n")
             .append(SOURCE_UTIL_ALL + "\n")
+            .append(SUBCOMMAND_EXIT + "\n")
             .close();
     }
 

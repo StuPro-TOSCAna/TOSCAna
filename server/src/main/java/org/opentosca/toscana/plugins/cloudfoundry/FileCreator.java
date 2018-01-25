@@ -16,6 +16,8 @@ import org.opentosca.toscana.plugins.scripts.EnvironmentCheck;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.json.JSONException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.opentosca.toscana.plugins.cloudfoundry.application.ManifestAttributes.DOMAIN;
 import static org.opentosca.toscana.plugins.cloudfoundry.application.ManifestAttributes.ENVIRONMENT;
@@ -43,6 +45,8 @@ public class FileCreator {
     public static final String APPLICATION_FOLDER = "app";
     public static String deploy_name = "application";
 
+    private final static Logger logger = LoggerFactory.getLogger(FileCreator.class);
+
     private final PluginFileAccess fileAccess;
     private List<Application> applications;
 
@@ -52,7 +56,9 @@ public class FileCreator {
     }
 
     public void createFiles() throws IOException, JSONException {
+        logger.info("Create manifest.yml");
         createManifest();
+        logger.info("Create deploy script");
         createDeployScript();
 
         for (Application application : applications) {
@@ -87,6 +93,7 @@ public class FileCreator {
      */
     private void addPathToApplication(Application application) throws IOException {
         String pathAddition = String.format("  %s: ../%s", PATH.getName(), APPLICATION_FOLDER + application.getApplicationNumber());
+        logger.info("Add path to application {} to manifest", pathAddition);
         fileAccess.access(MANIFEST_PATH).appendln(pathAddition).close();
     }
 
@@ -97,6 +104,7 @@ public class FileCreator {
             environmentVariables.add(String.format("  %s:", ENVIRONMENT.getName()));
             for (Map.Entry<String, String> entry : envVariables.entrySet()) {
                 environmentVariables.add(String.format("    %s: %s", entry.getKey(), entry.getValue()));
+                logger.debug("Add environment variable {} value: {} to manifest", entry.getKey(), entry.getValue());
             }
             for (String env : environmentVariables) {
                 fileAccess.access(MANIFEST_PATH).appendln(env).close();
@@ -115,6 +123,7 @@ public class FileCreator {
             services.add(String.format("  %s:", SERVICE.getName()));
             for (Map.Entry<String, ServiceTypes> service : appServices.entrySet()) {
                 services.add(String.format("    - %s", service.getKey()));
+                logger.debug("Add service {} to manifest", service.getKey());
             }
             for (String service : services) {
                 fileAccess.access(MANIFEST_PATH).appendln(service).close();
@@ -133,9 +142,11 @@ public class FileCreator {
         deployScript.append(EnvironmentCheck.checkEnvironment("cf"));
 
         //handle services
+        logger.debug("Handle services");
         handleServices(deployScript);
 
         //replace
+        logger.debug("Replace strings");
         replaceStrings(deployScript);
 
         //push applications
@@ -224,7 +235,10 @@ public class FileCreator {
 
                 for (Map.Entry<String, String> command : executeCommands.entrySet()) {
                     //TODO: add lists which strings should be replaced. In 12 Factor it is probably not necessary.
-                    deployment.replaceStrings(command.getKey(), "/var/www/html/", "/home/vcap/app/htdocs/");
+                    String findStr = "/var/www/html/";
+                    String replaceStr = "/home/vcap/app/htdocs/";
+                    deployment.replaceStrings(command.getKey(), findStr, replaceStr);
+                    logger.info("Add command to replace all occurence of {} with {}", findStr, replaceStr);
                 }
             }
         }
@@ -260,6 +274,7 @@ public class FileCreator {
     private void insertFiles(Application application) throws IOException {
         for (String filePath : application.getFilePaths()) {
             String path = APPLICATION_FOLDER + application.getApplicationNumber() + "/" + filePath;
+            logger.debug("Copy file {} to {}", filePath, path);
             fileAccess.copy(filePath, path);
         }
     }

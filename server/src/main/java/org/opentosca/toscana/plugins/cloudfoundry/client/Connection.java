@@ -6,6 +6,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.opentosca.toscana.plugins.cloudfoundry.application.Service;
+import org.opentosca.toscana.plugins.util.TransformationFailureException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -54,30 +55,37 @@ public class Connection {
         this.organization = organization;
         this.space = space;
 
+        logger.info("Try to connect to CF Instance");
         this.cloudFoundryOperations = createCloudFoundryOperations();
     }
 
     private CloudFoundryOperations createCloudFoundryOperations() {
-        DefaultConnectionContext connectionContext = DefaultConnectionContext.builder()
-            .apiHost(apiHost)
-            .build();
+        CloudFoundryOperations cloudFoundryOperations;
+        try {
+            DefaultConnectionContext connectionContext = DefaultConnectionContext.builder()
+                .apiHost(apiHost)
+                .build();
 
-        TokenProvider tokenProvider = PasswordGrantTokenProvider.builder()
-            .password(password)
-            .username(userName)
-            .build();
+            TokenProvider tokenProvider = PasswordGrantTokenProvider.builder()
+                .password(password)
+                .username(userName)
+                .build();
 
-        ReactorCloudFoundryClient reactorClient = ReactorCloudFoundryClient.builder()
-            .connectionContext(connectionContext)
-            .tokenProvider(tokenProvider)
-            .build();
+            ReactorCloudFoundryClient reactorClient = ReactorCloudFoundryClient.builder()
+                .connectionContext(connectionContext)
+                .tokenProvider(tokenProvider)
+                .build();
 
-        CloudFoundryOperations cloudFoundryOperations = DefaultCloudFoundryOperations.builder()
-            .cloudFoundryClient(reactorClient)
-            .organization(organization)
-            .space(space)
-            .build();
+            cloudFoundryOperations = DefaultCloudFoundryOperations.builder()
+                .cloudFoundryClient(reactorClient)
+                .organization(organization)
+                .space(space)
+                .build();
+        } catch (Exception e) {
+            throw new TransformationFailureException("Could not connect to Cloud Foundry instance, Please check your credentials", e);
+        }
 
+        logger.info("Connect successfully to Cloud Foundry instance");
         return cloudFoundryOperations;
     }
 

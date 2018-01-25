@@ -13,11 +13,15 @@ import org.opentosca.toscana.plugins.util.TransformationFailureException;
 
 import org.cloudfoundry.operations.services.ServiceOffering;
 import org.cloudfoundry.operations.services.ServicePlan;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.CLI_CREATE_SERVICE;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.CLI_CREATE_SERVICE_DEFAULT;
 
 public class ServiceHandler {
+
+    private final static Logger logger = LoggerFactory.getLogger(ServiceHandler.class);
 
     private Application application;
     private BashScript deploymentScript;
@@ -32,11 +36,13 @@ public class ServiceHandler {
      */
     public void addServiceCommands(Boolean showAllServiceOfferings) {
         try {
+            logger.info("Try to read service offerings of provider");
             readProviderServices();
 
             if (showAllServiceOfferings) {
                 if (application.getProvider() != null && !application.getServices().isEmpty()
                     && application.getConnection() != null) {
+                    logger.debug("List all possible services in the deploy script");
                     addProviderServiceOfferings();
                 }
             }
@@ -48,6 +54,7 @@ public class ServiceHandler {
     private void readProviderServices() throws IOException {
         if (application.getProvider() != null && !application.getServices().isEmpty() && application.getConnection() != null) {
             Provider provider = application.getProvider();
+            logger.debug("Read service offerings from provider");
             provider.setOfferedService(application.getConnection().getServices());
 
             for (Map.Entry<String, ServiceTypes> service : application.getServices().entrySet()) {
@@ -57,15 +64,18 @@ public class ServiceHandler {
 
                 //checks if a offered service of the provider contains the description of the needed service
                 //if yes then add the service to the script with a free plan
+                logger.info("Try to find a suitable service from provider which matches to the requested service");
                 isSet = addMatchedServices(services, deploymentScript, description, service);
 
                 //if not then add the default create command to the deploy script
                 if (!isSet) {
+                    logger.warn("Could not find a suitable service, add the default value {}. Please adapt the line in the deploy script!", CLI_CREATE_SERVICE_DEFAULT);
                     deploymentScript.append(CLI_CREATE_SERVICE_DEFAULT + service);
                 }
             }
         } else {
             for (Map.Entry<String, ServiceTypes> service : application.getServices().entrySet()) {
+                logger.warn("Could not find a suitable service, add the default value {}. Please adapt the line in the deploy script!", CLI_CREATE_SERVICE_DEFAULT);
                 deploymentScript.append(CLI_CREATE_SERVICE_DEFAULT + service.getKey());
             }
         }
@@ -85,6 +95,7 @@ public class ServiceHandler {
                         String serviceName = offeredService.getLabel();
                         String planName = plan.getName();
                         String serviceInstanceName = service.getKey();
+                        logger.info("A suitable service could be found, named {}. Add a free plan named {}, you could adpat the plan in the deploy script", serviceName, planName);
                         deployScript.append(String.format("%s%s %s %s", CLI_CREATE_SERVICE,
                             serviceName, planName, serviceInstanceName));
                         application.addMatchedService(

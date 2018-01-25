@@ -50,6 +50,7 @@ import static org.opentosca.toscana.plugins.cloudfoundry.application.buildpacks.
 import static org.opentosca.toscana.plugins.cloudfoundry.application.buildpacks.BuildpackDetector.BUILDPACK_OBJECT_PHP;
 import static org.opentosca.toscana.plugins.scripts.BashScript.SHEBANG;
 import static org.opentosca.toscana.plugins.scripts.BashScript.SOURCE_UTIL_ALL;
+import static org.opentosca.toscana.plugins.scripts.BashScript.SUBCOMMAND_EXIT;
 
 public class FileCreatorTest extends BaseUnitTest {
     private FileCreator fileCreator;
@@ -145,6 +146,7 @@ public class FileCreatorTest extends BaseUnitTest {
         String manifestContent = FileUtils.readFileToString(targetFile);
         String expectedDeployContent = SHEBANG + "\n" +
             SOURCE_UTIL_ALL + "\n" +
+            SUBCOMMAND_EXIT + "\n" +
             "check \"cf\"\n" +
             "cf push " + appName + CLI_PATH_TO_MANIFEST + MANIFEST_NAME + "\n";
         assertEquals(expectedDeployContent, manifestContent);
@@ -251,6 +253,7 @@ public class FileCreatorTest extends BaseUnitTest {
         String deployscriptContent = FileUtils.readFileToString(targetFile);
         String expectedContent = SHEBANG + "\n" +
             SOURCE_UTIL_ALL + "\n" +
+            SUBCOMMAND_EXIT + "\n" +
             "check \"cf\"\n" +
             "cf create-service {plan} {service} cleardb\n" +
             "cf create-service {plan} {service} p-mysql\n" +
