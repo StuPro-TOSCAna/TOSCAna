@@ -1,5 +1,5 @@
 #!/bin/bash
-CREDENTIALS="/var/www/html/my_app/mysql-credentials.php"
+CREDENTIALS="/var/www/html/mysql-credentials.php"
 
 sed -i "s:DATABASE_HOST:${database_host}:g" $CREDENTIALS
 sed -i "s:DATABASE_PASSWORD:${database_password}:g" $CREDENTIALS
