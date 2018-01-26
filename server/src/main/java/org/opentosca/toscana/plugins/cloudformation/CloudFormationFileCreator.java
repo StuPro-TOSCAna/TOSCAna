@@ -4,7 +4,9 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
+import java.util.Map;
 
+import com.scaleset.cfbuilder.core.Parameter;
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.plugins.scripts.BashScript;
 import org.opentosca.toscana.plugins.scripts.EnvironmentCheck;
@@ -13,6 +15,7 @@ import org.opentosca.toscana.plugins.util.TransformationFailureException;
 import org.apache.commons.io.Charsets;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
+import org.springframework.util.CollectionUtils;
 
 /**
  * Class for building scripts and copying files needed for deployment of cloudformation templates.
@@ -21,11 +24,10 @@ public class CloudFormationFileCreator {
     static final String CLI_COMMAND_CREATESTACK = "aws cloudformation deploy ";
     static final String CLI_PARAM_STACKNAME = "--stack-name ";
     static final String CLI_PARAM_TEMPLATEFILE = "--template-file ";
-    //TODO check if PARAMOVERRIDES are needed and get said parameters
-    // private static final String CLI_PARAM_PARAMOVERRIDES = "--parameter-overrides ";
+    static final String CLI_PARAM_PARAMOVERRIDES = "--parameter-overrides ";
     static final String FILENAME_DEPLOY = "deploy";
     static final String FILENAME_UPLOAD = "file-upload";
-    static final String TEMPLATE_YAML = "template.yaml ";
+    static final String TEMPLATE_YAML = "template.yaml";
     static final String CHANGE_TO_PARENT_DIRECTORY = "cd ..";
     static final String RELATIVE_DIRECTORY_PREFIX = "../files/";
 
@@ -82,10 +84,26 @@ public class CloudFormationFileCreator {
         logger.debug("Creating deploy script.");
         BashScript deployScript = new BashScript(cfnModule.getFileAccess(), FILENAME_DEPLOY);
         deployScript.append(EnvironmentCheck.checkEnvironment("aws"));
-        deployScript.append(CHANGE_TO_PARENT_DIRECTORY);
-        deployScript.append(CLI_COMMAND_CREATESTACK
-            + CLI_PARAM_STACKNAME + cfnModule.getStackName() + " "
-            + CLI_PARAM_TEMPLATEFILE + TEMPLATE_YAML);
+        deployScript.append("source " + FILENAME_UPLOAD + ".sh");
+        deployScript.append(CHANGE_TO_PARENT_DIRECTORY);        
+        StringBuilder deployCommand = new StringBuilder("");
+        deployCommand.append(CLI_COMMAND_CREATESTACK + CLI_PARAM_STACKNAME)
+            .append(cfnModule.getStackName()).append(" ")
+            .append(CLI_PARAM_TEMPLATEFILE).append(TEMPLATE_YAML);
+
+        // Add parameters if needed
+        Map<String, Parameter> parameters = cfnModule.getParameters();
+        if (!CollectionUtils.isEmpty(parameters)) {
+            deployCommand.append(" " + CLI_PARAM_PARAMOVERRIDES);
+            for (Map.Entry<String, Parameter> entry : parameters.entrySet())
+            {
+                String id = entry.getKey();
+                deployCommand.append(" ").append(id).append("=$").append(id).append("Var");
+            }
+        }
+        
+        deployCommand.append(" &");        
+        deployScript.append(deployCommand.toString());
     }
 
     /**
