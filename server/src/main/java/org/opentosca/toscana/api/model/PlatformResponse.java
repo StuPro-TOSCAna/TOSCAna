@@ -17,17 +17,20 @@ import org.springframework.hateoas.core.Relation;
 public class PlatformResponse extends HiddenResourceSupport {
     private final String identifier;
     private final String name;
+    private final boolean supportsDeployment;
 
     public PlatformResponse(
         @JsonProperty("id") String identifier,
-        @JsonProperty("name") String name
+        @JsonProperty("name") String name,
+        @JsonProperty("supportsDeployment") boolean supportsDeployment
     ) {
         this.identifier = identifier;
         this.name = name;
+        this.supportsDeployment = supportsDeployment;
     }
 
     public PlatformResponse(Platform p) {
-        this(p.id, p.name);
+        this(p.id, p.name, p.supportsDeployment);
     }
 
     @ApiModelProperty(
@@ -48,5 +51,15 @@ public class PlatformResponse extends HiddenResourceSupport {
     @JsonProperty("name")
     public String getName() {
         return name;
+    }
+
+    @ApiModelProperty(
+        required = true,
+        notes = "This value is true if a plugin supports in app deployment.",
+        example = "true"
+    )
+    @JsonProperty("supportsDeployment")
+    public boolean supportsDeployment() {
+        return supportsDeployment;
     }
 }

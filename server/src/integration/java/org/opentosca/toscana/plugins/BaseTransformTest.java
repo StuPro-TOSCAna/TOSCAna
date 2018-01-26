@@ -3,7 +3,7 @@ package org.opentosca.toscana.plugins;
 import java.io.File;
 
 import org.opentosca.toscana.core.BaseIntegrationTest;
-import org.opentosca.toscana.core.plugin.TransformationPlugin;
+import org.opentosca.toscana.core.plugin.TOSCAnaPlugin;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
 import org.opentosca.toscana.model.EffectiveModel;
@@ -27,7 +27,7 @@ public abstract class BaseTransformTest extends BaseIntegrationTest {
 
     private static final Logger logger = LoggerFactory.getLogger(BaseTransformTest.class);
 
-    protected final TransformationPlugin plugin;
+    protected final TOSCAnaPlugin plugin;
     protected EffectiveModel model;
     protected TransformationContext context;
     protected File workingDir;
@@ -36,7 +36,7 @@ public abstract class BaseTransformTest extends BaseIntegrationTest {
     /**
      Create a new Test instance using the given plugin
      */
-    public BaseTransformTest(TransformationPlugin plugin) {
+    public BaseTransformTest(TOSCAnaPlugin plugin) {
         this.plugin = plugin;
     }
 
@@ -51,6 +51,7 @@ public abstract class BaseTransformTest extends BaseIntegrationTest {
      */
     @Before
     public void setUp() throws Exception {
+        checkAssumptions();
         createDirectories();
 
         this.model = getModel();
@@ -71,7 +72,6 @@ public abstract class BaseTransformTest extends BaseIntegrationTest {
      */
     @Test
     public void performTransformation() throws Exception {
-        checkAssumptions();
         logger.info("Starting Transformation");
         try {
             plugin.transform(context);

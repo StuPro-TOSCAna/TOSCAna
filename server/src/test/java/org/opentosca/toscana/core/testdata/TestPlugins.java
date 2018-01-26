@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.opentosca.toscana.core.plugin.TransformationPlugin;
+import org.opentosca.toscana.core.plugin.TOSCAnaPlugin;
 import org.opentosca.toscana.core.testdata.dummyplugins.DummyPlugin;
 import org.opentosca.toscana.core.testdata.dummyplugins.ExecutionDummyPlugin;
 import org.opentosca.toscana.core.testdata.dummyplugins.FileCreationExcecutionDummy;
@@ -17,16 +17,17 @@ import org.assertj.core.util.Lists;
 public class TestPlugins {
 
     public static final Platform PLATFORM1 = new Platform("testplatform_one", "the first testplatform");
-    public static final TransformationPlugin PLUGIN1 = new DummyPlugin(PLATFORM1);
+    public static final TOSCAnaPlugin PLUGIN1 = new DummyPlugin(PLATFORM1);
 
     public static final Platform PLATFORM2 = new Platform("testplatform_two", "the second testplatform");
-    public static final TransformationPlugin PLUGIN2 = new DummyPlugin(PLATFORM2);
+    public static final TOSCAnaPlugin PLUGIN2 = new DummyPlugin(PLATFORM2);
 
     public static final Platform PLATFORM3 = new Platform("testplatform_three", "the third testplatform");
-    public static final TransformationPlugin PLUGIN3 = new DummyPlugin(PLATFORM3);
+    public static final TOSCAnaPlugin PLUGIN3 = new DummyPlugin(PLATFORM3);
 
-    public static final Platform PLATFORM4 = new Platform("testplatform_four", "the forth testplatform");
-    public static final TransformationPlugin PLUGIN4 = new DummyPlugin(PLATFORM4);
+    //Platform 4 Supports Deployments
+    public static final Platform PLATFORM4 = new Platform("testplatform_four", "the forth testplatform", true, new HashSet<>());
+    public static final TOSCAnaPlugin PLUGIN4 = new DummyPlugin(PLATFORM4);
 
     public static final Platform PLATFORM_NOT_SUPPORTED = new Platform("not-supported-plattform",
         "this platform is not supported by any plugin");
@@ -53,7 +54,7 @@ public class TestPlugins {
 
     public static final Set<Platform> PLATFORMS = new HashSet<>(Arrays.asList(PLATFORM1, PLATFORM2, PLATFORM3,
         PLATFORM4, PLATFORM_FAILING_DUMMY, PLATFORM_FAILING_WRITING_DUMMY, PLATFORM_PASSING_DUMMY, PLATFORM_PASSING_WRITING_DUMMY));
-    public static final List<TransformationPlugin> PLUGINS = Lists.newArrayList(
+    public static final List<TOSCAnaPlugin> PLUGINS = Lists.newArrayList(
         PLUGIN1, PLUGIN2,
         PLUGIN3, PLUGIN4,
         PASSING_DUMMY, FAILING_DUMMY,
