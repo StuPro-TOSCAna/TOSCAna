@@ -25,8 +25,8 @@ public class OutputResponse extends HiddenResourceSupport {
         this.outputs = outputs;
         add(
             linkTo(
-                methodOn(TransformationController.class).getOutputs(csarName, platformName)
-            ).withSelfRel()
+                methodOn(TransformationController.class).getOutputs(null, null)
+            ).withSelfRel().expand(csarName, platformName)
         );
     }
 

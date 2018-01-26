@@ -12,6 +12,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
+import java.util.SimpleTimeZone;
 
 import org.opentosca.toscana.api.exceptions.PlatformNotFoundException;
 import org.opentosca.toscana.api.utils.HALRelationUtils;
@@ -30,6 +31,7 @@ import org.opentosca.toscana.core.transformation.logging.LogEntry;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.platform.PlatformService;
 import org.opentosca.toscana.core.transformation.properties.PlatformProperty;
+import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
 import org.opentosca.toscana.core.transformation.properties.PropertyType;
 
@@ -239,6 +241,30 @@ public class TransformationControllerTest extends BaseSpringTest {
     //<editor-fold desc="Output Tests">
 
     @Test
+    public void testGetOutputs() throws Exception{
+        List<Transformation> transformations = preInitNonCreationTests();
+        Transformation t = transformations.get(0);
+        when(t.getState()). thenReturn(TransformationState.DONE);
+        HashSet<Property> outputs = new HashSet<>();
+        outputs.add(new PlatformProperty(
+            "test_property",
+            PropertyType.TEXT,
+            "",
+            true,
+            "some value"
+        ));
+        PropertyInstance mockOutputs = new PropertyInstance(outputs,t);
+        when(t.getOutputs()).thenReturn(mockOutputs);
+        mvc.perform(get(GET_OUTPUT_URL))
+            .andDo(print())
+            .andExpect(status().is(200))
+            .andExpect(jsonPath("$.outputs").isArray())
+            .andExpect(jsonPath("$.links[0].href").value("http://localhost/api/csars/kubernetes-cluster/transformations/p-a/outputs"))
+            .andExpect(jsonPath("$.outputs[0].key").value("test_property"))
+            .andReturn();
+    }
+
+    @Test
     public void testGetOutputsEmptyOutputs() throws Exception{
         List<Transformation> transformations = preInitNonCreationTests();
         Transformation t = transformations.get(0);
@@ -247,7 +273,12 @@ public class TransformationControllerTest extends BaseSpringTest {
         when(mockOutputs.getPropertySchema()).thenReturn(new HashSet<>());
         when(mockOutputs.getPropertyValues()). thenReturn(new HashMap<>());
         when(t.getOutputs()).thenReturn(mockOutputs);
-        mvc.perform(get(GET_OUTPUT_URL)).andDo(print()).andReturn();
+        mvc.perform(get(GET_OUTPUT_URL))
+            .andDo(print())
+            .andExpect(status().is(200))
+            .andExpect(jsonPath("$.outputs").isArray())
+            .andExpect(jsonPath("$.links[0].href").value("http://localhost/api/csars/kubernetes-cluster/transformations/p-a/outputs"))
+            .andReturn();
     }
 
     @Test

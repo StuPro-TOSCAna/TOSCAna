@@ -81,8 +81,8 @@ public interface Transformation {
 
     /**
      Returns the outputs of the transformation.
-     If the Transformation is not Done or has errored (The state is not DONE or ERROR) this will throw a IllegalStateExecption
-     @return
+     If the Transformation is not Done or has errored (The state is not DONE or ERROR)
+     this will throw a IllegalStateExecption
      */
     PropertyInstance getOutputs() throws IllegalStateException;
 }

@@ -779,6 +779,59 @@ public class TransformationController {
         }
     }
 
+    /**
+     Returns the outputs of a Transformation.
+
+     <table summary="">
+     <tr>
+     <td>HTTP-Code</td>
+     <td>Mime-Type</td>
+     <td>Description (Returned if)</td>
+     </tr>
+     <tr>
+     <td>200</td>
+     <td>application/hal+json</td>
+     <td>Returns a List of the Outputs. (Empty if no deployment has been executed)</td>
+     </tr>
+     <tr>
+     <td>400</td>
+     <td>application/json</td>
+     <td>Returned if the transformation is not in a valid state (has to be in DONE or ERROR) to set properties</td>
+     </tr>
+     <tr>
+     <td>404</td>
+     <td>application/json</td>
+     <td>Returns a error message if the csar is not found or if the csar does not have a transformation for the given
+     name (see returned error message for details)</td>
+     </tr>
+     </table>
+     */
+    @ApiOperation(
+        value = "Retrieve the Outputs and their values",
+        tags = {"transformations"},
+        notes = "This operation returns the Outputs of a Deployment. Retrieval of the outputs is not possible " +
+            "if the transformation (including Deployment) is not done yet. If A transformation will not " +
+            "perform the deployment in-app the ouptus will remain empty )emptry outputs array) after the " +
+            "transformation is done."
+    )
+    @ApiResponses({
+        @ApiResponse(
+            code = 200,
+            message = "The operation was executed successfully",
+            response = GetPropertiesResponse.class
+        ),
+        @ApiResponse(
+            code = 404,
+            message = "There is no CSAR for the given identifier or the CSAR does not have " +
+                "a Transformation for the specified platform.",
+            response = RestErrorResponse.class
+        ),
+        @ApiResponse(
+            code = 400,
+            message = "The State of the Transformation is invalid (Not ERROR or DONE)",
+            response = RestErrorResponse.class
+        )
+    })
     @RequestMapping(
         path = "/{platform}/outputs",
         method = {RequestMethod.GET},
