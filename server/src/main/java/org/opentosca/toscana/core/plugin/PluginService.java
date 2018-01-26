@@ -7,13 +7,13 @@ import org.opentosca.toscana.core.transformation.platform.PlatformService;
 
 public interface PluginService extends PlatformService {
 
-    List<TransformationPlugin> getPlugins();
+    List<TOSCAnaPlugin> getPlugins();
 
-    default TransformationPlugin findPluginByPlatform(Platform platform) {
+    default TOSCAnaPlugin findPluginByPlatform(Platform platform) {
         if (platform == null)
             return null;
-        List<TransformationPlugin> p = getPlugins();
-        for (TransformationPlugin e : p) {
+        List<TOSCAnaPlugin> p = getPlugins();
+        for (TOSCAnaPlugin e : p) {
             if (e.getPlatform().id.equals(platform.id)) {
                 return e;
             }

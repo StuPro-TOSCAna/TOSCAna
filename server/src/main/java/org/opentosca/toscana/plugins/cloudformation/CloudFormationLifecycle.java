@@ -5,13 +5,13 @@ import java.util.Map;
 import java.util.Set;
 
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
+import org.opentosca.toscana.core.plugin.lifecycle.AbstractLifecycle;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.visitor.VisitableNode;
 import org.opentosca.toscana.plugins.cloudformation.visitor.CloudFormationNodeVisitor;
-import org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle;
 import org.opentosca.toscana.plugins.util.TransformationFailureException;
 
 import com.amazonaws.auth.AWSCredentials;

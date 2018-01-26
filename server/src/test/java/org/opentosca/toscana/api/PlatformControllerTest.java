@@ -30,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(value = PlatformController.class)
-@ActiveProfiles({INTEGRATION_TEST_PROFILE, "base-image-mapper"})
+@ActiveProfiles( {INTEGRATION_TEST_PROFILE, "base-image-mapper"})
 @DirtiesContext(
     classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD
 )
@@ -61,6 +61,7 @@ public class PlatformControllerTest extends BaseTest {
         for (int i = 0; i < PLATFORMS.size(); i++) {
             resultActions.andExpect(jsonPath("$._embedded.platform[" + i + "].id").isString());
             resultActions.andExpect(jsonPath("$._embedded.platform[" + i + "].name").isString());
+            resultActions.andExpect(jsonPath("$._embedded.platform[" + i + "].supportsDeployment").isBoolean());
         }
         resultActions.andReturn();
     }
@@ -74,6 +75,7 @@ public class PlatformControllerTest extends BaseTest {
             resultActions.andExpect(jsonPath("$.id").value(platform.id));
             resultActions.andExpect(jsonPath("$.name").value(platform.name));
             resultActions.andExpect(jsonPath("$._links.self.href").isString());
+            resultActions.andExpect(jsonPath("$.supportsDeployment").value(platform.supportsDeployment));
             resultActions.andReturn();
         }
     }

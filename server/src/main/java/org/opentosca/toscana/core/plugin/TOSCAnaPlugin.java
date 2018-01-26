@@ -1,27 +1,32 @@
-package org.opentosca.toscana.plugins.lifecycle;
+package org.opentosca.toscana.core.plugin;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
-import org.opentosca.toscana.core.plugin.AbstractPlugin;
+import org.opentosca.toscana.core.plugin.lifecycle.ExecutionPhase;
+import org.opentosca.toscana.core.plugin.lifecycle.TransformationLifecycle;
+import org.opentosca.toscana.core.plugin.lifecycle.ValidationFailureException;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  This class represents the base class for every Plugin that wants to implement the Transformation lifecycle
 
  @param <LifecycleT> The class type of the plugin specific implementation of the Lifecycle interface */
-public abstract class LifecycleAwarePlugin<LifecycleT extends TransformationLifecycle>
-    extends AbstractPlugin {
+public abstract class TOSCAnaPlugin<LifecycleT extends TransformationLifecycle> {
 
     /**
      Immutable list of execution tasks, they are in the right execution order and get executed from the first
      index to the last
      */
     private final List<ExecutionPhase<LifecycleT>> executionTasks;
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private final Platform platform;
 
     /**
      Initializes the plugin, that means that all tasks get added to a internal list (executionTasks) that then gets
@@ -29,8 +34,10 @@ public abstract class LifecycleAwarePlugin<LifecycleT extends TransformationLife
      <p>
      The tasks get stored in a list (environment tasks)
      */
-    public LifecycleAwarePlugin(Platform platform) {
-        super(platform);
+    public TOSCAnaPlugin(Platform platform) {
+        this.platform = Objects.requireNonNull(platform, "The platform is not allowed to be null");
+        this.init();
+        logger.info("Initialized '{}' plugin.", platform.name);
         List<ExecutionPhase<LifecycleT>> executionTasks = new ArrayList<>();
 
         //Add the execution tasks
@@ -54,16 +61,38 @@ public abstract class LifecycleAwarePlugin<LifecycleT extends TransformationLife
         executionTasks.add(new ExecutionPhase<>("transformation", TransformationLifecycle::transform));
         executionTasks.add(new ExecutionPhase<>("cleanup", TransformationLifecycle::cleanup));
 
+        // Add Deployment Phase
+        if (platform.supportsDeployment) {
+            executionTasks.add(new ExecutionPhase<>(
+                "deploy",
+                TransformationLifecycle::deploy,
+                TransformationContext::performDeployment
+            ));
+        }
+
         //Make list immutable
         this.executionTasks = Collections.unmodifiableList(executionTasks);
     }
 
     /**
-     Performs the execution of the phases in the order that has been defined during the construction of the object
+     Is called during the initialisation of the plugin
+     */
+    protected void init() {
+        //Empty method, allows plugin to run code on initialisation
+    }
+
+    public Platform getPlatform() {
+        return platform;
+    }
+
+    /**
+     This method will transform  given model (contained in the TransformationContext instance) and will store the result
+     in a directory provided by the context.
+     <p>
+     Performs the execution in phases in the order that has been defined during the construction of the object
 
      @param context context for the transformation
      */
-    @Override
     public void transform(TransformationContext context) throws Exception {
         Logger logger = context.getLogger(getClass());
 
@@ -73,14 +102,22 @@ public abstract class LifecycleAwarePlugin<LifecycleT extends TransformationLife
         logger.info("Building Lifecycle interface...");
         LifecycleT lifecycleInterface = getInstance(context);
 
-        logger.info("This transformation has {} phases.", executionTasks.size());
+        int taskCount = countExecutionPhases(context);
+
+        logger.info("This transformation has {} phases.", taskCount);
         for (int i = 0; i < executionTasks.size(); i++) {
             ExecutionPhase<LifecycleT> phase = executionTasks.get(i);
-            logger.info("Executing phase '{}' ({} of {})", phase.getName(), (i + 1), executionTasks.size());
-            phase.execute(lifecycleInterface);
+            if (phase.shouldExecute(context)) {
+                logger.info("Executing phase '{}' ({} of {})", phase.getName(), (i + 1), taskCount);
+                phase.execute(lifecycleInterface);
+            }
         }
         time = System.currentTimeMillis() - time;
         logger.info("The execution of the transformation was done after {} MS.", time);
+    }
+
+    private int countExecutionPhases(TransformationContext ctx) {
+        return (int) this.executionTasks.stream().filter(e -> e.shouldExecute(ctx)).count();
     }
 
     /**

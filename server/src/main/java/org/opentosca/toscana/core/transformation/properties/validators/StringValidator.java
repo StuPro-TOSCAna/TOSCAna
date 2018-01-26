@@ -14,6 +14,6 @@ public class StringValidator implements ValueValidator {
 
     @Override
     public boolean isValid(String input) {
-        return regex == null || input.matches(regex);
+        return input != null && (regex == null || input.matches(regex));
     }
 }

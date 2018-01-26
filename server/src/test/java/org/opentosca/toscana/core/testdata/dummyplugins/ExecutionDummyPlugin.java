@@ -1,12 +1,13 @@
 package org.opentosca.toscana.core.testdata.dummyplugins;
 
-import org.opentosca.toscana.core.plugin.AbstractPlugin;
+import org.opentosca.toscana.core.plugin.TOSCAnaPlugin;
+import org.opentosca.toscana.core.plugin.lifecycle.TransformationLifecycle;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 
 import org.slf4j.Logger;
 
-public class ExecutionDummyPlugin extends AbstractPlugin {
+public class ExecutionDummyPlugin extends TOSCAnaPlugin {
 
     protected final boolean failDuringExec;
 
@@ -29,5 +30,10 @@ public class ExecutionDummyPlugin extends AbstractPlugin {
             logger.info("Throwing test exception");
             throw new InterruptedException("Test Exception");
         }
+    }
+
+    @Override
+    protected TransformationLifecycle getInstance(TransformationContext context) throws Exception {
+        return null;
     }
 }
