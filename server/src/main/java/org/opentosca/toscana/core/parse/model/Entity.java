@@ -40,7 +40,7 @@ public abstract class Entity implements Comparable<Entity> {
         Optional<Entity> parent = getParent();
         if (parent.isPresent()) {
             Connection incomingConnection = graph.getEdge(parent.get(), this);
-            if (incomingConnection != null){
+            if (incomingConnection != null) {
                 return incomingConnection.getKey();
             }
         }

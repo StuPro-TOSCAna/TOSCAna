@@ -4,12 +4,9 @@ import java.util.Optional;
 
 import javax.annotation.Nullable;
 
-import org.opentosca.toscana.core.parse.model.Connection;
-import org.opentosca.toscana.core.parse.model.Entity;
 import org.opentosca.toscana.core.parse.model.ScalarEntity;
 
 import lombok.EqualsAndHashCode;
-import lombok.ToString;
 
 /**
  See TOSCA Specification V1.1 ch. 2.1.1; 2.14
@@ -22,7 +19,7 @@ public class OperationVariable {
     private ScalarEntity backingEntity;
     private final String name;
 
-    public OperationVariable(ScalarEntity entity, @Nullable String name){
+    public OperationVariable(ScalarEntity entity, @Nullable String name) {
         this.backingEntity = entity;
         this.name = name;
     }
