@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.opentosca.toscana.plugins.cloudfoundry.client.Connection;
+import org.opentosca.toscana.plugins.cloudfoundry.transformation.sort.CloudFoundryStack;
 
 /**
  This class should describe a Application with all needed information to deploy it
@@ -27,6 +28,7 @@ public class Application {
     private Provider provider;
     private String pathToApplication;
     private String applicationSuffix;
+    private CloudFoundryStack stack;
 
     private Connection connection;
 
@@ -73,6 +75,14 @@ public class Application {
         } else {
             this.environmentVariables.put(environmentVariableName, value);
         }
+    }
+
+    public void addStack(CloudFoundryStack stack) {
+        this.stack = stack;
+    }
+
+    public CloudFoundryStack getStack() {
+        return stack;
     }
 
     public void addEnvironmentVariables(String environmentVariableName) {

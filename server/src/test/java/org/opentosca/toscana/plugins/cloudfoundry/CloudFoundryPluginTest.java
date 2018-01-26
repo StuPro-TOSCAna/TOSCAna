@@ -117,9 +117,20 @@ public class CloudFoundryPluginTest extends BaseUnitTest {
     }
 
     @Test
-    public void checkNodeTypes() throws Exception {
+    public void checkModel() throws Exception {
         TransformationContext context = setUpMockTransformationContext(TestEffectiveModels.getLampModel());
         CloudFoundryLifecycle cloudFoundry = new CloudFoundryLifecycle(context);
         assertTrue(cloudFoundry.checkModel());
     }
+
+    /*
+    @Test
+    public void checkTransformation() throws Exception {
+        TransformationContext context = setUpMockTransformationContext(TestEffectiveModels.getLampModel());
+        CloudFoundryPlugin cloudFoundry = new CloudFoundryPlugin();
+        CloudFoundryLifecycle cfcycle = cloudFoundry.getInstance(context);
+        cfcycle.prepare();
+        cfcycle.transform();
+    }
+    */
 }

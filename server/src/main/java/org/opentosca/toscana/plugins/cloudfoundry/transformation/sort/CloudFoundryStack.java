@@ -23,6 +23,10 @@ public class CloudFoundryStack {
         return nodeStacks.size();
     }
 
+    public List<CloudFoundryNode> getNodes() {
+        return nodeStacks;
+    }
+
     public CloudFoundryNode getRootNode() {
         return nodeStacks.get(nodeStacks.size() - 1);
     }

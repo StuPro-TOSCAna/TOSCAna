@@ -14,7 +14,6 @@ import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.RootNode;
-import org.opentosca.toscana.model.visitor.VisitableNode;
 import org.opentosca.toscana.plugins.cloudfoundry.FileCreator;
 import org.opentosca.toscana.plugins.cloudfoundry.application.Application;
 import org.opentosca.toscana.plugins.cloudfoundry.application.Provider;
@@ -22,9 +21,9 @@ import org.opentosca.toscana.plugins.cloudfoundry.client.Connection;
 import org.opentosca.toscana.plugins.cloudfoundry.transformation.sort.CloudFoundryNode;
 import org.opentosca.toscana.plugins.cloudfoundry.transformation.sort.CloudFoundryStack;
 import org.opentosca.toscana.plugins.cloudfoundry.transformation.sort.GraphSort;
+import org.opentosca.toscana.plugins.cloudfoundry.transformation.visitors.ComputeNodeFinder;
 import org.opentosca.toscana.plugins.cloudfoundry.transformation.visitors.NodeSupported;
 import org.opentosca.toscana.plugins.cloudfoundry.transformation.visitors.NodeVisitors;
-import org.opentosca.toscana.plugins.kubernetes.visitor.util.ComputeNodeFindingVisitor;
 import org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle;
 
 import org.json.JSONException;
@@ -48,6 +47,27 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
     public CloudFoundryLifecycle(TransformationContext context) throws IOException {
         super(context);
         model = context.getModel();
+
+        Map<String, String> properties = context.getProperties().getPropertyValues();
+
+        logger.debug("Checking for Properties");
+        if (!properties.isEmpty()) {
+            String username = properties.get(CF_PROPERTY_KEY_USERNAME);
+            String password = properties.get(CF_PROPERTY_KEY_PASSWORD);
+            String organization = properties.get(CF_PROPERTY_KEY_ORGANIZATION);
+            String space = properties.get(CF_PROPERTY_KEY_SPACE);
+            String apiHost = properties.get(CF_PROPERTY_KEY_API);
+
+            if (isNotNull(username, password, organization, space, apiHost)) {
+
+                connection = new Connection(username, password,
+                    apiHost, organization, space);
+
+                //TODO: check how to get used provider or figure out whether it is necessary to know it?
+                provider = new Provider(Provider.CloudFoundryProviderType.PIVOTAL);
+                provider.setOfferedService(connection.getServices());
+            }
+        }
     }
 
     @Override
@@ -77,37 +97,20 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
     @Override
     public void prepare() {
         logger.info("Begin preparation for transformation to Cloud Foundry.");
-        Map<String, String> properties = context.getProperties().getPropertyValues();
-
-        logger.debug("Checking for Properties");
-        if (!properties.isEmpty()) {
-            String username = properties.get(CF_PROPERTY_KEY_USERNAME);
-            String password = properties.get(CF_PROPERTY_KEY_PASSWORD);
-            String organization = properties.get(CF_PROPERTY_KEY_ORGANIZATION);
-            String space = properties.get(CF_PROPERTY_KEY_SPACE);
-            String apiHost = properties.get(CF_PROPERTY_KEY_API);
-
-            if (isNotNull(username, password, organization, space, apiHost)) {
-
-                connection = new Connection(username, password,
-                    apiHost, organization, space);
-
-                //TODO: check how to get used provider or figure out whether it is necessary to know it?
-                provider = new Provider(Provider.CloudFoundryProviderType.PIVOTAL);
-                provider.setOfferedService(connection.getServices());
-            }
-        }
 
         logger.debug("Collecting Compute Nodes in Topology");
-        ComputeNodeFindingVisitor computeFinder = new ComputeNodeFindingVisitor();
-        model.getNodes().forEach(e -> {
-            e.accept(computeFinder);
-            CloudFoundryNode container = new CloudFoundryNode(e);
-            applicationNodes.put(e.getNodeName(), container);
-        });
-        computeFinder.getComputeNodes().forEach(e -> computeNodes.add(applicationNodes.get(e.getNodeName())));
+        ComputeNodeFinder computeFinder = new ComputeNodeFinder();
+        for (RootNode node : model.getNodes()) {
+            node.accept(computeFinder);
+            CloudFoundryNode container = new CloudFoundryNode(node);
+            applicationNodes.put(node.getNodeName(), container);
+        }
 
-        logger.debug("Finding top Level Nodes");
+        for (Compute compute : computeFinder.getComputeNodes()) {
+            computeNodes.add(applicationNodes.get(compute.getNodeName()));
+        }
+
+        logger.debug("Finding Top Level Nodes");
         GraphSort graph = new GraphSort(model);
         Set<RootNode> topLevelNodes = graph.getTopLevelNode(
             computeFinder.getComputeNodes().stream().map(Compute.class::cast).collect(Collectors.toList()),
@@ -120,10 +123,17 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
         //TODO: check how many different applications there are and fill list with them
         //probably there must be a combination of application and set of nodes
         applications = new ArrayList<>();
-        Application myApp = new Application();
-        myApp.setProvider(provider);
-        myApp.setConnection(connection);
-        applications.add(myApp);
+
+        for (CloudFoundryStack stack : stacks) {
+            Application myApp = new Application();
+            myApp.setProvider(provider);
+            myApp.setConnection(connection);
+
+            myApp.setName(stack.getStackName());
+            myApp.addStack(stack);
+
+            applications.add(myApp);
+        }
     }
 
     private boolean isNotNull(String... elements) {
@@ -139,12 +149,13 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
     public void transform() {
         logger.info("Begin transformation to Cloud Foundry.");
         PluginFileAccess fileAccess = context.getPluginFileAccess();
-        Set<RootNode> nodes = model.getNodes();
         List<Application> filledApplications = new ArrayList<>();
+
         for (Application application : applications) {
             NodeVisitors visitor = new NodeVisitors(application);
-            for (VisitableNode node : nodes) {
-                node.accept(visitor);
+
+            for (CloudFoundryNode s : application.getStack().getNodes()) {
+                s.getNode().accept(visitor);
             }
 
             Application filledApplication = visitor.getFilledApp();
