@@ -19,6 +19,8 @@ import org.mockito.Mock;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
+import static org.opentosca.toscana.plugins.scripts.BashScript.SHEBANG;
+import static org.opentosca.toscana.plugins.scripts.BashScript.SOURCE_UTIL_ALL;
 
 public class DeploymentTest extends BaseUnitTest {
 
@@ -55,9 +57,10 @@ public class DeploymentTest extends BaseUnitTest {
         File deployFile = new File(targetDir, outputPath + "deploy_" + appName + ".sh");
         String contentDeploy = FileUtils.readFileToString(deployFile);
 
-        String expectedDeployContent = String.format("#!/bin/sh\n" +
-            "source util/*\n" +
-            "check python\npython %s %s\n", pythonFilename, pathToSqlFile);
+        String expectedDeployContent = String.format(SHEBANG + "\n" +
+            SOURCE_UTIL_ALL + "\n" +
+            "check python\n" +
+            "python %s %s\n", pythonFilename, pathToSqlFile);
 
         assertTrue(targetFile.exists());
         assertEquals(expectedDeployContent, contentDeploy);
@@ -72,9 +75,10 @@ public class DeploymentTest extends BaseUnitTest {
         File deployFile = new File(targetDir, outputPath + "deploy_" + appName + ".sh");
         String contentDeploy = FileUtils.readFileToString(deployFile);
 
-        String expectedDeployContent = String.format("#!/bin/sh\n" +
-            "source util/*\n" +
-            "check python\npython %s %s %s %s\n", pythonFilename, appName, service, ServiceTypes.MYSQL.getName());
+        String expectedDeployContent = String.format(SHEBANG + "\n" +
+            SOURCE_UTIL_ALL + "\n" +
+            "check python\n" +
+            "python %s %s %s %s\n", pythonFilename, appName, service, ServiceTypes.MYSQL.getName());
 
         assertTrue(targetFile.exists());
         assertEquals(expectedDeployContent, contentDeploy);
@@ -90,9 +94,10 @@ public class DeploymentTest extends BaseUnitTest {
         File deployFile = new File(targetDir, outputPath + "deploy_" + appName + ".sh");
         String contentDeploy = FileUtils.readFileToString(deployFile);
 
-        String expectedDeployContent = String.format("#!/bin/sh\n" +
-            "source util/*\n" +
-            "check python\npython %s %s %s\n", pythonFilename, appName, pathToFile);
+        String expectedDeployContent = String.format(SHEBANG + "\n" +
+            SOURCE_UTIL_ALL + "\n" +
+            "check python\n" +
+            "python %s %s %s\n", pythonFilename, appName, pathToFile);
 
         assertTrue(targetFile.exists());
         assertEquals(expectedDeployContent, contentDeploy);
@@ -110,9 +115,10 @@ public class DeploymentTest extends BaseUnitTest {
         File deployFile = new File(targetDir, outputPath + "deploy_" + appName + ".sh");
         String contentDeploy = FileUtils.readFileToString(deployFile);
 
-        String expectedDeployContent = String.format("#!/bin/sh\n" +
-            "source util/*\n" +
-            "check python\npython %s %s %s %s\n", pythonFilename, pathToFile, findStr, replaceStr);
+        String expectedDeployContent = String.format(SHEBANG + "\n" +
+            SOURCE_UTIL_ALL + "\n" +
+            "check python\n" +
+            "python %s %s %s %s\n", pythonFilename, pathToFile, findStr, replaceStr);
 
         assertTrue(targetFile.exists());
         assertEquals(expectedDeployContent, contentDeploy);

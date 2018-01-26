@@ -1,140 +1,158 @@
 package org.opentosca.toscana.model.node;
 
-import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 
-import org.opentosca.toscana.model.capability.Capability;
-import org.opentosca.toscana.model.capability.ContainerCapability;
+import org.opentosca.toscana.core.parse.model.MappingEntity;
 import org.opentosca.toscana.model.capability.DatabaseEndpointCapability;
-import org.opentosca.toscana.model.operation.StandardLifecycle;
-import org.opentosca.toscana.model.relation.HostedOn;
 import org.opentosca.toscana.model.requirement.DbmsRequirement;
-import org.opentosca.toscana.model.requirement.Requirement;
+import org.opentosca.toscana.model.util.ToscaKey;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  Represents a logical database that can be managed and hosted by a {@link Dbms} node.
  (TOSCA Simple Profile in YAML Version 1.1, p. 173)
  */
-@Data
+@EqualsAndHashCode
+@ToString
 public class Database extends RootNode {
-
-    public final Requirement<ContainerCapability, Dbms, HostedOn> host;
 
     /**
      The logical database databaseName.
      (TOSCA Simple Profile in YAML Version 1.1, p. 173)
      */
-    private final String databaseName;
+    public static ToscaKey<String> DATABASE_NAME = new ToscaKey<>(PROPERTIES, "name")
+        .required(true);
 
     /**
      The optional port the database service will use for incoming data and request.
      (TOSCA Simple Profile in YAML Version 1.1, p. 173)
      */
-    private final Integer port;
+    public static ToscaKey<Integer> PORT = new ToscaKey<>(PROPERTIES, "port")
+        .type(Integer.class);
 
     /**
      The optional special user account used for database administration.
      (TOSCA Simple Profile in YAML Version 1.1, p. 173)
      */
-    private final String user;
+    public static ToscaKey<String> USER = new ToscaKey<>(PROPERTIES, "user");
+
     /**
-     The optional password associated with the user account provided in the {@link #user} field.
+     The optional password associated with the user account provided in the {@link #USER} field.
      (TOSCA Simple Profile in YAML Version 1.1, p. 173)
      */
-    private final String password;
+    public static ToscaKey<String> PASSWORD = new ToscaKey<>(PROPERTIES, "password");
 
-    private final DatabaseEndpointCapability databaseEndpoint;
+    public static ToscaKey<DatabaseEndpointCapability> DATABASE_ENDPOINT = new ToscaKey<>(CAPABILITIES, "database_endpoint")
+        .type(DatabaseEndpointCapability.class);
 
-    @Builder
-    private Database(String databaseName,
-                     Integer port,
-                     String user,
-                     String password,
-                     Requirement<ContainerCapability, Dbms, HostedOn> host,
-                     DatabaseEndpointCapability databaseEndpoint,
-                     String nodeName,
-                     StandardLifecycle standardLifecycle,
-                     Set<Requirement> requirements,
-                     Set<Capability> capabilities,
-                     String description) {
-        super(nodeName, standardLifecycle, requirements, capabilities, description);
-        this.databaseName = Objects.requireNonNull(databaseName);
-        this.port = port;
-        this.user = user;
-        this.password = password;
-        this.host = DbmsRequirement.getFallback(host);
-        this.databaseEndpoint = Objects.requireNonNull(databaseEndpoint);
+    public static ToscaKey<DbmsRequirement> HOST = new ToscaKey<>(REQUIREMENTS, "host")
+        .type(DbmsRequirement.class);
 
-        capabilities.add(this.databaseEndpoint);
-        requirements.add(this.host);
+    public Database(MappingEntity mappingEntity) {
+        super(mappingEntity);
+        init();
     }
 
-    // only use when subclassing this and hiding host field
-    protected Database(String databaseName,
-                       Integer port,
-                       String user,
-                       String password,
-                       DatabaseEndpointCapability databaseEndpoint,
-                       String nodeName,
-                       StandardLifecycle standardLifecycle,
-                       Set<Requirement> requirements,
-                       Set<Capability> capabilities,
-                       String description) {
-        super(nodeName, standardLifecycle, requirements, capabilities, description);
-        this.databaseName = Objects.requireNonNull(databaseName);
-        this.port = port;
-        this.user = user;
-        this.password = password;
-        this.host = null;
-        this.databaseEndpoint = DatabaseEndpointCapability.getFallback(databaseEndpoint);
-
-        this.capabilities.add(this.databaseEndpoint);
+    private void init() {
+        setDefault(DATABASE_ENDPOINT, new DatabaseEndpointCapability(getChildEntity(DATABASE_ENDPOINT)));
+        setDefault(HOST, new DbmsRequirement(getChildEntity(HOST)));
     }
 
     /**
-     @param nodeName     {@link #nodeName}
-     @param databaseName {@link #databaseName}
+     @return {@link #DATABASE_NAME}
      */
-    public static DatabaseBuilder builder(String nodeName,
-                                          String databaseName) {
-        return new DatabaseBuilder()
-            .nodeName(nodeName)
-            .databaseName(databaseName);
+    public String getDatabaseName() {
+        return get(DATABASE_NAME);
     }
 
     /**
-     @return {@link #port}
+     Sets {@link #DATABASE_NAME}
+     */
+    public Database setDatabaseName(String databaseName) {
+        set(DATABASE_NAME, databaseName);
+        return this;
+    }
+
+    /**
+     @return {@link #DATABASE_ENDPOINT}
+     */
+    public DatabaseEndpointCapability getDatabaseEndpoint() {
+        return get(DATABASE_ENDPOINT);
+    }
+
+    /**
+     Sets {@link #DATABASE_ENDPOINT}
+     */
+    public Database setDatabaseEndpoint(DatabaseEndpointCapability databaseEndpoint) {
+        set(DATABASE_ENDPOINT, databaseEndpoint);
+        return this;
+    }
+
+    /**
+     @return {@link #HOST}
+     */
+    public DbmsRequirement getHost() {
+        return get(HOST);
+    }
+
+    /**
+     Sets {@link #HOST}
+     */
+    public Database setHost(DbmsRequirement host) {
+        set(HOST, host);
+        return this;
+    }
+
+    /**
+     @return {@link #PORT}
      */
     public Optional<Integer> getPort() {
-        return Optional.ofNullable(port);
+        return Optional.ofNullable(get(PORT));
     }
 
     /**
-     @return {@link #user}
+     Sets {@link #PORT}
+     */
+    public Database setPort(Integer port) {
+        set(PORT, port);
+        return this;
+    }
+
+    /**
+     @return {@link #USER}
      */
     public Optional<String> getUser() {
-        return Optional.ofNullable(user);
+        return Optional.ofNullable(get(USER));
     }
 
     /**
-     @return {@link #password}
+     Sets {@link #USER}
+     */
+    public Database setUser(String user) {
+        set(USER, user);
+        return this;
+    }
+
+    /**
+     @return {@link #PASSWORD}
      */
     public Optional<String> getPassword() {
-        return Optional.ofNullable(password);
+        return Optional.ofNullable(get(PASSWORD));
+    }
+
+    /**
+     Sets {@link #PASSWORD}
+     */
+    public Database setPassword(String password) {
+        set(PASSWORD, password);
+        return this;
     }
 
     @Override
     public void accept(NodeVisitor v) {
         v.visit(this);
-    }
-
-    public static class DatabaseBuilder extends RootNodeBuilder {
-        protected Set<Requirement> requirements = super.requirements;
-        protected Set<Capability> capabilities = super.capabilities;
     }
 }

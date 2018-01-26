@@ -7,57 +7,43 @@ import java.util.Set;
 
 import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
-import org.opentosca.toscana.core.transformation.TransformationContext;
-import org.opentosca.toscana.core.transformation.logging.Log;
+import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.visitor.VisitableNode;
 import org.opentosca.toscana.plugins.cloudfoundry.application.Application;
-import org.opentosca.toscana.plugins.cloudfoundry.transformation.CloudFoundryLifecycle;
-import org.opentosca.toscana.plugins.cloudfoundry.transformation.visitors.NodeVisitors;
-import org.opentosca.toscana.plugins.testdata.TestEffectiveModels;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.CLI_CREATE_SERVICE_DEFAULT;
-import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.CLI_PATH_TO_MANIFEST;
-import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.CLI_PUSH;
-import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.DEPLOY_NAME;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.FILEPRAEFIX_DEPLOY;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.FILESUFFIX_DEPLOY;
-import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.MANIFEST_NAME;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.MANIFEST_PATH;
-import static org.opentosca.toscana.plugins.util.TestUtil.setUpMockTransformationContext;
+import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.deploy_name;
+import static org.opentosca.toscana.plugins.scripts.BashScript.SHEBANG;
+import static org.opentosca.toscana.plugins.scripts.BashScript.SOURCE_UTIL_ALL;
 
 public class CloudFoundryPluginTest extends BaseUnitTest {
 
-    private final static EffectiveModel lamp = TestEffectiveModels.getLampModel();
-    private static Application myApp = new Application("my_app", 1);
-    private final static NodeVisitors visitor = new NodeVisitors(myApp);
-
-    @Mock
-    private Log log;
     private File targetDir;
     private final String appName = "my_app";
     private final String appNameClearedUp = "my-app";
     private final ArrayList<String> paths = new ArrayList<>();
     private final String resourcesPath = "src/test/resources/";
+    EffectiveModel lamp;
 
     @Before
     public void setUp() throws Exception {
-        File sourceDir = new File(resourcesPath + "csars/yaml/valid/lamp-input/");
+        Application myApp = new Application(appName, 1);
+        org.opentosca.toscana.plugins.cloudfoundry.transformation.visitors.NodeVisitor visitor = new org.opentosca.toscana.plugins.cloudfoundry.transformation.visitors.NodeVisitor(myApp);
+        lamp = new EffectiveModel(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, log);
+        File sourceDir = new File(resourcesPath, "csars/yaml/valid/lamp-noinput");
         targetDir = new File(tmpdir, "targetDir");
         sourceDir.mkdir();
         targetDir.mkdir();
-        when(log.getLogger(any(Class.class))).thenReturn(LoggerFactory.getLogger("Test logger"));
         PluginFileAccess fileAccess = new PluginFileAccess(sourceDir, targetDir, log);
         Set<RootNode> nodes = lamp.getNodes();
 
@@ -75,11 +61,6 @@ public class CloudFoundryPluginTest extends BaseUnitTest {
         applications.add(myApp);
         FileCreator fileCreator = new FileCreator(fileAccess, applications);
         fileCreator.createFiles();
-    }
-
-    @Test
-    public void getName() {
-        assertEquals(appNameClearedUp, myApp.getName());
     }
 
     @Test
@@ -107,23 +88,31 @@ public class CloudFoundryPluginTest extends BaseUnitTest {
 
     @Test
     public void getDeployScript() throws Exception {
-        File targetFile = new File(targetDir + "/output/scripts/", FILEPRAEFIX_DEPLOY + DEPLOY_NAME +
+        File targetFile = new File(targetDir + "/output/scripts/", FILEPRAEFIX_DEPLOY + deploy_name +
             FILESUFFIX_DEPLOY);
         String deployScript = FileUtils.readFileToString(targetFile);
-        String expectedOutput = String.format("#!/bin/sh\nsource util/*\ncheck \"cf\"\n%smy_db\n%s%s%s%s\n",
-            CLI_CREATE_SERVICE_DEFAULT, CLI_PUSH, appNameClearedUp, CLI_PATH_TO_MANIFEST, MANIFEST_NAME);
+        String expectedOutput = SHEBANG + "\n" + SOURCE_UTIL_ALL + "\n" +
+            "check \"cf\"\n" +
+            "cf create-service {plan} {service} my_db\n" +
+            "check python\n" +
+            "python replace.py ../../app1/my_app/configure_myphpapp.sh /var/www/html/ /home/vcap/app/htdocs/\n" +
+            "python replace.py ../../app1/my_app/create_myphpapp.sh /var/www/html/ /home/vcap/app/htdocs/\n" +
+            "cf push my-app -f ../manifest.yml\n" +
+            "python executeCommand.py my-app /home/vcap/app/htdocs/my_app/configure_myphpapp.sh\n" +
+            "python executeCommand.py my-app /home/vcap/app/htdocs/my_app/create_myphpapp.sh\n" +
+            "python configureMysql.py ../../app1/my_db/createtable.sql\n";
 
         assertEquals(expectedOutput, deployScript);
     }
-
+/*
     @Test
     public void checkModel() throws Exception {
-        TransformationContext context = setUpMockTransformationContext(TestEffectiveModels.getLampModel());
+        TransformationContext context = setUpMockTransformationContext(lamp);
         CloudFoundryLifecycle cloudFoundry = new CloudFoundryLifecycle(context);
         assertTrue(cloudFoundry.checkModel());
     }
 
-    /*
+    
     @Test
     public void checkTransformation() throws Exception {
         TransformationContext context = setUpMockTransformationContext(TestEffectiveModels.getLampModel());

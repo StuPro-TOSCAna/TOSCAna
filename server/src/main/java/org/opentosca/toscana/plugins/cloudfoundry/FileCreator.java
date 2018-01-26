@@ -7,12 +7,14 @@ import java.util.Map;
 
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.plugins.cloudfoundry.application.Application;
+import org.opentosca.toscana.plugins.cloudfoundry.application.Service;
 import org.opentosca.toscana.plugins.cloudfoundry.application.ServiceTypes;
 import org.opentosca.toscana.plugins.cloudfoundry.application.buildpacks.BuildpackDetector;
 import org.opentosca.toscana.plugins.cloudfoundry.application.deployment.Deployment;
 import org.opentosca.toscana.plugins.scripts.BashScript;
 import org.opentosca.toscana.plugins.scripts.EnvironmentCheck;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.json.JSONException;
 
 import static org.opentosca.toscana.plugins.cloudfoundry.application.ManifestAttributes.DOMAIN;
@@ -39,7 +41,7 @@ public class FileCreator {
     public static final String FILEPRAEFIX_DEPLOY = "deploy_";
     public static final String FILESUFFIX_DEPLOY = ".sh";
     public static final String APPLICATION_FOLDER = "app";
-    public static String DEPLOY_NAME = "application";
+    public static String deploy_name = "application";
 
     private final PluginFileAccess fileAccess;
     private List<Application> applications;
@@ -70,11 +72,6 @@ public class FileCreator {
         }
     }
 
-    public void updateManifest() throws IOException {
-        fileAccess.delete(MANIFEST_PATH);
-        createManifest();
-    }
-
     private void createManifestHead() throws IOException {
         String manifestHead = String.format(MANIFESTHEAD);
         fileAccess.access(MANIFEST_PATH).appendln(manifestHead).close();
@@ -85,6 +82,9 @@ public class FileCreator {
         fileAccess.access(MANIFEST_PATH).appendln(nameBlock).close();
     }
 
+    /**
+     adds the relative path of the application folder to the manifest
+     */
     private void addPathToApplication(Application application) throws IOException {
         String pathAddition = String.format("  %s: ../%s", PATH.getName(), APPLICATION_FOLDER + application.getApplicationNumber());
         fileAccess.access(MANIFEST_PATH).appendln(pathAddition).close();
@@ -127,25 +127,106 @@ public class FileCreator {
      */
     private void createDeployScript() throws IOException {
         if (applications.size() > 1) {
-            DEPLOY_NAME += "s";
+            deploy_name += "s";
         }
-        BashScript deployScript = new BashScript(fileAccess, FILEPRAEFIX_DEPLOY + DEPLOY_NAME);
+        BashScript deployScript = new BashScript(fileAccess, FILEPRAEFIX_DEPLOY + deploy_name);
         deployScript.append(EnvironmentCheck.checkEnvironment("cf"));
 
-        int counter = 0;
-        for (Application application : applications) {
-            counter += 1;
-            Deployment deployment = new Deployment(deployScript, application, fileAccess);
+        //handle services
+        handleServices(deployScript);
 
-            if (counter == 1) {
-                deployment.treatServices(true);
-            } else {
-                deployment.treatServices(false);
-            }
-        }
+        //replace
+        replaceStrings(deployScript);
 
+        //push applications
         for (Application application : applications) {
             deployScript.append(CLI_PUSH + application.getName() + CLI_PATH_TO_MANIFEST + MANIFEST_NAME);
+        }
+
+        //read credentials, replace, executeScript, configureMysql
+        for (Application application : applications) {
+            Deployment deployment = new Deployment(deployScript, application, fileAccess);
+
+            //read credentials
+            readCredentials(deployment, application);
+
+            //execute
+            executeFiles(deployment, application);
+
+            //configureSql
+            configureSql(deployment, application);
+        }
+    }
+
+    /**
+     the files in the application which are signed as sql and config scripts will be executed in the database
+     */
+    private void configureSql(Deployment deployment, Application application) throws IOException {
+        if (!application.getConfigMysql().isEmpty()) {
+            for (String file : application.getConfigMysql()) {
+                deployment.configureSql(file);
+            }
+        }
+    }
+
+    /**
+     adds to deploy script a command which will execute the files which are in the application signed to execute
+     */
+    private void executeFiles(Deployment deployment, Application application) throws IOException {
+        if (!application.getExecuteCommands().isEmpty()) {
+            Map<String, String> executeCommands = application.getExecuteCommands();
+
+            for (Map.Entry<String, String> command : executeCommands.entrySet()) {
+                deployment.executeFile(application.getName(), command.getValue());
+            }
+        }
+    }
+
+    /**
+     adds for each service a command to the deploy script which reads the credentials from the service which will be
+     created
+     */
+    private void readCredentials(Deployment deployment, Application application) throws IOException {
+        if (!CollectionUtils.isEmpty(application.getServicesMatchedToProvider())) {
+            for (Service service : application.getServicesMatchedToProvider()) {
+                deployment.readCredentials(application.getName(), service.getServiceName(), service.getServiceType());
+            }
+        }
+    }
+
+    /**
+     looks for a suitable service of the provider which matches to the needed service
+     adds the creation command to the deployscript
+
+     @param deployScript script the commands will be written in
+     */
+    private void handleServices(BashScript deployScript) throws IOException {
+        for (Application application : applications) {
+            Deployment deployment = new Deployment(deployScript, application, fileAccess);
+
+            //only one time all service offerings should be printed to the deploy script
+            deployment.treatServices();
+        }
+    }
+
+    /**
+     replaces strings in files with suitable strings.
+     If a path is not suitable to the path in the warden container
+     A replace command will be added to the deployscript which replaces the Strings locally.
+
+     @param deployScript script the commands will be written in
+     */
+    private void replaceStrings(BashScript deployScript) throws IOException {
+        for (Application application : applications) {
+            Deployment deployment = new Deployment(deployScript, application, fileAccess);
+            if (!application.getExecuteCommands().isEmpty()) {
+                Map<String, String> executeCommands = application.getExecuteCommands();
+
+                for (Map.Entry<String, String> command : executeCommands.entrySet()) {
+                    //TODO: add lists which strings should be replaced. In 12 Factor it is probably not necessary.
+                    deployment.replaceStrings(command.getKey(), "/var/www/html/", "/home/vcap/app/htdocs/");
+                }
+            }
         }
     }
 
@@ -161,14 +242,12 @@ public class FileCreator {
 
         if (!application.getAttributes().isEmpty()) {
             ArrayList<String> attributes = new ArrayList<>();
-            boolean containsDomain = false;
+
             for (Map.Entry<String, String> attribute : application.getAttributes().entrySet()) {
                 attributes.add(String.format("  %s: %s", attribute.getKey(), attribute.getValue()));
-                if (attribute.getKey().equals(DOMAIN.getName())) {
-                    containsDomain = true;
-                }
             }
-            if (!containsDomain) {
+
+            if (!application.getAttributes().containsKey(DOMAIN.getName())) {
                 attributes.add(String.format("  %s: %s", RANDOM_ROUTE.getName(), "true"));
             }
             for (String attribute : attributes) {

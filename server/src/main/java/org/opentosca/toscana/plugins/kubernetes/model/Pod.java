@@ -15,11 +15,11 @@ public class Pod {
     private List<NodeStack> containers;
 
     private Set<Port> ports;
-    
+
     public Pod(List<NodeStack> containers) {
         this.ports = new HashSet<>();
         this.containers = containers;
-        
+
         this.containers.forEach(e -> this.ports.addAll(e.getOpenPorts()));
     }
 

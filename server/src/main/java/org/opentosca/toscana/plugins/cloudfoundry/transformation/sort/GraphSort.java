@@ -65,7 +65,7 @@ public class GraphSort {
 
             while (!nodeStack.isEmpty()) {
                 RootNode currentNode = nodeStack.pop();
-                stack.add(nodes.get(currentNode.getNodeName()));
+                stack.add(nodes.get(currentNode.getEntityName()));
                 Set<RootRelationship> edges = graph.edgesOf(currentNode);
 
                 for (RootRelationship edge : edges) {

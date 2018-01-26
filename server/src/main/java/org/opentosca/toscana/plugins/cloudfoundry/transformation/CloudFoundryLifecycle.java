@@ -23,7 +23,7 @@ import org.opentosca.toscana.plugins.cloudfoundry.transformation.sort.CloudFound
 import org.opentosca.toscana.plugins.cloudfoundry.transformation.sort.GraphSort;
 import org.opentosca.toscana.plugins.cloudfoundry.transformation.visitors.ComputeNodeFinder;
 import org.opentosca.toscana.plugins.cloudfoundry.transformation.visitors.NodeSupported;
-import org.opentosca.toscana.plugins.cloudfoundry.transformation.visitors.NodeVisitors;
+import org.opentosca.toscana.plugins.cloudfoundry.transformation.visitors.NodeVisitor;
 import org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle;
 
 import org.json.JSONException;
@@ -103,18 +103,18 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
         for (RootNode node : model.getNodes()) {
             node.accept(computeFinder);
             CloudFoundryNode container = new CloudFoundryNode(node);
-            applicationNodes.put(node.getNodeName(), container);
+            applicationNodes.put(node.getEntityName(), container);
         }
 
         for (Compute compute : computeFinder.getComputeNodes()) {
-            computeNodes.add(applicationNodes.get(compute.getNodeName()));
+            computeNodes.add(applicationNodes.get(compute.getEntityName()));
         }
 
         logger.debug("Finding Top Level Nodes");
         GraphSort graph = new GraphSort(model);
         Set<RootNode> topLevelNodes = graph.getTopLevelNode(
             computeFinder.getComputeNodes().stream().map(Compute.class::cast).collect(Collectors.toList()),
-            e -> applicationNodes.get(e.getNodeName()).activateParentComputeNode()
+            e -> applicationNodes.get(e.getEntityName()).activateParentComputeNode()
         );
 
         logger.debug("Building complete Topology Stacks");
@@ -123,9 +123,11 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
         //TODO: check how many different applications there are and fill list with them
         //probably there must be a combination of application and set of nodes
         applications = new ArrayList<>();
+        int i = 1;
 
         for (CloudFoundryStack stack : stacks) {
-            Application myApp = new Application();
+            Application myApp = new Application(i);
+            i++;
             myApp.setProvider(provider);
             myApp.setConnection(connection);
 
@@ -152,7 +154,7 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
         List<Application> filledApplications = new ArrayList<>();
 
         for (Application application : applications) {
-            NodeVisitors visitor = new NodeVisitors(application);
+            NodeVisitor visitor = new NodeVisitor(application);
 
             for (CloudFoundryNode s : application.getStack().getNodes()) {
                 s.getNode().accept(visitor);

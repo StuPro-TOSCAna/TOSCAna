@@ -2,49 +2,49 @@ package org.opentosca.toscana.model.relation;
 
 import java.util.Optional;
 
+import org.opentosca.toscana.core.parse.model.MappingEntity;
 import org.opentosca.toscana.model.datatype.Credential;
+import org.opentosca.toscana.model.util.ToscaKey;
 import org.opentosca.toscana.model.visitor.RelationshipVisitor;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  Represents a network connection relationship between two nodes.
  (TOSCA Simple Profile in YAML Version 1.1, p. 160)
  */
-@Data
+@EqualsAndHashCode
+@ToString
 public class ConnectsTo extends RootRelationship {
 
     /**
      The optional credential used to present to the target endpoint for either authentication or authorization purposes.
      (TOSCA Simple Profile in YAML Version 1.1, p. 161)
      */
-    private final Credential credential;
+    public static ToscaKey<Credential> CREDENTIAL = new ToscaKey<>(PROPERTIES, "credential");
 
-    public ConnectsTo() {
-        super(null);
-        credential = null;
-    }
-
-    @Builder
-    protected ConnectsTo(Credential credential,
-                         String description) {
-        super(description);
-        this.credential = credential;
+    public ConnectsTo(MappingEntity entity) {
+        super(entity);
     }
 
     /**
-     @return {@link #credential}
+     @return {@link #CREDENTIAL}
      */
+
     public Optional<Credential> getCredential() {
-        return Optional.ofNullable(credential);
+        return Optional.ofNullable(get(CREDENTIAL));
+    }
+
+    /**
+     Sets {@link #CREDENTIAL}
+     */
+    public void setCredential(Credential credential) {
+        set(CREDENTIAL, credential);
     }
 
     @Override
     public void accept(RelationshipVisitor v) {
         v.visit(this);
-    }
-
-    public static class ConnectsToBuilder extends RootRelationshipBuilder {
     }
 }

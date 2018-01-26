@@ -1,32 +1,73 @@
 package org.opentosca.toscana.model.requirement;
 
-import java.util.Set;
+import java.util.Optional;
 
+import org.opentosca.toscana.core.parse.model.MappingEntity;
 import org.opentosca.toscana.model.capability.DockerContainerCapability;
-import org.opentosca.toscana.model.datatype.Range;
 import org.opentosca.toscana.model.node.ContainerRuntime;
 import org.opentosca.toscana.model.relation.HostedOn;
+import org.opentosca.toscana.model.util.ToscaKey;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.Singular;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
-@Data
+@EqualsAndHashCode
+@ToString
 public class DockerHostRequirement extends Requirement<DockerContainerCapability, ContainerRuntime, HostedOn> {
+    public ToscaKey<DockerContainerCapability> CAPABILITY = new ToscaKey<>(CAPABILITY_NAME)
+        .type(DockerContainerCapability.class);
+    public ToscaKey<ContainerRuntime> NODE = new ToscaKey<>(NODE_NAME)
+        .type(ContainerRuntime.class);
+    public ToscaKey<HostedOn> RELATIONSHIP = new ToscaKey<>(RELATIONSHIP_NAME)
+        .type(HostedOn.class);
 
-    @Builder
-    protected DockerHostRequirement(DockerContainerCapability capability,
-                                    Range occurrence,
-                                    @Singular Set<ContainerRuntime> fulfillers,
-                                    HostedOn relationship) {
-        super(capability, occurrence,
-            fulfillers, HostedOn.getFallback(relationship));
+    public DockerHostRequirement(MappingEntity mappingEntity) {
+        super(mappingEntity);
     }
 
-    public static Requirement<DockerContainerCapability, ContainerRuntime, HostedOn> getFallback(Requirement<DockerContainerCapability, ContainerRuntime, HostedOn> r) {
-        return (r == null) ? builder().build() : r;
+    /**
+     @return {@link #CAPABILITY}
+     */
+    public DockerContainerCapability getCapability() {
+        return get(CAPABILITY);
     }
 
-    public static class DockerHostRequirementBuilder extends RequirementBuilder<DockerContainerCapability, ContainerRuntime, HostedOn> {
+    /**
+     Sets {@link #CAPABILITY}
+     */
+    public DockerHostRequirement setCapability(DockerContainerCapability capability) {
+        set(CAPABILITY, capability);
+        return this;
+    }
+
+    /**
+     @return {@link #NODE}
+     */
+    public Optional<ContainerRuntime> getNode() {
+        return Optional.ofNullable(get(NODE));
+    }
+
+    /**
+     Sets {@link #NODE}
+     */
+    public DockerHostRequirement setNode(ContainerRuntime node) {
+        set(NODE, node);
+        return this;
+    }
+
+    /**
+     @return {@link #RELATIONSHIP}
+     */
+    public Optional<HostedOn> getRelationship() {
+        return Optional.ofNullable(get(RELATIONSHIP));
+    }
+
+    /**
+     Sets {@link #RELATIONSHIP}
+     */
+    @Override
+    public DockerHostRequirement setRelationship(HostedOn relationship) {
+        set(RELATIONSHIP, relationship);
+        return this;
     }
 }

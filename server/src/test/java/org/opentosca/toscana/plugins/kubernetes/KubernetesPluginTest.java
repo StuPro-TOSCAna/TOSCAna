@@ -1,11 +1,12 @@
 package org.opentosca.toscana.plugins.kubernetes;
 
 import org.opentosca.toscana.core.BaseUnitTest;
+import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.transformation.TransformationContext;
+import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.plugins.kubernetes.docker.mapper.BaseImageMapper;
 import org.opentosca.toscana.plugins.kubernetes.docker.mapper.MapperTest;
 import org.opentosca.toscana.plugins.lifecycle.ValidationFailureException;
-import org.opentosca.toscana.plugins.testdata.TestEffectiveModels;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -32,7 +33,8 @@ public class KubernetesPluginTest extends BaseUnitTest {
 
     @Test(expected = ValidationFailureException.class)
     public void modelCheckTest() throws Exception {
-        TransformationContext context = setUpMockTransformationContext(TestEffectiveModels.getSingleComputeNodeModel());
+        EffectiveModel singleComputeModel = new EffectiveModel(TestCsars.VALID_SINGLE_COMPUTE_WINDOWS_TEMPLATE, log);
+        TransformationContext context = setUpMockTransformationContext(singleComputeModel);
         plugin.transform(context);
     }
 }

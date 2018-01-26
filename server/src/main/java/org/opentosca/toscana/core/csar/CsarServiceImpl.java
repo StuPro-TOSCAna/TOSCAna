@@ -4,7 +4,6 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
 
-import org.opentosca.toscana.core.parse.CsarParseService;
 import org.opentosca.toscana.core.parse.InvalidCsarException;
 import org.opentosca.toscana.model.EffectiveModel;
 
@@ -19,12 +18,10 @@ public class CsarServiceImpl implements CsarService {
     private final static Logger logger = LoggerFactory.getLogger(CsarService.class.getName());
 
     private final CsarDao csarDao;
-    private final CsarParseService csarParser;
 
     @Autowired
-    public CsarServiceImpl(CsarDao dao, CsarParseService parser) {
+    public CsarServiceImpl(CsarDao dao) {
         this.csarDao = dao;
-        this.csarParser = parser;
     }
 
     @Override
@@ -43,8 +40,8 @@ public class CsarServiceImpl implements CsarService {
 
     private void populateWithTemplate(Csar csar) throws InvalidCsarException {
         if (!csar.getModel().isPresent()) {
-            EffectiveModel template = csarParser.parse(csar);
-            csar.setModel(template);
+            EffectiveModel model = new EffectiveModel(csar, csarDao.getContentDir(csar));
+            csar.setModel(model);
         }
     }
 

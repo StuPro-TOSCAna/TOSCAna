@@ -32,7 +32,7 @@ public class CloudFoundryStack {
     }
 
     public String getStackName() {
-        return nodeStacks.get(0).getNode().getNodeName();
+        return nodeStacks.get(0).getNode().getEntityName();
     }
 
     public String getCleanStackName() {
@@ -50,7 +50,7 @@ public class CloudFoundryStack {
         string.append("Node Stack (name = ").append(getStackName()).append(" , topology = ");
 
         for (CloudFoundryNode node : nodeStacks) {
-            string.append(node.getNode().getNodeName());
+            string.append(node.getNode().getEntityName());
             if (!node.getNode().equals(getRootNode().getNode())) {
                 string.append(" -> ");
             }

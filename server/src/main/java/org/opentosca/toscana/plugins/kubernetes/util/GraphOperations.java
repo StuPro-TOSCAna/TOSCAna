@@ -64,7 +64,7 @@ public class GraphOperations {
             nodeStack.add(n);
             while (!nodeStack.isEmpty()) {
                 RootNode currentNode = nodeStack.pop();
-                stack.add(nodes.get(currentNode.getNodeName()));
+                stack.add(nodes.get(currentNode.getEntityName()));
                 Set<RootRelationship> edges = graph.edgesOf(currentNode);
                 for (RootRelationship edge : edges) {
                     RootNode target = graph.getEdgeTarget(edge);

@@ -4,7 +4,6 @@ import org.opentosca.toscana.model.node.RootNode;
 
 /**
  This container class stores the data about this node aquired by the kubernetes plugin
- 
  */
 public class KubernetesNodeContainer {
 

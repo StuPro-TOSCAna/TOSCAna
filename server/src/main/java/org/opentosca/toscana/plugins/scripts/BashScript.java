@@ -1,5 +1,6 @@
 package org.opentosca.toscana.plugins.scripts;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
@@ -11,7 +12,8 @@ import static org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle.SCRIPTS_
 import static org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle.UTIL_DIR_NAME;
 
 public class BashScript {
-    public static final String SHEBANG = "#!/bin/sh";
+    public static final String SHEBANG = "#!/bin/bash";
+    public static final String SOURCE_UTIL_ALL = "for file in $(ls util); do source util/$file; done";
     private final static Logger logger = LoggerFactory.getLogger(BashScript.class);
     private String name;
     private PluginFileAccess access;
@@ -37,7 +39,7 @@ public class BashScript {
         access.delete(scriptPath);
 
         access.access(scriptPath).append(SHEBANG + "\n")
-            .append("source " + UTIL_DIR_NAME + "*\n")
+            .append(SOURCE_UTIL_ALL + "\n")
             .close();
     }
 
@@ -45,9 +47,16 @@ public class BashScript {
         logger.debug("Appending {} to {}.sh", string, name);
         access.access(scriptPath).appendln(string).close();
     }
-    
-    public void checkEnvironment (String command) throws IOException {
+
+    public void checkEnvironment(String command) throws IOException {
         EnvironmentCheck envCheck = new EnvironmentCheck();
         this.append(envCheck.checkEnvironment(command));
+    }
+
+    /**
+     get the absolute path of the Bash Script
+     */
+    public String getScriptPath() throws FileNotFoundException {
+        return access.getAbsolutePath(scriptPath);
     }
 }

@@ -1,7 +1,7 @@
 <?php
-$db_host = "127.0.0.1";
-$db_user = "root";
-$db_password = "abc";
-$db_name = "mydb";
-$db_port = 3306;
+$db_host = "DATABASE_HOST";
+$db_user = "DATABASE_USER";
+$db_password = "DATABASE_PASSWORD";
+$db_name = "DATABASE_NAME";
+$db_port = DATABASE_PORT;
 ?>
