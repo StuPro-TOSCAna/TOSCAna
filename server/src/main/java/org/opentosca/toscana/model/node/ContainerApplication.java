@@ -25,11 +25,14 @@ import lombok.ToString;
 public class ContainerApplication extends RootNode {
 
     public static ToscaKey<ContainerHostRequirement> HOST = new RequirementKey<>("host")
-        .types(ContainerCapability.class, ContainerRuntime.class, HostedOn.class);
+        .subTypes(ContainerCapability.class, ContainerRuntime.class, HostedOn.class)
+        .type(ContainerHostRequirement.class);
     public static ToscaKey<StorageRequirement> STORAGE = new RequirementKey<>("storage")
-        .types(StorageCapability.class, RootNode.class, DependsOn.class);
+        .subTypes(StorageCapability.class, RootNode.class, DependsOn.class)
+        .type(StorageRequirement.class);
     public static ToscaKey<NetworkRequirement> NETWORK = new RequirementKey<>("network")
-        .types(EndpointCapability.class, RootNode.class, DependsOn.class);
+        .subTypes(EndpointCapability.class, RootNode.class, DependsOn.class)
+        .type(NetworkRequirement.class);
 
     public ContainerApplication(MappingEntity mappingEntity) {
         super(mappingEntity);

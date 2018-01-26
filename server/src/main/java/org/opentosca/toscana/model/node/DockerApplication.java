@@ -17,7 +17,8 @@ import lombok.ToString;
 public class DockerApplication extends ContainerApplication {
 
     public static ToscaKey<DockerHostRequirement> DOCKER_HOST = new RequirementKey<>("host")
-        .types(DockerContainerCapability.class, ContainerRuntime.class, HostedOn.class);
+        .subTypes(DockerContainerCapability.class, ContainerRuntime.class, HostedOn.class)
+        .type(DockerHostRequirement.class);
 
     public DockerApplication(MappingEntity mappingEntity) {
         super(mappingEntity);

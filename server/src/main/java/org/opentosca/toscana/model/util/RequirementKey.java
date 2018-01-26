@@ -5,12 +5,7 @@ import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.relation.RootRelationship;
 import org.opentosca.toscana.model.requirement.Requirement;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class RequirementKey<T> extends ToscaKey<T> {
-
-    private final static Logger logger = LoggerFactory.getLogger(RequirementKey.class.getName());
 
     public final static String FULFILLER = "fulfiller_type";
     public final static String CAPABILITY = "capability_type";
@@ -21,15 +16,10 @@ public class RequirementKey<T> extends ToscaKey<T> {
         super.type(Requirement.class);
     }
 
-    public <T> RequirementKey<T> types(Class<? extends Capability> capabilityType, Class<? extends RootNode> fulfillerType, Class<? extends RootRelationship> relationshipType) {
+    public <T> RequirementKey<T> subTypes(Class<? extends Capability> capabilityType, Class<? extends RootNode> fulfillerType, Class<? extends RootRelationship> relationshipType) {
         directive(FULFILLER, fulfillerType);
         directive(CAPABILITY, capabilityType);
         directive(RELATIONSHIP, relationshipType);
         return (RequirementKey<T>) this;
-    }
-
-    @Override
-    public <T1> ToscaKey<T1> type(Class type) {
-        throw new UnsupportedOperationException("use types() instead");
     }
 }

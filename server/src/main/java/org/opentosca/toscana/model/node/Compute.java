@@ -1,5 +1,6 @@
 package org.opentosca.toscana.model.node;
 
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -68,7 +69,8 @@ public class Compute extends RootNode {
     public static ToscaKey<BindableCapability> BINDING = new ToscaKey<>(CAPABILITIES, "binding")
         .type(BindableCapability.class);
     public static ToscaKey<BlockStorageRequirement> LOCAL_STORAGE = new RequirementKey<>("local_storage")
-        .types(AttachmentCapability.class, BlockStorage.class, AttachesTo.class);
+        .subTypes(AttachmentCapability.class, BlockStorage.class, AttachesTo.class)
+        .type(BlockStorageRequirement.class);
 
     public Compute(MappingEntity mappingEntity) {
         super(mappingEntity);
@@ -118,14 +120,14 @@ public class Compute extends RootNode {
      @return {@link #NETWORKS}
      */
     public Set<NetworkInfo> getNetworks() {
-        return getCollection(NETWORKS);
+        return new HashSet<>(getCollection(NETWORKS));
     }
 
     /**
      @return {@link #PORTS}
      */
     public Set<PortInfo> getPorts() {
-        return getCollection(PORTS);
+        return new HashSet<>(getCollection(PORTS));
     }
 
     /**

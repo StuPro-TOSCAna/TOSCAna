@@ -18,14 +18,15 @@ import lombok.ToString;
 @ToString
 public class WordPress extends WebApplication {
 
-    public static ToscaKey<String> ADMIN_USER = new ToscaKey<>(PROPERTIES, "admin_user").required(true);
+    public static ToscaKey<String> ADMIN_USER = new ToscaKey<>(PROPERTIES, "admin_user").required();
 
-    public static ToscaKey<String> ADMIN_PASSWORD = new ToscaKey<>(PROPERTIES, "admin_password").required(true);
+    public static ToscaKey<String> ADMIN_PASSWORD = new ToscaKey<>(PROPERTIES, "admin_password").required();
 
-    public static ToscaKey<String> DB_HOST = new ToscaKey<>(PROPERTIES, "db_host").required(true);
+    public static ToscaKey<String> DB_HOST = new ToscaKey<>(PROPERTIES, "db_host").required();
 
     public static ToscaKey<DatabaseEndpointRequirement> DATABASE_ENDPOINT = new RequirementKey<>("database_endpoint")
-        .types(DatabaseEndpointCapability.class, Database.class, ConnectsTo.class);
+        .subTypes(DatabaseEndpointCapability.class, Database.class, ConnectsTo.class)
+        .type(DatabaseEndpointRequirement.class);
 
     public WordPress(MappingEntity mappingEntity) {
         super(mappingEntity);

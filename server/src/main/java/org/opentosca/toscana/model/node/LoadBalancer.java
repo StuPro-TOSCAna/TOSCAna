@@ -32,7 +32,8 @@ public class LoadBalancer extends RootNode {
     public static ToscaKey<PublicEndpointCapability> CLIENT = new ToscaKey<>(CAPABILITIES, "client")
         .type(PublicEndpointCapability.class);
     public static ToscaKey<NetworkRequirement> APPLICATION = new RequirementKey<>("application")
-        .types(EndpointCapability.class, RootNode.class, DependsOn.class);
+        .subTypes(EndpointCapability.class, RootNode.class, DependsOn.class)
+        .type(NetworkRequirement.class);
 
     public LoadBalancer(MappingEntity mappingEntity) {
         super(mappingEntity);

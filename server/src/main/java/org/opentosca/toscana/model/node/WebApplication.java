@@ -32,7 +32,8 @@ public class WebApplication extends RootNode {
     public static ToscaKey<EndpointCapability> APP_ENDPOINT = new ToscaKey<>(CAPABILITIES, "app_endpoint")
         .type(EndpointCapability.class);
     public static ToscaKey<WebServerRequirement> HOST = new RequirementKey<>("host")
-        .types(ContainerCapability.class, WebServer.class, HostedOn.class);
+        .subTypes(ContainerCapability.class, WebServer.class, HostedOn.class)
+        .type(WebServerRequirement.class);
 
     public WebApplication(MappingEntity mappingEntity) {
         super(mappingEntity);

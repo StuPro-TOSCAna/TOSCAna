@@ -36,7 +36,8 @@ public class SoftwareComponent extends RootNode {
         .type(Credential.class);
 
     public static ToscaKey<HostRequirement> HOST = new RequirementKey<>("host")
-        .types(ContainerCapability.class, Compute.class, HostedOn.class);
+        .subTypes(ContainerCapability.class, Compute.class, HostedOn.class)
+        .type(HostRequirement.class);
 
     public SoftwareComponent(MappingEntity mappingEntity) {
         super(mappingEntity);

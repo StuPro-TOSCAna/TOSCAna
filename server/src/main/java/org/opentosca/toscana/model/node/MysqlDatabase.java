@@ -16,7 +16,9 @@ import lombok.ToString;
 public class MysqlDatabase extends Database {
 
     public static ToscaKey<MysqlDbmsRequirement> HOST = new RequirementKey<>("host")
-        .types(ContainerCapability.class, MysqlDbms.class, HostedOn.class);
+        .subTypes(ContainerCapability.class, MysqlDbms.class, HostedOn.class)
+        .type(MysqlDbmsRequirement.class);
+    
 
     public MysqlDatabase(MappingEntity mappingEntity) {
         super(mappingEntity);

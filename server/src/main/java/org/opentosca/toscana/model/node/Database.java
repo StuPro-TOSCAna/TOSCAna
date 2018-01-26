@@ -27,7 +27,7 @@ public class Database extends RootNode {
      (TOSCA Simple Profile in YAML Version 1.1, p. 173)
      */
     public static ToscaKey<String> DATABASE_NAME = new ToscaKey<>(PROPERTIES, "name")
-        .required(true);
+        .required();
 
     /**
      The optional port the database service will use for incoming data and request.
@@ -52,14 +52,11 @@ public class Database extends RootNode {
         .type(DatabaseEndpointCapability.class);
 
     public static ToscaKey<DbmsRequirement> HOST = new RequirementKey<>("host")
-        .types(ContainerCapability.class, Dbms.class, HostedOn.class);
+        .subTypes(ContainerCapability.class, Dbms.class, HostedOn.class)
+        .type(DbmsRequirement.class);
 
     public Database(MappingEntity mappingEntity) {
         super(mappingEntity);
-        init();
-    }
-
-    private void init() {
         setDefault(DATABASE_ENDPOINT, new DatabaseEndpointCapability(getChildEntity(DATABASE_ENDPOINT)));
         setDefault(HOST, new DbmsRequirement(getChildEntity(HOST)));
     }
