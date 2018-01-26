@@ -37,7 +37,14 @@ public abstract class Entity implements Comparable<Entity> {
     }
 
     public String getName() {
-        return id.getName();
+        Optional<Entity> parent = getParent();
+        if (parent.isPresent()) {
+            Connection incomingConnection = graph.getEdge(parent.get(), this);
+            if (incomingConnection != null) {
+                return incomingConnection.getKey();
+            }
+        }
+        return this.id.getName();
     }
 
     public Optional<Entity> getChild(ToscaKey<?> key) {
@@ -99,7 +106,7 @@ public abstract class Entity implements Comparable<Entity> {
         if (child.isPresent()) {
             for (Entity grandChild : child.get().getChildren()) {
                 try {
-                    T value = TypeConverter.convert(grandChild, key);
+                    T value = TypeConverter.convert(grandChild, key, child.get());
                     values.add(value);
                 } catch (AttributeNotSetException e) {
                     logger.warn("Trying to access an unset attribute - skipping.", e);
@@ -121,9 +128,13 @@ public abstract class Entity implements Comparable<Entity> {
         return children;
     }
 
-    public Entity getParent() {
+    public Optional<Entity> getParent() {
         EntityId parentId = getId().ascend();
-        return graph.getEntity(parentId).get();
+        if (parentId == null) {
+            return Optional.empty();
+        }
+        Entity parent = graph.getEntity(parentId).get();
+        return Optional.of(parent);
     }
 
     @Override

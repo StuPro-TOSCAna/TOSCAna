@@ -22,7 +22,7 @@ public class MappingEntity extends Entity implements CollectionEntity {
         Optional<Entity> entity = getChild(key);
         if (entity.isPresent()) {
             try {
-                return TypeConverter.convert(entity.get(), key);
+                return TypeConverter.convert(entity.get(), key, entity.get().getParent().get());
             } catch (AttributeNotSetException e) {
                 graph.getLogger().warn("Accessing an unset attribute", e);
             }

@@ -6,9 +6,9 @@ applications:
   mem_size: 1024MB
   random-route: true
   env:
-    password: abc
-    port: 3306
-    name: mydb
-    user: root
+    database_user: root
+    database_name: mydb
+    database_port: 3306
+    database_password: abc
   services:
     - my_db
