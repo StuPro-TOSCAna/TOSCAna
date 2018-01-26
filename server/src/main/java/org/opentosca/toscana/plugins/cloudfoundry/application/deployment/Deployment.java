@@ -63,6 +63,7 @@ public class Deployment {
      */
     public void configureSql(String relativePathToSQLConfigureFile) throws IOException {
         copyFile(PYTHON_CONFIGURE_SQL_FILENAME, PYTHON_SCRIPTS_SOURCE);
+
         String command = String.format("python %s %s", PYTHON_CONFIGURE_SQL_FILENAME, relativePathToSQLConfigureFile);
         logger.debug("Add \"{}\" to deploy script. This command will configure the sql database. File should be a .sql File", command);
         deploymentScript.append(command);

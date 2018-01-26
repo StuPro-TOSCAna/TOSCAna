@@ -58,6 +58,7 @@ public class FileCreator {
     public void createFiles() throws IOException, JSONException {
         logger.info("Create manifest.yml");
         createManifest();
+
         logger.info("Create deploy script");
         createDeployScript();
 
@@ -93,6 +94,7 @@ public class FileCreator {
      */
     private void addPathToApplication(Application application) throws IOException {
         String pathAddition = String.format("  %s: ../%s", PATH.getName(), APPLICATION_FOLDER + application.getApplicationNumber());
+
         logger.info("Add path to application {} to manifest", pathAddition);
         fileAccess.access(MANIFEST_PATH).appendln(pathAddition).close();
     }

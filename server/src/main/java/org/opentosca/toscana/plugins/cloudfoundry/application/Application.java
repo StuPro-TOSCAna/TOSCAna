@@ -57,6 +57,7 @@ public class Application {
      */
     public void addConfigMysql(String pathToFile) {
         String relativePath = "../../" + APPLICATION_FOLDER + this.applicationNumber + "/" + pathToFile;
+        
         logger.debug("Add a config mysql command to deploy script. Relative path to file is {}", relativePath);
         configureSqlDatabase.add(relativePath);
     }
@@ -74,7 +75,9 @@ public class Application {
         if (parentTopNode instanceof WebApplication) {
             pathToFileOnContainer = "/home/vcap/app/htdocs/";
         }
+
         logger.debug("Add python script to execute {} on cloud foundry warden container", pathToFile);
+
         executeCommand.put("../../" + APPLICATION_FOLDER + this.getApplicationNumber() + "/" + pathToFile,
             pathToFileOnContainer + pathToFile);
     }
