@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.opentosca.toscana.core.plugin.PluginService;
-import org.opentosca.toscana.core.plugin.TransformationPlugin;
+import org.opentosca.toscana.core.plugin.TOSCAnaPlugin;
 import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.core.transformation.TransformationState;
@@ -17,7 +17,7 @@ import org.slf4j.Logger;
 public class ExecutionTask implements Runnable {
 
     private final Transformation transformation;
-    private final TransformationPlugin plugin;
+    private final TOSCAnaPlugin plugin;
     private final File csarContentDir;
     private final File transformationRootDir;
     private final String platformId;

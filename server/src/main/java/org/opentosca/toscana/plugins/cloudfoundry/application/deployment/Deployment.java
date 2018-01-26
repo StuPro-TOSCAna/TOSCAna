@@ -13,7 +13,7 @@ import org.opentosca.toscana.plugins.scripts.BashScript;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
-import static org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle.SCRIPTS_DIR_PATH;
+import static org.opentosca.toscana.core.plugin.lifecycle.AbstractLifecycle.SCRIPTS_DIR_PATH;
 
 public class Deployment {
 

@@ -1,12 +1,12 @@
 package org.opentosca.toscana.plugins.kubernetes;
 
 import org.opentosca.toscana.core.BaseUnitTest;
+import org.opentosca.toscana.core.plugin.lifecycle.ValidationFailureException;
 import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.plugins.kubernetes.docker.mapper.BaseImageMapper;
 import org.opentosca.toscana.plugins.kubernetes.docker.mapper.MapperTest;
-import org.opentosca.toscana.plugins.lifecycle.ValidationFailureException;
 
 import org.junit.Before;
 import org.junit.Test;
