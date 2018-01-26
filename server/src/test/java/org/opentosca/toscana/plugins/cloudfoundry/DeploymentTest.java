@@ -59,7 +59,8 @@ public class DeploymentTest extends BaseUnitTest {
 
         String expectedDeployContent = String.format(SHEBANG + "\n" +
             SOURCE_UTIL_ALL + "\n" +
-            "check python\npython %s %s\n", pythonFilename, pathToSqlFile);
+            "check python\n" +
+            "python %s %s\n", pythonFilename, pathToSqlFile);
 
         assertTrue(targetFile.exists());
         assertEquals(expectedDeployContent, contentDeploy);
@@ -76,7 +77,8 @@ public class DeploymentTest extends BaseUnitTest {
 
         String expectedDeployContent = String.format(SHEBANG + "\n" +
             SOURCE_UTIL_ALL + "\n" +
-            "check python\npython %s %s %s %s\n", pythonFilename, appName, service, ServiceTypes.MYSQL.getName());
+            "check python\n" +
+            "python %s %s %s %s\n", pythonFilename, appName, service, ServiceTypes.MYSQL.getName());
 
         assertTrue(targetFile.exists());
         assertEquals(expectedDeployContent, contentDeploy);
@@ -94,7 +96,8 @@ public class DeploymentTest extends BaseUnitTest {
 
         String expectedDeployContent = String.format(SHEBANG + "\n" +
             SOURCE_UTIL_ALL + "\n" +
-            "check python\npython %s %s %s\n", pythonFilename, appName, pathToFile);
+            "check python\n" +
+            "python %s %s %s\n", pythonFilename, appName, pathToFile);
 
         assertTrue(targetFile.exists());
         assertEquals(expectedDeployContent, contentDeploy);
@@ -114,7 +117,8 @@ public class DeploymentTest extends BaseUnitTest {
 
         String expectedDeployContent = String.format(SHEBANG + "\n" +
             SOURCE_UTIL_ALL + "\n" +
-            "check python\npython %s %s %s %s\n", pythonFilename, pathToFile, findStr, replaceStr);
+            "check python\n" +
+            "python %s %s %s %s\n", pythonFilename, pathToFile, findStr, replaceStr);
 
         assertTrue(targetFile.exists());
         assertEquals(expectedDeployContent, contentDeploy);

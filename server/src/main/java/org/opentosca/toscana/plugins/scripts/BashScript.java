@@ -1,5 +1,6 @@
 package org.opentosca.toscana.plugins.scripts;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
@@ -50,5 +51,12 @@ public class BashScript {
     public void checkEnvironment(String command) throws IOException {
         EnvironmentCheck envCheck = new EnvironmentCheck();
         this.append(envCheck.checkEnvironment(command));
+    }
+
+    /**
+     get the absolute path of the Bash Script
+     */
+    public String getScriptPath() throws FileNotFoundException {
+        return access.getAbsolutePath(scriptPath);
     }
 }

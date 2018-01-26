@@ -7,17 +7,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.opentosca.toscana.model.node.RootNode;
+import org.opentosca.toscana.model.node.WebApplication;
 import org.opentosca.toscana.plugins.cloudfoundry.client.Connection;
+
+import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.APPLICATION_FOLDER;
 
 /**
  This class should describe a Application with all needed information to deploy it
  */
 public class Application {
 
-    //private static int counter;
-
     private String name;
     private int applicationNumber;
+    private final ArrayList<String> configureSqlDatabase = new ArrayList<>();
+    private final Map<String, String> executeCommand = new HashMap<>();
     private final ArrayList<String> filePaths = new ArrayList<>();
     private final Map<String, String> environmentVariables = new HashMap<>();
     private final Map<String, String> attributes = new HashMap<>();
@@ -37,6 +41,51 @@ public class Application {
 
     public Application(int applicationNumber) {
         this.applicationNumber = applicationNumber;
+    }
+
+    /**
+     add in the deploy script the command to execute a sql file to the connected mysql database
+     must be a .sql File
+     If there is a script file to configure the database you have to use the executeFile method
+
+     @param pathToFile must be the path inside the csar. The method will create a relative path from it
+     */
+    public void addConfigMysql(String pathToFile) {
+        String relativePath = "../../" + APPLICATION_FOLDER + this.applicationNumber + "/" + pathToFile;
+        configureSqlDatabase.add(relativePath);
+    }
+
+    /**
+     execute the given file on the warden container
+
+     @param pathToFile    must be the path inside the csar. The method will create a path on the warden container
+     @param parentTopNode Class of a RootNode which should be the top node of this stack. This is needed to get the
+     right direction on the container
+     */
+    public void addExecuteFile(String pathToFile, RootNode parentTopNode) {
+        String pathToFileOnContainer = "/home/vcap/app/";
+        //TODO: expand with more NodeType
+        if (parentTopNode instanceof WebApplication) {
+            pathToFileOnContainer = "/home/vcap/app/htdocs/";
+        }
+        executeCommand.put("../../" + APPLICATION_FOLDER + this.getApplicationNumber() + "/" + pathToFile,
+            pathToFileOnContainer + pathToFile);
+    }
+
+    /**
+     returns a list with realtive paths which should be executed with the python script configMysql
+     */
+    public List<String> getConfigMysql() {
+        return configureSqlDatabase;
+    }
+
+    /**
+     returns a list with paths which should be executed with the python script executeCommand
+
+     @return Key is the path to File and value is path to file on container
+     */
+    public Map<String, String> getExecuteCommands() {
+        return executeCommand;
     }
 
     public int getApplicationNumber() {
