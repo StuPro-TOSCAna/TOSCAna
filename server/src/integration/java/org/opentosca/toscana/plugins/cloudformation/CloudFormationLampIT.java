@@ -58,5 +58,7 @@ public class CloudFormationLampIT extends BaseTransformTest {
         PropertyInstance propertyInstance = getProperties();
         Assume.assumeThat(propertyInstance.getPropertyValues().get(AWS_ACCESS_KEY_ID_KEY), not(isEmptyString()));
         Assume.assumeThat(propertyInstance.getPropertyValues().get(AWS_SECRET_KEY_KEY), not(isEmptyString()));
+        Assume.assumeNotNull(propertyInstance.getPropertyValues().get(AWS_ACCESS_KEY_ID_KEY));
+        Assume.assumeNotNull(propertyInstance.getPropertyValues().get(AWS_SECRET_KEY_KEY));
     }
 }
