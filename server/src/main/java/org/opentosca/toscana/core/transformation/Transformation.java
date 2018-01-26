@@ -78,4 +78,11 @@ public interface Transformation {
      @return Returns the underlying Csar of the transformation
      */
     Csar getCsar();
+
+    /**
+     Returns the outputs of the transformation.
+     If the Transformation is not Done or has errored (The state is not DONE or ERROR) this will throw a IllegalStateExecption
+     @return
+     */
+    PropertyInstance getOutputs() throws IllegalStateException;
 }

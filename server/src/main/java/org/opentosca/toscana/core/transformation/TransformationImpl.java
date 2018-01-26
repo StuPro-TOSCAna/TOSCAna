@@ -58,6 +58,11 @@ public class TransformationImpl implements Transformation {
     }
 
     @Override
+    public PropertyInstance getOutputs() throws IllegalStateException {
+        return null;
+    }
+
+    @Override
     public Log getLog() {
         return log;
     }

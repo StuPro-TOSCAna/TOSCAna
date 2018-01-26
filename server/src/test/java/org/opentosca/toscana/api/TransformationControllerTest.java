@@ -23,12 +23,14 @@ import org.opentosca.toscana.core.testdata.ByteArrayUtils;
 import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.TransformationImpl;
 import org.opentosca.toscana.core.transformation.TransformationService;
+import org.opentosca.toscana.core.transformation.TransformationState;
 import org.opentosca.toscana.core.transformation.artifacts.TargetArtifact;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.logging.LogEntry;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.platform.PlatformService;
 import org.opentosca.toscana.core.transformation.properties.PlatformProperty;
+import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
 import org.opentosca.toscana.core.transformation.properties.PropertyType;
 
 import ch.qos.logback.classic.Level;
@@ -37,7 +39,11 @@ import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
+import org.mockito.quality.Strictness;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
@@ -144,13 +150,19 @@ public class TransformationControllerTest extends BaseSpringTest {
     private final static String LIST_TRANSFORMATIONS_EXPECTED_URL = "http://localhost/api/csars/kubernetes-cluster/transformations/";
     private final static String CREATE_CSAR_VALID_URL = "/api/csars/kubernetes-cluster/transformations/p-a/create";
     private final static String PLATFORM_NOT_FOUND_URL = "/api/csars/kubernetes-cluster/transformations/p-z";
+    private final static String GET_OUTPUT_URL = "/api/csars/kubernetes-cluster/transformations/p-a/outputs";
     private final static String CSAR_NOT_FOUND_URL = "/api/csars/keinechtescsar/transformations";
-    private static final String[] CSAR_NAMES = new String[]{"kubernetes-cluster", "apache-test", "mongo-db"};
+    private static final String[] CSAR_NAMES = new String[] {"kubernetes-cluster", "apache-test", "mongo-db"};
     private static final String SECOND_VALID_PLATFORM_NAME = "p-b";
     private static final String PROPERTY_TEST_DEFAULT_VALUE = "Test-Default-Value";
     private static final String PROPERTY_TEST_DEFAULT_VALUE_KEY = "default_value_property";
     //</editor-fold>
 
+    @Rule
+    //This removes the Mockito Hints of unused Stubbings
+    //This is done to reduce log output.
+    public MockitoRule rule = MockitoJUnit.rule().strictness(Strictness.LENIENT);
+    
     private CsarService csarService;
     private TransformationService transformationService;
     private PlatformService platformService;
@@ -222,6 +234,42 @@ public class TransformationControllerTest extends BaseSpringTest {
             return t;
         });
     }
+    //</editor-fold>
+
+    //<editor-fold desc="Output Tests">
+
+    @Test
+    public void testGetOutputsEmptyOutputs() throws Exception{
+        List<Transformation> transformations = preInitNonCreationTests();
+        Transformation t = transformations.get(0);
+        when(t.getState()). thenReturn(TransformationState.DONE);
+        PropertyInstance mockOutputs = mock(PropertyInstance.class);
+        when(mockOutputs.getPropertySchema()).thenReturn(new HashSet<>());
+        when(mockOutputs.getPropertyValues()). thenReturn(new HashMap<>());
+        when(t.getOutputs()).thenReturn(mockOutputs);
+        mvc.perform(get(GET_OUTPUT_URL)).andDo(print()).andReturn();
+    }
+
+    @Test
+    public void testGetOutputsInvalidState() throws Exception {
+        List<Transformation> transformations = preInitNonCreationTests();
+        Transformation t = transformations.get(0);
+        when(t.getState()). thenReturn(TransformationState.TRANSFORMING);
+        mvc.perform(get(GET_OUTPUT_URL)).andDo(print()).andExpect(status().is(400)).andReturn();
+    }
+
+    @Test
+    public void testOutputInvalidPlatform() throws Exception {
+        mvc.perform(get(PLATFORM_NOT_FOUND_URL + "/outputs"))
+            .andDo(print()).andExpect(status().isNotFound()).andReturn();
+    }
+
+    @Test
+    public void testOutputInvalidCsar() throws Exception {
+        mvc.perform(get(CSAR_NOT_FOUND_URL + "/p-a/outputs"))
+            .andDo(print()).andExpect(status().isNotFound()).andReturn();
+    }
+
     //</editor-fold>
 
     //<editor-fold desc="Start transformation tests">
@@ -678,11 +726,13 @@ public class TransformationControllerTest extends BaseSpringTest {
     //</editor-fold>
 
     //<editor-fold desc="Util Methods">
-    public void preInitNonCreationTests() throws PlatformNotFoundException {
+    public List<Transformation> preInitNonCreationTests() throws PlatformNotFoundException {
         //add a transformation
         Optional<Csar> csar = csarService.getCsar(VALID_CSAR_NAME);
         assertTrue(csar.isPresent());
         String[] pnames = {VALID_PLATFORM_NAME, SECOND_VALID_PLATFORM_NAME};
+
+        List<Transformation> transformations = new ArrayList<>();
 
         for (String pname : pnames) {
 
@@ -696,8 +746,10 @@ public class TransformationControllerTest extends BaseSpringTest {
                 mockLog
             );
             transformation = spy(transformation);
+            transformations.add(transformation);
             csar.get().getTransformations().put(pname, transformation);
         }
+        return transformations;
     }
     //</editor-fold>
 }

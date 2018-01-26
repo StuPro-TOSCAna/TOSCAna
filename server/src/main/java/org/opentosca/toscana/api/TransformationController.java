@@ -22,6 +22,7 @@ import org.opentosca.toscana.api.exceptions.TransformationAlreadyPresentExceptio
 import org.opentosca.toscana.api.exceptions.TransformationNotFoundException;
 import org.opentosca.toscana.api.model.GetPropertiesResponse;
 import org.opentosca.toscana.api.model.LogResponse;
+import org.opentosca.toscana.api.model.OutputResponse;
 import org.opentosca.toscana.api.model.PropertyWrap;
 import org.opentosca.toscana.api.model.SetPropertiesRequest;
 import org.opentosca.toscana.api.model.SetPropertiesResponse;
@@ -669,23 +670,13 @@ public class TransformationController {
         Csar csar = findByCsarId(csarId);
         Transformation transformation = findTransformationByPlatform(csar, platformId);
         checkTransformationsForProperties(transformation, true);
-        List<PropertyWrap> propertyWrapList = new ArrayList<>();
         //TODO add filtering depending on the transformation state (i.e. Transforming, Deploying...)
         PropertyInstance instance = transformation.getProperties();
-        for (Property property : transformation.getProperties().getPropertySchema()) {
-            propertyWrapList.add(new PropertyWrap(
-                    property.getKey(),
-                    property.getType().getTypeName(),
-                    property.getDescription().orElse(null),
-                    instance.getPropertyValues().get(property.getKey()),
-                    property.isRequired()
-                )
-            );
-        }
+        List<PropertyWrap> propertyWrapList = wrapProperties(instance);
         GetPropertiesResponse response = new GetPropertiesResponse(csarId, platformId, propertyWrapList);
         return ResponseEntity.ok(response);
     }
-
+    
     /**
      This Mapping is used to post the inputs (properties) to the server. this will set the properties internally
      <p>
@@ -788,6 +779,27 @@ public class TransformationController {
         }
     }
 
+    @RequestMapping(
+        path = "/{platform}/outputs",
+        method = {RequestMethod.GET},
+        produces = "application/hal+json"
+    )
+    public ResponseEntity<OutputResponse> getOutputs(
+        @ApiParam(value = "The unique identifier for the CSAR", required = true, example = "test")
+        @PathVariable(name = "csarId") String csarId,
+        @ApiParam(value = "The identifier for the platform", required = true, example = "kubernetes")
+        @PathVariable(name = "platform") String platformId
+    ) {
+        Csar csar = findByCsarId(csarId);
+        Transformation transformation = findTransformationByPlatform(csar, platformId);
+        if(transformation.getState() != TransformationState.DONE && transformation.getState() != TransformationState.ERROR) {
+            throw new IllegalTransformationStateException("The Transformation has not finished yet!");
+        }
+        PropertyInstance outputs = transformation.getOutputs();
+        
+        return ResponseEntity.ok(new OutputResponse(csarId, platformId, wrapProperties(outputs)));
+    }
+    
     /**
      Checks if the given transformation exists and is in the required state otherwise a
      TransformationNotFoundException or IllegalTransformationsStateException is thrown
@@ -800,7 +812,7 @@ public class TransformationController {
             throw new IllegalTransformationStateException("The transformation is not in the INPUT_REQUIRED state");
         }
     }
-
+    
     @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "Cannot delete csar with running transformations")
     @ExceptionHandler(IndexOutOfBoundsException.class)
     public void handleLogIndexLessThanZero() {
@@ -822,5 +834,20 @@ public class TransformationController {
         Optional<Transformation> transformation = csar.getTransformation(platformId);
         return transformation.orElseThrow(() -> new TransformationNotFoundException(
             format("The Csar '%s' does not have a transformation for platform '%s'", csar.getIdentifier(), platformId)));
+    }
+
+    private List<PropertyWrap> wrapProperties(PropertyInstance instance) {
+        List<PropertyWrap> propertyWrapList = new ArrayList<>();
+        for (Property property : instance.getPropertySchema()) {
+            propertyWrapList.add(new PropertyWrap(
+                    property.getKey(),
+                    property.getType().getTypeName(),
+                    property.getDescription().orElse(null),
+                    instance.getPropertyValues().get(property.getKey()),
+                    property.isRequired()
+                )
+            );
+        }
+        return propertyWrapList;
     }
 }
