@@ -18,17 +18,17 @@ import org.apache.commons.lang3.EnumUtils;
 @SuppressWarnings("unchecked")
 public class TypeConverter {
 
-    public static <T> T convert(Entity entity, ToscaKey<T> key) throws AttributeNotSetException {
+    public static <T> T convert(Entity entity, ToscaKey<T> key, Entity parent) throws AttributeNotSetException {
         if (IntrinsicFunctionResolver.holdsFunction(entity)) {
             Entity resolvedEntity = IntrinsicFunctionResolver.resolveFunction(entity);
             if (resolvedEntity == null) {
                 return null;
             } else {
-                return convert(resolvedEntity, key);
+                return convert(resolvedEntity, key, parent);
             }
         } else if (entity instanceof ScalarEntity) {
             ScalarEntity scalarEntity = (ScalarEntity) entity;
-            return convertScalarEntity(scalarEntity, key);
+            return convertScalarEntity(scalarEntity, key, parent);
         } else if (BaseToscaElement.class.isAssignableFrom(key.getType())) {
             MappingEntity mappingEntity = (MappingEntity) entity;
             return TypeWrapper.wrapEntity(mappingEntity, key.getType());
@@ -38,7 +38,7 @@ public class TypeConverter {
         }
     }
 
-    private static <T> T convertScalarEntity(ScalarEntity scalarEntity, ToscaKey<T> key) {
+    private static <T> T convertScalarEntity(ScalarEntity scalarEntity, ToscaKey<T> key, Entity parent) {
         String value = scalarEntity.getValue();
         Class targetType = key.getType();
         if (String.class.isAssignableFrom(targetType)) {
@@ -57,7 +57,7 @@ public class TypeConverter {
             return result.orElseThrow(() -> new NoSuchElementException(
                 String.format("No value with name '%s' in enum '%s'", value, targetType.getSimpleName())));
         } else if (OperationVariable.class.isAssignableFrom(targetType)) {
-            return (T) new OperationVariable(scalarEntity);
+            return (T) new OperationVariable(scalarEntity, parent);
         } else if (SizeUnit.class.isAssignableFrom(targetType)) {
             SizeUnit.Unit fromDefaultUnit = (SizeUnit.Unit) key.getDirectives().get(SizeUnit.FROM);
             SizeUnit.Unit toUnit = (SizeUnit.Unit) key.getDirectives().get(SizeUnit.TO);

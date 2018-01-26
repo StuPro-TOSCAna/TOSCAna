@@ -39,7 +39,7 @@ public class KeyReflector {
             result = detectRealKey(entity, nodeType, toscaKeyType, filterName);
             return result.getType();
         } else if (RootRelationship.class.isAssignableFrom(type)) {
-            filterName = entity.getParent().getName();
+            filterName = entity.getParent().get().getName();
             toscaKeyType = Requirement.class;
             result = detectRealKey(entity, nodeType, toscaKeyType, filterName);
             return (Class) result.getDirectives().get(RequirementKey.RELATIONSHIP);
