@@ -4,7 +4,7 @@ VOLUME /toscana/data
 # Mount the AWS Directory as volume (used to store Credentials)
 VOLUME /root/.aws
 COPY server.jar server.jar
-ADD *.sh /toscana/
+COPY *.sh /toscana/
 RUN apk add --update --no-cache bash && \
     ./install-deps.sh && \
     ./cleanup.sh
