@@ -16,6 +16,8 @@ def main():
     if not strConfigureFile.lower().endswith(".sql"):
         print("needs an .sql File for db init")
         exit(1)
+    
+     print("Try to execute SQL-File {} in database".format(strConfigureFile))
 
     try:
         with open(strConfigureFile, 'r') as dbinit_file:
@@ -28,7 +30,7 @@ def main():
         with open(mysqlConfigFile, 'r') as content_file:
             mysql_config = content_file.read()
     except IOError as err:
-        print("""Failed to read mysqlConfigFile. Standard is %s. Where it is?""" %(mysqlConfigFile))
+        print("Failed to read mysqlConfigFile. Standard is {}. Where it is?".format(mysqlConfigFile))
         exit(1)
 
     config = ast.literal_eval(mysql_config)
