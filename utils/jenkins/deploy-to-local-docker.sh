@@ -13,6 +13,8 @@ mkdir server/target/docker_deploy
 echo "Copying Dockerfile"
 cp utils/jenkins/Dockerfile server/target/docker_deploy
 cp docker/alpine-dind/toscana-dind-entrypoint.sh server/target/docker_deploy
+cp docker/alpine-dind/install-deps.sh server/target/docker_deploy
+cp docker/alpine-dind/cleanup.sh server/target/docker_deploy
 # Copying server.jar in working Directory
 echo "Copying server.jar"
 cp server/target/server-1.0-SNAPSHOT.jar server/target/docker_deploy/server.jar
