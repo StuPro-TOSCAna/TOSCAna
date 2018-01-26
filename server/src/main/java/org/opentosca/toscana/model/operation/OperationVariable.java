@@ -2,6 +2,8 @@ package org.opentosca.toscana.model.operation;
 
 import java.util.Optional;
 
+import javax.annotation.Nullable;
+
 import org.opentosca.toscana.core.parse.model.Connection;
 import org.opentosca.toscana.core.parse.model.Entity;
 import org.opentosca.toscana.core.parse.model.ScalarEntity;
@@ -18,14 +20,11 @@ import lombok.ToString;
 public class OperationVariable {
 
     private ScalarEntity backingEntity;
-    private String name = null;
+    private final String name;
 
-    public OperationVariable(ScalarEntity entity, Entity parent){
+    public OperationVariable(ScalarEntity entity, @Nullable String name){
         this.backingEntity = entity;
-        Connection c = backingEntity.getGraph().getEdge(parent, entity);
-        if (c != null) {
-            name = c.getKey();
-        }
+        this.name = name;
     }
 
     public Optional<String> getValue() {

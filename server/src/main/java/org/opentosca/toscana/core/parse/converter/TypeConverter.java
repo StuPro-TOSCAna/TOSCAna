@@ -5,6 +5,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.opentosca.toscana.core.parse.converter.util.AttributeNotSetException;
+import org.opentosca.toscana.core.parse.model.Connection;
 import org.opentosca.toscana.core.parse.model.Entity;
 import org.opentosca.toscana.core.parse.model.MappingEntity;
 import org.opentosca.toscana.core.parse.model.ScalarEntity;
@@ -57,7 +58,12 @@ public class TypeConverter {
             return result.orElseThrow(() -> new NoSuchElementException(
                 String.format("No value with name '%s' in enum '%s'", value, targetType.getSimpleName())));
         } else if (OperationVariable.class.isAssignableFrom(targetType)) {
-            return (T) new OperationVariable(scalarEntity, parent);
+            Connection c = scalarEntity.getGraph().getEdge(parent, scalarEntity);
+            String name = null;
+            if (c != null) {
+                name = c.getKey();
+            }
+            return (T) new OperationVariable(scalarEntity, name);
         } else if (SizeUnit.class.isAssignableFrom(targetType)) {
             SizeUnit.Unit fromDefaultUnit = (SizeUnit.Unit) key.getDirectives().get(SizeUnit.FROM);
             SizeUnit.Unit toUnit = (SizeUnit.Unit) key.getDirectives().get(SizeUnit.TO);
