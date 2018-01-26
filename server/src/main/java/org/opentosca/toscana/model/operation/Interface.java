@@ -1,5 +1,6 @@
 package org.opentosca.toscana.model.operation;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -35,7 +36,7 @@ public class Interface extends BaseToscaElement {
      @return {@link #INPUTS}
      */
     public Set<OperationVariable> getInputs() {
-        return getCollection(INPUTS);
+        return new HashSet<>(getCollection(INPUTS));
     }
 
     /**

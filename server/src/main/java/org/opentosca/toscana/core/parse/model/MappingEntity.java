@@ -7,15 +7,10 @@ import org.opentosca.toscana.core.parse.converter.util.AttributeNotSetException;
 import org.opentosca.toscana.model.EntityId;
 import org.opentosca.toscana.model.util.ToscaKey;
 
-import org.slf4j.Logger;
-
-public class MappingEntity extends Entity {
-
-    private final Logger logger;
+public class MappingEntity extends Entity implements CollectionEntity {
 
     public MappingEntity(EntityId id, ServiceGraph graph) {
         super(id, graph);
-        this.logger = graph.getLog().getLogger(getClass());
     }
 
     @Override
@@ -24,12 +19,12 @@ public class MappingEntity extends Entity {
     }
 
     public <V> V getValue(ToscaKey<V> key) {
-        Optional<Entity> entity = graph.getChild(this, key);
+        Optional<Entity> entity = getChild(key);
         if (entity.isPresent()) {
             try {
                 return TypeConverter.convert(entity.get(), key);
             } catch (AttributeNotSetException e) {
-                logger.warn("Accessing an unset attribute", e);
+                graph.getLogger().warn("Accessing an unset attribute", e);
             }
         }
         return null;
@@ -38,15 +33,28 @@ public class MappingEntity extends Entity {
     /**
      Returns the child entity specified by given key. If the child entity does not exist yet, creates the entity.
      */
-    public MappingEntity getOrNewChild(ToscaKey key) {
+    public MappingEntity getOrNewChild(ToscaKey<?> key) {
         MappingEntity child;
         Optional<Entity> entity = getChild(key);
         if (entity.isPresent()) {
             child = (MappingEntity) entity.get();
         } else {
-            child = new MappingEntity(getId().descend(key), graph);
+            EntityId childId = getId();
+            if (key.getPredecessor().isPresent()) {
+                if (key.getPredecessor().get().isList()) {
+//                    childId = childId.descend();
+                    // todo
+
+                }
+            }
+            child = new MappingEntity(childId.descend(key), graph);
             graph.addEntity(child);
         }
         return child;
+    }
+
+    @Override
+    public void addChild(Entity entity) {
+        // todo
     }
 }

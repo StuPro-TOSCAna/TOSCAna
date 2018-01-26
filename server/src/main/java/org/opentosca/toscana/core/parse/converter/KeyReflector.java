@@ -10,7 +10,11 @@ import java.util.Set;
 import org.opentosca.toscana.core.parse.converter.util.NavigationUtil;
 import org.opentosca.toscana.core.parse.converter.util.NodeTypeResolver;
 import org.opentosca.toscana.core.parse.model.MappingEntity;
+import org.opentosca.toscana.model.capability.Capability;
 import org.opentosca.toscana.model.node.RootNode;
+import org.opentosca.toscana.model.relation.RootRelationship;
+import org.opentosca.toscana.model.requirement.Requirement;
+import org.opentosca.toscana.model.util.RequirementKey;
 import org.opentosca.toscana.model.util.ToscaKey;
 
 /**
@@ -22,14 +26,32 @@ import org.opentosca.toscana.model.util.ToscaKey;
  */
 public class KeyReflector {
 
-    public static Class detectRealCapabilityType(MappingEntity entity, Class type) {
+    public static Class detectRealSubtype(MappingEntity entity, Class type) {
         MappingEntity nodeEntity = NavigationUtil.getEnclosingNode(entity);
         String nodeTypeIdentifier = nodeEntity.getValue(RootNode.TYPE);
         Class nodeType = NodeTypeResolver.resolve(nodeTypeIdentifier);
-        Set<ToscaKey<?>> keys = reflectKeys(nodeType, type);
+        String filterName;
+        Class toscaKeyType;
+        ToscaKey result;
+        if (Capability.class.isAssignableFrom(type)) {
+            filterName = entity.getName();
+            toscaKeyType = type;
+            result = detectRealKey(entity, nodeType, toscaKeyType, filterName);
+            return result.getType();
+        } else if (RootRelationship.class.isAssignableFrom(type)) {
+            filterName = entity.getParent().getName();
+            toscaKeyType = Requirement.class;
+            result = detectRealKey(entity, nodeType, toscaKeyType, filterName);
+            return (Class) result.getDirectives().get(RequirementKey.RELATIONSHIP);
+        } else {
+            throw new IllegalStateException(String.format("Conversion of given abstract type %s not yet supported", type));
+        }
+    }
+
+    private static ToscaKey detectRealKey(MappingEntity entity, Class keyContainer, Class keyType, String filterName) {
+        Set<ToscaKey<?>> keys = reflectKeys(keyContainer, keyType);
         return keys.stream()
-            .filter(key -> key.getName().equals(entity.getName()))
-            .map(ToscaKey::getType)
+            .filter(key -> key.getName().equals(filterName))
             .findFirst().orElseThrow(() -> new IllegalStateException(
                 (String.format("No matching wrapper class found for entity '%s'", entity))));
     }
