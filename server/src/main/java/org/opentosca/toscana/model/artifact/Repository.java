@@ -22,7 +22,7 @@ public class Repository extends DescribableEntity {
     /**
      The URL used to access the repository.
      */
-    public static final ToscaKey<String> URL = new ToscaKey<>("url").required(true);
+    public static final ToscaKey<String> URL = new ToscaKey<>("url").required();
 
     /**
      The optional Credential used to authorize access to the repository.

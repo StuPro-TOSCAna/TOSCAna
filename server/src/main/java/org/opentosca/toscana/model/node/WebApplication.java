@@ -3,8 +3,14 @@ package org.opentosca.toscana.model.node;
 import java.util.Optional;
 
 import org.opentosca.toscana.core.parse.model.MappingEntity;
+import org.opentosca.toscana.model.capability.ContainerCapability;
+import org.opentosca.toscana.model.capability.DatabaseEndpointCapability;
 import org.opentosca.toscana.model.capability.EndpointCapability;
+import org.opentosca.toscana.model.relation.ConnectsTo;
+import org.opentosca.toscana.model.relation.HostedOn;
+import org.opentosca.toscana.model.requirement.DatabaseEndpointRequirement;
 import org.opentosca.toscana.model.requirement.WebServerRequirement;
+import org.opentosca.toscana.model.util.RequirementKey;
 import org.opentosca.toscana.model.util.ToscaKey;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 
@@ -28,8 +34,14 @@ public class WebApplication extends RootNode {
 
     public static ToscaKey<EndpointCapability> APP_ENDPOINT = new ToscaKey<>(CAPABILITIES, "app_endpoint")
         .type(EndpointCapability.class);
-    public static ToscaKey<WebServerRequirement> HOST = new ToscaKey<>(REQUIREMENTS, "host")
+    public static ToscaKey<WebServerRequirement> HOST = new RequirementKey<>("host")
+        .subTypes(ContainerCapability.class, WebServer.class, HostedOn.class)
         .type(WebServerRequirement.class);
+    
+    // TODO this is a hack: implement arbitrary requirement handling and delete this ToscaKey again
+    public static ToscaKey<DatabaseEndpointRequirement> DATABASE_ENDPOINT = new RequirementKey<>("database_endpoint")
+        .subTypes(DatabaseEndpointCapability.class, Database.class, ConnectsTo.class)
+        .type(DatabaseEndpointRequirement.class);
 
     public WebApplication(MappingEntity mappingEntity) {
         super(mappingEntity);

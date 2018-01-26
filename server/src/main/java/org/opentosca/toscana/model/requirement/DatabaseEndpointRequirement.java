@@ -14,6 +14,7 @@ import lombok.ToString;
 @EqualsAndHashCode
 @ToString
 public class DatabaseEndpointRequirement extends Requirement<DatabaseEndpointCapability, Database, ConnectsTo> {
+
     public ToscaKey<DatabaseEndpointCapability> CAPABILITY = new ToscaKey<>(CAPABILITY_NAME)
         .type(DatabaseEndpointCapability.class);
     public ToscaKey<Database> NODE = new ToscaKey<>(NODE_NAME)
