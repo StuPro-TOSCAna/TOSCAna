@@ -12,6 +12,7 @@ import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.visitor.VisitableNode;
 import org.opentosca.toscana.plugins.cloudformation.visitor.CloudFormationNodeVisitor;
 import org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle;
+import org.opentosca.toscana.plugins.util.TransformationFailureException;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
@@ -59,6 +60,7 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
         CloudFormationModule cfnModule = new CloudFormationModule(fileAccess, awsRegion, awsCredentials);
         Set<RootNode> nodes = model.getNodes();
 
+        // Visit Compute nodes first, then all others
         try {
             CloudFormationNodeVisitor cfnNodeVisitor = new CloudFormationNodeVisitor(logger, cfnModule);
             for (VisitableNode node : nodes) {
@@ -71,13 +73,26 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
                     node.accept(cfnNodeVisitor);
                 }
             }
-
-            fileAccess.access("output/template.yaml").appendln(cfnModule.toString()).close();
-            logger.info("Transformation to CloudFormation successful.");
+            logger.info("Creating CloudFormation template.");
+            fileAccess.access(OUTPUT_DIR + CloudFormationFileCreator.TEMPLATE_YAML)
+                .appendln(cfnModule.toString()).close();
         } catch (Exception e) {
-            logger.error("Transformation to CloudFormation unsuccessful. Please check the StackTrace for more Info.");
+            logger.error("Transformation to CloudFormation failed during template creation.");
             e.printStackTrace();
         }
+
+        try {
+            CloudFormationFileCreator fileCreator = new CloudFormationFileCreator(logger, cfnModule);
+            logger.info("Creating CloudFormation scripts.");
+            fileCreator.copyUtilScripts();
+            fileCreator.createScripts();
+            fileCreator.copyFiles();
+        } catch (IOException e) {
+            throw new TransformationFailureException("Transformation to CloudFormation failed " +
+                "during file creation.", e);
+        }
+
+        logger.info("Transformation to CloudFormation successful.");
     }
 
     @Override

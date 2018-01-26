@@ -26,6 +26,8 @@ import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.FILEPRAEFIX
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.FILESUFFIX_DEPLOY;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.MANIFEST_NAME;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.MANIFEST_PATH;
+import static org.opentosca.toscana.plugins.scripts.BashScript.SHEBANG;
+import static org.opentosca.toscana.plugins.scripts.BashScript.SOURCE_UTIL_ALL;
 
 public class CloudFoundryPluginTest extends BaseUnitTest {
 
@@ -96,7 +98,8 @@ public class CloudFoundryPluginTest extends BaseUnitTest {
         File targetFile = new File(targetDir + "/output/scripts/", FILEPRAEFIX_DEPLOY + appNameClearedUp +
             FILESUFFIX_DEPLOY);
         String deployScript = FileUtils.readFileToString(targetFile);
-        String expectedOutput = String.format("#!/bin/sh\nsource util/*\ncheck \"cf\"\n%smy_db\n%s%s%s%s\n",
+        String format = SHEBANG + "\n" + SOURCE_UTIL_ALL + "\n" + "check \"cf\"\n%smy_db\n%s%s%s%s\n";
+        String expectedOutput = String.format(format,
             CLI_CREATE_SERVICE_DEFAULT, CLI_PUSH, appNameClearedUp, CLI_PATH_TO_MANIFEST, MANIFEST_NAME);
 
         assertEquals(expectedOutput, deployScript);
