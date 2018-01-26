@@ -25,7 +25,7 @@ public class CloudFormationFileCreator {
     // private static final String CLI_PARAM_PARAMOVERRIDES = "--parameter-overrides ";
     static final String FILENAME_DEPLOY = "deploy";
     static final String FILENAME_UPLOAD = "file-upload";
-    static final String TEMPLATE_YAML = "template.yaml ";
+    static final String TEMPLATE_YAML = "template.yaml";
     static final String CHANGE_TO_PARENT_DIRECTORY = "cd ..";
     static final String RELATIVE_DIRECTORY_PREFIX = "../files/";
 

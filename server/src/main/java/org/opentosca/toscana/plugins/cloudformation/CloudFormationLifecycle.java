@@ -61,11 +61,13 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
         Set<RootRelationship> relationships = model.getTopology().edgeSet();
         try {
             CheckModelNodeVisitor checkModelNodeVisitor = new CheckModelNodeVisitor(logger);
+            logger.debug("Check nodes");
             for (VisitableNode node : nodes) {
                 node.accept(checkModelNodeVisitor);
             }
             CheckModelRelationshipVisitor checkModelRelationshipVisitor = new CheckModelRelationshipVisitor(logger,
                 model.getTopology());
+            logger.debug("Check relationships");
             for (VisitableRelationship relationship : relationships) {
                 relationship.accept(checkModelRelationshipVisitor);
             }
@@ -82,9 +84,11 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
         Set<RootNode> nodes = model.getNodes();
         Graph<RootNode, RootRelationship> topology = model.getTopology();
         PrepareModelNodeVisitor prepareModelNodeVisitor = new PrepareModelNodeVisitor(logger, topology);
+        logger.debug("Prepare nodes");
         for (VisitableNode node : nodes) {
             node.accept(prepareModelNodeVisitor);
         }
+        logger.debug("Prepare relationships");
         PrepareModelRelationshipVisitor prepareModelRelationshipVisitor = new PrepareModelRelationshipVisitor(logger,
             topology);
         for (VisitableRelationship relationship : topology.edgeSet()) {

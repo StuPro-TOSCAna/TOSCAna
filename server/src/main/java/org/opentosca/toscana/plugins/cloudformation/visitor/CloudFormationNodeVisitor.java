@@ -29,6 +29,7 @@ import com.scaleset.cfbuilder.rds.DBInstance;
 import org.slf4j.Logger;
 
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationLifecycle.toAlphanumerical;
+import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.ABSOLUTE_FILE_PATH;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.CONFIG_CONFIGURE;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.CONFIG_CREATE;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.CONFIG_SETS;
@@ -222,8 +223,6 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
     }
 
     private void handleOperation(Operation operation, String serverName, String config) {
-        String cfnFilePath = "/home/ubuntu/"; // TODO Check what path is needed
-
         //Add dependencies
         for (String dependency : operation.getDependencies()) {
             String cfnSource = getFileURL(cfnModule.getBucketName(), dependency);
@@ -231,7 +230,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             logger.debug("Marking " + dependency + " as file to be uploaded.");
             cfnModule.putFileToBeUploaded(dependency);
             
-            CFNFile cfnFile = new CFNFile(cfnFilePath + dependency)
+            CFNFile cfnFile = new CFNFile(ABSOLUTE_FILE_PATH + dependency)
                 .setSource(cfnSource)
                 .setMode(MODE_644) //TODO Check what mode is needed (only read?)
                 .setOwner(OWNER_GROUP_ROOT) //TODO Check what Owner is needed
@@ -252,15 +251,15 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             logger.debug("Marking " + artifact + " as file to be uploaded.");
             cfnModule.putFileToBeUploaded(artifact);
             
-            CFNFile cfnFile = new CFNFile(cfnFilePath + artifact)
+            CFNFile cfnFile = new CFNFile(ABSOLUTE_FILE_PATH + artifact)
                 .setSource(cfnSource)
                 .setMode(MODE_500) //TODO Check what mode is needed (read? + execute?)
                 .setOwner(OWNER_GROUP_ROOT) //TODO Check what Owner is needed
                 .setGroup(OWNER_GROUP_ROOT); //TODO Check what Group is needed
 
             CFNCommand cfnCommand = new CFNCommand(artifact,
-                cfnFilePath + artifact) //file is the full path, so need for "./"
-                .setCwd(cfnFilePath + new File(artifact).getParent());
+                ABSOLUTE_FILE_PATH + artifact) //file is the full path, so need for "./"
+                .setCwd(ABSOLUTE_FILE_PATH + new File(artifact).getParent());
             // add inputs to environment
             for (OperationVariable input : operation.getInputs()) {
                     Object value = input.getValue().orElseThrow(

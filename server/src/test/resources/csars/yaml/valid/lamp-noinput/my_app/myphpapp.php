@@ -8,6 +8,19 @@ if ($post != "") {
     saveToDb($post);
 }
 /**
+* check if table exists and if not create it
+*/
+function checkOrCreateTable()
+{
+    $conn = newDbConnection();
+    if ($conn->query("SHOW TABLES LIKE 'tasks'")->num_rows==0){
+        if (!$conn->query("CREATE table tasks (id INT not null auto_increment,task varchar(255), primary key(id))")){
+            echo("Creating table failed");
+            }
+    }
+    $conn->close();
+}
+/**
 * saved task to db
 */
 function saveToDb($task)

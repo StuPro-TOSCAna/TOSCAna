@@ -20,11 +20,12 @@ import com.scaleset.cfbuilder.ec2.metadata.CFNInit;
 
 public class CloudFormationModule extends Module {
 
-    public final static String CONFIG_SETS = "LifecycleOperations";
-    public final static String CONFIG_CREATE = "Create";
-    public final static String CONFIG_CONFIGURE = "Configure";
-    public final static String CONFIG_START = "Start";
-    public final static String SECURITY_GROUP = "SecurityGroup";
+    public static final String CONFIG_SETS = "LifecycleOperations";
+    public static final String CONFIG_CREATE = "Create";
+    public static final String CONFIG_CONFIGURE = "Configure";
+    public static final String CONFIG_START = "Start";
+    public static final String SECURITY_GROUP = "SecurityGroup";
+    public static final String ABSOLUTE_FILE_PATH = "/opt/";
     public static final String URL_HTTP = "http://";
     public static final String URL_S3_AMAZONAWS = ".s3.amazonaws.com";
     public static final String FILEPATH_TARGET = "output/files/";

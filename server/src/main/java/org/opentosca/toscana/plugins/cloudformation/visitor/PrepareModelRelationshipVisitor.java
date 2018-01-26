@@ -54,7 +54,7 @@ public class PrepareModelRelationshipVisitor implements RelationshipVisitor {
                 computeMysqlDatabase.setPrivateAddress(Fn.fnGetAtt(toAlphanumerical(mysqlDatabase.getEntityName()),
                     AWS_ENDPOINT_REFERENCE)
                     .toString(true));
-                logger.debug("Set private Address of {} to reference MysqlDatabase {}", computeMysqlDatabase
+                logger.debug("Set privateAddress of {} to reference MysqlDatabase {}", computeMysqlDatabase
                     .getEntityName(), mysqlDatabase.getEntityName());
             }
         }
