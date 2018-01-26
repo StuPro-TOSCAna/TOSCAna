@@ -12,6 +12,7 @@ import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.visitor.VisitableNode;
 import org.opentosca.toscana.plugins.cloudfoundry.application.Application;
+import org.opentosca.toscana.plugins.cloudfoundry.transformation.visitors.NodeVisitor;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
@@ -38,7 +39,7 @@ public class CloudFoundryPluginTest extends BaseUnitTest {
     @Before
     public void setUp() throws Exception {
         Application myApp = new Application(appName, 1);
-        org.opentosca.toscana.plugins.cloudfoundry.transformation.visitors.NodeVisitor visitor = new org.opentosca.toscana.plugins.cloudfoundry.transformation.visitors.NodeVisitor(myApp);
+        NodeVisitor visitor = new NodeVisitor(myApp);
         lamp = new EffectiveModel(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, log);
         File sourceDir = new File(resourcesPath, "csars/yaml/valid/lamp-noinput");
         targetDir = new File(tmpdir, "targetDir");
