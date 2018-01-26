@@ -19,6 +19,9 @@ import org.slf4j.LoggerFactory;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.CLI_CREATE_SERVICE;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.CLI_CREATE_SERVICE_DEFAULT;
 
+/**
+ this class provides methods to handle the services
+ */
 public class ServiceHandler {
 
     private final static Logger logger = LoggerFactory.getLogger(ServiceHandler.class);
@@ -33,6 +36,8 @@ public class ServiceHandler {
 
     /**
      Add the needed services to the deploymentscript and try to match a suitable service from the provider.
+
+     @param showAllServiceOfferings if yes then adds all service offerings to deploymentscript
      */
     public void addServiceCommands(Boolean showAllServiceOfferings) {
         try {
@@ -51,6 +56,11 @@ public class ServiceHandler {
         }
     }
 
+    /**
+     reads the offered services from the provider
+     tries to find a suitable service for the needed purpose.
+     always add a service with a free plan
+     */
     private void readProviderServices() throws IOException {
         if (application.getProvider() != null && !application.getServices().isEmpty() && application.getConnection() != null) {
             Provider provider = application.getProvider();
@@ -69,19 +79,21 @@ public class ServiceHandler {
 
                 //if not then add the default create command to the deploy script
                 if (!isSet) {
-                    logger.warn("Could not find a suitable service, add the default value {}. Please adapt the line in the deploy script!", CLI_CREATE_SERVICE_DEFAULT);
+                    logger.error("Could not find a suitable service, add the default value {}. Please adapt the line in the deploy script!", CLI_CREATE_SERVICE_DEFAULT);
                     deploymentScript.append(CLI_CREATE_SERVICE_DEFAULT + service);
                 }
             }
         } else {
             for (Map.Entry<String, ServiceTypes> service : application.getServices().entrySet()) {
-                logger.warn("Could not find a suitable service, add the default value {}. Please adapt the line in the deploy script!", CLI_CREATE_SERVICE_DEFAULT);
+                logger.error("Could not find a suitable service, add the default value {}. Please adapt the line in the deploy script!", CLI_CREATE_SERVICE_DEFAULT);
                 deploymentScript.append(CLI_CREATE_SERVICE_DEFAULT + service.getKey());
             }
         }
     }
 
-    //checks if a service of a provider matches the needed service
+    /**
+     checks if a service of a provider matches the needed service
+     */
     private boolean addMatchedServices(List<ServiceOffering> services,
                                        BashScript deployScript,
                                        String description,
@@ -109,6 +121,9 @@ public class ServiceHandler {
         return isSet;
     }
 
+    /**
+     adds all offered services from the provider to the deploy script
+     */
     private void addProviderServiceOfferings() throws IOException {
         Provider provider = application.getProvider();
         List<ServiceOffering> services = provider.getOfferedService();

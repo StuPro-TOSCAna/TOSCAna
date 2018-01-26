@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
-import org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin;
 import org.opentosca.toscana.plugins.cloudfoundry.application.Application;
 import org.opentosca.toscana.plugins.cloudfoundry.application.ServiceTypes;
 import org.opentosca.toscana.plugins.util.TransformationFailureException;
@@ -38,6 +37,10 @@ public class BuildpackDetector {
         this.applicationSuffix = application.getApplicationSuffix();
     }
 
+    /**
+     checks the application suffix e.g. .php and add defined buildpacks
+     currently only php is supported
+     */
     public void detectBuildpackAdditions() {
         if (applicationSuffix != null) {
             logger.info("Application suffix is: " + applicationSuffix);
@@ -54,6 +57,11 @@ public class BuildpackDetector {
         }
     }
 
+    /**
+     add to the output folder the buildpack file
+     adds for a special service the necessary buildpack additions
+     currently only msql is supported
+     */
     private void addBuildpackAdditonsPHP() throws JSONException, IOException {
 
         if (application.getServices().containsValue(ServiceTypes.MYSQL)) {

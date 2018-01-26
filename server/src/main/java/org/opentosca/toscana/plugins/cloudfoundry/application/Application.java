@@ -110,6 +110,11 @@ public class Application {
         return connection;
     }
 
+    /**
+     set the application name. 
+     all forbidden signs will be replaced by -
+     @param name
+     */
     public void setName(String name) {
         String clearedUpName = name.replaceAll("[:/?#@$&'()*+,;=_]", "-");
         logger.debug("Replace all occurence of forbidden signs in the application name with \"-\"");
@@ -163,6 +168,10 @@ public class Application {
         return attributes;
     }
 
+    /**
+     adds a file to the output folder
+     @param filePath path in the csar
+     */
     public void addFilePath(String filePath) {
         filePaths.add(filePath);
     }
@@ -183,6 +192,10 @@ public class Application {
         return applicationSuffix;
     }
 
+    /**
+     sets the path to the main application which should be executed
+     @param pathToApplication
+     */
     public void setPathToApplication(String pathToApplication) {
         int lastOccurenceOfBackslash = pathToApplication.lastIndexOf("/");
         int lastOccurenceOfDot = pathToApplication.lastIndexOf(".");

@@ -17,6 +17,9 @@ import org.slf4j.LoggerFactory;
 
 import static org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle.SCRIPTS_DIR_PATH;
 
+/**
+ this class provides methods to create the deployment script
+ */
 public class Deployment {
 
     private final static Logger logger = LoggerFactory.getLogger(Deployment.class);
@@ -62,7 +65,7 @@ public class Deployment {
      file
      */
     public void configureSql(String relativePathToSQLConfigureFile) throws IOException {
-        copyFile(PYTHON_CONFIGURE_SQL_FILENAME, PYTHON_SCRIPTS_SOURCE);
+        copyFile(PYTHON_CONFIGURE_SQL_FILENAME);
 
         String command = String.format("python %s %s", PYTHON_CONFIGURE_SQL_FILENAME, relativePathToSQLConfigureFile);
         logger.debug("Add \"{}\" to deploy script. This command will configure the sql database. File should be a .sql File", command);
@@ -77,7 +80,7 @@ public class Deployment {
      "/home/vcap/app..."
      */
     public void executeFile(String appName, String pathToFileOnContainer) throws IOException {
-        copyFile(PYTHON_EXECUTE_FILENAME, PYTHON_SCRIPTS_SOURCE);
+        copyFile(PYTHON_EXECUTE_FILENAME);
         deploymentScript.append(String.format("python %s %s %s", PYTHON_EXECUTE_FILENAME, appName, pathToFileOnContainer));
     }
 
@@ -90,7 +93,7 @@ public class Deployment {
      @param serviceType e.g. "mysql" for a mysql service
      */
     public void readCredentials(String appName, String serviceName, ServiceTypes serviceType) throws IOException {
-        copyFile(PYTHON_READ_CREDENTIALS_FILENAME, PYTHON_SCRIPTS_SOURCE);
+        copyFile(PYTHON_READ_CREDENTIALS_FILENAME);
         deploymentScript.append(String.format("python %s %s %s %s", PYTHON_READ_CREDENTIALS_FILENAME, appName, serviceName, serviceType.getName()));
     }
 
@@ -102,14 +105,19 @@ public class Deployment {
      @param replaceStr      String which replaces the findStr
      */
     public void replaceStrings(String pathToLocalFile, String findStr, String replaceStr) throws IOException {
-        copyFile(PYTHON_REPLACE_STRINGS_FILENAME, PYTHON_SCRIPTS_SOURCE);
+        copyFile(PYTHON_REPLACE_STRINGS_FILENAME);
         deploymentScript.append(String.format("python %s %s %s %s", PYTHON_REPLACE_STRINGS_FILENAME, pathToLocalFile, findStr, replaceStr));
     }
 
-    private void copyFile(String fileName, String source) throws IOException {
+    /**
+     copies the python script files to the output/scripts folder
+
+     @param fileName python script name
+     */
+    private void copyFile(String fileName) throws IOException {
         logger.debug("Copy python script {} to output folder", fileName);
         if (!isAlreadyCopied(fileName)) {
-            InputStream inputStream = deploymentClass.getResourceAsStream(source + fileName);
+            InputStream inputStream = deploymentClass.getResourceAsStream(PYTHON_SCRIPTS_SOURCE + fileName);
             String contentFile = IOUtils.toString(inputStream);
             inputStream.close();
             fileAccess.access(PYTHON_SCRIPTS_TARGET + fileName).appendln(contentFile).close();
@@ -117,6 +125,9 @@ public class Deployment {
         checkPython();
     }
 
+    /**
+     checks if a file is already copied.
+     */
     private boolean isAlreadyCopied(String fileName) {
         try {
             fileAccess.getAbsolutePath(PYTHON_SCRIPTS_TARGET + fileName);
@@ -128,6 +139,9 @@ public class Deployment {
         return true;
     }
 
+    /**
+     adds a shell command to check if python is installed
+     */
     private void checkPython() throws IOException {
         String scriptPath = deploymentScript.getScriptPath();
         File scriptFile = new File(scriptPath);

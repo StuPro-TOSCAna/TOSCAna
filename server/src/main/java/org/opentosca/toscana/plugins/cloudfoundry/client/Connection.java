@@ -45,6 +45,16 @@ public class Connection {
     private String space;
     private CloudFoundryOperations cloudFoundryOperations;
 
+    /**
+     creates a connection to a cloud foundry instance
+     will throw a transformation failure exception when no connection could established
+
+     @param username     username of the cloud foundry instance
+     @param password     password of the cloud foundry instance
+     @param apiHost      url to the provider
+     @param organization organisation of the user instance
+     @param space        space of the user instance
+     */
     public Connection(String username, String password,
                       String apiHost, String organization,
                       String space) {
@@ -59,6 +69,10 @@ public class Connection {
         this.cloudFoundryOperations = createCloudFoundryOperations();
     }
 
+    /**
+     create a Connection to a cloud foundry instance.
+     A CLoudFoundryOperation could send cf commands
+     */
     private CloudFoundryOperations createCloudFoundryOperations() {
         CloudFoundryOperations cloudFoundryOperations;
         try {
@@ -140,6 +154,10 @@ public class Connection {
         return succeed;
     }
 
+    /**
+     deploys a small application to the cloud foundry instance.
+     contains only default values, the application represents not an instance of the template model
+     */
     private boolean deployApplication(Path pathToApplication, String name,
                                       List<Service> services) throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
@@ -172,6 +190,9 @@ public class Connection {
         return succeed.get();
     }
 
+    /**
+     creates a service on the cloud foundry instance
+     */
     private void createService(String serviceInstanceName, String serviceName, String plan)
         throws InterruptedException {
 

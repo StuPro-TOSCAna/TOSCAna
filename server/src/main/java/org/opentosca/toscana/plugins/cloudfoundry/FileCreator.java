@@ -55,6 +55,10 @@ public class FileCreator {
         this.applications = applications;
     }
 
+    /**
+     creates all files which are necessary for deployment
+     Each application has to be filled with information
+     */
     public void createFiles() throws IOException, JSONException {
         logger.info("Create manifest.yml");
         createManifest();
@@ -68,6 +72,10 @@ public class FileCreator {
         }
     }
 
+    /**
+     creates the manifest
+     multiple applications are in the same manifest
+     */
     private void createManifest() throws IOException {
         createManifestHead();
         for (Application application : applications) {
@@ -79,11 +87,18 @@ public class FileCreator {
         }
     }
 
+    /**
+     creates once the manifest header
+     */
     private void createManifestHead() throws IOException {
         String manifestHead = String.format(MANIFESTHEAD);
         fileAccess.access(MANIFEST_PATH).appendln(manifestHead).close();
     }
 
+    /**
+     add the name block to manifest.
+     after this all application information will be inserted
+     */
     private void addNameToManifest(Application application) throws IOException {
         String nameBlock = String.format("- %s: %s", NAMEBLOCK, application.getName());
         fileAccess.access(MANIFEST_PATH).appendln(nameBlock).close();
@@ -99,6 +114,10 @@ public class FileCreator {
         fileAccess.access(MANIFEST_PATH).appendln(pathAddition).close();
     }
 
+    /**
+     creates a environment section in the manifest and adds all setted environments variables to it
+     if there is an empty environment variable a default value will be added
+     */
     private void createEnvironmentVariables(Application application) throws IOException {
         Map<String, String> envVariables = application.getEnvironmentVariables();
         if (!envVariables.isEmpty()) {
@@ -254,6 +273,10 @@ public class FileCreator {
         buildpackDetection.detectBuildpackAdditions();
     }
 
+    /**
+     fills in the attributes of the application
+     default is a random route attribute to avoid a deployment failure because the route to the app already exists
+     */
     private void createAttributes(Application application) throws IOException {
 
         if (!application.getAttributes().isEmpty()) {
@@ -273,6 +296,9 @@ public class FileCreator {
         }
     }
 
+    /**
+     insert all setted files to the application folder
+     */
     private void insertFiles(Application application) throws IOException {
         for (String filePath : application.getFilePaths()) {
             String path = APPLICATION_FOLDER + application.getApplicationNumber() + "/" + filePath;
