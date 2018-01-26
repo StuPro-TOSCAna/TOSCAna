@@ -105,7 +105,7 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
 
         // Visit Compute nodes first, then all others
         try {
-            CloudFormationNodeVisitor cfnNodeVisitor = new CloudFormationNodeVisitor(logger, cfnModule);
+            CloudFormationNodeVisitor cfnNodeVisitor = new CloudFormationNodeVisitor(logger, cfnModule, model.getTopology());
             for (VisitableNode node : nodes) {
                 if (node instanceof Compute) {
                     node.accept(cfnNodeVisitor);

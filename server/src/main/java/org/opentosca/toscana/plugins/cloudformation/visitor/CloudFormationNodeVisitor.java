@@ -1,6 +1,8 @@
 package org.opentosca.toscana.plugins.cloudformation.visitor;
 
 import java.io.File;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.opentosca.toscana.model.capability.ComputeCapability;
 import org.opentosca.toscana.model.capability.OsCapability;
@@ -9,10 +11,12 @@ import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.Dbms;
 import org.opentosca.toscana.model.node.MysqlDatabase;
 import org.opentosca.toscana.model.node.MysqlDbms;
+import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.node.WebApplication;
 import org.opentosca.toscana.model.node.WebServer;
 import org.opentosca.toscana.model.operation.Operation;
 import org.opentosca.toscana.model.operation.OperationVariable;
+import org.opentosca.toscana.model.relation.RootRelationship;
 import org.opentosca.toscana.model.visitor.StrictNodeVisitor;
 import org.opentosca.toscana.plugins.cloudformation.CloudFormationModule;
 import org.opentosca.toscana.plugins.cloudformation.mapper.CapabilityMapper;
@@ -26,6 +30,7 @@ import com.scaleset.cfbuilder.ec2.metadata.CFNFile;
 import com.scaleset.cfbuilder.ec2.metadata.CFNInit;
 import com.scaleset.cfbuilder.ec2.metadata.CFNPackage;
 import com.scaleset.cfbuilder.rds.DBInstance;
+import org.jgrapht.Graph;
 import org.slf4j.Logger;
 
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationLifecycle.toAlphanumerical;
@@ -40,24 +45,26 @@ import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.SECURITY_GROUP;
 
 /**
- * Class for building a CloudFormation template from an effective model instance via the visitor pattern. Currently only
- * supports LAMP-stacks built with Compute, WebApplication, Apache, MySQL, MySQL nodes.
+ Class for building a CloudFormation template from an effective model instance via the visitor pattern. Currently only
+ supports LAMP-stacks built with Compute, WebApplication, Apache, MySQL, MySQL nodes.
  */
 public class CloudFormationNodeVisitor implements StrictNodeVisitor {
 
     private final Logger logger;
     private CloudFormationModule cfnModule;
+    private Graph<RootNode, RootRelationship> topology;
 
     /**
-     * Creates a <tt>CloudFormationNodeVisitor<tt> in order to build a template with the given
-     * <tt>CloudFormationModule<tt>.
-     *
-     * @param logger    Logger for logging visitor behaviour
-     * @param cfnModule Module to build the template model
+     Creates a <tt>CloudFormationNodeVisitor<tt> in order to build a template with the given
+     <tt>CloudFormationModule<tt>.
+
+     @param logger    Logger for logging visitor behaviour
+     @param cfnModule Module to build the template model
      */
-    public CloudFormationNodeVisitor(Logger logger, CloudFormationModule cfnModule) {
+    public CloudFormationNodeVisitor(Logger logger, CloudFormationModule cfnModule, Graph<RootNode, RootRelationship> topology) {
         this.logger = logger;
         this.cfnModule = cfnModule;
+        this.topology = topology;
     }
 
     @Override
@@ -127,10 +134,15 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             String storageType = "gp2"; //SSD
 
             String securityGroupName = nodeName + SECURITY_GROUP;
-            cfnModule.resource(SecurityGroup.class, securityGroupName)
-                .groupDescription("Open database " + dbName + " for access to group " + serverName + SECURITY_GROUP)
-                .ingress(ingress -> ingress.sourceSecurityGroupName(cfnModule.ref(serverName + SECURITY_GROUP)),
-                    "tcp", port);
+            SecurityGroup securityGroup = cfnModule.resource(SecurityGroup.class, securityGroupName)
+                .groupDescription("Open database " + dbName + " for access to group " + serverName + SECURITY_GROUP);
+            Set<Compute> hostsOfConnectedTo = getHostsOfConnectedTo(node);
+            for (Compute hostOfConnectedTo : hostsOfConnectedTo) {
+                securityGroup.ingress(ingress -> ingress.sourceSecurityGroupName(
+                    cfnModule.ref(toAlphanumerical(hostOfConnectedTo.getEntityName()) + SECURITY_GROUP)),
+                    "tcp", 
+                    port);
+            }
 
             cfnModule.resource(DBInstance.class, nodeName)
                 .engine("MySQL")
@@ -226,10 +238,10 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
         //Add dependencies
         for (String dependency : operation.getDependencies()) {
             String cfnSource = getFileURL(cfnModule.getBucketName(), dependency);
-            
+
             logger.debug("Marking " + dependency + " as file to be uploaded.");
             cfnModule.putFileToBeUploaded(dependency);
-            
+
             CFNFile cfnFile = new CFNFile(ABSOLUTE_FILE_PATH + dependency)
                 .setSource(cfnSource)
                 .setMode(MODE_644) //TODO Check what mode is needed (only read?)
@@ -245,12 +257,11 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
         //Add artifact
         if (operation.getArtifact().isPresent()) {
             String artifact = operation.getArtifact().get().getFilePath();
-          
             String cfnSource = getFileURL(cfnModule.getBucketName(), artifact);
-            
+
             logger.debug("Marking " + artifact + " as file to be uploaded.");
             cfnModule.putFileToBeUploaded(artifact);
-            
+
             CFNFile cfnFile = new CFNFile(ABSOLUTE_FILE_PATH + artifact)
                 .setSource(cfnSource)
                 .setMode(MODE_500) //TODO Check what mode is needed (read? + execute?)
@@ -262,12 +273,12 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                 .setCwd(ABSOLUTE_FILE_PATH + new File(artifact).getParent());
             // add inputs to environment
             for (OperationVariable input : operation.getInputs()) {
-                    Object value = input.getValue().orElseThrow(
-                        () -> new IllegalArgumentException("Input value of " + input.getKey() + " expected to not be " +
-                            "null")
-                    );
-                    cfnCommand.addEnv(input.getKey(), value);
-                }
+                Object value = input.getValue().orElseThrow(
+                    () -> new IllegalArgumentException("Input value of " + input.getKey() + " expected to not be " +
+                        "null")
+                );
+                cfnCommand.addEnv(input.getKey(), value);
+            }
             cfnModule.getCFNInit(serverName)
                 .getOrAddConfig(CONFIG_SETS, config)
                 .putFile(cfnFile)
@@ -276,12 +287,12 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
     }
 
     /**
-     * Returns the URL to the file in the given S3Bucket.
-     * e.g. http://bucketName.s3.amazonaws.com/objectKey
-     *
-     * @param bucketName name of the bucket containing the file
-     * @param objectKey  key belonging to the file in the bucket
-     * @return URL for the file
+     Returns the URL to the file in the given S3Bucket.
+     e.g. http://bucketName.s3.amazonaws.com/objectKey
+
+     @param bucketName name of the bucket containing the file
+     @param objectKey  key belonging to the file in the bucket
+     @return URL for the file
      */
     private String getFileURL(String bucketName, String objectKey) {
         return CloudFormationModule.URL_HTTP + bucketName + CloudFormationModule.URL_S3_AMAZONAWS + "/" + objectKey;
@@ -289,5 +300,28 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
 
     public CapabilityMapper createCapabilityMapper() {
         return new CapabilityMapper(cfnModule.getAWSRegion(), cfnModule.getAwsCredentials(), logger);
+    }
+
+    private Set<Compute> getHostsOfConnectedTo(RootNode node) {
+        Set<Compute> connected = new HashSet<>();
+        Set<RootRelationship> incomingEdges = topology.incomingEdgesOf(node);
+        for (RootRelationship incomingEdge : incomingEdges) {
+            RootNode source = topology.getEdgeSource(incomingEdge);
+            if (source instanceof WebApplication) {
+                WebApplication webApplication = (WebApplication) source; 
+                Compute compute = getCompute(webApplication);
+                connected.add(compute);
+            }
+        }
+        return connected;
+    }
+    
+    private Compute getCompute(WebApplication webApplication) {
+        WebServer webServer = webApplication.getHost().getNode().orElseThrow(
+            () -> new IllegalStateException("WebApplication is missing WebServer")
+        );
+        return webServer.getHost().getNode().orElseThrow(
+            () -> new IllegalStateException("WebServer is missing Compute")
+        );
     }
 }

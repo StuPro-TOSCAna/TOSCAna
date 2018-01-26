@@ -39,7 +39,7 @@ public class CloudFormationPluginTest extends BaseUnitTest {
         lamp = new EffectiveModel(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, log);
         fileAccess = new PluginFileAccess(new File("src/test/resources/csars/yaml/valid/lamp-input/"), tmpdir, log);
         cfnModule = new CloudFormationModule(fileAccess, "us-west-2", new BasicAWSCredentials("", ""));
-        CloudFormationNodeVisitor cfnNodeVisitorL = new CloudFormationNodeVisitor(logger, cfnModule);
+        CloudFormationNodeVisitor cfnNodeVisitorL = new CloudFormationNodeVisitor(logger, cfnModule, lamp.getTopology());
         cfnNodeVisitor = spy(cfnNodeVisitorL);
         CapabilityMapper capabilityMapper = mock(CapabilityMapper.class);
         when(capabilityMapper.mapOsCapabilityToImageId(any(OsCapability.class))).thenReturn("ami-testami");
