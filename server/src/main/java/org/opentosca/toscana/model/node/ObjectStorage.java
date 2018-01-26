@@ -25,7 +25,7 @@ public class ObjectStorage extends RootNode {
      (TOSCA Simple Profile in YAML Version 1.1, p. 174)
      */
     public static ToscaKey<String> STORAGE_NAME = new ToscaKey<>(PROPERTIES, "name")
-        .required(true);
+        .required();
 
     /**
      The optional requested initial storage size in GB.

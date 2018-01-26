@@ -22,7 +22,7 @@ public class Artifact extends DescribableEntity {
      The path (relative or absolute) which can be used to locate the artifact’s filePath.
      */
     public static ToscaKey<String> FILE_PATH = new ToscaKey<>("file")
-        .required(true);
+        .required();
 
     /**
      The optional external repository that contains the artifact.

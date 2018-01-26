@@ -7,13 +7,12 @@ import java.util.stream.Collectors;
 
 import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.core.parse.converter.util.NodeTypeResolver;
+import org.opentosca.toscana.core.parse.converter.util.ToscaStructure;
 import org.opentosca.toscana.core.parse.model.MappingEntity;
 import org.opentosca.toscana.core.parse.model.ScalarEntity;
 import org.opentosca.toscana.core.parse.model.ServiceGraph;
-import org.opentosca.toscana.model.EntityId;
 import org.opentosca.toscana.model.node.RootNode;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.eclipse.winery.yaml.common.Defaults;
 import org.junit.Test;
@@ -36,7 +35,7 @@ public class NodeTypeResolverTest extends BaseUnitTest {
         for (String nodeType : wineryNodeTypes) {
             logger.info("Testing conversion of type '{}'", nodeType);
             ServiceGraph graph = new ServiceGraph(log);
-            MappingEntity nodeEntity = new MappingEntity(new EntityId(Lists.newArrayList("my", "id")), graph);
+            MappingEntity nodeEntity = new MappingEntity(ToscaStructure.NODE_TEMPLATES.descend("my-node"), graph);
             graph.addEntity(nodeEntity);
             ScalarEntity typeEntity = new ScalarEntity(nodeType, nodeEntity.getId().descend("type"), graph);
             graph.addEntity(typeEntity);

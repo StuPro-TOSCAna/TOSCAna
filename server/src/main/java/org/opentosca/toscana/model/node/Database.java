@@ -3,8 +3,11 @@ package org.opentosca.toscana.model.node;
 import java.util.Optional;
 
 import org.opentosca.toscana.core.parse.model.MappingEntity;
+import org.opentosca.toscana.model.capability.ContainerCapability;
 import org.opentosca.toscana.model.capability.DatabaseEndpointCapability;
+import org.opentosca.toscana.model.relation.HostedOn;
 import org.opentosca.toscana.model.requirement.DbmsRequirement;
+import org.opentosca.toscana.model.util.RequirementKey;
 import org.opentosca.toscana.model.util.ToscaKey;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 
@@ -24,7 +27,7 @@ public class Database extends RootNode {
      (TOSCA Simple Profile in YAML Version 1.1, p. 173)
      */
     public static ToscaKey<String> DATABASE_NAME = new ToscaKey<>(PROPERTIES, "name")
-        .required(true);
+        .required();
 
     /**
      The optional port the database service will use for incoming data and request.
@@ -48,15 +51,12 @@ public class Database extends RootNode {
     public static ToscaKey<DatabaseEndpointCapability> DATABASE_ENDPOINT = new ToscaKey<>(CAPABILITIES, "database_endpoint")
         .type(DatabaseEndpointCapability.class);
 
-    public static ToscaKey<DbmsRequirement> HOST = new ToscaKey<>(REQUIREMENTS, "host")
+    public static ToscaKey<DbmsRequirement> HOST = new RequirementKey<>("host")
+        .subTypes(ContainerCapability.class, Dbms.class, HostedOn.class)
         .type(DbmsRequirement.class);
 
     public Database(MappingEntity mappingEntity) {
         super(mappingEntity);
-        init();
-    }
-
-    private void init() {
         setDefault(DATABASE_ENDPOINT, new DatabaseEndpointCapability(getChildEntity(DATABASE_ENDPOINT)));
         setDefault(HOST, new DbmsRequirement(getChildEntity(HOST)));
     }

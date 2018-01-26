@@ -72,7 +72,9 @@ public class EntityId implements Comparable<EntityId> {
 
     public EntityId ascend() {
         int pathSize = this.path.size();
-        pathSize = (pathSize < 2) ? 2 : pathSize;
+        if (pathSize < 2) {
+            throw new IllegalStateException("Id has no parent - can not ascend further");
+        }
         List<String> parentPath = this.path.subList(0, pathSize - 1);
         return new EntityId(parentPath);
     }
@@ -83,7 +85,7 @@ public class EntityId implements Comparable<EntityId> {
         for (int i = 0; i < path.size(); i++) {
             representation += path.get(i);
             if (i != path.size() - 1) {
-                representation += " > ";
+                representation += ".";
             }
         }
         return representation;

@@ -18,18 +18,19 @@ public class ToscaKey<T> {
      Directives can be used in order to enrich the semantics of the key (e.g., used to specify unit sizes)
      */
     private final Map<String, Object> directives = new HashMap<>();
-    private ToscaKey<?> predecessor;
-    private boolean required;
-    private Class type;
+    private ToscaKey<?> predecessor = null;
+    private boolean required = false;
+    /**
+     True if this key denotes a list entity.
+     */
+    private boolean isList = false;
+    private Class type = String.class;
 
     /**
      Creates a ToscaKey which is not mandatory and of type String
      */
     public ToscaKey(String name) {
         this.name = name;
-        this.type = String.class;
-        this.required = false;
-        this.predecessor = null;
     }
 
     /**
@@ -40,8 +41,13 @@ public class ToscaKey<T> {
         this.predecessor = predecessor;
     }
 
-    public <T> ToscaKey<T> required(boolean required) {
-        this.required = required;
+    public <T> ToscaKey<T> required() {
+        this.required = true;
+        return (ToscaKey<T>) this;
+    }
+
+    public <T> ToscaKey<T> list() {
+        this.isList = true;
         return (ToscaKey<T>) this;
     }
 
@@ -73,6 +79,14 @@ public class ToscaKey<T> {
 
     public Map<String, Object> getDirectives() {
         return directives;
+    }
+
+    public boolean isRequired() {
+        return required;
+    }
+
+    public boolean isList() {
+        return isList;
     }
 
     public boolean hasSameShape(ToscaKey<?> other) {
