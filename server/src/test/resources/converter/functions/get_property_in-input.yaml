@@ -1,6 +1,6 @@
 tosca_definitions_version: tosca_simple_yaml_1_1
 
-description: a template for testing handling of the get_property function
+description: a template for testing handling of the get_property function in input assignment
 metadata:
   template_name: get_property
   template_author: stupro-toscana
@@ -10,9 +10,12 @@ topology_template:
   node_templates:
     my_db:
       type: tosca.nodes.Database
-      properties:
-        other_name: my_db_name
+      interfaces:
+        Standard:
+          configure:
+            inputs:
+              correct-name: { get_property: [ my_second_db, wrong-name] }
     my_second_db:
       type: tosca.nodes.Database
       properties:
-        name: { get_property: [ my_db, other_name ] }
+        wrong-name: test-string

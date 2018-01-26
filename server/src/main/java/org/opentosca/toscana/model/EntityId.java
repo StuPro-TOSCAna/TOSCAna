@@ -69,11 +69,14 @@ public class EntityId implements Comparable<EntityId> {
         }
         return intermediateId.descend(key.getName());
     }
-
+    
+    /**
+    Returns null if ascending is not possible
+     */
     public EntityId ascend() {
         int pathSize = this.path.size();
         if (pathSize < 2) {
-            throw new IllegalStateException("Id has no parent - can not ascend further");
+            return null;
         }
         List<String> parentPath = this.path.subList(0, pathSize - 1);
         return new EntityId(parentPath);
