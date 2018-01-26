@@ -96,6 +96,7 @@ public class Connection {
                 .space(space)
                 .build();
         } catch (Exception e) {
+            logger.error("Cant connect to Cloud Foundry instance");
             throw new TransformationFailureException("Could not connect to Cloud Foundry instance, Please check your credentials", e);
         }
 
