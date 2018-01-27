@@ -2,6 +2,7 @@ package org.opentosca.toscana.plugins.cloudfoundry.transformation.visitors;
 
 import org.opentosca.toscana.model.node.Apache;
 import org.opentosca.toscana.model.node.Compute;
+import org.opentosca.toscana.model.node.Database;
 import org.opentosca.toscana.model.node.MysqlDatabase;
 import org.opentosca.toscana.model.node.MysqlDbms;
 import org.opentosca.toscana.model.node.WebApplication;
@@ -25,6 +26,10 @@ public class NodeSupported implements StrictNodeVisitor {
 
     @Override
     public void visit(MysqlDbms node) {
+    }
+
+    @Override
+    public void visit(Database node) {
     }
 
     @Override

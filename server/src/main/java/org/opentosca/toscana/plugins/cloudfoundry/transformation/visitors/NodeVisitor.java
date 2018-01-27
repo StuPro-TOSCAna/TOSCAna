@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.opentosca.toscana.model.artifact.Artifact;
 import org.opentosca.toscana.model.node.Apache;
 import org.opentosca.toscana.model.node.Compute;
+import org.opentosca.toscana.model.node.Database;
 import org.opentosca.toscana.model.node.MysqlDatabase;
 import org.opentosca.toscana.model.node.MysqlDbms;
 import org.opentosca.toscana.model.node.RootNode;
@@ -75,6 +76,12 @@ public class NodeVisitor implements StrictNodeVisitor {
     @Override
     public void visit(MysqlDbms node) {
         // TODO: check how to configure database
+        handleStandardLifecycle(node, false);
+    }
+
+    @Override
+    public void visit(Database node) {
+        // TODO: check how to configure Database
         handleStandardLifecycle(node, false);
     }
 
