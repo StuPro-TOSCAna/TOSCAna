@@ -4,6 +4,7 @@ import java.io.File;
 
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.core.transformation.logging.Log;
+import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
 import org.opentosca.toscana.model.EffectiveModel;
 
@@ -42,5 +43,22 @@ public final class TransformationContext {
 
     public PluginFileAccess getPluginFileAccess() {
         return access;
+    }
+
+    /**
+     This Method returns true if the plugin should deploy after the transformation is performed.
+     False is resturned otherwise.
+     
+     A Small note to Plugin Developers:
+     This method is only intended to be called byt the AbstractLifecycle implementation.
+     Plaese DO NOT check if the platform should perform a deployment while performing the Transformation!
+     */
+    public boolean performDeployment() {
+        String value = properties.getPropertyValue(Platform.DEPLOY_AFTER_TRANSFORMATION_KEY).orElse("false");
+        try {
+            return Boolean.parseBoolean(value);
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

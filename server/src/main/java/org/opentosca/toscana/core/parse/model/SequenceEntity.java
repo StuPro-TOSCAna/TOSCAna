@@ -1,10 +1,10 @@
 package org.opentosca.toscana.core.parse.model;
 
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
+import java.util.Optional;
 
 import org.opentosca.toscana.model.EntityId;
 
@@ -12,7 +12,7 @@ import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.ScalarNode;
 import org.yaml.snakeyaml.nodes.SequenceNode;
 
-public class SequenceEntity extends Entity {
+public class SequenceEntity extends Entity implements CollectionEntity {
 
     private final SequenceNode sequenceNode;
 
@@ -33,19 +33,35 @@ public class SequenceEntity extends Entity {
     @Override
     public List<Entity> getChildren() {
         List<Entity> children = new ArrayList<>();
-        Set<Entity> entities = graph.getChildren(this);
+        Collection<Entity> entities = super.getChildren();
         List<Entity> orderedEntities = new LinkedList<>(entities);
+        // TODO sort per connection name, not entity name. 
         orderedEntities.sort((b1, b2) -> b1.getName().compareTo(b2.getName()));
         for (Entity entity : orderedEntities) {
-            if (entity instanceof ScalarEntity) {
-                children.add(entity);
-            } else {
-                Iterator<Entity> it = entity.getChildren().iterator();
-                Entity child = it.next();
-                children.add(child);
-            }
+            children.add(entity);
         }
         return children;
+    }
+
+    /**
+     Returns the associated child for given name and source entity.
+
+     @return null if no child associated with given name was found
+     */
+    @Override
+    public Optional<Entity> getChild(String key) {
+        for (Connection connection : graph.outgoingEdgesOf(this)) {
+            Entity child = connection.getTarget();
+            if (key.equals(child.getName())) {
+                return Optional.of(child);
+            }
+        }
+        return Optional.empty();
+    }
+
+    @Override
+    public void addChild(Entity entity) {
+        // TODO
     }
 
     @Override

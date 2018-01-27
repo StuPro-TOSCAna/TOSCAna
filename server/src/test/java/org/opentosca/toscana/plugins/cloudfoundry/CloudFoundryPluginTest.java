@@ -8,6 +8,7 @@ import java.util.Set;
 import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.core.testdata.TestCsars;
+import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.visitor.VisitableNode;
@@ -17,9 +18,13 @@ import org.opentosca.toscana.plugins.cloudfoundry.transformation.visitors.NodeVi
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.FILEPRAEFIX_DEPLOY;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.FILESUFFIX_DEPLOY;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.MANIFEST_PATH;
@@ -29,24 +34,32 @@ import static org.opentosca.toscana.plugins.scripts.BashScript.SOURCE_UTIL_ALL;
 
 public class CloudFoundryPluginTest extends BaseUnitTest {
 
-    private File targetDir;
     private final String appName = "my_app";
     private final String appNameClearedUp = "my-app";
     private final ArrayList<String> paths = new ArrayList<>();
     private final String resourcesPath = "src/test/resources/";
+    @Mock
+    public TransformationContext context;
     EffectiveModel lamp;
+    private File targetDir;
 
     @Before
     public void setUp() throws Exception {
         Application myApp = new Application(appName, 1);
         NodeVisitor visitor = new NodeVisitor(myApp);
+        EffectiveModel effectiveModel = new EffectiveModel(TestCsars.VALID_MINIMAL_DOCKER_TEMPLATE, log);
         lamp = new EffectiveModel(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, log);
+
         File sourceDir = new File(resourcesPath, "csars/yaml/valid/lamp-noinput");
         targetDir = new File(tmpdir, "targetDir");
         sourceDir.mkdir();
         targetDir.mkdir();
         PluginFileAccess fileAccess = new PluginFileAccess(sourceDir, targetDir, log);
         Set<RootNode> nodes = lamp.getNodes();
+
+        when(context.getPluginFileAccess()).thenReturn(fileAccess);
+        when(context.getLogger((Class<?>) any(Class.class))).thenReturn(LoggerFactory.getLogger("Dummy Logger"));
+        when(context.getModel()).thenReturn(effectiveModel);
 
         paths.add("app1/my_app/myphpapp.php");
         paths.add("app1/my_app/mysql-credentials.php");
@@ -105,22 +118,18 @@ public class CloudFoundryPluginTest extends BaseUnitTest {
 
         assertEquals(expectedOutput, deployScript);
     }
-/*
+/* Nullpointer for Properties
     @Test
     public void checkModel() throws Exception {
-        TransformationContext context = setUpMockTransformationContext(lamp);
         CloudFoundryLifecycle cloudFoundry = new CloudFoundryLifecycle(context);
         assertTrue(cloudFoundry.checkModel());
     }
 
-    
     @Test
     public void checkTransformation() throws Exception {
-        TransformationContext context = setUpMockTransformationContext(TestEffectiveModels.getLampModel());
-        CloudFoundryPlugin cloudFoundry = new CloudFoundryPlugin();
-        CloudFoundryLifecycle cfcycle = cloudFoundry.getInstance(context);
-        cfcycle.prepare();
-        cfcycle.transform();
+        CloudFoundryLifecycle cloudFoundry = new CloudFoundryLifecycle(context);
+        cloudFoundry.prepare();
+        cloudFoundry.transform();
     }
     */
 }

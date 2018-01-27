@@ -1,6 +1,7 @@
-package org.opentosca.toscana.plugins.lifecycle;
+package org.opentosca.toscana.core.plugin.lifecycle;
 
 import org.opentosca.toscana.core.BaseUnitTest;
+import org.opentosca.toscana.core.plugin.TOSCAnaPlugin;
 import org.opentosca.toscana.core.testdata.TestPlugins;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.core.transformation.platform.Platform;
@@ -14,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -33,6 +35,24 @@ public class LifecycleAwarePluginTest extends BaseUnitTest {
     public void setUp() throws Exception {
         when(context.getLogger((Class<?>) any(Class.class))).thenReturn(LoggerFactory.getLogger("Dummy Logger"));
         plugin = new LifecycleTestPlugin(TestPlugins.PLATFORM1);
+    }
+
+    @Test
+    public void testDeploymentEnabled() throws Exception {
+        plugin = new LifecycleTestPlugin(TestPlugins.PLATFORM4);
+        when(context.performDeployment()).thenReturn(true);
+        when(lifecycle.checkModel()).thenReturn(true);
+        plugin.transform(context);
+        verify(lifecycle, times(1)).deploy();
+    }
+
+    @Test
+    public void testDeploymentDisabled() throws Exception {
+        plugin = new LifecycleTestPlugin(TestPlugins.PLATFORM4);
+        when(context.performDeployment()).thenReturn(false);
+        when(lifecycle.checkModel()).thenReturn(true);
+        plugin.transform(context);
+        verify(lifecycle, times(0)).deploy();
     }
 
     @Test
@@ -67,7 +87,7 @@ public class LifecycleAwarePluginTest extends BaseUnitTest {
         verify(lifecycle).cleanup();
     }
 
-    private class LifecycleTestPlugin extends LifecycleAwarePlugin {
+    private class LifecycleTestPlugin extends TOSCAnaPlugin {
 
         //Not using mockito because it somehow did not work as expected using spy()
         private boolean envCheckReturnValue = true;

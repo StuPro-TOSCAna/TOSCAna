@@ -5,11 +5,11 @@ import java.io.IOException;
 
 import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
+import org.opentosca.toscana.core.plugin.lifecycle.AbstractLifecycle;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.plugins.cloudfoundry.application.Application;
 import org.opentosca.toscana.plugins.cloudfoundry.application.ServiceTypes;
 import org.opentosca.toscana.plugins.cloudfoundry.application.deployment.Deployment;
-import org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle;
 import org.opentosca.toscana.plugins.scripts.BashScript;
 
 import org.apache.commons.io.FileUtils;

@@ -1,5 +1,8 @@
-package org.opentosca.toscana.plugins.lifecycle;
+package org.opentosca.toscana.core.plugin.lifecycle;
 
+import java.util.function.Predicate;
+
+import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.util.ExceptionAwareVoidFunction;
 
 /**
@@ -12,6 +15,7 @@ import org.opentosca.toscana.util.ExceptionAwareVoidFunction;
 public class ExecutionPhase<LifecycleT extends TransformationLifecycle> {
     private String name;
     private ExceptionAwareVoidFunction<LifecycleT> function;
+    private Predicate<TransformationContext> executionCheck;
 
     public ExecutionPhase(
         String name,
@@ -19,6 +23,20 @@ public class ExecutionPhase<LifecycleT extends TransformationLifecycle> {
     ) {
         this.name = name;
         this.function = function;
+        this.executionCheck = (e) -> true;
+    }
+
+    public ExecutionPhase(
+        String name,
+        ExceptionAwareVoidFunction<LifecycleT> function,
+        Predicate<TransformationContext> validation
+    ) {
+        this(name, function);
+        this.executionCheck = validation;
+    }
+
+    public boolean shouldExecute(TransformationContext context) {
+        return executionCheck.test(context);
     }
 
     /**

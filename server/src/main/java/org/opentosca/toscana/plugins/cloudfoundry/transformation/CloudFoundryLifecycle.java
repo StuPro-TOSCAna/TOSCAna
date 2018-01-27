@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
+import org.opentosca.toscana.core.plugin.lifecycle.AbstractLifecycle;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.model.node.Compute;
@@ -24,7 +25,6 @@ import org.opentosca.toscana.plugins.cloudfoundry.transformation.sort.GraphSort;
 import org.opentosca.toscana.plugins.cloudfoundry.transformation.visitors.ComputeNodeFinder;
 import org.opentosca.toscana.plugins.cloudfoundry.transformation.visitors.NodeSupported;
 import org.opentosca.toscana.plugins.cloudfoundry.transformation.visitors.NodeVisitor;
-import org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle;
 
 import org.json.JSONException;
 
@@ -36,10 +36,10 @@ import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin.CF_P
 
 public class CloudFoundryLifecycle extends AbstractLifecycle {
 
+    private final EffectiveModel model;
     private Provider provider;
     private Connection connection;
     private List<Application> applications;
-    private final EffectiveModel model;
     private Map<String, CloudFoundryNode> applicationNodes = new HashMap<>();
     private Set<CloudFoundryNode> computeNodes = new HashSet<>();
     private Set<CloudFoundryStack> stacks = new HashSet<>();

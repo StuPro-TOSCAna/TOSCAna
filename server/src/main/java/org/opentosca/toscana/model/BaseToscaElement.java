@@ -34,7 +34,7 @@ public abstract class BaseToscaElement {
         return value;
     }
 
-    public <T> Set<T> getCollection(ToscaKey<T> key) {
+    public <T> Collection<T> getCollection(ToscaKey<T> key) {
         return mappingEntity.getCollection(key);
     }
 
@@ -62,14 +62,14 @@ public abstract class BaseToscaElement {
             mappingEntity.setValue(key, value);
         }
     }
-
+    
     public String getEntityName() {
         return name;
     }
 
     /**
      Returns the underlying raw entity.
-     Danger: Do not use this outside of the rename.
+     Danger: Do not use this outside of the converter.
      Your fellow developers will find you and hunt you down.
      */
     public MappingEntity getBackingEntity() {

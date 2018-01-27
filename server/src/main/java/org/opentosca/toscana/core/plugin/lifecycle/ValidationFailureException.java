@@ -1,4 +1,4 @@
-package org.opentosca.toscana.plugins.lifecycle;
+package org.opentosca.toscana.core.plugin.lifecycle;
 
 /**
  This is the exception that gets thrown if the validation fails

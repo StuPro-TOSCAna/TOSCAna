@@ -55,7 +55,7 @@ public class IntrinsicFunctionResolver {
             throw new IllegalStateException(String.format(
                 "Given entity '%s' does not hold a function - illegal call to resolveFunction", functionHolder));
         }
-        Entity parent = functionHolder.getParent();
+        Entity parent = functionHolder.getParent().orElseThrow(() -> new IllegalStateException("Function does not have a parent"));
         Entity functionTarget = getTarget((MappingEntity) functionHolder);
         if (functionTarget != null) {
             ServiceGraph graph = functionHolder.getGraph();

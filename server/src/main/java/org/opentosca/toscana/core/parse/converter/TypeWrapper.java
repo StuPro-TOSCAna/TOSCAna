@@ -49,7 +49,7 @@ public class TypeWrapper {
     private static <T> T wrap(MappingEntity entity, Class type) {
         try {
             if (Modifier.isAbstract(type.getModifiers())) {
-                type = KeyReflector.detectRealCapabilityType(entity, type);
+                type = KeyReflector.detectRealSubtype(entity, type);
             }
             T node = (T) ConstructorUtils.invokeConstructor(type, entity);
             return node;

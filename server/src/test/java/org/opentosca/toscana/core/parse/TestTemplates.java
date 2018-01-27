@@ -27,6 +27,7 @@ public class TestTemplates {
         public static final File GET_PROPERTY = new File(FUNCTIONS, "get_property.yaml");
         public static final File GET_PROPERTY_SELF = new File(FUNCTIONS, "get_property_self.yaml");
         public static final File GET_PROPERTY_IN_INTERFACE = new File(FUNCTIONS, "get_property_in-interface.yaml");
+        public static final File GET_PROPERTY_IN_INPUT = new File(FUNCTIONS, "get_property_in-input.yaml");
     }
 
     public static class Nodes {

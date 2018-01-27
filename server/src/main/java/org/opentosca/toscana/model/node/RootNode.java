@@ -1,5 +1,6 @@
 package org.opentosca.toscana.model.node;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.opentosca.toscana.core.parse.model.MappingEntity;
@@ -25,7 +26,7 @@ public abstract class RootNode extends DescribableEntity implements VisitableNod
     public static final ToscaKey<String> TYPE = new ToscaKey<>("type");
 
     public static ToscaKey<Requirement> REQUIREMENTS = new ToscaKey<>("requirements")
-        .type(Requirement.class);
+        .type(Requirement.class).list();
     public static ToscaKey<Capability> CAPABILITIES = new ToscaKey<>("capabilities")
         .type(Capability.class);
     public static ToscaKey<Interface> INTERFACES = new ToscaKey<>("interfaces")
@@ -45,14 +46,14 @@ public abstract class RootNode extends DescribableEntity implements VisitableNod
      @return {@link #REQUIREMENTS}
      */
     public Set<Requirement> getRequirements() {
-        return getCollection(REQUIREMENTS);
+        return new HashSet<>(getCollection(REQUIREMENTS));
     }
 
     /**
      @return {@link #CAPABILITIES}
      */
     public Set<Capability> getCapabilities() {
-        return getCollection(CAPABILITIES);
+        return new HashSet<>(getCollection(CAPABILITIES));
     }
 
     /**
@@ -74,14 +75,14 @@ public abstract class RootNode extends DescribableEntity implements VisitableNod
      @return {@link #ARTIFACTS}
      */
     public Set<Artifact> getArtifacts() {
-        return getCollection(ARTIFACTS);
+        return new HashSet<>(getCollection(ARTIFACTS));
     }
 
     /**
      @return {@link #INTERFACES}
      */
     public Set<Interface> getInterfaces() {
-        return getCollection(INTERFACES);
+        return new HashSet<>(getCollection(INTERFACES));
     }
 }
 
