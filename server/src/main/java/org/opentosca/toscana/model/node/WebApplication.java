@@ -51,6 +51,7 @@ public class WebApplication extends RootNode {
     private void init() {
         setDefault(APP_ENDPOINT, new EndpointCapability(getChildEntity(APP_ENDPOINT)));
         setDefault(HOST, new WebServerRequirement(getChildEntity(HOST)));
+        setDefault(DATABASE_ENDPOINT, new DatabaseEndpointRequirement(getChildEntity(DATABASE_ENDPOINT)));
     }
 
     /**
