@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.opentosca.toscana.core.testdata.TestCsars;
-import org.opentosca.toscana.retrofit.TOSCAnaAPI;
+import org.opentosca.toscana.retrofit.ToscanaApi;
 import org.opentosca.toscana.retrofit.model.Platform;
 import org.opentosca.toscana.retrofit.model.Transformation;
 import org.opentosca.toscana.retrofit.model.TransformationProperty;
@@ -29,13 +29,13 @@ public class ModelSpecificPropertyIT extends BaseSpringIntegrationTest {
     private static final String[] VALUES = {null, null, null, "default-value"};
     private static final boolean[] REQUIRED = {true, true, false, false};
 
-    private TOSCAnaAPI api;
+    private ToscanaApi api;
 
     private TransformationProperty property = new TransformationProperty();
 
     @Before
     public void setUp() {
-        api = new TOSCAnaAPI(getHttpUrl());
+        api = new ToscanaApi(getHttpUrl());
     }
 
     /**
@@ -48,7 +48,6 @@ public class ModelSpecificPropertyIT extends BaseSpringIntegrationTest {
         List<Platform> platforms = api.getPlatforms().getContent();
         String platform = platforms.get(0).getId();
         api.createTransformation(csarName, platform);
-        Transformation t = api.getTransformation(csarName, platform);
         List<TransformationProperty> properties = api.getProperties(csarName, platform).getProperties();
         // could be more than 4 properties: might contain platform properties in addition to the TOSCA inputs
         assertTrue(4 <= properties.size());

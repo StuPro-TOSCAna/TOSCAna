@@ -2,7 +2,7 @@ package org.opentosca.toscana.api.upload;
 
 import org.opentosca.toscana.core.BaseSpringIntegrationTest;
 import org.opentosca.toscana.core.testdata.TestCsars;
-import org.opentosca.toscana.retrofit.TOSCAnaAPI;
+import org.opentosca.toscana.retrofit.ToscanaApi;
 import org.opentosca.toscana.retrofit.util.TOSCAnaServerException;
 
 import org.junit.Before;
@@ -17,11 +17,11 @@ public class CsarUploadIT extends BaseSpringIntegrationTest {
 
     private static final Logger logger = LoggerFactory.getLogger(CsarUploadIT.class);
 
-    private TOSCAnaAPI toscanaAPI;
+    private ToscanaApi toscanaAPI;
 
     @Before
     public void setUp() throws Exception {
-        toscanaAPI = new TOSCAnaAPI(getHttpUrl());
+        toscanaAPI = new ToscanaApi(getHttpUrl());
     }
 
     @Test(timeout = 30000)

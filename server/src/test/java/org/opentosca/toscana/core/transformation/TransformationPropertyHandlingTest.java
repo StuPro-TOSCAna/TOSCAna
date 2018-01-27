@@ -52,7 +52,7 @@ public class TransformationPropertyHandlingTest extends BaseUnitTest {
         for (int i = 0; i < 10; i++) {
             transformation.setProperty("prop-" + i, "1");
         }
-        Map<String, String> property = transformation.getProperties().getPropertyValues();
+        Map<String, String> property = transformation.getInputs().getPropertyValues();
         for (int i = 0; i < 10; i++) {
             assertEquals("1", property.get("prop-" + i));
         }

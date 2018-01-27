@@ -18,7 +18,8 @@ public class TransformationImpl implements Transformation {
     private final Csar csar;
     private final Platform targetPlatform;
     private final Log log;
-    private final PropertyInstance properties;
+    private final PropertyInstance inputs;
+//    private final PropertyInstance outputs;
     private TransformationState state = TransformationState.READY;
     private TargetArtifact targetArtifact;
 
@@ -34,12 +35,16 @@ public class TransformationImpl implements Transformation {
         this.log = log;
 
         //Collect Possible Properties From the Platform and the Model
-        Set<Property> properties = new HashSet<>();
-        properties.addAll(csar.getModelSpecificProperties().values());
-        properties.addAll(targetPlatform.getProperties());
+        Set<Property> inputs = new HashSet<>();
+        inputs.addAll(csar.getModelSpecificProperties().values());
+        inputs.addAll(targetPlatform.getProperties());
 
         // transformationState can get set to INPUT_REQUIRED by this call
-        this.properties = new PropertyInstance(properties, this);
+        this.inputs = new PropertyInstance(inputs, this);
+        
+        Set<Property> outputs = new HashSet<>();
+        outputs.addAll(csar.getModel().get().getOutputs().values());
+//        this.outputs = new PropertyInstance(outputs, this);
     }
 
     @Override
@@ -59,7 +64,8 @@ public class TransformationImpl implements Transformation {
 
     @Override
     public PropertyInstance getOutputs() throws IllegalStateException {
-        return null;
+//        return outputs;
+        return new PropertyInstance(new HashSet<>(), this);
     }
 
     @Override
@@ -87,8 +93,8 @@ public class TransformationImpl implements Transformation {
     }
 
     @Override
-    public PropertyInstance getProperties() {
-        return properties;
+    public PropertyInstance getInputs() {
+        return inputs;
     }
 
     @Override

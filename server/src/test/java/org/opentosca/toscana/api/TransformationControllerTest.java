@@ -12,7 +12,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
-import java.util.SimpleTimeZone;
 
 import org.opentosca.toscana.api.exceptions.PlatformNotFoundException;
 import org.opentosca.toscana.api.utils.HALRelationUtils;
@@ -414,7 +413,7 @@ public class TransformationControllerTest extends BaseSpringTest {
         //Set a SimpleProperty value
         csarService.getCsar(VALID_CSAR_NAME)
             .get().getTransformation(VALID_PLATFORM_NAME).get()
-            .getProperties().setPropertyValue("secret_property", "geheim");
+            .getInputs().setPropertyValue("secret_property", "geheim");
         //Perform a request
         MvcResult result = mvc.perform(
             get(GET_PROPERTIES_VALID_URL)

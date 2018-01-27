@@ -20,7 +20,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 @RunWith(JUnit4.class)
-public class ResponseTest extends BaseTOSCAnaAPITest {
+public class ResponseTest extends BaseToscanaApiTest {
     @Test
     public void getStatus() throws Exception {
         enqueResponse("json/health.json", 200, "application/json");

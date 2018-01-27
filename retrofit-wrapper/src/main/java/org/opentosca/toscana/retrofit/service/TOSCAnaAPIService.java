@@ -101,6 +101,12 @@ public interface TOSCAnaAPIService {
         @Path("platform") String platform
     );
 
+    @GET("/api/csars/{csarName}/transformations/{platform}/outputs")
+    Call<TransformationProperties> getOutputs(
+        @Path("csarName") String csarName,
+        @Path("platform") String platform
+    );
+
     @PUT("/api/csars/{csarName}/transformations/{platform}/properties")
     Call<ResponseBody> updateProperties(
         @Path("csarName") String csarName,
@@ -114,4 +120,5 @@ public interface TOSCAnaAPIService {
         @Part MultipartBody.Part body,
         @Path("name") String name
     );
+
 }

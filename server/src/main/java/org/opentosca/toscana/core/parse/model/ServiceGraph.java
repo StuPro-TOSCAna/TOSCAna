@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.opentosca.toscana.core.parse.converter.GraphNormalizer;
@@ -137,6 +138,13 @@ public class ServiceGraph extends SimpleDirectedGraph<Entity, Connection> {
             }
         }
         return inputs;
+    }
+
+    public Map<String, Property> getOutputs() {
+        return getChildren(ToscaStructure.OUTPUTS)
+            .stream()
+            .map(o -> (Parameter) TypeWrapper.wrapEntity((MappingEntity) o, Parameter.class))
+            .collect(Collectors.toMap(Parameter::getKey, Function.identity()));
     }
 
     /**

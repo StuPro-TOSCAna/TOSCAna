@@ -37,9 +37,9 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
-public class TOSCAnaAPI {
+public class ToscanaApi {
 
-    private static final Logger logger = (Logger) LoggerFactory.getLogger(TOSCAnaAPI.class);
+    private static final Logger logger = (Logger) LoggerFactory.getLogger(ToscanaApi.class);
     private static final MediaType UPLOAD_MIME_TYPE = MediaType.parse("multipart/form-data");
 
     private String url;
@@ -48,12 +48,12 @@ public class TOSCAnaAPI {
 
     private ObjectMapper objectMapper;
 
-    public TOSCAnaAPI(String url) {
+    public ToscanaApi(String url) {
         this(url, LoggingMode.OFF);
         logger.setLevel(Level.OFF);
     }
 
-    public TOSCAnaAPI(String url, LoggingMode mode) {
+    public ToscanaApi(String url, LoggingMode mode) {
         this.url = url;
         setLoggingMode(mode);
 
@@ -174,6 +174,11 @@ public class TOSCAnaAPI {
     public TransformationProperties getProperties(String csarName, String platform)
         throws IOException, TOSCAnaServerException {
         return performCall(apiService.getProperties(csarName, platform));
+    }
+    
+    public TransformationProperties getOutputs(String csarName, String platform)
+        throws IOException, TOSCAnaServerException {
+        return performCall(apiService.getOutputs(csarName, platform));
     }
 
     public Map<String, Boolean> updateProperties(

@@ -5,7 +5,7 @@ import java.io.IOException;
 import org.opentosca.toscana.core.BaseSpringIntegrationTest;
 import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin;
-import org.opentosca.toscana.retrofit.TOSCAnaAPI;
+import org.opentosca.toscana.retrofit.ToscanaApi;
 import org.opentosca.toscana.retrofit.model.TransformationProperties;
 import org.opentosca.toscana.retrofit.model.TransformationProperty;
 import org.opentosca.toscana.retrofit.util.TOSCAnaServerException;
@@ -19,7 +19,7 @@ public class UserInputIT extends BaseSpringIntegrationTest {
 
     @Test
     public void transformationWithModelInputs() throws IOException, TOSCAnaServerException, InterruptedException {
-        TOSCAnaAPI api = new TOSCAnaAPI(getHttpUrl());
+        ToscanaApi api = new ToscanaApi(getHttpUrl());
         String csarName = "lamp";
         api.uploadCsar(csarName, TestCsars.VALID_LAMP_INPUT);
         String platformId = new CloudFoundryPlugin().getPlatform().id;

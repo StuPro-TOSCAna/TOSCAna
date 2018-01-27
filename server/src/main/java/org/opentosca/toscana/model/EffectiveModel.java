@@ -89,5 +89,9 @@ public class EffectiveModel {
     public Map<String, Property> getInputs() {
         return serviceGraph.getInputs();
     }
+
+    public Map<String,Property> getOutputs() {
+        return serviceGraph.getOutputs();
+    }
 }
 

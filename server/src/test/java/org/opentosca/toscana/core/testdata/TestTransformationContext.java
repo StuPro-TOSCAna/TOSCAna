@@ -53,7 +53,7 @@ public class TestTransformationContext extends BaseSpringTest {
         File csarContentDir = csarDao.getContentDir(csar);
         File transformationContentDir = transformationDao.getContentDir(transformation);
         return new TransformationContext(csarContentDir, transformationContentDir, mock(Log.class),
-            csar.getModel().get(), transformation.getProperties());
+            csar.getModel().get(), transformation.getInputs());
     }
 
     @Test

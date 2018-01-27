@@ -76,7 +76,7 @@ public class ExecutionTask implements Runnable {
             EffectiveModel model = transformation.getCsar().getModel().orElseThrow(() ->
                 new IllegalStateException("EffectiveModel is null, will not start transformation."));
             plugin.transform(new TransformationContext(csarContentDir, transformationRootDir,
-                transformation.getLog(), model, transformation.getProperties()));
+                transformation.getLog(), model, transformation.getInputs()));
             transformation.setState(TransformationState.DONE);
         } catch (Exception e) {
             log.info("Transformation of {}/{} failed", csarId, platformId);
