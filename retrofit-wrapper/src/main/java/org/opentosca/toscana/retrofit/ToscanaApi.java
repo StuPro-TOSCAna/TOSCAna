@@ -11,6 +11,7 @@ import org.opentosca.toscana.retrofit.model.Platform;
 import org.opentosca.toscana.retrofit.model.ServerError;
 import org.opentosca.toscana.retrofit.model.Transformation;
 import org.opentosca.toscana.retrofit.model.TransformationLogs;
+import org.opentosca.toscana.retrofit.model.TransformationOutputs;
 import org.opentosca.toscana.retrofit.model.TransformationProperties;
 import org.opentosca.toscana.retrofit.model.TransformerStatus;
 import org.opentosca.toscana.retrofit.model.embedded.CsarResources;
@@ -176,7 +177,7 @@ public class ToscanaApi {
         return performCall(apiService.getProperties(csarName, platform));
     }
     
-    public TransformationProperties getOutputs(String csarName, String platform)
+    public TransformationOutputs getOutputs(String csarName, String platform)
         throws IOException, TOSCAnaServerException {
         return performCall(apiService.getOutputs(csarName, platform));
     }

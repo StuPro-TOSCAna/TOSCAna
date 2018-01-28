@@ -2,9 +2,12 @@ package org.opentosca.toscana.retrofit.model;
 
 import java.time.Instant;
 
+import org.opentosca.toscana.retrofit.model.hal.Resource;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class LogEntry {
+public class LogEntry extends Resource {
+    
     private Long timestamp;
     private String level;
     private String message;
@@ -36,7 +39,7 @@ public class LogEntry {
     public String getMessage() {
         return message;
     }
-    
+
     @JsonProperty("index")
     public long getIndex() {
         return index;

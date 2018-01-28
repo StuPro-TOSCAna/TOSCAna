@@ -6,6 +6,7 @@ import org.opentosca.toscana.retrofit.model.Csar;
 import org.opentosca.toscana.retrofit.model.Platform;
 import org.opentosca.toscana.retrofit.model.Transformation;
 import org.opentosca.toscana.retrofit.model.TransformationLogs;
+import org.opentosca.toscana.retrofit.model.TransformationOutputs;
 import org.opentosca.toscana.retrofit.model.TransformationProperties;
 import org.opentosca.toscana.retrofit.model.TransformerStatus;
 import org.opentosca.toscana.retrofit.model.embedded.CsarResources;
@@ -102,7 +103,7 @@ public interface TOSCAnaAPIService {
     );
 
     @GET("/api/csars/{csarName}/transformations/{platform}/outputs")
-    Call<TransformationProperties> getOutputs(
+    Call<TransformationOutputs> getOutputs(
         @Path("csarName") String csarName,
         @Path("platform") String platform
     );

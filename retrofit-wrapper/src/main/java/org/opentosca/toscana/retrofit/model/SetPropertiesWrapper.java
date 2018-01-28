@@ -2,9 +2,11 @@ package org.opentosca.toscana.retrofit.model;
 
 import java.util.Map;
 
+import org.opentosca.toscana.retrofit.model.hal.Resource;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class SetPropertiesWrapper {
+public class SetPropertiesWrapper extends Resource {
 
     private Map<String, String> properties;
 

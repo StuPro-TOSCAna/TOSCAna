@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.retrofit.ToscanaApi;
+import org.opentosca.toscana.retrofit.model.TransformationOutputs;
 import org.opentosca.toscana.retrofit.model.TransformationProperties;
 import org.opentosca.toscana.retrofit.util.TOSCAnaServerException;
 
@@ -33,6 +34,6 @@ public class OutputPropertyIT extends BaseSpringIntegrationTest {
         while (api.getTransformation(csarName, platformId).getStatus().equals("TRANSFORMING")) {
             Thread.sleep(5);
         }
-        TransformationProperties outputs = api.getOutputs(csarName, platformId);
+        TransformationOutputs outputs = api.getOutputs(csarName, platformId);
     }
 }

@@ -43,8 +43,12 @@ public class TransformationImpl implements Transformation {
         this.inputs = new PropertyInstance(inputs, this);
         
         Set<Property> outputs = new HashSet<>();
-        outputs.addAll(csar.getModel().get().getOutputs().values());
+        //This is needed to prevent tests from failing
+        if (csar.getModel().isPresent()) {
+            outputs.addAll(csar.getModel().get().getOutputs().values());
+        }
 //        this.outputs = new PropertyInstance(outputs, this);
+
     }
 
     @Override
