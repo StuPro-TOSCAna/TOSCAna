@@ -3,6 +3,7 @@ package org.opentosca.toscana.plugins.kubernetes;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -12,6 +13,7 @@ import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.RootNode;
+import org.opentosca.toscana.model.requirement.Requirement;
 import org.opentosca.toscana.plugins.kubernetes.docker.image.ExportingImageBuilder;
 import org.opentosca.toscana.plugins.kubernetes.docker.image.ImageBuilder;
 import org.opentosca.toscana.plugins.kubernetes.docker.image.PushingImageBuilder;
@@ -27,6 +29,7 @@ import org.opentosca.toscana.plugins.kubernetes.visitor.util.ComputeNodeFindingV
 import org.opentosca.toscana.plugins.util.TransformationFailureException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.jgrapht.Graph;
 
 import static org.opentosca.toscana.plugins.kubernetes.util.GraphOperations.buildTopologyStacks;
 import static org.opentosca.toscana.plugins.kubernetes.util.GraphOperations.determineTopLevelNodes;
@@ -40,6 +43,7 @@ public class KubernetesLifecycle extends AbstractLifecycle {
     private Map<String, KubernetesNodeContainer> nodes = new HashMap<>();
     private Set<KubernetesNodeContainer> computeNodes = new HashSet<>();
     private Set<NodeStack> stacks = new HashSet<>();
+    private List<Pod> pods = null;
 
     private boolean pushToRegistry = false;
     private Map<NodeStack, ImageBuilder> imageBuilders = new HashMap<>();
@@ -123,6 +127,12 @@ public class KubernetesLifecycle extends AbstractLifecycle {
 
         logger.debug("Building complete Topology stacks");
         this.stacks.addAll(buildTopologyStacks(model, topLevelNodes, nodes));
+
+        logger.debug("Grouping Stacks in Pods");
+        this.pods = Pod.getPods(stacks);
+
+        logger.debug("Setting Private addresses of Compute Nodes");
+        pods.forEach(e -> e.getComputeNode().setPrivateAddress(e.getServiceName()));
     }
 
     @Override
@@ -222,10 +232,12 @@ public class KubernetesLifecycle extends AbstractLifecycle {
      Creates the Dockerfiles (that means the dockerfile and all its dependesies get written to disk)
      */
     private void createDockerfiles() {
+        Graph<NodeStack, Requirement> connectionGraph = RelationshipAnalyzer.buildRelationshipGraph(stacks);
+//        throw new TransformationFailureException();
         stacks.forEach(e -> {
             logger.info("Creating Dockerfile for {}", e);
             try {
-                e.buildToDockerfile(context, baseImageMapper);
+                e.buildToDockerfile(connectionGraph, context, baseImageMapper);
             } catch (IOException ex) {
                 ex.printStackTrace();
                 throw new TransformationFailureException("Transformation Failed", ex);
@@ -239,7 +251,7 @@ public class KubernetesLifecycle extends AbstractLifecycle {
     private void createKubernetesResources() {
         logger.info("Creating Kubernetes Resource Descriptions");
 
-        ResourceFileCreator creator = new ResourceFileCreator(Pod.getPods(this.stacks));
+        ResourceFileCreator creator = new ResourceFileCreator(pods);
 
         StringBuilder complete = new StringBuilder();
         try {

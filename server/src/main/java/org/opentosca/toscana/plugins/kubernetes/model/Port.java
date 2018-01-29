@@ -23,7 +23,7 @@ public class Port {
     }
 
     public ServicePort toServicePort() {
-        return new ServicePortBuilder().withPort(port).withName(getName()).build();
+        return new ServicePortBuilder().withName(getName()).withPort(port).build();
     }
 
     public ContainerPort toContainerPort() {
