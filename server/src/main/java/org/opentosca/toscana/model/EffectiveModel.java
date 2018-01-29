@@ -31,7 +31,7 @@ public class EffectiveModel {
     private Map<String, RootNode> nodeMap;
     private boolean initialized = false;
 
-    public EffectiveModel(Csar csar) throws InvalidCsarException {
+    protected EffectiveModel(Csar csar) throws InvalidCsarException {
         Log log = csar.getLog();
         EntrypointDetector entrypointDetector = new EntrypointDetector(log);
         this.logger = log.getLogger(getClass());
@@ -39,7 +39,7 @@ public class EffectiveModel {
         this.serviceGraph = new ServiceGraph(template, csar.getLog());
     }
 
-    public EffectiveModel(File template, Log log) {
+    protected EffectiveModel(File template, Log log) {
         this.logger = LoggerFactory.getLogger(getClass());
         this.serviceGraph = new ServiceGraph(template, log);
     }

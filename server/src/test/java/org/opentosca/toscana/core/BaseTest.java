@@ -1,14 +1,18 @@
 package org.opentosca.toscana.core;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.HashSet;
 
 import org.opentosca.toscana.UnitTest;
 import org.opentosca.toscana.core.transformation.logging.Log;
+import org.opentosca.toscana.model.EffectiveModel;
+import org.opentosca.toscana.model.relation.RootRelationship;
 
+import org.jgrapht.graph.DefaultDirectedGraph;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.experimental.categories.Category;
-import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.slf4j.LoggerFactory;
@@ -34,5 +38,17 @@ public abstract class BaseTest {
         log = mock(Log.class);
         when(log.getLogger(anyString())).thenReturn(LoggerFactory.getLogger("test logger"));
         when(log.getLogger(any(Class.class))).thenReturn(LoggerFactory.getLogger("test logger"));
+    }
+
+    /**
+     @return a mocked EffectiveModel instance which returns empty sets / maps /graphs upon every call
+     */
+    protected EffectiveModel modelMock() {
+        EffectiveModel model = mock(EffectiveModel.class);
+        when(model.getInputs()).thenReturn(new HashMap<>());
+        when(model.getNodeMap()).thenReturn(new HashMap<>());
+        when(model.getNodes()).thenReturn(new HashSet<>());
+        when(model.getTopology()).thenReturn(new DefaultDirectedGraph<>(RootRelationship.class));
+        return model;
     }
 }

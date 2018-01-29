@@ -11,7 +11,10 @@ import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarDao;
 import org.opentosca.toscana.core.csar.CsarFilesystemDao;
 import org.opentosca.toscana.core.csar.CsarImpl;
+import org.opentosca.toscana.core.parse.InvalidCsarException;
 import org.opentosca.toscana.core.transformation.platform.PlatformService;
+import org.opentosca.toscana.model.EffectiveModel;
+import org.opentosca.toscana.model.EffectiveModelFactory;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -22,6 +25,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.opentosca.toscana.core.testdata.TestPlugins.PLATFORM1;
 import static org.opentosca.toscana.core.testdata.TestPlugins.PLATFORM2;
@@ -41,11 +46,14 @@ public class TransformationFilesystemDaoTest extends BaseUnitTest {
     private File transformationRootDir;
 
     @Before
-    public void setUp() {
+    public void setUp() throws InvalidCsarException {
         csar = new CsarImpl(new File(""), "csar1", log);
-        transformationDao = new TransformationFilesystemDao(platformService);
+        EffectiveModelFactory modelFactory = mock(EffectiveModelFactory.class);
+        EffectiveModel model = modelMock();
+        when(modelFactory.create(any(Csar.class))).thenReturn(model);
+        transformationDao = new TransformationFilesystemDao(platformService, modelFactory);
         transformationDao.setCsarDao(csarDao);
-        transformation = new TransformationImpl(csar, PLATFORM1, log);
+        transformation = new TransformationImpl(csar, PLATFORM1, log, modelMock());
         transformationRootDir = transformationDao.getRootDir(transformation);
     }
 
@@ -132,7 +140,7 @@ public class TransformationFilesystemDaoTest extends BaseUnitTest {
     @Test
     public void readTransformationFromDiskWithIllegalPlatform() {
         when(csarDao.getTransformationsDir(csar)).thenReturn(tmpdir);
-        Transformation t = new TransformationImpl(csar, PLATFORM_NOT_SUPPORTED, log);
+        Transformation t = new TransformationImpl(csar, PLATFORM_NOT_SUPPORTED, log, modelMock());
         createRandomFiles(transformationDao.getRootDir(t));
 
         assertFalse(transformationDao.find(csar, PLATFORM_NOT_SUPPORTED).isPresent());

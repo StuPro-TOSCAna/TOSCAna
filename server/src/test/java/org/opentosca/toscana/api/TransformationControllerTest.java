@@ -218,7 +218,7 @@ public class TransformationControllerTest extends BaseSpringTest {
         when(transformationService.createTransformation(any(Csar.class), any(Platform.class))).then(iom -> {
             Csar csar = (Csar) iom.getArguments()[0];
             Platform platform = (Platform) iom.getArguments()[1];
-            Transformation t = new TransformationImpl(csar, platform, mock(Log.class));
+            Transformation t = new TransformationImpl(csar, platform, mock(Log.class), modelMock());
             csar.getTransformations().put(platform.id, t);
             return t;
         });
@@ -694,7 +694,7 @@ public class TransformationControllerTest extends BaseSpringTest {
             Transformation transformation = new TransformationImpl(
                 csar.get(),
                 platformService.findPlatformById(pname).get(),
-                mockLog
+                mockLog, modelMock()
             );
             transformation = spy(transformation);
             csar.get().getTransformations().put(pname, transformation);

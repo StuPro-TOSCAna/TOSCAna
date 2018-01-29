@@ -6,15 +6,21 @@ import java.io.InputStream;
 import java.util.List;
 
 import org.opentosca.toscana.core.BaseSpringIntegrationTest;
+import org.opentosca.toscana.core.parse.InvalidCsarException;
 import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.logging.LogImpl;
+import org.opentosca.toscana.model.EffectiveModel;
+import org.opentosca.toscana.model.EffectiveModelFactory;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class CsarServiceImplIT extends BaseSpringIntegrationTest {
 
@@ -26,8 +32,11 @@ public class CsarServiceImplIT extends BaseSpringIntegrationTest {
     private Csar csar;
 
     @Before
-    public void setUp() {
-        csarService = new CsarServiceImpl(csarDao);
+    public void setUp() throws InvalidCsarException {
+        EffectiveModelFactory modelFactory = mock(EffectiveModelFactory.class);
+        EffectiveModel model = modelMock();
+        when(modelFactory.create(any(Csar.class))).thenReturn(model);
+        csarService = new CsarServiceImpl(csarDao, modelFactory);
         Log log = new LogImpl(new File(tmpdir, "log"));
         csar = new CsarImpl(new File(""), identifier, log);
     }

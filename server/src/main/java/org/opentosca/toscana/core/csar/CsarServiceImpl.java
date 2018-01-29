@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.opentosca.toscana.core.parse.InvalidCsarException;
-import org.opentosca.toscana.model.EffectiveModel;
+import org.opentosca.toscana.model.EffectiveModelFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,10 +18,12 @@ public class CsarServiceImpl implements CsarService {
     private final static Logger logger = LoggerFactory.getLogger(CsarService.class.getName());
 
     private final CsarDao csarDao;
+    private final EffectiveModelFactory effectiveModelFactory;
 
     @Autowired
-    public CsarServiceImpl(CsarDao dao) {
+    public CsarServiceImpl(CsarDao dao, EffectiveModelFactory effectiveModelFactory) {
         this.csarDao = dao;
+        this.effectiveModelFactory = effectiveModelFactory;
     }
 
     @Override
@@ -43,7 +45,7 @@ public class CsarServiceImpl implements CsarService {
         // test whether EffectiveModel can get created without throwing an error
         try {
             // test if conversion does evoke errors
-            new EffectiveModel(csar);
+            effectiveModelFactory.create(csar);
             // TODO improve error handling
         } catch (Exception e) {
             throw new InvalidCsarException(csar.getLog());

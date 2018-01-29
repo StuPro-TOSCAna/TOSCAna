@@ -45,7 +45,7 @@ public class TransformationPropertyHandlingTest extends BaseUnitTest {
             );
         }
         Platform p = new Platform("test", "Test Platform", props);
-        transformation = new TransformationImpl(csar, p, log);
+        transformation = new TransformationImpl(csar, p, log, modelMock());
     }
 
     @Test
@@ -106,7 +106,8 @@ public class TransformationPropertyHandlingTest extends BaseUnitTest {
     @Test
     public void checkEmptyProperties() throws Exception {
         Csar csar = new CsarImpl(new File(""), MOCK_CSAR_NAME, log);
-        this.transformation = new TransformationImpl(csar, new Platform("test", "test", new HashSet<>()), mock(Log.class));
+        this.transformation = new TransformationImpl(csar, 
+            new Platform("test", "test", new HashSet<>()), mock(Log.class), modelMock());
         assertTrue(transformation.allRequiredPropertiesSet());
         assertTrue(transformation.allPropertiesSet());
     }

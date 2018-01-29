@@ -202,7 +202,7 @@ public class CsarControllerTest extends BaseSpringTest {
     public void testDeleteCsarBusy() throws Exception {
         //Add mock transformation to csar
         Csar csar = service.getCsar(VALID_CSAR_NAME).get();
-        Transformation transformation = new TransformationImpl(csar, PLATFORM1, mock(Log.class));
+        Transformation transformation = new TransformationImpl(csar, PLATFORM1, mock(Log.class), modelMock());
         transformation.setState(TransformationState.TRANSFORMING);
         csar.getTransformations().put(PLATFORM1.id, transformation);
         //Perform request

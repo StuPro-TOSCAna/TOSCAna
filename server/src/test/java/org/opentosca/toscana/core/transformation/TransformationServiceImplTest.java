@@ -1,8 +1,6 @@
 package org.opentosca.toscana.core.transformation;
 
 import java.io.FileNotFoundException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 import org.opentosca.toscana.api.exceptions.PlatformNotFoundException;
@@ -12,9 +10,6 @@ import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.transformation.artifacts.TargetArtifact;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.platform.Platform;
-import org.opentosca.toscana.core.transformation.properties.PlatformProperty;
-import org.opentosca.toscana.core.transformation.properties.Property;
-import org.opentosca.toscana.core.transformation.properties.PropertyType;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -35,7 +30,7 @@ import static org.opentosca.toscana.core.testdata.TestPlugins.PASSING_DUMMY;
 import static org.opentosca.toscana.core.testdata.TestPlugins.PASSING_WRITING_DUMMY;
 import static org.opentosca.toscana.core.testdata.TestPlugins.PLATFORM1;
 import static org.opentosca.toscana.core.testdata.TestPlugins.PLATFORM_NOT_SUPPORTED;
-import static org.opentosca.toscana.core.testdata.TestPlugins.PLATFORM_PASSING_DUMMY;
+import static org.opentosca.toscana.core.testdata.TestPlugins.PLATFORM_PASSING_INPUT_REQUIRED_DUMMY;
 
 public class TransformationServiceImplTest extends BaseSpringTest {
 
@@ -59,7 +54,7 @@ public class TransformationServiceImplTest extends BaseSpringTest {
 
     @Test(timeout = TEST_EXECUTION_TIMEOUT_MS)
     public void createTransformation() throws Exception {
-        Transformation expected = new TransformationImpl(csar, PLATFORM1, log);
+        Transformation expected = new TransformationImpl(csar, PLATFORM1, log, modelMock());
         Transformation transformation = service.createTransformation(csar, PLATFORM1);
         assertTrue(csar.getTransformation(PLATFORM1.id).isPresent());
         assertEquals(expected, transformation);
@@ -96,17 +91,8 @@ public class TransformationServiceImplTest extends BaseSpringTest {
 
     @Test(timeout = TEST_EXECUTION_TIMEOUT_MS)
     public void transformationCreationInputNeeded() throws Exception {
-        Csar csar = spy(this.csar);
-
-        //Generate Mock SimpleProperty
-        Map<String, Property> propMap = new HashMap<>();
-        propMap.put("mock_prop", new PlatformProperty("mock_prop", PropertyType.NAME));
-
-        // TODO fix
-//        when(csar.getModelSpecificProperties()).thenReturn(propMap);
-
-        Transformation t = service.createTransformation(csar, PLATFORM_PASSING_DUMMY);
-        assertTrue(csar.getTransformation(PLATFORM_PASSING_DUMMY.id).isPresent());
+        Transformation t = service.createTransformation(csar, PLATFORM_PASSING_INPUT_REQUIRED_DUMMY);
+        assertTrue(csar.getTransformation(PLATFORM_PASSING_INPUT_REQUIRED_DUMMY.id).isPresent());
         assertNotNull(t);
         assertEquals(TransformationState.INPUT_REQUIRED, t.getState());
     }
@@ -167,7 +153,7 @@ public class TransformationServiceImplTest extends BaseSpringTest {
 
     @Test(timeout = TEST_EXECUTION_TIMEOUT_MS)
     public void deleteTransformation() throws Exception {
-        Transformation transformation = new TransformationImpl(csar, PLATFORM1, log);
+        Transformation transformation = new TransformationImpl(csar, PLATFORM1, log, modelMock());
         csar.getTransformations().put(PLATFORM1.id, transformation);
         service.deleteTransformation(transformation);
 

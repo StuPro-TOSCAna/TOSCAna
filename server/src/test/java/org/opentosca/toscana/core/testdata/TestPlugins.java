@@ -11,7 +11,10 @@ import org.opentosca.toscana.core.testdata.dummyplugins.DummyPlugin;
 import org.opentosca.toscana.core.testdata.dummyplugins.ExecutionDummyPlugin;
 import org.opentosca.toscana.core.testdata.dummyplugins.FileCreationExcecutionDummy;
 import org.opentosca.toscana.core.transformation.platform.Platform;
+import org.opentosca.toscana.core.transformation.properties.PlatformProperty;
+import org.opentosca.toscana.core.transformation.properties.PropertyType;
 
+import com.google.common.collect.Sets;
 import org.assertj.core.util.Lists;
 
 public class TestPlugins {
@@ -36,6 +39,12 @@ public class TestPlugins {
         "the testplatform for passing dummy");
     public static final ExecutionDummyPlugin PASSING_DUMMY =
         new ExecutionDummyPlugin(PLATFORM_PASSING_DUMMY, false);
+    
+    public static final Platform PLATFORM_PASSING_INPUT_REQUIRED_DUMMY = new Platform("testplatform_passing_input_required_dummy",
+        "the testplatform for passing dummy, with platform property", 
+        Sets.newHashSet(new PlatformProperty("key", PropertyType.TEXT)));
+    public static final ExecutionDummyPlugin PASSING_INPUT_REQUIRED_DUMMY =
+        new ExecutionDummyPlugin(PLATFORM_PASSING_INPUT_REQUIRED_DUMMY, false);
 
     public static final Platform PLATFORM_FAILING_DUMMY = new Platform("testplatform_failing_dummy",
         "the testplatform for passing dummy");
@@ -53,12 +62,14 @@ public class TestPlugins {
         new FileCreationExcecutionDummy(PLATFORM_FAILING_WRITING_DUMMY, true);
 
     public static final Set<Platform> PLATFORMS = new HashSet<>(Arrays.asList(PLATFORM1, PLATFORM2, PLATFORM3,
-        PLATFORM4, PLATFORM_FAILING_DUMMY, PLATFORM_FAILING_WRITING_DUMMY, PLATFORM_PASSING_DUMMY, PLATFORM_PASSING_WRITING_DUMMY));
+        PLATFORM4, PLATFORM_FAILING_DUMMY, PLATFORM_FAILING_WRITING_DUMMY, PLATFORM_PASSING_DUMMY,
+        PLATFORM_PASSING_INPUT_REQUIRED_DUMMY, PLATFORM_PASSING_WRITING_DUMMY));
     public static final List<TOSCAnaPlugin> PLUGINS = Lists.newArrayList(
         PLUGIN1, PLUGIN2,
         PLUGIN3, PLUGIN4,
         PASSING_DUMMY, FAILING_DUMMY,
-        PASSING_WRITING_DUMMY, FAILING_WRITING_DUMMY
+        PASSING_WRITING_DUMMY, FAILING_WRITING_DUMMY,
+        PASSING_INPUT_REQUIRED_DUMMY
     );
 
     /**

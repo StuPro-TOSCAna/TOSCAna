@@ -20,6 +20,7 @@ import org.opentosca.toscana.core.transformation.artifacts.ArtifactService;
 import org.opentosca.toscana.core.transformation.artifacts.ArtifactServiceImpl;
 import org.opentosca.toscana.core.transformation.platform.PlatformService;
 import org.opentosca.toscana.core.util.Preferences;
+import org.opentosca.toscana.model.EffectiveModelFactory;
 import org.opentosca.toscana.plugins.kubernetes.docker.mapper.BaseImageMapper;
 import org.opentosca.toscana.plugins.kubernetes.docker.mapper.DockerBaseImages;
 import org.opentosca.toscana.plugins.kubernetes.docker.mapper.TagStorage;
@@ -66,7 +67,7 @@ public class TestCoreConfiguration extends CoreConfiguration {
 
     @Bean
     public CsarService csarService(CsarDao repo) {
-        return new CsarServiceImpl(repo);
+        return new CsarServiceImpl(repo, effectiveModelFactory());
     }
 
     @Bean
@@ -78,8 +79,13 @@ public class TestCoreConfiguration extends CoreConfiguration {
     @Bean
     @Primary
     public TransformationDao transformationDao(PlatformService platforms) {
-        TransformationFilesystemDao bean = new TransformationFilesystemDao(platforms);
+        TransformationFilesystemDao bean = new TransformationFilesystemDao(platforms, effectiveModelFactory());
         return bean;
+    }
+
+    @Bean
+    public EffectiveModelFactory effectiveModelFactory() {
+        return new EffectiveModelFactory();
     }
 
     @Bean

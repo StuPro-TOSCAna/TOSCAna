@@ -104,7 +104,7 @@ public class CsarFilesystemDaoTest extends BaseUnitTest {
 
         csarDao = new CsarFilesystemDao(preferences, transformationDao);
         List<Transformation> transformations = TestPlugins.PLATFORMS.stream()
-            .map(platform -> new TransformationImpl(csar, platform, fakeLog))
+            .map(platform -> new TransformationImpl(csar, platform, fakeLog, modelMock()))
             .collect(Collectors.toList());
         when(transformationDao.find(any())).thenReturn(transformations);
         csarDao.init();

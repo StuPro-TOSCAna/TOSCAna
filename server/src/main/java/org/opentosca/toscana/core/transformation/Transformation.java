@@ -12,12 +12,6 @@ import org.opentosca.toscana.model.EffectiveModel;
 public interface Transformation {
 
     /**
-     Populates the model (parses the service template, builds the EffectiveModel instance etc.)
-     This must be called explicitly in order to fully initialize this instance (for testing purposes this is handy)
-     */
-    void populateModel();
-
-    /**
      @return the state the transformation is currently in.
      */
     TransformationState getState();

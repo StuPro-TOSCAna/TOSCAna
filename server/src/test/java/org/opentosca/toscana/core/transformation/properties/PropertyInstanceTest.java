@@ -36,7 +36,8 @@ public class PropertyInstanceTest extends BaseUnitTest {
         transformation = new TransformationImpl(
             new CsarImpl(new File(""), "test", mock(Log.class)),
             testPlatform,
-            mock(Log.class)
+            mock(Log.class),
+            modelMock()
         );
 
         this.instance = new PropertyInstance(new HashSet<>(properties), transformation);

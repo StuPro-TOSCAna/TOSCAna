@@ -7,6 +7,7 @@ import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.model.EffectiveModel;
+import org.opentosca.toscana.model.EffectiveModelFactory;
 import org.opentosca.toscana.model.capability.OsCapability;
 import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.RootNode;
@@ -36,7 +37,7 @@ public class CloudFormationPluginTest extends BaseUnitTest {
 
     @Before
     public void setUp() throws Exception {
-        lamp = new EffectiveModel(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, log);
+        lamp = new EffectiveModelFactory().create(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, log);
         fileAccess = new PluginFileAccess(new File("src/test/resources/csars/yaml/valid/lamp-input/"), tmpdir, log);
         cfnModule = new CloudFormationModule(fileAccess, "us-west-2", new BasicAWSCredentials("", ""));
         CloudFormationNodeVisitor cfnNodeVisitorL = new CloudFormationNodeVisitor(logger, cfnModule);

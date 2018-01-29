@@ -137,7 +137,7 @@ public class TransformerHealthIndicatorTest extends BaseUnitTest {
 
         for (Object[] d : MOCK_DATA) {
             //Initialize transformation Mock
-            Transformation transformation = new TransformationImpl(csar, (Platform) d[0], mock(Log.class));
+            Transformation transformation = new TransformationImpl(csar, (Platform) d[0], mock(Log.class), modelMock());
             transformation.setState((TransformationState) d[1]);
             transformations.put(((Platform) d[0]).id, transformation);
 

@@ -5,7 +5,6 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.opentosca.toscana.core.csar.Csar;
-import org.opentosca.toscana.core.parse.InvalidCsarException;
 import org.opentosca.toscana.core.transformation.artifacts.TargetArtifact;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.platform.Platform;
@@ -22,8 +21,8 @@ public class TransformationImpl implements Transformation {
     private final Log log;
     private TransformationState state = TransformationState.READY;
     private TargetArtifact targetArtifact;
-    private EffectiveModel model = null;
-    private PropertyInstance properties;
+    private final EffectiveModel model;
+    private final PropertyInstance properties;
 
     /**
      Creates a new transformation for given csar to given targetPlatform.
@@ -31,23 +30,13 @@ public class TransformationImpl implements Transformation {
      @param csar           the subject of transformation
      @param targetPlatform the target platform
      */
-    public TransformationImpl(Csar csar, Platform targetPlatform, Log log) {
+    public TransformationImpl(Csar csar, Platform targetPlatform, Log log, EffectiveModel model) {
         this.csar = csar;
         this.targetPlatform = targetPlatform;
         this.log = log;
+        this.model = model;
         // caution: side effect
         // transformationState can get set to INPUT_REQUIRED by this call
-        this.properties = new PropertyInstance(targetPlatform.getProperties(), this);
-    }
-
-    @Override
-    public void populateModel() {
-        try {
-            this.model = new EffectiveModel(csar);
-        } catch (InvalidCsarException e) {
-            // should never happen - validation should have already failed
-            throw new IllegalStateException("Failed to convert TOSCA template to csar.");
-        }
         Set<Property> properties = new HashSet<>();
         properties.addAll(model.getInputs().values());
         properties.addAll(targetPlatform.getProperties());

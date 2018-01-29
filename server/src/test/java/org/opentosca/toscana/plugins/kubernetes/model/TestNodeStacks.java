@@ -7,7 +7,7 @@ import java.util.Set;
 
 import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.transformation.logging.Log;
-import org.opentosca.toscana.model.EffectiveModel;
+import org.opentosca.toscana.model.EffectiveModelFactory;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.plugins.kubernetes.util.KubernetesNodeContainer;
 import org.opentosca.toscana.plugins.kubernetes.util.NodeStack;
@@ -16,7 +16,7 @@ import com.google.common.collect.Sets;
 
 public class TestNodeStacks {
     public static Set<NodeStack> getLampNodeStacks(Log log) {
-        Map<String, RootNode> map = new EffectiveModel(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, log).getNodeMap();
+        Map<String, RootNode> map = new EffectiveModelFactory().create(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, log).getNodeMap();
 
         List<KubernetesNodeContainer> webAppNodes = new LinkedList<>();
         KubernetesNodeContainer computeContainer = new KubernetesNodeContainer(map.get("server"));

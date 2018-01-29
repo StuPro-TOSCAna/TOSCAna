@@ -13,11 +13,14 @@ import java.util.stream.Collectors;
 import org.opentosca.toscana.api.exceptions.PlatformNotFoundException;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarDao;
+import org.opentosca.toscana.core.parse.InvalidCsarException;
 import org.opentosca.toscana.core.transformation.artifacts.TargetArtifact;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.logging.LogImpl;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.platform.PlatformService;
+import org.opentosca.toscana.model.EffectiveModel;
+import org.opentosca.toscana.model.EffectiveModelFactory;
 
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -40,11 +43,13 @@ public class TransformationFilesystemDao implements TransformationDao {
 
     private final static Logger logger = LoggerFactory.getLogger(TransformationFilesystemDao.class);
     private final PlatformService platformService;
+    private final EffectiveModelFactory effectiveModelFactory;
     private CsarDao csarDao;
 
     @Autowired
-    public TransformationFilesystemDao(PlatformService platformService) {
+    public TransformationFilesystemDao(PlatformService platformService, EffectiveModelFactory effectiveModelFactory) {
         this.platformService = platformService;
+        this.effectiveModelFactory = effectiveModelFactory;
     }
 
     @Override
@@ -60,9 +65,14 @@ public class TransformationFilesystemDao implements TransformationDao {
     }
 
     private Transformation createTransformation(Csar csar, Platform platform) {
-        Transformation transformation = new TransformationImpl(csar, platform, getLog(csar, platform));
-        transformation.populateModel();
-        return transformation;
+        try {
+            EffectiveModel model = effectiveModelFactory.create(csar);
+            Transformation transformation = new TransformationImpl(csar, platform, getLog(csar, platform), model);
+            return transformation;
+        } catch (InvalidCsarException e) {
+            throw new IllegalStateException("Failed to create csar. Should not have happened - csar upload should have" +
+                "already failed", e);
+        }
     }
 
     @Override
