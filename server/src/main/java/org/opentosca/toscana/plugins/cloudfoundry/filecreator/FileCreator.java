@@ -1,4 +1,4 @@
-package org.opentosca.toscana.plugins.cloudfoundry;
+package org.opentosca.toscana.plugins.cloudfoundry.filecreator;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -48,7 +48,9 @@ public class FileCreator {
 
     public FileCreator(PluginFileAccess fileAccess, List<Application> applications) {
         this.fileAccess = fileAccess;
-        this.applications = applications;
+
+        //check applications and remove dummy applications
+        this.applications = new ApplicationHandler(applications).handleApplications();
     }
 
     public void createFiles() throws IOException, JSONException {

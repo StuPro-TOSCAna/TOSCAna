@@ -11,7 +11,7 @@ import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.node.WebApplication;
 import org.opentosca.toscana.plugins.cloudfoundry.client.Connection;
 
-import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.APPLICATION_FOLDER;
+import static org.opentosca.toscana.plugins.cloudfoundry.filecreator.FileCreator.APPLICATION_FOLDER;
 
 /**
  This class should describe a Application with all needed information to deploy it
@@ -31,6 +31,8 @@ public class Application {
     private Provider provider;
     private String pathToApplication;
     private String applicationSuffix;
+    private boolean realApplication = true;
+    private Application parentApplication = null;
 
     private Connection connection;
 
@@ -73,6 +75,16 @@ public class Application {
     }
 
     /**
+     execute the given file on the warden container
+
+     @param pathToFile      must be the path inside the csar. The method will create a path on the warden container
+     @param pathOnContainer must be the path inside the container
+     */
+    public void addExecuteFile(String pathToFile, String pathOnContainer) {
+        executeCommand.put(pathToFile, pathOnContainer);
+    }
+
+    /**
      returns a list with realtive paths which should be executed with the python script configMysql
      */
     public List<String> getConfigMysql() {
@@ -90,6 +102,10 @@ public class Application {
 
     public int getApplicationNumber() {
         return this.applicationNumber;
+    }
+
+    public void setApplicationNumber(int applicationNumber) {
+        this.applicationNumber = applicationNumber;
     }
 
     public void setConnection(Connection connection) {
@@ -191,5 +207,31 @@ public class Application {
 
     public String getPathToApplication() {
         return pathToApplication;
+    }
+
+    /**
+     true if the application is a real application
+     false if the application is a dummy application e.g. a service
+     default is true
+     */
+    public boolean isRealApplication() {
+        return realApplication;
+    }
+
+    /**
+     if the application is a dummy application e.g. a service
+     default is true
+
+     @param parentApplication the application which this application belongs to
+     */
+    public void applicationIsNotReal(Application parentApplication) {
+        this.realApplication = false;
+    }
+
+    /**
+     @return the application to which this dummy application belongs to. Null if there is no parent.
+     */
+    public Application getParentApplication() {
+        return parentApplication;
     }
 }
