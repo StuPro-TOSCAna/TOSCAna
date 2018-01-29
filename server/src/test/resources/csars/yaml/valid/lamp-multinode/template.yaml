@@ -1,0 +1,108 @@
+tosca_definitions_version: tosca_simple_yaml_1_1
+description: Template for deploying a LAMP stack. (Multi Compute Node)
+metadata:
+  template_name: lamp-stack-template
+  template_author: stupro-toscana
+  template_version: 1.0
+
+artifact_types:
+  SQL:
+    derived_from: tosca.artifacts.Implementation
+
+topology_template:
+
+  node_templates:
+    my_app:
+      type: tosca.nodes.WebApplication
+      requirements:
+        - host: apache_web_server
+        - database_endpoint: my_db
+      interfaces:
+        Standard:
+          create:
+            implementation:
+              primary: my_app/create_myphpapp.sh
+              dependencies:
+                - my_app/myphpapp.php
+                - my_app/mysql-credentials.php
+          configure:
+            implementation: my_app/configure_myphpapp.sh
+            inputs:
+              database_host: { get_attribute: [ db_server, private_address ] }
+              database_user: { get_property: [ my_db,  user ] }
+              database_password: { get_property: [ my_db, password ] }
+              database_name: { get_property: [ my_db, name ] }
+              database_port: { get_property: [ my_db, port ] }
+
+    apache_web_server:
+      type: tosca.nodes.WebServer.Apache
+      requirements:
+        - host: app_server
+      interfaces:
+        Standard:
+          configure:
+            implementation: my_apache/install_php.sh
+
+    app_server:
+      type: tosca.nodes.Compute
+      capabilities:
+        host:
+          properties:
+            num_cpus: 1
+            disk_size: 25 GB
+            mem_size: 2048 MB
+        os:
+          properties:
+            type: linux
+            distribution: ubuntu
+            version: 16.04
+
+    my_db:
+      type: tosca.nodes.Database.MySQL
+      properties:
+        name: mydb
+        user: root
+        password: abc
+        port: 3306
+      capabilities:
+        database_endpoint:
+          properties:
+            port: { get_property: [ SELF, port ] }
+      requirements:
+        - host: mysql_dbms
+      artifacts:
+        my_sql_table:
+          file: mysql/createtable.sql
+          type: SQL
+
+    mysql_dbms:
+      type: tosca.nodes.DBMS.MySQL
+      properties:
+        root_password: abc
+        port: 3306
+      requirements:
+        - host: db_server
+
+    db_server:
+      type: tosca.nodes.Compute
+      capabilities:
+        host:
+          properties:
+            num_cpus: 1
+            disk_size: 25 GB
+            mem_size: 2048 MB
+        os:
+          properties:
+            type: linux
+            distribution: ubuntu
+            version: 16.04
+
+  outputs:
+    public_address:
+      type: string
+      description: Public address of the server
+      value: { get_attribute: [ app_server, public_address ] }
+    port:
+      description: Port of the server
+      type: string
+      value: { get_attribute: [ app_server, port ] }

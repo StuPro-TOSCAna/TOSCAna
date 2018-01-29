@@ -1,6 +1,7 @@
 package org.opentosca.toscana.model.requirement;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import org.opentosca.toscana.core.parse.model.MappingEntity;
@@ -96,6 +97,9 @@ public class Requirement<CapabilityT extends Capability, NodeT extends RootNode,
     /**
      @return {@link #relationship}
      */
+    public Optional<RelationshipT> getRelationship() {
+        return Optional.of((RelationshipT) get(RELATIONSHIP));
+    }
 
     /**
      Sets {@link #relationship}

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.model.artifact.Artifact;
@@ -16,11 +17,13 @@ import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.node.WebApplication;
 import org.opentosca.toscana.model.operation.Operation;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
+import org.opentosca.toscana.model.requirement.Requirement;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 import org.opentosca.toscana.plugins.kubernetes.docker.dockerfile.builder.DockerfileBuilder;
 import org.opentosca.toscana.plugins.kubernetes.util.NodeStack;
 import org.opentosca.toscana.plugins.util.TransformationFailureException;
 
+import org.jgrapht.Graph;
 import org.slf4j.Logger;
 
 public class DockerfileBuildingVisitor implements NodeVisitor {
@@ -28,14 +31,21 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
     private final Logger logger;
     private final DockerfileBuilder builder;
     private final NodeStack stack;
+    private final Graph<NodeStack, Requirement> connectionGraph;
 
     private boolean sudoInstalled = false;
 
     private List<Integer> ports = new ArrayList<>();
 
-    public DockerfileBuildingVisitor(String baseImage, NodeStack stack, TransformationContext context) {
+    public DockerfileBuildingVisitor(
+        String baseImage,
+        NodeStack stack,
+        Graph<NodeStack, Requirement> connectionGraph,
+        TransformationContext context
+    ) {
         this.logger = context.getLogger(getClass());
         this.stack = stack;
+        this.connectionGraph = connectionGraph;
         logger.debug("Initiialing DockerfileBilder for {}", stack);
         this.builder = new DockerfileBuilder(
             baseImage,
@@ -54,8 +64,10 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
     public void visit(Apache node) {
         ports.add(80);
         ports.add(443);
-        //TODO only do this if a Mysql node connects to (is in a connection relationship with this node)
-        builder.run("docker-php-ext-install mysqli");
+        Set<Requirement> stackConnections = connectionGraph.outgoingEdgesOf(this.stack);
+        if (requiresMySQL(stackConnections)) {
+            builder.run("docker-php-ext-install mysqli");
+        }
         //TODO Add Dependency Detection for apache
         //handleDefault(node);
     }
@@ -136,6 +148,7 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
                 String path = operation.getArtifact().get().getFilePath();
                 if (!sudoInstalled && needsSudo(path)) {
                     //Install sudo, currently only works with Debian based systems
+                    //TODO implement sudo setup for other base images
                     builder.run("apt-get update && apt-get install -y sudo; true");
                     sudoInstalled = true;
                 }
@@ -167,5 +180,19 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
             node.getNode().accept(this);
         });
         builder.write();
+    }
+
+    private boolean requiresMySQL(Set<Requirement> stackConnections) {
+        boolean hasMySQLConnection = false;
+        if (stackConnections != null && stackConnections.size() > 0) {
+            for (Requirement connection : stackConnections) {
+                for (Object fulfiller : connection.getFulfillers()) {
+                    if (fulfiller instanceof MysqlDbms || fulfiller instanceof MysqlDatabase) {
+                        hasMySQLConnection = true;
+                    }
+                }
+            }
+        }
+        return hasMySQLConnection;
     }
 }
