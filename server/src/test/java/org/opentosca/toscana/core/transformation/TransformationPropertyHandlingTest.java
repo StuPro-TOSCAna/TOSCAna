@@ -106,7 +106,7 @@ public class TransformationPropertyHandlingTest extends BaseUnitTest {
     @Test
     public void checkEmptyProperties() throws Exception {
         Csar csar = new CsarImpl(new File(""), MOCK_CSAR_NAME, log);
-        this.transformation = new TransformationImpl(csar, 
+        this.transformation = new TransformationImpl(csar,
             new Platform("test", "test", new HashSet<>()), mock(Log.class), modelMock());
         assertTrue(transformation.allRequiredPropertiesSet());
         assertTrue(transformation.allPropertiesSet());

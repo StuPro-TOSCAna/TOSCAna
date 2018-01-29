@@ -39,9 +39,9 @@ public class TestPlugins {
         "the testplatform for passing dummy");
     public static final ExecutionDummyPlugin PASSING_DUMMY =
         new ExecutionDummyPlugin(PLATFORM_PASSING_DUMMY, false);
-    
+
     public static final Platform PLATFORM_PASSING_INPUT_REQUIRED_DUMMY = new Platform("testplatform_passing_input_required_dummy",
-        "the testplatform for passing dummy, with platform property", 
+        "the testplatform for passing dummy, with platform property",
         Sets.newHashSet(new PlatformProperty("key", PropertyType.TEXT)));
     public static final ExecutionDummyPlugin PASSING_INPUT_REQUIRED_DUMMY =
         new ExecutionDummyPlugin(PLATFORM_PASSING_INPUT_REQUIRED_DUMMY, false);

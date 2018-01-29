@@ -29,7 +29,6 @@ import lombok.ToString;
 @EqualsAndHashCode
 @ToString
 public class Requirement<CapabilityT extends Capability, NodeT extends RootNode, RelationshipT extends RootRelationship> extends BaseToscaElement {
-    
 
     public static String CAPABILITY_NAME = "capability";
     public static String NODE_NAME = "node";
@@ -105,7 +104,7 @@ public class Requirement<CapabilityT extends Capability, NodeT extends RootNode,
         set(RELATIONSHIP, relationship);
         return this;
     }
-    
+
     public static class RequirementType {
         public final Class<? extends Requirement> WRAPPER_TYPE;
         public final Class<? extends Capability> CAPABILITY_TYPE;
