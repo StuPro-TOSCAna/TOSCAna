@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
+import org.junit.rules.Timeout;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
@@ -26,6 +27,17 @@ public abstract class BaseUnitTest extends BaseTest {
     @Rule
     public final TemporaryFolder temporaryFolder = new TemporaryFolder(PROJECT_ROOT);
     protected File tmpdir;
+
+    /**
+     Timeout rule
+     <p>
+     This rule limits the runtime of a test (one method) to 30 Seconds.
+     This is to prevent continuos loops
+     <p>
+     This is equal to @Test(timeout = 30000)
+     */
+    @Rule
+    public final Timeout timeoutRule = Timeout.seconds(30);
 
     @BeforeClass
     public final static void offerStaticTmpDir() throws IOException {

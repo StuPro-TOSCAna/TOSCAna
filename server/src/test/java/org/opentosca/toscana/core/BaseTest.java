@@ -13,6 +13,7 @@ import org.jgrapht.graph.DefaultDirectedGraph;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.experimental.categories.Category;
+import org.junit.rules.Timeout;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.slf4j.LoggerFactory;
@@ -32,7 +33,7 @@ public abstract class BaseTest {
     protected static Log log;
     @Rule
     public MockitoRule rule = MockitoJUnit.rule();
-
+    
     @BeforeClass
     public static void setupLog() {
         log = mock(Log.class);
