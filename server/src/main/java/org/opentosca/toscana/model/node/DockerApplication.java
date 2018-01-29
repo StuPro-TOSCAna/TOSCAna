@@ -1,8 +1,11 @@
 package org.opentosca.toscana.model.node;
 
 import org.opentosca.toscana.core.parse.model.MappingEntity;
+import org.opentosca.toscana.model.capability.DockerContainerCapability;
+import org.opentosca.toscana.model.relation.HostedOn;
 import org.opentosca.toscana.model.requirement.ContainerHostRequirement;
 import org.opentosca.toscana.model.requirement.DockerHostRequirement;
+import org.opentosca.toscana.model.util.RequirementKey;
 import org.opentosca.toscana.model.util.ToscaKey;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 
@@ -13,7 +16,8 @@ import lombok.ToString;
 @ToString
 public class DockerApplication extends ContainerApplication {
 
-    public static ToscaKey<DockerHostRequirement> DOCKER_HOST = new ToscaKey<>(REQUIREMENTS, "host")
+    public static ToscaKey<DockerHostRequirement> DOCKER_HOST = new RequirementKey<>("host")
+        .subTypes(DockerContainerCapability.class, ContainerRuntime.class, HostedOn.class)
         .type(DockerHostRequirement.class);
 
     public DockerApplication(MappingEntity mappingEntity) {

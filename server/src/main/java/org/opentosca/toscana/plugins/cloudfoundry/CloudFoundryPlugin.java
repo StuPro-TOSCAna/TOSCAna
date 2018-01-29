@@ -3,18 +3,18 @@ package org.opentosca.toscana.plugins.cloudfoundry;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.opentosca.toscana.core.plugin.TOSCAnaPlugin;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.PlatformProperty;
 import org.opentosca.toscana.core.transformation.properties.PropertyType;
-import org.opentosca.toscana.plugins.lifecycle.LifecycleAwarePlugin;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CloudFoundryPlugin extends LifecycleAwarePlugin<CloudFoundryLifecycle> {
+public class CloudFoundryPlugin extends TOSCAnaPlugin<CloudFoundryLifecycle> {
 
     public final static String CF_PROPERTY_KEY_USERNAME = "username";
     public final static String CF_PROPERTY_KEY_PASSWORD = "password";

@@ -37,7 +37,7 @@ public class Credential extends BaseToscaElement {
      <p>
      (TOSCA Simple Profile in YAML Version 1.1, p. 140)
      */
-    public static ToscaKey<String> TOKEN = new ToscaKey<>("token").required(true);
+    public static ToscaKey<String> TOKEN = new ToscaKey<>("token").required();
     /**
      Map of protocol-specific keys or assertions. Might be empty.
      <p>

@@ -1,18 +1,21 @@
 package org.opentosca.toscana.plugins.cloudfoundry;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
+import org.opentosca.toscana.core.plugin.lifecycle.AbstractLifecycle;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.visitor.VisitableNode;
 import org.opentosca.toscana.plugins.cloudfoundry.application.Application;
 import org.opentosca.toscana.plugins.cloudfoundry.application.Provider;
 import org.opentosca.toscana.plugins.cloudfoundry.client.Connection;
-import org.opentosca.toscana.plugins.cloudfoundry.visitors.NodeVisitors;
-import org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle;
+import org.opentosca.toscana.plugins.cloudfoundry.visitors.NodeVisitor;
+import org.opentosca.toscana.plugins.util.TransformationFailureException;
 
 import org.json.JSONException;
 
@@ -26,6 +29,7 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
 
     private Provider provider;
     private Connection connection;
+    private List<Application> applications;
 
     public CloudFoundryLifecycle(TransformationContext context) throws IOException {
         super(context);
@@ -58,6 +62,14 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
                 provider.setOfferedService(connection.getServices());
             }
         }
+
+        //TODO: check how many different applications there are and fill list with them
+        //probably there must be a combination of application and set of nodes
+        applications = new ArrayList<>();
+        Application myApp = new Application(1);
+        myApp.setProvider(provider);
+        myApp.setConnection(connection);
+        applications.add(myApp);
     }
 
     private boolean isNotNull(String... elements) {
@@ -73,21 +85,23 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
     public void transform() {
         Application myApp = new Application(1);
         PluginFileAccess fileAccess = context.getPluginFileAccess();
-        myApp.setProvider(provider);
-        myApp.setConnection(connection);
-        NodeVisitors visitor = new NodeVisitors(myApp);
         Set<RootNode> nodes = context.getModel().getNodes();
+        List<Application> filledApplications = new ArrayList<>();
+        for (Application application : applications) {
+            NodeVisitor visitor = new NodeVisitor(application);
+            for (VisitableNode node : nodes) {
+                node.accept(visitor);
+            }
 
-        for (VisitableNode node : nodes) {
-            node.accept(visitor);
+            Application filledApplication = visitor.getFilledApp();
+            filledApplications.add(filledApplication);
         }
-        myApp = visitor.getFilledApp();
 
         try {
-            FileCreator fileCreator = new FileCreator(fileAccess, myApp);
+            FileCreator fileCreator = new FileCreator(fileAccess, filledApplications);
             fileCreator.createFiles();
         } catch (IOException | JSONException e) {
-            e.printStackTrace();
+            throw new TransformationFailureException("Something went wrong while creating the output files", e);
         }
     }
 

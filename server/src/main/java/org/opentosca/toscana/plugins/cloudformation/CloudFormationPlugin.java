@@ -3,11 +3,11 @@ package org.opentosca.toscana.plugins.cloudformation;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.opentosca.toscana.core.plugin.TOSCAnaPlugin;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.PlatformProperty;
 import org.opentosca.toscana.core.transformation.properties.PropertyType;
-import org.opentosca.toscana.plugins.lifecycle.LifecycleAwarePlugin;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.profile.ProfileCredentialsProvider;
@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CloudFormationPlugin extends LifecycleAwarePlugin<CloudFormationLifecycle> {
+public class CloudFormationPlugin extends TOSCAnaPlugin<CloudFormationLifecycle> {
     public static final String AWS_REGION_KEY = "AWS Region";
     public static final String AWS_REGION_DEFAULT = "us-west-2";
     public static final String AWS_ACCESS_KEY_ID_KEY = "AWS Access Key ID";
@@ -71,5 +71,4 @@ public class CloudFormationPlugin extends LifecycleAwarePlugin<CloudFormationLif
     protected CloudFormationLifecycle getInstance(TransformationContext context) throws Exception {
         return new CloudFormationLifecycle(context);
     }
-
 }

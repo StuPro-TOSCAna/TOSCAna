@@ -36,8 +36,6 @@ public class CsarServiceImplIT extends BaseSpringIntegrationTest {
     public void submitCsar() throws Exception {
         File file = TestCsars.VALID_MINIMAL_DOCKER;
         InputStream stream = new FileInputStream(file);
-//        when(csarDao.create(identifier, stream)).thenReturn(csar);
-//        when(csarDao.getContentDir(csar)).thenReturn(tmpdir);
 
         Csar result = csarService.submitCsar(identifier, stream);
         assertEquals(csar, result);
