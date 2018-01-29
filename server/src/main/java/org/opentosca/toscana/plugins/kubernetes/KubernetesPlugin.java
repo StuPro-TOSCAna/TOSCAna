@@ -3,13 +3,13 @@ package org.opentosca.toscana.plugins.kubernetes;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.opentosca.toscana.core.plugin.TOSCAnaPlugin;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.PlatformProperty;
 import org.opentosca.toscana.core.transformation.properties.PropertyType;
 import org.opentosca.toscana.plugins.kubernetes.docker.mapper.BaseImageMapper;
 import org.opentosca.toscana.plugins.kubernetes.docker.mapper.MapperConstants;
-import org.opentosca.toscana.plugins.lifecycle.LifecycleAwarePlugin;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class KubernetesPlugin extends LifecycleAwarePlugin<KubernetesLifecycle> {
+public class KubernetesPlugin extends TOSCAnaPlugin<KubernetesLifecycle> {
     public static final String DOCKER_PUSH_TO_REGISTRY_PROPERTY_KEY = "docker_push_to_registry";
     public static final String DOCKER_REGISTRY_URL_PROPERTY_KEY = "docker_registry_url";
     public static final String DOCKER_REGISTRY_USERNAME_PROPERTY_KEY = "docker_registry_username";

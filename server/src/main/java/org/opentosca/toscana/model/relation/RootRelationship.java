@@ -14,7 +14,7 @@ import lombok.ToString;
  */
 @EqualsAndHashCode
 @ToString
-public class RootRelationship extends DescribableEntity implements VisitableRelationship {
+public abstract class RootRelationship extends DescribableEntity implements VisitableRelationship {
 
     public RootRelationship(MappingEntity entity) {
         super(entity);

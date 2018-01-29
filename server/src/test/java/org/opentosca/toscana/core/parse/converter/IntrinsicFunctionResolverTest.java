@@ -12,10 +12,11 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.opentosca.toscana.core.parse.TestTemplates.Functions.GET_INPUT;
 import static org.opentosca.toscana.core.parse.TestTemplates.Functions.GET_PROPERTY;
+import static org.opentosca.toscana.core.parse.TestTemplates.Functions.GET_PROPERTY_IN_INPUT;
 import static org.opentosca.toscana.core.parse.TestTemplates.Functions.GET_PROPERTY_IN_INTERFACE;
 import static org.opentosca.toscana.core.parse.TestTemplates.Functions.GET_PROPERTY_SELF;
 
-public class ToscaFunctionTest extends BaseUnitTest {
+public class IntrinsicFunctionResolverTest extends BaseUnitTest {
 
     @Test
     public void getInputTest() {
@@ -39,11 +40,23 @@ public class ToscaFunctionTest extends BaseUnitTest {
     }
 
     @Test
-    public void getPropertyInInterfaceTest() {
+    public void getNestedPropertyTest() {
         EffectiveModel model = new EffectiveModel(GET_PROPERTY_IN_INTERFACE, log);
         Database database = (Database) model.getNodeMap().get("my_db");
         Set<OperationVariable> inputs = database.getStandardLifecycle().getConfigure().get().getInputs();
         OperationVariable input = inputs.stream().findFirst().orElse(null);
         assertEquals("my_user_name", input.getValue().get());
+    }
+
+    /**
+     Tests whether names of linked properties are correct
+     */
+    @Test
+    public void correctPropertyNameTest() {
+        EffectiveModel model = new EffectiveModel(GET_PROPERTY_IN_INPUT, log);
+        Database myApp = (Database) model.getNodeMap().get("my_db");
+        OperationVariable input = myApp.getStandardLifecycle().getConfigure().get().getInputs().iterator().next();
+        assertEquals("correct-name", input.getKey());
+        assertEquals("test-string", input.getValue().get());
     }
 }

@@ -19,12 +19,12 @@ import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.opentosca.toscana.core.plugin.lifecycle.AbstractLifecycle.OUTPUT_DIR;
 import static org.opentosca.toscana.plugins.cloudfoundry.application.ManifestAttributes.DOMAIN;
 import static org.opentosca.toscana.plugins.cloudfoundry.application.ManifestAttributes.ENVIRONMENT;
 import static org.opentosca.toscana.plugins.cloudfoundry.application.ManifestAttributes.PATH;
 import static org.opentosca.toscana.plugins.cloudfoundry.application.ManifestAttributes.RANDOM_ROUTE;
 import static org.opentosca.toscana.plugins.cloudfoundry.application.ManifestAttributes.SERVICE;
-import static org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle.OUTPUT_DIR;
 
 /**
  Creates all files which are necessary to deploy the application

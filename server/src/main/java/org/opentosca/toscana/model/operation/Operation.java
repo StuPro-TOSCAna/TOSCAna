@@ -1,5 +1,6 @@
 package org.opentosca.toscana.model.operation;
 
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -67,20 +68,20 @@ public class Operation extends DescribableEntity {
      @return {@link #DEPENDENCIES}
      */
     public Set<String> getDependencies() {
-        return getCollection(DEPENDENCIES);
+        return new HashSet<>(getCollection(DEPENDENCIES));
     }
 
     /**
      @return {@link #INPUTS}
      */
     public Set<OperationVariable> getInputs() {
-        return getCollection(INPUTS);
+        return new HashSet<>(getCollection(INPUTS));
     }
 
     /**
      @return {@link #OUTPUTS}
      */
     public Set<OperationVariable> getOutputs() {
-        return getCollection(OUTPUTS);
+        return new HashSet<>(getCollection(OUTPUTS));
     }
 }

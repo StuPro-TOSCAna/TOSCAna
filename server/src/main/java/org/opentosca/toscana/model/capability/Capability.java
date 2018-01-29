@@ -1,5 +1,6 @@
 package org.opentosca.toscana.model.capability;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.opentosca.toscana.core.parse.model.MappingEntity;
@@ -43,7 +44,7 @@ public abstract class Capability extends BaseToscaElement implements VisitableCa
      @return {@link #VALID_SOURCE_TYPES}
      */
     public Set<Class<? extends RootNode>> getValidSourceTypes() {
-        return getCollection(VALID_SOURCE_TYPES);
+        return new HashSet<>(getCollection(VALID_SOURCE_TYPES));
     }
 
     public Range getOccurrence() {

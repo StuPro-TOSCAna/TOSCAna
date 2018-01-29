@@ -21,6 +21,8 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.opentosca.toscana.core.plugin.lifecycle.AbstractLifecycle.SCRIPTS_DIR_PATH;
+import static org.opentosca.toscana.core.plugin.lifecycle.AbstractLifecycle.UTIL_DIR_PATH;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationFileCreator.CHANGE_TO_PARENT_DIRECTORY;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationFileCreator.CLI_COMMAND_CREATESTACK;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationFileCreator.CLI_PARAM_STACKNAME;
@@ -30,8 +32,6 @@ import static org.opentosca.toscana.plugins.cloudformation.CloudFormationFileCre
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationFileCreator.RELATIVE_DIRECTORY_PREFIX;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationFileCreator.TEMPLATE_YAML;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.FILEPATH_TARGET;
-import static org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle.SCRIPTS_DIR_PATH;
-import static org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle.UTIL_DIR_PATH;
 import static org.opentosca.toscana.plugins.scripts.BashScript.SHEBANG;
 import static org.opentosca.toscana.plugins.scripts.BashScript.SOURCE_UTIL_ALL;
 import static org.opentosca.toscana.plugins.scripts.BashScript.SUBCOMMAND_EXIT;
@@ -97,7 +97,7 @@ public class CloudFormationFileCreatorTest extends BaseUnitTest {
             FILEPATH_TARGET_TEST_FILE_LOCAL + "\"" + "\n";
         String actualDeployContent = FileUtils.readFileToString(deployScript);
         String actualFileUploadContent = FileUtils.readFileToString(fileUploadScript);
-        
+
         assertEquals(expectedDeployContent, actualDeployContent);
         assertEquals(expectedFileUploadContent, actualFileUploadContent);
     }

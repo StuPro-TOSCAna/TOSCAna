@@ -8,7 +8,7 @@ import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.opentosca.toscana.plugins.lifecycle.AbstractLifecycle.SCRIPTS_DIR_PATH;
+import static org.opentosca.toscana.core.plugin.lifecycle.AbstractLifecycle.SCRIPTS_DIR_PATH;
 
 public class BashScript {
     public static final String SHEBANG = "#!/bin/bash";

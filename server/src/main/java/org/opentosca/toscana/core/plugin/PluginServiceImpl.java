@@ -18,14 +18,14 @@ import org.springframework.stereotype.Component;
 public class PluginServiceImpl implements PluginService {
 
     private final static Logger logger = LoggerFactory.getLogger(PluginServiceImpl.class);
-    private final List<TransformationPlugin> plugins;
+    private final List<TOSCAnaPlugin> plugins;
     private final Set<Platform> platforms = new HashSet<>();
 
     @Autowired
-    public PluginServiceImpl(List<TransformationPlugin> plugins) {
+    public PluginServiceImpl(List<TOSCAnaPlugin> plugins) {
         this.plugins = plugins;
-        Map<String, TransformationPlugin> pluginMap = new HashMap<>();
-        for (TransformationPlugin plugin : plugins) {
+        Map<String, TOSCAnaPlugin> pluginMap = new HashMap<>();
+        for (TOSCAnaPlugin plugin : plugins) {
             if (pluginMap.get(plugin.getPlatform().id) != null) {
                 logger.error("Found duplicate plugin identifier '{}'", plugin.getPlatform().id);
                 throw new IllegalArgumentException("The platform id '"
@@ -33,7 +33,7 @@ public class PluginServiceImpl implements PluginService {
             }
             pluginMap.put(plugin.getPlatform().id, plugin);
         }
-        for (TransformationPlugin plugin : plugins) {
+        for (TOSCAnaPlugin plugin : plugins) {
             platforms.add(plugin.getPlatform());
         }
         logger.info("Loaded {} Plugins", plugins.size());
@@ -53,7 +53,7 @@ public class PluginServiceImpl implements PluginService {
     }
 
     @Override
-    public List<TransformationPlugin> getPlugins() {
+    public List<TOSCAnaPlugin> getPlugins() {
         return plugins;
     }
 
