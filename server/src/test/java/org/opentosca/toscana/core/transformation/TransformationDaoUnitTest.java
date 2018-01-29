@@ -8,7 +8,6 @@ import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarDao;
 import org.opentosca.toscana.core.csar.CsarImpl;
-import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.platform.PlatformService;
 import org.opentosca.toscana.core.util.Preferences;
 
@@ -18,7 +17,6 @@ import org.mockito.Mock;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.opentosca.toscana.core.testdata.TestPlugins.PLATFORM1;
 
@@ -39,7 +37,7 @@ public class TransformationDaoUnitTest extends BaseUnitTest {
     public void setUp() throws IOException {
         when(platformService.findPlatformById(PLATFORM1.id)).thenReturn(Optional.ofNullable(PLATFORM1));
         when(preferences.getDataDir()).thenReturn(tmpdir);
-        csar = new CsarImpl("csarIdentifier", mock(Log.class));
+        csar = new CsarImpl(new File(""), "csarIdentifier", log);
         File csarTransformationDir = new File(tmpdir, "transformationDir");
         csarTransformationDir.mkdir();
         when(csarDao.getTransformationsDir(csar)).thenReturn(csarTransformationDir);

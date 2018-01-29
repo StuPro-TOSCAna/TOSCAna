@@ -6,11 +6,8 @@ import java.io.FileNotFoundException;
 
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarDao;
-import org.opentosca.toscana.model.EffectiveModel;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
-import static org.mockito.Mockito.mock;
 
 /**
  Supplies test classes with csars.
@@ -24,6 +21,7 @@ public class TestCsars {
 
     // yaml csars
     public final static File VALID_EMPTY_TOPOLOGY = new File(YAML_DIR, "valid/empty-topology.csar");
+    public final static File VALID_EMPTY_TOPOLOGY_TEMPLATE = new File(YAML_DIR, "valid/empty-topology/template.yaml");
     public final static File VALID_MINIMAL_DOCKER = new File(YAML_DIR, "valid/minimal-docker.csar");
     public final static File VALID_MINIMAL_DOCKER_TEMPLATE = new File(YAML_DIR, "valid/minimal-docker/minimal-docker.yaml");
     public final static File VALID_LAMP_NO_INPUT = new File(YAML_DIR, "valid/lamp-noinput.csar");
@@ -62,7 +60,6 @@ public class TestCsars {
      */
     public Csar getCsar(String identifier, File file) throws FileNotFoundException {
         Csar csar = csarDao.create(identifier, new FileInputStream(file));
-        csar.setModel(mock(EffectiveModel.class));
         return csar;
     }
 }

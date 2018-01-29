@@ -21,18 +21,18 @@ public class EntrypointDetectorTest extends BaseSpringTest {
     @Test
     public void parseValidCsar() throws Exception {
         Csar csar = testCsars.getCsar(TestCsars.VALID_EMPTY_TOPOLOGY);
-        new EffectiveModel(csar, csarDao.getContentDir(csar));
+        new EffectiveModel(csar);
     }
 
     @Test(expected = InvalidCsarException.class)
     public void parseEntrypointMissing() throws FileNotFoundException, InvalidCsarException {
         Csar csar = testCsars.getCsar(TestCsars.INVALID_ENTRYPOINT_MISSING);
-        new EffectiveModel(csar, csarDao.getContentDir(csar));
+        new EffectiveModel(csar);
     }
 
     @Test(expected = InvalidCsarException.class)
     public void parseEntrypointAmbiguous() throws FileNotFoundException, InvalidCsarException {
         Csar csar = testCsars.getCsar(TestCsars.INVALID_ENTRYPOINT_AMBIGUOUS);
-        new EffectiveModel(csar, csarDao.getContentDir(csar));
+        new EffectiveModel(csar);
     }
 }

@@ -5,11 +5,13 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.opentosca.toscana.core.csar.Csar;
+import org.opentosca.toscana.core.parse.InvalidCsarException;
 import org.opentosca.toscana.core.transformation.artifacts.TargetArtifact;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
+import org.opentosca.toscana.model.EffectiveModel;
 
 import static java.lang.String.format;
 
@@ -18,9 +20,10 @@ public class TransformationImpl implements Transformation {
     private final Csar csar;
     private final Platform targetPlatform;
     private final Log log;
-    private final PropertyInstance properties;
     private TransformationState state = TransformationState.READY;
     private TargetArtifact targetArtifact;
+    private EffectiveModel model = null;
+    private PropertyInstance properties;
 
     /**
      Creates a new transformation for given csar to given targetPlatform.
@@ -32,13 +35,22 @@ public class TransformationImpl implements Transformation {
         this.csar = csar;
         this.targetPlatform = targetPlatform;
         this.log = log;
-
-        //Collect Possible Properties From the Platform and the Model
-        Set<Property> properties = new HashSet<>();
-        properties.addAll(csar.getModelSpecificProperties().values());
-        properties.addAll(targetPlatform.getProperties());
-
+        // caution: side effect
         // transformationState can get set to INPUT_REQUIRED by this call
+        this.properties = new PropertyInstance(targetPlatform.getProperties(), this);
+    }
+
+    @Override
+    public void populateModel() {
+        try {
+            this.model = new EffectiveModel(csar);
+        } catch (InvalidCsarException e) {
+            // should never happen - validation should have already failed
+            throw new IllegalStateException("Failed to convert TOSCA template to csar.");
+        }
+        Set<Property> properties = new HashSet<>();
+        properties.addAll(model.getInputs().values());
+        properties.addAll(targetPlatform.getProperties());
         this.properties = new PropertyInstance(properties, this);
     }
 
@@ -55,6 +67,15 @@ public class TransformationImpl implements Transformation {
     @Override
     public Csar getCsar() {
         return csar;
+    }
+
+    @Override
+    /**
+     @returns the underlying EffectiveModel instance or null if not yet initialized: {@link #populateModel()}
+     */
+    public EffectiveModel getModel() {
+        // TODO maybe delete this method?
+        return model;
     }
 
     @Override
@@ -83,7 +104,7 @@ public class TransformationImpl implements Transformation {
 
     @Override
     public PropertyInstance getProperties() {
-        return properties;
+        return this.properties;
     }
 
     @Override

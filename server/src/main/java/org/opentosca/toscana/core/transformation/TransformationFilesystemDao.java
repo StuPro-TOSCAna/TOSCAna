@@ -1,7 +1,6 @@
 package org.opentosca.toscana.core.transformation;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -53,10 +52,16 @@ public class TransformationFilesystemDao implements TransformationDao {
         if (!platformService.isSupported(platform)) {
             throw new PlatformNotFoundException();
         }
-        Transformation transformation = new TransformationImpl(csar, platform, getLog(csar, platform));
+        Transformation transformation = createTransformation(csar, platform);
         delete(transformation);
         csar.getTransformations().put(platform.id, transformation);
         getContentDir(transformation).mkdirs();
+        return transformation;
+    }
+
+    private Transformation createTransformation(Csar csar, Platform platform) {
+        Transformation transformation = new TransformationImpl(csar, platform, getLog(csar, platform));
+        transformation.populateModel();
         return transformation;
     }
 
@@ -97,8 +102,7 @@ public class TransformationFilesystemDao implements TransformationDao {
             }
             Optional<Platform> platform = platformService.findPlatformById(pluginEntry.getName());
             if (platform.isPresent()) {
-                Log log = getLog(csar, platform.get());
-                Transformation transformation = new TransformationImpl(csar, platform.get(), log);
+                Transformation transformation = createTransformation(csar, platform.get());
                 readTargetArtifactFromDisk(transformation);
                 transformations.add(transformation);
             } else {
@@ -131,7 +135,7 @@ public class TransformationFilesystemDao implements TransformationDao {
     }
 
     @Override
-    public TargetArtifact createTargetArtifact(Transformation transformation) throws FileNotFoundException {
+    public TargetArtifact createTargetArtifact(Transformation transformation) {
         String csarId = transformation.getCsar().getIdentifier();
         String platformId = transformation.getPlatform().id;
         String failed = transformation.getState() == TransformationState.ERROR ? FAILED : "";

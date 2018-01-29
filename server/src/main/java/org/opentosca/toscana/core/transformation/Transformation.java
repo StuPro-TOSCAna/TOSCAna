@@ -7,8 +7,15 @@ import org.opentosca.toscana.core.transformation.artifacts.TargetArtifact;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
+import org.opentosca.toscana.model.EffectiveModel;
 
 public interface Transformation {
+
+    /**
+     Populates the model (parses the service template, builds the EffectiveModel instance etc.)
+     This must be called explicitly in order to fully initialize this instance (for testing purposes this is handy)
+     */
+    void populateModel();
 
     /**
      @return the state the transformation is currently in.
@@ -78,4 +85,9 @@ public interface Transformation {
      @return Returns the underlying Csar of the transformation
      */
     Csar getCsar();
+
+    /**
+     Returns the underlying model of this transformation.
+     */
+    EffectiveModel getModel();
 }

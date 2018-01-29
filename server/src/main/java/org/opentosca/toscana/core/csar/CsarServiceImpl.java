@@ -28,7 +28,7 @@ public class CsarServiceImpl implements CsarService {
     public Csar submitCsar(String identifier, InputStream csarStream) throws InvalidCsarException {
         Csar csar = csarDao.create(identifier, csarStream);
         try {
-            populateWithTemplate(csar);
+            validate(csar);
             return csar;
         } catch (InvalidCsarException e) {
             logger.warn("Failed to submit csar", e);
@@ -38,10 +38,15 @@ public class CsarServiceImpl implements CsarService {
         }
     }
 
-    private void populateWithTemplate(Csar csar) throws InvalidCsarException {
-        if (!csar.getModel().isPresent()) {
-            EffectiveModel model = new EffectiveModel(csar, csarDao.getContentDir(csar));
-            csar.setModel(model);
+    private void validate(Csar csar) throws InvalidCsarException {
+        // TODO integrate winery parser as validator
+        // test whether EffectiveModel can get created without throwing an error
+        try {
+            // test if conversion does evoke errors
+            new EffectiveModel(csar);
+            // TODO improve error handling
+        } catch (Exception e) {
+            throw new InvalidCsarException(csar.getLog());
         }
     }
 
@@ -55,7 +60,7 @@ public class CsarServiceImpl implements CsarService {
         List<Csar> list = csarDao.findAll();
         for (Csar csar : list) {
             try {
-                populateWithTemplate(csar);
+                validate(csar);
             } catch (InvalidCsarException e) {
                 logger.error("Encountered invalid csar in repository.", csar, e);
                 // TODO wait for discussion outcome, maybe cleanup disk
@@ -69,7 +74,7 @@ public class CsarServiceImpl implements CsarService {
         Optional<Csar> csar = csarDao.find(identifier);
         if (csar.isPresent()) {
             try {
-                populateWithTemplate(csar.get());
+                validate(csar.get());
             } catch (InvalidCsarException e) {
                 logger.error("Encountered invalid csar in repository.", csar, e);
                 // TODO wait for discussion outcome, maybe cleanup disk

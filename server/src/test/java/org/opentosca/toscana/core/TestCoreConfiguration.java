@@ -12,7 +12,6 @@ import org.opentosca.toscana.core.plugin.PluginService;
 import org.opentosca.toscana.core.plugin.PluginServiceImpl;
 import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.testdata.TestPlugins;
-import org.opentosca.toscana.core.testdata.TestTransformationContext;
 import org.opentosca.toscana.core.transformation.TransformationDao;
 import org.opentosca.toscana.core.transformation.TransformationFilesystemDao;
 import org.opentosca.toscana.core.transformation.TransformationService;
@@ -91,12 +90,6 @@ public class TestCoreConfiguration extends CoreConfiguration {
         ArtifactService ams
     ) {
         TransformationServiceImpl bean = new TransformationServiceImpl(repo, service, csarDao, ams);
-        return bean;
-    }
-
-    @Bean
-    public TestTransformationContext testContext() {
-        TestTransformationContext bean = new TestTransformationContext();
         return bean;
     }
 

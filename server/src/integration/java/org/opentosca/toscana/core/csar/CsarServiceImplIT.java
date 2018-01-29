@@ -29,7 +29,7 @@ public class CsarServiceImplIT extends BaseSpringIntegrationTest {
     public void setUp() {
         csarService = new CsarServiceImpl(csarDao);
         Log log = new LogImpl(new File(tmpdir, "log"));
-        csar = new CsarImpl(identifier, log);
+        csar = new CsarImpl(new File(""), identifier, log);
     }
 
     @Test

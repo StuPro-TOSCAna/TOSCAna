@@ -1,5 +1,6 @@
 package org.opentosca.toscana.core.transformation.properties;
 
+import java.io.File;
 import java.util.HashSet;
 
 import org.opentosca.toscana.core.BaseUnitTest;
@@ -33,7 +34,7 @@ public class PropertyInstanceTest extends BaseUnitTest {
         Platform testPlatform = new Platform("test", "test", properties);
 
         transformation = new TransformationImpl(
-            new CsarImpl("test", mock(Log.class)),
+            new CsarImpl(new File(""), "test", mock(Log.class)),
             testPlatform,
             mock(Log.class)
         );

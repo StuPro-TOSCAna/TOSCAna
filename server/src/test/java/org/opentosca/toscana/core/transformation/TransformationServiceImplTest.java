@@ -102,7 +102,8 @@ public class TransformationServiceImplTest extends BaseSpringTest {
         Map<String, Property> propMap = new HashMap<>();
         propMap.put("mock_prop", new PlatformProperty("mock_prop", PropertyType.NAME));
 
-        when(csar.getModelSpecificProperties()).thenReturn(propMap);
+        // TODO fix
+//        when(csar.getModelSpecificProperties()).thenReturn(propMap);
 
         Transformation t = service.createTransformation(csar, PLATFORM_PASSING_DUMMY);
         assertTrue(csar.getTransformation(PLATFORM_PASSING_DUMMY.id).isPresent());
