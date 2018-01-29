@@ -85,9 +85,11 @@ public class NodeVisitor implements StrictNodeVisitor {
             throw new TransformationFailureException("Could not find source of database");
         }
 
-        handleStandardLifecycle(node, false);
+        handleStandardLifecycle(node, false, belongingApplication);
         logger.debug("Add MYSQL service to application");
         belongingApplication.addService(node.getEntityName(), ServiceTypes.MYSQL);
+        //current application is a dummy application
+        myApp.applicationIsNotReal(belongingApplication);
 
         //check artifacts and add paths to application
         for (Artifact artifact : node.getArtifacts()) {
@@ -128,8 +130,7 @@ public class NodeVisitor implements StrictNodeVisitor {
 
     @Override
     public void visit(MysqlDbms node) {
-        // TODO: check how to configure database
-        handleStandardLifecycle(node, false);
+        handleStandardLifecycle(node, false, myApp);
     }
 
     @Override
@@ -157,10 +158,10 @@ public class NodeVisitor implements StrictNodeVisitor {
             createArtifact.ifPresent(artifact -> myApp.addExecuteFile(artifact.getFilePath(), node));
         }
 
-        handleStandardLifecycle(node, true);
+        handleStandardLifecycle(node, true, myApp);
     }
 
-    private void handleStandardLifecycle(RootNode node, boolean isTopNode) {
+    private void handleStandardLifecycle(RootNode node, boolean isTopNode, Application application) {
         // get StandardLifecycle inputs
         for (OperationVariable lifecycleInput : node.getStandardLifecycle().getInputs()) {
             addEnvironmentVariable(lifecycleInput);
@@ -176,7 +177,7 @@ public class NodeVisitor implements StrictNodeVisitor {
 
             // add dependencies paths
             for (String dependency : operation.getDependencies()) {
-                myApp.addFilePath(dependency);
+                application.addFilePath(dependency);
                 setPathToApplication(dependency, isTopNode);
             }
 
