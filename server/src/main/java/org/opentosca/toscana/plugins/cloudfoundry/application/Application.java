@@ -11,6 +11,7 @@ import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.node.WebApplication;
 import org.opentosca.toscana.plugins.cloudfoundry.client.Connection;
 import org.opentosca.toscana.plugins.cloudfoundry.transformation.sort.CloudFoundryStack;
+import org.opentosca.toscana.plugins.kubernetes.util.NodeStack;
 
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.APPLICATION_FOLDER;
 
@@ -125,7 +126,7 @@ public class Application {
         }
     }
 
-    public void addStack(CloudFoundryStack stack) {
+    public void addStack(NodeStack stack) {
         this.stack = stack;
     }
 
