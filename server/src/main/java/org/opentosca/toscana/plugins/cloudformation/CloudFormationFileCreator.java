@@ -15,7 +15,7 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 
 /**
- * Class for building scripts and copying files needed for deployment of cloudformation templates.
+ Class for building scripts and copying files needed for deployment of cloudformation templates.
  */
 public class CloudFormationFileCreator {
     static final String CLI_COMMAND_CREATESTACK = "aws cloudformation deploy ";
@@ -33,10 +33,10 @@ public class CloudFormationFileCreator {
     private CloudFormationModule cfnModule;
 
     /**
-     * Creates a <tt>CloudFormationFileCreator<tt> in order to build deployment scripts and copy files.
-     *
-     * @param cfnModule Module to get the necessary CloudFormation information
-     * @param logger    standard logger
+     Creates a <tt>CloudFormationFileCreator<tt> in order to build deployment scripts and copy files.
+
+     @param cfnModule Module to get the necessary CloudFormation information
+     @param logger    standard logger
      */
     public CloudFormationFileCreator(Logger logger, CloudFormationModule cfnModule) {
         this.logger = logger;
@@ -44,7 +44,7 @@ public class CloudFormationFileCreator {
     }
 
     /**
-     * Copies all files that need to be uploaded to the target artifact.
+     Copies all files that need to be uploaded to the target artifact.
      */
     public void copyFiles() {
 
@@ -67,7 +67,7 @@ public class CloudFormationFileCreator {
     }
 
     /**
-     * Creates all Scripts necessary for AWS CloudFormation deployment.
+     Creates all Scripts necessary for AWS CloudFormation deployment.
      */
     public void createScripts() throws IOException {
         createFileUploadScript();
@@ -75,7 +75,7 @@ public class CloudFormationFileCreator {
     }
 
     /**
-     * Creates a deploy script for deploying the cloudformation template.
+     Creates a deploy script for deploying the cloudformation template.
      */
     private void createDeployScript() throws IOException {
         // TODO maybe add the execution of the fileUploadScript
@@ -89,7 +89,7 @@ public class CloudFormationFileCreator {
     }
 
     /**
-     * Creates the script for File Uploads if files need to be uploaded.
+     Creates the script for File Uploads if files need to be uploaded.
      */
     private void createFileUploadScript() throws IOException {
         List<String> filesToBeUploaded = cfnModule.getFilesToBeUploaded();
@@ -99,7 +99,7 @@ public class CloudFormationFileCreator {
             logger.debug("Files to be uploaded found. Creating file upload script.");
             BashScript fileUploadScript = new BashScript(cfnModule.getFileAccess(), FILENAME_UPLOAD);
             fileUploadScript.append(createBucket());
-            
+
             logger.debug("Adding file upload commands.");
             filesToBeUploaded.forEach((filePath) -> {
                 String localFilePath = RELATIVE_DIRECTORY_PREFIX + filePath;
@@ -115,25 +115,25 @@ public class CloudFormationFileCreator {
     }
 
     /**
-     * Creates an S3Bucket with the given name.
-     * Wraps resources/cloudformation.scripts/create-bucket.sh
+     Creates an S3Bucket with the given name.
+     Wraps resources/cloudformation.scripts/create-bucket.sh
      */
     private String createBucket() {
         return "createBucket " + cfnModule.getBucketName() + " " + cfnModule.getAWSRegion();
     }
 
     /**
-     * Puts the given file with the given key on the S3Bucket with  the given name.
-     * Wraps resources/cloudformation.scripts/upload-file.sh
+     Puts the given file with the given key on the S3Bucket with  the given name.
+     Wraps resources/cloudformation.scripts/upload-file.sh
      */
     private String uploadFile(String objectKey, String filePath) {
         return "uploadFile " + cfnModule.getBucketName() + " \"" + objectKey + "\" \"" + filePath + "\"";
     }
 
     /**
-     * Copies all needed cloudformation utility scripts into the target artifact.
-     *
-     * @throws IOException if scripts cannot be found
+     Copies all needed cloudformation utility scripts into the target artifact.
+
+     @throws IOException if scripts cannot be found
      */
     public void copyUtilScripts() throws IOException {
         //TODO extract duplicate code or add to setUpDirectories?

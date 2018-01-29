@@ -12,14 +12,16 @@ import org.opentosca.toscana.plugins.BaseTransformTest;
 import org.apache.commons.io.FileUtils;
 import org.junit.Assume;
 
-import static org.hamcrest.Matchers.isEmptyString;
-import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationPlugin.AWS_ACCESS_KEY_ID_KEY;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationPlugin.AWS_SECRET_KEY_KEY;
 
 public class CloudFormationLampIT extends BaseTransformTest {
+
+    private final String accessKey = System.getenv("AWS_ACCESS_KEY");
+    private final String secretKey = System.getenv("AWS_SECRET_KEY");
+
     public CloudFormationLampIT() {
         super(new CloudFormationPlugin());
     }
@@ -47,18 +49,16 @@ public class CloudFormationLampIT extends BaseTransformTest {
 
     @Override
     protected PropertyInstance getProperties() {
-        PropertyInstance props =  new PropertyInstance(new HashSet<>(plugin.getPlatform().properties), mock(Transformation.class));
-        props.setPropertyValue(AWS_ACCESS_KEY_ID_KEY, System.getenv("AWS_ACCESS_KEY"));
-        props.setPropertyValue(AWS_SECRET_KEY_KEY, System.getenv("AWS_SECRET_KEY"));
+        PropertyInstance props = new PropertyInstance(new HashSet<>(plugin.getPlatform().properties), mock
+            (Transformation.class));
+        props.setPropertyValue(AWS_ACCESS_KEY_ID_KEY, accessKey);
+        props.setPropertyValue(AWS_SECRET_KEY_KEY, secretKey);
         return props;
     }
 
     @Override
     protected void checkAssumptions() {
-        PropertyInstance propertyInstance = getProperties();
-        Assume.assumeThat(propertyInstance.getPropertyValues().get(AWS_ACCESS_KEY_ID_KEY), not(isEmptyString()));
-        Assume.assumeThat(propertyInstance.getPropertyValues().get(AWS_SECRET_KEY_KEY), not(isEmptyString()));
-        Assume.assumeNotNull(propertyInstance.getPropertyValues().get(AWS_ACCESS_KEY_ID_KEY));
-        Assume.assumeNotNull(propertyInstance.getPropertyValues().get(AWS_SECRET_KEY_KEY));
+        Assume.assumeNotNull(accessKey);
+        Assume.assumeNotNull(secretKey);
     }
 }

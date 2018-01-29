@@ -28,18 +28,13 @@ public class CheckModelRelationshipVisitor implements StrictRelationshipVisitor 
         RootNode source = topology.getEdgeSource(relation);
         RootNode target = topology.getEdgeTarget(relation);
         if (!(source instanceof WebApplication && target instanceof MysqlDatabase)) {
-            throw new UnsupportedTypeException("Relationship from source: " + source + " to target: " + target + " " +
-                "not supported.");
+            throw new UnsupportedTypeException("ConnectsTo relationship from source: " + source + " to target: " +
+                target + " not supported.");
         }
     }
 
     @Override
     public void visit(HostedOn relation) {
         logger.info("Check HostedOn relation {}.", relation.getEntityName());
-    }
-
-    @Override
-    public void visit(RootRelationship relation) {
-        logger.info("Check RootRelationship relation {}.", relation.getEntityName());
     }
 }

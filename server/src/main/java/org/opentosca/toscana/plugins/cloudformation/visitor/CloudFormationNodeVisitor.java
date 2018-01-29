@@ -67,6 +67,36 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
         this.topology = topology;
     }
 
+    /**
+     Get the Compute node this webApplication is ultimately hosted on
+
+     @param webApplication the webApplication to find the host for
+     @return the underlying Compute node
+     */
+    protected static Compute getCompute(WebApplication webApplication) {
+        WebServer webServer = webApplication.getHost().getNode().orElseThrow(
+            () -> new IllegalStateException("WebApplication is missing WebServer")
+        );
+        return webServer.getHost().getNode().orElseThrow(
+            () -> new IllegalStateException("WebServer is missing Compute")
+        );
+    }
+
+    /**
+     Get the Compute node this mysqlDatabase is ultimately hosted on
+
+     @param mysqlDatabase the mysqlDatabase to find the host for
+     @return the underlying Compute node
+     */
+    protected static Compute getCompute(MysqlDatabase mysqlDatabase) {
+        Dbms dbms = mysqlDatabase.getHost().getNode().orElseThrow(
+            () -> new IllegalStateException("MysqlDatabase is missing Dbms")
+        );
+        return dbms.getHost().getNode().orElseThrow(
+            () -> new IllegalStateException("Dbms is missing Compute")
+        );
+    }
+
     @Override
     public void visit(Compute node) {
         try {
@@ -111,13 +141,8 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             logger.info("Visit MysqlDatabase node {}.", node.getEntityName());
             String nodeName = toAlphanumerical(node.getEntityName());
 
-            //get the name of the server where the dbms this node is hosted on, is hosted on
-            Dbms dbms = node.getHost().getNode().orElseThrow(
-                () -> new IllegalStateException("MysqlDatabase is missing Dbms")
-            );
-            Compute compute = dbms.getHost().getNode().orElseThrow(
-                () -> new IllegalStateException("Dbms is missing Compute")
-            );
+            //get the compute where the dbms this node is hosted on, is hosted on
+            Compute compute = getCompute(node);
             String serverName = toAlphanumerical(compute.getEntityName());
             ComputeCapability hostedOnComputeCapability = compute.getHost();
             String dbName = node.getDatabaseName();
@@ -204,13 +229,8 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
     public void visit(WebApplication node) {
         logger.info("Visit WebApplication node {}.", node.getEntityName());
         try {
-            //get the name of the server where this node is hosted on
-            WebServer webServer = node.getHost().getNode().orElseThrow(
-                () -> new IllegalStateException("WebApplication is missing WebServer")
-            );
-            Compute compute = webServer.getHost().getNode().orElseThrow(
-                () -> new IllegalStateException("WebServer is missing Compute")
-            );
+            //get the compute where the apache this node is hosted on, is hosted on
+            Compute compute = getCompute(node);
             String computeName = toAlphanumerical(compute.getEntityName());
 
             //handle create
@@ -279,6 +299,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                 );
                 cfnCommand.addEnv(input.getKey(), value);
             }
+            // Add file to config and execution command
             cfnModule.getCFNInit(serverName)
                 .getOrAddConfig(CONFIG_SETS, config)
                 .putFile(cfnFile)
@@ -314,14 +335,5 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             }
         }
         return connected;
-    }
-    
-    private Compute getCompute(WebApplication webApplication) {
-        WebServer webServer = webApplication.getHost().getNode().orElseThrow(
-            () -> new IllegalStateException("WebApplication is missing WebServer")
-        );
-        return webServer.getHost().getNode().orElseThrow(
-            () -> new IllegalStateException("WebServer is missing Compute")
-        );
     }
 }
