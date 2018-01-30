@@ -34,7 +34,7 @@ public class KubernetesPluginTest extends BaseUnitTest {
 
     @Test(expected = ValidationFailureException.class)
     public void modelCheckTest() throws Exception {
-        EffectiveModel singleComputeModel = new EffectiveModelFactory().create(TestCsars.VALID_SINGLE_COMPUTE_WINDOWS_TEMPLATE, log);
+        EffectiveModel singleComputeModel = new EffectiveModelFactory().create(TestCsars.VALID_SINGLE_COMPUTE_WINDOWS_TEMPLATE, logMock());
         TransformationContext context = setUpMockTransformationContext(singleComputeModel);
         plugin.transform(context);
     }

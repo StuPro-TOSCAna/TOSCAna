@@ -1,7 +1,6 @@
 package org.opentosca.toscana.plugins.kubernetes.docker.mapper;
 
 import java.io.File;
-import java.io.IOException;
 
 import org.opentosca.toscana.IntegrationTest;
 import org.opentosca.toscana.core.BaseTest;
@@ -10,8 +9,6 @@ import org.opentosca.toscana.core.Main;
 import org.opentosca.toscana.core.parse.converter.util.ToscaStructure;
 import org.opentosca.toscana.core.parse.model.MappingEntity;
 import org.opentosca.toscana.core.parse.model.ServiceGraph;
-import org.opentosca.toscana.core.transformation.logging.Log;
-import org.opentosca.toscana.core.transformation.logging.LogImpl;
 import org.opentosca.toscana.core.util.Preferences;
 import org.opentosca.toscana.model.EntityId;
 import org.opentosca.toscana.model.capability.OsCapability;
@@ -50,19 +47,14 @@ public class MapperTagLoaderIT extends BaseTest {
     static final String LOADER_TEST_PROFILE = "base-image-mapper-loader-test";
     private static final Logger logger = LoggerFactory.getLogger(MapperTagLoaderIT.class);
     private static EntityId entityId = (ToscaStructure.NODE_TEMPLATES.descend("myNode"));
-    private static File logFile;
-    private static Log log;
     private static MappingEntity nodeEntity;
 
     @Autowired
     private BaseImageMapper mapper;
 
     @BeforeClass
-    public static void setUp() throws IOException {
-        logFile = File.createTempFile("testlog", "log", PROJECT_ROOT);
-        logFile.deleteOnExit();
-        log = new LogImpl(logFile);
-        ServiceGraph graph = new ServiceGraph(log);
+    public static void setUp() {
+        ServiceGraph graph = new ServiceGraph(logMock());
         nodeEntity = new MappingEntity(entityId, graph);
         graph.addEntity(nodeEntity);
     }

@@ -35,11 +35,11 @@ public class TransformationImpl implements Transformation {
         this.targetPlatform = targetPlatform;
         this.log = log;
         this.model = model;
-        // caution: side effect
-        // transformationState can get set to INPUT_REQUIRED by this call
         Set<Property> properties = new HashSet<>();
         properties.addAll(model.getInputs().values());
         properties.addAll(targetPlatform.getProperties());
+        // caution: side effect
+        // transformationState can get set to INPUT_REQUIRED by this call
         this.properties = new PropertyInstance(properties, this);
     }
 

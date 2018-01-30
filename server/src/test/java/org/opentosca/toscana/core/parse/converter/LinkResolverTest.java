@@ -26,7 +26,7 @@ public class LinkResolverTest extends BaseUnitTest {
 
     @Test
     public void resolveRequirementLink() {
-        EffectiveModel model = new EffectiveModelFactory().create(REQUIREMENT, log);
+        EffectiveModel model = new EffectiveModelFactory().create(REQUIREMENT, logMock());
         WebServer node = (WebServer) model.getNodeMap().get("test-node1");
         HostRequirement requirement = node.getHost();
         assertNotNull(requirement);
@@ -38,7 +38,7 @@ public class LinkResolverTest extends BaseUnitTest {
 
     @Test
     public void resolveRepositoryLink() {
-        EffectiveModel model = new EffectiveModelFactory().create(REPOSITORY, log);
+        EffectiveModel model = new EffectiveModelFactory().create(REPOSITORY, logMock());
         WebServer node = (WebServer) model.getNodeMap().get("test-node");
         Set<Artifact> artifacts = node.getArtifacts();
         Artifact artifact = artifacts.iterator().next();
@@ -50,7 +50,7 @@ public class LinkResolverTest extends BaseUnitTest {
 
     @Test
     public void resolveImplementationLink() {
-        EffectiveModel model = new EffectiveModelFactory().create(ARTIFACT, log);
+        EffectiveModel model = new EffectiveModelFactory().create(ARTIFACT, logMock());
         WebServer node = (WebServer) model.getNodeMap().get("test-node");
         Optional<Operation> create = node.getStandardLifecycle().getCreate();
         assertTrue(create.isPresent());

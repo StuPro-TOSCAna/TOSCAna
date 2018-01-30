@@ -39,12 +39,12 @@ public class CloudFoundryPluginTest extends BaseUnitTest {
     public void setUp() throws Exception {
         Application myApp = new Application(appName, 1);
         NodeVisitor visitor = new NodeVisitor(myApp);
-        EffectiveModel lamp = new EffectiveModelFactory().create(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, log);
+        EffectiveModel lamp = new EffectiveModelFactory().create(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, logMock());
         File sourceDir = new File(resourcesPath, "csars/yaml/valid/lamp-noinput");
         targetDir = new File(tmpdir, "targetDir");
         sourceDir.mkdir();
         targetDir.mkdir();
-        PluginFileAccess fileAccess = new PluginFileAccess(sourceDir, targetDir, log);
+        PluginFileAccess fileAccess = new PluginFileAccess(sourceDir, targetDir, logMock());
         Set<RootNode> nodes = lamp.getNodes();
 
         paths.add("app1/my_app/myphpapp.php");

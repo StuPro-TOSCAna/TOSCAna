@@ -47,13 +47,13 @@ public class TransformationFilesystemDaoTest extends BaseUnitTest {
 
     @Before
     public void setUp() throws InvalidCsarException {
-        csar = new CsarImpl(new File(""), "csar1", log);
+        csar = new CsarImpl(new File(""), "csar1", logMock());
         EffectiveModelFactory modelFactory = mock(EffectiveModelFactory.class);
         EffectiveModel model = modelMock();
         when(modelFactory.create(any(Csar.class))).thenReturn(model);
         transformationDao = new TransformationFilesystemDao(platformService, modelFactory);
         transformationDao.setCsarDao(csarDao);
-        transformation = new TransformationImpl(csar, PLATFORM1, log, modelMock());
+        transformation = new TransformationImpl(csar, PLATFORM1, logMock(), modelMock());
         transformationRootDir = transformationDao.getRootDir(transformation);
     }
 
@@ -140,7 +140,7 @@ public class TransformationFilesystemDaoTest extends BaseUnitTest {
     @Test
     public void readTransformationFromDiskWithIllegalPlatform() {
         when(csarDao.getTransformationsDir(csar)).thenReturn(tmpdir);
-        Transformation t = new TransformationImpl(csar, PLATFORM_NOT_SUPPORTED, log, modelMock());
+        Transformation t = new TransformationImpl(csar, PLATFORM_NOT_SUPPORTED, logMock(), modelMock());
         createRandomFiles(transformationDao.getRootDir(t));
 
         assertFalse(transformationDao.find(csar, PLATFORM_NOT_SUPPORTED).isPresent());
