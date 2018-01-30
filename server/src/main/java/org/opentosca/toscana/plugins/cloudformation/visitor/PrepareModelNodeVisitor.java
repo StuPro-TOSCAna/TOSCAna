@@ -32,7 +32,7 @@ public class PrepareModelNodeVisitor implements NodeVisitor {
 
     @Override
     public void visit(MysqlDatabase node) {
-        logger.info("Prepare MysqlDatabase node {}.", node.getEntityName());
+        logger.info("Prepare MysqlDatabase node '{}'.", node.getEntityName());
         //if certain values aren't given, fill them
         if (node.getPassword().isPresent()) {
             //password needs to be at least 8 characters long

@@ -100,7 +100,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
     @Override
     public void visit(Compute node) {
         try {
-            logger.info("Visit Compute node {}.", node.getEntityName());
+            logger.info("Visit Compute node '{}'.", node.getEntityName());
             String nodeName = toAlphanumerical(node.getEntityName());
             //default security group the EC2 Instance opens for port 80 and 22 to the whole internet
             Object cidrIp = "0.0.0.0/0";
@@ -138,7 +138,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
     @Override
     public void visit(MysqlDatabase node) {
         try {
-            logger.info("Visit MysqlDatabase node {}.", node.getEntityName());
+            logger.info("Visit MysqlDatabase node '{}'.", node.getEntityName());
             String nodeName = toAlphanumerical(node.getEntityName());
 
             //get the compute where the dbms this node is hosted on, is hosted on
@@ -186,7 +186,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
 
     @Override
     public void visit(MysqlDbms node) {
-        logger.info("Visit MysqlDbms node {}.", node.getEntityName());
+        logger.info("Visit MysqlDbms node '{}'.", node.getEntityName());
         // TODO handle sql artifact if present
     }
 
@@ -227,7 +227,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
 
     @Override
     public void visit(WebApplication node) {
-        logger.info("Visit WebApplication node {}.", node.getEntityName());
+        logger.info("Visit WebApplication node '{}'.", node.getEntityName());
         try {
             //get the compute where the apache this node is hosted on, is hosted on
             Compute compute = getCompute(node);

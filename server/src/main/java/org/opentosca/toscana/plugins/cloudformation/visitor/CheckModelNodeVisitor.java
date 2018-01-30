@@ -24,12 +24,12 @@ public class CheckModelNodeVisitor implements StrictNodeVisitor {
 
     @Override
     public void visit(Apache node) {
-        logger.info("Check Apache node {}.", node.getEntityName());
+        logger.info("Check Apache node '{}'.", node.getEntityName());
     }
 
     @Override
     public void visit(Compute node) {
-        logger.info("Check Compute node {}.", node.getEntityName());
+        logger.info("Check Compute node '{}'.", node.getEntityName());
         List<OsCapability.Type> supportedTypes = new ArrayList<>();
         supportedTypes.add(OsCapability.Type.LINUX);
         //might grow but for now only linux
@@ -55,16 +55,16 @@ public class CheckModelNodeVisitor implements StrictNodeVisitor {
 
     @Override
     public void visit(MysqlDatabase node) {
-        logger.info("Check MysqlDatabase node {}.", node.getEntityName());
+        logger.info("Check MysqlDatabase node '{}'.", node.getEntityName());
     }
 
     @Override
     public void visit(MysqlDbms node) {
-        logger.info("Check MysqlDbms node {}.", node.getEntityName());
+        logger.info("Check MysqlDbms node '{}'.", node.getEntityName());
     }
 
     @Override
     public void visit(WebApplication node) {
-        logger.info("Check WebApplication node {}.", node.getEntityName());
+        logger.info("Check WebApplication node '{}'.", node.getEntityName());
     }
 }

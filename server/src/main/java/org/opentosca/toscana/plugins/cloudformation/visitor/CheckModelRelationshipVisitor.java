@@ -24,7 +24,7 @@ public class CheckModelRelationshipVisitor implements StrictRelationshipVisitor 
 
     @Override
     public void visit(ConnectsTo relation) {
-        logger.info("Check ConnectsTo relation {}.", relation.getEntityName());
+        logger.info("Check ConnectsTo relation '{}'.", relation.getEntityName());
         RootNode source = topology.getEdgeSource(relation);
         RootNode target = topology.getEdgeTarget(relation);
         if (!(source instanceof WebApplication && target instanceof MysqlDatabase)) {
@@ -35,6 +35,6 @@ public class CheckModelRelationshipVisitor implements StrictRelationshipVisitor 
 
     @Override
     public void visit(HostedOn relation) {
-        logger.info("Check HostedOn relation {}.", relation.getEntityName());
+        logger.info("Check HostedOn relation '{}'.", relation.getEntityName());
     }
 }
