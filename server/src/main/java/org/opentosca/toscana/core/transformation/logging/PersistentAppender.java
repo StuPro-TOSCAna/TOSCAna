@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.regex.Pattern;
 
+import org.opentosca.toscana.plugins.util.TransformationFailureException;
+
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 import ch.qos.logback.classic.spi.ILoggingEvent;
