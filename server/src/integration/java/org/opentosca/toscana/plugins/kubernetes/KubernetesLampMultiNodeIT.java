@@ -16,7 +16,7 @@ public class KubernetesLampMultiNodeIT extends KubernetesLampIT {
 
     @Override
     protected EffectiveModel getModel() {
-        return new EffectiveModelFactory().create(TestCsars.VALID_LAMP_NO_INPUT_MULTI_COMPUTE_TEMPLATE, log);
+        return new EffectiveModelFactory().create(TestCsars.VALID_LAMP_NO_INPUT_MULTI_COMPUTE_TEMPLATE, logMock());
     }
 
     @Override

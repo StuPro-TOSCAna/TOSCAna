@@ -15,7 +15,7 @@ public class NodeConverterSoftwareComponentTest extends BaseUnitTest {
 
     @Test
     public void softwareComponent() {
-        EffectiveModel model = new EffectiveModelFactory().create(SOFTWARE_COMPONENT, log);
+        EffectiveModel model = new EffectiveModelFactory().create(SOFTWARE_COMPONENT, logMock());
         SoftwareComponent softwareComponent = (SoftwareComponent) model.getNodes().iterator().next();
         Credential credential = softwareComponent.getAdminCredential().get();
         assertEquals("securePassword", credential.getToken());

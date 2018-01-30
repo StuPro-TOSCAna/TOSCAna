@@ -42,7 +42,7 @@ public class TransformationDaoUnitTest extends BaseUnitTest {
     public void setUp() throws IOException, InvalidCsarException {
         when(platformService.findPlatformById(PLATFORM1.id)).thenReturn(Optional.ofNullable(PLATFORM1));
         when(preferences.getDataDir()).thenReturn(tmpdir);
-        csar = new CsarImpl(new File(""), "csarIdentifier", log);
+        csar = new CsarImpl(new File(""), "csarIdentifier", logMock());
         File csarTransformationDir = new File(tmpdir, "transformationDir");
         csarTransformationDir.mkdir();
         when(csarDao.getTransformationsDir(csar)).thenReturn(csarTransformationDir);

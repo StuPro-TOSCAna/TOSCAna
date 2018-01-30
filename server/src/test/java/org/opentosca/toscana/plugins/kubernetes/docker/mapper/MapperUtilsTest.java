@@ -22,7 +22,7 @@ public class MapperUtilsTest extends BaseUnitTest {
 
     @Before
     public void setUp() {
-        ServiceGraph graph = new ServiceGraph(log);
+        ServiceGraph graph = new ServiceGraph(logMock());
         entity = new MappingEntity(entityId, graph);
         graph.addEntity(entity);
     }
