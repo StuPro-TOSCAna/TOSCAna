@@ -38,8 +38,8 @@ import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.SECURITY_GROUP;
 
 /**
- * Class for building a CloudFormation template from an effective model instance via the visitor pattern. Currently only
- * supports LAMP-stacks built with Compute, WebApplication, Apache, MySQL, MySQL nodes.
+ Class for building a CloudFormation template from an effective model instance via the visitor pattern. Currently only
+ supports LAMP-stacks built with Compute, WebApplication, Apache, MySQL, MySQL nodes.
  */
 public class CloudFormationNodeVisitor implements StrictNodeVisitor {
 
@@ -47,11 +47,11 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
     private CloudFormationModule cfnModule;
 
     /**
-     * Creates a <tt>CloudFormationNodeVisitor<tt> in order to build a template with the given
-     * <tt>CloudFormationModule<tt>.
-     *
-     * @param logger    Logger for logging visitor behaviour
-     * @param cfnModule Module to build the template model
+     Creates a <tt>CloudFormationNodeVisitor<tt> in order to build a template with the given
+     <tt>CloudFormationModule<tt>.
+
+     @param logger    Logger for logging visitor behaviour
+     @param cfnModule Module to build the template model
      */
     public CloudFormationNodeVisitor(Logger logger, CloudFormationModule cfnModule) {
         this.logger = logger;
@@ -232,10 +232,10 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
         //Add dependencies
         for (String dependency : operation.getDependencies()) {
             String cfnSource = getFileURL(cfnModule.getBucketName(), dependency);
-            
+
             logger.debug("Marking " + dependency + " as file to be uploaded.");
             cfnModule.putFileToBeUploaded(dependency);
-            
+
             CFNFile cfnFile = new CFNFile(cfnFilePath + dependency)
                 .setSource(cfnSource)
                 .setMode(MODE_644) //TODO Check what mode is needed (only read?)
@@ -252,10 +252,10 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
         if (operation.getArtifact().isPresent()) {
             String artifact = operation.getArtifact().get().getFilePath();
             String cfnSource = getFileURL(cfnModule.getBucketName(), artifact);
-            
+
             logger.debug("Marking " + artifact + " as file to be uploaded.");
             cfnModule.putFileToBeUploaded(artifact);
-            
+
             CFNFile cfnFile = new CFNFile(cfnFilePath + artifact)
                 .setSource(cfnSource)
                 .setMode(MODE_500) //TODO Check what mode is needed (read? + execute?)
@@ -282,12 +282,12 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
     }
 
     /**
-     * Returns the URL to the file in the given S3Bucket.
-     * e.g. http://bucketName.s3.amazonaws.com/objectKey
-     *
-     * @param bucketName name of the bucket containing the file
-     * @param objectKey  key belonging to the file in the bucket
-     * @return URL for the file
+     Returns the URL to the file in the given S3Bucket.
+     e.g. http://bucketName.s3.amazonaws.com/objectKey
+
+     @param bucketName name of the bucket containing the file
+     @param objectKey  key belonging to the file in the bucket
+     @return URL for the file
      */
     private String getFileURL(String bucketName, String objectKey) {
         return CloudFormationModule.URL_HTTP + bucketName + CloudFormationModule.URL_S3_AMAZONAWS + "/" + objectKey;

@@ -150,7 +150,7 @@ public class ServiceGraph extends SimpleDirectedGraph<Entity, Connection> {
     /**
      Adds a new entity to the graph. Also adds the edge to its parent entity.
      If one ore more parent entities do not exist, automatically adds intermediate entities.
-     IF equivalent entity already exists, does nothing.
+     If equivalent entity already exists, does nothing.
      */
     public void addEntity(Entity entity) {
         Entity parent = root;
@@ -181,6 +181,8 @@ public class ServiceGraph extends SimpleDirectedGraph<Entity, Connection> {
             Optional<Entity> child = current.getChild(segment);
             if (child.isPresent()) {
                 current = child.get();
+            } else {
+                return Optional.empty();
             }
         }
         return Optional.of(current);

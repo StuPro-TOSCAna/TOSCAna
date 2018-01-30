@@ -7,6 +7,7 @@ import org.opentosca.toscana.core.transformation.artifacts.TargetArtifact;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
+import org.opentosca.toscana.model.EffectiveModel;
 
 public interface Transformation {
 
@@ -78,6 +79,11 @@ public interface Transformation {
      @return Returns the underlying Csar of the transformation
      */
     Csar getCsar();
+
+    /**
+     Returns the underlying model of this transformation.
+     */
+    EffectiveModel getModel();
 
     /**
      Returns the outputs of the transformation.

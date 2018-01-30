@@ -1,5 +1,6 @@
 package org.opentosca.toscana.core.csar;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -34,7 +35,7 @@ public class CsarImplTest extends BaseUnitTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        csar = new CsarImpl("csarIdentifier", log);
+        csar = new CsarImpl(new File(""), "csarIdentifier", log);
         transformations.add(transformation1);
         transformations.add(transformation2);
         when(transformation1.getPlatform()).thenReturn(PLATFORM1);

@@ -1,16 +1,15 @@
 package org.opentosca.toscana.plugins.kubernetes.docker.mapper;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collection;
 
+import org.opentosca.toscana.core.BaseTest;
 import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.core.parse.model.MappingEntity;
 import org.opentosca.toscana.core.parse.model.ServiceGraph;
-import org.opentosca.toscana.core.transformation.logging.LogImpl;
 import org.opentosca.toscana.core.util.Preferences;
 import org.opentosca.toscana.model.EntityId;
 import org.opentosca.toscana.model.capability.OsCapability;
@@ -133,10 +132,8 @@ public class MapperTest extends BaseUnitTest {
         );
     }
 
-    public static MappingEntity getEntity() throws IOException {
-        File logFile = File.createTempFile("testlog", "log", PROJECT_ROOT);
-        logFile.deleteOnExit();
-        ServiceGraph graph = new ServiceGraph(new LogImpl(logFile));
+    public static MappingEntity getEntity() {
+        ServiceGraph graph = new ServiceGraph(BaseTest.logMock());
         MappingEntity entity = new MappingEntity(entityId, graph);
         graph.addEntity(entity);
         return entity;

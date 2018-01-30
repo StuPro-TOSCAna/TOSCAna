@@ -75,7 +75,7 @@ public class DeploymentPropertyTest extends BaseUnitTest {
 
     @Parameterized.Parameters(name = "{index}: {0}")
     public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][] {
+        return Arrays.asList(new Object[][]{
             {"Unsupported with True", NOT_SUPPORTED, "true", false, IllegalArgumentException.class},
             {"Unsupported with False", NOT_SUPPORTED, "false", false, IllegalArgumentException.class},
             {"Unsupported with null", NOT_SUPPORTED, null, false, null},

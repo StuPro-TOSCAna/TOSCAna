@@ -12,7 +12,7 @@ public class NavigationUtil {
         Entity parent = current;
         do {
             current = parent;
-            parent = current.getParent().orElseThrow(() -> 
+            parent = current.getParent().orElseThrow(() ->
                 new IllegalStateException("Entity does not have a parent"));
         } while (!ToscaStructure.NODE_TEMPLATES.equals(parent.getId()));
 

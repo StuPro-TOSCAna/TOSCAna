@@ -15,12 +15,13 @@ public class Pod {
     private List<NodeStack> containers;
 
     private Set<Port> ports;
+    private Compute computeNode;
 
-    public Pod(List<NodeStack> containers) {
+    public Pod(List<NodeStack> containers, Compute compute) {
         this.ports = new HashSet<>();
         this.containers = containers;
-
-        this.containers.forEach(e -> this.ports.addAll(e.getOpenPorts()));
+        this.computeNode = compute;
+        updatePorts();
     }
 
     public List<NodeStack> getContainers() {
@@ -28,12 +29,31 @@ public class Pod {
     }
 
     public Set<Port> getPorts() {
+        updatePorts();
         return ports;
+    }
+
+    private void updatePorts() {
+        if (ports.isEmpty()) {
+            this.containers.forEach(e -> this.ports.addAll(e.getOpenPorts()));
+        }
     }
 
     public String getName() {
         //TODO find better mechanism to name the pod
         return containers.get(0).getCleanStackName();
+    }
+
+    public String getServiceName() {
+        return getName() + "-service";
+    }
+
+    public String getDeploymentName() {
+        return getName() + "-deployment";
+    }
+
+    public Compute getComputeNode() {
+        return computeNode;
     }
 
     public static List<Pod> getPods(Collection<NodeStack> stacks) {
@@ -47,7 +67,7 @@ public class Pod {
 
         //Convert NodeStacks to Pods
         List<Pod> pods = new ArrayList<>();
-        stackMap.forEach((k, v) -> pods.add(new Pod(v)));
+        stackMap.forEach((k, v) -> pods.add(new Pod(v, k)));
         return pods;
     }
 }

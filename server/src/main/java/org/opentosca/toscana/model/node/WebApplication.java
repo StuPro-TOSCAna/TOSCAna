@@ -43,6 +43,11 @@ public class WebApplication extends RootNode {
         .subTypes(DatabaseEndpointCapability.class, Database.class, ConnectsTo.class)
         .type(DatabaseEndpointRequirement.class);
 
+    // TODO this is a hack: implement arbitrary requirement handling and delete this ToscaKey again
+    public static ToscaKey<DatabaseEndpointRequirement> DATABASE_ENDPOINT = new RequirementKey<>("database_endpoint")
+        .subTypes(DatabaseEndpointCapability.class, Database.class, ConnectsTo.class)
+        .type(DatabaseEndpointRequirement.class);
+
     public WebApplication(MappingEntity mappingEntity) {
         super(mappingEntity);
         init();

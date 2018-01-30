@@ -11,6 +11,7 @@ import org.opentosca.toscana.core.plugin.lifecycle.AbstractLifecycle;
 import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.model.EffectiveModel;
+import org.opentosca.toscana.model.EffectiveModelFactory;
 import org.opentosca.toscana.model.node.MysqlDatabase;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.node.WebApplication;
@@ -282,7 +283,7 @@ public class FileCreatorTest extends BaseUnitTest {
         app.addService(service1, ServiceTypes.MYSQL);
         secondApp.addService("mydb", ServiceTypes.MYSQL);
 
-        EffectiveModel lamp = new EffectiveModel(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, log);
+        EffectiveModel lamp = new EffectiveModelFactory().create(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, log);
         RootNode webApplicationNode = null;
         RootNode mysqlDatabaseNode = null;
         for (RootNode node : lamp.getNodes()) {

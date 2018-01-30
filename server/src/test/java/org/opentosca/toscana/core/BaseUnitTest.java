@@ -3,15 +3,15 @@ package org.opentosca.toscana.core;
 import java.io.File;
 import java.io.IOException;
 
-import org.opentosca.toscana.core.transformation.logging.Log;
-import org.opentosca.toscana.core.transformation.logging.LogImpl;
-
 import org.apache.commons.io.FileUtils;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
+import org.junit.rules.DisableOnDebug;
 import org.junit.rules.TemporaryFolder;
+import org.junit.rules.TestRule;
+import org.junit.rules.Timeout;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
@@ -28,8 +28,18 @@ public abstract class BaseUnitTest extends BaseTest {
      */
     @Rule
     public final TemporaryFolder temporaryFolder = new TemporaryFolder(PROJECT_ROOT);
+
+    /**
+     Timeout rule
+     <p>
+     This rule limits the runtime of a test (one method) to 30 Seconds.
+     This is to prevent continuos loops
+     <p>
+     This is equal to @Test(timeout = 30000)
+     */
+    @Rule
+    public final TestRule timeoutRule = new DisableOnDebug(Timeout.seconds(30));
     protected File tmpdir;
-    protected Log log;
 
     @BeforeClass
     public final static void offerStaticTmpDir() throws IOException {
@@ -41,7 +51,6 @@ public abstract class BaseUnitTest extends BaseTest {
     @Before
     public final void initTmpdir() throws IOException {
         tmpdir = temporaryFolder.newFolder();
-        log = new LogImpl(File.createTempFile("testlog", "log", tmpdir));
     }
 
     @AfterClass

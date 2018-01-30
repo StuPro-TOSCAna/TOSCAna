@@ -10,6 +10,7 @@ import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
+import org.opentosca.toscana.model.EffectiveModel;
 
 import static java.lang.String.format;
 
@@ -19,7 +20,8 @@ public class TransformationImpl implements Transformation {
     private final Platform targetPlatform;
     private final Log log;
     private final PropertyInstance inputs;
-//    private final PropertyInstance outputs;
+    //    private final PropertyInstance outputs;
+    private final EffectiveModel model;
     private TransformationState state = TransformationState.READY;
     private TargetArtifact targetArtifact;
 
@@ -29,26 +31,17 @@ public class TransformationImpl implements Transformation {
      @param csar           the subject of transformation
      @param targetPlatform the target platform
      */
-    public TransformationImpl(Csar csar, Platform targetPlatform, Log log) {
+    public TransformationImpl(Csar csar, Platform targetPlatform, Log log, EffectiveModel model) {
         this.csar = csar;
         this.targetPlatform = targetPlatform;
         this.log = log;
-
-        //Collect Possible Properties From the Platform and the Model
-        Set<Property> inputs = new HashSet<>();
-        inputs.addAll(csar.getModelSpecificProperties().values());
-        inputs.addAll(targetPlatform.getProperties());
-
+        this.model = model;
+        Set<Property> properties = new HashSet<>();
+        properties.addAll(model.getInputs().values());
+        properties.addAll(targetPlatform.getProperties());
+        // caution: side effect
         // transformationState can get set to INPUT_REQUIRED by this call
-        this.inputs = new PropertyInstance(inputs, this);
-        
-        Set<Property> outputs = new HashSet<>();
-        //This is needed to prevent tests from failing
-        if (csar.getModel().isPresent()) {
-            outputs.addAll(csar.getModel().get().getOutputs().values());
-        }
-//        this.outputs = new PropertyInstance(outputs, this);
-
+        this.inputs = new PropertyInstance(properties, this);
     }
 
     @Override
@@ -67,7 +60,13 @@ public class TransformationImpl implements Transformation {
     }
 
     @Override
+    public EffectiveModel getModel() {
+        return model;
+    }
+
+    @Override
     public PropertyInstance getOutputs() throws IllegalStateException {
+        // TODO
 //        return outputs;
         return new PropertyInstance(new HashSet<>(), this);
     }
