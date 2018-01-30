@@ -20,7 +20,7 @@ public class EffectiveModelSetterTest extends BaseUnitTest {
 
     @Before
     public void setUp() {
-        EffectiveModel model = new EffectiveModelFactory().create(TestTemplates.Nodes.SOFTWARE_COMPONENT, log);
+        EffectiveModel model = new EffectiveModelFactory().create(TestTemplates.Nodes.SOFTWARE_COMPONENT, logMock());
         component = (SoftwareComponent) model.getNodeMap().get("software_component");
     }
 
