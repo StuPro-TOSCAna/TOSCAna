@@ -33,8 +33,8 @@ public class PropertyInstance {
         properties.forEach(e -> {
             propertyValues.put(e.getKey(), e.getDefaultValue().orElse(null));
         });
-        //Set state to input required if there are required properties
-        if (properties.stream().anyMatch(Property::isRequired)) {
+        //Set state to input required if there are required properties without default value
+        if (properties.stream().anyMatch(p -> p.isRequired() && !p.hasDefaultValue())) {
             transformation.setState(TransformationState.INPUT_REQUIRED);
         }
     }

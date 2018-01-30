@@ -38,7 +38,7 @@ public abstract class BaseDockerfileTest extends BaseIntegrationTest {
     protected File dockerWorkdir;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         inputDir = new File(tmpdir, INPUT_DIR_NAME);
         workDir = new File(tmpdir, WORKING_DIR_NAME);
         dockerWorkdir = new File(workDir, WORKING_DIR_SUBFOLDER_NAME);

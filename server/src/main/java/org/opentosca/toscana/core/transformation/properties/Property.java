@@ -16,4 +16,8 @@ public interface Property {
     boolean isRequired();
 
     Optional<String> getDefaultValue();
+
+    default boolean hasDefaultValue() {
+        return getDefaultValue().isPresent();
+    }
 }
