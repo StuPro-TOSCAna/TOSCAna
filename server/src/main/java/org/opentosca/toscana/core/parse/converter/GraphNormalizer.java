@@ -41,7 +41,7 @@ public class GraphNormalizer {
                         Optional<Entity> implementation = graph.getEntity(operation.getId().descend(Operation.IMPLEMENTATION.name));
                         implementation.ifPresent(e -> normalize(graph, e, Operation.PRIMARY.name));
                         Optional<Entity> shortArtifact = graph.getEntity(operation.getId().descend(Operation.PRIMARY));
-                        normalize(graph, shortArtifact.get(), Artifact.FILE_PATH.name);
+                        shortArtifact.ifPresent(artifact -> normalize(graph, artifact, Artifact.FILE_PATH.name));
                     }
                 }
             }

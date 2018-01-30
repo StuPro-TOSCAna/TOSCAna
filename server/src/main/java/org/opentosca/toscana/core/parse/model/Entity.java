@@ -26,14 +26,19 @@ public abstract class Entity implements Comparable<Entity> {
     }
 
     public <V> void setValue(ToscaKey<V> key, V value) {
-        EntityId newId = id.descend(key);
-        Entity entity;
+        EntityId id = this.id.descend(key);
+        final Entity newEntity;
         if (BaseToscaElement.class.isAssignableFrom(key.getType())) {
-            entity = ((BaseToscaElement) value).getBackingEntity();
+            newEntity = ((BaseToscaElement) value).getBackingEntity();
         } else {
-            entity = new ScalarEntity(value.toString(), newId, graph);
+            newEntity = new ScalarEntity(value.toString(), id, graph);
         }
-        graph.addEntity(entity);
+        Optional<Entity> oldEntity = graph.getEntity(id);
+        if (oldEntity.isPresent()) {
+            graph.replaceEntity(oldEntity.get(), newEntity);
+        } else {
+            graph.addEntity(newEntity);
+        }
     }
 
     public String getName() {
@@ -133,7 +138,7 @@ public abstract class Entity implements Comparable<Entity> {
         if (parentId == null) {
             return Optional.empty();
         }
-        Entity parent = graph.getEntity(parentId).get();
+        Entity parent = graph.getEntityOrThrow(parentId);
         return Optional.of(parent);
     }
 

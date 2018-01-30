@@ -17,21 +17,22 @@ import static org.junit.Assert.assertEquals;
 public class EffectiveModelSetterTest extends BaseUnitTest {
 
     private SoftwareComponent component;
+
     @Before
-    public void setUp(){
+    public void setUp() {
         EffectiveModel model = new EffectiveModelFactory().create(TestTemplates.Nodes.SOFTWARE_COMPONENT, log);
         component = (SoftwareComponent) model.getNodeMap().get("software_component");
     }
-    
+
     @Test
     public void firstTimeSetterTest() {
         String expected = "test-description";
         component.setDescription(expected);
         assertEquals(expected, component.getDescription().get());
     }
-    
+
     @Test
-    public void setAgainTest(){
+    public void setAgainTest() {
         String expected = "test-description";
         component.setDescription(expected);
         expected = "another-test-description";
