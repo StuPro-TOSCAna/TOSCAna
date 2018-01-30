@@ -18,7 +18,7 @@ public class EffectiveModelInputTest extends BaseUnitTest {
 
     @Test
     public void inputTest() {
-        EffectiveModel model = new EffectiveModelFactory().create(TestCsars.VALID_INPUTS_TEMPLATE, log);
+        EffectiveModel model = new EffectiveModelFactory().create(TestCsars.VALID_INPUTS_TEMPLATE, logMock());
         Map<String, Property> inputs = model.getInputs();
         assertNotNull(inputs);
         assertEquals(4, inputs.size());

@@ -37,8 +37,8 @@ public class CloudFormationPluginTest extends BaseUnitTest {
 
     @Before
     public void setUp() throws Exception {
-        lamp = new EffectiveModelFactory().create(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, log);
-        fileAccess = new PluginFileAccess(new File("src/test/resources/csars/yaml/valid/lamp-input/"), tmpdir, log);
+        lamp = new EffectiveModelFactory().create(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, logMock());
+        fileAccess = new PluginFileAccess(new File("src/test/resources/csars/yaml/valid/lamp-input/"), tmpdir, logMock());
         cfnModule = new CloudFormationModule(fileAccess, "us-west-2", new BasicAWSCredentials("", ""));
         CloudFormationNodeVisitor cfnNodeVisitorL = new CloudFormationNodeVisitor(logger, cfnModule, lamp.getTopology());
         cfnNodeVisitor = spy(cfnNodeVisitorL);

@@ -98,7 +98,7 @@ public abstract class BaseTransformTest extends BaseIntegrationTest {
      initializes the transformation context
      */
     protected TransformationContext initContext() throws Exception {
-        return new TransformationContext(contentDir, workingDir, log, model, getProperties());
+        return new TransformationContext(contentDir, workingDir, logMock(), model, getProperties());
     }
 
     /**

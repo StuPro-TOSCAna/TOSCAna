@@ -46,7 +46,7 @@ public abstract class BaseDockerfileTest extends BaseUnitTest {
         inputDir.mkdirs();
         workDir.mkdirs();
 
-        access = new PluginFileAccess(inputDir, workDir, log);
+        access = new PluginFileAccess(inputDir, workDir, logMock());
         builder = new DockerfileBuilder("library/ubuntu:latest", WORKING_DIR_SUBFOLDER_NAME, access);
     }
 

@@ -4,6 +4,8 @@ import org.opentosca.toscana.IntegrationTest;
 
 import org.junit.Rule;
 import org.junit.experimental.categories.Category;
+import org.junit.rules.DisableOnDebug;
+import org.junit.rules.TestRule;
 import org.junit.rules.Timeout;
 
 @Category(IntegrationTest.class)
@@ -15,5 +17,5 @@ public abstract class BaseIntegrationTest extends BaseUnitTest {
      This rule limits the runtime of a test to 5 Minutes
      */
     @Rule
-    public final Timeout timeoutRule = Timeout.seconds(300);
+    public final TestRule timeoutRule = new DisableOnDebug(Timeout.seconds(300));
 }
