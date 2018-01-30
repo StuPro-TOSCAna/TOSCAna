@@ -44,6 +44,6 @@ public class PersistentAppenderTest extends BaseUnitTest {
         }
         String result = FileUtils.readFileToString(logfile);
         String[] lines = result.split("\n");
-        assertTrue(lines.length > 20);
+        assertTrue(lines.length > 15);
     }
 }

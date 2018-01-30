@@ -10,6 +10,7 @@ import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
+import org.opentosca.toscana.model.EffectiveModel;
 
 import static java.lang.String.format;
 
@@ -18,9 +19,10 @@ public class TransformationImpl implements Transformation {
     private final Csar csar;
     private final Platform targetPlatform;
     private final Log log;
-    private final PropertyInstance properties;
     private TransformationState state = TransformationState.READY;
     private TargetArtifact targetArtifact;
+    private final EffectiveModel model;
+    private final PropertyInstance properties;
 
     /**
      Creates a new transformation for given csar to given targetPlatform.
@@ -28,16 +30,15 @@ public class TransformationImpl implements Transformation {
      @param csar           the subject of transformation
      @param targetPlatform the target platform
      */
-    public TransformationImpl(Csar csar, Platform targetPlatform, Log log) {
+    public TransformationImpl(Csar csar, Platform targetPlatform, Log log, EffectiveModel model) {
         this.csar = csar;
         this.targetPlatform = targetPlatform;
         this.log = log;
-
-        //Collect Possible Properties From the Platform and the Model
+        this.model = model;
         Set<Property> properties = new HashSet<>();
-        properties.addAll(csar.getModelSpecificProperties().values());
+        properties.addAll(model.getInputs().values());
         properties.addAll(targetPlatform.getProperties());
-
+        // caution: side effect
         // transformationState can get set to INPUT_REQUIRED by this call
         this.properties = new PropertyInstance(properties, this);
     }
@@ -55,6 +56,11 @@ public class TransformationImpl implements Transformation {
     @Override
     public Csar getCsar() {
         return csar;
+    }
+
+    @Override
+    public EffectiveModel getModel() {
+        return model;
     }
 
     @Override
@@ -83,7 +89,7 @@ public class TransformationImpl implements Transformation {
 
     @Override
     public PropertyInstance getProperties() {
-        return properties;
+        return this.properties;
     }
 
     @Override

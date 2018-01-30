@@ -10,6 +10,7 @@ import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.model.EffectiveModel;
+import org.opentosca.toscana.model.EffectiveModelFactory;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.visitor.VisitableNode;
 import org.opentosca.toscana.plugins.cloudfoundry.application.Application;
@@ -41,15 +42,17 @@ public class CloudFoundryPluginTest extends BaseUnitTest {
 
     @Before
     public void setUp() throws Exception {
-        EffectiveModel lamp = new EffectiveModel(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, log);
+
+        EffectiveModel lamp = new EffectiveModelFactory().create(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, logMock());
         this.context = setUpMockTransformationContext(lamp);
         Application myApp = new Application(appName, 1, context);
         NodeVisitor visitor = new NodeVisitor(myApp);
+
         File sourceDir = new File(resourcesPath, "csars/yaml/valid/lamp-noinput");
         targetDir = new File(tmpdir, "targetDir");
         sourceDir.mkdir();
         targetDir.mkdir();
-        PluginFileAccess fileAccess = new PluginFileAccess(sourceDir, targetDir, log);
+        PluginFileAccess fileAccess = new PluginFileAccess(sourceDir, targetDir, logMock());
         Set<RootNode> nodes = lamp.getNodes();
 
         paths.add("app1/my_app/myphpapp.php");

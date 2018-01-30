@@ -26,6 +26,9 @@ public class LogImpl implements Log {
     private final AtomicLong index;
     private final File logFile;
 
+    private MemoryAppender memoryAppender;
+    private PersistentAppender persistentAppender;
+
     /**
      @param logFile the logFile to which the Logger will write to
      */
@@ -33,6 +36,8 @@ public class LogImpl implements Log {
         this.logFile = logFile;
         //Create Synchronized linked list. to prevent any issues regarding concurrency
         this.logEntries = Collections.synchronizedList(new LinkedList<>());
+        memoryAppender = new MemoryAppender(this);
+        persistentAppender = new PersistentAppender(logFile);
         index = new AtomicLong(0);
         readLogFromFile();
     }
@@ -83,8 +88,7 @@ public class LogImpl implements Log {
     @Override
     public Logger getLogger(String context) {
         Logger logger = (Logger) LoggerFactory.getLogger(context);
-        MemoryAppender memoryAppender = new MemoryAppender(this);
-        PersistentAppender persistentAppender = new PersistentAppender(logFile);
+        
         logger.addAppender(memoryAppender);
         logger.addAppender(persistentAppender);
         logger.setLevel(Level.DEBUG);
@@ -95,5 +99,11 @@ public class LogImpl implements Log {
     @Override
     public Logger getLogger(Class context) {
         return getLogger(context.getName());
+    }
+
+    @Override
+    public void close() {
+        memoryAppender.stop();
+        persistentAppender.stop();
     }
 }

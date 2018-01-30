@@ -75,7 +75,7 @@ public class ServiceTest extends BaseUnitTest {
         targetDir = new File(tmpdir, "targetDir");
         sourceDir.mkdir();
         targetDir.mkdir();
-        fileAccess = new PluginFileAccess(sourceDir, targetDir, log);
+        fileAccess = new PluginFileAccess(sourceDir, targetDir, logMock());
     }
 
     @Test

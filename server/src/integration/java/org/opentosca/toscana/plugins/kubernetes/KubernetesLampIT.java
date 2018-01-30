@@ -7,6 +7,7 @@ import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
 import org.opentosca.toscana.model.EffectiveModel;
+import org.opentosca.toscana.model.EffectiveModelFactory;
 import org.opentosca.toscana.plugins.BaseTransformTest;
 import org.opentosca.toscana.plugins.kubernetes.docker.mapper.MapperTest;
 
@@ -28,7 +29,7 @@ public class KubernetesLampIT extends BaseTransformTest {
 
     @Override
     protected EffectiveModel getModel() {
-        return new EffectiveModel(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, log);
+        return new EffectiveModelFactory().create(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, logMock());
     }
 
     @Override

@@ -2,13 +2,16 @@ package org.opentosca.toscana.plugins.kubernetes.docker.dockerfile.builder;
 
 import java.io.File;
 
+import org.opentosca.toscana.UnitTest;
 import org.opentosca.toscana.plugins.kubernetes.docker.BaseDockerfileTest;
 
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+@Category(UnitTest.class)
 public class DockerfileBuilderTest extends BaseDockerfileTest {
 
     private static final String UNCOMPRESSED_PATH = "kubernetes/docker/df_uncompressed";

@@ -52,6 +52,7 @@ public class ExecutionTask implements Runnable {
         transform();
         serveArtifact();
         transformation.setState(failed ? TransformationState.ERROR : TransformationState.DONE);
+        transformation.getLog().close();
     }
 
     private void serveArtifact() {
@@ -73,8 +74,7 @@ public class ExecutionTask implements Runnable {
 
     private void transform() {
         try {
-            EffectiveModel model = transformation.getCsar().getModel().orElseThrow(() ->
-                new IllegalStateException("EffectiveModel is null, will not start transformation."));
+            EffectiveModel model = transformation.getModel();
             plugin.transform(new TransformationContext(csarContentDir, transformationRootDir,
                 transformation.getLog(), model, transformation.getProperties()));
             transformation.setState(TransformationState.DONE);

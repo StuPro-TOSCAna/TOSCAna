@@ -5,7 +5,23 @@ include_once "mysql-credentials.php";
 // get task from post after task was entered in form
 $post = $_POST['task'];
 if ($post != "") {
+    checkOrCreateTable();
     saveToDb($post);
+}
+
+
+/**
+* check if table exists and if not create it
+*/
+function checkOrCreateTable()
+{
+    $conn = newDbConnection();
+    if ($conn->query("SHOW TABLES LIKE 'tasks'")->num_rows==0){
+        if (!$conn->query("CREATE table tasks (id INT not null auto_increment,task varchar(255), primary key(id))")){
+            echo("Creating table failed");
+            }
+    }
+    $conn->close();
 }
 /**
 * saved task to db

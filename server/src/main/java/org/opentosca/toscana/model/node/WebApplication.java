@@ -37,7 +37,7 @@ public class WebApplication extends RootNode {
     public static ToscaKey<WebServerRequirement> HOST = new RequirementKey<>("host")
         .subTypes(ContainerCapability.class, WebServer.class, HostedOn.class)
         .type(WebServerRequirement.class);
-    
+
     // TODO this is a hack: implement arbitrary requirement handling and delete this ToscaKey again
     public static ToscaKey<DatabaseEndpointRequirement> DATABASE_ENDPOINT = new RequirementKey<>("database_endpoint")
         .subTypes(DatabaseEndpointCapability.class, Database.class, ConnectsTo.class)

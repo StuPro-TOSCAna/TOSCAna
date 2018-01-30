@@ -31,7 +31,7 @@ public class ValidatorTest extends BaseUnitTest {
 
     @Parameterized.Parameters(name = "{index}: {0} of {2}")
     public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][] {
+        return Arrays.asList(new Object[][]{
             {new StringValidator(), true, "Hello world"},
             {new StringValidator(), false, null},
             {new IntegerValidator(false), false, "Hello world"},
