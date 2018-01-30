@@ -55,7 +55,7 @@ public class ApplicationHandler {
 
         //set new application number because the dummy applications are missing
         for (int i = 0; i < checkedApplications.size(); i++) {
-            checkedApplications.get(i).setApplicationNumber(i);
+            checkedApplications.get(i).setApplicationNumber(i + 1);
         }
 
         return checkedApplications;
