@@ -51,8 +51,8 @@ public class TypeWrapper {
             if (Modifier.isAbstract(type.getModifiers())) {
                 type = KeyReflector.detectRealSubtype(entity, type);
             }
-            T node = (T) ConstructorUtils.invokeConstructor(type, entity);
-            return node;
+            T element = (T) ConstructorUtils.invokeConstructor(type, entity);
+            return element;
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
             throw new IllegalStateException(String.format("Failed to wrap up entity '%s' in type '%s'", entity, type), e);
         }

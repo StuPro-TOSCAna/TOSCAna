@@ -760,6 +760,7 @@ public class TransformationController {
                 transformation.setProperty(entry.getKey(), entry.getValue());
                 successes.put(entry.getKey(), true);
             } catch (Exception e) {
+                logger.error("Failed to set proeprties for transformation '%s'", transformation, e);
                 somethingFailed = true;
                 successes.put(entry.getKey(), false);
             }

@@ -1,6 +1,7 @@
 package org.opentosca.toscana;
 
 import java.io.IOException;
+import java.util.Map;
 
 import org.opentosca.toscana.core.BaseSpringIntegrationTest;
 import org.opentosca.toscana.core.testdata.TestCsars;
@@ -28,7 +29,7 @@ public class UserInputIT extends BaseSpringIntegrationTest {
         for (TransformationProperty property : properties.getProperties()) {
             property.setValue("1");
         }
-        api.updateProperties(csarName, platformId, properties);
+        Map<String, Boolean> result = api.updateProperties(csarName, platformId, properties);
         // if call does not fail, inputs have been correctly set and propagated
         api.startTransformation(csarName, platformId);
 

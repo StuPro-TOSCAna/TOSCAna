@@ -3,7 +3,6 @@ package org.opentosca.toscana.core.parse.model;
 import java.util.Map;
 
 import org.opentosca.toscana.core.BaseUnitTest;
-import org.opentosca.toscana.core.parse.TestTemplates;
 import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.model.EffectiveModel;
@@ -32,10 +31,10 @@ public class EffectiveModelTest extends BaseUnitTest {
 
     @Test
     public void outputTest() {
-        EffectiveModel model = new EffectiveModel(TestCsars.VALID_OUTPUTS_TEMPLATE, log);
+        EffectiveModel model = new EffectiveModelFactory().create(TestCsars.VALID_OUTPUTS_TEMPLATE, logMock());
         Map<String, Property> outputs = model.getOutputs();
         assertNotNull(outputs);
-        assertEquals(2, outputs.size());
+        assertEquals(1, outputs.size());
         Property linkedOutput = outputs.get("test_output_linked");
         assertNotNull(linkedOutput);
         assertTrue(linkedOutput.getDescription().isPresent());
