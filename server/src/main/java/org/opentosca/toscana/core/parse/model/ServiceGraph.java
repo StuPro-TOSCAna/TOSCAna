@@ -238,10 +238,6 @@ public class ServiceGraph extends SimpleDirectedGraph<Entity, Connection> {
         }
     }
 
-    public Log getLog() {
-        return log;
-    }
-
     public Logger getLogger() {
         return logger;
     }

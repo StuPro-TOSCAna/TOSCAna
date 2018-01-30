@@ -22,7 +22,7 @@ public abstract class Entity implements Comparable<Entity> {
     public Entity(EntityId id, ServiceGraph graph) {
         this.id = id;
         this.graph = graph;
-        this.logger = graph.getLog().getLogger(getClass());
+        this.logger = graph.getLogger();
     }
 
     public <V> void setValue(ToscaKey<V> key, V value) {
