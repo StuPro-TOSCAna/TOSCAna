@@ -27,15 +27,19 @@ public class EntrypointDetector {
      */
     public File findEntryPoint(File csarRoot) throws InvalidCsarException {
         File[] entryPoints = csarRoot.listFiles((file, s) -> s.matches(".*\\.ya?ml$"));
+        if (entryPoints == null) {
+            logger.error(String.format("Given directory '%s' does not exist", csarRoot));
+            throw new InvalidCsarException(log);
+        }
         if (entryPoints.length == 1) {
             File entryPoint = entryPoints[0].getAbsoluteFile();
-            logger.info("detected entry point is '{}'", entryPoint.getName());
+            logger.info("Detected entry point is '{}'", entryPoint.getName());
             return entryPoint;
         } else if (entryPoints.length > 1) {
-            logger.warn("parsing failed: more than one top level yaml file encountered in given csar");
+            logger.warn("Parsing failed: more than one top level yaml file encountered in given csar");
             throw new InvalidCsarException(log);
         } else {
-            logger.error("parsing failed: no top level yaml file encountered in given csar");
+            logger.error("Parsing failed: no top level yaml file encountered in given csar");
             throw new InvalidCsarException(log);
         }
     }

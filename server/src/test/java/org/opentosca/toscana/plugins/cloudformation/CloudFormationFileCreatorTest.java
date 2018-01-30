@@ -61,7 +61,7 @@ public class CloudFormationFileCreatorTest extends BaseUnitTest {
         FILEPATH_TARGET_TEST_FILE = new File(targetDir, FILEPATH_TARGET + FILENAME_TEST_FILE);
         writeTestFile();
         FILEPATH_TARGET_TEST_FILE_LOCAL = RELATIVE_DIRECTORY_PREFIX + FILENAME_TEST_FILE;
-        
+
         when(log.getLogger(any(Class.class))).thenReturn(mock(Logger.class));
         PluginFileAccess fileAccess = new PluginFileAccess(sourceDir, targetDir, log);
         cfnModule = new CloudFormationModule(fileAccess, "us-west-2", new BasicAWSCredentials("", ""));

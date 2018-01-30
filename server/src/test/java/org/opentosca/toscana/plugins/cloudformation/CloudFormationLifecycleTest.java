@@ -10,6 +10,7 @@ import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
 import org.opentosca.toscana.model.EffectiveModel;
+import org.opentosca.toscana.model.EffectiveModelFactory;
 
 import org.junit.Assume;
 import org.junit.Before;
@@ -42,7 +43,7 @@ public class CloudFormationLifecycleTest extends BaseUnitTest {
             new File(tmpdir, "sourceDir"),
             new File(tmpdir, "targetDir"),
             log);
-        EffectiveModel effectiveModel = new EffectiveModel(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, log);
+        EffectiveModel effectiveModel = new EffectiveModelFactory().create(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, log);
         PluginFileAccess access = spy(accessL);
         doNothing().when(access).copy(anyString(), anyString());
         when(context.getPluginFileAccess()).thenReturn(access);

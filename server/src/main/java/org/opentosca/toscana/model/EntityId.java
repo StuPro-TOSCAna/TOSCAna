@@ -69,9 +69,9 @@ public class EntityId implements Comparable<EntityId> {
         }
         return intermediateId.descend(key.getName());
     }
-    
+
     /**
-    Returns null if ascending is not possible
+     Returns null if ascending is not possible
      */
     public EntityId ascend() {
         int pathSize = this.path.size();

@@ -1,5 +1,6 @@
 package org.opentosca.toscana.core.csar;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -7,13 +8,15 @@ import java.util.Optional;
 
 import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.logging.Log;
-import org.opentosca.toscana.core.transformation.properties.Property;
-import org.opentosca.toscana.model.EffectiveModel;
 
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 public class CsarImpl implements Csar {
 
+    /**
+     the name of the directory which contains the unzipped content of the uploaded CSAR
+     */
+    public final static String CONTENT_DIR = "content";
     /**
      Stores all scheduled, ongoing or finished transformations of this CSAR. Key is the platform identifier.
      */
@@ -22,10 +25,13 @@ public class CsarImpl implements Csar {
     /**
      null if not yet parsed
      */
-    private EffectiveModel model;
     private final Log log;
+    private final File rootDir;
+    private final File contentDir;
 
-    public CsarImpl(String identifier, Log log) {
+    public CsarImpl(File rootDir, String identifier, Log log) {
+        this.rootDir = rootDir;
+        this.contentDir = new File(rootDir, CONTENT_DIR);
         this.identifier = identifier;
         this.log = log;
     }
@@ -44,25 +50,6 @@ public class CsarImpl implements Csar {
     @Override
     public String getIdentifier() {
         return identifier;
-    }
-
-    @Override
-    public Optional<EffectiveModel> getModel() {
-        return Optional.ofNullable(model);
-    }
-
-    @Override
-    public Map<String, Property> getModelSpecificProperties() {
-        if (model == null) {
-            return new HashMap<>();
-        } else {
-            return model.getInputs();
-        }
-    }
-
-    @Override
-    public void setModel(EffectiveModel model) {
-        this.model = model;
     }
 
     @Override
@@ -87,6 +74,11 @@ public class CsarImpl implements Csar {
         for (Transformation transformation : transformations) {
             this.transformations.put(transformation.getPlatform().id, transformation);
         }
+    }
+
+    @Override
+    public File getContentDir() {
+        return contentDir;
     }
 
     @Override

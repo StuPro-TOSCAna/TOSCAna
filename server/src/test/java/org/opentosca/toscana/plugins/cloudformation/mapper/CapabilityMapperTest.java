@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.model.EffectiveModel;
+import org.opentosca.toscana.model.EffectiveModelFactory;
 import org.opentosca.toscana.model.capability.ContainerCapability;
 import org.opentosca.toscana.model.capability.OsCapability;
 import org.opentosca.toscana.model.node.Compute;
@@ -53,7 +54,7 @@ public class CapabilityMapperTest {
         this.expectedDiskSize = expectedDiskSize;
         logger.debug("{}, {}, {}, {}, {}, {}", numCpus, memSize, diskSize, expectedEC2, expectedRDS, expectedDiskSize);
         this.capabilityMapper = new CapabilityMapper("us-west-2", new BasicAWSCredentials("", ""), logger);
-        EffectiveModel singleCompute = new EffectiveModel(TestCsars.VALID_SINGLE_COMPUTE_UBUNTU_TEMPLATE, log);
+        EffectiveModel singleCompute = new EffectiveModelFactory().create(TestCsars.VALID_SINGLE_COMPUTE_UBUNTU_TEMPLATE, log);
         Compute compute = (Compute) singleCompute.getNodeMap().get("server");
         //containerCapability = compute.getHost();
         containerCapability = mock(ContainerCapability.class);

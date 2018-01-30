@@ -2,6 +2,7 @@ package org.opentosca.toscana.core.parse.model;
 
 import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.model.EffectiveModel;
+import org.opentosca.toscana.model.EffectiveModelFactory;
 import org.opentosca.toscana.model.datatype.Credential;
 import org.opentosca.toscana.model.node.SoftwareComponent;
 
@@ -14,7 +15,7 @@ public class NodeConverterSoftwareComponentTest extends BaseUnitTest {
 
     @Test
     public void softwareComponent() {
-        EffectiveModel model = new EffectiveModel(SOFTWARE_COMPONENT, log);
+        EffectiveModel model = new EffectiveModelFactory().create(SOFTWARE_COMPONENT, log);
         SoftwareComponent softwareComponent = (SoftwareComponent) model.getNodes().iterator().next();
         Credential credential = softwareComponent.getAdminCredential().get();
         assertEquals("securePassword", credential.getToken());

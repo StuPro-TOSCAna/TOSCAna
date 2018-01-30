@@ -1,5 +1,6 @@
 package org.opentosca.toscana.core.util.health;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -128,7 +129,7 @@ public class TransformerHealthIndicatorTest extends BaseUnitTest {
     private void initTestEnvironment() {
         //Create Dummy Csar
         //DummyCsar csar = new DummyCsar("test");
-        Csar csar = new CsarImpl(MOCK_CSAR_NAME, mock(Log.class));
+        Csar csar = new CsarImpl(new File(""), MOCK_CSAR_NAME, mock(Log.class));
         csar = spy(csar);
 
         Map<String, Transformation> transformations = new HashMap<>();
@@ -136,7 +137,7 @@ public class TransformerHealthIndicatorTest extends BaseUnitTest {
 
         for (Object[] d : MOCK_DATA) {
             //Initialize transformation Mock
-            Transformation transformation = new TransformationImpl(csar, (Platform) d[0], mock(Log.class));
+            Transformation transformation = new TransformationImpl(csar, (Platform) d[0], mock(Log.class), modelMock());
             transformation.setState((TransformationState) d[1]);
             transformations.put(((Platform) d[0]).id, transformation);
 
