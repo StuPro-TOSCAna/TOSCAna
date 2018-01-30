@@ -38,10 +38,9 @@ public class BashScript {
         logger.info("Creating new bash scriptPath: " + this.scriptPath);
         access.delete(scriptPath);
 
-        access.access(scriptPath).append(SHEBANG + "\n")
-            .append(SOURCE_UTIL_ALL + "\n")
-            .append(SUBCOMMAND_EXIT + "\n")
-            .close();
+        access.access(scriptPath).appendln(SHEBANG).close();
+        access.access(scriptPath).appendln(SOURCE_UTIL_ALL).close();
+        access.access(scriptPath).appendln(SUBCOMMAND_EXIT).close();
     }
 
     public void append(String string) throws IOException {

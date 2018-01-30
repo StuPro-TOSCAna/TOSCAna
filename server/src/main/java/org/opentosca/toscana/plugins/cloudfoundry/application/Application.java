@@ -7,12 +7,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.node.WebApplication;
 import org.opentosca.toscana.plugins.cloudfoundry.client.Connection;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.APPLICATION_FOLDER;
 
@@ -21,7 +21,7 @@ import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.APPLICATION
  */
 public class Application {
 
-    private final static Logger logger = LoggerFactory.getLogger(Application.class);
+    private Logger logger;
 
     private String name;
     private int applicationNumber;
@@ -39,13 +39,15 @@ public class Application {
 
     private Connection connection;
 
-    public Application(String name, int applicationNumber) {
+    public Application(String name, int applicationNumber, TransformationContext context) {
         this.name = name;
         this.applicationNumber = applicationNumber;
+        this.logger = context.getLogger(getClass());
     }
 
-    public Application(int applicationNumber) {
+    public Application(int applicationNumber, TransformationContext context) {
         this.applicationNumber = applicationNumber;
+        this.logger = context.getLogger(getClass());
     }
 
     /**
@@ -57,7 +59,7 @@ public class Application {
      */
     public void addConfigMysql(String pathToFile) {
         String relativePath = "../../" + APPLICATION_FOLDER + this.applicationNumber + "/" + pathToFile;
-        
+
         logger.debug("Add a config mysql command to deploy script. Relative path to file is {}", relativePath);
         configureSqlDatabase.add(relativePath);
     }
@@ -111,9 +113,8 @@ public class Application {
     }
 
     /**
-     set the application name. 
+     set the application name.
      all forbidden signs will be replaced by -
-     @param name
      */
     public void setName(String name) {
         String clearedUpName = name.replaceAll("[:/?#@$&'()*+,;=_]", "-");
@@ -170,6 +171,7 @@ public class Application {
 
     /**
      adds a file to the output folder
+
      @param filePath path in the csar
      */
     public void addFilePath(String filePath) {
@@ -194,7 +196,6 @@ public class Application {
 
     /**
      sets the path to the main application which should be executed
-     @param pathToApplication
      */
     public void setPathToApplication(String pathToApplication) {
         int lastOccurenceOfBackslash = pathToApplication.lastIndexOf("/");

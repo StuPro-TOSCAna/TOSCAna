@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
+import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.plugins.cloudfoundry.application.Application;
 import org.opentosca.toscana.plugins.cloudfoundry.application.ServiceTypes;
 import org.opentosca.toscana.plugins.scripts.BashScript;
@@ -13,7 +14,6 @@ import org.opentosca.toscana.plugins.scripts.BashScript;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.opentosca.toscana.core.plugin.lifecycle.AbstractLifecycle.SCRIPTS_DIR_PATH;
 
@@ -22,7 +22,7 @@ import static org.opentosca.toscana.core.plugin.lifecycle.AbstractLifecycle.SCRI
  */
 public class Deployment {
 
-    private final static Logger logger = LoggerFactory.getLogger(Deployment.class);
+    private Logger logger;
 
     private BashScript deploymentScript;
     private Application application;
@@ -37,18 +37,22 @@ public class Deployment {
     private final String PYTHON_READ_CREDENTIALS_FILENAME = "readCredentials.py";
     private final String PYTHON_REPLACE_STRINGS_FILENAME = "replace.py";
 
-    public Deployment(BashScript deploymentScript, Application application, PluginFileAccess fileAccess) throws IOException {
+    private TransformationContext context;
+
+    public Deployment(BashScript deploymentScript, Application application, PluginFileAccess fileAccess, TransformationContext context) throws IOException {
         this.deploymentScript = deploymentScript;
         this.application = application;
         this.fileAccess = fileAccess;
         deploymentClass = Deployment.class;
+        this.logger = context.getLogger(getClass());
+        this.context = context;
     }
 
     /**
      look for suitable services which match to the requirements of the user
      */
     public void treatServices() throws IOException {
-        ServiceHandler serviceHandler = new ServiceHandler(application, deploymentScript);
+        ServiceHandler serviceHandler = new ServiceHandler(application, deploymentScript, context);
 
         String scriptPath = deploymentScript.getScriptPath();
         File scriptFile = new File(scriptPath);

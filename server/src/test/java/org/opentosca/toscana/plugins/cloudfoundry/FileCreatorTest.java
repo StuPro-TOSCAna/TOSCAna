@@ -9,6 +9,7 @@ import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.core.plugin.lifecycle.AbstractLifecycle;
 import org.opentosca.toscana.core.testdata.TestCsars;
+import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.model.node.MysqlDatabase;
@@ -51,6 +52,7 @@ import static org.opentosca.toscana.plugins.cloudfoundry.application.buildpacks.
 import static org.opentosca.toscana.plugins.scripts.BashScript.SHEBANG;
 import static org.opentosca.toscana.plugins.scripts.BashScript.SOURCE_UTIL_ALL;
 import static org.opentosca.toscana.plugins.scripts.BashScript.SUBCOMMAND_EXIT;
+import static org.opentosca.toscana.plugins.util.TestUtil.setUpMockTransformationContext;
 
 public class FileCreatorTest extends BaseUnitTest {
     private FileCreator fileCreator;
@@ -78,10 +80,14 @@ public class FileCreatorTest extends BaseUnitTest {
     private String envOrga;
     private String envSpace;
 
+    private TransformationContext context;
+
     @Before
-    public void setUp() {
+    public void setUp() throws IOException {
+        EffectiveModel lamp = new EffectiveModel(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, log);
+        this.context = setUpMockTransformationContext(lamp);
         appName = "testApp";
-        testApp = new Application("testApp", 1);
+        testApp = new Application("testApp", 1, context);
         testApp.setName(appName);
         File sourceDir = new File(tmpdir, "sourceDir");
         targetDir = new File(tmpdir, "targetDir");
@@ -90,7 +96,7 @@ public class FileCreatorTest extends BaseUnitTest {
         fileAccess = new PluginFileAccess(sourceDir, targetDir, log);
         List<Application> applications = new ArrayList<>();
         applications.add(testApp);
-        fileCreator = new FileCreator(fileAccess, applications);
+        fileCreator = new FileCreator(fileAccess, applications, context);
     }
 
     @Test
@@ -194,8 +200,8 @@ public class FileCreatorTest extends BaseUnitTest {
 
     @Test
     public void checkMultipleApplicationsManifest() throws Exception {
-        Application app1 = new Application("app1", 1);
-        Application app2 = new Application("app2", 2);
+        Application app1 = new Application("app1", 1, context);
+        Application app2 = new Application("app2", 2, context);
 
         app1.addService(service1, ServiceTypes.MYSQL);
         app2.addService(service2, ServiceTypes.MYSQL);
@@ -209,7 +215,7 @@ public class FileCreatorTest extends BaseUnitTest {
         applications.add(app1);
         applications.add(app2);
 
-        FileCreator fileCreatorMult = new FileCreator(fileAccess, applications);
+        FileCreator fileCreatorMult = new FileCreator(fileAccess, applications, context);
         fileCreatorMult.createFiles();
         File targetFile = new File(targetDir, MANIFEST_PATH);
         String manifestContent = FileUtils.readFileToString(targetFile);
@@ -237,8 +243,8 @@ public class FileCreatorTest extends BaseUnitTest {
 
     @Test
     public void checkMultipleApplicationsDeployScript() throws Exception {
-        Application app1 = new Application("app1", 1);
-        Application app2 = new Application("app2", 2);
+        Application app1 = new Application("app1", 1, context);
+        Application app2 = new Application("app2", 2, context);
 
         app1.addService(service1, ServiceTypes.MYSQL);
         app2.addService(service2, ServiceTypes.MYSQL);
@@ -247,7 +253,7 @@ public class FileCreatorTest extends BaseUnitTest {
         applications.add(app1);
         applications.add(app2);
 
-        FileCreator fileCreatorMult = new FileCreator(fileAccess, applications);
+        FileCreator fileCreatorMult = new FileCreator(fileAccess, applications, context);
         fileCreatorMult.createFiles();
         File targetFile = new File(targetDir, outputPath + FILEPRAEFIX_DEPLOY + deploy_name + FILESUFFIX_DEPLOY);
         String deployscriptContent = FileUtils.readFileToString(targetFile);
@@ -272,8 +278,8 @@ public class FileCreatorTest extends BaseUnitTest {
         envSpace = System.getenv(CF_ENVIRONMENT_SPACE);
 
         connection = createConnection();
-        Application app = new Application("app", 1);
-        Application secondApp = new Application("appSec", 2);
+        Application app = new Application("app", 1, context);
+        Application secondApp = new Application("appSec", 2, context);
         app.setProvider(new Provider(Provider
             .CloudFoundryProviderType.PIVOTAL));
         app.setConnection(connection);
@@ -306,7 +312,7 @@ public class FileCreatorTest extends BaseUnitTest {
         List<Application> applications = new ArrayList<>();
         applications.add(app);
         applications.add(secondApp);
-        FileCreator fileCreator = new FileCreator(fileAccess, applications);
+        FileCreator fileCreator = new FileCreator(fileAccess, applications, context);
         fileCreator.createFiles();
 
         File targetFile = new File(targetDir, outputPath + FILEPRAEFIX_DEPLOY + deploy_name + FILESUFFIX_DEPLOY);
@@ -335,7 +341,7 @@ public class FileCreatorTest extends BaseUnitTest {
             envPw,
             envHost,
             envOrga,
-            envSpace);
+            envSpace, context);
 
         return connection;
     }

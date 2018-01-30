@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.plugins.cloudfoundry.application.Application;
 import org.opentosca.toscana.plugins.cloudfoundry.application.Provider;
 import org.opentosca.toscana.plugins.cloudfoundry.application.Service;
@@ -14,7 +15,6 @@ import org.opentosca.toscana.plugins.util.TransformationFailureException;
 import org.cloudfoundry.operations.services.ServiceOffering;
 import org.cloudfoundry.operations.services.ServicePlan;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.CLI_CREATE_SERVICE;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.CLI_CREATE_SERVICE_DEFAULT;
@@ -24,14 +24,15 @@ import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.CLI_CREATE_
  */
 public class ServiceHandler {
 
-    private final static Logger logger = LoggerFactory.getLogger(ServiceHandler.class);
+    private Logger logger;
 
     private Application application;
     private BashScript deploymentScript;
 
-    public ServiceHandler(Application application, BashScript deploymentScript) {
+    public ServiceHandler(Application application, BashScript deploymentScript, TransformationContext context) {
         this.application = application;
         this.deploymentScript = deploymentScript;
+        this.logger = context.getLogger(getClass());
     }
 
     /**

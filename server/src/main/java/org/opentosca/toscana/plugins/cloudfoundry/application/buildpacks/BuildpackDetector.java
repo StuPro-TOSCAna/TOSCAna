@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
+import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.plugins.cloudfoundry.application.Application;
 import org.opentosca.toscana.plugins.cloudfoundry.application.ServiceTypes;
 import org.opentosca.toscana.plugins.util.TransformationFailureException;
@@ -12,7 +13,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.APPLICATION_FOLDER;
 
@@ -25,16 +25,17 @@ public class BuildpackDetector {
     public static final String BUILDPACK_OBJECT_PHP = "PHP_EXTENSIONS";
     public static final String BUILDPACK_FILEPATH_PHP = ".bp-config/options.json";
 
-    private final static Logger logger = LoggerFactory.getLogger(BuildpackDetector.class);
+    private Logger logger;
 
     private Application application;
     private String applicationSuffix;
     private PluginFileAccess fileAccess;
 
-    public BuildpackDetector(Application application, PluginFileAccess fileAccess) {
+    public BuildpackDetector(Application application, PluginFileAccess fileAccess, TransformationContext context) {
         this.application = application;
         this.fileAccess = fileAccess;
         this.applicationSuffix = application.getApplicationSuffix();
+        this.logger = context.getLogger(getClass());
     }
 
     /**

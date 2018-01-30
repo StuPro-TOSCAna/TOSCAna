@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
+import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.plugins.cloudfoundry.application.Application;
 import org.opentosca.toscana.plugins.cloudfoundry.application.Service;
 import org.opentosca.toscana.plugins.cloudfoundry.application.ServiceTypes;
@@ -17,7 +18,6 @@ import org.opentosca.toscana.plugins.scripts.EnvironmentCheck;
 import org.apache.commons.collections.CollectionUtils;
 import org.json.JSONException;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.opentosca.toscana.core.plugin.lifecycle.AbstractLifecycle.OUTPUT_DIR;
 import static org.opentosca.toscana.plugins.cloudfoundry.application.ManifestAttributes.DOMAIN;
@@ -45,14 +45,17 @@ public class FileCreator {
     public static final String APPLICATION_FOLDER = "app";
     public static String deploy_name = "application";
 
-    private final static Logger logger = LoggerFactory.getLogger(FileCreator.class);
+    private TransformationContext context;
+    private Logger logger;
 
     private final PluginFileAccess fileAccess;
     private List<Application> applications;
 
-    public FileCreator(PluginFileAccess fileAccess, List<Application> applications) {
+    public FileCreator(PluginFileAccess fileAccess, List<Application> applications, TransformationContext context) {
         this.fileAccess = fileAccess;
         this.applications = applications;
+        this.logger = context.getLogger(getClass());
+        this.context = context;
     }
 
     /**
@@ -177,7 +180,7 @@ public class FileCreator {
 
         //read credentials, replace, executeScript, configureMysql
         for (Application application : applications) {
-            Deployment deployment = new Deployment(deployScript, application, fileAccess);
+            Deployment deployment = new Deployment(deployScript, application, fileAccess, context);
 
             //read credentials
             readCredentials(deployment, application);
@@ -234,7 +237,7 @@ public class FileCreator {
      */
     private void handleServices(BashScript deployScript) throws IOException {
         for (Application application : applications) {
-            Deployment deployment = new Deployment(deployScript, application, fileAccess);
+            Deployment deployment = new Deployment(deployScript, application, fileAccess, context);
 
             //only one time all service offerings should be printed to the deploy script
             deployment.treatServices();
@@ -250,7 +253,7 @@ public class FileCreator {
      */
     private void replaceStrings(BashScript deployScript) throws IOException {
         for (Application application : applications) {
-            Deployment deployment = new Deployment(deployScript, application, fileAccess);
+            Deployment deployment = new Deployment(deployScript, application, fileAccess, context);
             if (!application.getExecuteCommands().isEmpty()) {
                 Map<String, String> executeCommands = application.getExecuteCommands();
 
@@ -269,7 +272,7 @@ public class FileCreator {
      detect if additional buildpacks are needed and add them
      */
     private void createBuildpackAdditionsFile(Application application) throws IOException, JSONException {
-        BuildpackDetector buildpackDetection = new BuildpackDetector(application, fileAccess);
+        BuildpackDetector buildpackDetection = new BuildpackDetector(application, fileAccess, context);
         buildpackDetection.detectBuildpackAdditions();
     }
 

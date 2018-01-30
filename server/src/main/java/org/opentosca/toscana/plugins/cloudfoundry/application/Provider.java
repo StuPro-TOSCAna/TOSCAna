@@ -9,7 +9,6 @@ import org.cloudfoundry.operations.services.ServiceOffering;
  */
 public class Provider {
 
-    // should be expanded with several cloud Providers
     public enum CloudFoundryProviderType {
         PIVOTAL;
     }

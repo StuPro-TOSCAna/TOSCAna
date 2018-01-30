@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.plugins.cloudfoundry.application.Service;
 import org.opentosca.toscana.plugins.util.TransformationFailureException;
 
@@ -26,7 +27,6 @@ import org.cloudfoundry.reactor.tokenprovider.PasswordGrantTokenProvider;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static java.lang.Boolean.TRUE;
 
@@ -36,7 +36,7 @@ import static java.lang.Boolean.TRUE;
  */
 public class Connection {
 
-    private final static Logger logger = LoggerFactory.getLogger(Connection.class);
+    private Logger logger;
 
     private String userName;
     private String password;
@@ -57,13 +57,14 @@ public class Connection {
      */
     public Connection(String username, String password,
                       String apiHost, String organization,
-                      String space) {
+                      String space, TransformationContext context) {
 
         this.userName = username;
         this.password = password;
         this.apiHost = apiHost;
         this.organization = organization;
         this.space = space;
+        this.logger = context.getLogger(getClass());
 
         logger.info("Try to connect to CF Instance");
         this.cloudFoundryOperations = createCloudFoundryOperations();
