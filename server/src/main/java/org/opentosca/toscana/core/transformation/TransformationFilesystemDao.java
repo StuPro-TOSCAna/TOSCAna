@@ -1,7 +1,6 @@
 package org.opentosca.toscana.core.transformation;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -14,11 +13,14 @@ import java.util.stream.Collectors;
 import org.opentosca.toscana.api.exceptions.PlatformNotFoundException;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarDao;
+import org.opentosca.toscana.core.parse.InvalidCsarException;
 import org.opentosca.toscana.core.transformation.artifacts.TargetArtifact;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.logging.LogImpl;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.platform.PlatformService;
+import org.opentosca.toscana.model.EffectiveModel;
+import org.opentosca.toscana.model.EffectiveModelFactory;
 
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -41,11 +43,13 @@ public class TransformationFilesystemDao implements TransformationDao {
 
     private final static Logger logger = LoggerFactory.getLogger(TransformationFilesystemDao.class);
     private final PlatformService platformService;
+    private final EffectiveModelFactory effectiveModelFactory;
     private CsarDao csarDao;
 
     @Autowired
-    public TransformationFilesystemDao(PlatformService platformService) {
+    public TransformationFilesystemDao(PlatformService platformService, EffectiveModelFactory effectiveModelFactory) {
         this.platformService = platformService;
+        this.effectiveModelFactory = effectiveModelFactory;
     }
 
     @Override
@@ -53,11 +57,22 @@ public class TransformationFilesystemDao implements TransformationDao {
         if (!platformService.isSupported(platform)) {
             throw new PlatformNotFoundException();
         }
-        Transformation transformation = new TransformationImpl(csar, platform, getLog(csar, platform));
+        Transformation transformation = createTransformation(csar, platform);
         delete(transformation);
         csar.getTransformations().put(platform.id, transformation);
         getContentDir(transformation).mkdirs();
         return transformation;
+    }
+
+    private Transformation createTransformation(Csar csar, Platform platform) {
+        try {
+            EffectiveModel model = effectiveModelFactory.create(csar);
+            Transformation transformation = new TransformationImpl(csar, platform, getLog(csar, platform), model);
+            return transformation;
+        } catch (InvalidCsarException e) {
+            throw new IllegalStateException("Failed to create csar. Should not have happened - csar upload should have" +
+                "already failed", e);
+        }
     }
 
     @Override
@@ -97,8 +112,7 @@ public class TransformationFilesystemDao implements TransformationDao {
             }
             Optional<Platform> platform = platformService.findPlatformById(pluginEntry.getName());
             if (platform.isPresent()) {
-                Log log = getLog(csar, platform.get());
-                Transformation transformation = new TransformationImpl(csar, platform.get(), log);
+                Transformation transformation = createTransformation(csar, platform.get());
                 readTargetArtifactFromDisk(transformation);
                 transformations.add(transformation);
             } else {
@@ -131,7 +145,7 @@ public class TransformationFilesystemDao implements TransformationDao {
     }
 
     @Override
-    public TargetArtifact createTargetArtifact(Transformation transformation) throws FileNotFoundException {
+    public TargetArtifact createTargetArtifact(Transformation transformation) {
         String csarId = transformation.getCsar().getIdentifier();
         String platformId = transformation.getPlatform().id;
         String failed = transformation.getState() == TransformationState.ERROR ? FAILED : "";

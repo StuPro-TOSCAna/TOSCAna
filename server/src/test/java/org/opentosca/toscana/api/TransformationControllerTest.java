@@ -20,6 +20,7 @@ import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarImpl;
 import org.opentosca.toscana.core.csar.CsarService;
 import org.opentosca.toscana.core.testdata.ByteArrayUtils;
+import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.TransformationImpl;
 import org.opentosca.toscana.core.transformation.TransformationService;
@@ -175,7 +176,7 @@ public class TransformationControllerTest extends BaseSpringTest {
         List<Csar> csars = new ArrayList<>();
         when(csarService.getCsar(anyString())).thenReturn(Optional.empty());
         for (String name : CSAR_NAMES) {
-            Csar csar = new CsarImpl(name, mock(Log.class));
+            Csar csar = new CsarImpl(TestCsars.VALID_EMPTY_TOPOLOGY_TEMPLATE, name, log);
             when(csarService.getCsar(name)).thenReturn(Optional.of(csar));
         }
         when(csarService.getCsars()).thenReturn(csars);
@@ -217,7 +218,7 @@ public class TransformationControllerTest extends BaseSpringTest {
         when(transformationService.createTransformation(any(Csar.class), any(Platform.class))).then(iom -> {
             Csar csar = (Csar) iom.getArguments()[0];
             Platform platform = (Platform) iom.getArguments()[1];
-            Transformation t = new TransformationImpl(csar, platform, mock(Log.class));
+            Transformation t = new TransformationImpl(csar, platform, mock(Log.class), modelMock());
             csar.getTransformations().put(platform.id, t);
             return t;
         });
@@ -693,7 +694,7 @@ public class TransformationControllerTest extends BaseSpringTest {
             Transformation transformation = new TransformationImpl(
                 csar.get(),
                 platformService.findPlatformById(pname).get(),
-                mockLog
+                mockLog, modelMock()
             );
             transformation = spy(transformation);
             csar.get().getTransformations().put(pname, transformation);

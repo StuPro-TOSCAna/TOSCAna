@@ -4,6 +4,7 @@ import java.io.File;
 
 import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.model.EffectiveModel;
+import org.opentosca.toscana.model.EffectiveModelFactory;
 
 import org.apache.commons.io.FileUtils;
 
@@ -15,7 +16,7 @@ public class KubernetesLampMultiNodeIT extends KubernetesLampIT {
 
     @Override
     protected EffectiveModel getModel() {
-        return new EffectiveModel(TestCsars.VALID_LAMP_NO_INPUT_MULTI_COMPUTE_TEMPLATE, log);
+        return new EffectiveModelFactory().create(TestCsars.VALID_LAMP_NO_INPUT_MULTI_COMPUTE_TEMPLATE, log);
     }
 
     @Override

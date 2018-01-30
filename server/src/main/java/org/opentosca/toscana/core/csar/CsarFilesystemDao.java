@@ -37,10 +37,6 @@ public class CsarFilesystemDao implements CsarDao {
      the name of the directory which contains the transformations
      */
     public final static String TRANSFORMATION_DIR = "transformations";
-    /**
-     the name of the directory which contains the unzipped content of the uploaded CSAR
-     */
-    final static String CONTENT_DIR = "content";
 
     private final static Logger logger = LoggerFactory.getLogger(CsarFilesystemDao.class);
 
@@ -72,7 +68,7 @@ public class CsarFilesystemDao implements CsarDao {
     public Csar create(String identifier, InputStream inputStream) {
         csarMap.remove(identifier);
         File csarDir = setupDir(identifier);
-        File contentDir = new File(csarDir, CONTENT_DIR);
+        File contentDir = new File(csarDir, CsarImpl.CONTENT_DIR);
         File transformationDir = new File(csarDir, TRANSFORMATION_DIR);
         transformationDir.mkdir();
         try {
@@ -81,7 +77,7 @@ public class CsarFilesystemDao implements CsarDao {
         } catch (IOException e) {
             logger.error("Failed to unzip csar with identifier '{}'", identifier, e);
         }
-        Csar csar = new CsarImpl(identifier, getLog(identifier));
+        Csar csar = new CsarImpl(getRootDir(identifier), identifier, getLog(identifier));
         csarMap.put(identifier, csar);
         return csar;
     }
@@ -134,7 +130,7 @@ public class CsarFilesystemDao implements CsarDao {
 
     @Override
     public File getContentDir(Csar csar) {
-        return new File(getRootDir(csar), CONTENT_DIR);
+        return new File(getRootDir(csar), CsarImpl.CONTENT_DIR);
     }
 
     @Override
@@ -151,8 +147,8 @@ public class CsarFilesystemDao implements CsarDao {
         File[] files = dataDir.listFiles();
         for (File file : files) {
             if (isCsarDir(file)) {
-                String csarIdentifier = file.getName();
-                CsarImpl csar = new CsarImpl(csarIdentifier, getLog(csarIdentifier));
+                String id = file.getName();
+                CsarImpl csar = new CsarImpl(getRootDir(id), id, getLog(id));
                 csarMap.put(csar.getIdentifier(), csar);
                 List<Transformation> transformations = transformationDao.find(csar);
                 csar.setTransformations(transformations);
@@ -167,7 +163,7 @@ public class CsarFilesystemDao implements CsarDao {
      */
     private boolean isCsarDir(File file) {
         if (file.isDirectory()) {
-            File contentDir = new File(file, CONTENT_DIR);
+            File contentDir = new File(file, CsarImpl.CONTENT_DIR);
             File transformationDir = new File(file, TRANSFORMATION_DIR);
             return (contentDir.exists() && transformationDir.exists());
         }
