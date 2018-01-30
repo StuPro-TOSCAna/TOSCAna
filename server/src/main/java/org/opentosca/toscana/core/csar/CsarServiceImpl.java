@@ -40,6 +40,7 @@ public class CsarServiceImpl implements CsarService {
         }
     }
 
+    // this call is expensive, use with care
     private void validate(Csar csar) throws InvalidCsarException {
         // TODO integrate winery parser as validator
         // test whether EffectiveModel can get created without throwing an error
@@ -59,29 +60,11 @@ public class CsarServiceImpl implements CsarService {
 
     @Override
     public List<Csar> getCsars() {
-        List<Csar> list = csarDao.findAll();
-        for (Csar csar : list) {
-            try {
-                validate(csar);
-            } catch (InvalidCsarException e) {
-                logger.error("Encountered invalid csar in repository.", csar, e);
-                // TODO wait for discussion outcome, maybe cleanup disk
-            }
-        }
-        return list;
+        return csarDao.findAll();
     }
 
     @Override
     public Optional<Csar> getCsar(String identifier) {
-        Optional<Csar> csar = csarDao.find(identifier);
-        if (csar.isPresent()) {
-            try {
-                validate(csar.get());
-            } catch (InvalidCsarException e) {
-                logger.error("Encountered invalid csar in repository.", csar, e);
-                // TODO wait for discussion outcome, maybe cleanup disk
-            }
-        }
-        return csar;
+        return csarDao.find(identifier);
     }
 }
