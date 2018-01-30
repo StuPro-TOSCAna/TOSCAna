@@ -11,6 +11,7 @@ import org.opentosca.toscana.core.plugin.lifecycle.AbstractLifecycle;
 import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.model.EffectiveModel;
+import org.opentosca.toscana.model.EffectiveModelFactory;
 import org.opentosca.toscana.plugins.cloudfoundry.application.Application;
 import org.opentosca.toscana.plugins.cloudfoundry.application.Provider;
 import org.opentosca.toscana.plugins.cloudfoundry.application.ServiceTypes;
@@ -58,7 +59,7 @@ public class ServiceTest extends BaseUnitTest {
 
     @Before
     public void setUp() throws IOException {
-        EffectiveModel lamp = new EffectiveModel(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, log);
+        EffectiveModel lamp = new EffectiveModelFactory().create(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, logMock());
         this.context = setUpMockTransformationContext(lamp);
         envUser = System.getenv(CF_ENVIRONMENT_USER);
         envPw = System.getenv(CF_ENVIRONMENT_PW);

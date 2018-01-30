@@ -85,7 +85,7 @@ public class FileCreatorTest extends BaseUnitTest {
 
     @Before
     public void setUp() throws IOException {
-        EffectiveModel lamp = new EffectiveModel(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, log);
+        EffectiveModel lamp = new EffectiveModelFactory().create(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, logMock());
         this.context = setUpMockTransformationContext(lamp);
         appName = "testApp";
         testApp = new Application("testApp", 1, context);

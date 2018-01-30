@@ -42,7 +42,6 @@ public class CloudFoundryPluginTest extends BaseUnitTest {
 
     @Before
     public void setUp() throws Exception {
-
         EffectiveModel lamp = new EffectiveModelFactory().create(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, logMock());
         this.context = setUpMockTransformationContext(lamp);
         Application myApp = new Application(appName, 1, context);
