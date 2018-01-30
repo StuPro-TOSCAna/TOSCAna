@@ -3,9 +3,11 @@ package org.opentosca.toscana.plugins.cloudfoundry.filecreator;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
 import org.opentosca.toscana.plugins.cloudfoundry.application.Application;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,9 +37,9 @@ public class ApplicationHandler {
 
         for (Application application : uncheckedApplications) {
             if (!application.isRealApplication()) {
-                Application parentApplication = application.getParentApplication();
-                if (parentApplication != null) {
-                    copyData(application, parentApplication);
+                Set<Application> parentApplications = application.getParentApplications();
+                if (CollectionUtils.isNotEmpty(parentApplications)) {
+                    parentApplications.forEach(parentApplication -> copyData(application, parentApplication));
                     appNumberFromUnrealApps.add(application.getApplicationNumber());
                 } else {
                     logger.error("There is a unreal application like a service, but no parent application");

@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.node.WebApplication;
@@ -32,7 +33,7 @@ public class Application {
     private String pathToApplication;
     private String applicationSuffix;
     private boolean realApplication = true;
-    private Application parentApplication = null;
+    private Set<Application> parentApplications = null;
 
     private Connection connection;
 
@@ -222,16 +223,17 @@ public class Application {
      if the application is a dummy application e.g. a service
      default is true
 
-     @param parentApplication the application which this application belongs to
+     @param parentApplications a set of applications to which this application belongs to
      */
-    public void applicationIsNotReal(Application parentApplication) {
+    public void applicationIsNotReal(Set<Application> parentApplications) {
         this.realApplication = false;
+        this.parentApplications = parentApplications;
     }
 
     /**
      @return the application to which this dummy application belongs to. Null if there is no parent.
      */
-    public Application getParentApplication() {
-        return parentApplication;
+    public Set<Application> getParentApplications() {
+        return parentApplications;
     }
 }
