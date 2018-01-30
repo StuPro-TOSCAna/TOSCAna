@@ -52,6 +52,7 @@ public class ExecutionTask implements Runnable {
         transform();
         serveArtifact();
         transformation.setState(failed ? TransformationState.ERROR : TransformationState.DONE);
+        transformation.getLog().close();
     }
 
     private void serveArtifact() {
