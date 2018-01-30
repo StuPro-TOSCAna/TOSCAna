@@ -8,7 +8,9 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
+import org.junit.rules.DisableOnDebug;
 import org.junit.rules.TemporaryFolder;
+import org.junit.rules.TestRule;
 import org.junit.rules.Timeout;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -26,7 +28,6 @@ public abstract class BaseUnitTest extends BaseTest {
      */
     @Rule
     public final TemporaryFolder temporaryFolder = new TemporaryFolder(PROJECT_ROOT);
-    protected File tmpdir;
 
     /**
      Timeout rule
@@ -37,7 +38,8 @@ public abstract class BaseUnitTest extends BaseTest {
      This is equal to @Test(timeout = 30000)
      */
     @Rule
-    public final Timeout timeoutRule = Timeout.seconds(30);
+    public final TestRule timeoutRule = new DisableOnDebug(Timeout.seconds(30));
+    protected File tmpdir;
 
     @BeforeClass
     public final static void offerStaticTmpDir() throws IOException {

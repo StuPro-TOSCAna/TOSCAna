@@ -6,13 +6,13 @@ import org.opentosca.toscana.IntegrationTest;
 import org.opentosca.toscana.core.BaseTest;
 import org.opentosca.toscana.core.CoreConfiguration;
 import org.opentosca.toscana.core.Main;
+import org.opentosca.toscana.core.parse.converter.util.ToscaStructure;
 import org.opentosca.toscana.core.parse.model.MappingEntity;
 import org.opentosca.toscana.core.parse.model.ServiceGraph;
 import org.opentosca.toscana.core.util.Preferences;
 import org.opentosca.toscana.model.EntityId;
 import org.opentosca.toscana.model.capability.OsCapability;
 
-import com.google.common.collect.Lists;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -46,21 +46,23 @@ public class MapperTagLoaderIT extends BaseTest {
 
     static final String LOADER_TEST_PROFILE = "base-image-mapper-loader-test";
     private static final Logger logger = LoggerFactory.getLogger(MapperTagLoaderIT.class);
-    private static EntityId entityId = new EntityId(Lists.newArrayList("my", "id"));
-    private static MappingEntity entity;
+    private static EntityId entityId = (ToscaStructure.NODE_TEMPLATES.descend("myNode"));
+    private static MappingEntity nodeEntity;
 
     @Autowired
     private BaseImageMapper mapper;
 
     @BeforeClass
     public static void setUp() {
-        entity = new MappingEntity(entityId, new ServiceGraph(logMock()));
+        ServiceGraph graph = new ServiceGraph(logMock());
+        nodeEntity = new MappingEntity(entityId, graph);
+        graph.addEntity(nodeEntity);
     }
 
     @Test
     public void testLoader() {
         String image = mapper.mapToBaseImage(
-            new OsCapability(entity).setDistribution(DEBIAN)
+            new OsCapability(nodeEntity).setDistribution(DEBIAN)
         );
         logger.info("Performed a mapping to {}", image);
         TagStorage data = mapper.getTagStorage();
