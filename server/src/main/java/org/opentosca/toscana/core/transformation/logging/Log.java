@@ -46,4 +46,6 @@ public interface Log {
      @see Log#getLogger(String)
      */
     Logger getLogger(Class context);
+    
+    void close();
 }
