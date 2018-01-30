@@ -59,11 +59,7 @@ public class TransformationImpl implements Transformation {
     }
 
     @Override
-    /**
-     @returns the underlying EffectiveModel instance or null if not yet initialized: {@link #populateModel()}
-     */
     public EffectiveModel getModel() {
-        // TODO maybe delete this method?
         return model;
     }
 
