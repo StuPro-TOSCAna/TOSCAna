@@ -28,7 +28,7 @@ public class PrepareModelRelationshipVisitor implements RelationshipVisitor {
 
     @Override
     public void visit(ConnectsTo relation) {
-        logger.info("Prepare ConnectsTo relation {}.", relation.getEntityName());
+        logger.info("Prepare ConnectsTo relation '{}'.", relation.getEntityName());
         RootNode source = topology.getEdgeSource(relation);
         RootNode target = topology.getEdgeTarget(relation);
         if (source instanceof WebApplication && target instanceof MysqlDatabase) {
@@ -39,12 +39,12 @@ public class PrepareModelRelationshipVisitor implements RelationshipVisitor {
             Compute computeWebApplication = getCompute(webApplication);
             if (computeMysqlDatabase.equals(computeWebApplication)) {
                 // means we can set the private address as reference the database endpoint
-                //TODO only set privateAddress or also publicAddress?
-                computeMysqlDatabase.setPrivateAddress(Fn.fnGetAtt(toAlphanumerical(mysqlDatabase.getEntityName()),
-                    AWS_ENDPOINT_REFERENCE)
-                    .toString(true));
-                logger.debug("Set privateAddress of {} to reference MysqlDatabase {}", computeMysqlDatabase
-                    .getEntityName(), mysqlDatabase.getEntityName());
+                String databaseEndpoint = Fn.fnGetAtt(toAlphanumerical(mysqlDatabase.getEntityName()),
+                    AWS_ENDPOINT_REFERENCE).toString(true);
+                computeMysqlDatabase.setPrivateAddress(databaseEndpoint);
+                computeMysqlDatabase.setPublicAddress(databaseEndpoint);
+                logger.debug("Set private address and public address of '{}' to reference MysqlDatabase '{}'",
+                    computeMysqlDatabase.getEntityName(), mysqlDatabase.getEntityName());
             }
         }
     }

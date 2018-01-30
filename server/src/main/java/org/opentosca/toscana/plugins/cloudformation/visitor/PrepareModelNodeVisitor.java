@@ -1,10 +1,12 @@
 package org.opentosca.toscana.plugins.cloudformation.visitor;
 
 import java.security.SecureRandom;
+import java.util.stream.Collectors;
 
 import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.MysqlDatabase;
 import org.opentosca.toscana.model.node.RootNode;
+import org.opentosca.toscana.model.relation.HostedOn;
 import org.opentosca.toscana.model.relation.RootRelationship;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 
@@ -56,13 +58,18 @@ public class PrepareModelNodeVisitor implements NodeVisitor {
 
         // check if Mysql is the only node hosted on his compute node
         Compute compute = getCompute(node);
-        if (topology.incomingEdgesOf(compute).size() == 1) {
+        if (topology.incomingEdgesOf(compute)
+            .stream()
+            .filter(relation -> relation instanceof HostedOn)
+            .collect(Collectors.toSet())
+            .size() == 1) {
             // means our dbms is the only one hosted on this compute
             // means we can set the private address as reference the database endpoint
-            //TODO only set privateAddress or also publicAddress?
-            compute.setPrivateAddress(Fn.fnGetAtt(toAlphanumerical(node.getEntityName()), AWS_ENDPOINT_REFERENCE)
-                .toString(true));
-            logger.debug("Set private Address of {} to reference MysqlDatabase {}", compute.getEntityName(), node
+            String databaseEndpoint = Fn.fnGetAtt(toAlphanumerical(node.getEntityName()), AWS_ENDPOINT_REFERENCE)
+                .toString(true);
+            compute.setPrivateAddress(databaseEndpoint);
+            compute.setPublicAddress(databaseEndpoint);
+            logger.debug("Set private address and public address of '{}' to reference MysqlDatabase '{}'", compute.getEntityName(), node
                 .getEntityName());
         }
     }
