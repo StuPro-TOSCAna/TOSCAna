@@ -15,7 +15,7 @@ public class TemplateConverterTest extends BaseUnitTest {
 
     @Test
     public void dockerConverter() {
-        EffectiveModel model = new EffectiveModelFactory().create(TestCsars.VALID_MINIMAL_DOCKER_TEMPLATE, log);
+        EffectiveModel model = new EffectiveModelFactory().create(TestCsars.VALID_MINIMAL_DOCKER_TEMPLATE, logMock());
         assertNotNull(model);
         DockerApplication dockerApp = (DockerApplication) model.getNodeMap().get("simpleTaskApp");
         DockerHostRequirement host = dockerApp.getDockerHost();
@@ -24,13 +24,13 @@ public class TemplateConverterTest extends BaseUnitTest {
 
     @Test
     public void lampNoInputConverter() {
-        EffectiveModel model = new EffectiveModelFactory().create(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, log);
+        EffectiveModel model = new EffectiveModelFactory().create(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, logMock());
         assertNotNull(model);
     }
 
     @Test
     public void lampInputConverter() {
-        EffectiveModel model = new EffectiveModelFactory().create(TestCsars.VALID_LAMP_INPUT_TEMPLATE, log);
+        EffectiveModel model = new EffectiveModelFactory().create(TestCsars.VALID_LAMP_INPUT_TEMPLATE, logMock());
         assertNotNull(model);
     }
 }
