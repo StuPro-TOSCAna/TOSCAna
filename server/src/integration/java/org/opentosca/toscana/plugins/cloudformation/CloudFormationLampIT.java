@@ -16,6 +16,7 @@ import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 
 public class CloudFormationLampIT extends BaseTransformTest {
+
     public CloudFormationLampIT() {
         super(new CloudFormationPlugin());
     }
@@ -37,7 +38,7 @@ public class CloudFormationLampIT extends BaseTransformTest {
 
     @Override
     protected void copyArtifacts(File contentDir) throws Exception {
-        File inputDir = new File(getClass().getResource("/csars/yaml/valid/lamp-noinput").getFile());
+        File inputDir = new File(getClass().getResource(TestCsars.CSAR_LAMP_NOINPUT_PATH).getFile());
         FileUtils.copyDirectory(inputDir, contentDir);
     }
 
