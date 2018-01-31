@@ -57,7 +57,7 @@ public class PlatformProperty implements Property {
     }
 
     @Override
-    public Optional<String> getValue() {
+    public Optional<String> getValueWithoutDefault() {
         return Optional.ofNullable(value);
     }
 
@@ -69,6 +69,11 @@ public class PlatformProperty implements Property {
     @Override
     public Optional<String> getDefaultValue() {
         return Optional.ofNullable(defaultValue);
+    }
+
+    @Override
+    public Optional<String> getValue() {
+        return Optional.ofNullable(value);
     }
 
     public PlatformProperty copy() {

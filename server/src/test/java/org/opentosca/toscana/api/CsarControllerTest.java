@@ -18,7 +18,6 @@ import org.opentosca.toscana.core.csar.CsarService;
 import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.TransformationImpl;
 import org.opentosca.toscana.core.transformation.TransformationState;
-import org.opentosca.toscana.core.transformation.logging.Log;
 
 import org.apache.commons.io.IOUtils;
 import org.json.JSONObject;
@@ -91,7 +90,7 @@ public class CsarControllerTest extends BaseSpringTest {
         when(service.getCsars()).thenReturn(mockedCsars);
         when(service.getCsar(anyString())).thenReturn(Optional.empty());
         for (String name : MOCK_CSAR_NAMES) {
-            Csar csar = spy(new CsarImpl(new File(""), name, mock(Log.class)));
+            Csar csar = spy(new CsarImpl(new File(""), name, logMock()));
             when(service.getCsar(name)).thenReturn(Optional.of(csar));
             mockedCsars.add(csar);
         }
@@ -110,7 +109,7 @@ public class CsarControllerTest extends BaseSpringTest {
                 dataRead = out.toByteArray();
 
                 //Create Csar Mock
-                return new CsarImpl(new File(""), iom.getArguments()[0].toString(), mock(Log.class));
+                return new CsarImpl(new File(""), iom.getArguments()[0].toString(), logMock());
             });
 
         CsarController controller = new CsarController(service);
@@ -202,7 +201,7 @@ public class CsarControllerTest extends BaseSpringTest {
     public void testDeleteCsarBusy() throws Exception {
         //Add mock transformation to csar
         Csar csar = service.getCsar(VALID_CSAR_NAME).get();
-        Transformation transformation = new TransformationImpl(csar, PLATFORM1, mock(Log.class), modelMock());
+        Transformation transformation = new TransformationImpl(csar, PLATFORM1, logMock(), modelMock());
         transformation.setState(TransformationState.TRANSFORMING);
         csar.getTransformations().put(PLATFORM1.id, transformation);
         //Perform request

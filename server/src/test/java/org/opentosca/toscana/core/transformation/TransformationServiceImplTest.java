@@ -72,7 +72,6 @@ public class TransformationServiceImplTest extends BaseSpringTest {
         Transformation t = service.createTransformation(csar, PASSING_DUMMY.getPlatform());
         t = spy(t);
         when(t.getState()).thenReturn(TransformationState.INPUT_REQUIRED);
-        when(t.allRequiredPropertiesSet()).thenReturn(false);
         assertFalse(service.startTransformation(t));
     }
 

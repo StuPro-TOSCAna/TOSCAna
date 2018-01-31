@@ -60,7 +60,7 @@ public class Parameter extends DescribableEntity implements Property {
      @return {@link #VALUE}
      */
     @Override
-    public Optional<String> getValue() {
+    public Optional<String> getValueWithoutDefault() {
         return Optional.ofNullable(get(VALUE));
     }
 

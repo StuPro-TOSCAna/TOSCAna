@@ -44,7 +44,7 @@ public class NodeStack {
     public boolean hasNode(String name) {
         return stackNodes.stream().anyMatch(e -> e.getNode().getEntityName().equals(name));
     }
-    
+
     public int getNodeCount() {
         return stackNodes.size();
     }
@@ -71,7 +71,7 @@ public class NodeStack {
         String baseImage = mappingVisitor.getBaseImage().get();
         logger.info("Determined Base Image {} for stack {}", baseImage, this);
 
-        DockerfileBuildingVisitor visitor = new DockerfileBuildingVisitor(baseImage, this,connectionGraph, context);
+        DockerfileBuildingVisitor visitor = new DockerfileBuildingVisitor(baseImage, this, connectionGraph, context);
         visitor.buildAndWriteDockerfile();
         this.openPorts.addAll(visitor.getPorts());
         dockerfilePath = "output/docker/" + getStackName();
