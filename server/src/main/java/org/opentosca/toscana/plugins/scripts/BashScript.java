@@ -13,6 +13,7 @@ import static org.opentosca.toscana.core.plugin.lifecycle.AbstractLifecycle.SCRI
 public class BashScript {
     public static final String SHEBANG = "#!/bin/bash";
     public static final String SOURCE_UTIL_ALL = "for file in $(ls util); do source util/$file; done";
+    public static final String SUBCOMMAND_EXIT = "set -e";
     private final static Logger logger = LoggerFactory.getLogger(BashScript.class);
     private String name;
     private PluginFileAccess access;
@@ -37,9 +38,9 @@ public class BashScript {
         logger.info("Creating new bash scriptPath: " + this.scriptPath);
         access.delete(scriptPath);
 
-        access.access(scriptPath).append(SHEBANG + "\n")
-            .append(SOURCE_UTIL_ALL + "\n")
-            .close();
+        access.access(scriptPath).appendln(SHEBANG).close();
+        access.access(scriptPath).appendln(SOURCE_UTIL_ALL).close();
+        access.access(scriptPath).appendln(SUBCOMMAND_EXIT).close();
     }
 
     public void append(String string) throws IOException {

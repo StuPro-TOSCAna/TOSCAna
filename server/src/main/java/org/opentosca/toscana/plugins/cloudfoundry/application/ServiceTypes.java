@@ -5,7 +5,7 @@ contains possible CloudFoundry services
  */
 public enum ServiceTypes {
 
-    //will be expanded
+    //should be expanded
     MYSQL("mysql");
 
     private final String name;
