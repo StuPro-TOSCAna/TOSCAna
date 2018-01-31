@@ -13,6 +13,8 @@ public class TransformationProperty {
     private String description;
     @JsonProperty("required")
     private boolean required;
+    @JsonProperty("default")
+    private String defaultValue;
 
     public String getKey() {
         return key;
@@ -52,6 +54,14 @@ public class TransformationProperty {
 
     public void setRequired(boolean required) {
         this.required = required;
+    }
+
+    public String getDefaultValue() {
+        return defaultValue;
+    }
+
+    public void setDefaultValue(String defaultValue) {
+        this.defaultValue = defaultValue;
     }
 
     @Override

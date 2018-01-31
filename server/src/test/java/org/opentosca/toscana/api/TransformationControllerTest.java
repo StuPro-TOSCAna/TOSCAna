@@ -38,7 +38,11 @@ import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
+import org.mockito.quality.Strictness;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
@@ -157,6 +161,9 @@ public class TransformationControllerTest extends BaseSpringTest {
     private PlatformService platformService;
     private MockMvc mvc;
 
+    @Rule
+    public MockitoRule rule = MockitoJUnit.rule().strictness(Strictness.LENIENT);
+    
     //<editor-fold desc="Initialization">
 
     @Before
@@ -285,8 +292,10 @@ public class TransformationControllerTest extends BaseSpringTest {
         ).andDo(print())
             .andExpect(status().is(406))
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-            .andExpect(jsonPath("$.valid_inputs.unsigned_integer").value(false))
-            .andExpect(jsonPath("$.valid_inputs.text_property").value(true))
+            .andExpect(jsonPath("$.properties[0].valid").isBoolean())
+            .andExpect(jsonPath("$.properties[0].key").isString())
+            .andExpect(jsonPath("$.properties[1].valid").isBoolean())
+            .andExpect(jsonPath("$.properties[1].key").isString())
             .andReturn();
     }
 

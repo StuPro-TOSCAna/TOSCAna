@@ -6,24 +6,27 @@ import io.swagger.annotations.ApiModelProperty;
 
 @ApiModel
 public class PropertyWrap {
-    private final String key;
-    private final String type;
-    private final String description;
-    private final boolean required;
-    private final String value;
+    protected final String key;
+    protected final String type;
+    protected final String description;
+    protected final boolean required;
+    protected final String value;
+    protected final String defaultValue;
 
     public PropertyWrap(
         @JsonProperty("key") String key,
         @JsonProperty("type") String type,
         @JsonProperty("description") String description,
         @JsonProperty("value") String value,
-        @JsonProperty("required") boolean required
+        @JsonProperty("required") boolean required,
+        @JsonProperty("default") String defaultValue
     ) {
         this.key = key;
         this.type = type;
         this.description = description;
         this.required = required;
         this.value = value;
+        this.defaultValue = defaultValue;
     }
 
     @ApiModelProperty(
@@ -39,7 +42,8 @@ public class PropertyWrap {
     @ApiModelProperty(
         required = true,
         notes = "The \"Datatype\" of a property. Supported Types are \"name\", \"text\", \"boolean\", " +
-            "\"integer\", \"unsigned_integer\", \"float\" and \"secret\"",
+            "\"integer\", \"unsigned_integer\", \"float\" and \"secret\". If you try to set a value of a non existant key." +
+            " The type in the response will be \"invalid\" however this type only occurs in that case",
         example = "text"
     )
     @JsonProperty("type")
@@ -75,5 +79,14 @@ public class PropertyWrap {
     @JsonProperty("value")
     public String getValue() {
         return value;
+    }
+
+    @ApiModelProperty(
+        required = true,
+        notes = "the default value of the property"
+    )
+    @JsonProperty("default")
+    public String getDefaultValue() {
+        return defaultValue;
     }
 }

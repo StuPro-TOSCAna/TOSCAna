@@ -6,9 +6,12 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -670,21 +673,27 @@ public class TransformationController {
         Csar csar = findByCsarId(csarId);
         Transformation transformation = findTransformationByPlatform(csar, platformId);
         checkTransformationState(transformation);
-        List<PropertyWrap> propertyWrapList = new ArrayList<>();
-        //TODO add filtering depending on the transformation state (i.e. Transforming, Deploying...)
-        PropertyInstance instance = transformation.getProperties();
-        for (Property property : instance.getProperties().values()) {
-            propertyWrapList.add(new PropertyWrap(
-                    property.getKey(),
-                    property.getType().getTypeName(),
-                    property.getDescription().orElse(null),
-                    property.getValue().orElse(null),
-                    property.isRequired()
-                )
-            );
-        }
+        List<PropertyWrap> propertyWrapList = toPropertyWrapList(transformation.getProperties(), null);
         GetPropertiesResponse response = new GetPropertiesResponse(csarId, platformId, propertyWrapList);
         return ResponseEntity.ok(response);
+    }
+
+    private List<PropertyWrap> toPropertyWrapList(PropertyInstance instance, Set<String> validKeys) {
+        List<PropertyWrap> propertyWrapList = new ArrayList<>();
+        for (Property property : instance.getProperties().values()) {
+            if (validKeys == null || validKeys.contains(property.getKey())) {
+                propertyWrapList.add(new PropertyWrap(
+                        property.getKey(),
+                        property.getType().getTypeName(),
+                        property.getDescription().orElse(null),
+                        property.getValue().orElse(null),
+                        property.isRequired(),
+                        property.getDefaultValue().orElse(null)
+                    )
+                );
+            }
+        }
+        return propertyWrapList;
     }
 
     /**
@@ -778,18 +787,26 @@ public class TransformationController {
                 successes.put(entry.getKey(), false);
             }
         }
-        //Return the result (with code 200 if all inputs were valid and 400 if at least 1 was invalid)
-//        PropertyInstance instance = transformation.getProperties();
-//        //TODO if other requirement types get used, this needs a change!
-//        //Change state of the transformation to show the user that all required properties have been set
-//        if(instance.requiredPropertiesSet(RequirementType.TRANSFORMATION)) {
-//            //TODO Maybe a different method to change the state is needed!
-//            transformation.setState(TransformationState.READY);
-//        }
         if (!somethingFailed) {
             return ResponseEntity.ok().build();
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(new SetPropertiesResponse(successes));
+            Set<String> requestedKeys = new HashSet<>(successes.keySet());
+            List<PropertyWrap> propWrapList = toPropertyWrapList(properties, requestedKeys);
+            //The Request contains invalid values
+            if (requestedKeys.size() > propWrapList.size()) {
+                Set<String> knownKeys = propWrapList.stream().map(PropertyWrap::getKey).collect(Collectors.toSet());
+                requestedKeys.removeAll(knownKeys); // Remove all known (valid) keys
+                requestedKeys.forEach(e -> {
+                    propWrapList.add(new PropertyWrap(e, "invalid", "Invalid Key", null, false, null));
+                });
+            }
+            SetPropertiesResponse response = new SetPropertiesResponse(
+                csarId,
+                platformId,
+                propWrapList,
+                successes
+            );
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(response);
         }
     }
 

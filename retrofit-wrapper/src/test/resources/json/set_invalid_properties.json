@@ -1,5 +1,17 @@
 {
-    "valid_inputs": {
-        "unsigned_integer": false
-    }
+    "_links": {
+        "self": {
+            "href": "http://localhost:8080/csars/mongo-db/transformations/p-a/properties"
+        }
+    },
+    "properties": [
+        {
+            "valid": false,
+            "key": "unsigned_integer",
+            "type": "unsigned_integer",
+            "description": "",
+            "required": true,
+            "value": "-111"
+        }
+    ]
 }
