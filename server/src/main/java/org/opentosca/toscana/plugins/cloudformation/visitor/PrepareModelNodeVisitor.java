@@ -3,6 +3,7 @@ package org.opentosca.toscana.plugins.cloudformation.visitor;
 import java.security.SecureRandom;
 import java.util.stream.Collectors;
 
+import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.model.node.Apache;
 import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.MysqlDatabase;
@@ -20,6 +21,9 @@ import org.slf4j.Logger;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationLifecycle.toAlphanumerical;
 import static org.opentosca.toscana.plugins.cloudformation.visitor.CloudFormationNodeVisitor.getCompute;
 
+/**
+ Class for preparing a models nodes
+ */
 public class PrepareModelNodeVisitor implements NodeVisitor {
 
     protected static final String AWS_ENDPOINT_REFERENCE = "Endpoint.Address";
@@ -30,10 +34,15 @@ public class PrepareModelNodeVisitor implements NodeVisitor {
     private Graph<RootNode, RootRelationship> topology;
     private CloudFormationModule cfnModule;
 
-    public PrepareModelNodeVisitor(Logger logger, Graph<RootNode, RootRelationship> topology, CloudFormationModule 
-        cfnModule) {
-        this.logger = logger;
-        this.topology = topology;
+    /**
+     Create a <tt>PrepareModelNodeVisitor</tt> to prepare a models nodes.
+
+     @param context   TransformationContext to extract topology and logger
+     @param cfnModule module to modify
+     */
+    public PrepareModelNodeVisitor(TransformationContext context, CloudFormationModule cfnModule) {
+        this.logger = context.getLogger(getClass());
+        this.topology = context.getModel().getTopology();
         this.cfnModule = cfnModule;
     }
 
@@ -74,8 +83,8 @@ public class PrepareModelNodeVisitor implements NodeVisitor {
                 .toString(true);
             compute.setPrivateAddress(databaseEndpoint);
             compute.setPublicAddress(databaseEndpoint);
-            logger.debug("Set private address and public address of '{}' to reference MysqlDatabase '{}'", compute.getEntityName(), node
-                .getEntityName());
+            logger.debug("Set private address and public address of '{}' to reference MysqlDatabase '{}'",
+                compute.getEntityName(), node.getEntityName());
         }
     }
 

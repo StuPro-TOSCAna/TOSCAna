@@ -46,6 +46,9 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
         this.cfnModule = new CloudFormationModule(fileAccess, awsRegion, awsCredentials);
     }
 
+    /**
+     Convert input to alphanumerical string
+     */
     public static String toAlphanumerical(String inp) {
         return inp.replaceAll("[^A-Za-z0-9]", "");
     }
@@ -56,13 +59,12 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
         Set<RootNode> nodes = model.getNodes();
         Set<RootRelationship> relationships = model.getTopology().edgeSet();
         try {
-            CheckModelNodeVisitor checkModelNodeVisitor = new CheckModelNodeVisitor(logger);
+            CheckModelNodeVisitor checkModelNodeVisitor = new CheckModelNodeVisitor(context);
             logger.debug("Check nodes");
             for (VisitableNode node : nodes) {
                 node.accept(checkModelNodeVisitor);
             }
-            CheckModelRelationshipVisitor checkModelRelationshipVisitor = new CheckModelRelationshipVisitor(logger,
-                model.getTopology());
+            CheckModelRelationshipVisitor checkModelRelationshipVisitor = new CheckModelRelationshipVisitor(context);
             logger.debug("Check relationships");
             for (VisitableRelationship relationship : relationships) {
                 relationship.accept(checkModelRelationshipVisitor);
@@ -79,14 +81,13 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
         logger.info("Prepare model for compatibility to CloudFormation");
         Set<RootNode> nodes = model.getNodes();
         Graph<RootNode, RootRelationship> topology = model.getTopology();
-        PrepareModelNodeVisitor prepareModelNodeVisitor = new PrepareModelNodeVisitor(logger, topology, cfnModule);
+        PrepareModelNodeVisitor prepareModelNodeVisitor = new PrepareModelNodeVisitor(context, cfnModule);
         logger.debug("Prepare nodes");
         for (VisitableNode node : nodes) {
             node.accept(prepareModelNodeVisitor);
         }
         logger.debug("Prepare relationships");
-        PrepareModelRelationshipVisitor prepareModelRelationshipVisitor = new PrepareModelRelationshipVisitor(logger,
-            topology);
+        PrepareModelRelationshipVisitor prepareModelRelationshipVisitor = new PrepareModelRelationshipVisitor(context);
         for (VisitableRelationship relationship : topology.edgeSet()) {
             relationship.accept(prepareModelRelationshipVisitor);
         }
@@ -99,7 +100,7 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
 
         // Visit Compute nodes first, then all others
         try {
-            CloudFormationNodeVisitor cfnNodeVisitor = new CloudFormationNodeVisitor(logger, cfnModule, model.getTopology());
+            CloudFormationNodeVisitor cfnNodeVisitor = new CloudFormationNodeVisitor(context, cfnModule);
             for (VisitableNode node : nodes) {
                 if (node instanceof Compute) {
                     node.accept(cfnNodeVisitor);
@@ -113,7 +114,7 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
             logger.info("Creating CloudFormation template.");
             fileAccess.access(OUTPUT_DIR + CloudFormationFileCreator.TEMPLATE_YAML)
                 .appendln(cfnModule.toString()).close();
-            CloudFormationFileCreator fileCreator = new CloudFormationFileCreator(logger, cfnModule);
+            CloudFormationFileCreator fileCreator = new CloudFormationFileCreator(context, cfnModule);
             logger.info("Creating CloudFormation scripts.");
             fileCreator.copyUtilScripts();
             fileCreator.createScripts();

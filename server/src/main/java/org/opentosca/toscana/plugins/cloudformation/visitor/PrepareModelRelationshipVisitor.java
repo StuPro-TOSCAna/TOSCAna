@@ -1,5 +1,6 @@
 package org.opentosca.toscana.plugins.cloudformation.visitor;
 
+import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.MysqlDatabase;
 import org.opentosca.toscana.model.node.RootNode;
@@ -16,14 +17,22 @@ import static org.opentosca.toscana.plugins.cloudformation.CloudFormationLifecyc
 import static org.opentosca.toscana.plugins.cloudformation.visitor.CloudFormationNodeVisitor.getCompute;
 import static org.opentosca.toscana.plugins.cloudformation.visitor.PrepareModelNodeVisitor.AWS_ENDPOINT_REFERENCE;
 
+/**
+ Class for preparing a models relationships
+ */
 public class PrepareModelRelationshipVisitor implements RelationshipVisitor {
 
     private final Logger logger;
     private Graph<RootNode, RootRelationship> topology;
 
-    public PrepareModelRelationshipVisitor(Logger logger, Graph<RootNode, RootRelationship> topology) {
-        this.logger = logger;
-        this.topology = topology;
+    /**
+     Create a <tt>PrepareModelRelationshipVisitor</tt> to prepare a models relationships.
+
+     @param context TransformationContext to extract topology and logger
+     */
+    public PrepareModelRelationshipVisitor(TransformationContext context) {
+        this.logger = context.getLogger(getClass());
+        this.topology = context.getModel().getTopology();
     }
 
     @Override

@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.model.capability.ComputeCapability;
 import org.opentosca.toscana.model.capability.OsCapability;
 import org.opentosca.toscana.model.node.Apache;
@@ -59,13 +60,13 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
      Creates a <tt>CloudFormationNodeVisitor<tt> in order to build a template with the given
      <tt>CloudFormationModule<tt>.
 
-     @param logger    Logger for logging visitor behaviour
+     @param context TransformationContext to extract topology and logger
      @param cfnModule Module to build the template model
      */
-    public CloudFormationNodeVisitor(Logger logger, CloudFormationModule cfnModule, Graph<RootNode, RootRelationship> topology) {
-        this.logger = logger;
+    public CloudFormationNodeVisitor(TransformationContext context, CloudFormationModule cfnModule) {
+        this.logger = context.getLogger(getClass());
+        this.topology = context.getModel().getTopology();
         this.cfnModule = cfnModule;
-        this.topology = topology;
     }
 
     /**
