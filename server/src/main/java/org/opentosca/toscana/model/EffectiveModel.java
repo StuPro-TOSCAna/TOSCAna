@@ -49,7 +49,7 @@ public class EffectiveModel {
 
     private void init() {
         try {
-            if (!serviceGraph.requiredInputsSet()) {
+            if (!serviceGraph.inputsValid()) {
                 throw new IllegalStateException("Must not initialize backing model: Not all required inputs are set");
             }
             nodeMap = TypeWrapper.wrapNodes(serviceGraph);

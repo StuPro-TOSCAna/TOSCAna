@@ -8,8 +8,8 @@ import java.util.HashSet;
 import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.TransformationContext;
-import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.platform.Platform;
+import org.opentosca.toscana.core.transformation.properties.NoSuchPropertyException;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
 import org.opentosca.toscana.model.EffectiveModel;
 
@@ -60,11 +60,11 @@ public class DeploymentPropertyTest extends BaseUnitTest {
             File output = new File(this.tmpdir, "out");
             PropertyInstance instance = new PropertyInstance(new HashSet<>(platform.properties), mock(Transformation.class));
             if (this.input != null) {
-                instance.setPropertyValue(Platform.DEPLOY_AFTER_TRANSFORMATION_KEY, this.input);
+                instance.set(Platform.DEPLOY_AFTER_TRANSFORMATION_KEY, this.input);
             }
-            TransformationContext context = new TransformationContext(input, output, mock(Log.class), mock(EffectiveModel.class), instance);
+            TransformationContext context = new TransformationContext(input, output, logMock(), mock(EffectiveModel.class), instance);
 
-            Assert.assertTrue(context.performDeployment() == expected);
+            Assert.assertEquals(expected, context.performDeployment());
         } catch (Exception e) {
             e.printStackTrace(System.out);
             if (expectedException == null || !expectedException.isInstance(e)) {
@@ -76,14 +76,14 @@ public class DeploymentPropertyTest extends BaseUnitTest {
     @Parameterized.Parameters(name = "{index}: {0}")
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][]{
-            {"Unsupported with True", NOT_SUPPORTED, "true", false, IllegalArgumentException.class},
-            {"Unsupported with False", NOT_SUPPORTED, "false", false, IllegalArgumentException.class},
+            {"Unsupported with True", NOT_SUPPORTED, "true", false, NoSuchPropertyException.class},
+            {"Unsupported with False", NOT_SUPPORTED, "false", false, NoSuchPropertyException.class},
             {"Unsupported with null", NOT_SUPPORTED, null, false, null},
-            {"Unsupported with Invalid Input", NOT_SUPPORTED, "abc", false, IllegalArgumentException.class},
+            {"Unsupported with Invalid Input", NOT_SUPPORTED, "abc", false, NoSuchPropertyException.class},
             {"Supported with True", SUPPORTED, "true", true, null},
             {"Supported with False", SUPPORTED, "false", false, null},
             {"Supported with null", SUPPORTED, null, false, null},
-            {"Supported with Invalid Input", SUPPORTED, "abc", false, IllegalArgumentException.class},
+            {"Supported with Invalid Input", SUPPORTED, "abc", false, NoSuchPropertyException.class},
         });
     }
 }

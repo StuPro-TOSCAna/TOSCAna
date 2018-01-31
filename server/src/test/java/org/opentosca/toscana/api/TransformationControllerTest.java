@@ -218,7 +218,7 @@ public class TransformationControllerTest extends BaseSpringTest {
         when(transformationService.createTransformation(any(Csar.class), any(Platform.class))).then(iom -> {
             Csar csar = (Csar) iom.getArguments()[0];
             Platform platform = (Platform) iom.getArguments()[1];
-            Transformation t = new TransformationImpl(csar, platform, mock(Log.class), modelMock());
+            Transformation t = new TransformationImpl(csar, platform, logMock(), modelMock());
             csar.getTransformations().put(platform.id, t);
             return t;
         });
@@ -336,7 +336,7 @@ public class TransformationControllerTest extends BaseSpringTest {
         //Set a SimpleProperty value
         csarService.getCsar(VALID_CSAR_NAME)
             .get().getTransformation(VALID_PLATFORM_NAME).get()
-            .getProperties().setPropertyValue("secret_property", "geheim");
+            .getProperties().set("secret_property", "geheim");
         //Perform a request
         MvcResult result = mvc.perform(
             get(GET_PROPERTIES_VALID_URL)
@@ -687,8 +687,8 @@ public class TransformationControllerTest extends BaseSpringTest {
 
         for (String pname : pnames) {
 
-            Log mockLog = mock(Log.class);
             LogEntry entry = new LogEntry(0, "Test Message", Level.DEBUG);
+            Log mockLog = logMock();
             when(mockLog.getLogEntries(0)).thenReturn(Collections.singletonList(entry));
 
             Transformation transformation = new TransformationImpl(

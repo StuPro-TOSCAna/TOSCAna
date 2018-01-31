@@ -58,8 +58,7 @@ public class KubernetesLifecycle extends AbstractLifecycle {
             return;
         }
         pushToRegistry = Boolean.parseBoolean(
-            context.getProperties().getPropertyValue(KubernetesPlugin.DOCKER_PUSH_TO_REGISTRY_PROPERTY_KEY)
-                .orElse("false")
+            context.getProperties().getOrThrow(KubernetesPlugin.DOCKER_PUSH_TO_REGISTRY_PROPERTY_KEY)
         );
     }
 

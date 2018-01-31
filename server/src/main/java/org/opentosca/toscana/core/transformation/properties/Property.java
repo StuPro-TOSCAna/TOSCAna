@@ -3,7 +3,11 @@ package org.opentosca.toscana.core.transformation.properties;
 import java.util.Optional;
 
 public interface Property {
-    Optional<String> getValue();
+    default Optional<String> getValue() {
+        return Optional.ofNullable(getValueWithoutDefault().orElse(getDefaultValue().orElse(null)));
+    }
+
+    Optional<String> getValueWithoutDefault();
 
     void setValue(String value);
 
@@ -16,4 +20,12 @@ public interface Property {
     boolean isRequired();
 
     Optional<String> getDefaultValue();
+
+    default boolean isValid() {
+        if (getValueWithoutDefault().isPresent()) {
+            return getType().validate(getValue().get());
+        } else {
+            return !isRequired() || getDefaultValue().isPresent();
+        }
+    }
 }

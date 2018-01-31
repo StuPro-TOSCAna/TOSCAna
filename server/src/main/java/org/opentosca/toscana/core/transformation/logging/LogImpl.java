@@ -88,7 +88,7 @@ public class LogImpl implements Log {
     @Override
     public Logger getLogger(String context) {
         Logger logger = (Logger) LoggerFactory.getLogger(context);
-        
+
         logger.addAppender(memoryAppender);
         logger.addAppender(persistentAppender);
         logger.setLevel(Level.DEBUG);
