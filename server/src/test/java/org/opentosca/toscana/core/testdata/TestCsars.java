@@ -37,6 +37,8 @@ public class TestCsars {
     public final static File INVALID_DOCKERAPP_MISSING = new File(YAML_DIR, "invalid/dockerapp_missing.csar");
     public final static File INVALID_ENTRYPOINT_MISSING = new File(YAML_DIR, "invalid/entrypoint_missing.csar");
     public final static File INVALID_ENTRYPOINT_AMBIGUOUS = new File(YAML_DIR, "invalid/entrypoint_ambiguous.csar");
+    public static final String CSAR_LAMP_NOINPUT_PATH = "/csars/yaml/valid/complete/lamp-noinput";
+    public static final String CSAR_LAMP_MULTINODE_NOINPUT_PATH = "/csars/yaml/valid/complete/lamp-multinode";
 
     @Autowired
     private CsarDao csarDao;
