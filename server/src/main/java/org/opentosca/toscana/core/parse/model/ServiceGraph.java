@@ -124,7 +124,7 @@ public class ServiceGraph extends SimpleDirectedGraph<Entity, Connection> {
     public boolean requiredInputsSet() {
         Map<String, Property> inputs = getInputs();
         return inputs.values().stream()
-            .allMatch(p -> p.getValueWithoutDefault().isPresent() || p.getDefaultValue().isPresent() || !p.isRequired());
+            .allMatch(p -> p.getValue().isPresent() || p.getDefaultValue().isPresent() || !p.isRequired());
     }
 
     public Map<String, Property> getInputs() {

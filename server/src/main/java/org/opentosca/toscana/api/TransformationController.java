@@ -678,7 +678,7 @@ public class TransformationController {
                     property.getKey(),
                     property.getType().getTypeName(),
                     property.getDescription().orElse(null),
-                    property.getValueWithoutDefault().orElse(null),
+                    property.getValue().orElse(null),
                     property.isRequired()
                 )
             );
