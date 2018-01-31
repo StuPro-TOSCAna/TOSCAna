@@ -1,0 +1,3 @@
+[submodule "server/src/test/resources/csars/yaml/valid/complete"]
+	path = server/src/test/resources/csars/yaml/valid/complete
+	url = https://github.com/StuPro-TOSCAna/TOSCAna-Samples.git
