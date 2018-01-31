@@ -3,7 +3,9 @@ package org.opentosca.toscana.plugins.cloudfoundry.filecreator;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Observable;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.opentosca.toscana.plugins.cloudfoundry.application.Application;
 
@@ -33,14 +35,23 @@ public class ApplicationHandler {
      */
     public List<Application> handleApplications() {
         List<Application> checkedApplications = new ArrayList<>();
-        List<Integer> appNumberFromUnrealApps = new ArrayList<>();
+        List<Application> realApplications = uncheckedApplications.stream()
+            .filter(application -> application.isRealApplication())
+            .collect(Collectors.toList());
+
+        //set new application number because the dummy applications are missing
+        for (int i = 0; i < realApplications.size(); i++) {
+            realApplications.get(i).setApplicationNumber(i + 1);
+        }
+
+        //sort checked applications by application number
+        realApplications.sort(Comparator.comparing(application -> application.getApplicationNumber()));
 
         for (Application application : uncheckedApplications) {
             if (!application.isRealApplication()) {
                 Set<Application> parentApplications = application.getParentApplications();
                 if (CollectionUtils.isNotEmpty(parentApplications)) {
                     parentApplications.forEach(parentApplication -> copyData(application, parentApplication));
-                    appNumberFromUnrealApps.add(application.getApplicationNumber());
                 } else {
                     logger.error("There is a unreal application like a service, but no parent application");
                 }
@@ -51,12 +62,9 @@ public class ApplicationHandler {
         }
 
         //sort checked applications by application number
-        checkedApplications.sort(Comparator.comparing(application -> application.getApplicationNumber()));
+        //checkedApplications.sort(Comparator.comparing(application -> application.getApplicationNumber()));
 
-        //set new application number because the dummy applications are missing
-        for (int i = 0; i < checkedApplications.size(); i++) {
-            checkedApplications.get(i).setApplicationNumber(i + 1);
-        }
+       
 
         return checkedApplications;
     }

@@ -58,9 +58,14 @@ public class Application {
      @param pathToFile must be the path inside the csar. The method will create a relative path from it
      */
     public void addConfigMysql(String pathToFile) {
+        if (pathToFile.contains("../../" + APPLICATION_FOLDER)) {
+            String[] paths = pathToFile.split("../../" + APPLICATION_FOLDER + "[0-9]*/");
+            pathToFile = paths[1];
+        }
         String relativePath = "../../" + APPLICATION_FOLDER + this.applicationNumber + "/" + pathToFile;
         configureSqlDatabase.add(relativePath);
     }
+    
 
     /**
      execute the given file on the warden container
@@ -75,6 +80,12 @@ public class Application {
         if (parentTopNode instanceof WebApplication) {
             pathToFileOnContainer = "/home/vcap/app/htdocs/";
         }
+
+        if (pathToFile.contains("../../" + APPLICATION_FOLDER)) {
+            String[] paths = pathToFile.split("../../" + APPLICATION_FOLDER + "[0-9]*/");
+            pathToFile = paths[1];
+        }
+        
         executeCommand.put("../../" + APPLICATION_FOLDER + this.getApplicationNumber() + "/" + pathToFile,
             pathToFileOnContainer + pathToFile);
     }
@@ -86,7 +97,23 @@ public class Application {
      @param pathOnContainer must be the path inside the container
      */
     public void addExecuteFile(String pathToFile, String pathOnContainer) {
+
+        if (pathToFile.contains("../../" + APPLICATION_FOLDER)) {
+            String[] paths = pathToFile.split("../../" + APPLICATION_FOLDER + "[0-9]*/");
+            pathToFile = paths[1];
+        }
+        pathToFile = "../../" + APPLICATION_FOLDER + this.getApplicationNumber() + "/" + pathToFile;
+        
         executeCommand.put(pathToFile, pathOnContainer);
+    }
+
+    /**
+     to update the paths if the applicationnumber changes
+     */
+    private void updateExecuteFiles() {
+        Map<String, String> oldExecuteCommand = new HashMap<>(executeCommand);
+        executeCommand.clear();
+        oldExecuteCommand.forEach((pathToFile, pathOnContainer)->this.addExecuteFile(pathToFile,pathOnContainer));
     }
 
     /**
@@ -104,13 +131,14 @@ public class Application {
     public Map<String, String> getExecuteCommands() {
         return executeCommand;
     }
-
+    
     public int getApplicationNumber() {
         return this.applicationNumber;
     }
 
     public void setApplicationNumber(int applicationNumber) {
         this.applicationNumber = applicationNumber;
+        this.updateExecuteFiles();
     }
 
     public void setConnection(Connection connection) {
