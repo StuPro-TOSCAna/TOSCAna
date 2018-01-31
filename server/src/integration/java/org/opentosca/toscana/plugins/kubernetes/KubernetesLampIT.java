@@ -33,14 +33,12 @@ public class KubernetesLampIT extends BaseTransformTest {
     }
 
     @Override
-    protected void onSuccess(File outputDir) throws Exception {
-        Thread.sleep(10000);
-        //Do Nothing
+    protected void onSuccess(File outputDir) {
+        return;
     }
 
     @Override
-    protected void onFailure(File outputDir, Exception e) throws InterruptedException {
-        Thread.sleep(10000);
+    protected void onFailure(File outputDir, Exception e) {
         fail();
     }
 
