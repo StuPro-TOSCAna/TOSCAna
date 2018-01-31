@@ -21,7 +21,7 @@ public class KubernetesLampMultiNodeIT extends KubernetesLampIT {
 
     @Override
     protected void copyArtifacts(File contentDir) throws Exception {
-        File inputDir = new File(getClass().getResource(CSAR_LAMP_MULTINODE_NOINPUT_PATH).getFile());
+        File inputDir = new File(getClass().getResource(TestCsars.CSAR_LAMP_MULTINODE_NOINPUT_PATH).getFile());
         FileUtils.copyDirectory(inputDir, contentDir);
     }
 }
