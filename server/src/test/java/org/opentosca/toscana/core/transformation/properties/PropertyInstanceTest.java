@@ -68,4 +68,24 @@ public class PropertyInstanceTest extends BaseUnitTest {
         assertFalse(this.instance.isValid());
         assertEquals(INPUT_REQUIRED, this.transformation.getState());
     }
+    
+    @Test
+    public void setNullValueNotRequired() throws NoSuchPropertyException {
+        for (int i = 0; i < 5; i++) {
+            this.instance.set("p-" + i, "" + i);
+        }
+        boolean success = this.instance.set("p-6", null);
+        assertTrue(success);
+        assertTrue(instance.isValid());
+    }
+    
+    @Test
+    public void setNullValueRequired() throws NoSuchPropertyException {
+        for (int i = 0; i < 4; i++) {
+            this.instance.set("p-" + i, "" + i);
+        }
+        boolean success = this.instance.set("p-4", null);
+        assertFalse(success);
+        assertFalse(instance.isValid());
+    }
 }
