@@ -14,8 +14,8 @@ import org.opentosca.toscana.plugins.util.TransformationFailureException;
 import org.cloudfoundry.operations.services.ServiceOffering;
 import org.cloudfoundry.operations.services.ServicePlan;
 
-import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.CLI_CREATE_SERVICE;
-import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.CLI_CREATE_SERVICE_DEFAULT;
+import static org.opentosca.toscana.plugins.cloudfoundry.filecreator.FileCreator.CLI_CREATE_SERVICE;
+import static org.opentosca.toscana.plugins.cloudfoundry.filecreator.FileCreator.CLI_CREATE_SERVICE_DEFAULT;
 
 public class ServiceHandler {
 

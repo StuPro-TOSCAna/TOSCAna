@@ -2,35 +2,20 @@ package org.opentosca.toscana.plugins.cloudfoundry;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.opentosca.toscana.core.BaseUnitTest;
-import org.opentosca.toscana.core.plugin.PluginFileAccess;
-import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.model.node.RootNode;
-import org.opentosca.toscana.model.visitor.VisitableNode;
+import org.opentosca.toscana.model.relation.RootRelationship;
 import org.opentosca.toscana.plugins.cloudfoundry.application.Application;
-import org.opentosca.toscana.plugins.cloudfoundry.transformation.visitors.NodeVisitor;
 
-import org.apache.commons.io.FileUtils;
-import org.junit.Before;
+import org.jgrapht.Graph;
 import org.junit.Test;
 import org.mockito.Mock;
-import org.slf4j.LoggerFactory;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.FILEPRAEFIX_DEPLOY;
-import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.FILESUFFIX_DEPLOY;
-import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.MANIFEST_PATH;
-import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.deploy_name;
-import static org.opentosca.toscana.plugins.scripts.BashScript.SHEBANG;
-import static org.opentosca.toscana.plugins.scripts.BashScript.SOURCE_UTIL_ALL;
+import org.slf4j.Logger;
 
 public class CloudFoundryPluginTest extends BaseUnitTest {
 
@@ -42,11 +27,24 @@ public class CloudFoundryPluginTest extends BaseUnitTest {
     public TransformationContext context;
     EffectiveModel lamp;
     private File targetDir;
+    private Graph<RootNode, RootRelationship> graph;
+    private Map<RootNode, Application> nodeApplicationMap = new HashMap<>();
+    Logger logger;
 
+    @Test
+    public void test() {
+    }
+/*
     @Before
     public void setUp() throws Exception {
         Application myApp = new Application(appName, 1);
-        NodeVisitor visitor = new NodeVisitor(myApp);
+
+        graph = lamp.getTopology();
+        for (int i = 0; i < myApp.getStack().getNodes().size(); i++) {
+            nodeApplicationMap.put(myApp.getStack().getNodes().get(i).getNode(), myApp);
+        }
+        
+        NodeVisitor visitor = new NodeVisitor(myApp, nodeApplicationMap, graph, logger);
         EffectiveModel effectiveModel = new EffectiveModel(TestCsars.VALID_MINIMAL_DOCKER_TEMPLATE, log);
         lamp = new EffectiveModel(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, log);
 
