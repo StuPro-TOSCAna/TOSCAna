@@ -23,15 +23,17 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.opentosca.toscana.core.plugin.lifecycle.AbstractLifecycle.SCRIPTS_DIR_PATH;
 import static org.opentosca.toscana.core.plugin.lifecycle.AbstractLifecycle.UTIL_DIR_PATH;
-import static org.opentosca.toscana.plugins.cloudformation.CloudFormationFileCreator.CHANGE_TO_PARENT_DIRECTORY;
-import static org.opentosca.toscana.plugins.cloudformation.CloudFormationFileCreator.CLI_COMMAND_CREATESTACK;
-import static org.opentosca.toscana.plugins.cloudformation.CloudFormationFileCreator.CLI_PARAM_STACKNAME;
-import static org.opentosca.toscana.plugins.cloudformation.CloudFormationFileCreator.CLI_PARAM_TEMPLATEFILE;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationFileCreator.FILENAME_DEPLOY;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationFileCreator.FILENAME_UPLOAD;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationFileCreator.RELATIVE_DIRECTORY_PREFIX;
+import static org.opentosca.toscana.plugins.cloudformation.CloudFormationFileCreator.CHANGE_TO_PARENT_DIRECTORY;
+import static org.opentosca.toscana.plugins.cloudformation.CloudFormationFileCreator.CLI_PARAM_PARAMOVERRIDES;
+import static org.opentosca.toscana.plugins.cloudformation.CloudFormationFileCreator.CLI_COMMAND_CREATESTACK;
+import static org.opentosca.toscana.plugins.cloudformation.CloudFormationFileCreator.CLI_PARAM_STACKNAME;
+import static org.opentosca.toscana.plugins.cloudformation.CloudFormationFileCreator.CLI_PARAM_TEMPLATEFILE;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationFileCreator.TEMPLATE_YAML;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.FILEPATH_TARGET;
+import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.KEYNAME;
 import static org.opentosca.toscana.plugins.scripts.BashScript.SHEBANG;
 import static org.opentosca.toscana.plugins.scripts.BashScript.SOURCE_UTIL_ALL;
 import static org.opentosca.toscana.plugins.scripts.BashScript.SUBCOMMAND_EXIT;
@@ -86,9 +88,10 @@ public class CloudFormationFileCreatorTest extends BaseUnitTest {
             SOURCE_UTIL_ALL + "\n" +
             SUBCOMMAND_EXIT + "\n" +
             "check \"aws\"\n" +
+            "source file-upload.sh\n" +
             CHANGE_TO_PARENT_DIRECTORY + "\n" +
-            CLI_COMMAND_CREATESTACK + CLI_PARAM_STACKNAME + cfnModule.getStackName() + " " + CLI_PARAM_TEMPLATEFILE
-            + TEMPLATE_YAML + "\n";
+            CLI_COMMAND_CREATESTACK + CLI_PARAM_STACKNAME + cfnModule.getStackName() + " " + CLI_PARAM_TEMPLATEFILE 
+            + TEMPLATE_YAML + " " + CLI_PARAM_PARAMOVERRIDES + " " + KEYNAME + "=$" + KEYNAME + "Var &" + "\n";
         String expectedFileUploadContent = SHEBANG + "\n" +
             SOURCE_UTIL_ALL + "\n" +
             SUBCOMMAND_EXIT + "\n" +
