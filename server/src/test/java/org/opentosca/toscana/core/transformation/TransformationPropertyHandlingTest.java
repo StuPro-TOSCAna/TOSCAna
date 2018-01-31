@@ -1,5 +1,6 @@
 package org.opentosca.toscana.core.transformation;
 
+import java.io.File;
 import java.util.HashSet;
 import java.util.Map;
 
@@ -30,7 +31,7 @@ public class TransformationPropertyHandlingTest extends BaseUnitTest {
 
     @Before
     public void setUp() throws Exception {
-        Csar csar = new CsarImpl(MOCK_CSAR_NAME, log);
+        Csar csar = new CsarImpl(new File(""), MOCK_CSAR_NAME, log);
 
         HashSet<PlatformProperty> props = new HashSet<>();
         for (int i = 0; i < 10; i++) {
@@ -44,7 +45,7 @@ public class TransformationPropertyHandlingTest extends BaseUnitTest {
             );
         }
         Platform p = new Platform("test", "Test Platform", props);
-        transformation = new TransformationImpl(csar, p, log);
+        transformation = new TransformationImpl(csar, p, log, modelMock());
     }
 
     @Test
@@ -104,8 +105,9 @@ public class TransformationPropertyHandlingTest extends BaseUnitTest {
 
     @Test
     public void checkEmptyProperties() throws Exception {
-        Csar csar = new CsarImpl(MOCK_CSAR_NAME, log);
-        this.transformation = new TransformationImpl(csar, new Platform("test", "test", new HashSet<>()), mock(Log.class));
+        Csar csar = new CsarImpl(new File(""), MOCK_CSAR_NAME, log);
+        this.transformation = new TransformationImpl(csar,
+            new Platform("test", "test", new HashSet<>()), mock(Log.class), modelMock());
         assertTrue(transformation.allRequiredPropertiesSet());
         assertTrue(transformation.allPropertiesSet());
     }

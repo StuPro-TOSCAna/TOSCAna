@@ -58,7 +58,7 @@ public class CsarFilesystemDaoTest extends BaseUnitTest {
         InputStream csarStream = new FileInputStream(csarFile);
         csarDao.create(identifier, csarStream);
         File csarFolder = new File(generalCsarsDir, identifier);
-        File contentFolder = new File(csarFolder, CsarFilesystemDao.CONTENT_DIR);
+        File contentFolder = new File(csarFolder, CsarImpl.CONTENT_DIR);
         File transformationFolder = new File(csarFolder, CsarFilesystemDao.TRANSFORMATION_DIR);
         assertTrue(contentFolder.isDirectory());
         assertTrue(transformationFolder.isDirectory());
@@ -100,11 +100,11 @@ public class CsarFilesystemDaoTest extends BaseUnitTest {
     public void returnedCsarHasPopulatedTransformations() {
         // test whether CsarDao calls TransformationDao internally to populate list of transformations
         String identifier = createFakeCsarDirectories(1)[0];
-        Csar csar = new CsarImpl(identifier, fakeLog);
+        Csar csar = new CsarImpl(new File(""), identifier, fakeLog);
 
         csarDao = new CsarFilesystemDao(preferences, transformationDao);
         List<Transformation> transformations = TestPlugins.PLATFORMS.stream()
-            .map(platform -> new TransformationImpl(csar, platform, fakeLog))
+            .map(platform -> new TransformationImpl(csar, platform, fakeLog, modelMock()))
             .collect(Collectors.toList());
         when(transformationDao.find(any())).thenReturn(transformations);
         csarDao.init();
@@ -131,7 +131,7 @@ public class CsarFilesystemDaoTest extends BaseUnitTest {
             identifiers[i] = "test" + i;
             File fakeApp = new File(generalCsarsDir, identifiers[i]);
             fakeApp.mkdir();
-            File fakeContentDir = new File(fakeApp, CsarFilesystemDao.CONTENT_DIR);
+            File fakeContentDir = new File(fakeApp, CsarImpl.CONTENT_DIR);
             fakeContentDir.mkdir();
             File fakeTransformationDir = new File(fakeApp, CsarFilesystemDao.TRANSFORMATION_DIR);
             fakeTransformationDir.mkdir();

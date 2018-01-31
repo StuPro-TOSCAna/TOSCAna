@@ -6,6 +6,7 @@ import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.model.EffectiveModel;
+import org.opentosca.toscana.model.EffectiveModelFactory;
 
 import org.junit.Test;
 
@@ -17,7 +18,7 @@ public class EffectiveModelInputTest extends BaseUnitTest {
 
     @Test
     public void inputTest() {
-        EffectiveModel model = new EffectiveModel(TestCsars.VALID_INPUTS_TEMPLATE, log);
+        EffectiveModel model = new EffectiveModelFactory().create(TestCsars.VALID_INPUTS_TEMPLATE, logMock());
         Map<String, Property> inputs = model.getInputs();
         assertNotNull(inputs);
         assertEquals(4, inputs.size());

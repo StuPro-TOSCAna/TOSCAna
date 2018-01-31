@@ -161,7 +161,7 @@ public class ServiceGraphTest extends BaseUnitTest {
     private ServiceGraph getGraph() {
         ServiceGraph graph = graphMap.get(currentFile);
         if (graph == null) {
-            graph = new ServiceGraph(currentFile, log);
+            graph = new ServiceGraph(currentFile, logMock());
             graphMap.put(currentFile, graph);
         }
         return graph;

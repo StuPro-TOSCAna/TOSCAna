@@ -1,8 +1,7 @@
 package org.opentosca.toscana.plugins.cloudfoundry.application;
 
 /**
- Created by jensmuller on 03.01.18.
- represents a service which is offered by a provider and the application needs
+ this class represents a service which is offered by a provider and the application needs
  */
 public class Service {
 
@@ -26,6 +25,10 @@ public class Service {
         return serviceName;
     }
 
+    /**
+     sets the service name. Should be the name of the service of the provider.
+     @param serviceName
+     */
     public void setServiceName(String serviceName) {
         this.serviceName = serviceName;
     }
@@ -34,6 +37,10 @@ public class Service {
         return serviceInstanceName;
     }
 
+    /**
+     set the instance name of the service. is the name from the template
+     @param serviceInstanceName
+     */
     public void setServiceInstanceName(String serviceInstanceName) {
         this.serviceInstanceName = serviceInstanceName;
     }

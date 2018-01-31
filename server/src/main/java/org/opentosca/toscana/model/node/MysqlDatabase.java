@@ -18,7 +18,6 @@ public class MysqlDatabase extends Database {
     public static ToscaKey<MysqlDbmsRequirement> HOST = new RequirementKey<>("host")
         .subTypes(ContainerCapability.class, MysqlDbms.class, HostedOn.class)
         .type(MysqlDbmsRequirement.class);
-    
 
     public MysqlDatabase(MappingEntity mappingEntity) {
         super(mappingEntity);
