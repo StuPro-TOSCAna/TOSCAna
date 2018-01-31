@@ -3,12 +3,14 @@ package org.opentosca.toscana.plugins.cloudformation.visitor;
 import java.security.SecureRandom;
 import java.util.stream.Collectors;
 
+import org.opentosca.toscana.model.node.Apache;
 import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.MysqlDatabase;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.relation.HostedOn;
 import org.opentosca.toscana.model.relation.RootRelationship;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
+import org.opentosca.toscana.plugins.cloudformation.CloudFormationModule;
 
 import com.scaleset.cfbuilder.core.Fn;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -26,10 +28,13 @@ public class PrepareModelNodeVisitor implements NodeVisitor {
     private static final Integer DEFAULT_PORT = 3306;
     private final Logger logger;
     private Graph<RootNode, RootRelationship> topology;
+    private CloudFormationModule cfnModule;
 
-    public PrepareModelNodeVisitor(Logger logger, Graph<RootNode, RootRelationship> topology) {
+    public PrepareModelNodeVisitor(Logger logger, Graph<RootNode, RootRelationship> topology, CloudFormationModule 
+        cfnModule) {
         this.logger = logger;
         this.topology = topology;
+        this.cfnModule = cfnModule;
     }
 
     @Override
@@ -72,6 +77,15 @@ public class PrepareModelNodeVisitor implements NodeVisitor {
             logger.debug("Set private address and public address of '{}' to reference MysqlDatabase '{}'", compute.getEntityName(), node
                 .getEntityName());
         }
+    }
+
+    @Override
+    public void visit(Apache node) {
+        logger.info("Prepare Apache node '{}'.", node.getEntityName());
+        //underlying compute should be converted to a ec2
+        Compute compute = getCompute(node);
+        cfnModule.addComputeToEc2(compute);
+        logger.debug("Adding Compute '{}' to be transformed", compute.getEntityName());
     }
 
     /**

@@ -31,23 +31,19 @@ import static org.opentosca.toscana.plugins.cloudformation.CloudFormationPlugin.
 
 public class CloudFormationLifecycle extends AbstractLifecycle {
     private final EffectiveModel model;
-    private String awsRegion;
-    private AWSCredentials awsCredentials;
+    private CloudFormationModule cfnModule;
+    private PluginFileAccess fileAccess;
 
     public CloudFormationLifecycle(TransformationContext context) throws IOException {
         super(context);
         model = context.getModel();
-        if (context.getProperties() == null) {
-            //lifecycle test failes because getProperties is null
-            awsRegion = "us-west-2";
-            awsCredentials = new BasicAWSCredentials("", "");
-            return;
-        }
         Map<String, String> properties = context.getProperties().getPropertyValues();
-        awsRegion = properties.get(AWS_REGION_KEY);
+        String awsRegion = properties.get(AWS_REGION_KEY);
         String keyId = properties.get(AWS_ACCESS_KEY_ID_KEY);
         String secretKey = properties.get(AWS_SECRET_KEY_KEY);
-        awsCredentials = new BasicAWSCredentials(keyId, secretKey);
+        AWSCredentials awsCredentials = new BasicAWSCredentials(keyId, secretKey);
+        this.fileAccess = context.getPluginFileAccess();
+        this.cfnModule = new CloudFormationModule(fileAccess, awsRegion, awsCredentials);
     }
 
     public static String toAlphanumerical(String inp) {
@@ -83,7 +79,7 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
         logger.info("Prepare model for compatibility to CloudFormation");
         Set<RootNode> nodes = model.getNodes();
         Graph<RootNode, RootRelationship> topology = model.getTopology();
-        PrepareModelNodeVisitor prepareModelNodeVisitor = new PrepareModelNodeVisitor(logger, topology);
+        PrepareModelNodeVisitor prepareModelNodeVisitor = new PrepareModelNodeVisitor(logger, topology, cfnModule);
         logger.debug("Prepare nodes");
         for (VisitableNode node : nodes) {
             node.accept(prepareModelNodeVisitor);
@@ -99,8 +95,6 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
     @Override
     public void transform() {
         logger.info("Begin transformation to CloudFormation.");
-        PluginFileAccess fileAccess = context.getPluginFileAccess();
-        CloudFormationModule cfnModule = new CloudFormationModule(fileAccess, awsRegion, awsCredentials);
         Set<RootNode> nodes = model.getNodes();
 
         // Visit Compute nodes first, then all others

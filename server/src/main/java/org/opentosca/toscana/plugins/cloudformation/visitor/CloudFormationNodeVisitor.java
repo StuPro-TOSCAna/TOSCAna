@@ -8,6 +8,7 @@ import org.opentosca.toscana.model.capability.ComputeCapability;
 import org.opentosca.toscana.model.capability.OsCapability;
 import org.opentosca.toscana.model.node.Apache;
 import org.opentosca.toscana.model.node.Compute;
+import org.opentosca.toscana.model.node.Database;
 import org.opentosca.toscana.model.node.Dbms;
 import org.opentosca.toscana.model.node.MysqlDatabase;
 import org.opentosca.toscana.model.node.MysqlDbms;
@@ -77,19 +78,17 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
         WebServer webServer = webApplication.getHost().getNode().orElseThrow(
             () -> new IllegalStateException("WebApplication is missing WebServer")
         );
-        return webServer.getHost().getNode().orElseThrow(
-            () -> new IllegalStateException("WebServer is missing Compute")
-        );
+        return getCompute(webServer);
     }
 
     /**
      Get the Compute node this mysqlDatabase is ultimately hosted on
 
-     @param mysqlDatabase the mysqlDatabase to find the host for
+     @param database the mysqlDatabase to find the host for
      @return the underlying Compute node
      */
-    protected static Compute getCompute(MysqlDatabase mysqlDatabase) {
-        Dbms dbms = mysqlDatabase.getHost().getNode().orElseThrow(
+    protected static Compute getCompute(Database database) {
+        Dbms dbms = database.getHost().getNode().orElseThrow(
             () -> new IllegalStateException("MysqlDatabase is missing Dbms")
         );
         return dbms.getHost().getNode().orElseThrow(
@@ -97,35 +96,52 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
         );
     }
 
+    /**
+     Get the Compute node this webServer is ultimately hosted on
+
+     @param webServer the mysqlDatabase to find the host for
+     @return the underlying Compute node
+     */
+    protected static Compute getCompute(WebServer webServer) {
+        return webServer.getHost().getNode().orElseThrow(
+            () -> new IllegalStateException("WebServer is missing Compute")
+        );
+    }
+
     @Override
     public void visit(Compute node) {
         try {
             logger.info("Visit Compute node '{}'.", node.getEntityName());
-            String nodeName = toAlphanumerical(node.getEntityName());
-            //default security group the EC2 Instance opens for port 80 and 22 to the whole internet
-            Object cidrIp = "0.0.0.0/0";
-            SecurityGroup webServerSecurityGroup = cfnModule.resource(SecurityGroup.class,
-                nodeName + SECURITY_GROUP)
-                .groupDescription("Enable ports 80 and 22")
-                .ingress(ingress -> ingress.cidrIp(cidrIp), "tcp", 80, 22);
+            if (cfnModule.checkComputeToEc2(node)) {
+                logger.debug("Compute '{}' will be transformed to EC2", node.getEntityName());
+                String nodeName = toAlphanumerical(node.getEntityName());
+                //default security group the EC2 Instance opens for port 80 and 22 to the whole internet
+                Object cidrIp = "0.0.0.0/0";
+                SecurityGroup webServerSecurityGroup = cfnModule.resource(SecurityGroup.class,
+                    nodeName + SECURITY_GROUP)
+                    .groupDescription("Enable ports 80 and 22")
+                    .ingress(ingress -> ingress.cidrIp(cidrIp), "tcp", 80, 22);
 
-            // check what image id should be taken
-            CapabilityMapper capabilityMapper = createCapabilityMapper();
+                // check what image id should be taken
+                CapabilityMapper capabilityMapper = createCapabilityMapper();
 
-            OsCapability computeOs = node.getOs();
-            String imageId = capabilityMapper.mapOsCapabilityToImageId(computeOs);
-            ComputeCapability computeCompute = node.getHost();
-            String instanceType = capabilityMapper.mapComputeCapabilityToInstanceType(computeCompute,
-                CapabilityMapper.EC2_DISTINCTION);
-            //create CFN init and store it
-            CFNInit init = new CFNInit(CONFIG_SETS);
-            cfnModule.putCFNInit(nodeName, init);
-            //takes default 8GB storage but volume
-            cfnModule.resource(Instance.class, nodeName)
-                .keyName(cfnModule.getKeyNameVar())
-                .securityGroupIds(webServerSecurityGroup)
-                .imageId(imageId)
-                .instanceType(instanceType);
+                OsCapability computeOs = node.getOs();
+                String imageId = capabilityMapper.mapOsCapabilityToImageId(computeOs);
+                ComputeCapability computeCompute = node.getHost();
+                String instanceType = capabilityMapper.mapComputeCapabilityToInstanceType(computeCompute,
+                    CapabilityMapper.EC2_DISTINCTION);
+                //create CFN init and store it
+                CFNInit init = new CFNInit(CONFIG_SETS);
+                cfnModule.putCFNInit(nodeName, init);
+                //takes default 8GB storage but volume
+                cfnModule.resource(Instance.class, nodeName)
+                    .keyName(cfnModule.getKeyNameVar())
+                    .securityGroupIds(webServerSecurityGroup)
+                    .imageId(imageId)
+                    .instanceType(instanceType);
+            } else {
+                logger.debug("Compute '{}' will not be transformed to EC2", node.getEntityName());
+            }
         } catch (SdkClientException se) {
             logger.error("SDKClient failed, no valid credentials or no internet connection");
             throw new TransformationFailureException("Failed", se);
@@ -140,7 +156,6 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
         try {
             logger.info("Visit MysqlDatabase node '{}'.", node.getEntityName());
             String nodeName = toAlphanumerical(node.getEntityName());
-
             //get the compute where the dbms this node is hosted on, is hosted on
             Compute compute = getCompute(node);
             String serverName = toAlphanumerical(compute.getEntityName());
@@ -149,7 +164,7 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
             String masterUser = node.getUser().orElseThrow(() -> new IllegalArgumentException("Database user not set"));
             String masterPassword = node.getPassword().orElseThrow(() -> new IllegalArgumentException("Database " +
                 "password not set"));
-            Integer port = node.getPort().orElse(3306);
+            Integer port = node.getPort().orElseThrow(() -> new IllegalArgumentException("Database port not set"));
             //check what values should be taken
             CapabilityMapper capabilityMapper = createCapabilityMapper();
             String dBInstanceClass = capabilityMapper.mapComputeCapabilityToInstanceType(hostedOnComputeCapability,

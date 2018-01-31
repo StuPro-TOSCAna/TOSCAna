@@ -47,7 +47,7 @@ public class CloudFormationPluginTest extends BaseUnitTest {
         when(cfnNodeVisitor.createCapabilityMapper()).thenReturn(capabilityMapper);
     }
 
-    @Test
+    @Test(expected = TransformationFailureException.class)
     public void testLamp() {
         try {
             Set<RootNode> nodes = lamp.getNodes();
