@@ -15,7 +15,6 @@ import com.scaleset.cfbuilder.core.Parameter;
 import org.apache.commons.io.Charsets;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
-import org.springframework.util.CollectionUtils;
 
 /**
  Class for building scripts and copying files needed for deployment of cloudformation templates.
@@ -80,11 +79,12 @@ public class CloudFormationFileCreator {
      Creates a deploy script for deploying the cloudformation template.
      */
     private void createDeployScript() throws IOException {
-        // TODO maybe add the execution of the fileUploadScript
         logger.debug("Creating deploy script.");
         BashScript deployScript = new BashScript(cfnModule.getFileAccess(), FILENAME_DEPLOY);
         deployScript.append(EnvironmentCheck.checkEnvironment("aws"));
-        deployScript.append("source " + FILENAME_UPLOAD + ".sh");
+        if (!cfnModule.getFilesToBeUploaded().isEmpty()) {
+            deployScript.append("source " + FILENAME_UPLOAD + ".sh");
+        }
         deployScript.append(CHANGE_TO_PARENT_DIRECTORY);
         StringBuilder deployCommand = new StringBuilder("");
         deployCommand.append(CLI_COMMAND_CREATESTACK + CLI_PARAM_STACKNAME)
@@ -93,7 +93,7 @@ public class CloudFormationFileCreator {
 
         // Add parameters if needed
         Map<String, Parameter> parameters = cfnModule.getParameters();
-        if (!CollectionUtils.isEmpty(parameters)) {
+        if (!parameters.isEmpty()) {
             deployCommand.append(" " + CLI_PARAM_PARAMOVERRIDES);
             for (Map.Entry<String, Parameter> entry : parameters.entrySet()) {
                 String id = entry.getKey();
@@ -153,7 +153,6 @@ public class CloudFormationFileCreator {
      @throws IOException if scripts cannot be found
      */
     public void copyUtilScripts() throws IOException {
-        //TODO extract duplicate code or add to setUpDirectories?
         String resourcePath = "/cloudformation/scripts/util/";
         String outputPath = "output/scripts/util/";
         PluginFileAccess fileAccess = cfnModule.getFileAccess();
