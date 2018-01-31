@@ -34,7 +34,7 @@ public class NodeTypeResolverTest extends BaseUnitTest {
         Set<String> wineryNodeTypes = getWineryNodeTypes();
         for (String nodeType : wineryNodeTypes) {
             logger.info("Testing conversion of type '{}'", nodeType);
-            ServiceGraph graph = new ServiceGraph(log);
+            ServiceGraph graph = new ServiceGraph(logMock());
             MappingEntity nodeEntity = new MappingEntity(ToscaStructure.NODE_TEMPLATES.descend("my-node"), graph);
             graph.addEntity(nodeEntity);
             ScalarEntity typeEntity = new ScalarEntity(nodeType, nodeEntity.getId().descend("type"), graph);

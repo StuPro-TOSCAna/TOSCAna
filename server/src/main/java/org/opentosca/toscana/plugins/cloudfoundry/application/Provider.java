@@ -5,11 +5,10 @@ import java.util.List;
 import org.cloudfoundry.operations.services.ServiceOffering;
 
 /**
- Created by jensmuller on 05.12.17.
+ This class should represent a provider.
  */
 public class Provider {
 
-    // will be expanded with several cloud Providers
     public enum CloudFoundryProviderType {
         PIVOTAL;
     }

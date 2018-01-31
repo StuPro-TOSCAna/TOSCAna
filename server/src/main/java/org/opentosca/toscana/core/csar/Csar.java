@@ -1,13 +1,12 @@
 package org.opentosca.toscana.core.csar;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.logging.Log;
-import org.opentosca.toscana.core.transformation.properties.Property;
-import org.opentosca.toscana.model.EffectiveModel;
 
 public interface Csar {
 
@@ -29,24 +28,14 @@ public interface Csar {
     String getIdentifier();
 
     /**
-     @return the parsed EffectiveModel (wrapped in Optional) of the csar.
-     <p>
-     Empty if not parsed yet.
-     */
-    Optional<EffectiveModel> getModel();
-
-    /**
-     Returns model specific properties as a set. If there are none a empty set has to be returned. this must not
-     return null to prevent problematic behaviour of the PropertyInstance class
-     */
-    Map<String, Property> getModelSpecificProperties();
-
-    void setModel(EffectiveModel model);
-
-    /**
      @return the log of this csar, which e.g. contains information about parsing
      */
     Log getLog();
 
     void setTransformations(List<Transformation> transformations);
+
+    /**
+     @return the root directory of the unzipped csar.
+     */
+    File getContentDir();
 }

@@ -68,7 +68,7 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
             if (isNotNull(username, password, organization, space, apiHost)) {
 
                 connection = new Connection(username, password,
-                    apiHost, organization, space);
+                    apiHost, organization, space, context);
 
                 //TODO: check how to get used provider or figure out whether it is necessary to know it?
                 provider = new Provider(Provider.CloudFoundryProviderType.PIVOTAL);
@@ -151,7 +151,7 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
         int i = 1;
 
         for (NodeStack stack : stacks) {
-            Application myApp = new Application(i);
+            Application myApp = new Application(i, context);
             i++;
             myApp.setProvider(provider);
             myApp.setConnection(connection);
@@ -196,7 +196,7 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
         }
 
         try {
-            FileCreator fileCreator = new FileCreator(fileAccess, filledApplications);
+            FileCreator fileCreator = new FileCreator(fileAccess, filledApplications, context);
             fileCreator.createFiles();
         } catch (IOException | JSONException e) {
             e.printStackTrace();

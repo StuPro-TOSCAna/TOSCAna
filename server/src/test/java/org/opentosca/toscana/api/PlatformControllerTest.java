@@ -30,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(value = PlatformController.class)
-@ActiveProfiles( {INTEGRATION_TEST_PROFILE, "base-image-mapper"})
+@ActiveProfiles({INTEGRATION_TEST_PROFILE, "base-image-mapper"})
 @DirtiesContext(
     classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD
 )

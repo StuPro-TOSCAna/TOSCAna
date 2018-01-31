@@ -21,6 +21,7 @@ public class PersistentAppender extends FileAppender<ILoggingEvent> {
 
     PersistentAppender(File targetFile) {
         try {
+            targetFile.getParentFile().mkdirs();
             targetFile.createNewFile();
         } catch (IOException e) {
             logger.error("Failed to create logfile '{}'", targetFile, e);

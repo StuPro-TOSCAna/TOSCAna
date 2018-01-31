@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+import org.opentosca.toscana.core.BaseIntegrationTest;
 import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.plugins.kubernetes.docker.dockerfile.builder.DockerfileBuilder;
@@ -20,7 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 
-public abstract class BaseDockerfileTest extends BaseUnitTest {
+public abstract class BaseDockerfileTest extends BaseIntegrationTest {
 
     protected static final String INPUT_DIR_NAME = "image-input";
     protected static final String WORKING_DIR_NAME = "test-image";
@@ -46,7 +47,7 @@ public abstract class BaseDockerfileTest extends BaseUnitTest {
         inputDir.mkdirs();
         workDir.mkdirs();
 
-        access = new PluginFileAccess(inputDir, workDir, log);
+        access = new PluginFileAccess(inputDir, workDir, logMock());
         builder = new DockerfileBuilder("library/ubuntu:latest", WORKING_DIR_SUBFOLDER_NAME, access);
     }
 

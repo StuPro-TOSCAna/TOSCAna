@@ -6,16 +6,32 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.opentosca.toscana.core.BaseUnitTest;
+import org.opentosca.toscana.core.plugin.PluginFileAccess;
+import org.opentosca.toscana.core.testdata.TestCsars;
+
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.model.EffectiveModel;
+import org.opentosca.toscana.model.EffectiveModelFactory;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.relation.RootRelationship;
 import org.opentosca.toscana.plugins.cloudfoundry.application.Application;
 
 import org.jgrapht.Graph;
 import org.junit.Test;
+
 import org.mockito.Mock;
 import org.slf4j.Logger;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.opentosca.toscana.plugins.cloudfoundry.filecreator.FileCreator.FILEPRAEFIX_DEPLOY;
+import static org.opentosca.toscana.plugins.cloudfoundry.filecreator.FileCreator.FILESUFFIX_DEPLOY;
+import static org.opentosca.toscana.plugins.cloudfoundry.filecreator.FileCreator.MANIFEST_PATH;
+import static org.opentosca.toscana.plugins.cloudfoundry.filecreator.FileCreator.deploy_name;
+import static org.opentosca.toscana.plugins.scripts.BashScript.SHEBANG;
+import static org.opentosca.toscana.plugins.scripts.BashScript.SOURCE_UTIL_ALL;
+import static org.opentosca.toscana.plugins.scripts.BashScript.SUBCOMMAND_EXIT;
+import static org.opentosca.toscana.plugins.util.TestUtil.setUpMockTransformationContext;
 
 public class CloudFoundryPluginTest extends BaseUnitTest {
 
@@ -30,29 +46,30 @@ public class CloudFoundryPluginTest extends BaseUnitTest {
     private Graph<RootNode, RootRelationship> graph;
     private Map<RootNode, Application> nodeApplicationMap = new HashMap<>();
     Logger logger;
-
+    
     @Test
     public void test() {
     }
 /*
+    private TransformationContext context;
+
     @Before
     public void setUp() throws Exception {
-        Application myApp = new Application(appName, 1);
-
+        EffectiveModel lamp = new EffectiveModelFactory().create(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, logMock());
+        this.context = setUpMockTransformationContext(lamp);
         graph = lamp.getTopology();
         for (int i = 0; i < myApp.getStack().getNodes().size(); i++) {
             nodeApplicationMap.put(myApp.getStack().getNodes().get(i).getNode(), myApp);
         }
-        
-        NodeVisitor visitor = new NodeVisitor(myApp, nodeApplicationMap, graph, logger);
-        EffectiveModel effectiveModel = new EffectiveModel(TestCsars.VALID_MINIMAL_DOCKER_TEMPLATE, log);
-        lamp = new EffectiveModel(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, log);
+        Application myApp = new Application(appName, 1, context);
+        NodeVisitor visitor = new NodeVisitor(myApp, nodeApplicationMap, graph, logMock());
+
 
         File sourceDir = new File(resourcesPath, "csars/yaml/valid/lamp-noinput");
         targetDir = new File(tmpdir, "targetDir");
         sourceDir.mkdir();
         targetDir.mkdir();
-        PluginFileAccess fileAccess = new PluginFileAccess(sourceDir, targetDir, log);
+        PluginFileAccess fileAccess = new PluginFileAccess(sourceDir, targetDir, logMock());
         Set<RootNode> nodes = lamp.getNodes();
 
         when(context.getPluginFileAccess()).thenReturn(fileAccess);
@@ -71,7 +88,7 @@ public class CloudFoundryPluginTest extends BaseUnitTest {
         myApp = visitor.getFilledApp();
         List<Application> applications = new ArrayList<>();
         applications.add(myApp);
-        FileCreator fileCreator = new FileCreator(fileAccess, applications);
+        FileCreator fileCreator = new FileCreator(fileAccess, applications, context);
         fileCreator.createFiles();
     }
 
@@ -104,6 +121,7 @@ public class CloudFoundryPluginTest extends BaseUnitTest {
             FILESUFFIX_DEPLOY);
         String deployScript = FileUtils.readFileToString(targetFile);
         String expectedOutput = SHEBANG + "\n" + SOURCE_UTIL_ALL + "\n" +
+            SUBCOMMAND_EXIT + "\n" +
             "check \"cf\"\n" +
             "cf create-service {plan} {service} my_db\n" +
             "check python\n" +

@@ -12,6 +12,7 @@ import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import com.amazonaws.auth.AWSCredentials;
 import com.scaleset.cfbuilder.core.Fn;
 import com.scaleset.cfbuilder.core.Module;
+import com.scaleset.cfbuilder.core.Parameter;
 import com.scaleset.cfbuilder.core.Resource;
 import com.scaleset.cfbuilder.core.Template;
 import com.scaleset.cfbuilder.ec2.Instance;
@@ -30,13 +31,13 @@ public class CloudFormationModule extends Module {
     public static final String MODE_500 = "000500";
     public static final String MODE_644 = "000644";
     public static final String OWNER_GROUP_ROOT = "root";
-    
+    public static final String KEYNAME = "KeyName";
+
     // KeyName is a default input value
     private static final String KEYNAME_DESCRIPTION = "Name of an existing EC2 KeyPair to enable SSH access to the " +
         "instances";
     private static final String KEYNAME_TYPE = "AWS::EC2::KeyPair::KeyName";
     private static final String KEYNAME_CONSTRAINT_DESCRIPTION = "must be the name of an existing EC2 KeyPair.";
-    private static final String KEYNAME = "KeyName";
     private static final String USERDATA_NAME = "Join";
     private static final String USERDATA_DELIMITER = "";
     private static final String[] USERDATA_CONSTANT_PARAMS = {
@@ -54,7 +55,7 @@ public class CloudFormationModule extends Module {
         "# Install the files and packages from the metadata\n",
         "/usr/local/bin/cfn-init -v ",
         "         --stack "};
-    
+
     private String awsRegion;
     private AWSCredentials awsCredentials;
     private Object keyNameVar;
@@ -65,9 +66,9 @@ public class CloudFormationModule extends Module {
     private String stackName;
 
     /**
-     * Create a Module which uses the cloudformation-builder to build an AWS CloudFormation template
-     *
-     * @param fileAccess fileAccess to append the content of files to the template
+     Create a Module which uses the cloudformation-builder to build an AWS CloudFormation template
+
+     @param fileAccess fileAccess to append the content of files to the template
      */
     public CloudFormationModule(PluginFileAccess fileAccess, String awsRegion, AWSCredentials awsCredentials) {
         this.id("").template(new Template());
@@ -84,19 +85,19 @@ public class CloudFormationModule extends Module {
     }
 
     /**
-     * Put a CFNInit into a map which will be added to the resource at build time
-     *
-     * @param resource resource to add CFNInit to
-     * @param init     CNFInit to add
+     Put a CFNInit into a map which will be added to the resource at build time
+
+     @param resource resource to add CFNInit to
+     @param init     CNFInit to add
      */
     public void putCFNInit(String resource, CFNInit init) {
         cfnInitMap.put(resource, init);
     }
 
     /**
-     * Get the CFNInit which belongs to a specific resource
-     *
-     * @param resource String id of a resource
+     Get the CFNInit which belongs to a specific resource
+
+     @param resource String id of a resource
      */
     public CFNInit getCFNInit(String resource) {
         return this.cfnInitMap.get(resource);
@@ -119,7 +120,7 @@ public class CloudFormationModule extends Module {
     }
 
     /**
-     * Get a ref to the KeyName of this template
+     Get a ref to the KeyName of this template
      */
     public Object getKeyNameVar() {
         return this.keyNameVar;
@@ -177,33 +178,42 @@ public class CloudFormationModule extends Module {
     }
 
     /**
-     * Get the fileAccess of this module
+     * Returns the paramaters of the template belonging to this module.
+     *
+     * @return map with the parameters of the template
+     */
+    public Map<String, Parameter> getParameters() {
+        return this.template.getParameters();
+    }
+
+    /**
+     Get the fileAccess of this module
      */
     public PluginFileAccess getFileAccess() {
         return fileAccess;
     }
 
     /**
-     * Returns a random DNS-compliant bucket name.
-     *
-     * @return random bucket name
+     Returns a random DNS-compliant bucket name.
+
+     @return random bucket name
      */
     private String getRandomBucketName() {
         return "toscana-bucket-" + UUID.randomUUID();
     }
 
     /**
-     * Returns a random DNS-compliant stack name.
-     *
-     * @return random stack name
+     Returns a random DNS-compliant stack name.
+
+     @return random stack name
      */
     private String getRandomStackName() {
         return "toscana-stack-" + UUID.randomUUID();
     }
 
     /**
-     * Build the template
-     * 1. Add CFNInit to corresponding instance resource
+     Build the template
+     1. Add CFNInit to corresponding instance resource
      */
     public void build() {
         for (Map.Entry<String, CFNInit> pair : cfnInitMap.entrySet()) {

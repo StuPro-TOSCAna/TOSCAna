@@ -24,8 +24,8 @@ public class ResourceFileCreator {
             ResourceDeployment replicationController
                 = new ResourceDeployment(pod);
             ResourceService service = new ResourceService(pod);
-            result.put(pod.getName() + "-deployment", replicationController.build().toYaml());
-            result.put(pod.getName() + "-service", service.build().toYaml());
+            result.put(pod.getDeploymentName(), replicationController.build().toYaml());
+            result.put(pod.getServiceName(), service.build().toYaml());
         }
         return result;
     }

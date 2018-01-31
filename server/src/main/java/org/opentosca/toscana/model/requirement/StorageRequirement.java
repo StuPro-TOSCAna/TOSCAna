@@ -4,7 +4,6 @@ import org.opentosca.toscana.core.parse.model.MappingEntity;
 import org.opentosca.toscana.model.capability.StorageCapability;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.relation.DependsOn;
-import org.opentosca.toscana.model.relation.RootRelationship;
 import org.opentosca.toscana.model.util.ToscaKey;
 
 import lombok.EqualsAndHashCode;

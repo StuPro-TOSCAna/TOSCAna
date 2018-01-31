@@ -83,6 +83,7 @@ public class PushingImageBuilderIT extends ExportingImageBuilderIT {
 
     @After
     public void tearDown() throws Exception {
+        super.tearDown();
         DockerClient client = DefaultDockerClient.fromEnv().build();
         logger.info("Stopping and removing registry");
         client.killContainer(this.registryid);

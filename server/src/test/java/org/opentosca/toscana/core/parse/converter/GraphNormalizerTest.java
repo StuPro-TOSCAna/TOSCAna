@@ -31,7 +31,7 @@ public class GraphNormalizerTest extends BaseUnitTest {
 
     @Test
     public void repositoryNormalization() {
-        ServiceGraph graph = new ServiceGraph(REPOSITORY, log);
+        ServiceGraph graph = new ServiceGraph(REPOSITORY, logMock());
         Collection<Entity> repositories = graph.getEntity(ToscaStructure.REPOSITORIES).get().getChildren();
         Entity repository = repositories.iterator().next();
         Optional<Entity> url = repository.getChild("url");
@@ -41,7 +41,7 @@ public class GraphNormalizerTest extends BaseUnitTest {
 
     @Test
     public void operationNormalization() {
-        ServiceGraph graph = new ServiceGraph(OPERATION, log);
+        ServiceGraph graph = new ServiceGraph(OPERATION, logMock());
         EntityId lifecycleId = ToscaStructure.NODE_TEMPLATES.descend("test-node")
             .descend(RootNode.INTERFACES.name)
             .descend(RootNode.STANDARD_LIFECYCLE.name);

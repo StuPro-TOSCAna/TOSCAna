@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
-import org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin;
+import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.plugins.cloudfoundry.application.Application;
 import org.opentosca.toscana.plugins.cloudfoundry.application.ServiceTypes;
 import org.opentosca.toscana.plugins.util.TransformationFailureException;
@@ -13,7 +13,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.opentosca.toscana.plugins.cloudfoundry.filecreator.FileCreator.APPLICATION_FOLDER;
 
@@ -26,23 +25,29 @@ public class BuildpackDetector {
     public static final String BUILDPACK_OBJECT_PHP = "PHP_EXTENSIONS";
     public static final String BUILDPACK_FILEPATH_PHP = ".bp-config/options.json";
 
-    private final static Logger logger = LoggerFactory.getLogger(CloudFoundryPlugin.class);
+    private Logger logger;
 
     private Application application;
     private String applicationSuffix;
     private PluginFileAccess fileAccess;
 
-    public BuildpackDetector(Application application, PluginFileAccess fileAccess) {
+    public BuildpackDetector(Application application, PluginFileAccess fileAccess, TransformationContext context) {
         this.application = application;
         this.fileAccess = fileAccess;
         this.applicationSuffix = application.getApplicationSuffix();
+        this.logger = context.getLogger(getClass());
     }
 
+    /**
+     checks the application suffix e.g. .php and add defined buildpacks
+     currently only php is supported
+     */
     public void detectBuildpackAdditions() {
         if (applicationSuffix != null) {
             logger.info("Application suffix is: " + applicationSuffix);
             if (applicationSuffix.equalsIgnoreCase("php")) {
                 try {
+                    logger.debug("Add PHP buildpacks");
                     addBuildpackAdditonsPHP();
                 } catch (JSONException | IOException e) {
                     throw new TransformationFailureException("Fail to add buildpacks", e);
@@ -53,6 +58,11 @@ public class BuildpackDetector {
         }
     }
 
+    /**
+     add to the output folder the buildpack file
+     adds for a special service the necessary buildpack additions
+     currently only msql is supported
+     */
     private void addBuildpackAdditonsPHP() throws JSONException, IOException {
 
         if (application.getServices().containsValue(ServiceTypes.MYSQL)) {
