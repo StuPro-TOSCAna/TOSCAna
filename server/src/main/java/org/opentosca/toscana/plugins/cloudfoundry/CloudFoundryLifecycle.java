@@ -3,12 +3,13 @@ package org.opentosca.toscana.plugins.cloudfoundry;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.core.plugin.lifecycle.AbstractLifecycle;
 import org.opentosca.toscana.core.transformation.TransformationContext;
+import org.opentosca.toscana.core.transformation.properties.NoSuchPropertyException;
+import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.visitor.VisitableNode;
 import org.opentosca.toscana.plugins.cloudfoundry.application.Application;
@@ -42,15 +43,15 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
     }
 
     @Override
-    public void prepare() {
-        Map<String, String> properties = context.getProperties().getPropertyValues();
+    public void prepare() throws NoSuchPropertyException {
+        PropertyInstance properties = context.getProperties();
 
         if (!properties.isEmpty()) {
-            String username = properties.get(CF_PROPERTY_KEY_USERNAME);
-            String password = properties.get(CF_PROPERTY_KEY_PASSWORD);
-            String organization = properties.get(CF_PROPERTY_KEY_ORGANIZATION);
-            String space = properties.get(CF_PROPERTY_KEY_SPACE);
-            String apiHost = properties.get(CF_PROPERTY_KEY_API);
+            String username = properties.get(CF_PROPERTY_KEY_USERNAME).orElse(null);
+            String password = properties.get(CF_PROPERTY_KEY_PASSWORD).orElse(null);
+            String organization = properties.get(CF_PROPERTY_KEY_ORGANIZATION).orElse(null);
+            String space = properties.get(CF_PROPERTY_KEY_SPACE).orElse(null);
+            String apiHost = properties.get(CF_PROPERTY_KEY_API).orElse(null);
 
             if (isNotNull(username, password, organization, space, apiHost)) {
 

@@ -60,11 +60,11 @@ public class CloudFoundryLampIT extends BaseTransformTest {
     @Override
     protected PropertyInstance getProperties() throws Exception {
         PropertyInstance props = new PropertyInstance(new HashSet<>(plugin.getPlatform().properties), mock(Transformation.class));
-        props.setPropertyValue(CF_PROPERTY_KEY_USERNAME, envUser);
-        props.setPropertyValue(CF_PROPERTY_KEY_PASSWORD, envPw);
-        props.setPropertyValue(CF_PROPERTY_KEY_API, envHost);
-        props.setPropertyValue(CF_PROPERTY_KEY_ORGANIZATION, envOrga);
-        props.setPropertyValue(CF_PROPERTY_KEY_SPACE, envSpace);
+        props.set(CF_PROPERTY_KEY_USERNAME, envUser);
+        props.set(CF_PROPERTY_KEY_PASSWORD, envPw);
+        props.set(CF_PROPERTY_KEY_API, envHost);
+        props.set(CF_PROPERTY_KEY_ORGANIZATION, envOrga);
+        props.set(CF_PROPERTY_KEY_SPACE, envSpace);
 
         return props;
     }

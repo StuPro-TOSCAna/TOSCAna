@@ -8,7 +8,6 @@ import java.util.UUID;
 
 import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
-import org.opentosca.toscana.core.transformation.logging.Log;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
@@ -16,7 +15,6 @@ import org.junit.Test;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
 import static org.opentosca.toscana.core.plugin.lifecycle.AbstractLifecycle.SCRIPTS_DIR_PATH;
 import static org.opentosca.toscana.plugins.scripts.BashScript.SHEBANG;
 import static org.opentosca.toscana.plugins.scripts.BashScript.SOURCE_UTIL_ALL;
@@ -32,7 +30,7 @@ public class BashScriptTest extends BaseUnitTest {
     public void setUp() {
         bashScript = null;
         fileName = UUID.randomUUID().toString();
-        access = new PluginFileAccess(tmpdir, tmpdir, mock(Log.class));
+        access = new PluginFileAccess(tmpdir, tmpdir, logMock());
         try {
             bashScript = new BashScript(access, fileName);
         } catch (IOException e) {

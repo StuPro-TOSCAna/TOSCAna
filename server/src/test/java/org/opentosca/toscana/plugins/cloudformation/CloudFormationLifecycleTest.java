@@ -6,7 +6,6 @@ import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.transformation.TransformationContext;
-import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.model.EffectiveModelFactory;
 
@@ -17,7 +16,6 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class CloudFormationLifecycleTest extends BaseUnitTest {
@@ -29,7 +27,7 @@ public class CloudFormationLifecycleTest extends BaseUnitTest {
 
     @Before
     public void setUp() throws Exception {
-        PluginFileAccess access = new PluginFileAccess(new File(""), tmpdir, mock(Log.class));
+        PluginFileAccess access = new PluginFileAccess(new File(""), tmpdir, logMock());
         EffectiveModel effectiveModel = new EffectiveModelFactory().create(TestCsars.VALID_MINIMAL_DOCKER_TEMPLATE, logMock());
 
         when(context.getPluginFileAccess()).thenReturn(access);

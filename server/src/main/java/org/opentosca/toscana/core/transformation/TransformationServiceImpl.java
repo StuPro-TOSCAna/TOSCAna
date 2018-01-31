@@ -51,9 +51,7 @@ public class TransformationServiceImpl implements TransformationService {
     public boolean startTransformation(Transformation transformation) {
         //Only start the transformation if the input has been validated or the 
         //transformation does not need any additional properties
-        if (transformation.getState() == TransformationState.READY
-            || (transformation.getState() == TransformationState.INPUT_REQUIRED
-            && transformation.allRequiredPropertiesSet())) {
+        if (transformation.getState() == TransformationState.READY) {
             Future<?> taskFuture = executor.submit(
                 new ExecutionTask(
                     transformation,
