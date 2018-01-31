@@ -55,7 +55,7 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
             if (isNotNull(username, password, organization, space, apiHost)) {
 
                 connection = new Connection(username, password,
-                    apiHost, organization, space);
+                    apiHost, organization, space, context);
 
                 //TODO: check how to get used provider or figure out whether it is necessary to know it?
                 provider = new Provider(Provider.CloudFoundryProviderType.PIVOTAL);
@@ -66,7 +66,7 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
         //TODO: check how many different applications there are and fill list with them
         //probably there must be a combination of application and set of nodes
         applications = new ArrayList<>();
-        Application myApp = new Application(1);
+        Application myApp = new Application(1, context);
         myApp.setProvider(provider);
         myApp.setConnection(connection);
         applications.add(myApp);
@@ -83,7 +83,7 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
 
     @Override
     public void transform() {
-        Application myApp = new Application(1);
+        Application myApp = new Application(1, context);
         PluginFileAccess fileAccess = context.getPluginFileAccess();
         Set<RootNode> nodes = context.getModel().getNodes();
         List<Application> filledApplications = new ArrayList<>();
@@ -98,7 +98,7 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
         }
 
         try {
-            FileCreator fileCreator = new FileCreator(fileAccess, filledApplications);
+            FileCreator fileCreator = new FileCreator(fileAccess, filledApplications, context);
             fileCreator.createFiles();
         } catch (IOException | JSONException e) {
             throw new TransformationFailureException("Something went wrong while creating the output files", e);

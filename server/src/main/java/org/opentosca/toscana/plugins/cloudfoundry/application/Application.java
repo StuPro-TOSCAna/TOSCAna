@@ -7,9 +7,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.node.WebApplication;
 import org.opentosca.toscana.plugins.cloudfoundry.client.Connection;
+
+import org.slf4j.Logger;
 
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.APPLICATION_FOLDER;
 
@@ -17,6 +20,8 @@ import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.APPLICATION
  This class should describe a Application with all needed information to deploy it
  */
 public class Application {
+
+    private Logger logger;
 
     private String name;
     private int applicationNumber;
@@ -34,13 +39,15 @@ public class Application {
 
     private Connection connection;
 
-    public Application(String name, int applicationNumber) {
+    public Application(String name, int applicationNumber, TransformationContext context) {
         this.name = name;
         this.applicationNumber = applicationNumber;
+        this.logger = context.getLogger(getClass());
     }
 
-    public Application(int applicationNumber) {
+    public Application(int applicationNumber, TransformationContext context) {
         this.applicationNumber = applicationNumber;
+        this.logger = context.getLogger(getClass());
     }
 
     /**
@@ -52,6 +59,8 @@ public class Application {
      */
     public void addConfigMysql(String pathToFile) {
         String relativePath = "../../" + APPLICATION_FOLDER + this.applicationNumber + "/" + pathToFile;
+
+        logger.debug("Add a config mysql command to deploy script. Relative path to file is {}", relativePath);
         configureSqlDatabase.add(relativePath);
     }
 
@@ -68,6 +77,9 @@ public class Application {
         if (parentTopNode instanceof WebApplication) {
             pathToFileOnContainer = "/home/vcap/app/htdocs/";
         }
+
+        logger.debug("Add python script to execute {} on cloud foundry warden container", pathToFile);
+
         executeCommand.put("../../" + APPLICATION_FOLDER + this.getApplicationNumber() + "/" + pathToFile,
             pathToFileOnContainer + pathToFile);
     }
@@ -100,8 +112,13 @@ public class Application {
         return connection;
     }
 
+    /**
+     set the application name.
+     all forbidden signs will be replaced by -
+     */
     public void setName(String name) {
         String clearedUpName = name.replaceAll("[:/?#@$&'()*+,;=_]", "-");
+        logger.debug("Replace all occurence of forbidden signs in the application name with \"-\"");
         this.name = clearedUpName;
     }
 
@@ -116,8 +133,10 @@ public class Application {
     public void addEnvironmentVariables(String environmentVariableName, String value) {
         if (value.isEmpty()) {
             this.addEnvironmentVariables(environmentVariableName);
+            logger.debug("Add environment variable {} to manifest", environmentVariableName);
         } else {
             this.environmentVariables.put(environmentVariableName, value);
+            logger.debug("Add environment variable {} with value {} to manifest", environmentVariableName, value);
         }
     }
 
@@ -143,12 +162,18 @@ public class Application {
 
     public void addAttribute(String attributeName, String attributeValue) {
         attributes.put(attributeName, attributeValue);
+        logger.debug("Add attribute variable {} with value {} to manifest", attributeName, attributeValue);
     }
 
     public Map<String, String> getAttributes() {
         return attributes;
     }
 
+    /**
+     adds a file to the output folder
+
+     @param filePath path in the csar
+     */
     public void addFilePath(String filePath) {
         filePaths.add(filePath);
     }
@@ -169,6 +194,9 @@ public class Application {
         return applicationSuffix;
     }
 
+    /**
+     sets the path to the main application which should be executed
+     */
     public void setPathToApplication(String pathToApplication) {
         int lastOccurenceOfBackslash = pathToApplication.lastIndexOf("/");
         int lastOccurenceOfDot = pathToApplication.lastIndexOf(".");

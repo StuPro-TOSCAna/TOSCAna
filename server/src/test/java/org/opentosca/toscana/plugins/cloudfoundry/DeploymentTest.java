@@ -6,7 +6,11 @@ import java.io.IOException;
 import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.core.plugin.lifecycle.AbstractLifecycle;
+import org.opentosca.toscana.core.testdata.TestCsars;
+import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.core.transformation.logging.Log;
+import org.opentosca.toscana.model.EffectiveModel;
+import org.opentosca.toscana.model.EffectiveModelFactory;
 import org.opentosca.toscana.plugins.cloudfoundry.application.Application;
 import org.opentosca.toscana.plugins.cloudfoundry.application.ServiceTypes;
 import org.opentosca.toscana.plugins.cloudfoundry.application.deployment.Deployment;
@@ -21,6 +25,8 @@ import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
 import static org.opentosca.toscana.plugins.scripts.BashScript.SHEBANG;
 import static org.opentosca.toscana.plugins.scripts.BashScript.SOURCE_UTIL_ALL;
+import static org.opentosca.toscana.plugins.scripts.BashScript.SUBCOMMAND_EXIT;
+import static org.opentosca.toscana.plugins.util.TestUtil.setUpMockTransformationContext;
 
 public class DeploymentTest extends BaseUnitTest {
 
@@ -35,10 +41,14 @@ public class DeploymentTest extends BaseUnitTest {
     private final String service = "cleardb";
     private PluginFileAccess fileAccess;
 
+    private TransformationContext context;
+
     @Before
     public void setUp() throws IOException {
+        EffectiveModel lamp = new EffectiveModelFactory().create(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, logMock());
+        this.context = setUpMockTransformationContext(lamp);
         appName = "testApp";
-        testApp = new Application("testApp", 1);
+        testApp = new Application("testApp", 1, context);
         File sourceDir = new File(tmpdir, "sourceDir");
         targetDir = new File(tmpdir, "targetDir");
         sourceDir.mkdir();
@@ -51,7 +61,7 @@ public class DeploymentTest extends BaseUnitTest {
     public void configureSql() throws IOException {
         String pythonFilename = "configureMysql.py";
         String pathToSqlFile = "../../test/configMysql.sql";
-        Deployment deployment = new Deployment(deployScript, testApp, fileAccess);
+        Deployment deployment = new Deployment(deployScript, testApp, fileAccess, context);
         deployment.configureSql(pathToSqlFile);
         File targetFile = new File(targetDir, outputPath + pythonFilename);
         File deployFile = new File(targetDir, outputPath + "deploy_" + appName + ".sh");
@@ -59,6 +69,7 @@ public class DeploymentTest extends BaseUnitTest {
 
         String expectedDeployContent = String.format(SHEBANG + "\n" +
             SOURCE_UTIL_ALL + "\n" +
+            SUBCOMMAND_EXIT + "\n" +
             "check python\n" +
             "python %s %s\n", pythonFilename, pathToSqlFile);
 
@@ -69,7 +80,7 @@ public class DeploymentTest extends BaseUnitTest {
     @Test
     public void readCredentials() throws IOException {
         String pythonFilename = "readCredentials.py";
-        Deployment deployment = new Deployment(deployScript, testApp, fileAccess);
+        Deployment deployment = new Deployment(deployScript, testApp, fileAccess, context);
         deployment.readCredentials(appName, service, ServiceTypes.MYSQL);
         File targetFile = new File(targetDir, outputPath + pythonFilename);
         File deployFile = new File(targetDir, outputPath + "deploy_" + appName + ".sh");
@@ -77,6 +88,7 @@ public class DeploymentTest extends BaseUnitTest {
 
         String expectedDeployContent = String.format(SHEBANG + "\n" +
             SOURCE_UTIL_ALL + "\n" +
+            SUBCOMMAND_EXIT + "\n" +
             "check python\n" +
             "python %s %s %s %s\n", pythonFilename, appName, service, ServiceTypes.MYSQL.getName());
 
@@ -87,7 +99,7 @@ public class DeploymentTest extends BaseUnitTest {
     @Test
     public void executeFile() throws IOException {
         String pythonFilename = "executeCommand.py";
-        Deployment deployment = new Deployment(deployScript, testApp, fileAccess);
+        Deployment deployment = new Deployment(deployScript, testApp, fileAccess, context);
         String pathToFile = "/home/vcap/app/testApp/command.sh";
         deployment.executeFile(appName, pathToFile);
         File targetFile = new File(targetDir, outputPath + pythonFilename);
@@ -96,6 +108,7 @@ public class DeploymentTest extends BaseUnitTest {
 
         String expectedDeployContent = String.format(SHEBANG + "\n" +
             SOURCE_UTIL_ALL + "\n" +
+            SUBCOMMAND_EXIT + "\n" +
             "check python\n" +
             "python %s %s %s\n", pythonFilename, appName, pathToFile);
 
@@ -106,7 +119,7 @@ public class DeploymentTest extends BaseUnitTest {
     @Test
     public void replaceStrings() throws IOException {
         String pythonFilename = "replace.py";
-        Deployment deployment = new Deployment(deployScript, testApp, fileAccess);
+        Deployment deployment = new Deployment(deployScript, testApp, fileAccess, context);
         String pathToFile = "../../testApp/move.sh";
         String findStr = "testAlt";
         String replaceStr = "testNeu";
@@ -117,6 +130,7 @@ public class DeploymentTest extends BaseUnitTest {
 
         String expectedDeployContent = String.format(SHEBANG + "\n" +
             SOURCE_UTIL_ALL + "\n" +
+            SUBCOMMAND_EXIT + "\n" +
             "check python\n" +
             "python %s %s %s %s\n", pythonFilename, pathToFile, findStr, replaceStr);
 
