@@ -13,6 +13,7 @@ import org.opentosca.toscana.core.parse.converter.TypeWrapper;
 import org.opentosca.toscana.core.parse.model.ServiceGraph;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.properties.Property;
+import org.opentosca.toscana.core.util.LifecyclePhase;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.relation.RootRelationship;
 import org.opentosca.toscana.model.requirement.Requirement;
@@ -33,12 +34,20 @@ public class EffectiveModel {
     private boolean initialized = false;
 
     protected EffectiveModel(Csar csar) throws InvalidCsarException {
+        LifecyclePhase parsePhase = csar.getLifecyclePhase(Csar.Phase.PARSE);
+        parsePhase.setState(LifecyclePhase.State.EXECUTING);
         this.log = csar.getLog();
         this.logger = log.getLogger(getClass());
-        logger.info("Constructing TOSCA element graph");
-        EntrypointDetector entrypointDetector = new EntrypointDetector(log);
-        File template = entrypointDetector.findEntryPoint(csar.getContentDir());
-        this.serviceGraph = new ServiceGraph(template, log);
+        try {
+            logger.info("Constructing TOSCA element graph");
+            EntrypointDetector entrypointDetector = new EntrypointDetector(log);
+            File template = entrypointDetector.findEntryPoint(csar.getContentDir());
+            this.serviceGraph = new ServiceGraph(template, csar.getLog());
+            parsePhase.setState(LifecyclePhase.State.DONE);
+        } catch (Exception e) {
+            parsePhase.setState(LifecyclePhase.State.FAILED);
+            throw e;
+        }
     }
 
     protected EffectiveModel(File template, Log log) {
@@ -76,7 +85,7 @@ public class EffectiveModel {
                 Set<? extends RootNode> fulfillers = requirement.getFulfillers();
                 for (RootNode fulfiller : fulfillers) {
                     RootRelationship relationship = requirement.get(requirement.RELATIONSHIP);
-                    logger.info("  > '{}'  === {} ==>> '{}'", node.getEntityName(), 
+                    logger.info("  > '{}'  === {} ==>> '{}'", node.getEntityName(),
                         relationship.getClass().getSimpleName(), fulfiller.getEntityName());
                     topology.addEdge(node, fulfiller, relationship);
                 }

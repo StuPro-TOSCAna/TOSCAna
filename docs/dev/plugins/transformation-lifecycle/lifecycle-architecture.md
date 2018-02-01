@@ -71,9 +71,11 @@ The order in which these methods get called is shown in the following sequence d
 
 ![](diagrams/seperate-validation-sequence-diagram.png)
 
-## Progress caluclation
+## Progress calculation
 
-Putting tasks in seperate methods allows a very simple, but also very inacurate way to calculate the progress. (at least when looking at execution time):
+Putting tasks in separate methods allows a very simple, but also very inaccurate way to calculate the progress. (at least when looking at execution time):
 
-- Once a step gets completetd, the progress gets incremented by `(<Current Step Number> / <Total Step count>) * 100` per cent.
-    - This option is very simple, but inacurate when looking at time based measurements. For example: If we decide to build Docker images while Transforming. This step will take way longer than just validating the Csar.
+- Once a step gets completed, the progress gets incremented by `(<Current Step Number> / <Total Step count>) * 100` per cent.
+    - This option is very simple, but inaccurate when looking at time based measurements. For example: If we decide to build Docker images while Transforming. This step will take way longer than just validating the Csar.
+    
+Note: Progress calculation got removed in February '18

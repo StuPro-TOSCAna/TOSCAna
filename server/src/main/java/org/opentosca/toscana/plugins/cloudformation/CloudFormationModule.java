@@ -207,9 +207,9 @@ public class CloudFormationModule extends Module {
     }
 
     /**
-     * Returns the paramaters of the template belonging to this module.
-     *
-     * @return map with the parameters of the template
+     Returns the paramaters of the template belonging to this module.
+
+     @return map with the parameters of the template
      */
     public Map<String, Parameter> getParameters() {
         return this.template.getParameters();
@@ -293,6 +293,7 @@ public class CloudFormationModule extends Module {
         2a. Add necessary IAM resources to the module
         2b. Add `Authentication` and `IamInstanceProfile` to corresponding instance resource
      */
+    @Override
     public void build() {
         for (Map.Entry<String, CFNInit> pair : cfnInitMap.entrySet()) {
             Resource res = this.getResource(pair.getKey());

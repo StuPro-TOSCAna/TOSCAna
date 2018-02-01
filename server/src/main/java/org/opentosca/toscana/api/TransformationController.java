@@ -6,9 +6,12 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -131,7 +134,7 @@ public class TransformationController {
         tags = {"transformations", "csars"},
         notes = "Returns a HAL-Resources list containing all Transformations for a specific CSAR"
     )
-    @ApiResponses({
+    @ApiResponses( {
         @ApiResponse(
             code = 200,
             message = "The operation was executed successfully",
@@ -156,7 +159,7 @@ public class TransformationController {
         List<TransformationResponse> transformations = new ArrayList<>();
         for (Map.Entry<String, Transformation> entry : csar.getTransformations().entrySet()) {
             transformations.add(new TransformationResponse(
-                0,
+                entry.getValue().getLifecyclePhase(),
                 entry.getValue().getState().name(),
                 entry.getKey(),
                 csar.getIdentifier()
@@ -199,7 +202,7 @@ public class TransformationController {
         tags = {"transformations"},
         notes = "Returns a HAL-Resource Containing the details for the transformation with the given parameters"
     )
-    @ApiResponses({
+    @ApiResponses( {
         @ApiResponse(
             code = 200,
             message = "The operation was executed successfully"
@@ -220,7 +223,7 @@ public class TransformationController {
         Csar csar = findByCsarId(name);
         Transformation transformation = findTransformationByPlatform(csar, platform);
         return ResponseEntity.ok().body(new TransformationResponse(
-            0,
+            transformation.getLifecyclePhase(),
             transformation.getState().name(),
             platform, name
         ));
@@ -261,7 +264,7 @@ public class TransformationController {
             "(If the platform does not exist and there is no other transformation with the same CSAR and Platform, " +
             "you have to delete the old transformation in this case)"
     )
-    @ApiResponses({
+    @ApiResponses( {
         @ApiResponse(
             code = 200,
             message = "The operation was executed successfully"
@@ -293,7 +296,7 @@ public class TransformationController {
         //Return 404 if the platform does not exist
         Optional<Platform> optionalPlatform = platformService.findPlatformById(platform);
         Platform p = optionalPlatform.orElseThrow(PlatformNotFoundException::new);
-        Transformation transformation = transformationService.createTransformation(csar, p);
+        transformationService.createTransformation(csar, p);
         return ResponseEntity.ok().build();
     }
 
@@ -338,7 +341,7 @@ public class TransformationController {
         notes = "Starts a transformation that has been created and is ready to get started. To start a transformation, the " +
             "Transformation has to be in the state READY otherwise the transformation cannot start."
     )
-    @ApiResponses({
+    @ApiResponses( {
         @ApiResponse(
             code = 200,
             message = "The operation was executed successfully"
@@ -412,7 +415,7 @@ public class TransformationController {
         tags = {"transformations"},
         notes = "Deletes a transformation and all the coresponding artifacts"
     )
-    @ApiResponses({
+    @ApiResponses( {
         @ApiResponse(
             code = 200,
             message = "The operation was executed successfully"
@@ -484,7 +487,7 @@ public class TransformationController {
             "following log lines get returned. If the start index is larger than the current last log index the operation " +
             "will return a empty list."
     )
-    @ApiResponses({
+    @ApiResponses( {
         @ApiResponse(
             code = 200,
             message = "The operation was executed successfully",
@@ -566,7 +569,7 @@ public class TransformationController {
             "It is possible to download a archive (ZIP format) of all the files generated while the transformation was " +
             "running."
     )
-    @ApiResponses({
+    @ApiResponses( {
         @ApiResponse(
             code = 200,
             message = "The operation was executed successfully"
@@ -648,7 +651,7 @@ public class TransformationController {
             "(See Set Properties Operation). If the Transformation does not need any properties a empty list (Json Array) " +
             "is returned"
     )
-    @ApiResponses({
+    @ApiResponses( {
         @ApiResponse(
             code = 200,
             message = "The operation was executed successfully",
@@ -670,19 +673,7 @@ public class TransformationController {
         Csar csar = findByCsarId(csarId);
         Transformation transformation = findTransformationByPlatform(csar, platformId);
         checkTransformationState(transformation);
-        List<PropertyWrap> propertyWrapList = new ArrayList<>();
-        //TODO add filtering depending on the transformation state (i.e. Transforming, Deploying...)
-        PropertyInstance instance = transformation.getProperties();
-        for (Property property : instance.getProperties().values()) {
-            propertyWrapList.add(new PropertyWrap(
-                    property.getKey(),
-                    property.getType().getTypeName(),
-                    property.getDescription().orElse(null),
-                    property.getValue().orElse(null),
-                    property.isRequired()
-                )
-            );
-        }
+        List<PropertyWrap> propertyWrapList = toPropertyWrapList(transformation.getProperties(), null);
         GetPropertiesResponse response = new GetPropertiesResponse(csarId, platformId, propertyWrapList);
         return ResponseEntity.ok(response);
     }
@@ -728,7 +719,7 @@ public class TransformationController {
             "to ready once all required properties have a value assigned to them. Once this is done the value can be changed or you can still " +
             "set non required properties."
     )
-    @ApiResponses({
+    @ApiResponses( {
         @ApiResponse(
             code = 200,
             message = "The operation was executed successfully",
@@ -778,18 +769,26 @@ public class TransformationController {
                 successes.put(entry.getKey(), false);
             }
         }
-        //Return the result (with code 200 if all inputs were valid and 400 if at least 1 was invalid)
-//        PropertyInstance instance = transformation.getProperties();
-//        //TODO if other requirement types get used, this needs a change!
-//        //Change state of the transformation to show the user that all required properties have been set
-//        if(instance.requiredPropertiesSet(RequirementType.TRANSFORMATION)) {
-//            //TODO Maybe a different method to change the state is needed!
-//            transformation.setState(TransformationState.READY);
-//        }
         if (!somethingFailed) {
             return ResponseEntity.ok().build();
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(new SetPropertiesResponse(successes));
+            Set<String> requestedKeys = new HashSet<>(successes.keySet());
+            List<PropertyWrap> propWrapList = toPropertyWrapList(properties, requestedKeys);
+            //The Request contains invalid values
+            if (requestedKeys.size() > propWrapList.size()) {
+                Set<String> knownKeys = propWrapList.stream().map(PropertyWrap::getKey).collect(Collectors.toSet());
+                requestedKeys.removeAll(knownKeys); // Remove all known (valid) keys
+                requestedKeys.forEach(e -> {
+                    propWrapList.add(new PropertyWrap(e, "invalid", "Invalid Key", null, false, null));
+                });
+            }
+            SetPropertiesResponse response = new SetPropertiesResponse(
+                csarId,
+                platformId,
+                propWrapList,
+                successes
+            );
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(response);
         }
     }
 
@@ -826,5 +825,23 @@ public class TransformationController {
         Optional<Transformation> transformation = csar.getTransformation(platformId);
         return transformation.orElseThrow(() -> new TransformationNotFoundException(
             format("The Csar '%s' does not have a transformation for platform '%s'", csar.getIdentifier(), platformId)));
+    }
+
+    private List<PropertyWrap> toPropertyWrapList(PropertyInstance instance, Set<String> validKeys) {
+        List<PropertyWrap> propertyWrapList = new ArrayList<>();
+        for (Property property : instance.getProperties().values()) {
+            if (validKeys == null || validKeys.contains(property.getKey())) {
+                propertyWrapList.add(new PropertyWrap(
+                        property.getKey(),
+                        property.getType().getTypeName(),
+                        property.getDescription().orElse(null),
+                        property.getValue().orElse(null),
+                        property.isRequired(),
+                        property.getDefaultValue().orElse(null)
+                    )
+                );
+            }
+        }
+        return propertyWrapList;
     }
 }
