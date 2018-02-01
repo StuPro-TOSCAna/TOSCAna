@@ -10,6 +10,7 @@ import java.util.UUID;
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 
 import com.amazonaws.auth.AWSCredentials;
+import com.scaleset.cfbuilder.cloudformation.Authentication;
 import com.scaleset.cfbuilder.core.Fn;
 import com.scaleset.cfbuilder.core.Module;
 import com.scaleset.cfbuilder.core.Parameter;
@@ -18,6 +19,10 @@ import com.scaleset.cfbuilder.core.Template;
 import com.scaleset.cfbuilder.ec2.Instance;
 import com.scaleset.cfbuilder.ec2.UserData;
 import com.scaleset.cfbuilder.ec2.metadata.CFNInit;
+import com.scaleset.cfbuilder.iam.InstanceProfile;
+import com.scaleset.cfbuilder.iam.Policy;
+import com.scaleset.cfbuilder.iam.Role;
+import io.fabric8.kubernetes.api.model.PodList;
 
 public class CloudFormationModule extends Module {
 
@@ -40,6 +45,8 @@ public class CloudFormationModule extends Module {
     private static final String KEYNAME_CONSTRAINT_DESCRIPTION = "must be the name of an existing EC2 KeyPair.";
     private static final String USERDATA_NAME = "Join";
     private static final String USERDATA_DELIMITER = "";
+    private static final String INSTANCE_PROFILE = "InstanceProfile";
+    private static final String INSTANCE_ROLE = "InstanceRole";
     private static final String[] USERDATA_CONSTANT_PARAMS = {
         "#!/bin/bash -xe\n",
         "mkdir -p /tmp/aws-cfn-bootstrap-latest\n",
@@ -55,11 +62,25 @@ public class CloudFormationModule extends Module {
         "# Install the files and packages from the metadata\n",
         "/usr/local/bin/cfn-init -v ",
         "         --stack "};
-
+    // TODO fix policy documents
+    private static final String ROLE_POLICY_DOCUMENT = "Statement:\n" +
+        "    - Effect: Allow\n" +
+        "      Principal:\n" +
+        "        Service:\n" +
+        "          - ec2.amazonaws.com\n" +
+        "      Action:\n" +
+        "        - 'sts:AssumeRole'";
+    private static final String POLICY_DOCUMENT = "Statement:\n" +
+        "    - Action:\n" +
+        "        - 's3:GetObject'\n" +
+        "      Effect: Allow\n" +
+        "      Resource: 'arn:aws:s3:::";
+    
     private String awsRegion;
     private AWSCredentials awsCredentials;
     private Object keyNameVar;
     private Map<String, CFNInit> cfnInitMap;
+    private List<String> authenticationList;
     private List<String> filesToBeUploaded;
     private PluginFileAccess fileAccess;
     private String bucketName;
@@ -76,6 +97,7 @@ public class CloudFormationModule extends Module {
             (KEYNAME_CONSTRAINT_DESCRIPTION);
         keyNameVar = template.ref(KEYNAME);
         cfnInitMap = new HashMap<>();
+        authenticationList = new ArrayList<>();
         filesToBeUploaded = new ArrayList<>();
         this.fileAccess = fileAccess;
         this.bucketName = getRandomBucketName();
@@ -110,7 +132,15 @@ public class CloudFormationModule extends Module {
     public void putFileToBeUploaded(String filePath) {
         this.filesToBeUploaded.add(filePath);
     }
-
+    
+    public List<String> getAuthenticationList() {
+        return authenticationList;
+    }
+    
+    public void putAuthentication(String instanceName) {
+        authenticationList.add(instanceName);
+    }
+    
     public String getBucketName() {
         return bucketName;
     }
@@ -210,10 +240,59 @@ public class CloudFormationModule extends Module {
     private String getRandomStackName() {
         return "toscana-stack-" + UUID.randomUUID();
     }
+    
+    /**
+     Returns the `Authentication` to access S3 for this module.
+     
+     @return authentication for S3
+     */
+    public Authentication getS3Authentication() {
+        return new Authentication("S3Creds")
+            .addBucket(bucketName)
+            .roleName(ref(INSTANCE_ROLE))
+            .type("S3");
+    }
 
+    /**
+     Returns the `Policy` to access S3 for this module.
+     Note: Roles must still be set.
+     
+     @return policy to access S3
+     */
+    public Policy getS3Policy() {
+        return resource(Policy.class, "RolePolicies")
+            .policyName("S3Download")
+            .policyDocument(POLICY_DOCUMENT + bucketName + "'");
+    }
+
+    /**
+     Returns the `Role` to access S3 for this module.
+
+     @return Role to access S3
+     */
+    public Role getS3InstanceRole() {
+        return resource(Role.class, INSTANCE_ROLE)
+            .path("/")
+            .assumeRolePolicyDocument(ROLE_POLICY_DOCUMENT);
+    }
+
+    /**
+     Returns the `Instanceprofile` to access S3 for this module.
+     Note: Roles must still be set.
+
+     @return instanceProfile to access S3
+     */
+    public InstanceProfile getS3InstanceProfile() {
+        return resource(InstanceProfile.class, INSTANCE_PROFILE)
+            .path("/");
+    }
+    
     /**
      Build the template
      1. Add CFNInit to corresponding instance resource
+     2. Check if EC2 instances need access to S3. If yes, then
+        2a. Add necessary IAM resources to the module
+        2b. Add `Authentication` and `IamInstanceProfile` to corresponding instance resource
      */
     public void build() {
         for (Map.Entry<String, CFNInit> pair : cfnInitMap.entrySet()) {
@@ -223,6 +302,21 @@ public class CloudFormationModule extends Module {
                 instance
                     .addCFNInit(pair.getValue())
                     .userData(new UserData(getUserDataFn(pair.getKey(), CONFIG_SETS)));
+            }
+        }
+        if (!filesToBeUploaded.isEmpty()) {
+            Role instanceRole = getS3InstanceRole();
+            getS3Policy().roles(instanceRole);
+            getS3InstanceProfile().roles(instanceRole);
+            Authentication s3authentication = getS3Authentication();
+            for (String instanceName : authenticationList) {
+                Resource res = this.getResource(instanceName);
+                if (res instanceof Instance) {
+                    Instance instance = (Instance) res;
+                    instance
+                        .authentication(s3authentication)
+                        .iamInstanceProfile(ref(INSTANCE_PROFILE));
+                }
             }
         }
     }

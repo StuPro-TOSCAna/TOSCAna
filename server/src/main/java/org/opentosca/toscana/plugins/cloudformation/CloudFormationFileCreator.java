@@ -24,6 +24,8 @@ public class CloudFormationFileCreator {
     public static final String CLI_PARAM_STACKNAME = "--stack-name ";
     public static final String CLI_PARAM_TEMPLATEFILE = "--template-file ";
     public static final String CLI_PARAM_PARAMOVERRIDES = "--parameter-overrides ";
+    public static final String CLI_PARAM_CAPABILITIES = "--capabilities";
+    public static final String CAPABILITY_IAM = "CAPABLITY_IAM";
     public static final String FILENAME_DEPLOY = "deploy";
     public static final String FILENAME_UPLOAD = "file-upload";
     public static final String TEMPLATE_YAML = "template.yaml";
@@ -82,7 +84,9 @@ public class CloudFormationFileCreator {
         logger.debug("Creating deploy script.");
         BashScript deployScript = new BashScript(cfnModule.getFileAccess(), FILENAME_DEPLOY);
         deployScript.append(EnvironmentCheck.checkEnvironment("aws"));
-        if (!cfnModule.getFilesToBeUploaded().isEmpty()) {
+        // Source file-upload script if needed
+        List filesToBeUploaded = cfnModule.getFilesToBeUploaded();
+        if (!filesToBeUploaded.isEmpty()) {
             deployScript.append("source " + FILENAME_UPLOAD + ".sh");
         }
         deployScript.append(CHANGE_TO_PARENT_DIRECTORY);
@@ -90,7 +94,12 @@ public class CloudFormationFileCreator {
         deployCommand.append(CLI_COMMAND_CREATESTACK + CLI_PARAM_STACKNAME)
             .append(cfnModule.getStackName()).append(" ")
             .append(CLI_PARAM_TEMPLATEFILE).append(TEMPLATE_YAML);
-
+        
+        // Add IAM capability if needed
+        if (!filesToBeUploaded.isEmpty()) {
+            deployCommand.append(" " + CLI_PARAM_CAPABILITIES + " " + CAPABILITY_IAM);
+        }
+        
         // Add parameters if needed
         Map<String, Parameter> parameters = cfnModule.getParameters();
         if (!parameters.isEmpty()) {

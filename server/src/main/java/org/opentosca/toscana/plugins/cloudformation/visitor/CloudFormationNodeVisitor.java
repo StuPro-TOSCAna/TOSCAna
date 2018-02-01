@@ -233,8 +233,10 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
         for (String dependency : operation.getDependencies()) {
             String cfnSource = getFileURL(cfnModule.getBucketName(), dependency);
 
-            logger.debug("Marking " + dependency + " as file to be uploaded.");
+            logger.debug("Marking '" + dependency + "' as file to be uploaded.");
             cfnModule.putFileToBeUploaded(dependency);
+            logger.debug("Marking '" + serverName + "' as instance in need of authentication.");
+            cfnModule.putAuthentication(serverName);
 
             CFNFile cfnFile = new CFNFile(cfnFilePath + dependency)
                 .setSource(cfnSource)
