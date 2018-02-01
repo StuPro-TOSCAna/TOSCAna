@@ -1,10 +1,13 @@
 package org.opentosca.toscana.core.transformation;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 import org.opentosca.toscana.core.csar.Csar;
+import org.opentosca.toscana.core.plugin.lifecycle.ExecutionPhase;
 import org.opentosca.toscana.core.transformation.artifacts.TargetArtifact;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.platform.Platform;
@@ -23,6 +26,7 @@ public class TransformationImpl implements Transformation {
     private TargetArtifact targetArtifact;
     private final EffectiveModel model;
     private final PropertyInstance properties;
+    private List<ExecutionPhase> executionPhases = new ArrayList<>();
 
     /**
      Creates a new transformation for given csar to given targetPlatform.
@@ -61,6 +65,16 @@ public class TransformationImpl implements Transformation {
     @Override
     public EffectiveModel getModel() {
         return model;
+    }
+
+    @Override
+    public List<ExecutionPhase> getExecutionPhases() {
+        return executionPhases;
+    }
+    
+    @Override
+    public void setExecutionPhases(List<ExecutionPhase> executionPhases) {
+        this.executionPhases = executionPhases;
     }
 
     @Override

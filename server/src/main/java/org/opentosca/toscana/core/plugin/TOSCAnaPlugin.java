@@ -37,44 +37,45 @@ public abstract class TOSCAnaPlugin<LifecycleT extends TransformationLifecycle> 
     public TOSCAnaPlugin(Platform platform) {
         this.platform = Objects.requireNonNull(platform, "The platform is not allowed to be null");
         this.executionPhases = populateExecutionPhases();
-        this.init();
-        logger.info("Initialized '{}' plugin.", platform.name);
+        initPlugin();
     }
 
     private List<ExecutionPhase<LifecycleT>> populateExecutionPhases() {
-        List<ExecutionPhase<LifecycleT>> executionTasks = new ArrayList<>();
+        List<ExecutionPhase<LifecycleT>> executionPhases = new ArrayList<>();
 
-        //Add the execution tasks
         //Environment validation
-        executionTasks.add(new ExecutionPhase<>("check environment", (e) -> {
+        executionPhases.add(new ExecutionPhase<>("check environment", (e) -> {
             if (!checkEnvironment()) {
                 throw new ValidationFailureException("Transformation Failed," +
                     " because the Environment check has failed!");
             }
         }));
         //Model validation
-        executionTasks.add(new ExecutionPhase<>("check model", (e) -> {
+        executionPhases.add(new ExecutionPhase<>("check model", (e) -> {
             if (!e.checkModel()) {
                 throw new ValidationFailureException("Transformation Failed," +
                     " because the model check has failed!");
             }
         }));
-
         //Transformation phases
-        executionTasks.add(new ExecutionPhase<>("prepare", TransformationLifecycle::prepare));
-        executionTasks.add(new ExecutionPhase<>("transformation", TransformationLifecycle::transform));
-        executionTasks.add(new ExecutionPhase<>("cleanup", TransformationLifecycle::cleanup));
-
+        executionPhases.add(new ExecutionPhase<>("prepare", TransformationLifecycle::prepare));
+        executionPhases.add(new ExecutionPhase<>("transformation", TransformationLifecycle::transform));
+        executionPhases.add(new ExecutionPhase<>("cleanup", TransformationLifecycle::cleanup));
         // Add Deployment Phase
         if (platform.supportsDeployment) {
-            executionTasks.add(new ExecutionPhase<>(
+            executionPhases.add(new ExecutionPhase<>(
                 "deploy",
                 TransformationLifecycle::deploy,
                 TransformationContext::performDeployment
             ));
         }
-        //Make list immutable
-        return Collections.unmodifiableList(executionTasks);
+        return Collections.unmodifiableList(executionPhases);
+    }
+
+    private void initPlugin() {
+        logger.info("Initializing plugin '{}'", this.platform.name);
+        this.init();
+        logger.info("Initialized plugin '{}'", this.platform.name);
     }
 
     /**
@@ -141,4 +142,9 @@ public abstract class TOSCAnaPlugin<LifecycleT extends TransformationLifecycle> 
      @return a newly constructed instance of the LifecycleInterface implemented by this plugin.
      */
     protected abstract LifecycleT getInstance(TransformationContext context) throws Exception;
+    
+    public List<ExecutionPhase<LifecycleT>> getExecutionPhases(){
+        return executionPhases;
+    }
+    
 }

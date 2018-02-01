@@ -1,8 +1,10 @@
 package org.opentosca.toscana.core.transformation;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.opentosca.toscana.core.csar.Csar;
+import org.opentosca.toscana.core.plugin.lifecycle.ExecutionPhase;
 import org.opentosca.toscana.core.transformation.artifacts.TargetArtifact;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.platform.Platform;
@@ -53,4 +55,8 @@ public interface Transformation {
      Returns the underlying model of this transformation.
      */
     EffectiveModel getModel();
+
+    void setExecutionPhases(List<ExecutionPhase> executionPhases);
+    
+    List<ExecutionPhase> getExecutionPhases();
 }
