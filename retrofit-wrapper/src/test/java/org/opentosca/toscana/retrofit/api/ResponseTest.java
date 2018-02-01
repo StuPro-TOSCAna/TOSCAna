@@ -28,6 +28,7 @@ public class ResponseTest extends BaseToscanaApiTest {
         assertEquals("UP", status.getStatus());
     }
 
+    //TODO Consider fixing this test after the property update
     @Test
     public void setInvalidPropertiesTest() throws Exception {
         enqueResponse("json/set_invalid_properties.json", 406, "application/json");

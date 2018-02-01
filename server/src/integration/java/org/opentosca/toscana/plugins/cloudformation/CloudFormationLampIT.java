@@ -27,7 +27,7 @@ public class CloudFormationLampIT extends BaseTransformTest {
 
     @Override
     protected void onSuccess(File outputDir) {
-        //Do Nothing
+        return;
     }
 
     @Override

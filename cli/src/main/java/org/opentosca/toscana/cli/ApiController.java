@@ -288,7 +288,6 @@ public class ApiController {
             transformation = toscanaApi.getTransformation(csar, plat);
             if (transformation != null) {
                 stringTransformation.append(transformation.getPlatform()).append(", ")
-                    .append(transformation.getProgress()).append(", ")
                     .append(transformation.getStatus());
             } else {
                 return Constants.TRANSFORMATION_INFO_EMPTY;

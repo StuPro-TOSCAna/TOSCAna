@@ -42,6 +42,7 @@ public class ExecutionTask implements Runnable {
         this.artifactService = ams;
         this.csarId = transformation.getCsar().getIdentifier();
         this.platformId = transformation.getPlatform().id;
+        transformation.setLifecyclePhases(plugin.getExecutionPhases());
     }
 
     @Override

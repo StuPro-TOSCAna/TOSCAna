@@ -1,10 +1,12 @@
 package org.opentosca.toscana.api.model;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.opentosca.toscana.api.PlatformController;
 import org.opentosca.toscana.api.TransformationController;
 import org.opentosca.toscana.api.docs.HiddenResourceSupport;
+import org.opentosca.toscana.core.util.LifecyclePhase;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
@@ -18,17 +20,17 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 @ApiModel
 @Relation(collectionRelation = "transformation")
 public class TransformationResponse extends HiddenResourceSupport {
-    private final int progress;
+    private final List<LifecyclePhase> phases;
     private final String status;
     private final String platform;
 
     public TransformationResponse(
-        @JsonProperty("progress") int progress,
+        @JsonProperty("phases") List<LifecyclePhase> phases,
         @JsonProperty("status") String status,
         @JsonProperty("platform") String platform,
         String csarName
     ) {
-        this.progress = progress;
+        this.phases = phases;
         this.status = status;
         this.platform = platform;
         this.add(ControllerLinkBuilder.linkTo(methodOn(TransformationController.class)
@@ -56,12 +58,11 @@ public class TransformationResponse extends HiddenResourceSupport {
 
     @ApiModelProperty(
         required = true,
-        notes = "The progress in % of how much is done to complete the transformation",
-        example = "0"
+        notes = "The phases of the transformation"
     )
-    @JsonProperty("progress")
-    public int getProgress() {
-        return progress;
+    @JsonProperty("phases")
+    public List<LifecyclePhase> getPhases() {
+        return phases;
     }
 
     @ApiModelProperty(

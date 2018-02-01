@@ -1,5 +1,6 @@
 package org.opentosca.toscana.core.transformation;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.opentosca.toscana.core.csar.Csar;
@@ -7,6 +8,7 @@ import org.opentosca.toscana.core.transformation.artifacts.TargetArtifact;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
+import org.opentosca.toscana.core.util.LifecyclePhase;
 import org.opentosca.toscana.model.EffectiveModel;
 
 public interface Transformation {
@@ -60,4 +62,8 @@ public interface Transformation {
      this will throw a IllegalStateExecption
      */
     PropertyInstance getOutputs() throws IllegalStateException;
+
+    void setLifecyclePhases(List<LifecyclePhase> lifecyclePhases);
+
+    List<LifecyclePhase> getLifecyclePhase();
 }

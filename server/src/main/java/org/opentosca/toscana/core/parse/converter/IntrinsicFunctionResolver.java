@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import org.opentosca.toscana.core.parse.ToscaTemplateException;
 import org.opentosca.toscana.core.parse.converter.util.AttributeNotSetException;
 import org.opentosca.toscana.core.parse.converter.util.NavigationUtil;
 import org.opentosca.toscana.core.parse.converter.util.ToscaStructure;
@@ -86,7 +86,7 @@ public class IntrinsicFunctionResolver {
         String inputName = inputFunctionEntity.getValue();
         Entity inputEntity = graph.getEntityOrThrow(ToscaStructure.INPUTS.descend(inputName));
         Optional<Entity> inputValue = inputEntity.getChild(Parameter.VALUE);
-        return inputValue.orElseThrow(() -> new IllegalStateException(
+        return inputValue.orElseThrow(() -> new ToscaTemplateException(
             String.format("Input '%s' is referenced but its value is not set", inputName)
         ));
     }
@@ -94,7 +94,7 @@ public class IntrinsicFunctionResolver {
     private static Entity getPropertyOrAtributeTarget(Entity functionEntity, ToscaFunction function) throws AttributeNotSetException {
         Collection<Entity> targetAddress = functionEntity.getChildren();
         if (targetAddress.size() < 2) {
-            throw new IllegalStateException(
+            throw new ToscaTemplateException(
                 String.format("Illegal amount of parameters for function at '%s'", functionEntity.getId()));
         }
         Iterator<Entity> it = targetAddress.iterator();
@@ -137,7 +137,7 @@ public class IntrinsicFunctionResolver {
         if (function == ToscaFunction.GET_ATTRIBUTE) {
             throw new AttributeNotSetException(message);
         } else {
-            throw new IllegalStateException(message);
+            throw new ToscaTemplateException(message);
         }
     }
 
@@ -177,7 +177,7 @@ public class IntrinsicFunctionResolver {
                     return value;
                 }
             }
-            throw new NoSuchElementException(String.format("Illegal tosca function name: '%s'", name));
+            throw new ToscaTemplateException(String.format("Illegal tosca function name: '%s'", name));
         }
 
         @Override
