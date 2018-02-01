@@ -4,11 +4,11 @@ import java.util.List;
 import java.util.Optional;
 
 import org.opentosca.toscana.core.csar.Csar;
-import org.opentosca.toscana.core.plugin.lifecycle.ExecutionPhase;
 import org.opentosca.toscana.core.transformation.artifacts.TargetArtifact;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
+import org.opentosca.toscana.core.util.LifecyclePhase;
 import org.opentosca.toscana.model.EffectiveModel;
 
 public interface Transformation {
@@ -56,7 +56,7 @@ public interface Transformation {
      */
     EffectiveModel getModel();
 
-    void setExecutionPhases(List<ExecutionPhase> executionPhases);
-    
-    List<ExecutionPhase> getExecutionPhases();
+    void setLifecyclePhases(List<LifecyclePhase> lifecyclePhases);
+
+    List<LifecyclePhase> getLifecyclePhase();
 }

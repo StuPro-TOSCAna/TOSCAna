@@ -156,7 +156,7 @@ public class TransformationController {
         List<TransformationResponse> transformations = new ArrayList<>();
         for (Map.Entry<String, Transformation> entry : csar.getTransformations().entrySet()) {
             transformations.add(new TransformationResponse(
-                entry.getValue().getExecutionPhases(),
+                entry.getValue().getLifecyclePhase(),
                 entry.getValue().getState().name(),
                 entry.getKey(),
                 csar.getIdentifier()
@@ -220,7 +220,7 @@ public class TransformationController {
         Csar csar = findByCsarId(name);
         Transformation transformation = findTransformationByPlatform(csar, platform);
         return ResponseEntity.ok().body(new TransformationResponse(
-            transformation.getExecutionPhases(),
+            transformation.getLifecyclePhase(),
             transformation.getState().name(),
             platform, name
         ));

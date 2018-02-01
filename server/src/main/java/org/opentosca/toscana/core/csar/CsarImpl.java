@@ -1,6 +1,7 @@
 package org.opentosca.toscana.core.csar;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,6 +9,7 @@ import java.util.Optional;
 
 import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.logging.Log;
+import org.opentosca.toscana.core.util.LifecyclePhase;
 
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -17,6 +19,8 @@ public class CsarImpl implements Csar {
      the name of the directory which contains the unzipped content of the uploaded CSAR
      */
     public final static String CONTENT_DIR = "content";
+    public final static String PHASE_UNZIP = "unzip";
+    public final static String PHASE_VALIDATE = "validate";
     /**
      Stores all scheduled, ongoing or finished transformations of this CSAR. Key is the platform identifier.
      */
@@ -28,12 +32,23 @@ public class CsarImpl implements Csar {
     private final Log log;
     private final File rootDir;
     private final File contentDir;
+    private final List<LifecyclePhase> lifecyclePhases;
 
     public CsarImpl(File rootDir, String identifier, Log log) {
         this.rootDir = rootDir;
         this.contentDir = new File(rootDir, CONTENT_DIR);
         this.identifier = identifier;
         this.log = log;
+        lifecyclePhases = initLifecyclePhases();
+    }
+
+    private List<LifecyclePhase> initLifecyclePhases() {
+        List<LifecyclePhase> phases = new ArrayList<>();
+        String[] phaseNames = {PHASE_UNZIP, PHASE_VALIDATE};
+        for (String name : phaseNames) {
+            phases.add(new LifecyclePhase(name));
+        }
+        return phases;
     }
 
     @Override
@@ -55,6 +70,11 @@ public class CsarImpl implements Csar {
     @Override
     public Log getLog() {
         return log;
+    }
+
+    @Override
+    public List<LifecyclePhase> getLifecyclePhases() {
+        return lifecyclePhases;
     }
 
     @Override

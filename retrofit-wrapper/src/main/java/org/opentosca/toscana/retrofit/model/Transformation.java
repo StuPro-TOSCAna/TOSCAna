@@ -9,11 +9,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class Transformation extends HALResource {
     private String status;
     private String platform;
-    private List<ExecutionPhase> phases;
+    private List<LifecyclePhase> phases;
 
     public Transformation(
         @JsonProperty("status") String status,
-        @JsonProperty("phases") List<ExecutionPhase> phases,
+        @JsonProperty("phases") List<LifecyclePhase> phases,
         @JsonProperty("platform") String platform
     ) {
         this.status = status;
@@ -27,7 +27,7 @@ public class Transformation extends HALResource {
     }
 
     @JsonProperty("phases")
-    public List<ExecutionPhase> getPhases() {
+    public List<LifecyclePhase> getPhases() {
         return phases;
     }
 

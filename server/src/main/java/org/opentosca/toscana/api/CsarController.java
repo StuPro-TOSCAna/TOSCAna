@@ -90,7 +90,7 @@ public class CsarController {
         Link selfLink = linkTo(methodOn(CsarController.class).listCSARs()).withSelfRel();
         List<CsarResponse> responses = new ArrayList<>();
         for (Csar csar : csarService.getCsars()) {
-            responses.add(new CsarResponse(csar.getIdentifier()));
+            responses.add(new CsarResponse(csar.getIdentifier(), csar.getLifecyclePhases()));
         }
         Resources<CsarResponse> csarResources = new HiddenResources<>(responses, selfLink);
         return ResponseEntity.ok().body(csarResources);
@@ -132,7 +132,7 @@ public class CsarController {
         @PathVariable(name = "name") String name
     ) {
         Csar csar = getCsarForName(name);
-        return ResponseEntity.ok().body(new CsarResponse(csar.getIdentifier()));
+        return ResponseEntity.ok().body(new CsarResponse(csar.getIdentifier(), csar.getLifecyclePhases()));
     }
 
     /**

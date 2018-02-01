@@ -3,11 +3,10 @@ package org.opentosca.toscana.core.plugin.lifecycle;
 import java.util.function.Predicate;
 
 import org.opentosca.toscana.core.transformation.TransformationContext;
+import org.opentosca.toscana.core.util.LifecyclePhase;
 import org.opentosca.toscana.util.ExceptionAwareVoidFunction;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 
 /**
  This represents a wrapper for a execution phase e.g. the transform phase.
@@ -17,10 +16,8 @@ import io.swagger.annotations.ApiModelProperty;
  this is equal to the <code>LifecycleT</code> of the Plugin that implements the
  LifecycleAware Plugin Class. */
 @ApiModel
-public class ExecutionPhase<LifecycleT extends TransformationLifecycle> {
+public class ExecutionPhase<LifecycleT extends TransformationLifecycle> extends LifecyclePhase {
 
-    private String name;
-    private State state = State.PENDING;
     private ExceptionAwareVoidFunction<LifecycleT> function;
     private Predicate<TransformationContext> executionCheck;
 
@@ -28,7 +25,7 @@ public class ExecutionPhase<LifecycleT extends TransformationLifecycle> {
         String name,
         ExceptionAwareVoidFunction<LifecycleT> function
     ) {
-        this.name = name;
+        super(name);
         this.function = function;
         this.executionCheck = (e) -> true;
     }
@@ -62,48 +59,12 @@ public class ExecutionPhase<LifecycleT extends TransformationLifecycle> {
             function.apply(lifecycle);
             setState(State.DONE);
         } catch (Exception e) {
-            setState(State.ERROR);
+            setState(State.FAILED);
             throw e;
         }
     }
 
     public void skip() {
         setState(State.SKIPPED);
-    }
-
-    /**
-     @return the display name of the execution phase
-     */
-    @ApiModelProperty(
-        required = true,
-        notes = "the name of this execution phase",
-        example = "deploy"
-    )
-    @JsonProperty("name")
-    public String getName() {
-        return name;
-    }
-
-    @ApiModelProperty(
-        required = true,
-        notes = "the current state of the phase. Must be one of { PENDING, SKIPPING, EXECUTING, SKIPPED, DONE, ERROR }",
-        example = "PENDING"
-    )
-    @JsonProperty("state")
-    public State getState() {
-        return state;
-    }
-
-    private void setState(State state) {
-        this.state = state;
-    }
-
-    public enum State {
-        PENDING,
-        SKIPPING,
-        EXECUTING,
-        SKIPPED,
-        DONE,
-        ERROR
     }
 }

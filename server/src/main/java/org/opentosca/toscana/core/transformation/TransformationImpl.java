@@ -13,6 +13,7 @@ import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
+import org.opentosca.toscana.core.util.LifecyclePhase;
 import org.opentosca.toscana.model.EffectiveModel;
 
 import static java.lang.String.format;
@@ -26,7 +27,7 @@ public class TransformationImpl implements Transformation {
     private TargetArtifact targetArtifact;
     private final EffectiveModel model;
     private final PropertyInstance properties;
-    private List<ExecutionPhase> executionPhases = new ArrayList<>();
+    private List<LifecyclePhase> lifecyclePhases = new ArrayList<>();
 
     /**
      Creates a new transformation for given csar to given targetPlatform.
@@ -68,13 +69,13 @@ public class TransformationImpl implements Transformation {
     }
 
     @Override
-    public List<ExecutionPhase> getExecutionPhases() {
-        return executionPhases;
+    public List<LifecyclePhase> getLifecyclePhase() {
+        return lifecyclePhases;
     }
-    
+
     @Override
-    public void setExecutionPhases(List<ExecutionPhase> executionPhases) {
-        this.executionPhases = executionPhases;
+    public void setLifecyclePhases(List<LifecyclePhase> lifecyclePhases) {
+        this.lifecyclePhases = lifecyclePhases;
     }
 
     @Override

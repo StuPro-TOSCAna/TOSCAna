@@ -4,12 +4,12 @@ import org.opentosca.toscana.retrofit.model.hal.HALResource;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class ExecutionPhase extends HALResource {
+public class LifecyclePhase extends HALResource {
 
     private String name;
     private State state;
 
-    public ExecutionPhase(
+    public LifecyclePhase(
         @JsonProperty("name") String name,
         @JsonProperty("state") State state
         ) {
@@ -33,6 +33,6 @@ public class ExecutionPhase extends HALResource {
         EXECUTING,
         SKIPPED,
         DONE,
-        ERROR
+        FAILED
     }
 }

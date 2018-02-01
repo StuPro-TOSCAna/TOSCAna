@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.logging.Log;
+import org.opentosca.toscana.core.util.LifecyclePhase;
 
 public interface Csar {
 
@@ -22,6 +23,10 @@ public interface Csar {
      */
     Optional<Transformation> getTransformation(String platformId);
 
+    void setTransformations(List<Transformation> transformations);
+
+    List<LifecyclePhase> getLifecyclePhases();
+
     /**
      @return the identifier of the CSAR
      */
@@ -31,8 +36,6 @@ public interface Csar {
      @return the log of this csar, which e.g. contains information about parsing
      */
     Log getLog();
-
-    void setTransformations(List<Transformation> transformations);
 
     /**
      @return the root directory of the unzipped csar.
