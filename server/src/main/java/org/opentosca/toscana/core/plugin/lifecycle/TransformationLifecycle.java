@@ -1,5 +1,7 @@
 package org.opentosca.toscana.core.plugin.lifecycle;
 
+import org.opentosca.toscana.core.transformation.properties.NoSuchPropertyException;
+
 /**
  The basic interface to implement the TransformationLifecycle
  */
@@ -24,7 +26,7 @@ public interface TransformationLifecycle {
      out
      of the method. To abort the transformation yo have to execute <code>throw new RunntimeException()</code>
      */
-    void prepare();
+    void prepare() throws NoSuchPropertyException;
 
     /**
      Has to implement the transform lifecycle operations

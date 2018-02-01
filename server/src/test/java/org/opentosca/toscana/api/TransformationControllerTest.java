@@ -154,7 +154,7 @@ public class TransformationControllerTest extends BaseSpringTest {
     private final static String PLATFORM_NOT_FOUND_URL = "/api/csars/kubernetes-cluster/transformations/p-z";
     private final static String GET_OUTPUT_URL = "/api/csars/kubernetes-cluster/transformations/p-a/outputs";
     private final static String CSAR_NOT_FOUND_URL = "/api/csars/keinechtescsar/transformations";
-    private static final String[] CSAR_NAMES = new String[] {"kubernetes-cluster", "apache-test", "mongo-db"};
+    private static final String[] CSAR_NAMES = new String[]{"kubernetes-cluster", "apache-test", "mongo-db"};
     private static final String SECOND_VALID_PLATFORM_NAME = "p-b";
     private static final String PROPERTY_TEST_DEFAULT_VALUE = "Test-Default-Value";
     private static final String PROPERTY_TEST_DEFAULT_VALUE_KEY = "default_value_property";
@@ -164,7 +164,7 @@ public class TransformationControllerTest extends BaseSpringTest {
     //This removes the Mockito Hints of unused Stubbings
     //This is done to reduce log output.
     public MockitoRule rule = MockitoJUnit.rule().strictness(Strictness.LENIENT);
-    
+
     private CsarService csarService;
     private TransformationService transformationService;
     private PlatformService platformService;
@@ -231,7 +231,7 @@ public class TransformationControllerTest extends BaseSpringTest {
         when(transformationService.createTransformation(any(Csar.class), any(Platform.class))).then(iom -> {
             Csar csar = (Csar) iom.getArguments()[0];
             Platform platform = (Platform) iom.getArguments()[1];
-            Transformation t = new TransformationImpl(csar, platform, mock(Log.class), modelMock());
+            Transformation t = new TransformationImpl(csar, platform, logMock(), modelMock());
             csar.getTransformations().put(platform.id, t);
             return t;
         });
@@ -241,10 +241,10 @@ public class TransformationControllerTest extends BaseSpringTest {
     //<editor-fold desc="Output Tests">
 
     @Test
-    public void testGetOutputs() throws Exception{
+    public void testGetOutputs() throws Exception {
         List<Transformation> transformations = preInitNonCreationTests();
         Transformation t = transformations.get(0);
-        when(t.getState()). thenReturn(TransformationState.DONE);
+        when(t.getState()).thenReturn(TransformationState.DONE);
         HashSet<Property> outputs = new HashSet<>();
         outputs.add(new PlatformProperty(
             "test_property",
@@ -253,7 +253,7 @@ public class TransformationControllerTest extends BaseSpringTest {
             true,
             "some value"
         ));
-        PropertyInstance mockOutputs = new PropertyInstance(outputs,t);
+        PropertyInstance mockOutputs = new PropertyInstance(outputs, t);
         when(t.getOutputs()).thenReturn(mockOutputs);
         mvc.perform(get(GET_OUTPUT_URL))
             .andDo(print())
@@ -265,13 +265,12 @@ public class TransformationControllerTest extends BaseSpringTest {
     }
 
     @Test
-    public void testGetOutputsEmptyOutputs() throws Exception{
+    public void testGetOutputsEmptyOutputs() throws Exception {
         List<Transformation> transformations = preInitNonCreationTests();
         Transformation t = transformations.get(0);
-        when(t.getState()). thenReturn(TransformationState.DONE);
+        when(t.getState()).thenReturn(TransformationState.DONE);
         PropertyInstance mockOutputs = mock(PropertyInstance.class);
-        when(mockOutputs.getPropertySchema()).thenReturn(new HashSet<>());
-        when(mockOutputs.getPropertyValues()). thenReturn(new HashMap<>());
+        when(mockOutputs.getProperties()).thenReturn(new HashMap<>());
         when(t.getOutputs()).thenReturn(mockOutputs);
         mvc.perform(get(GET_OUTPUT_URL))
             .andDo(print())
@@ -285,7 +284,7 @@ public class TransformationControllerTest extends BaseSpringTest {
     public void testGetOutputsInvalidState() throws Exception {
         List<Transformation> transformations = preInitNonCreationTests();
         Transformation t = transformations.get(0);
-        when(t.getState()). thenReturn(TransformationState.TRANSFORMING);
+        when(t.getState()).thenReturn(TransformationState.TRANSFORMING);
         mvc.perform(get(GET_OUTPUT_URL)).andDo(print()).andExpect(status().is(400)).andReturn();
     }
 
@@ -414,7 +413,7 @@ public class TransformationControllerTest extends BaseSpringTest {
         //Set a SimpleProperty value
         csarService.getCsar(VALID_CSAR_NAME)
             .get().getTransformation(VALID_PLATFORM_NAME).get()
-            .getInputs().setPropertyValue("secret_property", "geheim");
+            .getInputs().set("secret_property", "geheim");
         //Perform a request
         MvcResult result = mvc.perform(
             get(GET_PROPERTIES_VALID_URL)
@@ -767,8 +766,8 @@ public class TransformationControllerTest extends BaseSpringTest {
 
         for (String pname : pnames) {
 
-            Log mockLog = mock(Log.class);
             LogEntry entry = new LogEntry(0, "Test Message", Level.DEBUG);
+            Log mockLog = logMock();
             when(mockLog.getLogEntries(0)).thenReturn(Collections.singletonList(entry));
 
             Transformation transformation = new TransformationImpl(

@@ -14,6 +14,7 @@ import org.junit.Rule;
 import org.junit.experimental.categories.Category;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -28,6 +29,7 @@ public abstract class BaseTest {
 
     // "user.dir" is module root
     protected static final File PROJECT_ROOT = new File(System.getProperty("user.dir"));
+    private final static Logger logger = LoggerFactory.getLogger("test logger");
     @Rule
     public MockitoRule rule = MockitoJUnit.rule();
 
@@ -36,8 +38,8 @@ public abstract class BaseTest {
      */
     public static Log logMock() {
         Log log = mock(Log.class);
-        when(log.getLogger(anyString())).thenReturn(LoggerFactory.getLogger("test logger"));
-        when(log.getLogger(any(Class.class))).thenReturn(LoggerFactory.getLogger("test logger"));
+        when(log.getLogger(anyString())).thenReturn(logger);
+        when(log.getLogger(any(Class.class))).thenReturn(logger);
         return log;
     }
 

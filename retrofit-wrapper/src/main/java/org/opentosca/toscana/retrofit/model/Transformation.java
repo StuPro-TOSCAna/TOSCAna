@@ -20,8 +20,8 @@ public class Transformation extends HALResource {
     }
 
     @JsonProperty("status")
-    public String getStatus() {
-        return status;
+    public TransformationState getStatus() {
+        return TransformationState.valueOf(status);
     }
 
     @JsonProperty("progress")
@@ -32,5 +32,13 @@ public class Transformation extends HALResource {
     @JsonProperty("platform")
     public String getPlatform() {
         return platform;
+    }
+
+    public enum TransformationState {
+        READY,
+        INPUT_REQUIRED,
+        TRANSFORMING,
+        DONE,
+        ERROR
     }
 }

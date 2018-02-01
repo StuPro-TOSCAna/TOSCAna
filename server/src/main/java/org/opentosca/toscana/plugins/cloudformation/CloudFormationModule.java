@@ -12,6 +12,7 @@ import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import com.amazonaws.auth.AWSCredentials;
 import com.scaleset.cfbuilder.core.Fn;
 import com.scaleset.cfbuilder.core.Module;
+import com.scaleset.cfbuilder.core.Parameter;
 import com.scaleset.cfbuilder.core.Resource;
 import com.scaleset.cfbuilder.core.Template;
 import com.scaleset.cfbuilder.ec2.Instance;
@@ -30,13 +31,13 @@ public class CloudFormationModule extends Module {
     public static final String MODE_500 = "000500";
     public static final String MODE_644 = "000644";
     public static final String OWNER_GROUP_ROOT = "root";
+    public static final String KEYNAME = "KeyName";
 
     // KeyName is a default input value
     private static final String KEYNAME_DESCRIPTION = "Name of an existing EC2 KeyPair to enable SSH access to the " +
         "instances";
     private static final String KEYNAME_TYPE = "AWS::EC2::KeyPair::KeyName";
     private static final String KEYNAME_CONSTRAINT_DESCRIPTION = "must be the name of an existing EC2 KeyPair.";
-    private static final String KEYNAME = "KeyName";
     private static final String USERDATA_NAME = "Join";
     private static final String USERDATA_DELIMITER = "";
     private static final String[] USERDATA_CONSTANT_PARAMS = {
@@ -174,6 +175,15 @@ public class CloudFormationModule extends Module {
             e.printStackTrace();
         }
         return "";
+    }
+
+    /**
+     * Returns the paramaters of the template belonging to this module.
+     *
+     * @return map with the parameters of the template
+     */
+    public Map<String, Parameter> getParameters() {
+        return this.template.getParameters();
     }
 
     /**

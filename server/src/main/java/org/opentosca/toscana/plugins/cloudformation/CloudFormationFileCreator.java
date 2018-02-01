@@ -4,12 +4,14 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
+import java.util.Map;
 
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.plugins.scripts.BashScript;
 import org.opentosca.toscana.plugins.scripts.EnvironmentCheck;
 import org.opentosca.toscana.plugins.util.TransformationFailureException;
 
+import com.scaleset.cfbuilder.core.Parameter;
 import org.apache.commons.io.Charsets;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -18,16 +20,15 @@ import org.slf4j.Logger;
  Class for building scripts and copying files needed for deployment of cloudformation templates.
  */
 public class CloudFormationFileCreator {
-    static final String CLI_COMMAND_CREATESTACK = "aws cloudformation deploy ";
-    static final String CLI_PARAM_STACKNAME = "--stack-name ";
-    static final String CLI_PARAM_TEMPLATEFILE = "--template-file ";
-    //TODO check if PARAMOVERRIDES are needed and get said parameters
-    // private static final String CLI_PARAM_PARAMOVERRIDES = "--parameter-overrides ";
-    static final String FILENAME_DEPLOY = "deploy";
-    static final String FILENAME_UPLOAD = "file-upload";
-    static final String TEMPLATE_YAML = "template.yaml ";
-    static final String CHANGE_TO_PARENT_DIRECTORY = "cd ..";
-    static final String RELATIVE_DIRECTORY_PREFIX = "../files/";
+    public static final String CLI_COMMAND_CREATESTACK = "aws cloudformation deploy ";
+    public static final String CLI_PARAM_STACKNAME = "--stack-name ";
+    public static final String CLI_PARAM_TEMPLATEFILE = "--template-file ";
+    public static final String CLI_PARAM_PARAMOVERRIDES = "--parameter-overrides ";
+    public static final String FILENAME_DEPLOY = "deploy";
+    public static final String FILENAME_UPLOAD = "file-upload";
+    public static final String TEMPLATE_YAML = "template.yaml";
+    public static final String CHANGE_TO_PARENT_DIRECTORY = "cd ..";
+    public static final String RELATIVE_DIRECTORY_PREFIX = "../files/";
 
     private final Logger logger;
     private CloudFormationModule cfnModule;
@@ -78,14 +79,30 @@ public class CloudFormationFileCreator {
      Creates a deploy script for deploying the cloudformation template.
      */
     private void createDeployScript() throws IOException {
-        // TODO maybe add the execution of the fileUploadScript
         logger.debug("Creating deploy script.");
         BashScript deployScript = new BashScript(cfnModule.getFileAccess(), FILENAME_DEPLOY);
         deployScript.append(EnvironmentCheck.checkEnvironment("aws"));
+        if (!cfnModule.getFilesToBeUploaded().isEmpty()) {
+            deployScript.append("source " + FILENAME_UPLOAD + ".sh");
+        }
         deployScript.append(CHANGE_TO_PARENT_DIRECTORY);
-        deployScript.append(CLI_COMMAND_CREATESTACK
-            + CLI_PARAM_STACKNAME + cfnModule.getStackName() + " "
-            + CLI_PARAM_TEMPLATEFILE + TEMPLATE_YAML);
+        StringBuilder deployCommand = new StringBuilder("");
+        deployCommand.append(CLI_COMMAND_CREATESTACK + CLI_PARAM_STACKNAME)
+            .append(cfnModule.getStackName()).append(" ")
+            .append(CLI_PARAM_TEMPLATEFILE).append(TEMPLATE_YAML);
+
+        // Add parameters if needed
+        Map<String, Parameter> parameters = cfnModule.getParameters();
+        if (!parameters.isEmpty()) {
+            deployCommand.append(" " + CLI_PARAM_PARAMOVERRIDES);
+            for (Map.Entry<String, Parameter> entry : parameters.entrySet()) {
+                String id = entry.getKey();
+                deployCommand.append(" ").append(id).append("=$").append(id).append("Var");
+            }
+        }
+
+        deployCommand.append(" &");
+        deployScript.append(deployCommand.toString());
     }
 
     /**
@@ -136,7 +153,6 @@ public class CloudFormationFileCreator {
      @throws IOException if scripts cannot be found
      */
     public void copyUtilScripts() throws IOException {
-        //TODO extract duplicate code or add to setUpDirectories?
         String resourcePath = "/cloudformation/scripts/util/";
         String outputPath = "output/scripts/util/";
         PluginFileAccess fileAccess = cfnModule.getFileAccess();

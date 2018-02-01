@@ -2,14 +2,15 @@ package org.opentosca.toscana.core.transformation;
 
 import java.io.File;
 import java.util.HashSet;
-import java.util.Map;
 
 import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarImpl;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.platform.Platform;
+import org.opentosca.toscana.core.transformation.properties.NoSuchPropertyException;
 import org.opentosca.toscana.core.transformation.properties.PlatformProperty;
+import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
 import org.opentosca.toscana.core.transformation.properties.PropertyType;
 
 import org.junit.Before;
@@ -19,12 +20,12 @@ import org.mockito.Mock;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
 
 public class TransformationPropertyHandlingTest extends BaseUnitTest {
     private static final String MOCK_CSAR_NAME = "test";
 
     private TransformationImpl transformation;
+    private PropertyInstance properties;
 
     @Mock
     private Log log;
@@ -46,69 +47,52 @@ public class TransformationPropertyHandlingTest extends BaseUnitTest {
         }
         Platform p = new Platform("test", "Test Platform", props);
         transformation = new TransformationImpl(csar, p, log, modelMock());
+        properties = transformation.getInputs();
     }
 
     @Test
     public void setValidProperty() throws Exception {
         for (int i = 0; i < 10; i++) {
-            transformation.setProperty("prop-" + i, "1");
+            properties.set("prop-" + i, "1");
         }
-        Map<String, String> property = transformation.getInputs().getPropertyValues();
         for (int i = 0; i < 10; i++) {
-            assertEquals("1", property.get("prop-" + i));
+            assertEquals("1", properties.get("prop-" + i).get());
         }
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void setInvalidPropertyValue() throws Exception {
-        transformation.setProperty("prop-1", "-13");
+        boolean success = properties.set("prop-1", "-13");
+        assertFalse(success);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NoSuchPropertyException.class)
     public void setInvalidPropertyKey() throws Exception {
-        transformation.setProperty("prop-112", "-13");
+        properties.set("prop-112", "-13");
     }
 
     @Test
-    public void checkAllPropsSetFalse() throws Exception {
-        for (int i = 0; i < 9; i++) {
-            transformation.setProperty("prop-" + i, "1");
-        }
-        assertFalse(transformation.allPropertiesSet());
-    }
-
-    @Test
-    public void checkAllPropsSetTrue() throws Exception {
-        for (int i = 0; i < 10; i++) {
-            transformation.setProperty("prop-" + i, "1");
-        }
-        assertTrue(transformation.allPropertiesSet());
-    }
-
-    @Test
-    public void checkAllRequiredPropertiesTrue() throws Exception {
+    public void checkRequiredPropertiesSetTrue() throws Exception {
         for (int i = 0; i < 5; i++) {
-            transformation.setProperty("prop-" + i, "1");
+            properties.set("prop-" + i, "1");
         }
-        assertTrue(transformation.allRequiredPropertiesSet());
-        assertFalse(transformation.allPropertiesSet());
+        assertTrue(properties.isValid());
     }
 
     @Test
     public void checkAllRequiredPropertiesFalse() throws Exception {
         for (int i = 0; i < 4; i++) {
-            transformation.setProperty("prop-" + i, "1");
+            properties.set("prop-" + i, "1");
         }
-        assertFalse(transformation.allRequiredPropertiesSet());
-        assertFalse(transformation.allPropertiesSet());
+        assertFalse(properties.isValid());
     }
 
     @Test
     public void checkEmptyProperties() throws Exception {
         Csar csar = new CsarImpl(new File(""), MOCK_CSAR_NAME, log);
         this.transformation = new TransformationImpl(csar,
-            new Platform("test", "test", new HashSet<>()), mock(Log.class), modelMock());
-        assertTrue(transformation.allRequiredPropertiesSet());
-        assertTrue(transformation.allPropertiesSet());
+            new Platform("test", "test", new HashSet<>()), logMock(), modelMock());
+        assertEquals(TransformationState.READY, transformation.getState());
+        assertTrue(transformation.getInputs().isValid());
     }
 }

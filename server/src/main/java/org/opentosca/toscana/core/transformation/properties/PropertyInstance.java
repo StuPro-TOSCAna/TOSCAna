@@ -1,10 +1,11 @@
 package org.opentosca.toscana.core.transformation.properties;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.TransformationState;
@@ -14,8 +15,7 @@ import org.opentosca.toscana.core.transformation.TransformationState;
  That means that this is storing the values that get assigned to the defined properties.
  */
 public class PropertyInstance {
-    private final Map<String, String> propertyValues;
-    private final Set<Property> properties;
+    private final Map<String, Property> properties;
     private final Transformation transformation;
 
     /**
@@ -28,37 +28,50 @@ public class PropertyInstance {
      */
     public PropertyInstance(Set<Property> properties, Transformation transformation) {
         this.transformation = transformation;
-        this.propertyValues = new HashMap<>();
-        this.properties = properties;
-        properties.forEach(e -> {
-            propertyValues.put(e.getKey(), e.getDefaultValue().orElse(null));
-        });
-        //Set state to input required if there are required properties
-        if (properties.stream().anyMatch(p -> p.isRequired() && !p.getDefaultValue().isPresent())) {
+        this.properties = properties.stream().collect(Collectors.toMap(Property::getKey, p -> p));
+
+        if (!properties.stream().allMatch(Property::isValid)) {
             transformation.setState(TransformationState.INPUT_REQUIRED);
         }
     }
 
-    /**
-     Sets the value of the property with its given key.
-
-     @throws IllegalArgumentException if a property with the given key cannot be found or if the entered value is invalid
-     */
-    public void setPropertyValue(PlatformProperty property, String value) {
-        this.setPropertyValue(property.getKey(), value);
+    public Map<String, Property> getProperties() {
+        return Collections.unmodifiableMap(properties);
     }
 
     /**
-     Checks if all Properties for the given Requirement type.
-
-     @return true if all properties have been set and are valid, false otherwise
+     @param key the key of a corresponding property
+     @return the value of the property matching given key
+     @throws NoSuchPropertyException if no property with given key exists
      */
-    public boolean allPropertiesSet() {
-        return checkPropsSet(true);
+    public Optional<String> get(String key) throws NoSuchPropertyException {
+        Property p = properties.get(key);
+        if (p != null) {
+            return p.getValue();
+        } else {
+            throw new NoSuchPropertyException(key);
+        }
     }
 
-    private boolean isPropertySet(Map<String, String> propInstance, Property property) {
-        return propInstance.get(property.getKey()) == null;
+    /**
+     @return the value of the corresponding property
+     @throws NoSuchElementException if no property with given key exists or
+     if no value or default value for corresponding property is set
+     */
+    public String getOrThrow(String key) {
+        Optional<String> value = null;
+        try {
+            value = get(key);
+            return value.orElseThrow(() -> new NoSuchElementException(
+                String.format("Property with key '%s' does neither have a value nor a default value," +
+                    "but is required to have one.", key)));
+        } catch (NoSuchPropertyException e) {
+            throw new NoSuchElementException(String.format("Property with key '%s' does not exist", e.getKey()));
+        }
+    }
+
+    public boolean isEmpty() {
+        return properties.isEmpty();
     }
 
     /**
@@ -66,63 +79,32 @@ public class PropertyInstance {
 
      @return true if all required properties are set and valid
      */
-    public boolean requiredPropertiesSet() {
-        return checkPropsSet(false);
-    }
-
-    /**
-     Checks if properties are set for a specific requirement type
-
-     @param allProps if this is false it will check if all required properties are set,
-     otherwise all properties have to be set
-     @return true if all Properties in the wanted scope are set and valid
-     */
-    private boolean checkPropsSet(boolean allProps) {
-        Map<String, String> propInstance = getPropertyValues();
-        for (Property property : properties) {
-            if ((property.isRequired() || allProps) && isPropertySet(propInstance, property)) {
-                return false;
-            }
-        }
-        return true;
+    public boolean isValid() {
+        return properties.values().stream().allMatch(Property::isValid);
     }
 
     /**
      Sets the value of the property with its given key.
 
-     @throws IllegalArgumentException if a property with given key cannot be found or if the entered value is invalid
+     @return true if corresponding property is now valid, false otherwise
      */
-    public void setPropertyValue(String key, String value) {
-        setPropertyInternal(key, value);
-        if (requiredPropertiesSet() && transformation.getState() == TransformationState.INPUT_REQUIRED) {
+    public boolean set(String key, String value) throws NoSuchPropertyException {
+        Property property = properties.get(key);
+        if (property != null) {
+            property.setValue(value);
+        } else {
+            throw new NoSuchPropertyException(key);
+        }
+        changeTransformationState();
+        return property.isValid();
+    }
+
+    private void changeTransformationState() {
+        boolean allValid = isValid();
+        if (allValid && transformation.getState() == TransformationState.INPUT_REQUIRED) {
             transformation.setState(TransformationState.READY);
+        } else if (!allValid && transformation.getState() == TransformationState.READY) {
+            transformation.setState(TransformationState.INPUT_REQUIRED);
         }
-    }
-
-    private void setPropertyInternal(String key, String value) {
-        for (Property p : properties) {
-            if (p.getKey().equals(key)) {
-                if (p.getType().validate(value)) {
-                    p.setValue(value);
-                    this.propertyValues.put(key, value);
-                    return;
-                } else {
-                    throw new IllegalArgumentException("The SimpleProperty value is invalid");
-                }
-            }
-        }
-        throw new IllegalArgumentException("A property with the given key does not exist. Key: " + key);
-    }
-
-    public Map<String, String> getPropertyValues() {
-        return Collections.unmodifiableMap(propertyValues);
-    }
-
-    public Optional<String> getPropertyValue(String key) {
-        return Optional.ofNullable(propertyValues.get(key));
-    }
-
-    public Set<Property> getPropertySchema() {
-        return Collections.unmodifiableSet(properties);
     }
 }

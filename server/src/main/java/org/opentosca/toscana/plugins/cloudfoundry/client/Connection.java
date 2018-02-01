@@ -5,7 +5,9 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.plugins.cloudfoundry.application.Service;
+import org.opentosca.toscana.plugins.util.TransformationFailureException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,7 +27,6 @@ import org.cloudfoundry.reactor.tokenprovider.PasswordGrantTokenProvider;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static java.lang.Boolean.TRUE;
 
@@ -35,7 +36,7 @@ import static java.lang.Boolean.TRUE;
  */
 public class Connection {
 
-    private final static Logger logger = LoggerFactory.getLogger(Connection.class);
+    private Logger logger;
 
     private String userName;
     private String password;
@@ -44,40 +45,63 @@ public class Connection {
     private String space;
     private CloudFoundryOperations cloudFoundryOperations;
 
+    /**
+     creates a connection to a cloud foundry instance
+     will throw a transformation failure exception when no connection could established
+
+     @param username     username of the cloud foundry instance
+     @param password     password of the cloud foundry instance
+     @param apiHost      url to the provider
+     @param organization organisation of the user instance
+     @param space        space of the user instance
+     */
     public Connection(String username, String password,
                       String apiHost, String organization,
-                      String space) {
+                      String space, TransformationContext context) {
 
         this.userName = username;
         this.password = password;
         this.apiHost = apiHost;
         this.organization = organization;
         this.space = space;
+        this.logger = context.getLogger(getClass());
 
+        logger.info("Try to connect to CF Instance");
         this.cloudFoundryOperations = createCloudFoundryOperations();
     }
 
+    /**
+     create a Connection to a cloud foundry instance.
+     A CLoudFoundryOperation could send cf commands
+     */
     private CloudFoundryOperations createCloudFoundryOperations() {
-        DefaultConnectionContext connectionContext = DefaultConnectionContext.builder()
-            .apiHost(apiHost)
-            .build();
+        CloudFoundryOperations cloudFoundryOperations;
+        try {
+            DefaultConnectionContext connectionContext = DefaultConnectionContext.builder()
+                .apiHost(apiHost)
+                .build();
 
-        TokenProvider tokenProvider = PasswordGrantTokenProvider.builder()
-            .password(password)
-            .username(userName)
-            .build();
+            TokenProvider tokenProvider = PasswordGrantTokenProvider.builder()
+                .password(password)
+                .username(userName)
+                .build();
 
-        ReactorCloudFoundryClient reactorClient = ReactorCloudFoundryClient.builder()
-            .connectionContext(connectionContext)
-            .tokenProvider(tokenProvider)
-            .build();
+            ReactorCloudFoundryClient reactorClient = ReactorCloudFoundryClient.builder()
+                .connectionContext(connectionContext)
+                .tokenProvider(tokenProvider)
+                .build();
 
-        CloudFoundryOperations cloudFoundryOperations = DefaultCloudFoundryOperations.builder()
-            .cloudFoundryClient(reactorClient)
-            .organization(organization)
-            .space(space)
-            .build();
+            cloudFoundryOperations = DefaultCloudFoundryOperations.builder()
+                .cloudFoundryClient(reactorClient)
+                .organization(organization)
+                .space(space)
+                .build();
+        } catch (Exception e) {
+            logger.error("Cant connect to Cloud Foundry instance");
+            throw new TransformationFailureException("Could not connect to Cloud Foundry instance, Please check your credentials", e);
+        }
 
+        logger.info("Connect successfully to Cloud Foundry instance");
         return cloudFoundryOperations;
     }
 
@@ -132,6 +156,10 @@ public class Connection {
         return succeed;
     }
 
+    /**
+     deploys a small application to the cloud foundry instance.
+     contains only default values, the application represents not an instance of the template model
+     */
     private boolean deployApplication(Path pathToApplication, String name,
                                       List<Service> services) throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
@@ -164,6 +192,9 @@ public class Connection {
         return succeed.get();
     }
 
+    /**
+     creates a service on the cloud foundry instance
+     */
     private void createService(String serviceInstanceName, String serviceName, String plan)
         throws InterruptedException {
 

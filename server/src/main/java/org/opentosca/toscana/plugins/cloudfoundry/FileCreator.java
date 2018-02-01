@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
+import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.plugins.cloudfoundry.application.Application;
 import org.opentosca.toscana.plugins.cloudfoundry.application.Service;
 import org.opentosca.toscana.plugins.cloudfoundry.application.ServiceTypes;
@@ -16,6 +17,7 @@ import org.opentosca.toscana.plugins.scripts.EnvironmentCheck;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.json.JSONException;
+import org.slf4j.Logger;
 
 import static org.opentosca.toscana.core.plugin.lifecycle.AbstractLifecycle.OUTPUT_DIR;
 import static org.opentosca.toscana.plugins.cloudfoundry.application.ManifestAttributes.DOMAIN;
@@ -43,16 +45,28 @@ public class FileCreator {
     public static final String APPLICATION_FOLDER = "app";
     public static String deploy_name = "application";
 
+    private TransformationContext context;
+    private Logger logger;
+
     private final PluginFileAccess fileAccess;
     private List<Application> applications;
 
-    public FileCreator(PluginFileAccess fileAccess, List<Application> applications) {
+    public FileCreator(PluginFileAccess fileAccess, List<Application> applications, TransformationContext context) {
         this.fileAccess = fileAccess;
         this.applications = applications;
+        this.logger = context.getLogger(getClass());
+        this.context = context;
     }
 
+    /**
+     creates all files which are necessary for deployment
+     Each application has to be filled with information
+     */
     public void createFiles() throws IOException, JSONException {
+        logger.info("Create manifest.yml");
         createManifest();
+
+        logger.info("Create deploy script");
         createDeployScript();
 
         for (Application application : applications) {
@@ -61,6 +75,10 @@ public class FileCreator {
         }
     }
 
+    /**
+     creates the manifest
+     multiple applications are in the same manifest
+     */
     private void createManifest() throws IOException {
         createManifestHead();
         for (Application application : applications) {
@@ -72,11 +90,18 @@ public class FileCreator {
         }
     }
 
+    /**
+     creates once the manifest header
+     */
     private void createManifestHead() throws IOException {
         String manifestHead = String.format(MANIFESTHEAD);
         fileAccess.access(MANIFEST_PATH).appendln(manifestHead).close();
     }
 
+    /**
+     add the name block to manifest.
+     after this all application information will be inserted
+     */
     private void addNameToManifest(Application application) throws IOException {
         String nameBlock = String.format("- %s: %s", NAMEBLOCK, application.getName());
         fileAccess.access(MANIFEST_PATH).appendln(nameBlock).close();
@@ -87,9 +112,15 @@ public class FileCreator {
      */
     private void addPathToApplication(Application application) throws IOException {
         String pathAddition = String.format("  %s: ../%s", PATH.getName(), APPLICATION_FOLDER + application.getApplicationNumber());
+
+        logger.info("Add path to application {} to manifest", pathAddition);
         fileAccess.access(MANIFEST_PATH).appendln(pathAddition).close();
     }
 
+    /**
+     creates a environment section in the manifest and adds all setted environments variables to it
+     if there is an empty environment variable a default value will be added
+     */
     private void createEnvironmentVariables(Application application) throws IOException {
         Map<String, String> envVariables = application.getEnvironmentVariables();
         if (!envVariables.isEmpty()) {
@@ -97,6 +128,7 @@ public class FileCreator {
             environmentVariables.add(String.format("  %s:", ENVIRONMENT.getName()));
             for (Map.Entry<String, String> entry : envVariables.entrySet()) {
                 environmentVariables.add(String.format("    %s: %s", entry.getKey(), entry.getValue()));
+                logger.debug("Add environment variable {} value: {} to manifest", entry.getKey(), entry.getValue());
             }
             for (String env : environmentVariables) {
                 fileAccess.access(MANIFEST_PATH).appendln(env).close();
@@ -115,6 +147,7 @@ public class FileCreator {
             services.add(String.format("  %s:", SERVICE.getName()));
             for (Map.Entry<String, ServiceTypes> service : appServices.entrySet()) {
                 services.add(String.format("    - %s", service.getKey()));
+                logger.debug("Add service {} to manifest", service.getKey());
             }
             for (String service : services) {
                 fileAccess.access(MANIFEST_PATH).appendln(service).close();
@@ -133,9 +166,11 @@ public class FileCreator {
         deployScript.append(EnvironmentCheck.checkEnvironment("cf"));
 
         //handle services
+        logger.debug("Handle services");
         handleServices(deployScript);
 
         //replace
+        logger.debug("Replace strings");
         replaceStrings(deployScript);
 
         //push applications
@@ -145,7 +180,7 @@ public class FileCreator {
 
         //read credentials, replace, executeScript, configureMysql
         for (Application application : applications) {
-            Deployment deployment = new Deployment(deployScript, application, fileAccess);
+            Deployment deployment = new Deployment(deployScript, application, fileAccess, context);
 
             //read credentials
             readCredentials(deployment, application);
@@ -202,7 +237,7 @@ public class FileCreator {
      */
     private void handleServices(BashScript deployScript) throws IOException {
         for (Application application : applications) {
-            Deployment deployment = new Deployment(deployScript, application, fileAccess);
+            Deployment deployment = new Deployment(deployScript, application, fileAccess, context);
 
             //only one time all service offerings should be printed to the deploy script
             deployment.treatServices();
@@ -218,13 +253,16 @@ public class FileCreator {
      */
     private void replaceStrings(BashScript deployScript) throws IOException {
         for (Application application : applications) {
-            Deployment deployment = new Deployment(deployScript, application, fileAccess);
+            Deployment deployment = new Deployment(deployScript, application, fileAccess, context);
             if (!application.getExecuteCommands().isEmpty()) {
                 Map<String, String> executeCommands = application.getExecuteCommands();
 
                 for (Map.Entry<String, String> command : executeCommands.entrySet()) {
                     //TODO: add lists which strings should be replaced. In 12 Factor it is probably not necessary.
-                    deployment.replaceStrings(command.getKey(), "/var/www/html/", "/home/vcap/app/htdocs/");
+                    String findStr = "/var/www/html/";
+                    String replaceStr = "/home/vcap/app/htdocs/";
+                    deployment.replaceStrings(command.getKey(), findStr, replaceStr);
+                    logger.info("Add command to replace all occurence of {} with {}", findStr, replaceStr);
                 }
             }
         }
@@ -234,10 +272,14 @@ public class FileCreator {
      detect if additional buildpacks are needed and add them
      */
     private void createBuildpackAdditionsFile(Application application) throws IOException, JSONException {
-        BuildpackDetector buildpackDetection = new BuildpackDetector(application, fileAccess);
+        BuildpackDetector buildpackDetection = new BuildpackDetector(application, fileAccess, context);
         buildpackDetection.detectBuildpackAdditions();
     }
 
+    /**
+     fills in the attributes of the application
+     default is a random route attribute to avoid a deployment failure because the route to the app already exists
+     */
     private void createAttributes(Application application) throws IOException {
 
         if (!application.getAttributes().isEmpty()) {
@@ -257,9 +299,13 @@ public class FileCreator {
         }
     }
 
+    /**
+     insert all setted files to the application folder
+     */
     private void insertFiles(Application application) throws IOException {
         for (String filePath : application.getFilePaths()) {
             String path = APPLICATION_FOLDER + application.getApplicationNumber() + "/" + filePath;
+            logger.debug("Copy file {} to {}", filePath, path);
             fileAccess.copy(filePath, path);
         }
     }

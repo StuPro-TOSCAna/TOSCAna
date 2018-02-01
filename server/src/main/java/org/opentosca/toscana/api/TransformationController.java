@@ -37,6 +37,7 @@ import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.logging.LogEntry;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.platform.PlatformService;
+import org.opentosca.toscana.core.transformation.properties.NoSuchPropertyException;
 import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
 
@@ -669,7 +670,7 @@ public class TransformationController {
     ) {
         Csar csar = findByCsarId(csarId);
         Transformation transformation = findTransformationByPlatform(csar, platformId);
-        checkTransformationsForProperties(transformation, true);
+        checkTransformationState(transformation);
         //TODO add filtering depending on the transformation state (i.e. Transforming, Deploying...)
         PropertyInstance instance = transformation.getInputs();
         List<PropertyWrap> propertyWrapList = wrapProperties(instance);
@@ -751,16 +752,20 @@ public class TransformationController {
     ) {
         Csar csar = findByCsarId(csarId);
         Transformation transformation = findTransformationByPlatform(csar, platformId);
-        checkTransformationsForProperties(transformation, false);
+        PropertyInstance properties = transformation.getInputs();
+        checkTransformationState(transformation);
         Map<String, Boolean> successes = new HashMap<>();
         boolean somethingFailed = false;
         //Set The Properties and check their validity
         for (PropertyWrap entry : setPropertiesRequest.getProperties()) {
             try {
-                transformation.setProperty(entry.getKey(), entry.getValue());
-                successes.put(entry.getKey(), true);
-            } catch (Exception e) {
-                logger.error("Failed to set proeprties for transformation '%s'", transformation, e);
+                boolean success = properties.set(entry.getKey(), entry.getValue());
+                successes.put(entry.getKey(), success);
+                if (!success) {
+                    somethingFailed = true;
+                }
+            } catch (NoSuchPropertyException e) {
+                logger.error("Failed to set properties for transformation '%s'", transformation, e);
                 somethingFailed = true;
                 successes.put(entry.getKey(), false);
             }
@@ -855,15 +860,14 @@ public class TransformationController {
     }
 
     /**
-     Checks if the given transformation exists and is in the required state otherwise a
-     TransformationNotFoundException or IllegalTransformationsStateException is thrown
+     Checks if the given transformation is in the required state.
+     If not, a IllegalTransformationsStateException is thrown.
      */
-    private void checkTransformationsForProperties(Transformation transformation, boolean isGetProps) {
+    private void checkTransformationState(Transformation transformation) {
         List<TransformationState> validStates = Arrays.asList(INPUT_REQUIRED, READY);
-        if (transformation == null) {
-            throw new TransformationNotFoundException();
-        } else if (!validStates.contains(transformation.getState()) && !isGetProps) {
-            throw new IllegalTransformationStateException("The transformation is not in the INPUT_REQUIRED state");
+        if (!validStates.contains(transformation.getState())) {
+            throw new IllegalTransformationStateException(
+                String.format("The transformation is not in one of the states '%s'", validStates));
         }
     }
 
@@ -892,12 +896,12 @@ public class TransformationController {
 
     private List<PropertyWrap> wrapProperties(PropertyInstance instance) {
         List<PropertyWrap> propertyWrapList = new ArrayList<>();
-        for (Property property : instance.getPropertySchema()) {
+        for (Property property : instance.getProperties().values()) {
             propertyWrapList.add(new PropertyWrap(
                     property.getKey(),
                     property.getType().getTypeName(),
                     property.getDescription().orElse(null),
-                    instance.getPropertyValues().get(property.getKey()),
+                    property.getValue().orElse(null),
                     property.isRequired()
                 )
             );

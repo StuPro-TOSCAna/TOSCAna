@@ -27,40 +27,9 @@ public interface Transformation {
     Platform getPlatform();
 
     /**
-     Sets the value of the property with its given name.
-
-     @throws IllegalArgumentException if a property with the given name cannot be found or if entered value is invalid
-     */
-    default void setProperty(String key, String value) {
-        getInputs().setPropertyValue(key, value);
-    }
-
-    /**
      @return Key(SimpleProperty Name)-Value map of all properties that have been set explicitly!
      */
     PropertyInstance getInputs();
-
-    /**
-     Checks if all Properties for the given Requirement type are set.
-     <p>
-     This is just a "shortcut" for <code>getProperties().allPropertiesSet(type)</code>
-
-     @return true if all properties have been set and are valid, false otherwise
-     */
-    default boolean allPropertiesSet() {
-        return getInputs().allPropertiesSet();
-    }
-
-    /**
-     Checks if all Properties for the given Requirement type are set.
-     <p>
-     This is just a "shortcut" for <code>getProperties().requiredPropertiesSet(type)</code>
-
-     @return true if all required properties have been set and are valid, false otherwise
-     */
-    default boolean allRequiredPropertiesSet() {
-        return getInputs().requiredPropertiesSet();
-    }
 
     /**
      Returns the log of this transformation
