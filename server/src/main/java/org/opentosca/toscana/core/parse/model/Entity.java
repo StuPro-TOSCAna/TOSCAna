@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+import org.opentosca.toscana.core.parse.ToscaTemplateException;
 import org.opentosca.toscana.core.parse.converter.TypeConverter;
 import org.opentosca.toscana.core.parse.converter.util.AttributeNotSetException;
 import org.opentosca.toscana.model.BaseToscaElement;
@@ -81,14 +82,14 @@ public abstract class Entity implements Comparable<Entity> {
 
     public Entity getChildOrThrow(String key) {
         Optional<Entity> optionalEntity = getChild(key);
-        return optionalEntity.orElseThrow(() -> new IllegalStateException(
+        return optionalEntity.orElseThrow(() -> new ToscaTemplateException(
             String.format("Entity '%s' is referenced but does not exist", getId().descend(key))
         ));
     }
 
     public Entity getChildOrThrow(ToscaKey key) {
         Optional<Entity> optionalEntity = getChild(key);
-        return optionalEntity.orElseThrow(() -> new IllegalStateException(
+        return optionalEntity.orElseThrow(() -> new ToscaTemplateException(
             String.format("Entity '%s' is referenced but does not exist", getId().descend(key))
         ));
     }
