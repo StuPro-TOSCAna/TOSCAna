@@ -45,10 +45,13 @@ public class CsarServiceImpl implements CsarService {
     private void validate(Csar csar) throws InvalidCsarException {
         LifecyclePhase validatePhase = csar.getLifecyclePhase(Csar.Phase.VALIDATE);
         validatePhase.setState(LifecyclePhase.State.EXECUTING);
+        logger.info("Validating csar '{}'", csar.getIdentifier());
+        logger.debug("  > Validating csar with winery parser", csar.getIdentifier());
         // TODO integrate winery parser as validator
         // test whether EffectiveModel can get created without throwing an error
         try {
             // test if conversion does evoke errors
+            logger.info("  > Constructing service template for validation", csar.getIdentifier());
             effectiveModelFactory.create(csar);
             validatePhase.setState(LifecyclePhase.State.DONE);
         } catch (Exception e) {

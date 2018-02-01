@@ -10,7 +10,6 @@ import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.core.plugin.lifecycle.AbstractLifecycle;
 import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.transformation.TransformationContext;
-import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.model.EffectiveModelFactory;
 import org.opentosca.toscana.model.node.MysqlDatabase;
@@ -25,7 +24,6 @@ import org.apache.commons.io.FileUtils;
 import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -59,8 +57,6 @@ public class FileCreatorTest extends BaseUnitTest {
     private FileCreator fileCreator;
     private Application testApp;
 
-    @Mock
-    private Log log;
     private File targetDir;
     private String appName;
     private final String outputPath = AbstractLifecycle.SCRIPTS_DIR_PATH;
@@ -94,7 +90,7 @@ public class FileCreatorTest extends BaseUnitTest {
         targetDir = new File(tmpdir, "targetDir");
         sourceDir.mkdir();
         targetDir.mkdir();
-        fileAccess = new PluginFileAccess(sourceDir, targetDir, log);
+        fileAccess = new PluginFileAccess(sourceDir, targetDir, logMock());
         List<Application> applications = new ArrayList<>();
         applications.add(testApp);
         fileCreator = new FileCreator(fileAccess, applications, context);
@@ -292,7 +288,7 @@ public class FileCreatorTest extends BaseUnitTest {
         app.addService(service1, ServiceTypes.MYSQL);
         secondApp.addService("mydb", ServiceTypes.MYSQL);
 
-        EffectiveModel lamp = new EffectiveModelFactory().create(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, log);
+        EffectiveModel lamp = new EffectiveModelFactory().create(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, logMock());
         RootNode webApplicationNode = null;
         RootNode mysqlDatabaseNode = null;
         for (RootNode node : lamp.getNodes()) {

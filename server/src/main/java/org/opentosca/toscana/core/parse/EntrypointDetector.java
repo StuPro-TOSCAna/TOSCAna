@@ -33,7 +33,7 @@ public class EntrypointDetector {
         }
         if (entryPoints.length == 1) {
             File entryPoint = entryPoints[0].getAbsoluteFile();
-            logger.info("Detected entry point is '{}'", entryPoint.getName());
+            logger.info("Detected entry point of CSAR is '{}'", entryPoint.getName());
             return entryPoint;
         } else if (entryPoints.length > 1) {
             logger.warn("Parsing failed: more than one top level yaml file encountered in given csar");
