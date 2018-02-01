@@ -35,7 +35,6 @@ import org.opentosca.toscana.core.transformation.properties.PropertyType;
 import ch.qos.logback.classic.Level;
 import com.jayway.jsonpath.JsonPath;
 import org.apache.commons.io.FileUtils;
-import org.assertj.core.util.Lists;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Before;
@@ -470,7 +469,8 @@ public class TransformationControllerTest extends BaseSpringTest {
             .andDo(print())
             .andExpect(status().is(200))
             .andExpect(content().contentType(DEFAULT_CHARSET_HAL_JSON))
-            .andExpect(jsonPath("$.phases").value(Lists.emptyList()))
+            .andExpect(jsonPath("$.phases").isArray())
+            .andExpect(jsonPath("$.phases").isEmpty())
             .andExpect(jsonPath("$.platform").value(VALID_PLATFORM_NAME))
             .andExpect(jsonPath("$.status").value("INPUT_REQUIRED"))
             .andReturn();
