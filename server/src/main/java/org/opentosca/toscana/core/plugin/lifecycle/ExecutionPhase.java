@@ -13,7 +13,9 @@ import org.opentosca.toscana.util.ExceptionAwareVoidFunction;
  this is equal to the <code>LifecycleT</code> of the Plugin that implements the
  LifecycleAware Plugin Class. */
 public class ExecutionPhase<LifecycleT extends TransformationLifecycle> {
+
     private String name;
+    private State state = State.PENDING;
     private ExceptionAwareVoidFunction<LifecycleT> function;
     private Predicate<TransformationContext> executionCheck;
 
@@ -36,17 +38,28 @@ public class ExecutionPhase<LifecycleT extends TransformationLifecycle> {
     }
 
     public boolean shouldExecute(TransformationContext context) {
-        return executionCheck.test(context);
+        boolean shouldExecute = executionCheck.test(context);
+        if (!shouldExecute && getState() == State.PENDING) {
+            setState(State.SKIPPING);
+        }
+        return shouldExecute;
     }
 
     /**
-     Calls the given function
+     Calls the given function if the phase should execute. Else does nothing.
 
      @param lifecycle the lifecycle object to call the function on/with
      @throws Exception if you throw an exception inside of the Function, the transformation will fail.
      */
     public void execute(LifecycleT lifecycle) throws Exception {
-        function.apply(lifecycle);
+        try {
+            setState(State.EXECUTING);
+            function.apply(lifecycle);
+            setState(State.DONE);
+        } catch (Exception e) {
+            setState(State.ERROR);
+            throw e;
+        }
     }
 
     /**
@@ -54,5 +67,26 @@ public class ExecutionPhase<LifecycleT extends TransformationLifecycle> {
      */
     public String getName() {
         return name;
+    }
+
+    public State getState() {
+        return state;
+    }
+
+    public void setState(State state) {
+        this.state = state;
+    }
+
+    public void skip() {
+        setState(State.SKIPPED);
+    }
+
+    public enum State {
+        PENDING,
+        SKIPPING,
+        EXECUTING,
+        SKIPPED,
+        DONE,
+        ERROR
     }
 }

@@ -114,6 +114,7 @@ public abstract class TOSCAnaPlugin<LifecycleT extends TransformationLifecycle> 
                 logger.info("Executing phase '{}' ({} of {})", phase.getName(), (i + 1), taskCount);
                 phase.execute(lifecycleInterface);
             } else {
+                phase.skip();
                 logger.info("Skipping phase '{}' ({} of {})", phase.getName(), (i + 1), taskCount);
             }
         }
