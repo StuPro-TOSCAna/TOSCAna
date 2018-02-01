@@ -44,9 +44,10 @@ public interface Csar {
      */
     File getContentDir();
 
-    public enum Phase {
+    enum Phase {
         UNZIP("unzip"),
-        VALIDATE("validate");
+        VALIDATE("validate"), 
+        PARSE("parse");
 
         private final String name;
     

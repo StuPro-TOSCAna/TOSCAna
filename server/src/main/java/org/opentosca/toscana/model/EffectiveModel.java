@@ -12,6 +12,7 @@ import org.opentosca.toscana.core.parse.converter.TypeWrapper;
 import org.opentosca.toscana.core.parse.model.ServiceGraph;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.properties.Property;
+import org.opentosca.toscana.core.util.LifecyclePhase;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.relation.RootRelationship;
 import org.opentosca.toscana.model.requirement.Requirement;
@@ -32,11 +33,19 @@ public class EffectiveModel {
     private boolean initialized = false;
 
     protected EffectiveModel(Csar csar) throws InvalidCsarException {
-        Log log = csar.getLog();
-        EntrypointDetector entrypointDetector = new EntrypointDetector(log);
-        this.logger = log.getLogger(getClass());
-        File template = entrypointDetector.findEntryPoint(csar.getContentDir());
-        this.serviceGraph = new ServiceGraph(template, csar.getLog());
+        LifecyclePhase parsePhase = csar.getLifecyclePhase(Csar.Phase.PARSE);
+        try {
+            parsePhase.setState(LifecyclePhase.State.EXECUTING);
+            Log log = csar.getLog();
+            EntrypointDetector entrypointDetector = new EntrypointDetector(log);
+            this.logger = log.getLogger(getClass());
+            File template = entrypointDetector.findEntryPoint(csar.getContentDir());
+            this.serviceGraph = new ServiceGraph(template, csar.getLog());
+            parsePhase.setState(LifecyclePhase.State.DONE);
+        } catch (Exception e) {
+            parsePhase.setState(LifecyclePhase.State.FAILED);
+            throw e;
+        }
     }
 
     protected EffectiveModel(File template, Log log) {

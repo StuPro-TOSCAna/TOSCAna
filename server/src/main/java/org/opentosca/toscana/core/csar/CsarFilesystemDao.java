@@ -153,17 +153,20 @@ public class CsarFilesystemDao implements CsarDao {
     private void readFromDisk() {
         csarMap.clear();
         dataDir.mkdir();
+        logger.info("Reading CSARs from repository");
         File[] files = dataDir.listFiles();
         for (File file : files) {
             if (isCsarDir(file)) {
                 String id = file.getName();
                 CsarImpl csar = new CsarImpl(getRootDir(id), id, getLog(id));
+                csar.getLifecyclePhase(Csar.Phase.UNZIP).setState(LifecyclePhase.State.DONE);
+                csar.getLifecyclePhase(Csar.Phase.VALIDATE).setState(LifecyclePhase.State.SKIPPED);
                 csarMap.put(csar.getIdentifier(), csar);
                 List<Transformation> transformations = transformationDao.find(csar);
                 csar.setTransformations(transformations);
             }
         }
-        logger.debug("Read csars from disk");
+        logger.info("Found {} CSARs in repository", csarMap.size());
     }
 
     /**
