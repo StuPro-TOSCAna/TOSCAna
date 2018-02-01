@@ -140,10 +140,10 @@ public class ServiceGraphTest extends BaseUnitTest {
     public void allInputsSetTest() {
         currentFile = INPUT_NO_VALUE;
         ServiceGraph graph = getGraph();
-        assertFalse(graph.requiredInputsSet());
+        assertFalse(graph.inputsValid());
         currentFile = INPUT;
         graph = getGraph();
-        assertTrue(graph.requiredInputsSet());
+        assertTrue(graph.inputsValid());
     }
 
     private String get(String... context) {

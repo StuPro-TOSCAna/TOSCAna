@@ -43,7 +43,7 @@ public class CloudFormationLifecycleTest extends BaseUnitTest {
         PluginFileAccess accessL = new PluginFileAccess(
             new File(tmpdir, "sourceDir"),
             new File(tmpdir, "targetDir"),
-            mock(Log.class));
+            logMock());
         EffectiveModel effectiveModel = new EffectiveModelFactory().create(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, logMock());
         PluginFileAccess access = spy(accessL);
         doNothing().when(access).copy(anyString(), anyString());

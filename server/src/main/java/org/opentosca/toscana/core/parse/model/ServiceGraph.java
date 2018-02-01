@@ -58,7 +58,7 @@ public class ServiceGraph extends SimpleDirectedGraph<Entity, Connection> {
             EntityId id = new EntityId(new ArrayList<>());
             ToscaStructure.buildBasicStructure(this); // in case this has not already been established automatically
             populateGraph(snakeNode, id);
-            if (requiredInputsSet()) {
+            if (inputsValid()) {
                 finalizeGraph();
             }
         } catch (FileNotFoundException e) {
@@ -109,8 +109,8 @@ public class ServiceGraph extends SimpleDirectedGraph<Entity, Connection> {
     public void finalizeGraph() {
         if (finalized) return;
         finalized = true;
-        if (!requiredInputsSet()) {
-            logger.error("Required inputs must be set before graph can get finalized.");
+        if (!inputsValid()) {
+            logger.error("Inputs must be set and valid before graph can get finalized.");
             throw new IllegalStateException();
         }
         GraphNormalizer.normalize(this);
@@ -121,10 +121,10 @@ public class ServiceGraph extends SimpleDirectedGraph<Entity, Connection> {
      @return true if all declared tosca inputs have a value assigned
      (or have a default value, or are flagged as not required), false otherwise.
      */
-    public boolean requiredInputsSet() {
+    public boolean inputsValid() {
         Map<String, Property> inputs = getInputs();
         return inputs.values().stream()
-            .allMatch(p -> p.getValue().isPresent() || p.getDefaultValue().isPresent() || !p.isRequired());
+            .allMatch(Property::isValid);
     }
 
     public Map<String, Property> getInputs() {

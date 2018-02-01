@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Random;
 
 import org.opentosca.toscana.core.BaseIntegrationTest;
-import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.plugins.kubernetes.docker.dockerfile.builder.DockerfileBuilder;
 import org.opentosca.toscana.plugins.kubernetes.docker.dockerfile.builder.DockerfileBuilderTest;
@@ -38,7 +37,7 @@ public abstract class BaseDockerfileTest extends BaseIntegrationTest {
     protected File dockerWorkdir;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         inputDir = new File(tmpdir, INPUT_DIR_NAME);
         workDir = new File(tmpdir, WORKING_DIR_NAME);
         dockerWorkdir = new File(workDir, WORKING_DIR_SUBFOLDER_NAME);

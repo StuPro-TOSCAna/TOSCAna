@@ -1,12 +1,12 @@
 package org.opentosca.toscana.plugins.cloudformation;
 
 import java.io.IOException;
-import java.util.Map;
 import java.util.Set;
 
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.core.plugin.lifecycle.AbstractLifecycle;
 import org.opentosca.toscana.core.transformation.TransformationContext;
+import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
 import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.RootNode;
@@ -37,10 +37,10 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
     public CloudFormationLifecycle(TransformationContext context) throws IOException {
         super(context);
         model = context.getModel();
-        Map<String, String> properties = context.getProperties().getPropertyValues();
-        String awsRegion = properties.get(AWS_REGION_KEY);
-        String keyId = properties.get(AWS_ACCESS_KEY_ID_KEY);
-        String secretKey = properties.get(AWS_SECRET_KEY_KEY);
+        PropertyInstance properties = context.getProperties();
+        String awsRegion = properties.getOrThrow(AWS_REGION_KEY);
+        String keyId = properties.getOrThrow(AWS_ACCESS_KEY_ID_KEY);
+        String secretKey = properties.getOrThrow(AWS_SECRET_KEY_KEY);
         AWSCredentials awsCredentials = new BasicAWSCredentials(keyId, secretKey);
         this.fileAccess = context.getPluginFileAccess();
         this.cfnModule = new CloudFormationModule(fileAccess, awsRegion, awsCredentials);
