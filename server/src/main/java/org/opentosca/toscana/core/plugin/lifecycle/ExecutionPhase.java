@@ -5,6 +5,10 @@ import java.util.function.Predicate;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.util.ExceptionAwareVoidFunction;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  This represents a wrapper for a execution phase e.g. the transform phase.
  A Phase gets defined with a Function and a name
@@ -12,6 +16,7 @@ import org.opentosca.toscana.util.ExceptionAwareVoidFunction;
  @param <LifecycleT> The type of the Transformation Lifecycle Interface,
  this is equal to the <code>LifecycleT</code> of the Plugin that implements the
  LifecycleAware Plugin Class. */
+@ApiModel
 public class ExecutionPhase<LifecycleT extends TransformationLifecycle> {
 
     private String name;
@@ -62,23 +67,35 @@ public class ExecutionPhase<LifecycleT extends TransformationLifecycle> {
         }
     }
 
+    public void skip() {
+        setState(State.SKIPPED);
+    }
+
     /**
      @return the display name of the execution phase
      */
+    @ApiModelProperty(
+        required = true,
+        notes = "the name of this execution phase",
+        example = "deploy"
+    )
+    @JsonProperty("name")
     public String getName() {
         return name;
     }
 
+    @ApiModelProperty(
+        required = true,
+        notes = "the current state of the phase. Must be one of { PENDING, SKIPPING, EXECUTING, SKIPPED, DONE, ERROR }",
+        example = "PENDING"
+    )
+    @JsonProperty("state")
     public State getState() {
         return state;
     }
 
     private void setState(State state) {
         this.state = state;
-    }
-
-    public void skip() {
-        setState(State.SKIPPED);
     }
 
     public enum State {

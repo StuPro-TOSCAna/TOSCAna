@@ -1,21 +1,23 @@
 package org.opentosca.toscana.retrofit.model;
 
+import java.util.List;
+
 import org.opentosca.toscana.retrofit.model.hal.HALResource;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Transformation extends HALResource {
     private String status;
-    private Long progress;
     private String platform;
+    private List<ExecutionPhase> phases;
 
     public Transformation(
         @JsonProperty("status") String status,
-        @JsonProperty("progress") Long progress,
+        @JsonProperty("phases") List<ExecutionPhase> phases,
         @JsonProperty("platform") String platform
     ) {
         this.status = status;
-        this.progress = progress;
+        this.phases = phases;
         this.platform = platform;
     }
 
@@ -24,9 +26,9 @@ public class Transformation extends HALResource {
         return TransformationState.valueOf(status);
     }
 
-    @JsonProperty("progress")
-    public Long getProgress() {
-        return progress;
+    @JsonProperty("phases")
+    public List<ExecutionPhase> getPhases() {
+        return phases;
     }
 
     @JsonProperty("platform")
