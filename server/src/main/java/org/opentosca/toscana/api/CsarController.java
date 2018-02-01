@@ -13,10 +13,13 @@ import org.opentosca.toscana.api.exceptions.ActiveTransformationsException;
 import org.opentosca.toscana.api.exceptions.CsarNotFoundException;
 import org.opentosca.toscana.api.model.CsarResponse;
 import org.opentosca.toscana.api.model.CsarUploadErrorResponse;
+import org.opentosca.toscana.api.model.LogResponse;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarService;
 import org.opentosca.toscana.core.parse.InvalidCsarException;
 import org.opentosca.toscana.core.transformation.TransformationState;
+import org.opentosca.toscana.core.transformation.logging.Log;
+import org.opentosca.toscana.core.transformation.logging.LogEntry;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -260,5 +263,79 @@ public class CsarController {
     private Csar getCsarForName(@PathVariable("name") String name) {
         Optional<Csar> optionalCsar = csarService.getCsar(name);
         return optionalCsar.orElseThrow(CsarNotFoundException::new);
+    }
+
+    /**
+     Returns the logs from a given start index to the current end of the logger file. If the start index is higher then
+     the current end index, a empty list is returned! The start parameter is a URL encoded parameter
+     (<code>?start=0</code>)
+     <p>
+     Accessed with http call <code>GET /csars/{csar}/transformations/{platform}/logs</code>
+     <table summary="">
+     <tr>
+     <td>HTTP-Code</td>
+     <td>Mime-Type</td>
+     <td>Description (Returned if)</td>
+     </tr>
+     <tr>
+     <td>200</td>
+     <td>application/hal+json</td>
+     <td>Returns a Json object containing the desired part of the logger for the transformation</td>
+     </tr>
+     <tr>
+     <td>404</td>
+     <td>application/json</td>
+     <td>Returns a error message if the csar is not found or if the csar does not have a transformation for the given
+     name (see returned error message for details)</td>
+     </tr>
+     </table>
+     */
+    @RequestMapping(
+        path = "/{name}/logs",
+        method = RequestMethod.GET,
+        produces = "application/hal+json"
+    )
+    @ApiOperation(
+        value = "Get the logs of a csar",
+        tags = {"csars"},
+        notes = "Returns the logs for a csar, starting at a specific position. from the given start index all " +
+            "following log lines get returned. If the start index is larger than the current last log index the operation " +
+            "will return a empty list."
+    )
+    @ApiResponses( {
+        @ApiResponse(
+            code = 200,
+            message = "The operation was executed successfully",
+            response = LogResponse.class
+        ),
+        @ApiResponse(
+            code = 400,
+            message = "The given start value is less than zero",
+            response = RestErrorResponse.class
+        ),
+        @ApiResponse(
+            code = 404,
+            message = "There is no CSAR for the given identifier",
+            response = RestErrorResponse.class
+        )
+    })
+    public ResponseEntity<LogResponse> getLogs(
+        @ApiParam(value = "The unique identifier for the CSAR", required = true, example = "test")
+        @PathVariable(name = "name") String csarId,
+        @ApiParam(value = "The index of the first log entry you want (0 returns the whole log)", required = true, example = "0")
+        @RequestParam(name = "start", required = false, defaultValue = "0") Long start
+    ) {
+        if (start < 0) {
+            throw new IndexOutOfBoundsException("the start index has to be at least 0");
+        }
+        Csar csar = getCsarForName(csarId);
+        Log log = csar.getLog();
+        List<LogEntry> entries = log.getLogEntries(Math.toIntExact(start));
+        return ResponseEntity.ok().body(new LogResponse(
+            start,
+            entries.size() == 0 ? start : start + entries.size() - 1,
+            entries,
+            csarId
+        ));
     }
 }
