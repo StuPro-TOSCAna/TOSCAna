@@ -19,8 +19,6 @@ public class CsarImpl implements Csar {
      the name of the directory which contains the unzipped content of the uploaded CSAR
      */
     public final static String CONTENT_DIR = "content";
-    public final static String PHASE_UNZIP = "unzip";
-    public final static String PHASE_VALIDATE = "validate";
     /**
      Stores all scheduled, ongoing or finished transformations of this CSAR. Key is the platform identifier.
      */
@@ -44,7 +42,7 @@ public class CsarImpl implements Csar {
 
     private List<LifecyclePhase> initLifecyclePhases() {
         List<LifecyclePhase> phases = new ArrayList<>();
-        String[] phaseNames = {PHASE_UNZIP, PHASE_VALIDATE};
+        String[] phaseNames = {Phase.UNZIP.getName(), Phase.VALIDATE.getName()};
         for (String name : phaseNames) {
             phases.add(new LifecyclePhase(name));
         }
@@ -75,6 +73,13 @@ public class CsarImpl implements Csar {
     @Override
     public List<LifecyclePhase> getLifecyclePhases() {
         return lifecyclePhases;
+    }
+
+    @Override
+    public LifecyclePhase getLifecyclePhase(Phase phase) {
+        String phaseName = phase.getName();
+        return getLifecyclePhases().stream().filter(p -> p.getName().equals(phaseName)).findFirst().orElseThrow(()
+            -> new IllegalArgumentException(String.format("Csar does not have a lifecycle phase called %s", phaseName)));
     }
 
     @Override

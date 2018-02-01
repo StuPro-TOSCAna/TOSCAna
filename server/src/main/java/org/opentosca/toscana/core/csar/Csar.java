@@ -27,6 +27,8 @@ public interface Csar {
 
     List<LifecyclePhase> getLifecyclePhases();
 
+    LifecyclePhase getLifecyclePhase(Phase phase);
+
     /**
      @return the identifier of the CSAR
      */
@@ -41,4 +43,19 @@ public interface Csar {
      @return the root directory of the unzipped csar.
      */
     File getContentDir();
+
+    public enum Phase {
+        UNZIP("unzip"),
+        VALIDATE("validate");
+
+        private final String name;
+    
+        Phase(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+    }
 }

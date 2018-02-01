@@ -16,6 +16,7 @@ import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.TransformationDao;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.logging.LogImpl;
+import org.opentosca.toscana.core.util.LifecyclePhase;
 import org.opentosca.toscana.core.util.Preferences;
 import org.opentosca.toscana.core.util.ZipUtility;
 
@@ -67,19 +68,27 @@ public class CsarFilesystemDao implements CsarDao {
     @Override
     public Csar create(String identifier, InputStream inputStream) {
         csarMap.remove(identifier);
+        Csar csar = new CsarImpl(getRootDir(identifier), identifier, getLog(identifier));
         File csarDir = setupDir(identifier);
-        File contentDir = new File(csarDir, CsarImpl.CONTENT_DIR);
         File transformationDir = new File(csarDir, TRANSFORMATION_DIR);
         transformationDir.mkdir();
-        try {
-            ZipUtility.unzip(new ZipInputStream(inputStream), contentDir.getPath());
-            logger.info("Extracted csar '{}' into '{}'", identifier, contentDir.getPath());
-        } catch (IOException e) {
-            logger.error("Failed to unzip csar with identifier '{}'", identifier, e);
-        }
-        Csar csar = new CsarImpl(getRootDir(identifier), identifier, getLog(identifier));
+        unzip(identifier, inputStream, csar, csarDir);
         csarMap.put(identifier, csar);
         return csar;
+    }
+
+    private void unzip(String identifier, InputStream inputStream, Csar csar, File csarDir) {
+        File contentDir = new File(csarDir, CsarImpl.CONTENT_DIR);
+        LifecyclePhase unzipPhase = csar.getLifecyclePhase(Csar.Phase.UNZIP);
+        unzipPhase.setState(LifecyclePhase.State.EXECUTING);
+        try {
+            ZipUtility.unzip(new ZipInputStream(inputStream), contentDir.getPath());
+            unzipPhase.setState(LifecyclePhase.State.DONE);
+            logger.info("Extracted csar '{}' into '{}'", identifier, contentDir.getPath());
+        } catch (IOException e) {
+            unzipPhase.setState(LifecyclePhase.State.FAILED);
+            logger.error("Failed to unzip csar with identifier '{}'", identifier, e);
+        }
     }
 
     private File setupDir(String identifier) {

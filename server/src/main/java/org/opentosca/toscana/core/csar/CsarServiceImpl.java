@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.opentosca.toscana.core.parse.InvalidCsarException;
+import org.opentosca.toscana.core.util.LifecyclePhase;
 import org.opentosca.toscana.model.EffectiveModelFactory;
 
 import org.slf4j.Logger;
@@ -42,13 +43,16 @@ public class CsarServiceImpl implements CsarService {
 
     // this call is expensive, use with care
     private void validate(Csar csar) throws InvalidCsarException {
+        LifecyclePhase validatePhase = csar.getLifecyclePhase(Csar.Phase.VALIDATE);
+        validatePhase.setState(LifecyclePhase.State.EXECUTING);
         // TODO integrate winery parser as validator
         // test whether EffectiveModel can get created without throwing an error
         try {
             // test if conversion does evoke errors
             effectiveModelFactory.create(csar);
-            // TODO improve error handling
+            validatePhase.setState(LifecyclePhase.State.DONE);
         } catch (Exception e) {
+            validatePhase.setState(LifecyclePhase.State.FAILED);
             throw new InvalidCsarException(csar.getLog());
         }
     }
