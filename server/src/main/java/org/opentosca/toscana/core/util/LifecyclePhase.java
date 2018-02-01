@@ -4,11 +4,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
 
 public class LifecyclePhase {
-    
+
     private final String name;
     private State state = State.PENDING;
-    
-    public LifecyclePhase(String name){
+
+    public LifecyclePhase(String name) {
         this.name = name;
     }
 
@@ -18,7 +18,7 @@ public class LifecyclePhase {
         example = "deploy"
     )
     @JsonProperty("name")
-    public String getName(){
+    public String getName() {
         return name;
     }
 
@@ -28,14 +28,14 @@ public class LifecyclePhase {
         example = "PENDING"
     )
     @JsonProperty("state")
-    public State getState(){
+    public State getState() {
         return state;
     }
-    
-    public void setState(State state){
+
+    public void setState(State state) {
         this.state = state;
     }
-    
+
     public enum State {
         PENDING,
         SKIPPING,
@@ -44,5 +44,4 @@ public class LifecyclePhase {
         SKIPPED,
         FAILED
     }
-    
 }

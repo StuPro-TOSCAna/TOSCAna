@@ -19,7 +19,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 @Relation(collectionRelation = "csar")
 @ApiModel
 public class CsarResponse extends HiddenResourceSupport {
-    
+
     private final String name;
     private final List<LifecyclePhase> phases;
 
@@ -45,7 +45,7 @@ public class CsarResponse extends HiddenResourceSupport {
     public String getName() {
         return name;
     }
-    
+
     @ApiModelProperty(
         required = true,
         notes = "The lifecycle phases of this CSAR"

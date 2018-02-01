@@ -21,9 +21,9 @@ import org.slf4j.Logger;
  Responsible for converting tosca short notations (one-line notation) to its corresponding extended (ergo: normalized) form
  */
 public class GraphNormalizer {
-    
+
     private static Logger logger;
-    
+
     public static void normalize(ServiceGraph graph, Log log) {
         logger = log.getLogger(GraphNormalizer.class);
         logger.info("Expanding short notations to extended notations");

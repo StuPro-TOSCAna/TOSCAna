@@ -12,7 +12,7 @@ public class LifecyclePhase extends HALResource {
     public LifecyclePhase(
         @JsonProperty("name") String name,
         @JsonProperty("state") State state
-        ) {
+    ) {
         this.name = name;
         this.state = state;
     }

@@ -85,7 +85,7 @@ public class EffectiveModel {
                 Set<? extends RootNode> fulfillers = requirement.getFulfillers();
                 for (RootNode fulfiller : fulfillers) {
                     RootRelationship relationship = requirement.get(requirement.RELATIONSHIP);
-                    logger.info("  > '{}'  === {} ==>> '{}'", node.getEntityName(), 
+                    logger.info("  > '{}'  === {} ==>> '{}'", node.getEntityName(),
                         relationship.getClass().getSimpleName(), fulfiller.getEntityName());
                     topology.addEdge(node, fulfiller, relationship);
                 }

@@ -10,7 +10,7 @@ public class TransformationProperties extends HALResource {
     private List<TransformationProperty> properties;
 
     public TransformationProperties(
-        @JsonProperty("properties")List<TransformationProperty> properties
+        @JsonProperty("properties") List<TransformationProperty> properties
     ) {
         this.properties = properties;
     }

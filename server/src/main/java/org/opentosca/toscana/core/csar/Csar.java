@@ -46,11 +46,11 @@ public interface Csar {
 
     enum Phase {
         UNZIP("unzip"),
-        VALIDATE("validate"), 
+        VALIDATE("validate"),
         PARSE("parse");
 
         private final String name;
-    
+
         Phase(String name) {
             this.name = name;
         }

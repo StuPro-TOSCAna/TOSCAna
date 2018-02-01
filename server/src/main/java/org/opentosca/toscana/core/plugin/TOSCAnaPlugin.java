@@ -142,9 +142,8 @@ public abstract class TOSCAnaPlugin<LifecycleT extends TransformationLifecycle> 
      @return a newly constructed instance of the LifecycleInterface implemented by this plugin.
      */
     protected abstract LifecycleT getInstance(TransformationContext context) throws Exception;
-    
-    public List<ExecutionPhase<LifecycleT>> getExecutionPhases(){
+
+    public List<ExecutionPhase<LifecycleT>> getExecutionPhases() {
         return executionPhases;
     }
-    
 }
