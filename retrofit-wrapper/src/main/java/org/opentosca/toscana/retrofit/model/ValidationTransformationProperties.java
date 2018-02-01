@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ValidationTransformationProperties
     extends AbstractTransformationProperties<ValidationTransformationProperty> {
+    
     public ValidationTransformationProperties(
         @JsonProperty("properties") List<ValidationTransformationProperty> properties
     ) {

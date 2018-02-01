@@ -41,9 +41,9 @@ public class PropertyWrap {
 
     @ApiModelProperty(
         required = true,
-        notes = "The \"Datatype\" of a property. Supported Types are \"name\", \"text\", \"boolean\", " +
-            "\"integer\", \"unsigned_integer\", \"float\" and \"secret\". If you try to set a value of a non existant key." +
-            " The type in the response will be \"invalid\" however this type only occurs in that case",
+        notes = "The 'Datatype' of a property. Supported Types are 'name', 'text', 'boolean', " +
+            "'integer', 'unsigned_integer', 'float' and 'secret'. If you try to set a value of a non existant key." +
+            " The type in the response will be 'invalid' however this type only occurs in that case",
         example = "text"
     )
     @JsonProperty("type")

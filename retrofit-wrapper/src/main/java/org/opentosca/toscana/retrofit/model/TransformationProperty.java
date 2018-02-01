@@ -3,6 +3,7 @@ package org.opentosca.toscana.retrofit.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class TransformationProperty {
+    
     @JsonProperty("key")
     private String key;
     @JsonProperty("type")

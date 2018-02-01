@@ -7,7 +7,6 @@ import org.opentosca.toscana.retrofit.model.Platform;
 import org.opentosca.toscana.retrofit.model.Transformation;
 import org.opentosca.toscana.retrofit.model.TransformationLogs;
 import org.opentosca.toscana.retrofit.model.TransformationProperties;
-import org.opentosca.toscana.retrofit.model.TransformationProperty;
 import org.opentosca.toscana.retrofit.model.TransformerStatus;
 import org.opentosca.toscana.retrofit.model.embedded.CsarResources;
 import org.opentosca.toscana.retrofit.model.embedded.PlatformResources;
