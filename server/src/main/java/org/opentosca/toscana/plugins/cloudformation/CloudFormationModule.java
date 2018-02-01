@@ -22,7 +22,6 @@ import com.scaleset.cfbuilder.ec2.metadata.CFNInit;
 import com.scaleset.cfbuilder.iam.InstanceProfile;
 import com.scaleset.cfbuilder.iam.Policy;
 import com.scaleset.cfbuilder.iam.Role;
-import io.fabric8.kubernetes.api.model.PodList;
 
 public class CloudFormationModule extends Module {
 
