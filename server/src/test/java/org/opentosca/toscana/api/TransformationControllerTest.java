@@ -478,7 +478,8 @@ public class TransformationControllerTest extends BaseSpringTest {
             .andDo(print())
             .andExpect(status().is(200))
             .andExpect(content().contentType(DEFAULT_CHARSET_HAL_JSON))
-            .andExpect(jsonPath("$.progress").value(0))
+            .andExpect(jsonPath("$.phases").isArray())
+            .andExpect(jsonPath("$.phases").isEmpty())
             .andExpect(jsonPath("$.platform").value(VALID_PLATFORM_NAME))
             .andExpect(jsonPath("$.status").value("INPUT_REQUIRED"))
             .andReturn();

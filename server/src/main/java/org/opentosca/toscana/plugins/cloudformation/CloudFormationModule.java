@@ -178,9 +178,9 @@ public class CloudFormationModule extends Module {
     }
 
     /**
-     * Returns the paramaters of the template belonging to this module.
-     *
-     * @return map with the parameters of the template
+     Returns the paramaters of the template belonging to this module.
+
+     @return map with the parameters of the template
      */
     public Map<String, Parameter> getParameters() {
         return this.template.getParameters();
@@ -215,6 +215,7 @@ public class CloudFormationModule extends Module {
      Build the template
      1. Add CFNInit to corresponding instance resource
      */
+    @Override
     public void build() {
         for (Map.Entry<String, CFNInit> pair : cfnInitMap.entrySet()) {
             Resource res = this.getResource(pair.getKey());

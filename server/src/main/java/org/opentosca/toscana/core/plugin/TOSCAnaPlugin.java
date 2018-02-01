@@ -24,54 +24,58 @@ public abstract class TOSCAnaPlugin<LifecycleT extends TransformationLifecycle> 
      Immutable list of execution tasks, they are in the right execution order and get executed from the first
      index to the last
      */
-    private final List<ExecutionPhase<LifecycleT>> executionTasks;
+    private final List<ExecutionPhase<LifecycleT>> executionPhases;
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final Platform platform;
 
     /**
-     Initializes the plugin, that means that all tasks get added to a internal list (executionTasks) that then gets
+     Initializes the plugin, that means that all tasks get added to a internal list (executionPhases) that then gets
      executed by the transform method.
      <p>
      The tasks get stored in a list (environment tasks)
      */
     public TOSCAnaPlugin(Platform platform) {
         this.platform = Objects.requireNonNull(platform, "The platform is not allowed to be null");
-        this.init();
-        logger.info("Initialized '{}' plugin.", platform.name);
-        List<ExecutionPhase<LifecycleT>> executionTasks = new ArrayList<>();
+        this.executionPhases = populateExecutionPhases();
+        initPlugin();
+    }
 
-        //Add the execution tasks
+    private List<ExecutionPhase<LifecycleT>> populateExecutionPhases() {
+        List<ExecutionPhase<LifecycleT>> executionPhases = new ArrayList<>();
+
         //Environment validation
-        executionTasks.add(new ExecutionPhase<>("check environment", (e) -> {
+        executionPhases.add(new ExecutionPhase<>("check environment", (e) -> {
             if (!checkEnvironment()) {
                 throw new ValidationFailureException("Transformation Failed," +
                     " because the Environment check has failed!");
             }
         }));
         //Model validation
-        executionTasks.add(new ExecutionPhase<>("check model", (e) -> {
+        executionPhases.add(new ExecutionPhase<>("check model", (e) -> {
             if (!e.checkModel()) {
                 throw new ValidationFailureException("Transformation Failed," +
                     " because the model check has failed!");
             }
         }));
-
         //Transformation phases
-        executionTasks.add(new ExecutionPhase<>("prepare", TransformationLifecycle::prepare));
-        executionTasks.add(new ExecutionPhase<>("transformation", TransformationLifecycle::transform));
-        executionTasks.add(new ExecutionPhase<>("cleanup", TransformationLifecycle::cleanup));
-
+        executionPhases.add(new ExecutionPhase<>("prepare", TransformationLifecycle::prepare));
+        executionPhases.add(new ExecutionPhase<>("transformation", TransformationLifecycle::transform));
+        executionPhases.add(new ExecutionPhase<>("cleanup", TransformationLifecycle::cleanup));
         // Add Deployment Phase
         if (platform.supportsDeployment) {
-            executionTasks.add(new ExecutionPhase<>(
+            executionPhases.add(new ExecutionPhase<>(
                 "deploy",
                 TransformationLifecycle::deploy,
                 TransformationContext::performDeployment
             ));
         }
+        return Collections.unmodifiableList(executionPhases);
+    }
 
-        //Make list immutable
-        this.executionTasks = Collections.unmodifiableList(executionTasks);
+    private void initPlugin() {
+        logger.info("Initializing plugin '{}'", this.platform.name);
+        this.init();
+        logger.info("Initialized plugin '{}'", this.platform.name);
     }
 
     /**
@@ -99,25 +103,28 @@ public abstract class TOSCAnaPlugin<LifecycleT extends TransformationLifecycle> 
         //Store current time for time measurement
         long time = System.currentTimeMillis();
 
-        logger.info("Building Lifecycle interface...");
+        logger.info("Building Lifecycle interface");
         LifecycleT lifecycleInterface = getInstance(context);
 
         int taskCount = countExecutionPhases(context);
 
-        logger.info("This transformation has {} phases.", taskCount);
-        for (int i = 0; i < executionTasks.size(); i++) {
-            ExecutionPhase<LifecycleT> phase = executionTasks.get(i);
+        logger.info("This transformation has {} phases", taskCount);
+        for (int i = 0; i < executionPhases.size(); i++) {
+            ExecutionPhase<LifecycleT> phase = executionPhases.get(i);
             if (phase.shouldExecute(context)) {
                 logger.info("Executing phase '{}' ({} of {})", phase.getName(), (i + 1), taskCount);
                 phase.execute(lifecycleInterface);
+            } else {
+                phase.skip();
+                logger.info("Skipping phase '{}' ({} of {})", phase.getName(), (i + 1), taskCount);
             }
         }
         time = System.currentTimeMillis() - time;
-        logger.info("The execution of the transformation was done after {} MS.", time);
+        logger.info("Transformation finished after {} ms", time);
     }
 
     private int countExecutionPhases(TransformationContext ctx) {
-        return (int) this.executionTasks.stream().filter(e -> e.shouldExecute(ctx)).count();
+        return (int) this.executionPhases.stream().filter(e -> e.shouldExecute(ctx)).count();
     }
 
     /**
@@ -135,4 +142,8 @@ public abstract class TOSCAnaPlugin<LifecycleT extends TransformationLifecycle> 
      @return a newly constructed instance of the LifecycleInterface implemented by this plugin.
      */
     protected abstract LifecycleT getInstance(TransformationContext context) throws Exception;
+
+    public List<ExecutionPhase<LifecycleT>> getExecutionPhases() {
+        return executionPhases;
+    }
 }

@@ -159,7 +159,7 @@ public class TransformationController {
         List<TransformationResponse> transformations = new ArrayList<>();
         for (Map.Entry<String, Transformation> entry : csar.getTransformations().entrySet()) {
             transformations.add(new TransformationResponse(
-                0,
+                entry.getValue().getLifecyclePhase(),
                 entry.getValue().getState().name(),
                 entry.getKey(),
                 csar.getIdentifier()
@@ -223,7 +223,7 @@ public class TransformationController {
         Csar csar = findByCsarId(name);
         Transformation transformation = findTransformationByPlatform(csar, platform);
         return ResponseEntity.ok().body(new TransformationResponse(
-            0,
+            transformation.getLifecyclePhase(),
             transformation.getState().name(),
             platform, name
         ));
@@ -296,7 +296,7 @@ public class TransformationController {
         //Return 404 if the platform does not exist
         Optional<Platform> optionalPlatform = platformService.findPlatformById(platform);
         Platform p = optionalPlatform.orElseThrow(PlatformNotFoundException::new);
-        Transformation transformation = transformationService.createTransformation(csar, p);
+        transformationService.createTransformation(csar, p);
         return ResponseEntity.ok().build();
     }
 

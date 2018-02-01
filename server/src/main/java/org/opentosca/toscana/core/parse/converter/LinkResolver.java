@@ -52,7 +52,7 @@ public class LinkResolver {
                     EntityId targetId = ToscaStructure.REPOSITORIES.descend(url);
                     Optional<Entity> target = graph.getEntity(targetId);
                     target.ifPresent(baseEntity -> {
-                        logger.debug("    > '{}'  ===>  '{}'", 
+                        logger.debug("    > '{}'  ===>  '{}'",
                             repository.get().getId(), baseEntity.getId());
                         graph.replaceEntity(repository.get(), baseEntity);
                     });
@@ -97,7 +97,7 @@ public class LinkResolver {
                         Artifact operationArtifact = optionalArtifact.get();
                         for (Artifact nodeArtifact : node.getArtifacts()) {
                             if (operationArtifact.getFilePath().equals(nodeArtifact.getEntityName())) {
-                                logger.debug("    > '{}'  ===>  '{}'", 
+                                logger.debug("    > '{}'  ===>  '{}'",
                                     operationArtifact.getBackingEntity().getId(), nodeArtifact.getBackingEntity().getId());
                                 graph.replaceEntity(operationArtifact.getBackingEntity(), nodeArtifact.getBackingEntity());
                             }

@@ -36,7 +36,7 @@ public class LogEntry {
     public String getMessage() {
         return message;
     }
-    
+
     @JsonProperty("index")
     public long getIndex() {
         return index;

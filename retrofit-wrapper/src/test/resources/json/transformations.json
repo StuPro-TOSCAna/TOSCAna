@@ -2,7 +2,7 @@
 	"_embedded": {
 		"transformation": [
 			{
-				"progress": 0,
+                "phases": [ ],
 				"status": "INPUT_REQUIRED",
 				"platform": "p-a",
 				"_links": {
