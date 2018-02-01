@@ -8,6 +8,7 @@ import org.opentosca.toscana.model.node.WebApplication;
 import org.opentosca.toscana.model.relation.ConnectsTo;
 import org.opentosca.toscana.model.relation.RootRelationship;
 import org.opentosca.toscana.model.visitor.RelationshipVisitor;
+import org.opentosca.toscana.plugins.cloudformation.CloudFormationModule;
 
 import com.scaleset.cfbuilder.core.Fn;
 import org.jgrapht.Graph;
@@ -24,15 +25,17 @@ public class PrepareModelRelationshipVisitor implements RelationshipVisitor {
 
     private final Logger logger;
     private Graph<RootNode, RootRelationship> topology;
+    private CloudFormationModule cfnModule;
 
     /**
      Create a <tt>PrepareModelRelationshipVisitor</tt> to prepare a models relationships.
 
      @param context TransformationContext to extract topology and logger
      */
-    public PrepareModelRelationshipVisitor(TransformationContext context) {
+    public PrepareModelRelationshipVisitor(TransformationContext context, CloudFormationModule cfnModule) {
         this.logger = context.getLogger(getClass());
         this.topology = context.getModel().getTopology();
+        this.cfnModule = cfnModule;
     }
 
     @Override
@@ -48,8 +51,10 @@ public class PrepareModelRelationshipVisitor implements RelationshipVisitor {
             Compute computeWebApplication = getCompute(webApplication);
             if (computeMysqlDatabase.equals(computeWebApplication)) {
                 // means we can set the private address as reference the database endpoint
-                String databaseEndpoint = Fn.fnGetAtt(toAlphanumerical(mysqlDatabase.getEntityName()),
-                    AWS_ENDPOINT_REFERENCE).toString(true);
+                Fn databaseEndpointFn = Fn.fnGetAtt(toAlphanumerical(mysqlDatabase.getEntityName()),
+                    AWS_ENDPOINT_REFERENCE);
+                String databaseEndpoint = databaseEndpointFn.toString(true);
+                cfnModule.putFn(databaseEndpoint, databaseEndpointFn);
                 computeMysqlDatabase.setPrivateAddress(databaseEndpoint);
                 computeMysqlDatabase.setPublicAddress(databaseEndpoint);
                 logger.debug("Set private address and public address of '{}' to reference MysqlDatabase '{}'",

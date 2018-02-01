@@ -309,11 +309,15 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
                 .setCwd(ABSOLUTE_FILE_PATH + new File(artifact).getParent());
             // add inputs to environment
             for (OperationVariable input : operation.getInputs()) {
-                Object value = input.getValue().orElseThrow(
+                String value = input.getValue().orElseThrow(
                     () -> new IllegalArgumentException("Input value of " + input.getKey() + " expected to not be " +
                         "null")
                 );
-                cfnCommand.addEnv(input.getKey(), value);
+                if (cfnModule.checkFn(value)) {
+                    cfnCommand.addEnv(input.getKey(), cfnModule.getFn(value));
+                } else {
+                    cfnCommand.addEnv(input.getKey(), value);
+                }
             }
             // Add file to config and execution command
             cfnModule.getCFNInit(serverName)

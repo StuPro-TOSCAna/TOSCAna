@@ -87,7 +87,7 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
             node.accept(prepareModelNodeVisitor);
         }
         logger.debug("Prepare relationships");
-        PrepareModelRelationshipVisitor prepareModelRelationshipVisitor = new PrepareModelRelationshipVisitor(context);
+        PrepareModelRelationshipVisitor prepareModelRelationshipVisitor = new PrepareModelRelationshipVisitor(context, cfnModule);
         for (VisitableRelationship relationship : topology.edgeSet()) {
             relationship.accept(prepareModelRelationshipVisitor);
         }

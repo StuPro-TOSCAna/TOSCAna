@@ -68,6 +68,7 @@ public class CloudFormationModule extends Module {
     private Object keyNameVar;
     private Map<String, CFNInit> cfnInitMap;
     private Set<String> computeToEc2;
+    private Map<String, Fn> fnSaver;
     private List<String> filesToBeUploaded;
     private PluginFileAccess fileAccess;
     private String bucketName;
@@ -82,10 +83,11 @@ public class CloudFormationModule extends Module {
         this.id("").template(new Template());
         strParam(KEYNAME).type(KEYNAME_TYPE).description(KEYNAME_DESCRIPTION).constraintDescription
             (KEYNAME_CONSTRAINT_DESCRIPTION);
-        keyNameVar = template.ref(KEYNAME);
-        cfnInitMap = new HashMap<>();
-        computeToEc2 = new HashSet<>();
-        filesToBeUploaded = new ArrayList<>();
+        this.keyNameVar = template.ref(KEYNAME);
+        this.cfnInitMap = new HashMap<>();
+        this.computeToEc2 = new HashSet<>();
+        this.fnSaver = new HashMap<>();
+        this.filesToBeUploaded = new ArrayList<>();
         this.fileAccess = fileAccess;
         this.bucketName = getRandomBucketName();
         this.stackName = getRandomStackName();
@@ -124,6 +126,27 @@ public class CloudFormationModule extends Module {
      */
     public boolean checkComputeToEc2(Compute compute) {
         return computeToEc2.contains(toAlphanumerical(compute.getEntityName()));
+    }
+
+    /**
+     Put a Fn with its string representation into a map
+     */
+    public void putFn(String key, Fn value) {
+        this.fnSaver.put(key, value);
+    }
+
+    /**
+     Check if the key is also saved as a Fn object
+     */
+    public boolean checkFn(String key) {
+        return this.fnSaver.containsKey(key);
+    }
+
+    /**
+     Get the Fn for this key
+     */
+    public Fn getFn(String key) {
+        return this.fnSaver.get(key);
     }
 
     public List<String> getFilesToBeUploaded() {

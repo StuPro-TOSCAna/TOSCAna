@@ -79,8 +79,9 @@ public class PrepareModelNodeVisitor implements NodeVisitor {
             .size() == 1) {
             // means our dbms is the only one hosted on this compute
             // means we can set the private address as reference the database endpoint
-            String databaseEndpoint = Fn.fnGetAtt(toAlphanumerical(node.getEntityName()), AWS_ENDPOINT_REFERENCE)
-                .toString(true);
+            Fn databaseEndpointFn = Fn.fnGetAtt(toAlphanumerical(node.getEntityName()), AWS_ENDPOINT_REFERENCE);
+            String databaseEndpoint = databaseEndpointFn.toString(true);
+            cfnModule.putFn(databaseEndpoint, databaseEndpointFn);
             compute.setPrivateAddress(databaseEndpoint);
             compute.setPublicAddress(databaseEndpoint);
             logger.debug("Set private address and public address of '{}' to reference MysqlDatabase '{}'",
