@@ -8,7 +8,6 @@ import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.PlatformProperty;
 import org.opentosca.toscana.core.transformation.properties.PropertyType;
-import org.opentosca.toscana.plugins.cloudfoundry.transformation.CloudFoundryLifecycle;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,4 +1,4 @@
-package org.opentosca.toscana.plugins.cloudfoundry.transformation;
+package org.opentosca.toscana.plugins.cloudfoundry;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ import org.opentosca.toscana.plugins.cloudfoundry.application.Application;
 import org.opentosca.toscana.plugins.cloudfoundry.application.Provider;
 import org.opentosca.toscana.plugins.cloudfoundry.client.Connection;
 import org.opentosca.toscana.plugins.cloudfoundry.filecreator.FileCreator;
-import org.opentosca.toscana.plugins.cloudfoundry.transformation.visitors.NodeVisitor;
+import org.opentosca.toscana.plugins.cloudfoundry.visitor.NodeVisitor;
 import org.opentosca.toscana.plugins.kubernetes.exceptions.UnsupportedOsTypeException;
 import org.opentosca.toscana.plugins.kubernetes.util.KubernetesNodeContainer;
 import org.opentosca.toscana.plugins.kubernetes.util.NodeStack;

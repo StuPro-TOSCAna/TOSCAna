@@ -1,4 +1,4 @@
-package org.opentosca.toscana.plugins.cloudfoundry.transformation.visitors;
+package org.opentosca.toscana.plugins.cloudfoundry.visitor;
 
 import java.util.HashSet;
 import java.util.Map;
