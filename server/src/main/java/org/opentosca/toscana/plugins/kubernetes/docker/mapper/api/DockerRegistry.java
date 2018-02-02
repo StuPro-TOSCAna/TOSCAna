@@ -65,7 +65,8 @@ public class DockerRegistry {
                 logger.error("Execution of the request failed", e);
                 logger.error("Processing failed: For {}/{} (Page {}) on '{}'", user, repository, page, baseUrl);
                 try {
-                    logger.error("The Server responded {}", (response.errorBody() != null) ? response.errorBody().string() : "");
+                    logger.error("The Server responded '{}'", (response != null &&
+                        response.errorBody() != null) ? response.errorBody().string() : "");
                 } catch (Exception ex) {
                     logger.error("Printing error response failed.", ex);
                     ex.printStackTrace();
