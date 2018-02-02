@@ -1,6 +1,5 @@
 package org.opentosca.toscana.plugins.cloudformation.visitor;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.opentosca.toscana.core.transformation.TransformationContext;
@@ -13,6 +12,7 @@ import org.opentosca.toscana.model.node.WebApplication;
 import org.opentosca.toscana.model.visitor.StrictNodeVisitor;
 import org.opentosca.toscana.model.visitor.UnsupportedTypeException;
 
+import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 
 /**
@@ -33,17 +33,14 @@ public class CheckModelNodeVisitor implements StrictNodeVisitor {
 
     @Override
     public void visit(Apache node) {
-        logger.info("Check Apache node '{}'.", node.getEntityName());
+        // noop
     }
 
     @Override
     public void visit(Compute node) {
-        logger.info("Check Compute node '{}'.", node.getEntityName());
-        List<OsCapability.Type> supportedTypes = new ArrayList<>();
-        supportedTypes.add(OsCapability.Type.LINUX);
+        List<OsCapability.Type> supportedTypes = Lists.newArrayList(OsCapability.Type.LINUX);
         //might grow but for now only linux
-        List<OsCapability.Distribution> supportedDistributions = new ArrayList<>();
-        supportedDistributions.add(OsCapability.Distribution.UBUNTU);
+        List<OsCapability.Distribution> supportedDistributions = Lists.newArrayList(OsCapability.Distribution.UBUNTU);
         //might grow, but for now only ubuntu, maybe already work with others but not yet tested
         OsCapability osCapability = node.getOs();
         //check type
@@ -64,16 +61,16 @@ public class CheckModelNodeVisitor implements StrictNodeVisitor {
 
     @Override
     public void visit(MysqlDatabase node) {
-        logger.info("Check MysqlDatabase node '{}'.", node.getEntityName());
+        // noop
     }
 
     @Override
     public void visit(MysqlDbms node) {
-        logger.info("Check MysqlDbms node '{}'.", node.getEntityName());
+        // noop
     }
 
     @Override
     public void visit(WebApplication node) {
-        logger.info("Check WebApplication node '{}'.", node.getEntityName());
+        // noop
     }
 }

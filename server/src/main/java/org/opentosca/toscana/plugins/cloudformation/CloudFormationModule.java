@@ -122,6 +122,13 @@ public class CloudFormationModule extends Module {
     }
 
     /**
+     Mark a compute node to be transformed to a ec2
+     */
+    public void removeComputeToEc2(Compute compute) {
+        computeToEc2.remove(toAlphanumerical(compute.getEntityName()));
+    }
+
+    /**
      Check if this compute is marked to be transformed to ec2
      */
     public boolean checkComputeToEc2(Compute compute) {

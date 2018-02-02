@@ -112,7 +112,6 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
     @Override
     public void visit(Compute node) {
         try {
-            logger.info("Visit Compute node '{}'.", node.getEntityName());
             if (cfnModule.checkComputeToEc2(node)) {
                 logger.debug("Compute '{}' will be transformed to EC2", node.getEntityName());
                 String nodeName = toAlphanumerical(node.getEntityName());
@@ -155,7 +154,6 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
     @Override
     public void visit(MysqlDatabase node) {
         try {
-            logger.info("Visit MysqlDatabase node '{}'.", node.getEntityName());
             String nodeName = toAlphanumerical(node.getEntityName());
             //get the compute where the dbms this node is hosted on, is hosted on
             Compute compute = getCompute(node);
@@ -202,14 +200,12 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
 
     @Override
     public void visit(MysqlDbms node) {
-        logger.info("Visit MysqlDbms node '{}'.", node.getEntityName());
         // TODO handle sql artifact if present
     }
 
     @Override
     public void visit(Apache node) {
         try {
-            logger.info("Visit Apache node " + node.getEntityName() + ".");
             Compute compute = node.getHost().getNode().orElseThrow(
                 () -> new IllegalStateException("Apache is missing compute")
             );
@@ -243,7 +239,6 @@ public class CloudFormationNodeVisitor implements StrictNodeVisitor {
 
     @Override
     public void visit(WebApplication node) {
-        logger.info("Visit WebApplication node '{}'.", node.getEntityName());
         try {
             //get the compute where the apache this node is hosted on, is hosted on
             Compute compute = getCompute(node);

@@ -11,9 +11,9 @@ import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.relation.RootRelationship;
+import org.opentosca.toscana.model.visitor.NodeVisitor;
+import org.opentosca.toscana.model.visitor.RelationshipVisitor;
 import org.opentosca.toscana.model.visitor.UnsupportedTypeException;
-import org.opentosca.toscana.model.visitor.VisitableNode;
-import org.opentosca.toscana.model.visitor.VisitableRelationship;
 import org.opentosca.toscana.plugins.cloudformation.visitor.CheckModelNodeVisitor;
 import org.opentosca.toscana.plugins.cloudformation.visitor.CheckModelRelationshipVisitor;
 import org.opentosca.toscana.plugins.cloudformation.visitor.CloudFormationNodeVisitor;
@@ -60,15 +60,11 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
         Set<RootRelationship> relationships = model.getTopology().edgeSet();
         try {
             CheckModelNodeVisitor checkModelNodeVisitor = new CheckModelNodeVisitor(context);
-            logger.debug("Check nodes");
-            for (VisitableNode node : nodes) {
-                node.accept(checkModelNodeVisitor);
-            }
+            logger.info("Check nodes");
+            visitAllNodes(nodes, checkModelNodeVisitor);
             CheckModelRelationshipVisitor checkModelRelationshipVisitor = new CheckModelRelationshipVisitor(context);
-            logger.debug("Check relationships");
-            for (VisitableRelationship relationship : relationships) {
-                relationship.accept(checkModelRelationshipVisitor);
-            }
+            logger.info("Check relationships");
+            visitAllRelationships(relationships, checkModelRelationshipVisitor);
         } catch (UnsupportedTypeException ute) {
             logger.error(ute.getMessage());
             return false;
@@ -82,35 +78,22 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
         Set<RootNode> nodes = model.getNodes();
         Graph<RootNode, RootRelationship> topology = model.getTopology();
         PrepareModelNodeVisitor prepareModelNodeVisitor = new PrepareModelNodeVisitor(context, cfnModule);
-        logger.debug("Prepare nodes");
-        for (VisitableNode node : nodes) {
-            node.accept(prepareModelNodeVisitor);
-        }
-        logger.debug("Prepare relationships");
+        logger.info("Prepare nodes");
+        visitComputeNodesFirst(nodes, prepareModelNodeVisitor);
+        logger.info("Prepare relationships");
         PrepareModelRelationshipVisitor prepareModelRelationshipVisitor = new PrepareModelRelationshipVisitor(context, cfnModule);
-        for (VisitableRelationship relationship : topology.edgeSet()) {
-            relationship.accept(prepareModelRelationshipVisitor);
-        }
+        visitAllRelationships(topology.edgeSet(), prepareModelRelationshipVisitor);
     }
 
     @Override
     public void transform() {
         logger.info("Begin transformation to CloudFormation.");
         Set<RootNode> nodes = model.getNodes();
-
         // Visit Compute nodes first, then all others
         try {
             CloudFormationNodeVisitor cfnNodeVisitor = new CloudFormationNodeVisitor(context, cfnModule);
-            for (VisitableNode node : nodes) {
-                if (node instanceof Compute) {
-                    node.accept(cfnNodeVisitor);
-                }
-            }
-            for (VisitableNode node : nodes) {
-                if (!(node instanceof Compute)) {
-                    node.accept(cfnNodeVisitor);
-                }
-            }
+            logger.info("Transform nodes");
+            visitComputeNodesFirst(nodes, cfnNodeVisitor);
             logger.info("Creating CloudFormation template.");
             fileAccess.access(OUTPUT_DIR + CloudFormationFileCreator.TEMPLATE_YAML)
                 .appendln(cfnModule.toString()).close();
@@ -135,5 +118,34 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
     @Override
     public void cleanup() {
         //noop
+    }
+
+    private void visitComputeNodesFirst(Set<RootNode> nodes, NodeVisitor nodeVisitor) {
+        nodes.stream()
+            .filter(node -> node instanceof Compute)
+            .forEach(node -> {
+                logger.debug("Visit '{}' node '{}'", node.getClass().getSimpleName(), node.getEntityName());
+                node.accept(nodeVisitor);
+            });
+        nodes.stream()
+            .filter(node -> !(node instanceof Compute))
+            .forEach(node -> {
+                logger.debug("Visit '{}' node '{}'", node.getClass().getSimpleName(), node.getEntityName());
+                node.accept(nodeVisitor);
+            });
+    }
+
+    private void visitAllNodes(Set<RootNode> nodes, NodeVisitor nodeVisitor) {
+        nodes.forEach(node -> {
+            logger.debug("Visit '{}' node '{}'", node.getClass().getSimpleName(), node.getEntityName());
+            node.accept(nodeVisitor);
+        });
+    }
+
+    private void visitAllRelationships(Set<RootRelationship> relationships, RelationshipVisitor relationshipVisitor) {
+        relationships.forEach(relation -> {
+            logger.debug("Visit '{}' relationship '{}'", relation.getClass().getSimpleName(), relation.getEntityName());
+            relation.accept(relationshipVisitor);
+        });
     }
 }

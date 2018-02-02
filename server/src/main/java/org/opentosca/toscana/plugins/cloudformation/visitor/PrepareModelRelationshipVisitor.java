@@ -40,7 +40,6 @@ public class PrepareModelRelationshipVisitor implements RelationshipVisitor {
 
     @Override
     public void visit(ConnectsTo relation) {
-        logger.info("Prepare ConnectsTo relation '{}'.", relation.getEntityName());
         RootNode source = topology.getEdgeSource(relation);
         RootNode target = topology.getEdgeTarget(relation);
         if (source instanceof WebApplication && target instanceof MysqlDatabase) {

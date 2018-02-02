@@ -4,7 +4,6 @@ import java.security.SecureRandom;
 import java.util.stream.Collectors;
 
 import org.opentosca.toscana.core.transformation.TransformationContext;
-import org.opentosca.toscana.model.node.Apache;
 import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.MysqlDatabase;
 import org.opentosca.toscana.model.node.RootNode;
@@ -48,7 +47,6 @@ public class PrepareModelNodeVisitor implements NodeVisitor {
 
     @Override
     public void visit(MysqlDatabase node) {
-        logger.info("Prepare MysqlDatabase node '{}'.", node.getEntityName());
         //if certain values aren't given, fill them
         if (node.getPassword().isPresent()) {
             //password needs to be at least 8 characters long
@@ -86,16 +84,16 @@ public class PrepareModelNodeVisitor implements NodeVisitor {
             compute.setPublicAddress(databaseEndpoint);
             logger.debug("Set private address and public address of '{}' to reference MysqlDatabase '{}'",
                 compute.getEntityName(), node.getEntityName());
+            //also the underlying compute should not get mapped to an ec2
+            cfnModule.removeComputeToEc2(compute);
+            logger.debug("Removing Compute '{}' to be transformed", compute.getEntityName());
         }
     }
 
     @Override
-    public void visit(Apache node) {
-        logger.info("Prepare Apache node '{}'.", node.getEntityName());
-        //underlying compute should be converted to a ec2
-        Compute compute = getCompute(node);
-        cfnModule.addComputeToEc2(compute);
-        logger.debug("Adding Compute '{}' to be transformed", compute.getEntityName());
+    public void visit(Compute node) {
+        // compute nodes only get transformed if they are present in this map
+        cfnModule.addComputeToEc2(node);
     }
 
     /**
