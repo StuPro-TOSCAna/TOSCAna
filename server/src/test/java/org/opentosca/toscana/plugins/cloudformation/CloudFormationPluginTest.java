@@ -14,7 +14,7 @@ import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.visitor.VisitableNode;
 import org.opentosca.toscana.plugins.cloudformation.mapper.CapabilityMapper;
-import org.opentosca.toscana.plugins.cloudformation.visitor.CloudFormationNodeVisitor;
+import org.opentosca.toscana.plugins.cloudformation.visitor.TransformModelNodeVisitor;
 import org.opentosca.toscana.plugins.util.TransformationFailureException;
 
 import com.amazonaws.SdkClientException;
@@ -33,7 +33,7 @@ public class CloudFormationPluginTest extends BaseUnitTest {
     private final static Logger logger = LoggerFactory.getLogger(CloudFormationPluginTest.class);
     private static CloudFormationModule cfnModule;
     private static PluginFileAccess fileAccess;
-    private static CloudFormationNodeVisitor cfnNodeVisitor;
+    private static TransformModelNodeVisitor cfnNodeVisitor;
     private EffectiveModel lamp;
 
     @Before
@@ -44,7 +44,7 @@ public class CloudFormationPluginTest extends BaseUnitTest {
         TransformationContext context = mock(TransformationContext.class);
         when(context.getModel()).thenReturn(lamp);
         when(context.getLogger((Class<?>) any(Class.class))).thenReturn(LoggerFactory.getLogger("Dummy Logger"));
-        CloudFormationNodeVisitor cfnNodeVisitorL = new CloudFormationNodeVisitor(context, cfnModule);
+        TransformModelNodeVisitor cfnNodeVisitorL = new TransformModelNodeVisitor(context, cfnModule);
         cfnNodeVisitor = spy(cfnNodeVisitorL);
         CapabilityMapper capabilityMapper = mock(CapabilityMapper.class);
         when(capabilityMapper.mapOsCapabilityToImageId(any(OsCapability.class))).thenReturn("ami-testami");

@@ -15,7 +15,7 @@ import org.jgrapht.Graph;
 import org.slf4j.Logger;
 
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationLifecycle.toAlphanumerical;
-import static org.opentosca.toscana.plugins.cloudformation.visitor.CloudFormationNodeVisitor.getCompute;
+import static org.opentosca.toscana.plugins.cloudformation.visitor.TransformModelNodeVisitor.getCompute;
 import static org.opentosca.toscana.plugins.cloudformation.visitor.PrepareModelNodeVisitor.AWS_ENDPOINT_REFERENCE;
 
 /**

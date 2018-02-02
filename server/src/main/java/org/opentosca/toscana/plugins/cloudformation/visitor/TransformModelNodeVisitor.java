@@ -50,20 +50,20 @@ import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.
  Class for building a CloudFormation template from an effective model instance via the visitor pattern. Currently only
  supports LAMP-stacks built with Compute, WebApplication, Apache, MySQL, MySQL nodes.
  */
-public class CloudFormationNodeVisitor implements StrictNodeVisitor {
+public class TransformModelNodeVisitor implements StrictNodeVisitor {
 
     private final Logger logger;
     private CloudFormationModule cfnModule;
     private Graph<RootNode, RootRelationship> topology;
 
     /**
-     Creates a <tt>CloudFormationNodeVisitor<tt> in order to build a template with the given
+     Creates a <tt>TransformModelNodeVisitor<tt> in order to build a template with the given
      <tt>CloudFormationModule<tt>.
 
      @param context TransformationContext to extract topology and logger
      @param cfnModule Module to build the template model
      */
-    public CloudFormationNodeVisitor(TransformationContext context, CloudFormationModule cfnModule) {
+    public TransformModelNodeVisitor(TransformationContext context, CloudFormationModule cfnModule) {
         this.logger = context.getLogger(getClass());
         this.topology = context.getModel().getTopology();
         this.cfnModule = cfnModule;

@@ -16,7 +16,7 @@ import org.opentosca.toscana.model.visitor.RelationshipVisitor;
 import org.opentosca.toscana.model.visitor.UnsupportedTypeException;
 import org.opentosca.toscana.plugins.cloudformation.visitor.CheckModelNodeVisitor;
 import org.opentosca.toscana.plugins.cloudformation.visitor.CheckModelRelationshipVisitor;
-import org.opentosca.toscana.plugins.cloudformation.visitor.CloudFormationNodeVisitor;
+import org.opentosca.toscana.plugins.cloudformation.visitor.TransformModelNodeVisitor;
 import org.opentosca.toscana.plugins.cloudformation.visitor.PrepareModelNodeVisitor;
 import org.opentosca.toscana.plugins.cloudformation.visitor.PrepareModelRelationshipVisitor;
 import org.opentosca.toscana.plugins.util.TransformationFailureException;
@@ -91,7 +91,7 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
         Set<RootNode> nodes = model.getNodes();
         // Visit Compute nodes first, then all others
         try {
-            CloudFormationNodeVisitor cfnNodeVisitor = new CloudFormationNodeVisitor(context, cfnModule);
+            TransformModelNodeVisitor cfnNodeVisitor = new TransformModelNodeVisitor(context, cfnModule);
             logger.info("Transform nodes");
             visitComputeNodesFirst(nodes, cfnNodeVisitor);
             logger.info("Creating CloudFormation template.");
