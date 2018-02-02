@@ -213,9 +213,11 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
         for (String dependency : operation.getDependencies()) {
             String cfnSource = getFileURL(cfnModule.getBucketName(), dependency);
 
-            logger.debug("Marking " + dependency + " as file to be uploaded.");
+            logger.debug("Marking '{}' as file to be uploaded.", dependency);
             cfnModule.putFileToBeUploaded(dependency);
-
+            logger.debug("Marking '{}' as instance in need of authentication.", serverName);
+            cfnModule.putAuthentication(serverName);
+            
             CFNFile cfnFile = new CFNFile(ABSOLUTE_FILE_PATH + dependency)
                 .setSource(cfnSource)
                 .setMode(MODE_644) //TODO Check what mode is needed (only read?)
@@ -233,8 +235,10 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
             String artifact = operation.getArtifact().get().getFilePath();
             String cfnSource = getFileURL(cfnModule.getBucketName(), artifact);
 
-            logger.debug("Marking " + artifact + " as file to be uploaded.");
+            logger.debug("Marking '{}' as file to be uploaded.", artifact);
             cfnModule.putFileToBeUploaded(artifact);
+            logger.debug("Marking '{}' as instance in need of authentication.", serverName);
+            cfnModule.putAuthentication(serverName);
 
             CFNFile cfnFile = new CFNFile(ABSOLUTE_FILE_PATH + artifact)
                 .setSource(cfnSource)

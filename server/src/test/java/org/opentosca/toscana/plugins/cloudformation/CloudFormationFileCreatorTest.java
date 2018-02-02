@@ -97,7 +97,7 @@ public class CloudFormationFileCreatorTest extends BaseUnitTest {
             "check \"aws\"\n" +
             "source file-upload.sh\n" +
             CHANGE_TO_PARENT_DIRECTORY + "\n" +
-            CLI_COMMAND_CREATESTACK + CLI_PARAM_STACKNAME + cfnModule.getStackName() + " " + CLI_PARAM_TEMPLATEFILE 
+            CLI_COMMAND_CREATESTACK + CLI_PARAM_STACKNAME + cfnModule.getStackName() + " " + CLI_PARAM_TEMPLATEFILE
             + TEMPLATE_YAML + " " + CLI_PARAM_CAPABILITIES + " " + CAPABILITY_IAM + " " + CLI_PARAM_PARAMOVERRIDES + " " + KEYNAME + "=$" + KEYNAME + "Var &" + "\n";
         String expectedFileUploadContent = SHEBANG + "\n" +
             SOURCE_UTIL_ALL + "\n" +

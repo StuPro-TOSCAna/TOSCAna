@@ -81,14 +81,14 @@ public class CloudFormationModule extends Module {
         "        - 's3:GetObject'\n" +
         "      Effect: Allow\n" +
         "      Resource: 'arn:aws:s3:::";
-    
+
     private String awsRegion;
     private AWSCredentials awsCredentials;
     private Object keyNameVar;
     private Map<String, CFNInit> cfnInitMap;
     private Set<String> computeToEc2;
     private Map<String, Fn> fnSaver;
-    private List<String> authenticationList;
+    private Set<String> authenticationSet;
     private List<String> filesToBeUploaded;
     private PluginFileAccess fileAccess;
     private String bucketName;
@@ -107,7 +107,7 @@ public class CloudFormationModule extends Module {
         this.cfnInitMap = new HashMap<>();
         this.computeToEc2 = new HashSet<>();
         this.fnSaver = new HashMap<>();
-        this.authenticationList = new ArrayList<>();
+        this.authenticationSet = new HashSet<>();
         this.filesToBeUploaded = new ArrayList<>();
         this.fileAccess = fileAccess;
         this.bucketName = getRandomBucketName();
@@ -184,15 +184,15 @@ public class CloudFormationModule extends Module {
     public void putFileToBeUploaded(String filePath) {
         this.filesToBeUploaded.add(filePath);
     }
-    
-    public List<String> getAuthenticationList() {
-        return authenticationList;
+
+    public Set<String> getAuthenticationSet() {
+        return authenticationSet;
     }
-    
+
     public void putAuthentication(String instanceName) {
-        authenticationList.add(instanceName);
+        authenticationSet.add(instanceName);
     }
-    
+
     public String getBucketName() {
         return bucketName;
     }
@@ -292,10 +292,10 @@ public class CloudFormationModule extends Module {
     private String getRandomStackName() {
         return "toscana-stack-" + UUID.randomUUID();
     }
-    
+
     /**
      Returns the `Authentication` to access S3 for this module.
-     
+
      @return authentication for S3
      */
     public Authentication getS3Authentication() {
@@ -308,7 +308,7 @@ public class CloudFormationModule extends Module {
     /**
      Returns the `Policy` to access S3 for this module.
      Note: Roles must still be set.
-     
+
      @return policy to access S3
      */
     public Policy getS3Policy() {
@@ -338,13 +338,13 @@ public class CloudFormationModule extends Module {
         return resource(InstanceProfile.class, INSTANCE_PROFILE)
             .path("/");
     }
-    
+
     /**
      Build the template
      1. Add CFNInit to corresponding instance resource
      2. Check if EC2 instances need access to S3. If yes, then
-        2a. Add necessary IAM resources to the module
-        2b. Add `Authentication` and `IamInstanceProfile` to corresponding instance resource
+     2a. Add necessary IAM resources to the module
+     2b. Add `Authentication` and `IamInstanceProfile` to corresponding instance resource
      */
     @Override
     public void build() {
@@ -364,7 +364,7 @@ public class CloudFormationModule extends Module {
             getS3Policy().roles(instanceRole);
             getS3InstanceProfile().roles(instanceRole);
             Authentication s3authentication = getS3Authentication();
-            for (String instanceName : authenticationList) {
+            for (String instanceName : authenticationSet) {
                 Resource res = this.getResource(instanceName);
                 if (res instanceof Instance) {
                     Instance instance = (Instance) res;

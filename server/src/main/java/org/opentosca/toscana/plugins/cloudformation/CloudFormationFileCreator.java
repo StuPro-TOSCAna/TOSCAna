@@ -39,7 +39,7 @@ public class CloudFormationFileCreator {
     /**
      Creates a <tt>CloudFormationFileCreator<tt> in order to build deployment scripts and copy files.
 
-     @param context TransformationContext to extract topology and logger
+     @param context   TransformationContext to extract topology and logger
      @param cfnModule Module to get the necessary CloudFormation information
      */
     public CloudFormationFileCreator(TransformationContext context, CloudFormationModule cfnModule) {
@@ -95,12 +95,12 @@ public class CloudFormationFileCreator {
         deployCommand.append(CLI_COMMAND_CREATESTACK + CLI_PARAM_STACKNAME)
             .append(cfnModule.getStackName()).append(" ")
             .append(CLI_PARAM_TEMPLATEFILE).append(TEMPLATE_YAML);
-        
+
         // Add IAM capability if needed
         if (!filesToBeUploaded.isEmpty()) {
             deployCommand.append(" " + CLI_PARAM_CAPABILITIES + " " + CAPABILITY_IAM);
         }
-        
+
         // Add parameters if needed
         Map<String, Parameter> parameters = cfnModule.getParameters();
         if (!parameters.isEmpty()) {
