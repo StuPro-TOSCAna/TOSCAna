@@ -198,9 +198,10 @@ public class TOSCAnaAPI {
             props.getProperties()
                 .forEach(transformationProperty -> result.put(transformationProperty.getKey(), true));
             return result;
+        } else {
+            throwToscanaException(call, response);
+            return null;
         }
-        throwToscanaException(call, response);
-        return null;
     }
 
     public byte[] downloadArtifactAsBytes(String csarName,
