@@ -8,6 +8,7 @@ import org.opentosca.toscana.model.capability.OsCapability;
 import org.opentosca.toscana.model.capability.ScalableCapability;
 import org.opentosca.toscana.model.node.Compute;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import static junit.framework.TestCase.assertTrue;
@@ -15,14 +16,22 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 public class EffectiveModelTest extends BaseUnitTest {
+    
+    private EffectiveModel model;
+    private Compute compute;
+    
+    @Before
+    public void setUp(){
+        this.model = new EffectiveModel(TestCsars.VALID_SINGLE_COMPUTE_WINDOWS_TEMPLATE, logMock());
+        this.compute = (Compute) model.getNodes().iterator().next();
+        
+    }
 
     /**
      Test the generic 'setter' functionality (appears trivial but that's a deception)
      */
     @Test
     public void setPropertyTest() {
-        EffectiveModel model = new EffectiveModel(TestCsars.VALID_SINGLE_COMPUTE_WINDOWS_TEMPLATE, logMock());
-        Compute compute = (Compute) model.getNodes().iterator().next();
         String expected = "test-public-address";
         compute.setPublicAddress(expected);
         Optional<String> publicAddress = compute.getPublicAddress();
@@ -32,8 +41,6 @@ public class EffectiveModelTest extends BaseUnitTest {
 
     @Test
     public void setEnumTest() {
-        EffectiveModel model = new EffectiveModel(TestCsars.VALID_SINGLE_COMPUTE_WINDOWS_TEMPLATE, logMock());
-        Compute compute = (Compute) model.getNodes().iterator().next();
         OsCapability os = compute.getOs();
         OsCapability.Distribution expected = OsCapability.Distribution.FEDORA;
         os.setDistribution(expected);
@@ -48,8 +55,6 @@ public class EffectiveModelTest extends BaseUnitTest {
      */
     @Test
     public void setDefaultTest() {
-        EffectiveModel model = new EffectiveModel(TestCsars.VALID_SINGLE_COMPUTE_WINDOWS_TEMPLATE, logMock());
-        Compute compute = (Compute) model.getNodes().iterator().next();
         ScalableCapability scalable = compute.getScalable();
         assertNotNull(scalable);
     }
