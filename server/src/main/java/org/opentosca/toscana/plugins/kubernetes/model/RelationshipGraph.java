@@ -1,6 +1,9 @@
-package org.opentosca.toscana.plugins.kubernetes;
+package org.opentosca.toscana.plugins.kubernetes.model;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.relation.ConnectsTo;
@@ -8,17 +11,13 @@ import org.opentosca.toscana.model.requirement.Requirement;
 import org.opentosca.toscana.plugins.kubernetes.util.NodeStack;
 import org.opentosca.toscana.plugins.util.TransformationFailureException;
 
-import org.jgrapht.Graph;
 import org.jgrapht.graph.DirectedMultigraph;
 
-/**
- This class is used to find the ConnectsTo Relationships in a given topology.
- */
-public class RelationshipAnalyzer {
+public class RelationshipGraph extends DirectedMultigraph<NodeStack, Requirement> {
 
-    public static Graph<NodeStack, Requirement> buildRelationshipGraph(Set<NodeStack> stacks) {
-        Graph<NodeStack, Requirement> relationshipGraph = new DirectedMultigraph<>(Requirement.class);
-        stacks.forEach(relationshipGraph::addVertex);
+    public RelationshipGraph(Set<NodeStack> stacks) {
+        super(Requirement.class);
+        stacks.forEach(this::addVertex);
         for (NodeStack stack : stacks) {
             stack.forEachNode(n -> {
                 RootNode node = n.getNode();
@@ -35,14 +34,27 @@ public class RelationshipAnalyzer {
                         RootNode fulfiller = (RootNode) fulfillers.stream().findFirst().get();
                         for (NodeStack s : stacks) {
                             if (s.hasNode(fulfiller.getEntityName())) {
-                                relationshipGraph.addEdge(stack, s, r);
+                                this.addEdge(stack, s, r);
                             }
                         }
                     }
                 });
             });
         }
+    }
 
-        return relationshipGraph;
+    public Map<String, String> getEnvironmentVariables(NodeStack stack) {
+        Set<Requirement> sourceRequirements = this.edgesOf(stack).stream()
+            .filter(e -> this.getEdgeSource(e).equals(stack)).collect(Collectors.toSet());
+        Map<String, String> environment = new HashMap<>();
+        for (Requirement requirement : sourceRequirements) {
+            if (requirement.getRelationship().orElse(null) instanceof ConnectsTo) {
+                NodeStack target = this.getEdgeTarget(requirement);
+                target.forEachNode(e -> {
+                    System.out.println(e.getNode().getCollection(RootNode.PROPERTIES));
+                });
+            }
+        }
+        return environment;
     }
 }

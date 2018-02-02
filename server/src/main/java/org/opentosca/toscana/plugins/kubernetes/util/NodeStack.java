@@ -13,6 +13,7 @@ import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.requirement.Requirement;
 import org.opentosca.toscana.plugins.kubernetes.docker.mapper.BaseImageMapper;
 import org.opentosca.toscana.plugins.kubernetes.model.Port;
+import org.opentosca.toscana.plugins.kubernetes.model.RelationshipGraph;
 import org.opentosca.toscana.plugins.kubernetes.visitor.imgtransform.DockerfileBuildingVisitor;
 import org.opentosca.toscana.plugins.kubernetes.visitor.imgtransform.ImageMappingVisitor;
 
@@ -54,7 +55,7 @@ public class NodeStack {
     }
 
     public void buildToDockerfile(
-        Graph<NodeStack, Requirement> connectionGraph,
+        RelationshipGraph connectionGraph,
         TransformationContext context,
         BaseImageMapper mapper
     ) throws IOException {
