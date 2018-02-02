@@ -8,6 +8,8 @@ if ($post != "") {
     checkOrCreateTable();
     saveToDb($post);
 }
+
+
 /**
 * check if table exists and if not create it
 */

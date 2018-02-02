@@ -39,7 +39,7 @@ public class PrepareModelRelationshipVisitor extends CloudFormationVisitorExtens
             Compute computeMysqlDatabase = getCompute(mysqlDatabase);
             Compute computeWebApplication = getCompute(webApplication);
             if (computeMysqlDatabase.equals(computeWebApplication)) {
-                // means we can set the private address as reference the database endpoint
+                // means we can set the private address as reference to the database endpoint
                 Fn databaseEndpointFn = Fn.fnGetAtt(toAlphanumerical(mysqlDatabase.getEntityName()),
                     AWS_ENDPOINT_REFERENCE);
                 String databaseEndpoint = databaseEndpointFn.toString(true);
@@ -48,6 +48,8 @@ public class PrepareModelRelationshipVisitor extends CloudFormationVisitorExtens
                 computeMysqlDatabase.setPublicAddress(databaseEndpoint);
                 logger.debug("Set private address and public address of '{}' to reference MysqlDatabase '{}'",
                     computeMysqlDatabase.getEntityName(), mysqlDatabase.getEntityName());
+            } else {
+                logger.debug("Cannot safely set private/public address of '{}'", computeMysqlDatabase.getEntityName());
             }
         } else {
             logger.debug("Drop relationship, because it is not supported");

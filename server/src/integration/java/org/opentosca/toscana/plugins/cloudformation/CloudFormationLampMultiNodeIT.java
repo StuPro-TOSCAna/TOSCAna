@@ -9,9 +9,7 @@ import org.opentosca.toscana.model.EffectiveModelFactory;
 import org.apache.commons.io.FileUtils;
 
 public class CloudFormationLampMultiNodeIT extends CloudFormationLampIT {
-    public CloudFormationLampMultiNodeIT() {
-        super();
-    }
+
     @Override
     protected EffectiveModel getModel() {
         return new EffectiveModelFactory().create(TestCsars.VALID_LAMP_NO_INPUT_MULTI_COMPUTE_TEMPLATE, logMock());
