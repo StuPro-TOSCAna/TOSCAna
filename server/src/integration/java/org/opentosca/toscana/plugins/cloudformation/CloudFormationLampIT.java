@@ -5,6 +5,7 @@ import java.util.HashSet;
 
 import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.transformation.Transformation;
+import org.opentosca.toscana.core.transformation.properties.NoSuchPropertyException;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
 import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.model.EffectiveModelFactory;
@@ -49,11 +50,11 @@ public class CloudFormationLampIT extends BaseTransformTest {
     }
 
     @Override
-    protected PropertyInstance getProperties() {
+    protected PropertyInstance getProperties() throws NoSuchPropertyException {
         PropertyInstance props = new PropertyInstance(new HashSet<>(plugin.getPlatform().properties), mock
             (Transformation.class));
-        props.setPropertyValue(AWS_ACCESS_KEY_ID_KEY, accessKey);
-        props.setPropertyValue(AWS_SECRET_KEY_KEY, secretKey);
+        props.set(AWS_ACCESS_KEY_ID_KEY, accessKey);
+        props.set(AWS_SECRET_KEY_KEY, secretKey);
         return props;
     }
 
