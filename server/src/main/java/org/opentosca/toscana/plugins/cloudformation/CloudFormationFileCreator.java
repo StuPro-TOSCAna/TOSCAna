@@ -26,7 +26,7 @@ public class CloudFormationFileCreator {
     public static final String CLI_PARAM_TEMPLATEFILE = "--template-file ";
     public static final String CLI_PARAM_PARAMOVERRIDES = "--parameter-overrides ";
     public static final String CLI_PARAM_CAPABILITIES = "--capabilities";
-    public static final String CAPABILITY_IAM = "CAPABLITY_IAM";
+    public static final String CAPABILITY_IAM = "CAPABILITY_IAM";
     public static final String FILENAME_DEPLOY = "deploy";
     public static final String FILENAME_UPLOAD = "file-upload";
     public static final String TEMPLATE_YAML = "template.yaml";
