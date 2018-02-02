@@ -33,4 +33,10 @@ public class TemplateConverterTest extends BaseUnitTest {
         EffectiveModel model = new EffectiveModelFactory().create(TestCsars.VALID_LAMP_INPUT_TEMPLATE, logMock());
         assertNotNull(model);
     }
+
+    @Test
+    public void expressConverter() {
+        EffectiveModel model = new EffectiveModelFactory().create(TestCsars.VALID_EXPRESS_TEMPLATE, logMock());
+        assertNotNull(model);
+    }
 }

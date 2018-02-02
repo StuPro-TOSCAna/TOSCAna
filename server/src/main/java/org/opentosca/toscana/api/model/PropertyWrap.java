@@ -19,7 +19,7 @@ public class PropertyWrap {
         @JsonProperty("description") String description,
         @JsonProperty("value") String value,
         @JsonProperty("required") boolean required,
-        @JsonProperty("default") String defaultValue
+        @JsonProperty("default_value") String defaultValue
     ) {
         this.key = key;
         this.type = type;
@@ -85,7 +85,7 @@ public class PropertyWrap {
         required = true,
         notes = "the default value of the property"
     )
-    @JsonProperty("default")
+    @JsonProperty("default_value")
     public String getDefaultValue() {
         return defaultValue;
     }

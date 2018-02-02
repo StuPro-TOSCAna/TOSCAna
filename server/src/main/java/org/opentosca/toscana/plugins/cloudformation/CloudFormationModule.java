@@ -3,11 +3,14 @@ package org.opentosca.toscana.plugins.cloudformation;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
+import org.opentosca.toscana.model.node.Compute;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.scaleset.cfbuilder.core.Fn;
@@ -19,12 +22,16 @@ import com.scaleset.cfbuilder.ec2.Instance;
 import com.scaleset.cfbuilder.ec2.UserData;
 import com.scaleset.cfbuilder.ec2.metadata.CFNInit;
 
+import static org.opentosca.toscana.plugins.cloudformation.CloudFormationLifecycle.toAlphanumerical;
+
 public class CloudFormationModule extends Module {
 
-    public final static String CONFIG_SETS = "InstallAndConfigure";
-    public final static String CONFIG_INSTALL = "Install";
-    public final static String CONFIG_CONFIGURE = "Configure";
-    public final static String SECURITY_GROUP = "SecurityGroup";
+    public static final String CONFIG_SETS = "LifecycleOperations";
+    public static final String CONFIG_CREATE = "Create";
+    public static final String CONFIG_CONFIGURE = "Configure";
+    public static final String CONFIG_START = "Start";
+    public static final String SECURITY_GROUP = "SecurityGroup";
+    public static final String ABSOLUTE_FILE_PATH = "/opt/";
     public static final String URL_HTTP = "http://";
     public static final String URL_S3_AMAZONAWS = ".s3.amazonaws.com";
     public static final String FILEPATH_TARGET = "output/files/";
@@ -60,6 +67,8 @@ public class CloudFormationModule extends Module {
     private AWSCredentials awsCredentials;
     private Object keyNameVar;
     private Map<String, CFNInit> cfnInitMap;
+    private Set<String> computeToEc2;
+    private Map<String, Fn> fnSaver;
     private List<String> filesToBeUploaded;
     private PluginFileAccess fileAccess;
     private String bucketName;
@@ -74,9 +83,11 @@ public class CloudFormationModule extends Module {
         this.id("").template(new Template());
         strParam(KEYNAME).type(KEYNAME_TYPE).description(KEYNAME_DESCRIPTION).constraintDescription
             (KEYNAME_CONSTRAINT_DESCRIPTION);
-        keyNameVar = template.ref(KEYNAME);
-        cfnInitMap = new HashMap<>();
-        filesToBeUploaded = new ArrayList<>();
+        this.keyNameVar = template.ref(KEYNAME);
+        this.cfnInitMap = new HashMap<>();
+        this.computeToEc2 = new HashSet<>();
+        this.fnSaver = new HashMap<>();
+        this.filesToBeUploaded = new ArrayList<>();
         this.fileAccess = fileAccess;
         this.bucketName = getRandomBucketName();
         this.stackName = getRandomStackName();
@@ -101,6 +112,48 @@ public class CloudFormationModule extends Module {
      */
     public CFNInit getCFNInit(String resource) {
         return this.cfnInitMap.get(resource);
+    }
+
+    /**
+     Mark a compute node to be transformed to a ec2
+     */
+    public void addComputeToEc2(Compute compute) {
+        computeToEc2.add(toAlphanumerical(compute.getEntityName()));
+    }
+
+    /**
+     Mark a compute node to be transformed to a ec2
+     */
+    public void removeComputeToEc2(Compute compute) {
+        computeToEc2.remove(toAlphanumerical(compute.getEntityName()));
+    }
+
+    /**
+     Check if this compute is marked to be transformed to ec2
+     */
+    public boolean checkComputeToEc2(Compute compute) {
+        return computeToEc2.contains(toAlphanumerical(compute.getEntityName()));
+    }
+
+    /**
+     Put a Fn with its string representation into a map
+     */
+    public void putFn(String key, Fn value) {
+        this.fnSaver.put(key, value);
+    }
+
+    /**
+     Check if the key is also saved as a Fn object
+     */
+    public boolean checkFn(String key) {
+        return this.fnSaver.containsKey(key);
+    }
+
+    /**
+     Get the Fn for this key
+     */
+    public Fn getFn(String key) {
+        return this.fnSaver.get(key);
     }
 
     public List<String> getFilesToBeUploaded() {
@@ -221,9 +274,11 @@ public class CloudFormationModule extends Module {
             Resource res = this.getResource(pair.getKey());
             if (res instanceof Instance) {
                 Instance instance = (Instance) res;
-                instance
-                    .addCFNInit(pair.getValue())
-                    .userData(new UserData(getUserDataFn(pair.getKey(), CONFIG_SETS)));
+                if (!pair.getValue().getConfigs().isEmpty()) {
+                    instance
+                        .addCFNInit(pair.getValue())
+                        .userData(new UserData(getUserDataFn(pair.getKey(), CONFIG_SETS)));
+                }
             }
         }
     }

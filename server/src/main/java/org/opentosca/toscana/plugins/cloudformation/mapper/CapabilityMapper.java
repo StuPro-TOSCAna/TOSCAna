@@ -117,7 +117,7 @@ public class CapabilityMapper {
         try {
             DescribeImagesResult describeImagesResult = ec2.describeImages(describeImagesRequest);
             String imageId = processResult(describeImagesResult);
-            logger.debug("ImageId is: {}", imageId);
+            logger.debug("ImageId is: '{}'", imageId);
             return imageId;
         } catch (SdkClientException se) {
             logger.error("Cannot connect to AWS to request image Ids");
@@ -140,7 +140,7 @@ public class CapabilityMapper {
     private String processResult(DescribeImagesResult describeImagesResult) throws ParseException,
         IllegalArgumentException {
         Integer numReceivedImages = describeImagesResult.getImages().size();
-        logger.debug("Got {} images from aws", numReceivedImages);
+        logger.debug("Got '{}' images from aws", numReceivedImages);
         if (numReceivedImages > 0) {
             DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
             Map<Date, Image> creationDateMap = new HashMap<>();
@@ -149,7 +149,7 @@ public class CapabilityMapper {
                 creationDateMap.put(date, image);
             }
             Image latest = creationDateMap.get(Collections.max(creationDateMap.keySet()));
-            logger.debug("Latest image received: {}", latest);
+            logger.debug("Latest image received: '{}'", latest);
             return latest.getImageId();
         } else {
             throw new IllegalArgumentException("No images received");
@@ -190,17 +190,17 @@ public class CapabilityMapper {
             .collect(Collectors.toList());
         // scale numCpus and memSize upwards if they are not represented in the lists
         try {
-            logger.debug("Check numCpus: {}", numCpus);
+            logger.debug("Check numCpus: '{}'", numCpus);
             numCpus = checkValue(numCpus, allNumCpus);
-            logger.debug("Check memSize: {}", memSize);
+            logger.debug("Check memSize: '{}'", memSize);
             memSize = checkValue(memSize, allMemSizes);
         } catch (IllegalArgumentException ie) {
-            logger.error("Values numCpus: {} and/or memSize: are too big. No InstanceType found", numCpus, memSize);
+            logger.error("Values numCpus: '{}' and/or memSize: are too big. No InstanceType found", numCpus, memSize);
             throw ie;
         }
         //get instanceType from combination
         String instanceType = findCombination(numCpus, memSize, instanceTypes, allNumCpus, allMemSizes);
-        logger.debug("InstanceType is: {}", instanceType);
+        logger.debug("InstanceType is: '{}'", instanceType);
         return instanceType;
     }
 
@@ -216,14 +216,14 @@ public class CapabilityMapper {
         Integer diskSize = computeCapability.getDiskSizeInMb().orElse(minSize * 1000);
         diskSize = diskSize / 1000;
         if (diskSize > maxSize) {
-            logger.debug("Disk size: {}", maxSize);
+            logger.debug("Disk size: '{}'", maxSize);
             return maxSize;
         }
         if (diskSize < minSize) {
-            logger.debug("Disk size: {}", minSize);
+            logger.debug("Disk size: '{}'", minSize);
             return minSize;
         }
-        logger.debug("Disk size: {}", diskSize);
+        logger.debug("Disk size: '{}'", diskSize);
         return diskSize;
     }
 
@@ -258,7 +258,7 @@ public class CapabilityMapper {
             Integer newMemSize = memSize;
             //the combination does not exist
             //try to scale cpu
-            logger.debug("The combination of numCpus: {} and memSize: {} does not exist", newNumCpus, newMemSize);
+            logger.debug("The combination of numCpus: '{}' and memSize: '{}' does not exist", newNumCpus, newMemSize);
             logger.debug("Try to scale cpu");
             for (Integer num : allNumCpus) {
                 if (num > newNumCpus && getMemByCpu(num, instanceTypes).contains(newMemSize)) {
@@ -281,10 +281,10 @@ public class CapabilityMapper {
                 if (instanceType.isEmpty()) {
                     throw new TransformationFailureException("No combination of numCpus and memSize found");
                 } else {
-                    logger.debug("Scaling memSize succeeded, memSize: {}", newMemSize);
+                    logger.debug("Scaling memSize succeeded, memSize: '{}'", newMemSize);
                 }
             } else {
-                logger.debug("Scaling numCpus succeeded, numCpus: {}", newNumCpus);
+                logger.debug("Scaling numCpus succeeded, numCpus: '{}'", newNumCpus);
             }
         }
         return instanceType;

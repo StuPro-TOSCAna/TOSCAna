@@ -481,7 +481,7 @@ public class TransformationControllerTest extends BaseSpringTest {
             .andExpect(jsonPath("$.phases").isArray())
             .andExpect(jsonPath("$.phases").isEmpty())
             .andExpect(jsonPath("$.platform").value(VALID_PLATFORM_NAME))
-            .andExpect(jsonPath("$.status").value("INPUT_REQUIRED"))
+            .andExpect(jsonPath("$.state").value("INPUT_REQUIRED"))
             .andReturn();
         JSONObject object = new JSONObject(result.getResponse().getContentAsString());
         HALRelationUtils.validateRelations(

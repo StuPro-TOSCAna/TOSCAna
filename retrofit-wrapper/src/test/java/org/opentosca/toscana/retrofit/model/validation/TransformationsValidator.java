@@ -13,7 +13,7 @@ public class TransformationsValidator implements IModelValidator {
         assertEquals(1, resources.getContent().size());
         Transformation t = resources.getContent().get(0);
         assertNotNull(t.getPlatform());
-        assertNotNull(t.getStatus());
+        assertNotNull(t.getState());
         assertEquals(6, t.getLinks().size());
     }
 }
