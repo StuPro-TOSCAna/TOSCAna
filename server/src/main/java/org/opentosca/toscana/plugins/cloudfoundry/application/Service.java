@@ -27,7 +27,6 @@ public class Service {
 
     /**
      sets the service name. Should be the name of the service of the provider.
-     @param serviceName
      */
     public void setServiceName(String serviceName) {
         this.serviceName = serviceName;
@@ -39,7 +38,6 @@ public class Service {
 
     /**
      set the instance name of the service. is the name from the template
-     @param serviceInstanceName
      */
     public void setServiceInstanceName(String serviceInstanceName) {
         this.serviceInstanceName = serviceInstanceName;
