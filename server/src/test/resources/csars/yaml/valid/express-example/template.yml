@@ -1,0 +1,105 @@
+tosca_definitions_version: tosca_simple_yaml_1_1
+description: Template for deploying a NodeJS WebApplication
+metadata:
+  template_name: simple-task-js-template
+  template_author: stupro-toscana
+  template_version: 1.0
+
+topology_template:
+
+  node_templates:
+    simple_task_js:
+      type: tosca.nodes.WebApplication
+      requirements:
+        - host: node_srv
+        - database_endpoint:
+            node: redis_db
+            capability: database_endpoint
+            relationship: ConnectsTo
+        #- database_endpoint: redis_db
+      capabilities:
+        app_endpoint:
+          protocol: http
+          port: 3000
+      interfaces:
+        Standard:
+          create:
+            implementation:
+              primary: simpletaskapp_js/install_stajs.sh
+              dependencies:
+                - simpletaskapp_js/stajs.zip
+          start:
+            implementation:
+              primary: simpletaskapp_js/start_stajs.sh
+
+    node_srv:
+      type: tosca.nodes.WebServer.NodeJS
+      requirements:
+        - host: app_server
+      interfaces:
+        Standard:
+          create:
+            implementation:
+              primary: node/install_nodejs.sh
+
+    app_server:
+      type: tosca.nodes.Compute
+      capabilities:
+        host:
+          properties:
+            num_cpus: 1
+            disk_size: 4 GB
+            mem_size: 512 MB
+        os:
+          properties:
+            type: linux
+            distribution: ubuntu
+            version: 16.04
+
+    redis_db:
+      type: tosca.nodes.Database
+      properties:
+        name: 0
+      requirements:
+        - host: redis
+
+    redis:
+      type: tosca.nodes.DBMS
+      properties:
+        port: 6379
+      requirements:
+        - host: redis_compute
+      interfaces:
+        Standard:
+          create:
+            implementation:
+              primary: redis/install_redis.sh
+              dependencies:
+                - redis/redis.conf
+          start:
+            implementation:
+              primary: redis/start_redis.sh
+
+    redis_compute:
+      type: tosca.nodes.Compute
+      capabilities:
+        host:
+          properties:
+            num_cpus: 1
+            disk_size: 4 GB
+            mem_size: 512 MB
+        os:
+          properties:
+            type: linux
+            distribution: ubuntu
+            version: 16.04
+
+  outputs:
+    public_address:
+      type: string
+      description: Public address of the server hosting the SimpleTaskAppJS
+      value: { get_attribute: [ app_server, public_address ] }
+    port:
+      description: Port of the SimpleTaskAppJS
+      type: string
+      value: { get_attribute: [ simple_task_js, port ] }
