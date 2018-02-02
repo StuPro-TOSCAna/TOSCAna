@@ -6,32 +6,24 @@ import java.util.stream.Collectors;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.MysqlDatabase;
-import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.relation.HostedOn;
-import org.opentosca.toscana.model.relation.RootRelationship;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 import org.opentosca.toscana.plugins.cloudformation.CloudFormationModule;
 
 import com.scaleset.cfbuilder.core.Fn;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.jgrapht.Graph;
-import org.slf4j.Logger;
 
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationLifecycle.toAlphanumerical;
-import static org.opentosca.toscana.plugins.cloudformation.visitor.TransformModelNodeVisitor.getCompute;
 
 /**
  Class for preparing a models nodes
  */
-public class PrepareModelNodeVisitor implements NodeVisitor {
+public class PrepareModelNodeVisitor extends CloudFormationVisitorExtension implements NodeVisitor {
 
     protected static final String AWS_ENDPOINT_REFERENCE = "Endpoint.Address";
     private static final int minPWLength = 8;
     private static final String DEFAULT_USER = "root";
     private static final Integer DEFAULT_PORT = 3306;
-    private final Logger logger;
-    private Graph<RootNode, RootRelationship> topology;
-    private CloudFormationModule cfnModule;
 
     /**
      Create a <tt>PrepareModelNodeVisitor</tt> to prepare a models nodes.
@@ -40,9 +32,7 @@ public class PrepareModelNodeVisitor implements NodeVisitor {
      @param cfnModule module to modify
      */
     public PrepareModelNodeVisitor(TransformationContext context, CloudFormationModule cfnModule) {
-        this.logger = context.getLogger(getClass());
-        this.topology = context.getModel().getTopology();
-        this.cfnModule = cfnModule;
+        super(context, cfnModule);
     }
 
     @Override
@@ -52,7 +42,7 @@ public class PrepareModelNodeVisitor implements NodeVisitor {
             //password needs to be at least 8 characters long
             String password = node.getPassword().get();
             if (password.length() < minPWLength) {
-                logger.warn("Database password to short, creating new random password");
+                logger.warn("Database password too short, creating new random password");
                 node.setPassword(randomString(minPWLength));
             }
         } else {

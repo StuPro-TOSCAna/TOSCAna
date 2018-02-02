@@ -13,14 +13,11 @@ import org.opentosca.toscana.model.visitor.StrictNodeVisitor;
 import org.opentosca.toscana.model.visitor.UnsupportedTypeException;
 
 import com.google.common.collect.Lists;
-import org.slf4j.Logger;
 
 /**
  Class for checking the models nodes
  */
-public class CheckModelNodeVisitor implements StrictNodeVisitor {
-
-    private final Logger logger;
+public class CheckModelNodeVisitor extends CloudFormationVisitorExtension implements StrictNodeVisitor {
 
     /**
      Create a <tt>CheckModelNodeVisitor</tt> to check the models nodes.
@@ -28,7 +25,7 @@ public class CheckModelNodeVisitor implements StrictNodeVisitor {
      @param context TransformationContext to extract topology and logger
      */
     public CheckModelNodeVisitor(TransformationContext context) {
-        this.logger = context.getLogger(getClass());
+        super(context);
     }
 
     @Override

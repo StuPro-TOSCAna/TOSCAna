@@ -16,9 +16,9 @@ import org.opentosca.toscana.model.visitor.RelationshipVisitor;
 import org.opentosca.toscana.model.visitor.UnsupportedTypeException;
 import org.opentosca.toscana.plugins.cloudformation.visitor.CheckModelNodeVisitor;
 import org.opentosca.toscana.plugins.cloudformation.visitor.CheckModelRelationshipVisitor;
-import org.opentosca.toscana.plugins.cloudformation.visitor.TransformModelNodeVisitor;
 import org.opentosca.toscana.plugins.cloudformation.visitor.PrepareModelNodeVisitor;
 import org.opentosca.toscana.plugins.cloudformation.visitor.PrepareModelRelationshipVisitor;
+import org.opentosca.toscana.plugins.cloudformation.visitor.TransformModelNodeVisitor;
 import org.opentosca.toscana.plugins.util.TransformationFailureException;
 
 import com.amazonaws.auth.AWSCredentials;

@@ -6,26 +6,18 @@ import org.opentosca.toscana.model.node.MysqlDatabase;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.node.WebApplication;
 import org.opentosca.toscana.model.relation.ConnectsTo;
-import org.opentosca.toscana.model.relation.RootRelationship;
 import org.opentosca.toscana.model.visitor.RelationshipVisitor;
 import org.opentosca.toscana.plugins.cloudformation.CloudFormationModule;
 
 import com.scaleset.cfbuilder.core.Fn;
-import org.jgrapht.Graph;
-import org.slf4j.Logger;
 
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationLifecycle.toAlphanumerical;
-import static org.opentosca.toscana.plugins.cloudformation.visitor.TransformModelNodeVisitor.getCompute;
 import static org.opentosca.toscana.plugins.cloudformation.visitor.PrepareModelNodeVisitor.AWS_ENDPOINT_REFERENCE;
 
 /**
  Class for preparing a models relationships
  */
-public class PrepareModelRelationshipVisitor implements RelationshipVisitor {
-
-    private final Logger logger;
-    private Graph<RootNode, RootRelationship> topology;
-    private CloudFormationModule cfnModule;
+public class PrepareModelRelationshipVisitor extends CloudFormationVisitorExtension implements RelationshipVisitor {
 
     /**
      Create a <tt>PrepareModelRelationshipVisitor</tt> to prepare a models relationships.
@@ -33,9 +25,7 @@ public class PrepareModelRelationshipVisitor implements RelationshipVisitor {
      @param context TransformationContext to extract topology and logger
      */
     public PrepareModelRelationshipVisitor(TransformationContext context, CloudFormationModule cfnModule) {
-        this.logger = context.getLogger(getClass());
-        this.topology = context.getModel().getTopology();
-        this.cfnModule = cfnModule;
+        super(context, cfnModule);
     }
 
     @Override
