@@ -288,7 +288,7 @@ public class ApiController {
             transformation = toscAnaAPI.getTransformation(csar, plat);
             if (transformation != null) {
                 stringTransformation.append(transformation.getPlatform()).append(", ")
-                    .append(transformation.getStatus());
+                    .append(transformation.getState());
             } else {
                 return Constants.TRANSFORMATION_INFO_EMPTY;
             }
