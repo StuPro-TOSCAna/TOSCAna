@@ -68,8 +68,8 @@ public class CsarFilesystemDao implements CsarDao {
     @Override
     public Csar create(String identifier, InputStream inputStream) {
         csarMap.remove(identifier);
-        Csar csar = new CsarImpl(getRootDir(identifier), identifier, getLog(identifier));
         File csarDir = setupDir(identifier);
+        Csar csar = new CsarImpl(getRootDir(identifier), identifier, getLog(identifier));
         File transformationDir = new File(csarDir, TRANSFORMATION_DIR);
         transformationDir.mkdir();
         unzip(identifier, inputStream, csar, csarDir);
