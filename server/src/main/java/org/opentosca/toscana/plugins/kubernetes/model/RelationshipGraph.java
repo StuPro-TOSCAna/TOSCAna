@@ -42,20 +42,5 @@ public class RelationshipGraph extends DirectedMultigraph<NodeStack, Requirement
             });
         }
     }
-
-    public Map<String, String> getEnvironmentVariables(NodeStack stack) {
-        Set<Requirement> sourceRequirements = this.edgesOf(stack).stream()
-            .filter(e -> this.getEdgeSource(e).equals(stack)).collect(Collectors.toSet());
-        Map<String, String> environment = new HashMap<>();
-        //TODO Remove
-//        for (Requirement requirement : sourceRequirements) {
-//            if (requirement.getRelationship().orElse(null) instanceof ConnectsTo) {
-//                NodeStack target = this.getEdgeTarget(requirement);
-//                target.forEachNode(e -> {
-//                    System.out.println(e.getNode().getCollection(RootNode.PROPERTIES));
-//                });
-//            }
-//        }
-        return environment;
-    }
+    
 }

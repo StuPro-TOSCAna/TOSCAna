@@ -3,6 +3,7 @@ package org.opentosca.toscana.plugins.kubernetes.visitor.imgtransform;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -39,7 +40,7 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
 
     private boolean sudoInstalled = false;
 
-    private List<Integer> ports = new ArrayList<>();
+    private Set<Integer> ports = new HashSet<>();
     //This list is used to build a entrypoint script if there is more than one startup script
     private List<String> startCommands = new ArrayList<>();
 
@@ -78,6 +79,9 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
 
     @Override
     public void visit(Database node) {
+        if (node.getPort().isPresent()) {
+            ports.add(node.getPort().get());
+        }
         handleDefault(node);
     }
 
@@ -103,7 +107,9 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
 
     @Override
     public void visit(MysqlDbms node) {
-        ports.add(3306);
+        if (node.getPort().isPresent()) {
+            ports.add(node.getPort().get());
+        }
         builder.env("MYSQL_ROOT_PASSWORD", node.getRootPassword().get());
         handleDefault(node);
     }
@@ -151,7 +157,7 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
                         }
                     }
                 } catch (Exception ex) {
-                    logger.warn("Failed reading Port from node {}", node.getEntityName(),ex);
+                    logger.warn("Failed reading Port from node {}", node.getEntityName(), ex);
                 }
             });
             addToDockerfile(node.getEntityName(), node.getStandardLifecycle());
@@ -208,8 +214,8 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
         return true;
     }
 
-    public List<Integer> getPorts() {
-        return Collections.unmodifiableList(ports);
+    public Set<Integer> getPorts() {
+        return Collections.unmodifiableSet(ports);
     }
 
     private String determineFilename(String path) {

@@ -232,7 +232,6 @@ public class KubernetesLifecycle extends AbstractLifecycle {
     private void createDockerfiles() {
         RelationshipGraph connectionGraph = new RelationshipGraph(stacks);
         stacks.forEach(e -> {
-            connectionGraph.getEnvironmentVariables(e);
             logger.info("Creating Dockerfile for {}", e);
             try {
                 e.buildToDockerfile(connectionGraph, context, baseImageMapper);
