@@ -37,6 +37,7 @@ public class CsarServiceImpl implements CsarService {
             logger.warn("Failed to submit csar", e);
             // cleanup
             csarDao.delete(csar.getIdentifier());
+            csar.getLog().close();
             throw e;
         }
     }
