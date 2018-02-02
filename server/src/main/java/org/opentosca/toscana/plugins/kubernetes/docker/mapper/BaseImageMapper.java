@@ -1,5 +1,6 @@
 package org.opentosca.toscana.plugins.kubernetes.docker.mapper;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -70,14 +71,19 @@ public class BaseImageMapper {
      */
     private void updateBaseImageMap() {
         if (tagStorage.needsUpdate()) {
-            logger.info("Updating docker base tags");
-            for (DockerBaseImages baseImage : baseImages) {
-                logger.debug("Fetching tags for base image {}", baseImage.name());
-                List<ImageTags> imageTags = fetchImageTags(baseImage);
-                logger.debug("Remapping Tags for Base image {}", baseImage.name());
-                addImagesForType(baseImage, imageTags);
+            try {
+                logger.info("Updating docker base tags");
+                for (DockerBaseImages baseImage : baseImages) {
+                    logger.debug("Fetching tags for base image {}", baseImage.name());
+                    List<ImageTags> imageTags = fetchImageTags(baseImage);
+                    logger.debug("Remapping Tags for Base image {}", baseImage.name());
+                    addImagesForType(baseImage, imageTags);
+                }
+                tagStorage.persist();
+            } catch (Exception e) {
+                logger.error("Persisting the BaseImageTags failed. " +
+                    "This could cause issues when perforimin Kubernetes Based Transformations", e);
             }
-            tagStorage.persist();
         } else {
             logger.debug("Not updating docker base tags: Using local data (next persist: {})", tagStorage.getNextUpdate());
         }
@@ -131,7 +137,7 @@ public class BaseImageMapper {
     /**
      Downloads the tags for a given base image
      */
-    private List<ImageTags> fetchImageTags(DockerBaseImages image) {
+    private List<ImageTags> fetchImageTags(DockerBaseImages image) throws Exception {
         DockerRegistry registry = new DockerRegistry(image.getRegistry());
         return registry.getTagsForRepository(image.getUsername(), image.getRepository());
     }

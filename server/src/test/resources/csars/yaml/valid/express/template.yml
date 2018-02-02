@@ -12,11 +12,11 @@ topology_template:
       type: tosca.nodes.WebApplication
       requirements:
         - host: node_srv
-        - database_endpoint:
-            node: redis_db
-            capability: database_endpoint
-            relationship: ConnectsTo
-        #- database_endpoint: redis_db
+        #- database_endpoint:
+        #    node: redis_db
+        #    capability: database_endpoint
+        #    relationship: ConnectsTo
+        - database_endpoint: redis_db
       capabilities:
         app_endpoint:
           protocol: http
@@ -33,7 +33,7 @@ topology_template:
               primary: simpletaskapp_js/start_stajs.sh
 
     node_srv:
-      type: tosca.nodes.WebServer.NodeJS
+      type: tosca.nodes.WebServer.Nodejs
       requirements:
         - host: app_server
       interfaces:
