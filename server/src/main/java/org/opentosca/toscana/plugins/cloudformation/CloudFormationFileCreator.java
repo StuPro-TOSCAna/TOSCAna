@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
+import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.plugins.scripts.BashScript;
 import org.opentosca.toscana.plugins.scripts.EnvironmentCheck;
 import org.opentosca.toscana.plugins.util.TransformationFailureException;
@@ -38,11 +39,11 @@ public class CloudFormationFileCreator {
     /**
      Creates a <tt>CloudFormationFileCreator<tt> in order to build deployment scripts and copy files.
 
+     @param context TransformationContext to extract topology and logger
      @param cfnModule Module to get the necessary CloudFormation information
-     @param logger    standard logger
      */
-    public CloudFormationFileCreator(Logger logger, CloudFormationModule cfnModule) {
-        this.logger = logger;
+    public CloudFormationFileCreator(TransformationContext context, CloudFormationModule cfnModule) {
+        this.logger = context.getLogger(getClass());
         this.cfnModule = cfnModule;
     }
 

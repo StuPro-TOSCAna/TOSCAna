@@ -5,17 +5,25 @@ import java.util.HashSet;
 
 import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.transformation.Transformation;
+import org.opentosca.toscana.core.transformation.properties.NoSuchPropertyException;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
 import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.model.EffectiveModelFactory;
 import org.opentosca.toscana.plugins.BaseTransformTest;
 
 import org.apache.commons.io.FileUtils;
+import org.junit.Assume;
 
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
+import static org.opentosca.toscana.plugins.cloudformation.CloudFormationPlugin.AWS_ACCESS_KEY_ID_KEY;
+import static org.opentosca.toscana.plugins.cloudformation.CloudFormationPlugin.AWS_SECRET_KEY_KEY;
 
 public class CloudFormationLampIT extends BaseTransformTest {
+
+    private final String accessKey = System.getenv("AWS_ACCESS_KEY");
+    private final String secretKey = System.getenv("AWS_SECRET_KEY");
+
     public CloudFormationLampIT() {
         super(new CloudFormationPlugin());
     }
@@ -42,7 +50,17 @@ public class CloudFormationLampIT extends BaseTransformTest {
     }
 
     @Override
-    protected PropertyInstance getProperties() {
-        return new PropertyInstance(new HashSet<>(plugin.getPlatform().properties), mock(Transformation.class));
+    protected PropertyInstance getProperties() throws NoSuchPropertyException {
+        PropertyInstance props = new PropertyInstance(new HashSet<>(plugin.getPlatform().properties), mock
+            (Transformation.class));
+        props.set(AWS_ACCESS_KEY_ID_KEY, accessKey);
+        props.set(AWS_SECRET_KEY_KEY, secretKey);
+        return props;
+    }
+
+    @Override
+    protected void checkAssumptions() {
+        Assume.assumeNotNull(accessKey);
+        Assume.assumeNotNull(secretKey);
     }
 }
