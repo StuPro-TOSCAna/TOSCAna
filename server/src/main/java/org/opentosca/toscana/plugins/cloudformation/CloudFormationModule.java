@@ -24,7 +24,10 @@ import com.scaleset.cfbuilder.ec2.UserData;
 import com.scaleset.cfbuilder.ec2.metadata.CFNInit;
 import com.scaleset.cfbuilder.iam.InstanceProfile;
 import com.scaleset.cfbuilder.iam.Policy;
+import com.scaleset.cfbuilder.iam.PolicyDocument;
+import com.scaleset.cfbuilder.iam.Principal;
 import com.scaleset.cfbuilder.iam.Role;
+import com.scaleset.cfbuilder.iam.Statement;
 
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationLifecycle.toAlphanumerical;
 
@@ -68,19 +71,8 @@ public class CloudFormationModule extends Module {
         "# Install the files and packages from the metadata\n",
         "/usr/local/bin/cfn-init -v ",
         "         --stack "};
-    // TODO fix policy documents
-    private static final String ROLE_POLICY_DOCUMENT = "Statement:\n" +
-        "    - Effect: Allow\n" +
-        "      Principal:\n" +
-        "        Service:\n" +
-        "          - ec2.amazonaws.com\n" +
-        "      Action:\n" +
-        "        - 'sts:AssumeRole'";
-    private static final String POLICY_DOCUMENT = "Statement:\n" +
-        "    - Action:\n" +
-        "        - 's3:GetObject'\n" +
-        "      Effect: Allow\n" +
-        "      Resource: 'arn:aws:s3:::";
+    private static final String ARN_AWS_S3 = "arn:aws:s3:::";
+    private static final String EC2_AMAZONAWS_COM = "ec2.amazonaws.com";
 
     private String awsRegion;
     private AWSCredentials awsCredentials;
@@ -294,11 +286,11 @@ public class CloudFormationModule extends Module {
     }
 
     /**
-     Returns the `Authentication` to access S3 for this module.
+     Returns the <tt>Authentication<tt> to access S3 for this module.
 
      @return authentication for S3
      */
-    public Authentication getS3Authentication() {
+    private Authentication getS3Authentication() {
         return new Authentication("S3Creds")
             .addBucket(bucketName)
             .roleName(ref(INSTANCE_ROLE))
@@ -306,35 +298,42 @@ public class CloudFormationModule extends Module {
     }
 
     /**
-     Returns the `Policy` to access S3 for this module.
+     Returns the <tt>Policy<tt> to access S3 for this module.
      Note: Roles must still be set.
 
      @return policy to access S3
      */
-    public Policy getS3Policy() {
+    private Policy getS3Policy() {
+        Statement statement = new Statement().addAction("s3:GetObject").effect("Allow").addResource(ARN_AWS_S3 + bucketName + "/*");
+        PolicyDocument policyDocument = new PolicyDocument().addStatement(statement);
         return resource(Policy.class, "RolePolicies")
             .policyName("S3Download")
-            .policyDocument(POLICY_DOCUMENT + bucketName + "'");
+            .policyDocument(policyDocument);
     }
 
     /**
-     Returns the `Role` to access S3 for this module.
+     Returns the <tt>Role<tt> to access S3 for this module.
 
      @return Role to access S3
      */
-    public Role getS3InstanceRole() {
+    private Role getS3InstanceRole() {
+        List<String> resourceList = new ArrayList<>();
+        resourceList.add(EC2_AMAZONAWS_COM);
+        Principal principal = new Principal().principal("Service", resourceList);
+        Statement statement = new Statement().addAction("sts:AssumeRole").effect("Allow").principal(principal);
+        PolicyDocument policyDocument = new PolicyDocument().addStatement(statement);
         return resource(Role.class, INSTANCE_ROLE)
             .path("/")
-            .assumeRolePolicyDocument(ROLE_POLICY_DOCUMENT);
+            .assumeRolePolicyDocument(policyDocument);
     }
 
     /**
-     Returns the `Instanceprofile` to access S3 for this module.
+     Returns the <tt>Instanceprofile<tt> to access S3 for this module.
      Note: Roles must still be set.
 
      @return instanceProfile to access S3
      */
-    public InstanceProfile getS3InstanceProfile() {
+    private InstanceProfile getS3InstanceProfile() {
         return resource(InstanceProfile.class, INSTANCE_PROFILE)
             .path("/");
     }
@@ -344,7 +343,7 @@ public class CloudFormationModule extends Module {
      1. Add CFNInit to corresponding instance resource
      2. Check if EC2 instances need access to S3. If yes, then
      2a. Add necessary IAM resources to the module
-     2b. Add `Authentication` and `IamInstanceProfile` to corresponding instance resource
+     2b. Add <tt>Authentication<tt> and <tt>IamInstanceProfile<tt> to corresponding instance resource
      */
     @Override
     public void build() {
