@@ -104,13 +104,13 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
             //get the compute where the dbms this node is hosted on, is hosted on
             Compute compute = getCompute(node);
             String serverName = toAlphanumerical(compute.getEntityName());
-            ComputeCapability hostedOnComputeCapability = compute.getHost();
             String dbName = node.getDatabaseName();
             String masterUser = node.getUser().orElseThrow(() -> new IllegalArgumentException("Database user not set"));
             String masterPassword = node.getPassword().orElseThrow(() -> new IllegalArgumentException("Database " +
                 "password not set"));
             Integer port = node.getPort().orElseThrow(() -> new IllegalArgumentException("Database port not set"));
             //check what values should be taken
+            ComputeCapability hostedOnComputeCapability = compute.getHost();
             CapabilityMapper capabilityMapper = createCapabilityMapper();
             String dBInstanceClass = capabilityMapper.mapComputeCapabilityToInstanceType(hostedOnComputeCapability,
                 CapabilityMapper.RDS_DISTINCTION);
@@ -128,7 +128,6 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
                     "tcp", 
                     port);
             }
-
             cfnModule.resource(DBInstance.class, nodeName)
                 .engine("MySQL")
                 .dBName(dbName)
@@ -152,9 +151,7 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
     @Override
     public void visit(Apache node) {
         try {
-            Compute compute = node.getHost().getNode().orElseThrow(
-                () -> new IllegalStateException("Apache is missing compute")
-            );
+            Compute compute = getCompute(node);
             String computeName = toAlphanumerical(compute.getEntityName());
             //instead of lifecycle create we add the package apache2 to the configset
             cfnModule.getCFNInit(computeName)

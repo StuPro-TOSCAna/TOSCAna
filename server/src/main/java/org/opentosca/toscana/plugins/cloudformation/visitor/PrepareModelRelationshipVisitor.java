@@ -49,6 +49,8 @@ public class PrepareModelRelationshipVisitor extends CloudFormationVisitorExtens
                 logger.debug("Set private address and public address of '{}' to reference MysqlDatabase '{}'",
                     computeMysqlDatabase.getEntityName(), mysqlDatabase.getEntityName());
             }
+        } else {
+            logger.debug("Drop relationship, because it is not supported");
         }
     }
 }
