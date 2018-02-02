@@ -31,6 +31,10 @@ topology_template:
           start:
             implementation:
               primary: simpletaskapp_js/start_stajs.sh
+            inputs:
+              REDIS_HOST: { get_attribute: [ redis_compute, private_address ] }
+              REDIS_DB: { get_property: [ redis_db,  name ] }
+              REDIS_PORT: { get_property: [ redis,  port ] }
 
     node_srv:
       type: tosca.nodes.WebServer.Nodejs
@@ -40,7 +44,7 @@ topology_template:
         Standard:
           create:
             implementation:
-              primary: node/install_nodejs.sh
+              primary: nodejs/install_nodejs.sh
 
     app_server:
       type: tosca.nodes.Compute
