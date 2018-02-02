@@ -14,7 +14,7 @@ public class TransformationProperty {
     private String description;
     @JsonProperty("required")
     private boolean required;
-    @JsonProperty("default")
+    @JsonProperty("default_value")
     private String defaultValue;
 
     public String getKey() {
