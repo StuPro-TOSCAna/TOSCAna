@@ -134,7 +134,7 @@ public class TransformationController {
         tags = {"transformations", "csars"},
         notes = "Returns a HAL-Resources list containing all Transformations for a specific CSAR"
     )
-    @ApiResponses( {
+    @ApiResponses({
         @ApiResponse(
             code = 200,
             message = "The operation was executed successfully",
@@ -160,7 +160,7 @@ public class TransformationController {
         for (Map.Entry<String, Transformation> entry : csar.getTransformations().entrySet()) {
             transformations.add(new TransformationResponse(
                 entry.getValue().getLifecyclePhase(),
-                entry.getValue().getState().name(),
+                entry.getValue().getState(),
                 entry.getKey(),
                 csar.getIdentifier()
             ));
@@ -202,7 +202,7 @@ public class TransformationController {
         tags = {"transformations"},
         notes = "Returns a HAL-Resource Containing the details for the transformation with the given parameters"
     )
-    @ApiResponses( {
+    @ApiResponses({
         @ApiResponse(
             code = 200,
             message = "The operation was executed successfully"
@@ -224,7 +224,7 @@ public class TransformationController {
         Transformation transformation = findTransformationByPlatform(csar, platform);
         return ResponseEntity.ok().body(new TransformationResponse(
             transformation.getLifecyclePhase(),
-            transformation.getState().name(),
+            transformation.getState(),
             platform, name
         ));
     }
@@ -264,7 +264,7 @@ public class TransformationController {
             "(If the platform does not exist and there is no other transformation with the same CSAR and Platform, " +
             "you have to delete the old transformation in this case)"
     )
-    @ApiResponses( {
+    @ApiResponses({
         @ApiResponse(
             code = 200,
             message = "The operation was executed successfully"
@@ -341,7 +341,7 @@ public class TransformationController {
         notes = "Starts a transformation that has been created and is ready to get started. To start a transformation, the " +
             "Transformation has to be in the state READY otherwise the transformation cannot start."
     )
-    @ApiResponses( {
+    @ApiResponses({
         @ApiResponse(
             code = 200,
             message = "The operation was executed successfully"
@@ -415,7 +415,7 @@ public class TransformationController {
         tags = {"transformations"},
         notes = "Deletes a transformation and all the coresponding artifacts"
     )
-    @ApiResponses( {
+    @ApiResponses({
         @ApiResponse(
             code = 200,
             message = "The operation was executed successfully"
@@ -487,7 +487,7 @@ public class TransformationController {
             "following log lines get returned. If the start index is larger than the current last log index the operation " +
             "will return a empty list."
     )
-    @ApiResponses( {
+    @ApiResponses({
         @ApiResponse(
             code = 200,
             message = "The operation was executed successfully",
@@ -569,7 +569,7 @@ public class TransformationController {
             "It is possible to download a archive (ZIP format) of all the files generated while the transformation was " +
             "running."
     )
-    @ApiResponses( {
+    @ApiResponses({
         @ApiResponse(
             code = 200,
             message = "The operation was executed successfully"
@@ -651,7 +651,7 @@ public class TransformationController {
             "(See Set Properties Operation). If the Transformation does not need any properties a empty list (Json Array) " +
             "is returned"
     )
-    @ApiResponses( {
+    @ApiResponses({
         @ApiResponse(
             code = 200,
             message = "The operation was executed successfully",
@@ -719,7 +719,7 @@ public class TransformationController {
             "to ready once all required properties have a value assigned to them. Once this is done the value can be changed or you can still " +
             "set non required properties."
     )
-    @ApiResponses( {
+    @ApiResponses({
         @ApiResponse(
             code = 200,
             message = "The operation was executed successfully",
