@@ -26,6 +26,6 @@ public class PropertyValidationIT extends BaseSpringIntegrationTest {
         String platformId = "kubernetes";
         api.createTransformation(csarName, platformId);
         Transformation t = api.getTransformation(csarName, platformId);
-        assertEquals(TransformationState.READY, t.getStatus());
+        assertEquals(TransformationState.READY, t.getState());
     }
 }

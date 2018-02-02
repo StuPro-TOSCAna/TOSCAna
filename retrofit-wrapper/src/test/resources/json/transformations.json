@@ -3,7 +3,7 @@
 		"transformation": [
 			{
                 "phases": [ ],
-				"status": "INPUT_REQUIRED",
+				"state": "INPUT_REQUIRED",
 				"platform": "p-a",
 				"_links": {
 					"self": {
