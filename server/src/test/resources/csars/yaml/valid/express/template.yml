@@ -19,8 +19,9 @@ topology_template:
         - database_endpoint: redis_db
       capabilities:
         app_endpoint:
-          protocol: http
-          port: 3000
+          properties:
+            protocol: http
+            port: 3000
       interfaces:
         Standard:
           create:
