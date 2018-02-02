@@ -41,11 +41,6 @@ topology_template:
       type: tosca.nodes.WebServer.Nodejs
       requirements:
         - host: app_server
-      interfaces:
-        Standard:
-          create:
-            implementation:
-              primary: nodejs/install_nodejs.sh
 
     app_server:
       type: tosca.nodes.Compute

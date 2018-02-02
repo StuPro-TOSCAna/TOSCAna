@@ -69,7 +69,7 @@ public abstract class ImageBuilder implements ProgressHandler {
             log(progressMessage.progress(), logger::trace);
         log(progressMessage.stream(), logger::info);
         log(progressMessage.error(), logger::error);
-        log(progressMessage.status(), logger::info);
+        log(progressMessage.status(), logger::trace);
     }
 
     private String cleanString(String s) {

@@ -9,10 +9,14 @@ import java.util.Set;
 
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.model.artifact.Artifact;
+import org.opentosca.toscana.model.capability.EndpointCapability;
 import org.opentosca.toscana.model.node.Apache;
 import org.opentosca.toscana.model.node.Compute;
+import org.opentosca.toscana.model.node.Database;
+import org.opentosca.toscana.model.node.Dbms;
 import org.opentosca.toscana.model.node.MysqlDatabase;
 import org.opentosca.toscana.model.node.MysqlDbms;
+import org.opentosca.toscana.model.node.Nodejs;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.node.WebApplication;
 import org.opentosca.toscana.model.operation.Operation;
@@ -36,6 +40,8 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
     private boolean sudoInstalled = false;
 
     private List<Integer> ports = new ArrayList<>();
+    //This list is used to build a entrypoint script if there is more than one startup script
+    private List<String> startCommands = new ArrayList<>();
 
     public DockerfileBuildingVisitor(
         String baseImage,
@@ -46,7 +52,7 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
         this.logger = context.getLogger(getClass());
         this.stack = stack;
         this.connectionGraph = connectionGraph;
-        logger.debug("Initiialing DockerfileBilder for {}", stack);
+        logger.debug("Initializing DockerfileBuilder for {}", stack);
         this.builder = new DockerfileBuilder(
             baseImage,
             "output/docker/" + stack.getStackName(),
@@ -61,9 +67,22 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
     }
 
     @Override
+    public void visit(Nodejs node) {
+        handleDefault(node);
+    }
+
+    @Override
+    public void visit(Dbms node) {
+        handleDefault(node);
+    }
+
+    @Override
+    public void visit(Database node) {
+        handleDefault(node);
+    }
+
+    @Override
     public void visit(Apache node) {
-        ports.add(80);
-        ports.add(443);
         Set<Requirement> stackConnections = connectionGraph.outgoingEdgesOf(this.stack);
         if (requiresMySQL(stackConnections)) {
             builder.run("docker-php-ext-install mysqli");
@@ -74,6 +93,11 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
 
     @Override
     public void visit(WebApplication node) {
+        //If a webapplication does not define a port. add the defaults for HTTP and HTTPS
+        if (!node.getAppEndpoint().getPort().isPresent()) {
+            ports.add(80);
+            ports.add(443);
+        }
         handleDefault(node);
     }
 
@@ -119,6 +143,17 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
 
     private void handleDefault(RootNode node) {
         try {
+            node.getCapabilities().forEach(e -> {
+                try {
+                    if (e instanceof EndpointCapability) {
+                        if (((EndpointCapability) e).getPort().isPresent()) {
+                            ports.add(((EndpointCapability) e).getPort().get().port);
+                        }
+                    }
+                } catch (Exception ex) {
+                    logger.warn("Failed reading Port from node {}", node.getEntityName(),ex);
+                }
+            });
             addToDockerfile(node.getEntityName(), node.getStandardLifecycle());
         } catch (IOException e) {
             throw new UnsupportedOperationException("Transformation failed while copying artifacts", e);
@@ -126,12 +161,17 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
     }
 
     private void addToDockerfile(String nodeName, StandardLifecycle lifecycle) throws IOException {
-        copyAndExecIfPresent(nodeName, "create", lifecycle.getCreate());
-        copyAndExecIfPresent(nodeName, "configure", lifecycle.getConfigure());
+        copyAndExecIfPresent(nodeName, "create", lifecycle.getCreate(), false);
+        copyAndExecIfPresent(nodeName, "configure", lifecycle.getConfigure(), false);
+        copyAndExecIfPresent(nodeName, "start", lifecycle.getStart(), true);
     }
 
-    private void copyAndExecIfPresent(String nodeName, String opName, Optional<Operation> optionalOperation)
-        throws IOException {
+    private void copyAndExecIfPresent(
+        String nodeName,
+        String opName,
+        Optional<Operation> optionalOperation,
+        boolean isStartup
+    ) throws IOException {
         if (optionalOperation.isPresent()) {
             optionalOperation.get().getInputs().forEach(e -> {
                 if (e.getValue().isPresent()) {
@@ -154,7 +194,11 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
                 }
                 if (path.endsWith(".sql")) return;
                 builder.copyFromCsar(path, nodeName, nodeName + "-" + opName);
-                builder.run("sh " + nodeName + "-" + opName);
+                if (!isStartup) {
+                    builder.run("sh " + nodeName + "-" + opName);
+                } else {
+                    startCommands.add("sh " + nodeName + "-" + opName);
+                }
             }
         }
     }
@@ -179,6 +223,9 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
             logger.debug("Visitng node: {}", node.getNode().getEntityName());
             node.getNode().accept(this);
         });
+        if (startCommands.size() == 1) {
+            builder.entrypoint(startCommands.get(0));
+        }
         builder.write();
     }
 
