@@ -21,9 +21,9 @@ import static org.junit.Assert.assertEquals;
 public class UserInputIT extends BaseSpringIntegrationTest {
 
     private TOSCAnaAPI api;
-    String csarName = "lamp";
-    String platformId = new CloudFoundryPlugin().getPlatform().id;
-    TransformationProperties properties;
+    private String csarName = "lamp";
+    private String platformId = new CloudFoundryPlugin().getPlatform().id;
+    private TransformationProperties properties;
 
     @Before
     public void setUp() throws IOException, TOSCAnaServerException {
