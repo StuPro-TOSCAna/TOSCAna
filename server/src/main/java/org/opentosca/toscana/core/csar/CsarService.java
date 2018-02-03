@@ -23,7 +23,7 @@ public interface CsarService {
      Deletes given Csar and all associated transformations from in-memory and persistence layer.
      */
     void deleteCsar(Csar csar);
-
+    
     /**
      Returns all Csars currently managed by the application.
      */
