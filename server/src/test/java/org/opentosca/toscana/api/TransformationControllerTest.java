@@ -150,7 +150,7 @@ public class TransformationControllerTest extends BaseSpringTest {
     private final static String CREATE_CSAR_VALID_URL = "/api/csars/kubernetes-cluster/transformations/p-a/create";
     private final static String PLATFORM_NOT_FOUND_URL = "/api/csars/kubernetes-cluster/transformations/p-z";
     private final static String CSAR_NOT_FOUND_URL = "/api/csars/keinechtescsar/transformations";
-    private static final String[] CSAR_NAMES = new String[] {"kubernetes-cluster", "apache-test", "mongo-db"};
+    private static final String[] CSAR_NAMES = new String[]{"kubernetes-cluster", "apache-test", "mongo-db"};
     private static final String SECOND_VALID_PLATFORM_NAME = "p-b";
     private static final String PROPERTY_TEST_DEFAULT_VALUE = "Test-Default-Value";
     private static final String PROPERTY_TEST_DEFAULT_VALUE_KEY = "default_value_property";
@@ -335,7 +335,7 @@ public class TransformationControllerTest extends BaseSpringTest {
         String[] values = JsonPath.parse(responseJson).read("$.properties[*].value", String[].class);
         long nullCount = Arrays.asList(values).stream().filter(Objects::isNull).count();
         long testCount = Arrays.asList(values).stream().filter(e -> e != null && e.equals(PROPERTY_TEST_DEFAULT_VALUE)).count();
-        assertEquals(7, nullCount);
+        assertEquals(8, nullCount);
         assertEquals(1, testCount);
     }
 
