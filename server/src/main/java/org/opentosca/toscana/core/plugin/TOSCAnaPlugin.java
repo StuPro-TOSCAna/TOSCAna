@@ -101,6 +101,8 @@ public abstract class TOSCAnaPlugin<LifecycleT extends TransformationLifecycle> 
      @param context context for the transformation
      */
     public void transform(TransformationContext context) throws Exception {
+        final Logger phaseLogger = context.getLogger(LifecyclePhase.class);
+        executionPhases.forEach(phase -> phase.setLogger(phaseLogger));
         Logger logger = context.getLogger(getClass());
 
         //Store current time for time measurement

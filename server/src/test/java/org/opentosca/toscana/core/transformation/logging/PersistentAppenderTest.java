@@ -24,7 +24,7 @@ public class PersistentAppenderTest extends BaseUnitTest {
     }
 
     @Test
-    public void appenderWritesToFile() throws IOException, InterruptedException {
+    public void appenderWritesToFile() throws IOException {
         log = new LogImpl(logfile);
         logger = log.getLogger(getClass());
         String message1 = "this message should get written to logfile";

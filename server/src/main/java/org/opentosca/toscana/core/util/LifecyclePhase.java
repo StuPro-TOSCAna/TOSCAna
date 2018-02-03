@@ -2,12 +2,14 @@ package org.opentosca.toscana.core.util;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
+import org.slf4j.Logger;
 
 public class LifecyclePhase {
 
     private final String name;
     private final Lifecycle lifecycle;
     private State state = State.PENDING;
+    private Logger logger;
 
     public LifecyclePhase(String name, Lifecycle lifecycle) {
         this.name = name;
@@ -35,10 +37,16 @@ public class LifecyclePhase {
     }
 
     public void setState(State state) {
+        if (this.state == state) return;
+        logger.info(String.format("%-20s  %-10s ==> %s", "Phase '" + this.name + "':", this.state, state));
         this.state = state;
         if (state == State.FAILED) {
             setSuccessorsToSkipped();
         }
+    }
+
+    public void setLogger(Logger logger) {
+        this.logger = logger;
     }
 
     private void setSuccessorsToSkipped() {

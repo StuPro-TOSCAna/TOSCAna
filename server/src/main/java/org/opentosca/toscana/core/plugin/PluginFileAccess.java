@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.Writer;
 
 import org.opentosca.toscana.core.transformation.logging.Log;
+import org.opentosca.toscana.core.transformation.logging.LogFormat;
 
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -56,10 +57,10 @@ public class PluginFileAccess {
         try {
             if (source.isDirectory()) {
                 FileUtils.copyDirectory(source, target);
-                logger.info("Copied directory '{}' and its content to '{}'", source, target);
+                logger.info(LogFormat.pointAt(1, "Recursive copy " + source, target));
             } else if (source.isFile()) {
                 FileUtils.copyFile(source, target);
-                logger.info("Copied file '{}' to '{}'", source, target);
+                logger.info(LogFormat.pointAt(1, "Copy " + source, target));
             }
         } catch (IOException e) {
             logger.error("Failed to copy from '{}' to '{}'", source, target, e);
