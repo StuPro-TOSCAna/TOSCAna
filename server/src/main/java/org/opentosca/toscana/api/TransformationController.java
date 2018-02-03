@@ -25,9 +25,8 @@ import org.opentosca.toscana.api.exceptions.TransformationAlreadyPresentExceptio
 import org.opentosca.toscana.api.exceptions.TransformationNotFoundException;
 import org.opentosca.toscana.api.model.GetPropertiesResponse;
 import org.opentosca.toscana.api.model.LogResponse;
+import org.opentosca.toscana.api.model.PropertiesResponse;
 import org.opentosca.toscana.api.model.PropertyWrap;
-import org.opentosca.toscana.api.model.SetPropertiesRequest;
-import org.opentosca.toscana.api.model.SetPropertiesResponse;
 import org.opentosca.toscana.api.model.TransformationResponse;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarService;
@@ -42,6 +41,7 @@ import org.opentosca.toscana.core.transformation.platform.PlatformService;
 import org.opentosca.toscana.core.transformation.properties.NoSuchPropertyException;
 import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
+import org.opentosca.toscana.core.transformation.properties.PropertyType;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -740,15 +740,15 @@ public class TransformationController {
             code = 406,
             message = "At least one of the properties could not get set because either the key does not exist or the " +
                 "Syntax validation of the value has failed.",
-            response = SetPropertiesResponse.class
+            response = PropertiesResponse.class
         )
     })
-    public ResponseEntity<SetPropertiesResponse> setTransformationProperties(
+    public ResponseEntity<PropertiesResponse> setTransformationProperties(
         @ApiParam(value = "The unique identifier for the CSAR", required = true, example = "test")
         @PathVariable(name = "csarId") String csarId,
         @ApiParam(value = "The identifier for the platform", required = true, example = "kubernetes")
         @PathVariable(name = "platform") String platformId,
-        @RequestBody SetPropertiesRequest setPropertiesRequest
+        @RequestBody PropertiesResponse propertiesRequest
     ) {
         Csar csar = findByCsarId(csarId);
         Transformation transformation = findTransformationByPlatform(csar, platformId);
@@ -757,7 +757,7 @@ public class TransformationController {
         Map<String, Boolean> successes = new HashMap<>();
         boolean somethingFailed = false;
         //Set The Properties and check their validity
-        for (PropertyWrap entry : setPropertiesRequest.getProperties()) {
+        for (PropertyWrap entry : propertiesRequest.getProperties()) {
             try {
                 boolean success = properties.set(entry.getKey(), entry.getValue());
                 successes.put(entry.getKey(), success);
@@ -779,14 +779,12 @@ public class TransformationController {
                 Set<String> knownKeys = propWrapList.stream().map(PropertyWrap::getKey).collect(Collectors.toSet());
                 requestedKeys.removeAll(knownKeys); // Remove all known (valid) keys
                 requestedKeys.forEach(e -> {
-                    propWrapList.add(new PropertyWrap(e, "invalid", "Invalid Key", null, false, null));
+                    propWrapList.add(new PropertyWrap(e, PropertyType.INVALID_KEY, "Invalid Key",
+                        null, false, null, false));
                 });
             }
-            SetPropertiesResponse response = new SetPropertiesResponse(
-                csarId,
-                platformId,
-                propWrapList,
-                successes
+            PropertiesResponse response = new PropertiesResponse(
+                propWrapList
             );
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(response);
         }
@@ -831,15 +829,7 @@ public class TransformationController {
         List<PropertyWrap> propertyWrapList = new ArrayList<>();
         for (Property property : instance.getProperties().values()) {
             if (validKeys == null || validKeys.contains(property.getKey())) {
-                propertyWrapList.add(new PropertyWrap(
-                        property.getKey(),
-                        property.getType().getTypeName(),
-                        property.getDescription().orElse(null),
-                        property.getValue().orElse(null),
-                        property.isRequired(),
-                        property.getDefaultValue().orElse(null)
-                    )
-                );
+                propertyWrapList.add(new PropertyWrap(property));
             }
         }
         return propertyWrapList;
