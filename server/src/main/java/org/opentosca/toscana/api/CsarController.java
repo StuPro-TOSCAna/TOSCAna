@@ -4,19 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.opentosca.toscana.api.docs.CsarResources;
 import org.opentosca.toscana.api.docs.HiddenResources;
 import org.opentosca.toscana.api.docs.RestErrorResponse;
 import org.opentosca.toscana.api.exceptions.ActiveTransformationsException;
 import org.opentosca.toscana.api.exceptions.CsarNotFoundException;
 import org.opentosca.toscana.api.model.CsarResponse;
-import org.opentosca.toscana.api.model.CsarUploadErrorResponse;
 import org.opentosca.toscana.api.model.LogResponse;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarService;
-import org.opentosca.toscana.core.parse.InvalidCsarException;
 import org.opentosca.toscana.core.transformation.TransformationState;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.logging.LogEntry;
@@ -34,12 +30,10 @@ import org.springframework.hateoas.Resources;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -144,7 +138,6 @@ public class CsarController {
      <b>HTTP Response Codes</b>
      <p>
      200 (no Content): Upload succeeded
-     400 (application/hal+json): parsing of the csar failed. Response contains logs of parser.
      <p>
      500: Processing failed
      */
@@ -160,13 +153,8 @@ public class CsarController {
     @ApiResponses({
         @ApiResponse(
             code = 201,
-            message = "The upload and parsing of the csar was sucessful",
+            message = "The upload of the csar was successful",
             response = Void.class
-        ),
-        @ApiResponse(
-            code = 400,
-            message = "Processing of the csar failed. Information why can be found in the attached error message!",
-            response = CsarUploadErrorResponse.class
         ),
         @ApiResponse(
             code = 500,
@@ -185,11 +173,11 @@ public class CsarController {
         @ApiParam(value = "The CSAR Archive (Compressed as ZIP)", required = true)
         @RequestParam(name = "file", required = true) MultipartFile file
 //        HttpServletRequest request
-    ) throws InvalidCsarException {
+    ) {
         try {
             csarService.submitCsar(name, file.getInputStream());
             return ResponseEntity.status(HttpStatus.CREATED).build();
-        } catch (InvalidCsarException | RuntimeException e) {
+        } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
             log.error("Failed to process submitted CSAR", e);
@@ -246,20 +234,6 @@ public class CsarController {
         return ResponseEntity.ok().build();
     }
 
-    /**
-     This exception handler creates the response for a failed upload (parsing failure).
-     <p>
-     The response also contains the log messages produced during parsing.
-     */
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(InvalidCsarException.class)
-    public CsarUploadErrorResponse onUploadError(
-        HttpServletRequest request,
-        InvalidCsarException e
-    ) {
-        return new CsarUploadErrorResponse(e, request.getServletPath(), 400);
-    }
-
     private Csar getCsarForName(@PathVariable("name") String name) {
         Optional<Csar> optionalCsar = csarService.getCsar(name);
         return optionalCsar.orElseThrow(CsarNotFoundException::new);
@@ -302,7 +276,7 @@ public class CsarController {
             "following log lines get returned. If the start index is larger than the current last log index the operation " +
             "will return a empty list."
     )
-    @ApiResponses( {
+    @ApiResponses({
         @ApiResponse(
             code = 200,
             message = "The operation was executed successfully",

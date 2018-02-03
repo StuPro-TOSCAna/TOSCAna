@@ -178,7 +178,7 @@ public class TransformationFilesystemDao implements TransformationDao {
     public void setCsarDao(CsarDao csarDao) {
         this.csarDao = csarDao;
     }
-
+    
     private Log getLog(Csar csar, Platform platform) {
         File logFile = new File(getContentDir(csar, platform), format("%s-%s.log", csar.getIdentifier(), platform.id));
         return new LogImpl(logFile);
