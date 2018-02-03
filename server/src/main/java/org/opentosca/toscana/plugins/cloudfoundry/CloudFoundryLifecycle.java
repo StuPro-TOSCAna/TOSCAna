@@ -50,6 +50,7 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
     private Set<NodeStack> stacks = new HashSet<>();
     private Map<RootNode, Application> nodeApplicationMap = new HashMap<>();
     private Graph<RootNode, RootRelationship> graph;
+    private List<Application> filledApplications;
 
     public CloudFoundryLifecycle(TransformationContext context) throws IOException {
         super(context);
@@ -176,7 +177,27 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
     public void transform() {
         logger.info("Begin transformation to Cloud Foundry.");
         PluginFileAccess fileAccess = context.getPluginFileAccess();
-        List<Application> filledApplications = new ArrayList<>();
+
+        fillApplications();
+
+        try {
+            FileCreator fileCreator = new FileCreator(fileAccess, filledApplications, context);
+            fileCreator.createFiles();
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void cleanup() {
+        //throw new UnsupportedOperationException();
+    }
+
+    /**
+     Fills the Applications with the sorted Node structure
+     */
+    public void fillApplications() {
+        filledApplications = new ArrayList<>();
 
         for (Application app : applications) {
             for (int i = 0; i < app.getStack().getNodes().size(); i++) {
@@ -194,18 +215,10 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
             Application filledApplication = visitor.getFilledApp();
             filledApplications.add(filledApplication);
         }
-
-        try {
-            FileCreator fileCreator = new FileCreator(fileAccess, filledApplications, context);
-            fileCreator.createFiles();
-        } catch (IOException | JSONException e) {
-            e.printStackTrace();
-        }
     }
 
-    @Override
-    public void cleanup() {
-        //throw new UnsupportedOperationException();
+    public List<Application> getFilledApplications() {
+        return filledApplications;
     }
-}
+}   
 
