@@ -6,10 +6,12 @@ import io.swagger.annotations.ApiModelProperty;
 public class LifecyclePhase {
 
     private final String name;
+    private final Lifecycle lifecycle;
     private State state = State.PENDING;
 
-    public LifecyclePhase(String name) {
+    public LifecyclePhase(String name, Lifecycle lifecycle) {
         this.name = name;
+        this.lifecycle = lifecycle;
     }
 
     @ApiModelProperty(
@@ -34,6 +36,22 @@ public class LifecyclePhase {
 
     public void setState(State state) {
         this.state = state;
+        if (state == State.FAILED) {
+            setSuccessorsToSkipped();
+        }
+    }
+
+    private void setSuccessorsToSkipped() {
+        boolean passedSelf = false;
+        for (LifecyclePhase phase : lifecycle.getLifecyclePhases()) {
+            if (passedSelf) {
+                phase.setState(State.SKIPPED);
+            } else {
+                if (phase == this) {
+                    passedSelf = true;
+                }
+            }
+        }
     }
 
     public enum State {
