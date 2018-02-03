@@ -10,6 +10,7 @@ import org.opentosca.toscana.core.parse.model.Entity;
 import org.opentosca.toscana.core.parse.model.MappingEntity;
 import org.opentosca.toscana.core.parse.model.ScalarEntity;
 import org.opentosca.toscana.model.BaseToscaElement;
+import org.opentosca.toscana.model.datatype.Port;
 import org.opentosca.toscana.model.datatype.SizeUnit;
 import org.opentosca.toscana.model.operation.OperationVariable;
 import org.opentosca.toscana.model.util.ToscaKey;
@@ -72,6 +73,8 @@ public class TypeConverter {
                     "ToscaKey defining a SizeUnit is illegal: No directive set for source and target units");
             }
             return (T) SizeUnit.convert(value, fromDefaultUnit, toUnit);
+        } else if (Port.class.isAssignableFrom(targetType)) {
+            return (T) new Port(Integer.valueOf(value));
         } else {
             throw new UnsupportedOperationException(String.format(
                 "Cannot convert value of type %s: currently unsupported", targetType.getSimpleName()));

@@ -1,0 +1,15 @@
+tosca_definitions_version: tosca_simple_yaml_1_1
+description: Template for testing conversion of Port types
+metadata:
+  template_name: port
+  template_author: stupro-toscana
+  template_version: 1.0
+
+topology_template:
+  node_templates:
+    test-node:
+      type: WebApplication
+      capabilities:
+        app_endpoint:
+          properties:
+            port: 3000
