@@ -672,7 +672,6 @@ public class TransformationController {
     ) {
         Csar csar = findByCsarId(csarId);
         Transformation transformation = findTransformationByPlatform(csar, platformId);
-        checkTransformationState(transformation);
         List<PropertyWrap> propertyWrapList = toPropertyWrapList(transformation.getProperties(), null);
         GetPropertiesResponse response = new GetPropertiesResponse(csarId, platformId, propertyWrapList);
         return ResponseEntity.ok(response);
