@@ -1,7 +1,8 @@
 import {Injectable} from '@angular/core';
-import {PropertyWrap, SetPropertiesRequest, TransformationsService} from '../../api';
+import {InputsResponse, InputWrap, TransformationsService} from '../../api';
 import {PlatformsProvider} from '../platforms/platforms.provider';
 import {Transformation} from '../../model/transformation';
+import {Observable} from 'rxjs/Observable';
 
 
 @Injectable()
@@ -10,29 +11,29 @@ export class TransformationsProvider {
     constructor(private transformationsService: TransformationsService, private platformsProvider: PlatformsProvider) {
     }
 
-    public async getTransformationProperties(csarId: string, platform: string) {
-        let result = await this.transformationsService.getTransformationPropertiesUsingGET(csarId, platform).toPromise();
-        return result.properties;
+    public getTransformationProperties(csarId: string, platform: string) {
+        return this.transformationsService.getInputsUsingGET(csarId, platform);
     }
 
     public async createNewTransformation(csarId: string, platform: string) {
         let result = await  this.transformationsService.addTransformationUsingPOST(csarId, platform).toPromise();
     }
 
-    public setTransformationProperties(csarId: string, platform: string, properties: PropertyWrap[]) {
-        const send: SetPropertiesRequest = {
-            properties: properties
+    public setTransformationProperties(csarId: string, platform: string, inputs: InputWrap[]) {
+        const send: InputsResponse = {
+            inputs: inputs
         };
 
-        return this.transformationsService.setTransformationPropertiesUsingPUT(csarId, platform, send).toPromise();
+        return this.transformationsService.setInputsUsingPUT(csarId, platform, send).toPromise();
     }
 
-    public async getTransformationByCsarAndPlatform(csarId: string, platform: string): Promise<Transformation> {
-        let result = await this.transformationsService.getCSARTransformationUsingGET(csarId, platform).toPromise();
-        let fullName = this.platformsProvider.getFullPlatformName(result.platform);
-        let transformation: Transformation = <Transformation>result;
-        transformation.fullName = fullName;
-        return Promise.resolve(transformation);
+    public getTransformationByCsarAndPlatform(csarId: string, platform: string): Observable<Transformation> {
+        return this.transformationsService.getCSARTransformationUsingGET(csarId, platform).map(result => {
+            let fullName = this.platformsProvider.getFullPlatformName(result.platform);
+            let transformation: Transformation = <Transformation>result;
+            transformation.fullName = fullName;
+            return transformation;
+        });
     }
 
     startTransformation(csarId: string, platform: string) {
@@ -40,7 +41,7 @@ export class TransformationsProvider {
     }
 
     deleteTransformation(csarId: string, platform: string) {
-        return this.transformationsService.deleteTransformationUsingDELETE(csarId, platform).toPromise();
+        return this.transformationsService.deleteTransformationUsingDELETE(csarId, platform);
     }
 
     getLogs(csarId: string, platform: string, num: number) {

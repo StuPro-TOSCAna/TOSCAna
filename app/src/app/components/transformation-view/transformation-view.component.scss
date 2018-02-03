@@ -2,3 +2,33 @@
     border-right: 1px solid black;
 }
 
+.items {
+    display: inline-flex;
+    width: 100%;
+    margin-bottom: 20px;
+    .phases {
+        font-size: larger;
+        width: 100%;
+        .fa {
+            font-size: 22px;
+        }
+
+        .fa-check-circle {
+            color: green;
+        }
+        .fa-times-circle {
+            color: red;
+        }
+        .active {
+            font-weight: bold;
+        }
+    }
+    .download {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 10px;
+        width: 100%;
+    }
+}
+

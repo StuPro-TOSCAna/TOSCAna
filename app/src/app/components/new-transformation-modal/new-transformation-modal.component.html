@@ -1,4 +1,4 @@
-<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+<div bsModal #template="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
      aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -37,6 +37,3 @@
         </button>
     </div>
 </div>
-
-<app-input [csarId]="this.csar.name" *ngIf="platformSelected" (onSubmit)="onSubmit($event)" (onExit)="onExit()"
-           [selectedPlatform]="platform"></app-input>

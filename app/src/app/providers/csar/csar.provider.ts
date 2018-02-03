@@ -7,6 +7,7 @@ import {Transformation} from '../../model/transformation';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Helper} from '../../helper/helper';
 import 'rxjs/add/operator/catch';
+import 'rxjs/add/operator/map';
 import {CsarResponse} from '../../api';
 import {Observable} from 'rxjs/Observable';
 
@@ -119,9 +120,7 @@ export class CsarProvider {
         return promise.toPromise();
     }
 
-    getCsarById(csarId: string): Observable<Csar> {
-        return new Observable<Csar>(observer => {
-            observer.next(this.dataStore.csars.find(csar => csar.name === csarId));
-        });
+    getCsarById(csarId: string): Csar {
+        return this.dataStore.csars.find(csar => csar.name === csarId);
     }
 }

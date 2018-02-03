@@ -33,6 +33,6 @@ export class AppModule {
 
 export function apiConfig() {
     return new Configuration({
-        basePath: ''
+        basePath: 'http://localhost:8084'
     });
 }

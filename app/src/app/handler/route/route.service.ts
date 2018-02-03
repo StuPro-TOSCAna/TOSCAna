@@ -13,6 +13,7 @@ export class RouteHandler {
     _activeCsars: BehaviorSubject<string[]>;
     _activeTransformation: BehaviorSubject<ActiveTransformation>;
     _open: BehaviorSubject<boolean>;
+    inputLazyLoad = false;
     private dataStore: {
         activeCsars: string[]
         activeTransformation: ActiveTransformation;
@@ -32,14 +33,11 @@ export class RouteHandler {
             const parts = url.split('/');
             const csar = parts[parts.length - 2];
             const platform = parts[parts.length - 1];
-            console.log(csar);
-            console.log(platform);
-            this.openTransformation(csar, platform);
+            this.addTransformation(csar, platform);
         } else if (url.indexOf('new') !== -1) {
-            const parts = url.split('/');
-            console.log(parts);
-            const csar = parts[parts.length - 1];
-            this.newTransformation(csar);
+            this.openSplit();
+        } else if (url.indexOf('inputs') !== -1) {
+            this.openSplit();
         }
     }
 
@@ -69,21 +67,26 @@ export class RouteHandler {
 
     close() {
         this.router.navigate(['/']);
-        if (isNullOrUndefined(this.dataStore.activeTransformation)) return;
-        this.dataStore.activeCsars.splice(this.dataStore.activeCsars.indexOf(this.dataStore.activeTransformation.platform), 1);
-        this._activeTransformation = null;
         this.dataStore.open = false;
         this.updateOpenSubject();
+        if (isNullOrUndefined(this.dataStore.activeTransformation)) return;
+        this.dataStore.activeCsars.splice(this.dataStore.activeCsars.indexOf(this.dataStore.activeTransformation.platform), 1);
         this.updateCsarSubject();
     }
 
     openTransformation(csarId: string, platform: string) {
         this.router.navigate(['/transformation', csarId, platform]);
+        this.addTransformation(csarId, platform);
+    }
+
+    private addTransformation(csarId: string, platform: string) {
         if (this.dataStore.activeCsars.indexOf(csarId) === -1) {
             this.dataStore.activeCsars.push(csarId);
         }
+        console.log(this.dataStore.activeTransformation);
         this.dataStore.activeTransformation.csarId = csarId;
         this.dataStore.activeTransformation.platform = platform;
+        console.log(this.dataStore.activeTransformation);
 
         this.dataStore.open = true;
 
@@ -104,7 +107,19 @@ export class RouteHandler {
 
     newTransformation(csarId: string) {
         this.router.navigate(['/new', csarId]);
+        this.openSplit();
+    }
+
+    private openSplit() {
         this.dataStore.open = true;
         this.updateOpenSubject();
     }
+
+    openInputs(csarId: string, platform: string) {
+        this.inputLazyLoad = false;
+        this.router.navigate(['/inputs', csarId, platform]);
+        this.dataStore.open = true;
+        this.updateOpenSubject();
+    }
+
 }

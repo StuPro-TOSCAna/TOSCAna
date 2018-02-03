@@ -25,7 +25,6 @@ export class NewTransformationModalComponent implements OnInit {
     platform: string;
     platformSelected = false;
     selectPlatformString = 'Select Platform';
-    enterInputsString = 'Enter Inputs';
     notNullOrUndefined = Helper.notNullOrUndefined;
     config = {
         animated: true,
@@ -36,11 +35,11 @@ export class NewTransformationModalComponent implements OnInit {
                 private routeHandler: RouteHandler) {
         this.routeHandler.setUp();
         this.title = this.selectPlatformString;
-        this.platforms = this.platformsProvider.getPlatforms();
     }
 
     ngOnInit() {
         this.route.data.subscribe((data: { csar: Csar }) => {
+            this.platforms = this.platformsProvider.getPlatforms();
             this.csar = data.csar;
             this.notAlreadyUsedPlatforms();
         });
@@ -67,10 +66,9 @@ export class NewTransformationModalComponent implements OnInit {
     }
 
     async overwriteTransformation() {
-        await this.deleteTransformation();
+        await this.deleteTransformation().toPromise();
         this.createNewTransformation(this.platform);
         this.template.hide();
-        this.routeHandler.close();
     }
 
     deleteTransformation() {
@@ -83,28 +81,13 @@ export class NewTransformationModalComponent implements OnInit {
     }
 
     toogle() {
-        this.platformSelected = !this.platformSelected;
-        if (this.platformSelected) {
-            this.title = this.enterInputsString;
-        } else {
-            this.title = this.selectPlatformString;
-        }
-    }
-
-    onSubmit() {
-        this.transformationProvider.startTransformation(this.csar.name, this.platform).then(() => {
-            this.csar.addTransformation(this.platform, this.platformsProvider.getFullPlatformName(this.platform));
-            this.csarsProvider.updateCsar(this.csar);
-            this.routeHandler.openTransformation(this.csar.name, this.platform);
-            // this close
-        });
-
+        this.routeHandler.openInputs(this.csar.name, this.platform);
     }
 
     onExit() {
         if (this.platformSelected) {
             this.deleteTransformation();
         }
-        // todo close
+        this.platformSelected = false;
     }
 }
