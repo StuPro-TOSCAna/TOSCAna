@@ -62,7 +62,7 @@
         <dependency>
             <groupId>com.github.StuPro-TOSCAna</groupId>
             <artifactId>cloudformation-builder</artifactId>
-            <version>07f5a10efdafee5679471358fb620e082a64e26b</version>
+            <version>4dbd6cb8743e1ecb778ea34b1afc32fc939fa04f</version>
         </dependency>
         <!--AWS Java SDK ec2 module-->
         <dependency>
