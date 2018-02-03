@@ -1,13 +1,14 @@
 package org.opentosca.toscana.retrofit.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 public class TransformationProperty {
-    
+
     @JsonProperty("key")
     private String key;
     @JsonProperty("type")
-    private String type;
+    private PropertyType type;
     @JsonProperty("value")
     private String value;
     @JsonProperty("description")
@@ -16,6 +17,8 @@ public class TransformationProperty {
     private boolean required;
     @JsonProperty("default_value")
     private String defaultValue;
+    @JsonProperty("valid")
+    private boolean valid;
 
     public String getKey() {
         return key;
@@ -25,11 +28,11 @@ public class TransformationProperty {
         this.key = key;
     }
 
-    public String getType() {
+    public PropertyType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(PropertyType type) {
         this.type = type;
     }
 
@@ -65,9 +68,39 @@ public class TransformationProperty {
         this.defaultValue = defaultValue;
     }
 
+    public boolean isValid() {
+        return valid;
+    }
+
+    public void setValid(boolean valid) {
+        this.valid = valid;
+    }
+
     @Override
     public String toString() {
-        return String.format("Property (key=%s, type=%s, description=%s, required=%s, value=%s)"
-            , key, type, description, required, value);
+        return String.format("Property (key=%s, type=%s, description=%s, required=%s, value=%s, valid=%s)"
+            , key, type, description, required, value, valid);
+    }
+
+    public enum PropertyType {
+        NAME("name"),
+        TEXT("text"),
+        SECRET("secret"),
+        INTEGER("integer"),
+        UNSIGNED_INTEGER("unsigned_integer"),
+        FLOAT("float"),
+        BOOLEAN("boolean"),
+        INVALID_KEY("invalid_key");
+
+        private final String name;
+
+        PropertyType(String name) {
+            this.name = name;
+        }
+
+        @JsonValue
+        public String getName() {
+            return name;
+        }
     }
 }

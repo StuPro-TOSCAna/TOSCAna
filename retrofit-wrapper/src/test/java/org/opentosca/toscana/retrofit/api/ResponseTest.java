@@ -6,6 +6,7 @@ import java.util.Map;
 import org.opentosca.toscana.retrofit.model.ServerError;
 import org.opentosca.toscana.retrofit.model.TransformationProperties;
 import org.opentosca.toscana.retrofit.model.TransformationProperty;
+import org.opentosca.toscana.retrofit.model.TransformationProperty.PropertyType;
 import org.opentosca.toscana.retrofit.model.TransformerStatus;
 import org.opentosca.toscana.retrofit.model.embedded.CsarResources;
 import org.opentosca.toscana.retrofit.util.TOSCAnaServerException;
@@ -33,7 +34,7 @@ public class ResponseTest extends BaseTOSCAnaAPITest {
     public void setInvalidPropertiesTest() throws Exception {
         enqueResponse("json/set_invalid_properties.json", 406, "application/json");
         TransformationProperty property = new TransformationProperty();
-        property.setType("unsigned_integer");
+        property.setType(PropertyType.UNSIGNED_INTEGER);
         property.setKey("unsigned_integer");
         property.setValue("-11");
         TransformationProperties properties = new TransformationProperties(Arrays.asList(property));
