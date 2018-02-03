@@ -3,6 +3,7 @@ package org.opentosca.toscana.core.plugin.lifecycle;
 import java.util.function.Predicate;
 
 import org.opentosca.toscana.core.transformation.TransformationContext;
+import org.opentosca.toscana.core.util.Lifecycle;
 import org.opentosca.toscana.core.util.LifecyclePhase;
 import org.opentosca.toscana.util.ExceptionAwareVoidFunction;
 
@@ -23,9 +24,10 @@ public class ExecutionPhase<LifecycleT extends TransformationLifecycle> extends 
 
     public ExecutionPhase(
         String name,
-        ExceptionAwareVoidFunction<LifecycleT> function
+        ExceptionAwareVoidFunction<LifecycleT> function,
+        Lifecycle lifecycle
     ) {
-        super(name);
+        super(name, lifecycle);
         this.function = function;
         this.executionCheck = (e) -> true;
     }
@@ -33,9 +35,10 @@ public class ExecutionPhase<LifecycleT extends TransformationLifecycle> extends 
     public ExecutionPhase(
         String name,
         ExceptionAwareVoidFunction<LifecycleT> function,
-        Predicate<TransformationContext> validation
+        Predicate<TransformationContext> validation,
+        Lifecycle lifecycle
     ) {
-        this(name, function);
+        this(name, function, lifecycle);
         this.executionCheck = validation;
     }
 

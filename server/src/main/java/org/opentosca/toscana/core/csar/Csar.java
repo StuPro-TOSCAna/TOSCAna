@@ -7,9 +7,10 @@ import java.util.Optional;
 
 import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.logging.Log;
+import org.opentosca.toscana.core.util.Lifecycle;
 import org.opentosca.toscana.core.util.LifecyclePhase;
 
-public interface Csar {
+public interface Csar extends Lifecycle {
 
     /**
      Validates this csar. Caution: This call is expensive
@@ -30,6 +31,7 @@ public interface Csar {
 
     void setTransformations(List<Transformation> transformations);
 
+    @Override
     List<LifecyclePhase> getLifecyclePhases();
 
     LifecyclePhase getLifecyclePhase(Phase phase);
