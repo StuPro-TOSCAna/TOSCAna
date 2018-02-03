@@ -48,7 +48,7 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
      Creates a <tt>TransformModelNodeVisitor<tt> in order to build a template with the given
      <tt>CloudFormationModule<tt>.
 
-     @param context TransformationContext to extract topology and logger
+     @param context   TransformationContext to extract topology and logger
      @param cfnModule Module to build the template model
      */
     public TransformModelNodeVisitor(TransformationContext context, CloudFormationModule cfnModule) {
@@ -125,7 +125,7 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
             for (Compute hostOfConnectedTo : hostsOfConnectedTo) {
                 securityGroup.ingress(ingress -> ingress.sourceSecurityGroupName(
                     cfnModule.ref(toAlphanumerical(hostOfConnectedTo.getEntityName()) + SECURITY_GROUP)),
-                    "tcp", 
+                    "tcp",
                     port);
             }
             cfnModule.resource(DBInstance.class, nodeName)
@@ -215,9 +215,13 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
 
             logger.debug("Marking '{}' as file to be uploaded.", dependency);
             cfnModule.putFileToBeUploaded(dependency);
-            logger.debug("Marking '{}' as instance in need of authentication.", serverName);
-            cfnModule.putAuthentication(serverName);
-            
+            if (!cfnModule.getAuthenticationSet().contains(serverName)) {
+                logger.debug("Marking '{}' as instance in need of authentication.", serverName);
+                cfnModule.putAuthentication(serverName);
+            } else {
+                logger.debug("'{}' already marked as instance in need of authentication. " +
+                    "Skipping authentication marking.", serverName);
+            }
             CFNFile cfnFile = new CFNFile(ABSOLUTE_FILE_PATH + dependency)
                 .setSource(cfnSource)
                 .setMode(MODE_644) //TODO Check what mode is needed (only read?)
@@ -237,7 +241,12 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
 
             logger.debug("Marking '{}' as file to be uploaded.", artifact);
             cfnModule.putFileToBeUploaded(artifact);
-            logger.debug("Marking '{}' as instance in need of authentication.", serverName);
+            if (!cfnModule.getAuthenticationSet().contains(serverName)) {
+                logger.debug("Marking '{}' as instance in need of authentication.", serverName);
+            } else {
+                logger.debug("'{}' already marked as instance in need of authentication. " +
+                    "Skipping authentication marking.", serverName);
+            }
             cfnModule.putAuthentication(serverName);
 
             CFNFile cfnFile = new CFNFile(ABSOLUTE_FILE_PATH + artifact)
