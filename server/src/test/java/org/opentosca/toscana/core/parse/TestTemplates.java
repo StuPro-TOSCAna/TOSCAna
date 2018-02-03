@@ -9,6 +9,7 @@ public class TestTemplates {
     private static final File NORMALIZATION = new File(BASE_PATH, "normalization");
     private static final File SYMBOLIC_LINKS = new File(BASE_PATH, "symbolic_links");
     private static final File TOSCA_ELEMENTS = new File(BASE_PATH, "tosca_elements");
+    private static final File DATATYPES = new File(BASE_PATH, "datatypes");
     private static final File NODES = new File(TOSCA_ELEMENTS, "nodes");
 
     public static class Normalization {
@@ -44,6 +45,10 @@ public class TestTemplates {
         public static final File CAPABILITY = new File(TOSCA_ELEMENTS, "capability.yaml");
         public static final File REQUIREMENT = new File(TOSCA_ELEMENTS, "requirement.yaml");
         public static final File NODE = new File(TOSCA_ELEMENTS, "node.yaml");
+    }
+    
+    public static class Datatypes {
+        public static final File PORT = new File(DATATYPES, "port.yaml");
     }
 }
 
