@@ -13,6 +13,10 @@
 
 export interface LogEntry {
     /**
+     * The log context
+     */
+    context: string;
+    /**
      * the index of the logline in the list of all loglines for this list of log entries
      */
     index: number;

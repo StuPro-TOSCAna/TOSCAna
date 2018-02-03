@@ -11,7 +11,7 @@
  */
 
 
-export interface PropertyWrap {
+export interface InputWrap {
     /**
      * the default value of the property
      */
@@ -31,7 +31,7 @@ export interface PropertyWrap {
     /**
      * The 'Datatype' of a property. Supported Types are 'name', 'text', 'boolean', 'integer', 'unsigned_integer', 'float' and 'secret'. If you try to set a value of a non existant key. The type in the response will be 'invalid' however this type only occurs in that case
      */
-    type: PropertyWrap.TypeEnum;
+    type: InputWrap.TypeEnum;
     /**
      * true if the property is valid, false otherwise. The server will ignore this value, as it is designed to be read-only.
      */
@@ -41,7 +41,7 @@ export interface PropertyWrap {
      */
     value?: string;
 }
-export namespace PropertyWrap {
+export namespace InputWrap {
     export type TypeEnum = 'name' | 'text' | 'secret' | 'integer' | 'unsigned_integer' | 'float' | 'boolean' | 'invalid_key';
     export const TypeEnum = {
         Name: 'name' as TypeEnum,

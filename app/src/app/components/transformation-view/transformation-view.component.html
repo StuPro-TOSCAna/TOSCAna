@@ -1,8 +1,20 @@
 <div *ngIf="transformation !== undefined">
     <h3>{{csarId}}/{{transformation.fullName}}</h3>
-    <a *ngIf="transformationDone" class="btn btn-success"
-       href="http://localhost:8084/api/csars/test/transformations/kubernetes/artifact">Download</a>
-    <h5>Status: {{transformation.status}}</h5>
+    <div class="items">
+        <div class="phases">
+            <h4>Phases</h4>
+            <div class="phase" *ngFor="let item of transformation.phases">
+                <div [ngClass]="{'active': isActive(item)}">{{item.name}} <i class="fa fa-circle" [style.color]="getIcon(item)"></i></div>
+
+            </div>
+
+        </div>
+        <div class="download">
+            <a *ngIf="transformationDone" class="btn btn-success btn-lg btn-block"
+               href="{{url}}">Download Artifact</a>
+        </div>
+    </div>
+
     <ul class="nav nav-tabs">
         <li class="nav-item">
             <a class="nav-link active">
@@ -13,7 +25,7 @@
             <a class="nav-link">Inputs</a>
         </li>
     </ul>
-    <app-log #Log [csarId]="csarId" [platformId]="platform" [status]="transformation.status"></app-log>
+    <app-log #Log [csarId]="csarId" [platformId]="platform"></app-log>
 </div>
 
 

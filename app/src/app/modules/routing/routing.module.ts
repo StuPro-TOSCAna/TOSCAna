@@ -3,9 +3,14 @@ import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 import {NewTransformationModalComponent} from '../../components/new-transformation-modal/new-transformation-modal.component';
 import {CanActivateNew} from './CsarResolver';
+import {InputComponent} from '../../components/input/input.component';
 
 const routes: Routes = [
     {path: 'transformation/:csar/:platform', component: TransformationViewComponent}, {
+        path: 'inputs/:csar/:platform',
+        component: InputComponent
+    },
+    {
         path: 'new/:csarId',
         component: NewTransformationModalComponent,
         resolve: {

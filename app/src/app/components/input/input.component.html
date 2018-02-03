@@ -1,3 +1,12 @@
+<nav class="navbar navbar-dark bg-dark">
+    <div class="place-holder"><i class="fa fa-times"
+                                 aria-hidden="true"></i></div>
+    <div class="navbar-brand">Enter Inputs</div>
+    <div (click)="close()" class="back-button"><i class="fa fa-times"
+                                aria-hidden="true"></i>
+    </div>
+</nav>
+
 <form (ngSubmit)="submit()" #propertiesForm="ngForm">
     <table class="table table-striped" *ngIf="properties.length > 0">
         <thead>
@@ -9,11 +18,14 @@
         </tr>
         </thead>
         <tbody>
-        <tr *ngFor="let item of properties">
+        <tr *ngFor="let item of properties; let n=index">
             <td>{{item.key}}</td>
             <td>{{item.type}}</td>
             <td>{{item.required}}</td>
-            <td><input [(ngModel)]="item.value" name="item.key"/></td>
+
+            <td><input [value]="item.value"  (input)="change(item, $event.target.value)" name="item.key"
+                       [ngClass]="{'invalid': !item.valid, 'valid':item.valid}"/>
+            </td>
         </tr>
         </tbody>
     </table>
@@ -23,7 +35,6 @@
     </div>
     <div class="alert alert-danger" role="alert" *ngIf="errorMsg">Some inputs are invalid please recheck.</div>
     <div class="actions">
-        <button type="button" class="btn btn-danger" (click)="exit()">Cancel</button>
-        <button type="submit" class="btn btn-success" [disabled]="!propertiesForm.form.valid">Transform</button>
+        <button type="submit" [disabled]="!everythingValid" class="btn btn-success btn-lg btn-block">Transform</button>
     </div>
 </form>

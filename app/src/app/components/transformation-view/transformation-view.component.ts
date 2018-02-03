@@ -1,16 +1,16 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {ActivatedRoute, ParamMap, Router} from '@angular/router';
+import {ActivatedRoute, ParamMap} from '@angular/router';
 import 'rxjs/add/operator/switchMap';
 import {PlatformsProvider} from '../../providers/platforms/platforms.provider';
 import {TransformationsProvider} from '../../providers/transformations/transformations.provider';
 import {Transformation} from '../../model/transformation';
-import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/observable/fromPromise';
 import {IntervalObservable} from 'rxjs/observable/IntervalObservable';
 import 'rxjs/add/operator/takeWhile';
 import {RouteHandler} from '../../handler/route/route.service';
-import {TransformationResponse} from '../../api';
-import StateEnum = TransformationResponse.StateEnum;
+import {LifecyclePhase, TransformationResponse} from '../../api';
+import TransformationStateEnum = TransformationResponse.StateEnum;
+import  LifecycleStateEnum = LifecyclePhase.StateEnum;
 
 @Component({
     selector: 'app-transformation-view',
@@ -24,33 +24,66 @@ export class TransformationViewComponent implements OnInit {
     csarId: string;
     platform: string;
     transformationDone = false;
-    url = 'http://localhost:8084/api/csars/test/transformations/kubernetes/artifact';
+    url = '';
 
     constructor(private routeHandler: RouteHandler, private route: ActivatedRoute,
                 private transformationProvider: TransformationsProvider, public platformsProvider: PlatformsProvider) {
     }
+
+    isActive(phase: LifecyclePhase) {
+        if (phase.state === LifecycleStateEnum.EXECUTING) {
+            return true;
+        }
+        return false;
+    }
+
+    getIcon(phase: LifecyclePhase) {
+        if (phase.state === LifecycleStateEnum.DONE) {
+            return 'green';
+        } else if (phase.state === LifecycleStateEnum.FAILED) {
+            return 'red';
+        } else if (phase.state === LifecycleStateEnum.EXECUTING) {
+            return 'orange';
+        } else if (phase.state === LifecycleStateEnum.PENDING) {
+            return 'blue';
+        } else if (phase.state === LifecycleStateEnum.SKIPPING) {
+            return 'gray';
+        }
+    }
+
+    generateDownloadUrl() {
+        this.url = `http://localhost:8084/api/csars/${this.csarId}/transformations/${this.platform}/artifact`;
+    }
+
 
     async ngOnInit() {
         this.routeHandler.setUp();
         this.route.paramMap.switchMap((params: ParamMap) => {
             this.csarId = params.get('csar');
             this.platform = params.get('platform');
-            let promise = this.transformationProvider.getTransformationByCsarAndPlatform(this.csarId, this.platform);
-            console.log(promise);
-            return Observable.fromPromise(promise);
+            return this.transformationProvider.getTransformationByCsarAndPlatform(this.csarId, this.platform);
         }).subscribe(data => {
             this.transformationDone = false;
             this.transformation = data;
+            this.generateDownloadUrl();
+            if (this.transformation.state === TransformationStateEnum.INPUTREQUIRED) {
+                this.routeHandler.openInputs(this.csarId, this.platform);
+            }
+            this.checkTransformationstate();
             IntervalObservable.create(1000).takeWhile(() => !this.transformationDone).subscribe(() => {
-                Observable.fromPromise(this.transformationProvider.getTransformationByCsarAndPlatform(this.csarId, this.platform))
+                this.transformationProvider.getTransformationByCsarAndPlatform(this.csarId, this.platform)
                     .subscribe(res => {
                         this.transformation = res;
-                        if (res.state === StateEnum.DONE  || res.state === StateEnum.ERROR || res.state === StateEnum.INPUTREQUIRED) {
-                            this.transformationDone = true;
-                        }
+                        this.checkTransformationstate();
                         this.logView.refresh();
                     });
             });
         });
+    }
+
+    private checkTransformationstate() {
+        if (this.transformation.state === TransformationStateEnum.DONE || this.transformation.state === TransformationStateEnum.ERROR || this.transformation.state === TransformationStateEnum.INPUTREQUIRED) {
+            this.transformationDone = true;
+        }
     }
 }

@@ -11,8 +11,7 @@ import 'rxjs/add/operator/takeWhile';
 export class LogComponent implements OnInit, OnChanges {
     @Input() csarId;
     @Input() platformId;
-    @Input() status;
-    logs: LogEntry[];
+    logs: LogEntry[] = [];
     last = 0;
 
 
@@ -21,17 +20,20 @@ export class LogComponent implements OnInit, OnChanges {
 
     refresh() {
         this.transformationProvider.getLogs(this.csarId, this.platformId, this.last).subscribe(data => {
-            this.logs = data.logs;
             this.last = data.end;
             this.logs.push.apply(this.logs, data.logs);
         });
     }
 
     ngOnChanges(changes: { [propKey: string]: SimpleChange }) {
+        this.logs = [];
+        this.last = 0;
         this.refresh();
     }
 
     ngOnInit() {
+        this.last = 0;
+        this.refresh();
     }
 
 }
