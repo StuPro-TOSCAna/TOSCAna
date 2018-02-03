@@ -9,11 +9,11 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 @ApiModel
-public class SetPropertiesRequest extends HiddenResourceSupport {
+public class PropertiesResponse extends HiddenResourceSupport {
 
     private final List<PropertyWrap> properties;
 
-    public SetPropertiesRequest(
+    public PropertiesResponse(
         @JsonProperty("properties") List<PropertyWrap> properties
     ) {
         this.properties = properties;
@@ -21,7 +21,7 @@ public class SetPropertiesRequest extends HiddenResourceSupport {
 
     @ApiModelProperty(
         required = true,
-        notes = "The list of properties associated with this transformation, containing properties with values set by the client."
+        notes = "The list of properties associated with this transformation."
     )
     @JsonProperty("properties")
     public List<PropertyWrap> getProperties() {

@@ -13,7 +13,6 @@ import org.opentosca.toscana.retrofit.model.Transformation;
 import org.opentosca.toscana.retrofit.model.TransformationLogs;
 import org.opentosca.toscana.retrofit.model.TransformationProperties;
 import org.opentosca.toscana.retrofit.model.TransformerStatus;
-import org.opentosca.toscana.retrofit.model.ValidationTransformationProperties;
 import org.opentosca.toscana.retrofit.model.embedded.CsarResources;
 import org.opentosca.toscana.retrofit.model.embedded.PlatformResources;
 import org.opentosca.toscana.retrofit.model.embedded.TransformationResources;
@@ -38,7 +37,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
-@SuppressWarnings( {"unchecked", "ConstantConditions"})
+@SuppressWarnings({"unchecked", "ConstantConditions"})
 public class TOSCAnaAPI {
 
     private static final Logger logger = (Logger) LoggerFactory.getLogger(TOSCAnaAPI.class);
@@ -188,8 +187,8 @@ public class TOSCAnaAPI {
         if (response.code() == 400) {
             return objectMapper.readValue(response.errorBody().string(), Map.class);
         } else if (response.code() == 406) {
-            ValidationTransformationProperties properties =
-                objectMapper.readValue(response.errorBody().string(), ValidationTransformationProperties.class);
+            TransformationProperties properties =
+                objectMapper.readValue(response.errorBody().string(), TransformationProperties.class);
             Map<String, Boolean> validPropsMap = new HashMap<>();
             properties.getProperties().forEach(e -> validPropsMap.put(e.getKey(), e.isValid()));
             return validPropsMap;
