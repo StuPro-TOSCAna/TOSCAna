@@ -42,7 +42,6 @@ public class CsarFilesystemDao implements CsarDao {
     private final static Logger logger = LoggerFactory.getLogger(CsarFilesystemDao.class);
 
     private final TransformationDao transformationDao;
-    private CsarService csarService;
     private final File dataDir;
 
     // a map containing all csars. it should be kept in sync with the status of the file system
