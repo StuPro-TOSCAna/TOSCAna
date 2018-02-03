@@ -95,7 +95,7 @@ public class CsarControllerTest extends BaseSpringTest {
         when(service.getCsars()).thenReturn(mockedCsars);
         when(service.getCsar(anyString())).thenReturn(Optional.empty());
         for (String name : MOCK_CSAR_NAMES) {
-            LogEntry entry = new LogEntry(0, "Test Message", Level.DEBUG);
+            LogEntry entry = new LogEntry(0, "TestContext","Test Message", Level.DEBUG);
             Log mockLog = logMock();
             when(mockLog.getLogEntries(0)).thenReturn(Collections.singletonList(entry));
             Csar csar = spy(new CsarImpl(new File(""), name, mockLog));
@@ -265,6 +265,7 @@ public class CsarControllerTest extends BaseSpringTest {
             .andExpect(jsonPath("$.logs[0]").exists())
             .andExpect(jsonPath("$.logs[0].timestamp").isNumber())
             .andExpect(jsonPath("$.logs[0].level").isString())
+            .andExpect(jsonPath("$.logs[0].context").isString())
             .andExpect(jsonPath("$.logs[0].message").isString())
             .andReturn();
     }
