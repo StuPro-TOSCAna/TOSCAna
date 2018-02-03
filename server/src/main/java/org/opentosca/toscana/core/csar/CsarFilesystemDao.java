@@ -42,6 +42,7 @@ public class CsarFilesystemDao implements CsarDao {
     private final static Logger logger = LoggerFactory.getLogger(CsarFilesystemDao.class);
 
     private final TransformationDao transformationDao;
+    private CsarService csarService;
     private final File dataDir;
 
     // a map containing all csars. it should be kept in sync with the status of the file system
@@ -160,7 +161,7 @@ public class CsarFilesystemDao implements CsarDao {
                 String id = file.getName();
                 CsarImpl csar = new CsarImpl(getRootDir(id), id, getLog(id));
                 csar.getLifecyclePhase(Csar.Phase.UNZIP).setState(LifecyclePhase.State.DONE);
-                csar.getLifecyclePhase(Csar.Phase.VALIDATE).setState(LifecyclePhase.State.SKIPPED);
+                csar.validate();
                 csarMap.put(csar.getIdentifier(), csar);
                 List<Transformation> transformations = transformationDao.find(csar);
                 csar.setTransformations(transformations);

@@ -20,7 +20,7 @@ public class CsarUploadIT extends BaseSpringIntegrationTest {
     private TOSCAnaAPI toscanaAPI;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         toscanaAPI = new TOSCAnaAPI(getHttpUrl());
     }
 
