@@ -18,11 +18,6 @@ public interface Csar extends Lifecycle {
     boolean validate();
 
     /**
-     Validates this csar. Caution: This call is expensive
-     */
-    boolean validate();
-
-    /**
      @return a map of all transformation objects of this csar. This includes scheduled, ongoing and finished
      transformations. Key of each map entry is the platform identifier of its particular transformation.
      */
