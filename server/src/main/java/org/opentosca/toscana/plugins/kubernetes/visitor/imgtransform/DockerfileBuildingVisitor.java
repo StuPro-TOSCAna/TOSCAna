@@ -74,6 +74,9 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
 
     @Override
     public void visit(Dbms node) {
+        if (node.getPort().isPresent()) {
+            ports.add(node.getPort().get());
+        }
         handleDefault(node);
     }
 
@@ -109,6 +112,9 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
     public void visit(MysqlDbms node) {
         if (node.getPort().isPresent()) {
             ports.add(node.getPort().get());
+        } else {
+            //Add mysql default port if none is set
+            ports.add(3306);
         }
         builder.env("MYSQL_ROOT_PASSWORD", node.getRootPassword().get());
         handleDefault(node);

@@ -2,6 +2,7 @@ package org.opentosca.toscana.plugins.kubernetes;
 
 import java.io.File;
 import java.util.HashSet;
+import java.util.concurrent.TimeUnit;
 
 import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.transformation.Transformation;
@@ -13,6 +14,9 @@ import org.opentosca.toscana.plugins.BaseTransformTest;
 import org.opentosca.toscana.plugins.kubernetes.docker.mapper.MapperTest;
 
 import org.apache.commons.io.FileUtils;
+import org.junit.Assume;
+import org.junit.Rule;
+import org.junit.rules.Timeout;
 
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
@@ -24,8 +28,16 @@ import static org.opentosca.toscana.plugins.kubernetes.KubernetesPlugin.DOCKER_R
 
 public class KubernetesLampIT extends BaseTransformTest {
 
+    @Rule
+    public Timeout timeout = Timeout.builder().withTimeout(600, TimeUnit.SECONDS).build();
+    
     public KubernetesLampIT() throws Exception {
         super(new KubernetesPlugin(MapperTest.init()));
+    }
+
+    @Override
+    protected void checkAssumptions() {
+        Assume.assumeNotNull(System.getenv("RUN_K8S_MODEL_TESTS"));
     }
 
     @Override
