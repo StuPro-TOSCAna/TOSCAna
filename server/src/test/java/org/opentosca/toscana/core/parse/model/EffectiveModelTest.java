@@ -1,9 +1,11 @@
-package org.opentosca.toscana.model;
+package org.opentosca.toscana.core.parse.model;
 
 import java.util.Optional;
 
 import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.core.testdata.TestCsars;
+import org.opentosca.toscana.model.EffectiveModel;
+import org.opentosca.toscana.model.EffectiveModelFactory;
 import org.opentosca.toscana.model.capability.OsCapability;
 import org.opentosca.toscana.model.capability.ScalableCapability;
 import org.opentosca.toscana.model.node.Compute;
@@ -16,15 +18,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 public class EffectiveModelTest extends BaseUnitTest {
-    
+
     private EffectiveModel model;
     private Compute compute;
-    
+
     @Before
-    public void setUp(){
-        this.model = new EffectiveModel(TestCsars.VALID_SINGLE_COMPUTE_WINDOWS_TEMPLATE, logMock());
+    public void setUp() {
+        this.model = new EffectiveModelFactory().create(TestCsars.VALID_SINGLE_COMPUTE_WINDOWS_TEMPLATE, logMock());
         this.compute = (Compute) model.getNodes().iterator().next();
-        
     }
 
     /**

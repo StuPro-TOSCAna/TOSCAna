@@ -1,4 +1,4 @@
-package org.opentosca.toscana.model;
+package org.opentosca.toscana.core.parse.model;
 
 import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.model.datatype.SizeUnit;
