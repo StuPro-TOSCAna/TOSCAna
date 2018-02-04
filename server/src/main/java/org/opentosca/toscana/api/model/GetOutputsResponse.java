@@ -13,20 +13,20 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 @ApiModel
-public class OutputsResponse extends HiddenResourceSupport {
+public class GetOutputsResponse extends HiddenResourceSupport {
 
-    private List<PropertyWrap> outputs;
+    private List<OutputWrap> outputs;
 
-    public OutputsResponse(
-        String csarName,
-        String platformName,
-        @JsonProperty("outputs") List<PropertyWrap> outputs
+    public GetOutputsResponse(
+        String csarId,
+        String platformId,
+        @JsonProperty("outputs") List<OutputWrap> outputs
     ) {
         this.outputs = outputs;
         add(
             linkTo(
                 methodOn(TransformationController.class).getOutputs(null, null)
-            ).withSelfRel().expand(csarName, platformName)
+            ).withSelfRel().expand(csarId, platformId)
         );
     }
 
@@ -36,7 +36,7 @@ public class OutputsResponse extends HiddenResourceSupport {
             "doesn't have any outputs."
     )
     @JsonProperty("outputs")
-    public List<PropertyWrap> getOutputs() {
+    public List<OutputWrap> getOutputs() {
         return outputs;
     }
 }

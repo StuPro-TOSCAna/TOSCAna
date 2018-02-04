@@ -4,8 +4,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.opentosca.toscana.core.transformation.properties.InputProperty;
 import org.opentosca.toscana.core.transformation.properties.PlatformInput;
-import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.core.transformation.properties.PropertyType;
 
 public class Platform {
@@ -71,8 +71,8 @@ public class Platform {
     /**
      @return a list of properties which are necessary for a transformation to this platform.
      */
-    public Set<Property> getProperties() {
-        Set<Property> props = new HashSet<>();
+    public Set<InputProperty> getProperties() {
+        Set<InputProperty> props = new HashSet<>();
         this.properties.forEach(e -> props.add(e.copy()));
         return Collections.unmodifiableSet(props);
     }

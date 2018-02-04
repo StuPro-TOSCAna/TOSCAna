@@ -24,10 +24,11 @@ import org.opentosca.toscana.api.exceptions.PlatformNotFoundException;
 import org.opentosca.toscana.api.exceptions.TransformationAlreadyPresentException;
 import org.opentosca.toscana.api.exceptions.TransformationNotFoundException;
 import org.opentosca.toscana.api.model.GetInputsResponse;
+import org.opentosca.toscana.api.model.GetOutputsResponse;
+import org.opentosca.toscana.api.model.InputWrap;
 import org.opentosca.toscana.api.model.InputsResponse;
 import org.opentosca.toscana.api.model.LogResponse;
-import org.opentosca.toscana.api.model.OutputsResponse;
-import org.opentosca.toscana.api.model.PropertyWrap;
+import org.opentosca.toscana.api.model.OutputWrap;
 import org.opentosca.toscana.api.model.TransformationResponse;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarService;
@@ -39,8 +40,9 @@ import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.logging.LogEntry;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.platform.PlatformService;
+import org.opentosca.toscana.core.transformation.properties.InputProperty;
 import org.opentosca.toscana.core.transformation.properties.NoSuchPropertyException;
-import org.opentosca.toscana.core.transformation.properties.Property;
+import org.opentosca.toscana.core.transformation.properties.OutputProperty;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
 import org.opentosca.toscana.core.transformation.properties.PropertyType;
 
@@ -673,8 +675,8 @@ public class TransformationController {
     ) {
         Csar csar = findByCsarId(csarId);
         Transformation transformation = findTransformationByPlatform(csar, platformId);
-        List<PropertyWrap> propertyWrapList = toPropertyWrapList(transformation.getInputs(), null);
-        GetInputsResponse response = new GetInputsResponse(csarId, platformId, propertyWrapList);
+        List<InputWrap> inputWrapList = toPropertyWrapList(transformation.getInputs(), null);
+        GetInputsResponse response = new GetInputsResponse(csarId, platformId, inputWrapList);
         return ResponseEntity.ok(response);
     }
 
@@ -751,18 +753,18 @@ public class TransformationController {
     ) {
         Csar csar = findByCsarId(csarId);
         Transformation transformation = findTransformationByPlatform(csar, platformId);
-        PropertyInstance properties = transformation.getInputs();
         List<TransformationState> validStates = Arrays.asList(INPUT_REQUIRED, READY);
         if (!Arrays.asList(INPUT_REQUIRED, READY).contains(transformation.getState())) {
             throw new IllegalTransformationStateException(
                 String.format("The transformation is not in one of the states '%s'", validStates));
         }
+        PropertyInstance inputs = transformation.getInputs();
         Map<String, Boolean> successes = new HashMap<>();
         boolean somethingFailed = false;
         //Set the properties and check their validity
-        for (PropertyWrap entry : propertiesRequest.getInputs()) {
+        for (InputWrap entry : propertiesRequest.getInputs()) {
             try {
-                boolean success = properties.set(entry.getKey(), entry.getValue());
+                boolean success = inputs.set(entry.getKey(), entry.getValue());
                 successes.put(entry.getKey(), success);
                 if (!success) {
                     somethingFailed = true;
@@ -777,19 +779,17 @@ public class TransformationController {
             return ResponseEntity.ok().build();
         } else {
             Set<String> requestedKeys = new HashSet<>(successes.keySet());
-            List<PropertyWrap> propWrapList = toPropertyWrapList(properties, requestedKeys);
+            List<InputWrap> propWrapList = toPropertyWrapList(inputs, requestedKeys);
             //The request contains invalid values
             if (requestedKeys.size() > propWrapList.size()) {
-                Set<String> knownKeys = propWrapList.stream().map(PropertyWrap::getKey).collect(Collectors.toSet());
+                Set<String> knownKeys = propWrapList.stream().map(InputWrap::getKey).collect(Collectors.toSet());
                 requestedKeys.removeAll(knownKeys); // Remove all known (valid) keys
                 requestedKeys.forEach(e -> {
-                    propWrapList.add(new PropertyWrap(e, PropertyType.INVALID_KEY, "Invalid Key",
+                    propWrapList.add(new InputWrap(e, PropertyType.INVALID_KEY, "Invalid Key",
                         null, false, null, false));
                 });
             }
-            InputsResponse response = new InputsResponse(
-                propWrapList
-            );
+            InputsResponse response = new InputsResponse(propWrapList);
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(response);
         }
     }
@@ -831,7 +831,7 @@ public class TransformationController {
         @ApiResponse(
             code = 200,
             message = "The operation was executed successfully",
-            response = GetInputsResponse.class
+            response = InputsResponse.class
         ),
         @ApiResponse(
             code = 404,
@@ -850,7 +850,7 @@ public class TransformationController {
         method = {RequestMethod.GET},
         produces = "application/hal+json"
     )
-    public ResponseEntity<OutputsResponse> getOutputs(
+    public ResponseEntity<GetOutputsResponse> getOutputs(
         @ApiParam(value = "The unique identifier for the CSAR", required = true, example = "test")
         @PathVariable(name = "csarId") String csarId,
         @ApiParam(value = "The identifier for the platform", required = true, example = "kubernetes")
@@ -861,11 +861,11 @@ public class TransformationController {
         if (transformation.getState() != TransformationState.DONE && transformation.getState() != TransformationState.ERROR) {
             throw new IllegalTransformationStateException("The Transformation has not finished yet!");
         }
-        List<Property> outputs = transformation.getOutputs();
-        List<PropertyWrap> wrappedOutputs = outputs.stream()
-            .map(o -> new PropertyWrap(o))
+        List<OutputProperty> outputs = transformation.getOutputs();
+        List<OutputWrap> wrappedOutputs = outputs.stream()
+            .map(o -> new OutputWrap(o))
             .collect(Collectors.toList());
-        return ResponseEntity.ok(new OutputsResponse(csarId, platformId, wrappedOutputs));
+        return ResponseEntity.ok(new GetOutputsResponse(csarId, platformId, wrappedOutputs));
     }
 
     @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "Cannot delete csar with running transformations")
@@ -891,13 +891,13 @@ public class TransformationController {
             format("The Csar '%s' does not have a transformation for platform '%s'", csar.getIdentifier(), platformId)));
     }
 
-    private List<PropertyWrap> toPropertyWrapList(PropertyInstance instance, Set<String> validKeys) {
-        List<PropertyWrap> propertyWrapList = new ArrayList<>();
-        for (Property property : instance.getProperties().values()) {
+    private List<InputWrap> toPropertyWrapList(PropertyInstance instance, Set<String> validKeys) {
+        List<InputWrap> inputWrapList = new ArrayList<>();
+        for (InputProperty property : instance.getProperties().values()) {
             if (validKeys == null || validKeys.contains(property.getKey())) {
-                propertyWrapList.add(new PropertyWrap(property));
+                inputWrapList.add(new InputWrap(property));
             }
         }
-        return propertyWrapList;
+        return inputWrapList;
     }
 }

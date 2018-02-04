@@ -14,6 +14,7 @@ import org.junit.Rule;
 import org.junit.experimental.categories.Category;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
+import org.mockito.quality.Strictness;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ActiveProfiles;
@@ -30,8 +31,10 @@ public abstract class BaseTest {
     // "user.dir" is module root
     protected static final File PROJECT_ROOT = new File(System.getProperty("user.dir"));
     private final static Logger logger = LoggerFactory.getLogger("test logger");
+    
     @Rule
-    public MockitoRule rule = MockitoJUnit.rule();
+    //This removes the mockito hints of unused stubs
+    public MockitoRule rule = MockitoJUnit.rule().strictness(Strictness.LENIENT);
 
     /**
      @return a mocked Log instance which returns a normal logger upon any getLogger call

@@ -30,8 +30,8 @@ import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.logging.LogEntry;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.platform.PlatformService;
+import org.opentosca.toscana.core.transformation.properties.OutputProperty;
 import org.opentosca.toscana.core.transformation.properties.PlatformInput;
-import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.core.transformation.properties.PropertyType;
 
 import ch.qos.logback.classic.Level;
@@ -41,11 +41,7 @@ import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
-import org.mockito.quality.Strictness;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
@@ -139,7 +135,7 @@ public class TransformationControllerTest extends BaseSpringTest {
     private final static String VALID_CSAR_NAME = "kubernetes-cluster";
     private final static String VALID_PLATFORM_NAME = "p-a";
     private final static String START_TRANSFORMATION_VALID_URL = "/api/csars/kubernetes-cluster/transformations/p-a/start";
-    private final static String GET_INPUTS_VALID_URL = "/api/csars/kubernetes-cluster/transformations/p-a/inputs";
+    private final static String INPUTS_VALID_URL = "/api/csars/kubernetes-cluster/transformations/p-a/inputs";
     private final static String DEFAULT_CHARSET_HAL_JSON = "application/hal+json;charset=UTF-8";
     private final static String ARTIFACT_RESPONSE_EXPECTED_URL = "http://localhost/api/csars/kubernetes-cluster/transformations/p-a/artifact";
     private final static String GET_ARTIFACTS_VALID_URL = "/api/csars/kubernetes-cluster/transformations/p-a/artifact";
@@ -159,11 +155,6 @@ public class TransformationControllerTest extends BaseSpringTest {
     private static final String INPUT_TEST_DEFAULT_VALUE = "Test-Default-Value";
     private static final String PROPERTY_TEST_DEFAULT_VALUE_KEY = "default_value_property";
     //</editor-fold>
-
-    @Rule
-    //This removes the Mockito Hints of unused Stubbings
-    //This is done to reduce log output.
-    public MockitoRule rule = MockitoJUnit.rule().strictness(Strictness.LENIENT);
 
     private CsarService csarService;
     private TransformationService transformationService;
@@ -246,7 +237,7 @@ public class TransformationControllerTest extends BaseSpringTest {
         Transformation t = transformations.get(0);
         when(t.getState()).thenReturn(TransformationState.DONE);
         String outputKey = "test_output";
-        List<Property> outputs = Lists.newArrayList(new PlatformInput(
+        List<OutputProperty> outputs = Lists.newArrayList(new PlatformInput(
             outputKey,
             PropertyType.TEXT,
             "",
@@ -340,7 +331,7 @@ public class TransformationControllerTest extends BaseSpringTest {
     public void setTransformationProperties() throws Exception {
         preInitNonCreationTests();
         mvc.perform(
-            put(GET_INPUTS_VALID_URL)
+            put(INPUTS_VALID_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(INPUTS_VALID)
         ).andDo(print())
@@ -353,7 +344,7 @@ public class TransformationControllerTest extends BaseSpringTest {
     public void setTransformationPropertiesInvalidInput() throws Exception {
         preInitNonCreationTests();
         mvc.perform(
-            put(GET_INPUTS_VALID_URL)
+            put(INPUTS_VALID_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(INPUTS_INVALID)
         ).andDo(print())
@@ -370,7 +361,7 @@ public class TransformationControllerTest extends BaseSpringTest {
     public void setTransformationPropertiesMissingValueInvalidInput() throws Exception {
         preInitNonCreationTests();
         mvc.perform(
-            put(GET_INPUTS_VALID_URL)
+            put(INPUTS_VALID_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(INPUTS_MISSING_VALUE)
         ).andDo(print())
@@ -382,7 +373,7 @@ public class TransformationControllerTest extends BaseSpringTest {
     public void getInputsTest() throws Exception {
         preInitNonCreationTests();
         MvcResult result = mvc.perform(
-            get(GET_INPUTS_VALID_URL)
+            get(INPUTS_VALID_URL)
         ).andDo(print())
             .andExpect(status().is(200))
             .andExpect(content().contentType(DEFAULT_CHARSET_HAL_JSON))
@@ -417,7 +408,7 @@ public class TransformationControllerTest extends BaseSpringTest {
             .getInputs().set(inputKey, inputValue);
         //Perform a request
         MvcResult result = mvc.perform(
-            get(GET_INPUTS_VALID_URL)
+            get(INPUTS_VALID_URL)
         ).andDo(print())
             .andExpect(status().is(200))
             .andExpect(content().contentType(DEFAULT_CHARSET_HAL_JSON))

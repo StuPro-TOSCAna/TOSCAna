@@ -10,9 +10,9 @@ import org.opentosca.toscana.retrofit.model.Csar;
 import org.opentosca.toscana.retrofit.model.Platform;
 import org.opentosca.toscana.retrofit.model.ServerError;
 import org.opentosca.toscana.retrofit.model.Transformation;
+import org.opentosca.toscana.retrofit.model.TransformationInputs;
 import org.opentosca.toscana.retrofit.model.TransformationLogs;
 import org.opentosca.toscana.retrofit.model.TransformationOutputs;
-import org.opentosca.toscana.retrofit.model.TransformationInputs;
 import org.opentosca.toscana.retrofit.model.TransformerStatus;
 import org.opentosca.toscana.retrofit.model.embedded.CsarResources;
 import org.opentosca.toscana.retrofit.model.embedded.PlatformResources;
@@ -38,7 +38,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
-@SuppressWarnings( {"unchecked", "ConstantConditions"})
+@SuppressWarnings({"unchecked", "ConstantConditions"})
 public class ToscanaApi {
 
     private static final Logger logger = (Logger) LoggerFactory.getLogger(ToscanaApi.class);
@@ -177,7 +177,7 @@ public class ToscanaApi {
         throws IOException, TOSCAnaServerException {
         return performCall(apiService.getInputs(csarName, platform));
     }
-    
+
     public TransformationOutputs getOutputs(String csarName, String platform)
         throws IOException, TOSCAnaServerException {
         return performCall(apiService.getOutputs(csarName, platform));

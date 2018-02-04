@@ -11,20 +11,19 @@ import io.swagger.annotations.ApiModelProperty;
 @ApiModel
 public class InputsResponse extends HiddenResourceSupport {
 
-    private final List<PropertyWrap> inputs;
+    private final List<InputWrap> inputs;
 
-    public InputsResponse(
-        @JsonProperty("inputs") List<PropertyWrap> inputs
-    ) {
+    public InputsResponse(@JsonProperty("inputs") List<InputWrap> inputs) {
         this.inputs = inputs;
     }
 
     @ApiModelProperty(
         required = true,
-        notes = "The list of inputs associated with this transformation."
+        notes = "The list of properties associated with this transformation, if this list is empty, the transformation " +
+            "doesn't have any properties to set."
     )
     @JsonProperty("inputs")
-    public List<PropertyWrap> getInputs() {
+    public List<InputWrap> getInputs() {
         return inputs;
     }
 }

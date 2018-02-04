@@ -5,7 +5,7 @@ import java.util.Optional;
 import lombok.Data;
 
 @Data
-public class PlatformInput implements Property {
+public class PlatformInput implements InputProperty {
 
     private final String key;
     private final PropertyType type;

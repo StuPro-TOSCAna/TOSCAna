@@ -11,7 +11,8 @@ import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.transformation.artifacts.TargetArtifact;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.platform.Platform;
-import org.opentosca.toscana.core.transformation.properties.Property;
+import org.opentosca.toscana.core.transformation.properties.InputProperty;
+import org.opentosca.toscana.core.transformation.properties.OutputProperty;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
 import org.opentosca.toscana.core.util.LifecyclePhase;
 import org.opentosca.toscana.model.EffectiveModel;
@@ -24,7 +25,7 @@ public class TransformationImpl implements Transformation {
     private final Platform targetPlatform;
     private final Log log;
     private final PropertyInstance inputs;
-    private final List<Property> outputs;
+    private final List<OutputProperty> outputs;
     private final EffectiveModel model;
     private TransformationState state = TransformationState.READY;
     private TargetArtifact targetArtifact;
@@ -41,13 +42,13 @@ public class TransformationImpl implements Transformation {
         this.targetPlatform = targetPlatform;
         this.log = log;
         this.model = model;
-        Set<Property> properties = new HashSet<>();
+        Set<InputProperty> properties = new HashSet<>();
         properties.addAll(model.getInputs().values());
         properties.addAll(targetPlatform.getProperties());
         // caution: side effect
         // transformationState can get set to INPUT_REQUIRED by this call
         this.inputs = new PropertyInstance(properties, this);
-        outputs = Collections.unmodifiableList(new ArrayList<>(model.getOutputs().values()));
+        this.outputs = Collections.unmodifiableList(new ArrayList<>(model.getOutputs().values()));
     }
 
     @Override
@@ -71,7 +72,7 @@ public class TransformationImpl implements Transformation {
     }
 
     @Override
-    public List<Property> getOutputs() throws IllegalStateException {
+    public List<OutputProperty> getOutputs() throws IllegalStateException {
         return outputs;
     }
 
