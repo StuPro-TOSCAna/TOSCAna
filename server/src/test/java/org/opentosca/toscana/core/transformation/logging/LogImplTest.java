@@ -31,7 +31,7 @@ public class LogImplTest extends BaseUnitTest {
         log = new LogImpl(new File(tmpdir, "log"));
         logger.info("Creating dummy log entries");
         for (int index = 0; index < 100; index++) {
-            LogEntry logEntry = new LogEntry(index, String.format("Log-Message-%d", index), Level.DEBUG);
+            LogEntry logEntry = new LogEntry(index, "TestContext", String.format("Log-Message-%d", index), Level.DEBUG);
             log.addLogEntry(logEntry);
         }
         logfile = new File(tmpdir, "log");

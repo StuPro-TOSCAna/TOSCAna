@@ -1,5 +1,8 @@
 package org.opentosca.toscana.api.model;
 
+import org.opentosca.toscana.core.transformation.properties.Property;
+import org.opentosca.toscana.core.transformation.properties.PropertyType;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -7,26 +10,38 @@ import io.swagger.annotations.ApiModelProperty;
 @ApiModel
 public class PropertyWrap {
     protected final String key;
-    protected final String type;
+    protected final PropertyType type;
     protected final String description;
     protected final boolean required;
     protected final String value;
     protected final String defaultValue;
+    protected boolean valid;
 
     public PropertyWrap(
         @JsonProperty("key") String key,
-        @JsonProperty("type") String type,
+        @JsonProperty("type") PropertyType type,
         @JsonProperty("description") String description,
         @JsonProperty("value") String value,
         @JsonProperty("required") boolean required,
-        @JsonProperty("default") String defaultValue
-    ) {
+        @JsonProperty("default_value") String defaultValue,
+        @JsonProperty("valid") boolean valid) {
         this.key = key;
         this.type = type;
         this.description = description;
         this.required = required;
         this.value = value;
         this.defaultValue = defaultValue;
+        this.valid = valid;
+    }
+
+    public PropertyWrap(Property p) {
+        this(p.getKey(),
+            p.getType(),
+            p.getDescription().orElse(null),
+            p.getValue().orElse(null),
+            p.isRequired(),
+            p.getDefaultValue().orElse(null),
+            p.isValid());
     }
 
     @ApiModelProperty(
@@ -47,7 +62,7 @@ public class PropertyWrap {
         example = "text"
     )
     @JsonProperty("type")
-    public String getType() {
+    public PropertyType getType() {
         return type;
     }
 
@@ -85,8 +100,17 @@ public class PropertyWrap {
         required = true,
         notes = "the default value of the property"
     )
-    @JsonProperty("default")
+    @JsonProperty("default_value")
     public String getDefaultValue() {
         return defaultValue;
+    }
+
+    @ApiModelProperty(
+        notes = "true if the property is valid, false otherwise. The server will ignore this value, as it is designed " +
+            "to be read-only."
+    )
+    @JsonProperty("valid")
+    public boolean isValid() {
+        return valid;
     }
 }

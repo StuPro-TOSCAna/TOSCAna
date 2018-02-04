@@ -68,8 +68,8 @@ public class CsarFilesystemDao implements CsarDao {
     @Override
     public Csar create(String identifier, InputStream inputStream) {
         csarMap.remove(identifier);
-        Csar csar = new CsarImpl(getRootDir(identifier), identifier, getLog(identifier));
         File csarDir = setupDir(identifier);
+        Csar csar = new CsarImpl(getRootDir(identifier), identifier, getLog(identifier));
         File transformationDir = new File(csarDir, TRANSFORMATION_DIR);
         transformationDir.mkdir();
         unzip(identifier, inputStream, csar, csarDir);
@@ -159,8 +159,8 @@ public class CsarFilesystemDao implements CsarDao {
             if (isCsarDir(file)) {
                 String id = file.getName();
                 CsarImpl csar = new CsarImpl(getRootDir(id), id, getLog(id));
-                csar.getLifecyclePhase(Csar.Phase.UNZIP).setState(LifecyclePhase.State.DONE);
-                csar.getLifecyclePhase(Csar.Phase.VALIDATE).setState(LifecyclePhase.State.SKIPPED);
+                csar.getLifecyclePhase(Csar.Phase.UNZIP).setState(LifecyclePhase.State.SKIPPED);
+                csar.validate();
                 csarMap.put(csar.getIdentifier(), csar);
                 List<Transformation> transformations = transformationDao.find(csar);
                 csar.setTransformations(transformations);

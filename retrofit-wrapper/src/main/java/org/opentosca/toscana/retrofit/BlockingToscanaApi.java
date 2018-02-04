@@ -26,7 +26,7 @@ public class BlockingToscanaApi extends ToscanaApi {
     @Override
     public ResponseBody startTransformation(String csarName, String platform) throws IOException, TOSCAnaServerException {
         ResponseBody response = super.startTransformation(csarName, platform);
-        TransformationState state = getTransformation(csarName, platform).getStatus();
+        TransformationState state = getTransformation(csarName, platform).getState();
         if (state == TransformationState.INPUT_REQUIRED) {
             return response;
         } else {
@@ -36,7 +36,7 @@ public class BlockingToscanaApi extends ToscanaApi {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                state = getTransformation(csarName, platform).getStatus();
+                state = getTransformation(csarName, platform).getState();
             } while (!(state == TransformationState.DONE
                 || state == TransformationState.ERROR));
             return response;

@@ -154,7 +154,7 @@ public class TransformationControllerTest extends BaseSpringTest {
     private final static String PLATFORM_NOT_FOUND_URL = "/api/csars/kubernetes-cluster/transformations/p-z";
     private final static String GET_OUTPUT_URL = "/api/csars/kubernetes-cluster/transformations/p-a/outputs";
     private final static String CSAR_NOT_FOUND_URL = "/api/csars/keinechtescsar/transformations";
-    private static final String[] CSAR_NAMES = new String[] {"kubernetes-cluster", "apache-test", "mongo-db"};
+    private static final String[] CSAR_NAMES = new String[]{"kubernetes-cluster", "apache-test", "mongo-db"};
     private static final String SECOND_VALID_PLATFORM_NAME = "p-b";
     private static final String PROPERTY_TEST_DEFAULT_VALUE = "Test-Default-Value";
     private static final String PROPERTY_TEST_DEFAULT_VALUE_KEY = "default_value_property";
@@ -405,7 +405,7 @@ public class TransformationControllerTest extends BaseSpringTest {
         String[] values = JsonPath.parse(responseJson).read("$.properties[*].value", String[].class);
         long nullCount = Arrays.asList(values).stream().filter(Objects::isNull).count();
         long testCount = Arrays.asList(values).stream().filter(e -> e != null && e.equals(PROPERTY_TEST_DEFAULT_VALUE)).count();
-        assertEquals(7, nullCount);
+        assertEquals(8, nullCount);
         assertEquals(1, testCount);
     }
 
@@ -551,7 +551,7 @@ public class TransformationControllerTest extends BaseSpringTest {
             .andExpect(jsonPath("$.phases").isArray())
             .andExpect(jsonPath("$.phases").isEmpty())
             .andExpect(jsonPath("$.platform").value(VALID_PLATFORM_NAME))
-            .andExpect(jsonPath("$.status").value("INPUT_REQUIRED"))
+            .andExpect(jsonPath("$.state").value("INPUT_REQUIRED"))
             .andReturn();
         JSONObject object = new JSONObject(result.getResponse().getContentAsString());
         HALRelationUtils.validateRelations(
@@ -769,7 +769,7 @@ public class TransformationControllerTest extends BaseSpringTest {
 
         for (String pname : pnames) {
 
-            LogEntry entry = new LogEntry(0, "Test Message", Level.DEBUG);
+            LogEntry entry = new LogEntry(0, "Test Context","Test Message", Level.DEBUG);
             Log mockLog = logMock();
             when(mockLog.getLogEntries(0)).thenReturn(Collections.singletonList(entry));
 

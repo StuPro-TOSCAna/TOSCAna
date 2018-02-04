@@ -14,7 +14,6 @@ import org.opentosca.toscana.retrofit.model.TransformationLogs;
 import org.opentosca.toscana.retrofit.model.TransformationOutputs;
 import org.opentosca.toscana.retrofit.model.TransformationProperties;
 import org.opentosca.toscana.retrofit.model.TransformerStatus;
-import org.opentosca.toscana.retrofit.model.ValidationTransformationProperties;
 import org.opentosca.toscana.retrofit.model.embedded.CsarResources;
 import org.opentosca.toscana.retrofit.model.embedded.PlatformResources;
 import org.opentosca.toscana.retrofit.model.embedded.TransformationResources;
@@ -194,8 +193,8 @@ public class ToscanaApi {
         if (response.code() == 400) {
             return objectMapper.readValue(response.errorBody().string(), Map.class);
         } else if (response.code() == 406) {
-            ValidationTransformationProperties properties =
-                objectMapper.readValue(response.errorBody().string(), ValidationTransformationProperties.class);
+            TransformationProperties properties =
+                objectMapper.readValue(response.errorBody().string(), TransformationProperties.class);
             Map<String, Boolean> validPropsMap = new HashMap<>();
             properties.getProperties().forEach(e -> validPropsMap.put(e.getKey(), e.isValid()));
             return validPropsMap;
@@ -204,9 +203,10 @@ public class ToscanaApi {
             props.getProperties()
                 .forEach(transformationProperty -> result.put(transformationProperty.getKey(), true));
             return result;
+        } else {
+            throwToscanaException(call, response);
+            return null;
         }
-        throwToscanaException(call, response);
-        return null;
     }
 
     public byte[] downloadArtifactAsBytes(String csarName,

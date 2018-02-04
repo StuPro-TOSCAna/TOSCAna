@@ -32,7 +32,8 @@ public abstract class Entity implements Comparable<Entity> {
         if (BaseToscaElement.class.isAssignableFrom(key.getType())) {
             newEntity = ((BaseToscaElement) value).getBackingEntity();
         } else {
-            newEntity = new ScalarEntity(value.toString(), id, graph);
+            String normalizedValue  = (value == null) ? null : value.toString();
+            newEntity = new ScalarEntity(normalizedValue, id, graph);
         }
         Optional<Entity> oldEntity = graph.getEntity(id);
         if (oldEntity.isPresent()) {

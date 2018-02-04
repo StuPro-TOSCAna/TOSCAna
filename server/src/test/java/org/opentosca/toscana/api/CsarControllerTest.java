@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +19,10 @@ import org.opentosca.toscana.core.csar.CsarService;
 import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.TransformationImpl;
 import org.opentosca.toscana.core.transformation.TransformationState;
+import org.opentosca.toscana.core.transformation.logging.Log;
+import org.opentosca.toscana.core.transformation.logging.LogEntry;
 
+import ch.qos.logback.classic.Level;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONObject;
 import org.junit.Before;
@@ -58,6 +62,7 @@ public class CsarControllerTest extends BaseSpringTest {
     private static final String[] MOCK_CSAR_NAMES = {"windows-server", "apache"};
     private static final Map<String, String> relations = new HashMap<>();
     private static final String ACCEPTED_MIME_TYPE = "application/hal+json";
+    private final static String DEFAULT_CHARSET_HAL_JSON = "application/hal+json;charset=UTF-8";
     private static final String CSAR_BASE_URL = LIST_CSARS_URL + "/";
     private static final String MULTIPART_FILE_UPLOAD_KEY = "file";
     private static final String MULTIPART_FILE_ORIGINAL_FILENAME = "null";
@@ -90,7 +95,10 @@ public class CsarControllerTest extends BaseSpringTest {
         when(service.getCsars()).thenReturn(mockedCsars);
         when(service.getCsar(anyString())).thenReturn(Optional.empty());
         for (String name : MOCK_CSAR_NAMES) {
-            Csar csar = spy(new CsarImpl(new File(""), name, logMock()));
+            LogEntry entry = new LogEntry(0, "TestContext","Test Message", Level.DEBUG);
+            Log mockLog = logMock();
+            when(mockLog.getLogEntries(0)).thenReturn(Collections.singletonList(entry));
+            Csar csar = spy(new CsarImpl(new File(""), name, mockLog));
             when(service.getCsar(name)).thenReturn(Optional.of(csar));
             mockedCsars.add(csar);
         }
@@ -241,5 +249,24 @@ public class CsarControllerTest extends BaseSpringTest {
         builder = (MockMultipartHttpServletRequestBuilder) builder.file(mockMultipartFile)
             .contentType(MediaType.MULTIPART_FORM_DATA);
         return builder;
+    }
+    
+    @Test
+    public void retrieveCsarLogs() throws Exception {
+        String logCall = String.format("%s/%s/logs", LIST_CSARS_URL, VALID_CSAR_NAME);
+        mvc.perform(
+            get(logCall)
+        ).andDo(print())
+            .andExpect(status().is(200))
+            .andExpect(content().contentType(DEFAULT_CHARSET_HAL_JSON))
+            .andExpect(jsonPath("$.start").value(0))
+            .andExpect(jsonPath("$.end").isNumber())
+            .andExpect(jsonPath("$.logs").isArray())
+            .andExpect(jsonPath("$.logs[0]").exists())
+            .andExpect(jsonPath("$.logs[0].timestamp").isNumber())
+            .andExpect(jsonPath("$.logs[0].level").isString())
+            .andExpect(jsonPath("$.logs[0].context").isString())
+            .andExpect(jsonPath("$.logs[0].message").isString())
+            .andReturn();
     }
 }

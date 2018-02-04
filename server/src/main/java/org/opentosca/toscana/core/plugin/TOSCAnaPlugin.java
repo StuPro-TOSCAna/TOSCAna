@@ -10,6 +10,8 @@ import org.opentosca.toscana.core.plugin.lifecycle.TransformationLifecycle;
 import org.opentosca.toscana.core.plugin.lifecycle.ValidationFailureException;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.core.transformation.platform.Platform;
+import org.opentosca.toscana.core.util.Lifecycle;
+import org.opentosca.toscana.core.util.LifecyclePhase;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,13 +20,13 @@ import org.slf4j.LoggerFactory;
  This class represents the base class for every Plugin that wants to implement the Transformation lifecycle
 
  @param <LifecycleT> The class type of the plugin specific implementation of the Lifecycle interface */
-public abstract class TOSCAnaPlugin<LifecycleT extends TransformationLifecycle> {
+public abstract class TOSCAnaPlugin<LifecycleT extends TransformationLifecycle> implements Lifecycle {
 
     /**
      Immutable list of execution tasks, they are in the right execution order and get executed from the first
      index to the last
      */
-    private final List<ExecutionPhase<LifecycleT>> executionPhases;
+    private final List<ExecutionPhase> executionPhases;
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final Platform platform;
 
@@ -40,8 +42,8 @@ public abstract class TOSCAnaPlugin<LifecycleT extends TransformationLifecycle> 
         initPlugin();
     }
 
-    private List<ExecutionPhase<LifecycleT>> populateExecutionPhases() {
-        List<ExecutionPhase<LifecycleT>> executionPhases = new ArrayList<>();
+    private List<ExecutionPhase> populateExecutionPhases() {
+        List<ExecutionPhase> executionPhases = new ArrayList<>();
 
         //Environment validation
         executionPhases.add(new ExecutionPhase<>("check environment", (e) -> {
@@ -49,24 +51,25 @@ public abstract class TOSCAnaPlugin<LifecycleT extends TransformationLifecycle> 
                 throw new ValidationFailureException("Transformation Failed," +
                     " because the Environment check has failed!");
             }
-        }));
+        }, this));
         //Model validation
         executionPhases.add(new ExecutionPhase<>("check model", (e) -> {
             if (!e.checkModel()) {
                 throw new ValidationFailureException("Transformation Failed," +
                     " because the model check has failed!");
             }
-        }));
+        }, this));
         //Transformation phases
-        executionPhases.add(new ExecutionPhase<>("prepare", TransformationLifecycle::prepare));
-        executionPhases.add(new ExecutionPhase<>("transformation", TransformationLifecycle::transform));
-        executionPhases.add(new ExecutionPhase<>("cleanup", TransformationLifecycle::cleanup));
+        executionPhases.add(new ExecutionPhase<>("prepare", TransformationLifecycle::prepare, this));
+        executionPhases.add(new ExecutionPhase<>("transformation", TransformationLifecycle::transform, this));
+        executionPhases.add(new ExecutionPhase<>("cleanup", TransformationLifecycle::cleanup, this));
         // Add Deployment Phase
         if (platform.supportsDeployment) {
             executionPhases.add(new ExecutionPhase<>(
                 "deploy",
                 TransformationLifecycle::deploy,
-                TransformationContext::performDeployment
+                TransformationContext::performDeployment,
+                this
             ));
         }
         return Collections.unmodifiableList(executionPhases);
@@ -98,6 +101,8 @@ public abstract class TOSCAnaPlugin<LifecycleT extends TransformationLifecycle> 
      @param context context for the transformation
      */
     public void transform(TransformationContext context) throws Exception {
+        final Logger phaseLogger = context.getLogger(LifecyclePhase.class);
+        executionPhases.forEach(phase -> phase.setLogger(phaseLogger));
         Logger logger = context.getLogger(getClass());
 
         //Store current time for time measurement
@@ -143,7 +148,8 @@ public abstract class TOSCAnaPlugin<LifecycleT extends TransformationLifecycle> 
      */
     protected abstract LifecycleT getInstance(TransformationContext context) throws Exception;
 
-    public List<ExecutionPhase<LifecycleT>> getExecutionPhases() {
+    @Override
+    public List<? extends LifecyclePhase> getLifecyclePhases() {
         return executionPhases;
     }
 }

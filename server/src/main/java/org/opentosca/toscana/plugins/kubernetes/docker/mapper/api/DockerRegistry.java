@@ -47,7 +47,7 @@ public class DockerRegistry {
      <p>
      This is a list, because the api splits this into pages
      */
-    public List<ImageTags> getTagsForRepository(String user, String repository) {
+    public List<ImageTags> getTagsForRepository(String user, String repository) throws IOException {
         Object next;
         int page = 1;
         List<ImageTags> imageTags = new ArrayList<>();
@@ -62,15 +62,16 @@ public class DockerRegistry {
                 next = response.body().getNext();
                 page++;
             } catch (Exception e) {
-                logger.error("Execution of the request failed", e);
+                logger.error("Execution of the request failed");
                 logger.error("Processing failed: For {}/{} (Page {}) on '{}'", user, repository, page, baseUrl);
                 try {
-                    logger.error("The Server responded {}", (response.errorBody() != null) ? response.errorBody().string() : "");
+                    logger.error("The Server responded '{}'", (response != null &&
+                        response.errorBody() != null) ? response.errorBody().string() : "");
                 } catch (Exception ex) {
                     logger.error("Printing error response failed.", ex);
                     ex.printStackTrace();
                 }
-                return imageTags;
+                throw e;
             }
         } while (next != null);
         return imageTags;

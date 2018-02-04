@@ -16,6 +16,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static junit.framework.TestCase.assertTrue;
+import static org.opentosca.toscana.retrofit.model.TransformationProperty.PropertyType.BOOLEAN;
+import static org.opentosca.toscana.retrofit.model.TransformationProperty.PropertyType.FLOAT;
+import static org.opentosca.toscana.retrofit.model.TransformationProperty.PropertyType.INTEGER;
+import static org.opentosca.toscana.retrofit.model.TransformationProperty.PropertyType.TEXT;
 
 /**
  Tests setting model specific properties.
@@ -24,14 +28,12 @@ import static junit.framework.TestCase.assertTrue;
 public class ModelSpecificPropertyIT extends BaseSpringIntegrationTest {
 
     private static final String[] KEYS = {"string-input", "boolean-input", "integer-input", "float-input"};
-    private static final String[] TYPES = {"text", "boolean", "integer", "float"};
+    private static final TransformationProperty.PropertyType[] TYPES = {TEXT, BOOLEAN, INTEGER, FLOAT};
     private static final String[] DESCRIPTIONS = {"description1", "description2", "description3", "description4"};
     private static final String[] VALUES = {null, null, null, "default-value"};
     private static final boolean[] REQUIRED = {true, true, false, false};
 
     private ToscanaApi api;
-
-    private TransformationProperty property = new TransformationProperty();
 
     @Before
     public void setUp() {
@@ -65,8 +67,8 @@ public class ModelSpecificPropertyIT extends BaseSpringIntegrationTest {
             }
             if (!match) {
                 throw new IllegalStateException(String.format(
-                    "SimpleProperty '%s' does not match expected properties (one of %s)",
-                    property, expectedProperties));
+                    "SimpleProperty '%s' does not match one of %s",
+                    expected, properties));
             }
         }
     }

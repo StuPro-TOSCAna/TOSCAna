@@ -7,6 +7,7 @@ import java.io.Writer;
 
 import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
+import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.core.transformation.logging.Log;
 
 import com.amazonaws.auth.BasicAWSCredentials;
@@ -15,6 +16,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -23,7 +25,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.opentosca.toscana.core.plugin.lifecycle.AbstractLifecycle.SCRIPTS_DIR_PATH;
 import static org.opentosca.toscana.core.plugin.lifecycle.AbstractLifecycle.UTIL_DIR_PATH;
+import static org.opentosca.toscana.plugins.cloudformation.CloudFormationFileCreator.CAPABILITY_IAM;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationFileCreator.CHANGE_TO_PARENT_DIRECTORY;
+import static org.opentosca.toscana.plugins.cloudformation.CloudFormationFileCreator.CLI_PARAM_CAPABILITIES;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationFileCreator.CLI_COMMAND_CREATESTACK;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationFileCreator.CLI_PARAM_PARAMOVERRIDES;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationFileCreator.CLI_PARAM_STACKNAME;
@@ -68,7 +72,10 @@ public class CloudFormationFileCreatorTest extends BaseUnitTest {
         when(log.getLogger(any(Class.class))).thenReturn(mock(Logger.class));
         PluginFileAccess fileAccess = new PluginFileAccess(sourceDir, targetDir, log);
         cfnModule = new CloudFormationModule(fileAccess, "us-west-2", new BasicAWSCredentials("", ""));
-        fileCreator = new CloudFormationFileCreator(log.getLogger(CloudFormationFileCreator.class), cfnModule);
+        TransformationContext context = mock(TransformationContext.class);
+        when(context.getLogger((Class<?>) any(Class.class)))
+            .thenReturn(LoggerFactory.getLogger("File Creator Test Logger"));
+        fileCreator = new CloudFormationFileCreator(context, cfnModule);
     }
 
     @Test
@@ -91,7 +98,7 @@ public class CloudFormationFileCreatorTest extends BaseUnitTest {
             "source file-upload.sh\n" +
             CHANGE_TO_PARENT_DIRECTORY + "\n" +
             CLI_COMMAND_CREATESTACK + CLI_PARAM_STACKNAME + cfnModule.getStackName() + " " + CLI_PARAM_TEMPLATEFILE
-            + TEMPLATE_YAML + " " + CLI_PARAM_PARAMOVERRIDES + " " + KEYNAME + "=$" + KEYNAME + "Var &" + "\n";
+            + TEMPLATE_YAML + " " + CLI_PARAM_CAPABILITIES + " " + CAPABILITY_IAM + " " + CLI_PARAM_PARAMOVERRIDES + " " + KEYNAME + "=$" + KEYNAME + "Var &" + "\n";
         String expectedFileUploadContent = SHEBANG + "\n" +
             SOURCE_UTIL_ALL + "\n" +
             SUBCOMMAND_EXIT + "\n" +

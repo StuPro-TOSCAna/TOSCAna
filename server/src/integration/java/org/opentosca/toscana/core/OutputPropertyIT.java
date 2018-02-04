@@ -5,7 +5,6 @@ import java.io.IOException;
 import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.retrofit.ToscanaApi;
 import org.opentosca.toscana.retrofit.model.TransformationOutputs;
-import org.opentosca.toscana.retrofit.model.TransformationProperties;
 import org.opentosca.toscana.retrofit.util.TOSCAnaServerException;
 
 import org.junit.Before;
@@ -31,9 +30,10 @@ public class OutputPropertyIT extends BaseSpringIntegrationTest {
         String platformId = "kubernetes";
         api.createTransformation(csarName, platformId);
         api.startTransformation(csarName, platformId);
-        while (api.getTransformation(csarName, platformId).getStatus().equals("TRANSFORMING")) {
+        while (api.getTransformation(csarName, platformId).getState().equals("TRANSFORMING")) {
             Thread.sleep(5);
         }
         TransformationOutputs outputs = api.getOutputs(csarName, platformId);
+        // todo 
     }
 }
