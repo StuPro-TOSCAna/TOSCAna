@@ -6,6 +6,7 @@ import org.opentosca.toscana.model.node.Apache;
 import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.MysqlDatabase;
 import org.opentosca.toscana.model.node.MysqlDbms;
+import org.opentosca.toscana.model.node.Nodejs;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.node.WebApplication;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
@@ -50,6 +51,15 @@ public class ImageMappingVisitor implements NodeVisitor {
         if (!hasInstallScripts) {
             if (!hasCreateScript(node)) {
                 baseImage = "library/mysql:latest";
+            }
+        }
+    }
+
+    @Override
+    public void visit(Nodejs node) {
+        if (!hasInstallScripts) {
+            if (!hasCreateScript(node)) {
+                baseImage = "library/node:latest";
             }
         }
     }

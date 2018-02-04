@@ -2,7 +2,6 @@ package org.opentosca.toscana.plugins.kubernetes.util;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -10,17 +9,12 @@ import java.util.stream.Collectors;
 
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.model.node.Compute;
-import org.opentosca.toscana.model.requirement.Requirement;
 import org.opentosca.toscana.plugins.kubernetes.docker.mapper.BaseImageMapper;
 import org.opentosca.toscana.plugins.kubernetes.model.Port;
+import org.opentosca.toscana.plugins.kubernetes.model.RelationshipGraph;
 import org.opentosca.toscana.plugins.kubernetes.visitor.imgtransform.DockerfileBuildingVisitor;
 import org.opentosca.toscana.plugins.kubernetes.visitor.imgtransform.ImageMappingVisitor;
 
-import io.fabric8.kubernetes.api.model.ContainerPort;
-import io.fabric8.kubernetes.api.model.ContainerPortBuilder;
-import io.fabric8.kubernetes.api.model.ServicePort;
-import io.fabric8.kubernetes.api.model.ServicePortBuilder;
-import org.jgrapht.Graph;
 import org.slf4j.Logger;
 
 public class NodeStack {
@@ -54,7 +48,7 @@ public class NodeStack {
     }
 
     public void buildToDockerfile(
-        Graph<NodeStack, Requirement> connectionGraph,
+        RelationshipGraph connectionGraph,
         TransformationContext context,
         BaseImageMapper mapper
     ) throws IOException {
@@ -75,18 +69,6 @@ public class NodeStack {
         visitor.buildAndWriteDockerfile();
         this.openPorts.addAll(visitor.getPorts());
         dockerfilePath = "output/docker/" + getStackName();
-    }
-
-    public List<ContainerPort> getOpenContainerPorts() {
-        List<ContainerPort> ports = new ArrayList<>();
-        openPorts.forEach(e -> ports.add(new ContainerPortBuilder().withContainerPort(e).build()));
-        return Collections.unmodifiableList(ports);
-    }
-
-    public List<ServicePort> getOpenServicePorts() {
-        List<ServicePort> ports = new ArrayList<>();
-        openPorts.forEach(e -> ports.add(new ServicePortBuilder().withPort(e).build()));
-        return Collections.unmodifiableList(ports);
     }
 
     public List<Port> getOpenPorts() {

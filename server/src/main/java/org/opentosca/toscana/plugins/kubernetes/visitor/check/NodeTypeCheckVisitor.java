@@ -4,9 +4,12 @@ import org.opentosca.toscana.model.node.Apache;
 import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.ContainerApplication;
 import org.opentosca.toscana.model.node.ContainerRuntime;
+import org.opentosca.toscana.model.node.Database;
+import org.opentosca.toscana.model.node.Dbms;
 import org.opentosca.toscana.model.node.DockerApplication;
 import org.opentosca.toscana.model.node.MysqlDatabase;
 import org.opentosca.toscana.model.node.MysqlDbms;
+import org.opentosca.toscana.model.node.Nodejs;
 import org.opentosca.toscana.model.node.WebApplication;
 import org.opentosca.toscana.model.visitor.StrictNodeVisitor;
 
@@ -22,6 +25,21 @@ public class NodeTypeCheckVisitor implements StrictNodeVisitor {
 
     @Override
     public void visit(WebApplication node) {
+        //noop 
+    }
+
+    @Override
+    public void visit(Nodejs node) {
+        //noop 
+    }
+
+    @Override
+    public void visit(Database node) {
+        //noop 
+    }
+
+    @Override
+    public void visit(Dbms node) {
         //noop 
     }
 

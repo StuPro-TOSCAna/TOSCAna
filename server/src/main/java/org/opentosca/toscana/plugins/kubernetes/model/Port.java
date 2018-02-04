@@ -19,7 +19,22 @@ public class Port {
     }
 
     public String getName() {
-        return namePrefix + "-" + port;
+        String name = namePrefix + "-" + port;
+        
+        //Simplify the name if its bigger than 15 Chars
+        if (name.length() >= 15) {
+            StringBuilder builder = new StringBuilder();
+            String[] nameParts = name.split("-");
+            for (String namePart : nameParts) {
+                if (namePart.length() >= 1) {
+                    builder.append(namePart.charAt(0));
+                }
+            }
+            builder.append("-").append(port);
+            name = builder.toString();
+        }
+        
+        return name;
     }
 
     public ServicePort toServicePort() {
