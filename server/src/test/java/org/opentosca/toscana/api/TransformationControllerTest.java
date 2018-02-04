@@ -24,25 +24,24 @@ import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.TransformationImpl;
 import org.opentosca.toscana.core.transformation.TransformationService;
+import org.opentosca.toscana.core.transformation.TransformationState;
 import org.opentosca.toscana.core.transformation.artifacts.TargetArtifact;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.logging.LogEntry;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.platform.PlatformService;
-import org.opentosca.toscana.core.transformation.properties.PlatformProperty;
+import org.opentosca.toscana.core.transformation.properties.OutputProperty;
+import org.opentosca.toscana.core.transformation.properties.PlatformInput;
 import org.opentosca.toscana.core.transformation.properties.PropertyType;
 
 import ch.qos.logback.classic.Level;
+import com.google.common.collect.Lists;
 import com.jayway.jsonpath.JsonPath;
 import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
-import org.mockito.quality.Strictness;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
@@ -57,7 +56,6 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
-import static org.opentosca.toscana.core.transformation.TransformationState.TRANSFORMING;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -71,17 +69,17 @@ public class TransformationControllerTest extends BaseSpringTest {
 
     //<editor-fold desc="Constant Definition">
 
-    private final static String VALID_PROPERTY_INPUT = "{\n" +
-        "    \"properties\": [\n" +
+    private final static String INPUTS_VALID = "{\n" +
+        "    \"inputs\": [\n" +
         "        {\n" +
-        "            \"key\": \"text_property\",\n" +
+        "            \"key\": \"text_input\",\n" +
         "            \"type\": \"text\",\n" +
         "            \"required\": true,\n" +
         "            \"description\": \"\",\n" +
         "            \"value\": \"Hallo\"\n" +
         "        },\n" +
         "        {\n" +
-        "            \"key\": \"name_property\",\n" +
+        "            \"key\": \"name_input\",\n" +
         "            \"type\": \"name\",\n" +
         "            \"required\": true,\n" +
         "            \"description\": \"\",\n" +
@@ -90,14 +88,14 @@ public class TransformationControllerTest extends BaseSpringTest {
         "    ],\n" +
         "    \"_links\": {\n" +
         "        \"self\": {\n" +
-        "            \"href\": \"http://localhost:8080/csars/mongo-db/transformations/p-a/properties\"\n" +
+        "            \"href\": \"http://localhost:8080/csars/mongo-db/transformations/p-a/inputs\"\n" +
         "        }\n" +
         "    } " +
         "}";
-    private final static String INVALID_PROPERTY_INPUT = "{\n" +
-        "    \"properties\": [\n" +
+    private final static String INPUTS_INVALID = "{\n" +
+        "    \"inputs\": [\n" +
         "        {\n" +
-        "            \"key\": \"text_property\",\n" +
+        "            \"key\": \"text_input\",\n" +
         "            \"type\": \"text\",\n" +
         "            \"required\": true,\n" +
         "            \"description\": \"\",\n" +
@@ -113,14 +111,14 @@ public class TransformationControllerTest extends BaseSpringTest {
         "    ],\n" +
         "    \"_links\": {\n" +
         "        \"self\": {\n" +
-        "            \"href\": \"http://localhost:8080/csars/mongo-db/transformations/p-a/properties\"\n" +
+        "            \"href\": \"http://localhost:8080/csars/mongo-db/transformations/p-a/inputs\"\n" +
         "        }\n" +
         "    } " +
         "}";
-    private final static String MISSING_VALUE_PROPERTY_INPUT = "{\n" +
-        "    \"properties\": [\n" +
+    private final static String INPUTS_MISSING_VALUE = "{\n" +
+        "    \"inputs\": [\n" +
         "        {\n" +
-        "            \"key\": \"text_property\",\n" +
+        "            \"key\": \"text_input\",\n" +
         "            \"type\": \"text\",\n" +
         "            \"required\": true,\n" +
         "            \"description\": \"\",\n" +
@@ -128,7 +126,7 @@ public class TransformationControllerTest extends BaseSpringTest {
         "    ],\n" +
         "    \"_links\": {\n" +
         "        \"self\": {\n" +
-        "            \"href\": \"http://localhost:8080/csars/mongo-db/transformations/p-a/properties\"\n" +
+        "            \"href\": \"http://localhost:8080/csars/mongo-db/transformations/p-a/inputs\"\n" +
         "        }\n" +
         "    } " +
         "}";
@@ -136,7 +134,7 @@ public class TransformationControllerTest extends BaseSpringTest {
     private final static String VALID_CSAR_NAME = "kubernetes-cluster";
     private final static String VALID_PLATFORM_NAME = "p-a";
     private final static String START_TRANSFORMATION_VALID_URL = "/api/csars/kubernetes-cluster/transformations/p-a/start";
-    private final static String GET_PROPERTIES_VALID_URL = "/api/csars/kubernetes-cluster/transformations/p-a/properties";
+    private final static String INPUTS_VALID_URL = "/api/csars/kubernetes-cluster/transformations/p-a/inputs";
     private final static String DEFAULT_CHARSET_HAL_JSON = "application/hal+json;charset=UTF-8";
     private final static String ARTIFACT_RESPONSE_EXPECTED_URL = "http://localhost/api/csars/kubernetes-cluster/transformations/p-a/artifact";
     private final static String GET_ARTIFACTS_VALID_URL = "/api/csars/kubernetes-cluster/transformations/p-a/artifact";
@@ -149,15 +147,13 @@ public class TransformationControllerTest extends BaseSpringTest {
     private final static String LIST_TRANSFORMATIONS_EXPECTED_URL = "http://localhost/api/csars/kubernetes-cluster/transformations/";
     private final static String CREATE_CSAR_VALID_URL = "/api/csars/kubernetes-cluster/transformations/p-a/create";
     private final static String PLATFORM_NOT_FOUND_URL = "/api/csars/kubernetes-cluster/transformations/p-z";
+    private final static String GET_OUTPUT_URL = "/api/csars/kubernetes-cluster/transformations/p-a/outputs";
     private final static String CSAR_NOT_FOUND_URL = "/api/csars/keinechtescsar/transformations";
     private static final String[] CSAR_NAMES = new String[]{"kubernetes-cluster", "apache-test", "mongo-db"};
     private static final String SECOND_VALID_PLATFORM_NAME = "p-b";
-    private static final String PROPERTY_TEST_DEFAULT_VALUE = "Test-Default-Value";
+    private static final String INPUT_TEST_DEFAULT_VALUE = "Test-Default-Value";
     private static final String PROPERTY_TEST_DEFAULT_VALUE_KEY = "default_value_property";
     //</editor-fold>
-
-    @Rule
-    public MockitoRule rule = MockitoJUnit.rule().strictness(Strictness.LENIENT);
 
     private CsarService csarService;
     private TransformationService transformationService;
@@ -195,21 +191,21 @@ public class TransformationControllerTest extends BaseSpringTest {
         Set<Platform> platforms = new HashSet<>();
 
         for (int i = 0; i < 5; i++) {
-            HashSet<PlatformProperty> properties = new HashSet<>();
+            HashSet<PlatformInput> inputs = new HashSet<>();
             for (PropertyType type : PropertyType.values()) {
-                properties.add(new PlatformProperty(type.getTypeName() + "_property", type));
+                inputs.add(new PlatformInput(type.getTypeName() + "_input", type));
             }
             char[] chars = "abcdefghijklmnopqrstuvwxyz".toCharArray();
             if (i == 0) {
-                properties.add(new PlatformProperty(
+                inputs.add(new PlatformInput(
                     PROPERTY_TEST_DEFAULT_VALUE_KEY,
                     PropertyType.TEXT,
                     "",
                     false,
-                    PROPERTY_TEST_DEFAULT_VALUE
+                    INPUT_TEST_DEFAULT_VALUE
                 ));
             }
-            platforms.add(new Platform("p-" + chars[i], "platform-" + (i + 1), properties));
+            platforms.add(new Platform("p-" + chars[i], "platform-" + (i + 1), inputs));
         }
         when(platformService.getSupportedPlatforms()).thenReturn(platforms);
         when(platformService.isSupported(any(Platform.class))).thenReturn(false);
@@ -232,6 +228,67 @@ public class TransformationControllerTest extends BaseSpringTest {
     }
     //</editor-fold>
 
+    //<editor-fold desc="Output Tests">
+
+    @Test
+    public void testGetOutputs() throws Exception {
+        List<Transformation> transformations = preInitNonCreationTests();
+        Transformation t = transformations.get(0);
+        when(t.getState()).thenReturn(TransformationState.DONE);
+        String outputKey = "test_output";
+        List<OutputProperty> outputs = Lists.newArrayList(new PlatformInput(
+            outputKey,
+            PropertyType.TEXT,
+            "",
+            true,
+            "some value"
+        ));
+        when(t.getOutputs()).thenReturn(outputs);
+        mvc.perform(get(GET_OUTPUT_URL))
+            .andDo(print())
+            .andExpect(status().is(200))
+            .andExpect(jsonPath("$.outputs").isArray())
+            .andExpect(jsonPath("$.links[0].href").value("http://localhost" + GET_OUTPUT_URL))
+            .andExpect(jsonPath("$.outputs[0].key").value(outputKey))
+            .andReturn();
+    }
+
+    @Test
+    public void testGetOutputsEmptyOutputs() throws Exception {
+        List<Transformation> transformations = preInitNonCreationTests();
+        Transformation t = transformations.get(0);
+        when(t.getState()).thenReturn(TransformationState.DONE);
+        when(t.getOutputs()).thenReturn(new ArrayList<>());
+        mvc.perform(get(GET_OUTPUT_URL))
+            .andDo(print())
+            .andExpect(status().is(200))
+            .andExpect(jsonPath("$.outputs").isArray())
+            .andExpect(jsonPath("$.links[0].href").value("http://localhost/api/csars/kubernetes-cluster/transformations/p-a/outputs"))
+            .andReturn();
+    }
+
+    @Test
+    public void testGetOutputsInvalidState() throws Exception {
+        List<Transformation> transformations = preInitNonCreationTests();
+        Transformation t = transformations.get(0);
+        when(t.getState()).thenReturn(TransformationState.TRANSFORMING);
+        mvc.perform(get(GET_OUTPUT_URL)).andDo(print()).andExpect(status().is(400)).andReturn();
+    }
+
+    @Test
+    public void testOutputInvalidPlatform() throws Exception {
+        mvc.perform(get(PLATFORM_NOT_FOUND_URL + "/outputs"))
+            .andDo(print()).andExpect(status().isNotFound()).andReturn();
+    }
+
+    @Test
+    public void testOutputInvalidCsar() throws Exception {
+        mvc.perform(get(CSAR_NOT_FOUND_URL + "/p-a/outputs"))
+            .andDo(print()).andExpect(status().isNotFound()).andReturn();
+    }
+
+    //</editor-fold>
+
     //<editor-fold desc="Start transformation tests">
 
     @Test
@@ -243,7 +300,7 @@ public class TransformationControllerTest extends BaseSpringTest {
         mvc.perform(
             post(START_TRANSFORMATION_VALID_URL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(VALID_PROPERTY_INPUT)
+                .content(INPUTS_VALID)
         ).andDo(print())
             .andExpect(status().is(200))
             .andExpect(content().bytes(new byte[0]))
@@ -257,12 +314,12 @@ public class TransformationControllerTest extends BaseSpringTest {
         mvc.perform(
             post(START_TRANSFORMATION_VALID_URL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(VALID_PROPERTY_INPUT)
+                .content(INPUTS_VALID)
         ).andDo(print())
             .andExpect(status().is(400))
             .andExpect(content().bytes(new byte[0]))
             .andReturn();
-        assertNotEquals(TRANSFORMING,
+        assertNotEquals(TransformationState.TRANSFORMING,
             csarService.getCsar(VALID_CSAR_NAME).get().getTransformation(VALID_PLATFORM_NAME).get().getState());
     }
 
@@ -273,9 +330,9 @@ public class TransformationControllerTest extends BaseSpringTest {
     public void setTransformationProperties() throws Exception {
         preInitNonCreationTests();
         mvc.perform(
-            put(GET_PROPERTIES_VALID_URL)
+            put(INPUTS_VALID_URL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(VALID_PROPERTY_INPUT)
+                .content(INPUTS_VALID)
         ).andDo(print())
             .andExpect(status().is(200))
             .andExpect(content().bytes(new byte[0]))
@@ -286,16 +343,16 @@ public class TransformationControllerTest extends BaseSpringTest {
     public void setTransformationPropertiesInvalidInput() throws Exception {
         preInitNonCreationTests();
         mvc.perform(
-            put(GET_PROPERTIES_VALID_URL)
+            put(INPUTS_VALID_URL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(INVALID_PROPERTY_INPUT)
+                .content(INPUTS_INVALID)
         ).andDo(print())
             .andExpect(status().is(406))
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-            .andExpect(jsonPath("$.properties[0].valid").isBoolean())
-            .andExpect(jsonPath("$.properties[0].key").isString())
-            .andExpect(jsonPath("$.properties[1].valid").isBoolean())
-            .andExpect(jsonPath("$.properties[1].key").isString())
+            .andExpect(jsonPath("$.inputs[0].valid").isBoolean())
+            .andExpect(jsonPath("$.inputs[0].key").isString())
+            .andExpect(jsonPath("$.inputs[1].valid").isBoolean())
+            .andExpect(jsonPath("$.inputs[1].key").isString())
             .andReturn();
     }
 
@@ -303,67 +360,69 @@ public class TransformationControllerTest extends BaseSpringTest {
     public void setTransformationPropertiesMissingValueInvalidInput() throws Exception {
         preInitNonCreationTests();
         mvc.perform(
-            put(GET_PROPERTIES_VALID_URL)
+            put(INPUTS_VALID_URL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(MISSING_VALUE_PROPERTY_INPUT)
+                .content(INPUTS_MISSING_VALUE)
         ).andDo(print())
             .andExpect(status().is(400))
             .andReturn();
     }
 
     @Test
-    public void getTransformationProperties() throws Exception {
+    public void getInputsTest() throws Exception {
         preInitNonCreationTests();
         MvcResult result = mvc.perform(
-            get(GET_PROPERTIES_VALID_URL)
+            get(INPUTS_VALID_URL)
         ).andDo(print())
             .andExpect(status().is(200))
             .andExpect(content().contentType(DEFAULT_CHARSET_HAL_JSON))
-            .andExpect(jsonPath("$.properties").isArray())
-            .andExpect(jsonPath("$.properties").isNotEmpty())
-            .andExpect(jsonPath("$.properties[0].key").isString())
-            .andExpect(jsonPath("$.properties[0].type").isString())
-            .andExpect(jsonPath("$.properties[0].description").isString())
-            .andExpect(jsonPath("$.properties[0].required").isBoolean())
+            .andExpect(jsonPath("$.inputs").isArray())
+            .andExpect(jsonPath("$.inputs").isNotEmpty())
+            .andExpect(jsonPath("$.inputs[0].key").isString())
+            .andExpect(jsonPath("$.inputs[0].type").isString())
+            .andExpect(jsonPath("$.inputs[0].description").isString())
+            .andExpect(jsonPath("$.inputs[0].required").isBoolean())
             .andExpect(jsonPath("$.links[0].rel").value("self"))
             .andExpect(jsonPath("$.links[0].href")
-                .value("http://localhost/api/csars/kubernetes-cluster/transformations/p-a/properties"))
+                .value("http://localhost/api/csars/kubernetes-cluster/transformations/p-a/inputs"))
             .andReturn();
 
         MockHttpServletResponse response = result.getResponse();
         String responseJson = new String(response.getContentAsByteArray());
-        String[] values = JsonPath.parse(responseJson).read("$.properties[*].value", String[].class);
+        String[] values = JsonPath.parse(responseJson).read("$.inputs[*].value", String[].class);
         long nullCount = Arrays.asList(values).stream().filter(Objects::isNull).count();
-        long testCount = Arrays.asList(values).stream().filter(e -> e != null && e.equals(PROPERTY_TEST_DEFAULT_VALUE)).count();
+        long testCount = Arrays.asList(values).stream().filter(e -> e != null && e.equals(INPUT_TEST_DEFAULT_VALUE)).count();
         assertEquals(8, nullCount);
         assertEquals(1, testCount);
     }
 
     @Test
-    public void getTransformationPropertyValues() throws Exception {
+    public void getInputsTest2() throws Exception {
         preInitNonCreationTests();
         //Set a SimpleProperty value
+        String inputKey = "secret_input";
+        String inputValue = "geheim";
         csarService.getCsar(VALID_CSAR_NAME)
             .get().getTransformation(VALID_PLATFORM_NAME).get()
-            .getProperties().set("secret_property", "geheim");
+            .getInputs().set(inputKey, inputValue);
         //Perform a request
         MvcResult result = mvc.perform(
-            get(GET_PROPERTIES_VALID_URL)
+            get(INPUTS_VALID_URL)
         ).andDo(print())
             .andExpect(status().is(200))
             .andExpect(content().contentType(DEFAULT_CHARSET_HAL_JSON))
             .andReturn();
         // Check if only one value is set (the one that has been set above) and the others are not!
-        JSONArray obj = new JSONObject(result.getResponse().getContentAsString()).getJSONArray("properties");
+        JSONArray obj = new JSONObject(result.getResponse().getContentAsString()).getJSONArray("inputs");
         boolean valueFound = false;
         boolean restNull = true;
         for (int i = 0; i < obj.length(); i++) {
             JSONObject content = obj.getJSONObject(i);
-            if (content.getString("key").equals("secret_property")) {
-                valueFound = content.getString("value").equals("geheim");
+            if (content.getString("key").equals(inputKey)) {
+                valueFound = content.getString("value").equals(inputValue);
             } else {
                 restNull = restNull && (content.isNull("value")
-                    || content.getString("value").equals(PROPERTY_TEST_DEFAULT_VALUE));
+                    || content.getString("value").equals(INPUT_TEST_DEFAULT_VALUE));
             }
         }
         assertTrue("Could not find valid value in property list", valueFound);
@@ -498,7 +557,7 @@ public class TransformationControllerTest extends BaseSpringTest {
         map.put("logs", "http://localhost/api/csars/%s/transformations/%s/logs?start=0");
         map.put("platform", "http://localhost/api/platforms/p-a");
         map.put("artifact", "http://localhost/api/csars/%s/transformations/%s/artifact");
-        map.put("properties", "http://localhost/api/csars/%s/transformations/%s/properties");
+        map.put("inputs", "http://localhost/api/csars/%s/transformations/%s/inputs");
         map.put("delete", "http://localhost/api/csars/%s/transformations/%s/delete");
         return map;
     }
@@ -603,16 +662,16 @@ public class TransformationControllerTest extends BaseSpringTest {
 
     @Test
     public void transformationPropertiesGetPlatformNotFound() throws Exception {
-        mvc.perform(get(PLATFORM_NOT_FOUND_URL + "/properties"))
+        mvc.perform(get(PLATFORM_NOT_FOUND_URL + "/inputs"))
             .andDo(print()).andExpect(status().isNotFound()).andReturn();
     }
 
     @Test
-    public void transformationPropertiesPutPlatformNotFound() throws Exception {
+    public void transformationInputsPutPlatformNotFound() throws Exception {
         mvc.perform(
-            put(PLATFORM_NOT_FOUND_URL + "/properties")
+            put(PLATFORM_NOT_FOUND_URL + "/inputs")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"properties\": [{}]}")
+                .content("{\"inputs\": [{}]}")
         ).andDo(print()).andExpect(status().isNotFound()).andReturn();
     }
 
@@ -661,16 +720,16 @@ public class TransformationControllerTest extends BaseSpringTest {
     }
 
     @Test
-    public void transformationPropertiesGetCsarNotFound() throws Exception {
-        mvc.perform(get(CSAR_NOT_FOUND_URL + "/p-a/properties"))
+    public void transformationInputsGetCsarNotFound() throws Exception {
+        mvc.perform(get(CSAR_NOT_FOUND_URL + "/p-a/inputs"))
             .andDo(print()).andExpect(status().isNotFound()).andReturn();
     }
 
     @Test
-    public void transformationPropertiesPutCsarNotFound() throws Exception {
+    public void transformationInputsPutCsarNotFound() throws Exception {
         mvc.perform(
-            put(CSAR_NOT_FOUND_URL + "/p-a/properties")
-                .content("{\"properties\": [{}]}")
+            put(CSAR_NOT_FOUND_URL + "/p-a/inputs")
+                .content("{\"inputs\": [{}]}")
                 .contentType(MediaType.APPLICATION_JSON)
         ).andDo(print()).andExpect(status().isNotFound()).andReturn();
     }
@@ -689,15 +748,17 @@ public class TransformationControllerTest extends BaseSpringTest {
     //</editor-fold>
 
     //<editor-fold desc="Util Methods">
-    public void preInitNonCreationTests() throws PlatformNotFoundException {
+    public List<Transformation> preInitNonCreationTests() throws PlatformNotFoundException {
         //add a transformation
         Optional<Csar> csar = csarService.getCsar(VALID_CSAR_NAME);
         assertTrue(csar.isPresent());
         String[] pnames = {VALID_PLATFORM_NAME, SECOND_VALID_PLATFORM_NAME};
 
+        List<Transformation> transformations = new ArrayList<>();
+
         for (String pname : pnames) {
 
-            LogEntry entry = new LogEntry(0, "Test Context","Test Message", Level.DEBUG);
+            LogEntry entry = new LogEntry(0, "Test Context", "Test Message", Level.DEBUG);
             Log mockLog = logMock();
             when(mockLog.getLogEntries(0)).thenReturn(Collections.singletonList(entry));
 
@@ -707,8 +768,10 @@ public class TransformationControllerTest extends BaseSpringTest {
                 mockLog, modelMock()
             );
             transformation = spy(transformation);
+            transformations.add(transformation);
             csar.get().getTransformations().put(pname, transformation);
         }
+        return transformations;
     }
     //</editor-fold>
 }

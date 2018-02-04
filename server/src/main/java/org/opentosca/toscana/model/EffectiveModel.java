@@ -13,7 +13,8 @@ import org.opentosca.toscana.core.parse.converter.TypeWrapper;
 import org.opentosca.toscana.core.parse.model.ServiceGraph;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.logging.LogFormat;
-import org.opentosca.toscana.core.transformation.properties.Property;
+import org.opentosca.toscana.core.transformation.properties.InputProperty;
+import org.opentosca.toscana.core.transformation.properties.OutputProperty;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.relation.RootRelationship;
 import org.opentosca.toscana.model.requirement.Requirement;
@@ -111,8 +112,12 @@ public class EffectiveModel {
         return topology;
     }
 
-    public Map<String, Property> getInputs() {
+    public Map<String, InputProperty> getInputs() {
         return serviceGraph.getInputs();
+    }
+
+    public Map<String, OutputProperty> getOutputs() {
+        return serviceGraph.getOutputs();
     }
 }
 

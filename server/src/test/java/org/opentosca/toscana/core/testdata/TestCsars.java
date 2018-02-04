@@ -31,6 +31,8 @@ public class TestCsars {
     public final static File VALID_LAMP_INPUT_TEMPLATE = new File(YAML_DIR, "valid/lamp-input/template.yaml");
     public final static File VALID_INPUTS = new File(YAML_DIR, "valid/inputs.csar");
     public final static File VALID_INPUTS_TEMPLATE = new File(YAML_DIR, "valid/inputs/inputs.yaml");
+    public final static File VALID_OUTPUTS = new File(YAML_DIR, "valid/outputs.csar");
+    public final static File VALID_OUTPUTS_TEMPLATE = new File(YAML_DIR, "valid/outputs/outputs.yaml");
     public static final File VALID_SINGLE_COMPUTE_WINDOWS_TEMPLATE = new File(YAML_DIR, "valid/single-compute-windows/single-compute-windows.yaml");
     public static final File VALID_SINGLE_COMPUTE_UBUNTU_TEMPLATE = new File(YAML_DIR, "valid/single-compute-ubuntu/single-compute-ubuntu.yaml");
     public static final File VALID_EXPRESS = new File(YAML_DIR, "valid/express.csar");

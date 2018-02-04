@@ -6,15 +6,16 @@ import org.opentosca.toscana.retrofit.model.hal.HALResource;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class TransformationProperties extends HALResource {
-
+public class TransformationOutputs extends HALResource {
     private List<TransformationProperty> properties;
 
-    public TransformationProperties(@JsonProperty("properties") List<TransformationProperty> properties) {
+    public TransformationOutputs(
+        @JsonProperty("outputs")List<TransformationProperty> properties
+    ) {
         this.properties = properties;
     }
 
-    @JsonProperty("properties")
+    @JsonProperty("outputs")
     public List<TransformationProperty> getProperties() {
         return properties;
     }

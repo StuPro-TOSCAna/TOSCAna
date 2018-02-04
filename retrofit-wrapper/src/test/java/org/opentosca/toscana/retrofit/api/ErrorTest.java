@@ -3,7 +3,7 @@ package org.opentosca.toscana.retrofit.api;
 import java.util.Arrays;
 import java.util.Collection;
 
-import org.opentosca.toscana.retrofit.TOSCAnaAPI;
+import org.opentosca.toscana.retrofit.ToscanaApi;
 import org.opentosca.toscana.retrofit.util.TOSCAnaServerException;
 
 import org.junit.Test;
@@ -11,7 +11,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 @RunWith(Parameterized.class)
-public class ErrorTest extends BaseTOSCAnaAPITest {
+public class ErrorTest extends BaseToscanaApiTest {
 
     private ErrorTestParam param;
 
@@ -37,7 +37,7 @@ public class ErrorTest extends BaseTOSCAnaAPITest {
     }
 
     private interface ErrorTestFunction {
-        Object excec(TOSCAnaAPI api) throws Exception;
+        Object excec(ToscanaApi api) throws Exception;
     }
 
     @Parameterized.Parameters(name = "{index}: {1}")

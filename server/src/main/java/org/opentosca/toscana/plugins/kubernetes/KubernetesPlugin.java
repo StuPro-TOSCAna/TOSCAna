@@ -6,7 +6,7 @@ import java.util.Set;
 import org.opentosca.toscana.core.plugin.TOSCAnaPlugin;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.core.transformation.platform.Platform;
-import org.opentosca.toscana.core.transformation.properties.PlatformProperty;
+import org.opentosca.toscana.core.transformation.properties.PlatformInput;
 import org.opentosca.toscana.core.transformation.properties.PropertyType;
 import org.opentosca.toscana.plugins.kubernetes.docker.mapper.BaseImageMapper;
 import org.opentosca.toscana.plugins.kubernetes.docker.mapper.MapperConstants;
@@ -37,8 +37,8 @@ public class KubernetesPlugin extends TOSCAnaPlugin<KubernetesLifecycle> {
     private static Platform getPlatformDetails() {
         String platformId = "kubernetes";
         String platformName = "Kubernetes";
-        Set<PlatformProperty> platformProperties = new HashSet<>();
-        platformProperties.add(new PlatformProperty(
+        Set<PlatformInput> platformProperties = new HashSet<>();
+        platformProperties.add(new PlatformInput(
                 DOCKER_PUSH_TO_REGISTRY_PROPERTY_KEY,
                 PropertyType.BOOLEAN,
                 "Set this to true if the created docker images should be pushed to the given docker registry",
@@ -46,7 +46,7 @@ public class KubernetesPlugin extends TOSCAnaPlugin<KubernetesLifecycle> {
                 "false"
             )
         );
-        platformProperties.add(new PlatformProperty(
+        platformProperties.add(new PlatformInput(
                 DOCKER_REGISTRY_URL_PROPERTY_KEY,
                 PropertyType.TEXT,
                 "The URL To the docker Registry. (Will default to DockerHub if empty)",
@@ -54,21 +54,21 @@ public class KubernetesPlugin extends TOSCAnaPlugin<KubernetesLifecycle> {
                 MapperConstants.DOCKER_HUB_URL
             )
         );
-        platformProperties.add(new PlatformProperty(
+        platformProperties.add(new PlatformInput(
                 DOCKER_REGISTRY_USERNAME_PROPERTY_KEY,
                 PropertyType.TEXT,
                 "The Username of the user, used to push to the regsitry",
                 false
             )
         );
-        platformProperties.add(new PlatformProperty(
+        platformProperties.add(new PlatformInput(
                 DOCKER_REGISTRY_PASSWORD_PROPERTY_KEY,
                 PropertyType.SECRET,
                 "The password of the registry user",
                 false
             )
         );
-        platformProperties.add(new PlatformProperty(
+        platformProperties.add(new PlatformInput(
                 DOCKER_REGISTRY_REPOSITORY_PROPERTY_KEY,
                 PropertyType.TEXT,
                 "The name of the repository used to push the images onto.",

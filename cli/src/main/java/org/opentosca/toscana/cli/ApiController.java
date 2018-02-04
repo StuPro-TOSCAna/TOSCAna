@@ -9,13 +9,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.opentosca.toscana.cli.commands.Constants;
-import org.opentosca.toscana.retrofit.TOSCAnaAPI;
+import org.opentosca.toscana.retrofit.ToscanaApi;
 import org.opentosca.toscana.retrofit.model.Csar;
 import org.opentosca.toscana.retrofit.model.LogEntry;
 import org.opentosca.toscana.retrofit.model.Platform;
 import org.opentosca.toscana.retrofit.model.Transformation;
+import org.opentosca.toscana.retrofit.model.TransformationInputs;
 import org.opentosca.toscana.retrofit.model.TransformationLogs;
-import org.opentosca.toscana.retrofit.model.TransformationProperties;
 import org.opentosca.toscana.retrofit.model.TransformationProperty;
 import org.opentosca.toscana.retrofit.model.TransformerStatus;
 import org.opentosca.toscana.retrofit.model.embedded.CsarResources;
@@ -28,13 +28,13 @@ import static org.opentosca.toscana.cli.commands.Constants.SOMETHING_WRONG;
 
 public class ApiController {
 
-    private TOSCAnaAPI toscAnaAPI;
+    private ToscanaApi toscanaApi;
 
     /**
      Constructor for the ApiController, parameters decide if there should be any output of information
      */
     public ApiController(String apiUrl) {
-        toscAnaAPI = new TOSCAnaAPI(apiUrl);
+        toscanaApi = new ToscanaApi(apiUrl);
     }
 
     /**
@@ -45,7 +45,7 @@ public class ApiController {
      */
     public String uploadCsar(File file) {
         try {
-            toscAnaAPI.uploadCsar(file.getName(), file);
+            toscanaApi.uploadCsar(file.getName(), file);
         } catch (IOException e) {
             System.err.println(String.format(SOMETHING_WRONG + Constants.CSAR_UPLOAD_IO_ERROR
                 + Constants.ERROR_PLACEHOLDER, e.getMessage()));
@@ -64,7 +64,7 @@ public class ApiController {
      */
     public String deleteCsar(String csar) {
         try {
-            toscAnaAPI.deleteCsar(csar);
+            toscanaApi.deleteCsar(csar);
         } catch (IOException e) {
             System.err.println(String.format(SOMETHING_WRONG + Constants.CSAR_DELETE_ERROR
                 + Constants.ERROR_PLACEHOLDER, e.getMessage()));
@@ -85,7 +85,7 @@ public class ApiController {
         CsarResources csarList;
         StringBuilder stringCsars = new StringBuilder();
         try {
-            csarList = toscAnaAPI.getCsars();
+            csarList = toscanaApi.getCsars();
             List<Csar> list = csarList.getContent();
             if (list != null) {
                 for (Csar c : list) {
@@ -116,7 +116,7 @@ public class ApiController {
         String cName = "";
         Csar csar;
         try {
-            csar = toscAnaAPI.getCsarDetails(csarName);
+            csar = toscanaApi.getCsarDetails(csarName);
             if (csar != null) {
                 cName = csar.getName();
             } else {
@@ -142,7 +142,7 @@ public class ApiController {
      */
     public String startTransformation(String csar, String plat) {
         try {
-            toscAnaAPI.createTransformation(csar, plat);
+            toscanaApi.createTransformation(csar, plat);
             launchTransformation(csar, plat);
         } catch (IOException e) {
             System.err.println(String.format(SOMETHING_WRONG + Constants.TRANSFORMATION_CREATE_ERROR
@@ -164,7 +164,7 @@ public class ApiController {
      */
     private String launchTransformation(String csar, String platform) {
         try {
-            toscAnaAPI.startTransformation(csar, platform);
+            toscanaApi.startTransformation(csar, platform);
         } catch (IOException e) {
             System.err.println(String.format(SOMETHING_WRONG + Constants.TRANSFORMATION_START_ERROR
                 + Constants.ERROR_PLACEHOLDER, e.getMessage()));
@@ -196,7 +196,7 @@ public class ApiController {
      */
     public String deleteTransformation(String csar, String plat) {
         try {
-            toscAnaAPI.deleteTransformation(csar, plat);
+            toscanaApi.deleteTransformation(csar, plat);
         } catch (IOException e) {
             System.err.println(String.format(SOMETHING_WRONG + Constants.TRANSFORMATION_DELETE_ERROR
                 + Constants.ERROR_PLACEHOLDER, e.getMessage()));
@@ -216,7 +216,7 @@ public class ApiController {
      @return output for the CLI
      */
     public String downloadTransformationUrl(String csar, String plat) {
-        return toscAnaAPI.getArtifactDownloadUrl(csar, plat);
+        return toscanaApi.getArtifactDownloadUrl(csar, plat);
     }
 
     /**
@@ -229,7 +229,7 @@ public class ApiController {
      */
     public String downloadTransformationStream(String csar, String plat, File destinationFile) {
         try {
-            InputStream input = toscAnaAPI.downloadArtifactAsStream(csar, plat);
+            InputStream input = toscanaApi.downloadArtifactAsStream(csar, plat);
             java.nio.file.Files.copy(input, destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
             input.close();
         } catch (IOException e) {
@@ -253,7 +253,7 @@ public class ApiController {
         TransformationResources transformationList;
         StringBuilder stringTransformations = new StringBuilder();
         try {
-            transformationList = toscAnaAPI.getTransformations(csar);
+            transformationList = toscanaApi.getTransformations(csar);
             List<Transformation> list = transformationList.getContent();
             if (list != null) {
                 for (Transformation t : list) {
@@ -285,7 +285,7 @@ public class ApiController {
         Transformation transformation;
         StringBuilder stringTransformation = new StringBuilder();
         try {
-            transformation = toscAnaAPI.getTransformation(csar, plat);
+            transformation = toscanaApi.getTransformation(csar, plat);
             if (transformation != null) {
                 stringTransformation.append(transformation.getPlatform()).append(", ")
                     .append(transformation.getState());
@@ -315,7 +315,7 @@ public class ApiController {
         TransformationLogs logsList;
         StringBuilder stringLogs = new StringBuilder();
         try {
-            logsList = toscAnaAPI.getLogs(csar, plat, start);
+            logsList = toscanaApi.getLogs(csar, plat, start);
             List<LogEntry> list = logsList.getLogEntries();
             if (list != null) {
                 for (LogEntry l : list) {
@@ -346,11 +346,11 @@ public class ApiController {
      @return output for the CLI
      */
     public String inputList(String csar, String plat) {
-        TransformationProperties propertiesList;
+        TransformationInputs propertiesList;
         StringBuilder stringProperties = new StringBuilder();
         try {
-            propertiesList = toscAnaAPI.getProperties(csar, plat);
-            List<TransformationProperty> list = propertiesList.getProperties();
+            propertiesList = toscanaApi.getInputs(csar, plat);
+            List<TransformationProperty> list = propertiesList.getInputs();
             if (list != null) {
                 for (TransformationProperty p : list) {
                     stringProperties.append(p.getKey()).append(", ")
@@ -391,13 +391,13 @@ public class ApiController {
             p.setValue(mapEntry.getValue());
             properties.add(p);
         }
-        TransformationProperties sendProp = new TransformationProperties(properties);
+        TransformationInputs sendProp = new TransformationInputs(properties);
 
         //get Return of the update if it was successfull
         Map<String, Boolean> propertiesReturn;
         StringBuilder stringProperties = new StringBuilder();
         try {
-            propertiesReturn = toscAnaAPI.updateProperties(csar, plat, sendProp);
+            propertiesReturn = toscanaApi.updateProperties(csar, plat, sendProp);
             if (propertiesReturn != null) {
                 for (String s : propertiesReturn.keySet()) {
                     stringProperties.append(s).append(" ")
@@ -426,7 +426,7 @@ public class ApiController {
         PlatformResources platformList;
         StringBuilder stringPlatforms = new StringBuilder();
         try {
-            platformList = toscAnaAPI.getPlatforms();
+            platformList = toscanaApi.getPlatforms();
             List<Platform> list = platformList.getContent();
             if (list != null) {
                 for (Platform p : list) {
@@ -458,7 +458,7 @@ public class ApiController {
         Platform platform;
         StringBuilder stringPlatform = new StringBuilder();
         try {
-            platform = toscAnaAPI.getPlatformDetails(plat);
+            platform = toscanaApi.getPlatformDetails(plat);
             if (platform != null) {
                 stringPlatform.append(platform.getId()).append(", ")
                     .append(platform.getName());
@@ -485,7 +485,7 @@ public class ApiController {
         TransformerStatus status;
         StringBuilder stringStatus = new StringBuilder();
         try {
-            status = toscAnaAPI.getServerStatus();
+            status = toscanaApi.getServerStatus();
             if (status != null) {
                 stringStatus.append(status.getStatus()).append(", free: ")
                     .append(status.getFileSystemHealth().getFreeBytes());
@@ -506,6 +506,6 @@ public class ApiController {
     }
 
     public void setLoggingMode(LoggingMode loggingMode) {
-        toscAnaAPI.setLoggingMode(loggingMode);
+        toscanaApi.setLoggingMode(loggingMode);
     }
 }

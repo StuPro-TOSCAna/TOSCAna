@@ -6,9 +6,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.opentosca.toscana.core.testdata.TestCsars;
-import org.opentosca.toscana.retrofit.TOSCAnaAPI;
+import org.opentosca.toscana.retrofit.ToscanaApi;
 import org.opentosca.toscana.retrofit.model.Platform;
-import org.opentosca.toscana.retrofit.model.Transformation;
 import org.opentosca.toscana.retrofit.model.TransformationProperty;
 import org.opentosca.toscana.retrofit.util.TOSCAnaServerException;
 
@@ -25,7 +24,7 @@ import static org.opentosca.toscana.retrofit.model.TransformationProperty.Proper
  Tests setting model specific properties.
  Involved components are: REST API, core, rename.
  */
-public class ModelSpecificPropertyIT extends BaseSpringIntegrationTest {
+public class ToscaInputsIT extends BaseSpringIntegrationTest {
 
     private static final String[] KEYS = {"string-input", "boolean-input", "integer-input", "float-input"};
     private static final TransformationProperty.PropertyType[] TYPES = {TEXT, BOOLEAN, INTEGER, FLOAT};
@@ -33,11 +32,11 @@ public class ModelSpecificPropertyIT extends BaseSpringIntegrationTest {
     private static final String[] VALUES = {null, null, null, "default-value"};
     private static final boolean[] REQUIRED = {true, true, false, false};
 
-    private TOSCAnaAPI api;
+    private ToscanaApi api;
 
     @Before
     public void setUp() {
-        api = new TOSCAnaAPI(getHttpUrl());
+        api = new ToscanaApi(getHttpUrl());
     }
 
     /**
@@ -50,8 +49,7 @@ public class ModelSpecificPropertyIT extends BaseSpringIntegrationTest {
         List<Platform> platforms = api.getPlatforms().getContent();
         String platform = platforms.get(0).getId();
         api.createTransformation(csarName, platform);
-        Transformation t = api.getTransformation(csarName, platform);
-        List<TransformationProperty> properties = api.getProperties(csarName, platform).getProperties();
+        List<TransformationProperty> properties = api.getInputs(csarName, platform).getInputs();
         // could be more than 4 properties: might contain platform properties in addition to the TOSCA inputs
         assertTrue(4 <= properties.size());
         Set<TransformationProperty> expectedProperties = buildExpectedProperties();

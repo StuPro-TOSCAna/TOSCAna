@@ -5,7 +5,7 @@ import java.util.Optional;
 import lombok.Data;
 
 @Data
-public class PlatformProperty implements Property {
+public class PlatformInput implements InputProperty {
 
     private final String key;
     private final PropertyType type;
@@ -22,7 +22,7 @@ public class PlatformProperty implements Property {
      @param description a short description of the property (should not exceed 200 characters, does not get checked tough
      @param required    determines if the property is required or not
      */
-    public PlatformProperty(
+    public PlatformInput(
         String key,
         PropertyType type,
         String description,
@@ -31,7 +31,7 @@ public class PlatformProperty implements Property {
         this(key, type, description, required, null);
     }
 
-    public PlatformProperty(
+    public PlatformInput(
         String key,
         PropertyType type,
         String description,
@@ -52,7 +52,7 @@ public class PlatformProperty implements Property {
      @param key  the unique name of the property
      @param type the expected data type of the property value
      */
-    public PlatformProperty(String key, PropertyType type) {
+    public PlatformInput(String key, PropertyType type) {
         this(key, type, "", true);
     }
 
@@ -76,8 +76,8 @@ public class PlatformProperty implements Property {
         return Optional.ofNullable(value);
     }
 
-    public PlatformProperty copy() {
-        PlatformProperty p = new PlatformProperty(
+    public PlatformInput copy() {
+        PlatformInput p = new PlatformInput(
             key,
             type,
             description,

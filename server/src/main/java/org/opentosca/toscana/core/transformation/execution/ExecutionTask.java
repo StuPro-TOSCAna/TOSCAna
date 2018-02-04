@@ -77,7 +77,7 @@ public class ExecutionTask implements Runnable {
         try {
             EffectiveModel model = transformation.getModel();
             plugin.transform(new TransformationContext(csarContentDir, transformationRootDir,
-                transformation.getLog(), model, transformation.getProperties()));
+                transformation.getLog(), model, transformation.getInputs()));
             transformation.setState(TransformationState.DONE);
         } catch (Exception e) {
             log.info("Transformation of {}/{} failed", csarId, platformId);

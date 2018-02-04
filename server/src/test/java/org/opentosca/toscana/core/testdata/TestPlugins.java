@@ -11,7 +11,7 @@ import org.opentosca.toscana.core.testdata.dummyplugins.DummyPlugin;
 import org.opentosca.toscana.core.testdata.dummyplugins.ExecutionDummyPlugin;
 import org.opentosca.toscana.core.testdata.dummyplugins.FileCreationExcecutionDummy;
 import org.opentosca.toscana.core.transformation.platform.Platform;
-import org.opentosca.toscana.core.transformation.properties.PlatformProperty;
+import org.opentosca.toscana.core.transformation.properties.PlatformInput;
 import org.opentosca.toscana.core.transformation.properties.PropertyType;
 
 import com.google.common.collect.Sets;
@@ -42,7 +42,7 @@ public class TestPlugins {
 
     public static final Platform PLATFORM_PASSING_INPUT_REQUIRED_DUMMY = new Platform("testplatform_passing_input_required_dummy",
         "the testplatform for passing dummy, with platform property",
-        Sets.newHashSet(new PlatformProperty("key", PropertyType.TEXT)));
+        Sets.newHashSet(new PlatformInput("key", PropertyType.TEXT)));
     public static final ExecutionDummyPlugin PASSING_INPUT_REQUIRED_DUMMY =
         new ExecutionDummyPlugin(PLATFORM_PASSING_INPUT_REQUIRED_DUMMY, false);
 

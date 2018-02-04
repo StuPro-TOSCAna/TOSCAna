@@ -8,7 +8,7 @@ public class NoSuchPropertyException extends Exception {
     private final String key;
 
     public NoSuchPropertyException(String key) {
-        super(String.format("Property with key '%s' does not exist", key));
+        super(String.format("InputProperty with key '%s' does not exist", key));
         this.key = key;
     }
 

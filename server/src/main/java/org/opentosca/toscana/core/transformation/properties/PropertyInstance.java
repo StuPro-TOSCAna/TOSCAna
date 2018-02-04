@@ -15,7 +15,7 @@ import org.opentosca.toscana.core.transformation.TransformationState;
  That means that this is storing the values that get assigned to the defined properties.
  */
 public class PropertyInstance {
-    private final Map<String, Property> properties;
+    private final Map<String, InputProperty> properties;
     private final Transformation transformation;
 
     /**
@@ -26,16 +26,16 @@ public class PropertyInstance {
      @param transformation the related transformation. It's TransformationState will be altered by this instance
      according to the state of the properties
      */
-    public PropertyInstance(Set<Property> properties, Transformation transformation) {
+    public PropertyInstance(Set<InputProperty> properties, Transformation transformation) {
         this.transformation = transformation;
-        this.properties = properties.stream().collect(Collectors.toMap(Property::getKey, p -> p));
+        this.properties = properties.stream().collect(Collectors.toMap(InputProperty::getKey, p -> p));
 
-        if (!properties.stream().allMatch(Property::isValid)) {
+        if (!properties.stream().allMatch(InputProperty::isValid)) {
             transformation.setState(TransformationState.INPUT_REQUIRED);
         }
     }
 
-    public Map<String, Property> getProperties() {
+    public Map<String, InputProperty> getProperties() {
         return Collections.unmodifiableMap(properties);
     }
 
@@ -45,7 +45,7 @@ public class PropertyInstance {
      @throws NoSuchPropertyException if no property with given key exists
      */
     public Optional<String> get(String key) throws NoSuchPropertyException {
-        Property p = properties.get(key);
+        InputProperty p = properties.get(key);
         if (p != null) {
             return p.getValue();
         } else {
@@ -63,10 +63,10 @@ public class PropertyInstance {
         try {
             value = get(key);
             return value.orElseThrow(() -> new NoSuchElementException(
-                String.format("Property with key '%s' does neither have a value nor a default value," +
+                String.format("InputProperty with key '%s' does neither have a value nor a default value," +
                     "but is required to have one.", key)));
         } catch (NoSuchPropertyException e) {
-            throw new NoSuchElementException(String.format("Property with key '%s' does not exist", e.getKey()));
+            throw new NoSuchElementException(String.format("InputProperty with key '%s' does not exist", e.getKey()));
         }
     }
 
@@ -80,7 +80,7 @@ public class PropertyInstance {
      @return true if all required properties are set and valid
      */
     public boolean isValid() {
-        return properties.values().stream().allMatch(Property::isValid);
+        return properties.values().stream().allMatch(InputProperty::isValid);
     }
 
     /**
@@ -89,7 +89,7 @@ public class PropertyInstance {
      @return true if corresponding property is now valid, false otherwise
      */
     public boolean set(String key, String value) throws NoSuchPropertyException {
-        Property property = properties.get(key);
+        InputProperty property = properties.get(key);
         if (property != null) {
             property.setValue(value);
         } else {

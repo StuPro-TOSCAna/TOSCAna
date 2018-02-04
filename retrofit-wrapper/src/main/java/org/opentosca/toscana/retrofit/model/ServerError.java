@@ -3,9 +3,11 @@ package org.opentosca.toscana.retrofit.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.opentosca.toscana.retrofit.model.hal.Resource;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class ServerError {
+public class ServerError extends Resource {
     @JsonProperty("path")
     private String path;
     @JsonProperty("error")
