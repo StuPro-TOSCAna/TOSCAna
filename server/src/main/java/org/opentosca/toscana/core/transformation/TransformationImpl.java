@@ -1,6 +1,7 @@
 package org.opentosca.toscana.core.transformation;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -23,7 +24,7 @@ public class TransformationImpl implements Transformation {
     private final Platform targetPlatform;
     private final Log log;
     private final PropertyInstance inputs;
-    //    private final PropertyInstance outputs;
+    private final List<Property> outputs;
     private final EffectiveModel model;
     private TransformationState state = TransformationState.READY;
     private TargetArtifact targetArtifact;
@@ -46,6 +47,7 @@ public class TransformationImpl implements Transformation {
         // caution: side effect
         // transformationState can get set to INPUT_REQUIRED by this call
         this.inputs = new PropertyInstance(properties, this);
+        outputs = Collections.unmodifiableList(new ArrayList<>(model.getOutputs().values()));
     }
 
     @Override
@@ -69,10 +71,8 @@ public class TransformationImpl implements Transformation {
     }
 
     @Override
-    public PropertyInstance getOutputs() throws IllegalStateException {
-        // TODO
-//        return outputs;
-        return new PropertyInstance(new HashSet<>(), this);
+    public List<Property> getOutputs() throws IllegalStateException {
+        return outputs;
     }
 
     @Override

@@ -26,7 +26,7 @@ import org.opentosca.toscana.api.exceptions.TransformationNotFoundException;
 import org.opentosca.toscana.api.model.GetInputsResponse;
 import org.opentosca.toscana.api.model.InputsResponse;
 import org.opentosca.toscana.api.model.LogResponse;
-import org.opentosca.toscana.api.model.OutputResponse;
+import org.opentosca.toscana.api.model.OutputsResponse;
 import org.opentosca.toscana.api.model.PropertyWrap;
 import org.opentosca.toscana.api.model.TransformationResponse;
 import org.opentosca.toscana.core.csar.Csar;
@@ -752,7 +752,11 @@ public class TransformationController {
         Csar csar = findByCsarId(csarId);
         Transformation transformation = findTransformationByPlatform(csar, platformId);
         PropertyInstance properties = transformation.getInputs();
-        checkTransformationState(transformation);
+        List<TransformationState> validStates = Arrays.asList(INPUT_REQUIRED, READY);
+        if (!Arrays.asList(INPUT_REQUIRED, READY).contains(transformation.getState())) {
+            throw new IllegalTransformationStateException(
+                String.format("The transformation is not in one of the states '%s'", validStates));
+        }
         Map<String, Boolean> successes = new HashMap<>();
         boolean somethingFailed = false;
         //Set the properties and check their validity
@@ -837,7 +841,7 @@ public class TransformationController {
         ),
         @ApiResponse(
             code = 400,
-            message = "The state of the transformation is invalid (Not ERROR or DONE)",
+            message = "The state of the transformation is invalid (not ERROR or DONE)",
             response = RestErrorResponse.class
         )
     })
@@ -846,7 +850,7 @@ public class TransformationController {
         method = {RequestMethod.GET},
         produces = "application/hal+json"
     )
-    public ResponseEntity<OutputResponse> getOutputs(
+    public ResponseEntity<OutputsResponse> getOutputs(
         @ApiParam(value = "The unique identifier for the CSAR", required = true, example = "test")
         @PathVariable(name = "csarId") String csarId,
         @ApiParam(value = "The identifier for the platform", required = true, example = "kubernetes")
@@ -857,29 +861,17 @@ public class TransformationController {
         if (transformation.getState() != TransformationState.DONE && transformation.getState() != TransformationState.ERROR) {
             throw new IllegalTransformationStateException("The Transformation has not finished yet!");
         }
-        PropertyInstance outputs = transformation.getOutputs();
-
-//        return ResponseEntity.ok(new OutputResponse(csarId, platformId, toPropertyWrapList(outputs)));
-        // TODO fix
-        return null;
-    }
-
-    /**
-     Checks if the given transformation is in the required state.
-     If not, a IllegalTransformationsStateException is thrown.
-     */
-    private void checkTransformationState(Transformation transformation) {
-        List<TransformationState> validStates = Arrays.asList(INPUT_REQUIRED, READY);
-        if (!validStates.contains(transformation.getState())) {
-            throw new IllegalTransformationStateException(
-                String.format("The transformation is not in one of the states '%s'", validStates));
-        }
+        List<Property> outputs = transformation.getOutputs();
+        List<PropertyWrap> wrappedOutputs = outputs.stream()
+            .map(o -> new PropertyWrap(o))
+            .collect(Collectors.toList());
+        return ResponseEntity.ok(new OutputsResponse(csarId, platformId, wrappedOutputs));
     }
 
     @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "Cannot delete csar with running transformations")
     @ExceptionHandler(IndexOutOfBoundsException.class)
     public void handleLogIndexLessThanZero() {
-        //Nop
+        // noop
     }
 
     /**

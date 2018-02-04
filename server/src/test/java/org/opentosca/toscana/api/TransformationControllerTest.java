@@ -32,10 +32,10 @@ import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.platform.PlatformService;
 import org.opentosca.toscana.core.transformation.properties.PlatformInput;
 import org.opentosca.toscana.core.transformation.properties.Property;
-import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
 import org.opentosca.toscana.core.transformation.properties.PropertyType;
 
 import ch.qos.logback.classic.Level;
+import com.google.common.collect.Lists;
 import com.jayway.jsonpath.JsonPath;
 import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
@@ -245,22 +245,21 @@ public class TransformationControllerTest extends BaseSpringTest {
         List<Transformation> transformations = preInitNonCreationTests();
         Transformation t = transformations.get(0);
         when(t.getState()).thenReturn(TransformationState.DONE);
-        HashSet<Property> outputs = new HashSet<>();
-        outputs.add(new PlatformInput(
-            "test_property",
+        String outputKey = "test_output";
+        List<Property> outputs = Lists.newArrayList(new PlatformInput(
+            outputKey,
             PropertyType.TEXT,
             "",
             true,
             "some value"
         ));
-        PropertyInstance mockOutputs = new PropertyInstance(outputs, t);
-        when(t.getOutputs()).thenReturn(mockOutputs);
+        when(t.getOutputs()).thenReturn(outputs);
         mvc.perform(get(GET_OUTPUT_URL))
             .andDo(print())
             .andExpect(status().is(200))
             .andExpect(jsonPath("$.outputs").isArray())
-            .andExpect(jsonPath("$.links[0].href").value("http://localhost/api/csars/kubernetes-cluster/transformations/p-a/outputs"))
-            .andExpect(jsonPath("$.outputs[0].key").value("test_property"))
+            .andExpect(jsonPath("$.links[0].href").value("http://localhost" + GET_OUTPUT_URL))
+            .andExpect(jsonPath("$.outputs[0].key").value(outputKey))
             .andReturn();
     }
 
@@ -269,9 +268,7 @@ public class TransformationControllerTest extends BaseSpringTest {
         List<Transformation> transformations = preInitNonCreationTests();
         Transformation t = transformations.get(0);
         when(t.getState()).thenReturn(TransformationState.DONE);
-        PropertyInstance mockOutputs = mock(PropertyInstance.class);
-        when(mockOutputs.getProperties()).thenReturn(new HashMap<>());
-        when(t.getOutputs()).thenReturn(mockOutputs);
+        when(t.getOutputs()).thenReturn(new ArrayList<>());
         mvc.perform(get(GET_OUTPUT_URL))
             .andDo(print())
             .andExpect(status().is(200))

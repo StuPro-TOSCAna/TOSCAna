@@ -13,11 +13,11 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 @ApiModel
-public class OutputResponse extends HiddenResourceSupport {
+public class OutputsResponse extends HiddenResourceSupport {
 
     private List<PropertyWrap> outputs;
 
-    public OutputResponse(
+    public OutputsResponse(
         String csarName,
         String platformName,
         @JsonProperty("outputs") List<PropertyWrap> outputs
