@@ -1,3 +1,6 @@
 #!/bin/bash
 dockerd &
-java -jar server.jar
+logfile=/var/log/toscana.log
+touch $logfile
+java -jar server.jar | tee -a $logfile
+
