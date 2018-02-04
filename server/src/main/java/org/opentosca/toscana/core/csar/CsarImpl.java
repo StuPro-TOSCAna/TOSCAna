@@ -51,8 +51,10 @@ public class CsarImpl implements Csar {
 
     private List<LifecyclePhase> initLifecyclePhases() {
         List<LifecyclePhase> phases = new ArrayList<>();
-        for (Phase phase : Phase.values()) {
-            phases.add(new LifecyclePhase(phase.getName(), this));
+        for (Phase phaseName : Phase.values()) {
+            LifecyclePhase phase = new LifecyclePhase(phaseName.getName(), this);
+            phase.setLogger(log.getLogger(LifecyclePhase.class));
+            phases.add(phase);
         }
         return phases;
     }
@@ -71,16 +73,16 @@ public class CsarImpl implements Csar {
         try {
             File entryPoint = new EntrypointDetector(this.log).findEntryPoint(this.contentDir);
             Reader.getReader().parse(Paths.get(this.contentDir.toString()), Paths.get(entryPoint.toString()));
-            phase.setState(LifecyclePhase.State.DONE);
             logger.info("Template validation successful");
+            phase.setState(LifecyclePhase.State.DONE);
             return true;
         } catch (InvalidCsarException e) {
-            phase.setState(LifecyclePhase.State.FAILED);
             logger.error("Template validation failed");
+            phase.setState(LifecyclePhase.State.FAILED);
             return false;
         } catch (MultiException e) {
-            phase.setState(LifecyclePhase.State.FAILED);
             logger.error("Template validation failed", e);
+            phase.setState(LifecyclePhase.State.FAILED);
             return false;
         }
     }
@@ -91,12 +93,12 @@ public class CsarImpl implements Csar {
         logger.info("  > Constructing model from TOSCA template");
         try {
             new EffectiveModelFactory().create(this);
-            phase.setState(LifecyclePhase.State.DONE);
             logger.info("Model construction successful");
+            phase.setState(LifecyclePhase.State.DONE);
             return true;
         } catch (Exception e) {
-            phase.setState(LifecyclePhase.State.FAILED);
             logger.error("Model construction failed", this.identifier, e);
+            phase.setState(LifecyclePhase.State.FAILED);
             return false;
         }
     }

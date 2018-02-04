@@ -12,8 +12,8 @@ import org.opentosca.toscana.core.parse.ToscaTemplateException;
 import org.opentosca.toscana.core.parse.converter.TypeWrapper;
 import org.opentosca.toscana.core.parse.model.ServiceGraph;
 import org.opentosca.toscana.core.transformation.logging.Log;
+import org.opentosca.toscana.core.transformation.logging.LogFormat;
 import org.opentosca.toscana.core.transformation.properties.Property;
-import org.opentosca.toscana.core.util.LifecyclePhase;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.relation.RootRelationship;
 import org.opentosca.toscana.model.requirement.Requirement;
@@ -34,8 +34,6 @@ public class EffectiveModel {
     private boolean initialized = false;
 
     protected EffectiveModel(Csar csar) throws InvalidCsarException {
-        LifecyclePhase parsePhase = csar.getLifecyclePhase(Csar.Phase.PARSE);
-        parsePhase.setState(LifecyclePhase.State.EXECUTING);
         this.log = csar.getLog();
         this.logger = log.getLogger(getClass());
         try {
@@ -43,9 +41,7 @@ public class EffectiveModel {
             EntrypointDetector entrypointDetector = new EntrypointDetector(log);
             File template = entrypointDetector.findEntryPoint(csar.getContentDir());
             this.serviceGraph = new ServiceGraph(template, csar.getLog());
-            parsePhase.setState(LifecyclePhase.State.DONE);
         } catch (Exception e) {
-            parsePhase.setState(LifecyclePhase.State.FAILED);
             throw e;
         }
     }
@@ -73,7 +69,7 @@ public class EffectiveModel {
     private void initNodes() {
         logger.info("Populating vertices");
         nodeMap.forEach((name, node) -> {
-            logger.info("  > '{}' ({})", name, node.getClass().getSimpleName());
+            logger.info(LogFormat.indent(1, String.format("%-25s(%s)", name, node.getClass().getSimpleName())));
             topology.addVertex(node);
         });
     }
@@ -85,8 +81,8 @@ public class EffectiveModel {
                 Set<? extends RootNode> fulfillers = requirement.getFulfillers();
                 for (RootNode fulfiller : fulfillers) {
                     RootRelationship relationship = requirement.get(requirement.RELATIONSHIP);
-                    logger.info("  > '{}'  === {} ==>> '{}'", node.getEntityName(),
-                        relationship.getClass().getSimpleName(), fulfiller.getEntityName());
+                    logger.info(LogFormat.pointAt(1, 25, node.getEntityName(),
+                        relationship.getClass().getSimpleName(), fulfiller.getEntityName()));
                     topology.addEdge(node, fulfiller, relationship);
                 }
             }

@@ -8,6 +8,7 @@ import org.opentosca.toscana.core.parse.model.MappingEntity;
 import org.opentosca.toscana.core.parse.model.ScalarEntity;
 import org.opentosca.toscana.core.parse.model.ServiceGraph;
 import org.opentosca.toscana.core.transformation.logging.Log;
+import org.opentosca.toscana.core.transformation.logging.LogFormat;
 import org.opentosca.toscana.model.EntityId;
 import org.opentosca.toscana.model.artifact.Artifact;
 import org.opentosca.toscana.model.artifact.Repository;
@@ -33,21 +34,21 @@ public class GraphNormalizer {
     }
 
     private static synchronized void normalizeRepositories(ServiceGraph graph) {
-        logger.debug("  >>> repositories");
+        logger.debug(LogFormat.indent(1, "repositories"));
         for (Entity repository : graph.getChildren(ToscaStructure.REPOSITORIES)) {
-            logger.debug("    > '{}'", repository.getId());
+            logger.debug(LogFormat.indent(2, repository.getId()));
             normalize(graph, repository, Repository.URL.name);
         }
     }
 
     private static void normalizeOperations(ServiceGraph graph) {
-        logger.debug("  >>> operations");
+        logger.debug(LogFormat.indent(1, "operations"));
         for (Entity node : graph.getChildren(ToscaStructure.NODE_TEMPLATES)) {
             Optional<Entity> interfaces = node.getChild(RootNode.INTERFACES.name);
             if (interfaces.isPresent()) {
                 for (Entity thisInterface : interfaces.get().getChildren()) {
                     for (Entity operation : thisInterface.getChildren()) {
-                        logger.debug("    > '{}'", operation.getId());
+                        logger.debug(LogFormat.indent(2, operation.getId()));
                         normalize(graph, operation, Operation.IMPLEMENTATION.name, Operation.PRIMARY.name);
                         Optional<Entity> implementation = graph.getEntity(operation.getId().descend(Operation.IMPLEMENTATION.name));
                         implementation.ifPresent(e -> normalize(graph, e, Operation.PRIMARY.name));
@@ -60,12 +61,12 @@ public class GraphNormalizer {
     }
 
     private static void normalizeRequirements(ServiceGraph graph) {
-        logger.info("  >>> requirements");
+        logger.debug(LogFormat.indent(1, "requirements"));
         for (Entity node : graph.getChildren(ToscaStructure.NODE_TEMPLATES)) {
             Optional<Entity> requirements = node.getChild(RootNode.REQUIREMENTS);
             if (requirements.isPresent()) {
                 for (Entity requirement : requirements.get().getChildren()) {
-                    logger.info("    > '{}'", requirement.getId());
+                    logger.info(LogFormat.indent(2, requirement.getId()));
                     normalize(graph, requirement, Requirement.NODE_NAME);
                 }
             }
