@@ -185,7 +185,7 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
                                 .stream().filter(ek -> ek.hasNode((RootNode) o)).findFirst().orElse(null);
                             if (targetStack != null &&
                                 targetStack.getComputeNode() == this.stack.getComputeNode()) {
-                                adresses.put(this.stack, this.stack.getComputeNode().getPrivateAddress().get());
+                                adresses.put(this.stack, this.stack.getComputeNode().getPrivateAddress().orElse(null));
                                 this.stack.getComputeNode().setPrivateAddress("127.0.0.1");
                             }
                         }

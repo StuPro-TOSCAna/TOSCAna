@@ -51,7 +51,7 @@ public class KubernetesPlugin extends TOSCAnaPlugin<KubernetesLifecycle> {
                 PropertyType.TEXT,
                 "The URL To the docker Registry. (Will default to DockerHub if empty)",
                 false,
-                MapperConstants.DOCKER_HUB_URL
+                ""
             )
         );
         platformProperties.add(new PlatformInput(
