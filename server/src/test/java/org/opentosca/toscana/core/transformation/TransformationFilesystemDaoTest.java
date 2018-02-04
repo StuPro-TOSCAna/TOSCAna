@@ -87,7 +87,8 @@ public class TransformationFilesystemDaoTest extends BaseUnitTest {
         File[] result = transformationRootDir.listFiles();
         assertEquals(1, result.length);  // old files deleted, empty content dir got created
         assertEquals(TransformationFilesystemDao.CONTENT_DIR, result[0].getName());
-        assertEquals(0, result[0].list().length);
+        // only logfile must exist
+        assertEquals(1, result[0].list().length);
     }
 
     /**

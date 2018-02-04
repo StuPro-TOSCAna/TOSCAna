@@ -57,7 +57,12 @@ public class TransformationFilesystemDao implements TransformationDao {
         if (!platformService.isSupported(platform)) {
             throw new PlatformNotFoundException();
         }
-        csar.getTransformation(platform.id).ifPresent(this::delete);
+        Optional<Transformation> oldTransformation = csar.getTransformation(platform.id);
+        if (oldTransformation.isPresent()) {
+            delete(oldTransformation.get());
+        } else {
+            delete(getRootDir(csar, platform));
+        }
         Transformation transformation = createTransformation(csar, platform);
         csar.getTransformations().put(platform.id, transformation);
         getContentDir(transformation).mkdirs();
@@ -77,13 +82,17 @@ public class TransformationFilesystemDao implements TransformationDao {
 
     @Override
     public void delete(Transformation transformation) {
+        transformation.getCsar().getTransformations().remove(transformation.getPlatform().id);
         File transformationDir = getRootDir(transformation);
+        delete(transformationDir);
+    }
+
+    private void delete(File transformationDir) {
         try {
             FileUtils.deleteDirectory(transformationDir);
-            transformation.getCsar().getTransformations().remove(transformation.getPlatform().id);
             logger.info("Deleted transformation directory '{}'", transformationDir);
         } catch (IOException e) {
-            logger.error("Failed to delete directory of transformation '{}'", transformation, e);
+            logger.error("Failed to delete directory '{}'", transformationDir, e);
         }
     }
 
@@ -178,7 +187,7 @@ public class TransformationFilesystemDao implements TransformationDao {
     public void setCsarDao(CsarDao csarDao) {
         this.csarDao = csarDao;
     }
-    
+
     private Log getLog(Csar csar, Platform platform) {
         File logFile = new File(getContentDir(csar, platform), format("%s-%s.log", csar.getIdentifier(), platform.id));
         return new LogImpl(logFile);
