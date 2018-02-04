@@ -23,7 +23,7 @@ public class ExecutionTask implements Runnable {
     private final String platformId;
     private final String csarId;
     private final ArtifactService artifactService;
-    private final Logger log;
+    private final Logger logger;
 
     private boolean failed = false;
 
@@ -35,7 +35,7 @@ public class ExecutionTask implements Runnable {
         File transformationRootDir
     ) {
         this.transformation = transformation;
-        this.log = transformation.getLog().getLogger(getClass());
+        this.logger = transformation.getLog().getLogger(getClass());
         this.plugin = pluginService.findPluginByPlatform(transformation.getPlatform());
         this.csarContentDir = csarContentDir;
         this.transformationRootDir = transformationRootDir;
@@ -47,7 +47,7 @@ public class ExecutionTask implements Runnable {
 
     @Override
     public void run() {
-        log.info("Starting Transformation executor for {}/{}", csarId, platformId);
+        logger.info("Starting Transformation executor for {}/{}", csarId, platformId);
         transformation.setState(TransformationState.TRANSFORMING);
         transformationRootDir.mkdirs();
         transform();
@@ -59,17 +59,17 @@ public class ExecutionTask implements Runnable {
     private void serveArtifact() {
         if (transformationRootDir.listFiles().length != 0) {
             try {
-                log.info("Compressing transformation artifacts");
+                logger.info("Compressing transformation artifacts");
                 TargetArtifact artifact = artifactService.serveArtifact(transformation);
                 transformation.setTargetArtifact(artifact);
-                log.info("Artifact archive ready for download");
+                logger.info("Artifact archive ready for download");
             } catch (IOException e) {
-                log.error("Failed to serve artifact archive for transformation {}/{}", csarId, platformId, e);
+                logger.error("Failed to serve artifact archive for transformation {}/{}", csarId, platformId, e);
                 failed = true;
             }
         } else {
             failed = true;
-            log.error("Logfile missing! Not compressing target artifacts: Transformation generated no output files");
+            logger.error("Logfile missing! Not compressing target artifacts: Transformation generated no output files");
         }
     }
 
@@ -80,8 +80,8 @@ public class ExecutionTask implements Runnable {
                 transformation.getLog(), model, transformation.getProperties()));
             transformation.setState(TransformationState.DONE);
         } catch (Exception e) {
-            log.info("Transformation of {}/{} failed", csarId, platformId);
-            log.error("Something went wrong while transforming", e);
+            logger.info("Transformation of {}/{} failed", csarId, platformId);
+            logger.error("Something went wrong while transforming", e);
             failed = true;
         }
     }
