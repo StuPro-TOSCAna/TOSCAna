@@ -83,9 +83,12 @@ public abstract class ImageBuilder implements ProgressHandler {
         if (s != null) {
             String[] lines = s.split("\n");
             for (String line : lines) {
-                String[] cleanLine = cleanString(line).split("\n");
+                String[] cleanLine = cleanString(line)
+                    //Remove ansi Shell colors
+                    .replaceAll("\\x1b\\[[0-9;]*m","")
+                    .split("\n");
                 for (String partialLine : cleanLine) {
-                    if (partialLine.replace(" ", "").length() == 0) {
+                    if (partialLine.replaceAll("(\\.| |_|-|\\:|;)", "").length() == 0) {
                         continue;
                     }
                     loggingFunc.accept(partialLine);

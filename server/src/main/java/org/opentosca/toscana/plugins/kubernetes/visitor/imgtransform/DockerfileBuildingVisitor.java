@@ -3,8 +3,10 @@ package org.opentosca.toscana.plugins.kubernetes.visitor.imgtransform;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -23,6 +25,7 @@ import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.node.WebApplication;
 import org.opentosca.toscana.model.operation.Operation;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
+import org.opentosca.toscana.model.relation.ConnectsTo;
 import org.opentosca.toscana.model.requirement.Requirement;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 import org.opentosca.toscana.plugins.kubernetes.docker.dockerfile.builder.DockerfileBuilder;
@@ -159,6 +162,7 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
 
     private void handleDefault(RootNode node) {
         try {
+            Map<NodeStack, String> adresses = new HashMap<>();
             node.getCapabilities().forEach(e -> {
                 try {
                     if (e instanceof EndpointCapability) {
@@ -170,7 +174,31 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
                     logger.warn("Failed reading Port from node {}", node.getEntityName(), ex);
                 }
             });
+
+            //Temporarily set the private address to localhost (127.0.0.1) if there is a connection in the same pod
+            //The same compute node
+            node.getRequirements().forEach(e -> {
+                if (e.getRelationship().isPresent() && e.getRelationship().get() instanceof ConnectsTo) {
+                    for (Object o : e.getFulfillers()) {
+                        if (o instanceof RootNode) {
+                            NodeStack targetStack = this.connectionGraph.vertexSet()
+                                .stream().filter(ek -> ek.hasNode((RootNode) o)).findFirst().orElse(null);
+                            if (targetStack != null &&
+                                targetStack.getComputeNode() == this.stack.getComputeNode()) {
+                                adresses.put(this.stack, this.stack.getComputeNode().getPrivateAddress().orElse(null));
+                                this.stack.getComputeNode().setPrivateAddress("127.0.0.1");
+                            }
+                        }
+                    }
+                }
+            });
+
             addToDockerfile(node.getEntityName(), node.getStandardLifecycle());
+
+            //Reset to original address
+            adresses.forEach((k, v) -> {
+                k.getComputeNode().setPrivateAddress(v);
+            });
         } catch (IOException e) {
             throw new UnsupportedOperationException("Transformation failed while copying artifacts", e);
         }
