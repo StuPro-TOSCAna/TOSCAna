@@ -1,10 +1,10 @@
 {
     "_links": {
         "self": {
-            "href": "http://localhost:8080/csars/mongo-db/transformations/p-a/properties"
+            "href": "http://localhost:8080/csars/mongo-db/transformations/p-a/inputs"
         }
     },
-    "properties": [
+    "inputs": [
         {
             "valid": false,
             "key": "unsigned_integer",

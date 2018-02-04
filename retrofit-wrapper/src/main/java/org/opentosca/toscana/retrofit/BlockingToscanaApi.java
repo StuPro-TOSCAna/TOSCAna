@@ -12,7 +12,7 @@ import okhttp3.ResponseBody;
  This class wraps these calls so that they only return when the server has finished processing.
  This is realized by polling the server state.
  */
-public class BlockingToscanaApi extends TOSCAnaAPI {
+public class BlockingToscanaApi extends ToscanaApi {
 
     public static final int POLLING_INTERVAL_MS = 700;
 

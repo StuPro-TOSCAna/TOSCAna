@@ -9,7 +9,7 @@ import org.opentosca.toscana.core.csar.CsarImpl;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.NoSuchPropertyException;
-import org.opentosca.toscana.core.transformation.properties.PlatformProperty;
+import org.opentosca.toscana.core.transformation.properties.PlatformInput;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
 import org.opentosca.toscana.core.transformation.properties.PropertyType;
 
@@ -34,10 +34,10 @@ public class TransformationPropertyHandlingTest extends BaseUnitTest {
     public void setUp() throws Exception {
         Csar csar = new CsarImpl(new File(""), MOCK_CSAR_NAME, log);
 
-        HashSet<PlatformProperty> props = new HashSet<>();
+        HashSet<PlatformInput> props = new HashSet<>();
         for (int i = 0; i < 10; i++) {
             props.add(
-                new PlatformProperty(
+                new PlatformInput(
                     "prop-" + i,
                     PropertyType.UNSIGNED_INTEGER,
                     "No real Description",
@@ -47,7 +47,7 @@ public class TransformationPropertyHandlingTest extends BaseUnitTest {
         }
         Platform p = new Platform("test", "Test Platform", props);
         transformation = new TransformationImpl(csar, p, log, modelMock());
-        properties = transformation.getProperties();
+        properties = transformation.getInputs();
     }
 
     @Test
@@ -93,6 +93,6 @@ public class TransformationPropertyHandlingTest extends BaseUnitTest {
         this.transformation = new TransformationImpl(csar,
             new Platform("test", "test", new HashSet<>()), logMock(), modelMock());
         assertEquals(TransformationState.READY, transformation.getState());
-        assertTrue(transformation.getProperties().isValid());
+        assertTrue(transformation.getInputs().isValid());
     }
 }

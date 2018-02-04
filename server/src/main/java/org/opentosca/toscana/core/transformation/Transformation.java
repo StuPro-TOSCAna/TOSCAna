@@ -7,6 +7,7 @@ import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.transformation.artifacts.TargetArtifact;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.platform.Platform;
+import org.opentosca.toscana.core.transformation.properties.OutputProperty;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
 import org.opentosca.toscana.core.util.LifecyclePhase;
 import org.opentosca.toscana.model.EffectiveModel;
@@ -31,7 +32,7 @@ public interface Transformation {
     /**
      @return Key(SimpleProperty Name)-Value map of all properties that have been set explicitly!
      */
-    PropertyInstance getProperties();
+    PropertyInstance getInputs();
 
     /**
      Returns the log of this transformation
@@ -55,6 +56,13 @@ public interface Transformation {
      Returns the underlying model of this transformation.
      */
     EffectiveModel getModel();
+
+    /**
+     Returns the outputs of the transformation.
+     If the Transformation is not Done or has errored (The state is not DONE or ERROR)
+     this will throw a IllegalStateExecption
+     */
+    List<OutputProperty> getOutputs() throws IllegalStateException;
 
     void setLifecyclePhases(List<LifecyclePhase> lifecyclePhases);
 

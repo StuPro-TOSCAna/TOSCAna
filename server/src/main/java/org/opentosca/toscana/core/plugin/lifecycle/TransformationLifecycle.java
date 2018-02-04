@@ -48,9 +48,6 @@ public interface TransformationLifecycle {
      */
     void cleanup();
 
-    /**
-
-     */
     default void deploy() {
         throw new UnsupportedOperationException("This Plugin does not support deployments from within the TOSCAna Transformer!");
     }

@@ -4,7 +4,7 @@ import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class HALResource {
+public class HALResource extends Resource {
 
     protected Map<String, ResourceLink> links;
 
@@ -18,7 +18,7 @@ public class HALResource {
         this.links = links;
     }
 
-    public static class ResourceLink {
+    public static class ResourceLink extends Resource {
         private String reference;
         private Boolean templated;
 
