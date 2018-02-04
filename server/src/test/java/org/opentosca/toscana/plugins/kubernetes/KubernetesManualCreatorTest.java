@@ -22,6 +22,6 @@ public class KubernetesManualCreatorTest extends BaseUnitTest {
 
     @Test
     public void testCorrectFile() throws IOException {
-        assertEquals(testManualCorrectFile, KubernetesManualCreator.createManual("test-app", "test-app.yaml"));
+        assertEquals(testManualCorrectFile, ManualCreator.createManual("test-app", "test-app.yaml"));
     }
 }

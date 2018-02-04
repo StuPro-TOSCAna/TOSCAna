@@ -65,11 +65,12 @@ public abstract class ImageBuilder implements ProgressHandler {
 
     @Override
     public void progress(ProgressMessage progressMessage) throws DockerException {
-        if (logger.isDebugEnabled())
+        if (logger.isDebugEnabled()) {
             log(progressMessage.progress(), logger::trace);
+            log(progressMessage.status(), logger::trace);
+        }
         log(progressMessage.stream(), logger::info);
         log(progressMessage.error(), logger::error);
-        log(progressMessage.status(), logger::info);
     }
 
     private String cleanString(String s) {
