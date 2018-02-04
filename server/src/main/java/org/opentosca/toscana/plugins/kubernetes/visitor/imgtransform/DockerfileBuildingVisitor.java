@@ -12,7 +12,6 @@ import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.model.artifact.Artifact;
 import org.opentosca.toscana.model.capability.EndpointCapability;
 import org.opentosca.toscana.model.datatype.Port;
-import org.opentosca.toscana.model.datatype.PortSpec;
 import org.opentosca.toscana.model.node.Apache;
 import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.Database;
@@ -211,7 +210,7 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
                 }
                 if (path.endsWith(".sql")) return;
                 builder.copyFromCsar(path, nodeName, nodeName + "-" + opName);
-                
+
                 String command = "sh " + nodeName + "-" + opName;
                 if (!isStartup) {
                     builder.run(command);

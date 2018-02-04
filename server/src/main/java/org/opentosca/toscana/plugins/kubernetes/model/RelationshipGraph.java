@@ -1,9 +1,6 @@
 package org.opentosca.toscana.plugins.kubernetes.model;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.relation.ConnectsTo;
@@ -42,5 +39,4 @@ public class RelationshipGraph extends DirectedMultigraph<NodeStack, Requirement
             });
         }
     }
-    
 }
