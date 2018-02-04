@@ -20,6 +20,7 @@ import org.opentosca.toscana.core.parse.converter.LinkResolver;
 import org.opentosca.toscana.core.parse.converter.TypeWrapper;
 import org.opentosca.toscana.core.parse.converter.util.ToscaStructure;
 import org.opentosca.toscana.core.transformation.logging.Log;
+import org.opentosca.toscana.core.transformation.logging.LogFormat;
 import org.opentosca.toscana.core.transformation.properties.Property;
 import org.opentosca.toscana.model.EntityId;
 import org.opentosca.toscana.model.Parameter;
@@ -142,7 +143,7 @@ public class ServiceGraph extends SimpleDirectedGraph<Entity, Connection> {
                 inputs.put(input.getEntityName(), input);
             }
             logger.debug("Found {} TOSCA inputs in graph", inputs.size());
-            inputs.keySet().forEach(key -> logger.debug("  > '{}'", key));
+            inputs.keySet().forEach(key -> logger.debug(LogFormat.indent(1, key)));
         }
         return inputs;
     }
