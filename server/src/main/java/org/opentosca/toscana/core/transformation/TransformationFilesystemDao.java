@@ -57,8 +57,8 @@ public class TransformationFilesystemDao implements TransformationDao {
         if (!platformService.isSupported(platform)) {
             throw new PlatformNotFoundException();
         }
+        csar.getTransformation(platform.id).ifPresent(this::delete);
         Transformation transformation = createTransformation(csar, platform);
-        delete(transformation);
         csar.getTransformations().put(platform.id, transformation);
         getContentDir(transformation).mkdirs();
         return transformation;
