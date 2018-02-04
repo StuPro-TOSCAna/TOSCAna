@@ -21,10 +21,9 @@ public class OutputWrap {
         this.type = type;
         this.description = description;
     }
-    
-    public OutputWrap(OutputProperty output){
+
+    public OutputWrap(OutputProperty output) {
         this(output.getKey(), output.getValue().orElse(null), output.getType(), output.getDescription().orElse(null));
-        
     }
 
     @ApiModelProperty(

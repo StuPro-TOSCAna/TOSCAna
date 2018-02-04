@@ -9,7 +9,7 @@ import io.swagger.annotations.ApiModelProperty;
 
 @ApiModel
 public class InputWrap extends OutputWrap {
-   
+
     protected final boolean required;
     protected final String defaultValue;
     protected boolean valid;

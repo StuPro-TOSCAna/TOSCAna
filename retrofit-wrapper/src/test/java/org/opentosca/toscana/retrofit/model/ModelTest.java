@@ -32,7 +32,7 @@ import static org.junit.runners.Parameterized.Parameters;
 public class ModelTest {
 
     private static final Logger logger = LoggerFactory.getLogger(ModelTest.class);
-    
+
     private String resourcePath;
     private Class<?> resultClass;
     private IModelValidator modelValidator;
@@ -53,7 +53,7 @@ public class ModelTest {
 
     @Parameters(name = "{index}: {3}")
     public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][] {
+        return Arrays.asList(new Object[][]{
             {"json/get_inputs.json", TransformationInputs.class, new GetInputsValidator(), "Get Properties"},
             {"json/logs.json", TransformationLogs.class, new LogValidator(), "Log"},
             {"json/health.json", TransformerStatus.class, new HealthValidator(), "Health"},
@@ -62,7 +62,7 @@ public class ModelTest {
             {"json/platforms.json", PlatformResources.class, new PlatformsValidator(), "Platforms"},
             {"json/csars.json", CsarResources.class, new CsarsValidator(), "Csars Model"},
             {"json/regular_error.json", ServerError.class, new ErrorValidator(false), "Regular Error"},
-            {"json/parse_error.json", ServerError.class, new ErrorValidator(true),"Parsing Error"}
+            {"json/parse_error.json", ServerError.class, new ErrorValidator(true), "Parsing Error"}
         });
     }
 
@@ -74,7 +74,7 @@ public class ModelTest {
 
     @Test
     public void validateModel() throws Exception {
-        logger.info("Loading Resource {}",resourcePath);
+        logger.info("Loading Resource {}", resourcePath);
         InputStream in = getClass().getClassLoader().getResourceAsStream(resourcePath);
         logger.info("Mapping");
         Object o = mapper.readValue(in, resultClass);

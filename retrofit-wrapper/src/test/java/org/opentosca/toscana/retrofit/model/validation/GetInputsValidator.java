@@ -8,7 +8,7 @@ import static org.junit.Assert.assertNull;
 
 public class GetInputsValidator
     implements IModelValidator {
-    
+
     @Override
     public void validate(Object obj) {
         TransformationInputs inputs = (TransformationInputs) obj;

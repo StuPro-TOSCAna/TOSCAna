@@ -56,7 +56,6 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
-import static org.opentosca.toscana.core.transformation.TransformationState.TRANSFORMING;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -320,7 +319,7 @@ public class TransformationControllerTest extends BaseSpringTest {
             .andExpect(status().is(400))
             .andExpect(content().bytes(new byte[0]))
             .andReturn();
-        assertNotEquals(TRANSFORMING,
+        assertNotEquals(TransformationState.TRANSFORMING,
             csarService.getCsar(VALID_CSAR_NAME).get().getTransformation(VALID_PLATFORM_NAME).get().getState());
     }
 
