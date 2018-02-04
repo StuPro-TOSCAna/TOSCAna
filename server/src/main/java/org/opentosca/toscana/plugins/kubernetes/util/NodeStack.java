@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.model.node.Compute;
+import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.plugins.kubernetes.docker.mapper.BaseImageMapper;
 import org.opentosca.toscana.plugins.kubernetes.model.Port;
 import org.opentosca.toscana.plugins.kubernetes.model.RelationshipGraph;
@@ -98,6 +99,10 @@ public class NodeStack {
     public Compute getComputeNode() {
         return (Compute) this.stackNodes.stream().filter(e -> e.getNode() instanceof Compute)
             .findFirst().orElseThrow(IllegalArgumentException::new).getNode();
+    }
+    
+    public boolean hasNode(RootNode node) {
+        return stackNodes.stream().filter(e -> e.getNode().equals(node)).count() == 1;
     }
 
     @Override

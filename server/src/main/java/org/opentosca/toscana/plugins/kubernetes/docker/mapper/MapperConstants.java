@@ -12,7 +12,7 @@ import static org.opentosca.toscana.model.capability.OsCapability.Architecture.x
 public class MapperConstants {
     public static final String DEFAULT_IMAGE_PATH = "library/ubuntu:latest";
     public static final String DEFAULT_IMAGE_DISTRO = "ubuntu";
-    public static final String DOCKER_HUB_URL = "https://registry.hub.docker.com";
+    public static final String DOCKER_HUB_URL = "";
     public static final Map<Architecture, String> ARCHITECTURE_MAP;
 
     static {
