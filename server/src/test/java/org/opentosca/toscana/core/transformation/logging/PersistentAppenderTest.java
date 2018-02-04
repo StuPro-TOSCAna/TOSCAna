@@ -26,10 +26,12 @@ public class PersistentAppenderTest extends BaseUnitTest {
     @Test
     public void appenderWritesToFile() throws IOException {
         log = new LogImpl(logfile);
-        logger = log.getLogger(getClass());
+        String context = "test-context";
+        logger = log.getLogger(context);
         String message1 = "this message should get written to logfile";
         logger.info(message1);
         String result = FileUtils.readFileToString(logfile);
+        assertTrue(result.contains(context));
         assertTrue(result.contains(message1));
     }
 
@@ -37,11 +39,7 @@ public class PersistentAppenderTest extends BaseUnitTest {
     public void appenderWritesStackTracesToFile() throws IOException {
         log = new LogImpl(logfile);
         logger = log.getLogger(getClass());
-        try {
-            throw new ArithmeticException();
-        } catch (ArithmeticException e) {
-            logger.error("testing stacktraces", e);
-        }
+        logger.error("testing stacktraces", new ArithmeticException("Test exception"));
         String result = FileUtils.readFileToString(logfile);
         String[] lines = result.split("\n");
         assertTrue(lines.length > 15);

@@ -697,7 +697,7 @@ public class TransformationControllerTest extends BaseSpringTest {
 
         for (String pname : pnames) {
 
-            LogEntry entry = new LogEntry(0, "Test Message", Level.DEBUG);
+            LogEntry entry = new LogEntry(0, "Test Context","Test Message", Level.DEBUG);
             Log mockLog = logMock();
             when(mockLog.getLogEntries(0)).thenReturn(Collections.singletonList(entry));
 

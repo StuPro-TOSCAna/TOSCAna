@@ -17,16 +17,18 @@ public class LogEntry {
     private final static Logger logger = LoggerFactory.getLogger(LogEntry.class);
 
     private long timestamp;
+    private String context;
     private String message;
     private Level level;
     private long index;
 
-    public LogEntry(long index, String message, Level level) {
-        this(System.currentTimeMillis(), index, message, level);
+    public LogEntry(long index, String context, String message, Level level) {
+        this(System.currentTimeMillis(), index, context, message, level);
     }
 
-    private LogEntry(long timestamp, long index, String message, Level level) {
+    private LogEntry(long timestamp, long index, String context, String message, Level level) {
         this.timestamp = timestamp;
+        this.context = context;
         this.message = message;
         this.level = level;
         this.index = index;
@@ -49,18 +51,19 @@ public class LogEntry {
         }
     }
 
-    private void parseRegularLine(String line, LogEntry precessor) throws LogParserException {
-        String[] tokens = line.split(" ", 3);
-        if (tokens.length == 3) {
+    private void parseRegularLine(String line, LogEntry predecessor) throws LogParserException {
+        String[] tokens = line.split(" ", 4);
+        if (tokens.length == 4) {
             String dateString = tokens[0];
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern(PersistentAppender.DATE_FORMAT);
             ZonedDateTime zonedDateTime = ZonedDateTime.parse(dateString, formatter);
             timestamp = zonedDateTime.toInstant().toEpochMilli();
             String levelString = tokens[1];
             level = Level.valueOf(levelString);
-            message = tokens[2];
-            if (precessor != null) {
-                index = precessor.index + 1;
+            context = tokens[2];
+            message = tokens[3];
+            if (predecessor != null) {
+                index = predecessor.index + 1;
             } else {
                 index = 0;
             }
@@ -83,6 +86,7 @@ public class LogEntry {
     }
 
     // a regular logline is a line with beginning with date and time, else it's considered as part of a stacktrace
+
     private boolean isRegularLine(String line) {
         Matcher m = PersistentAppender.DATE_FORMAT_REGEX.matcher(line);
         return m.find();
@@ -116,16 +120,6 @@ public class LogEntry {
 
     @ApiModelProperty(
         required = true,
-        notes = "The log message",
-        example = "Some log message"
-    )
-    @JsonProperty("message")
-    public String getMessage() {
-        return message;
-    }
-
-    @ApiModelProperty(
-        required = true,
         notes = "The log level for this log entry. The value has to be one of the following: " +
             "\"DEBUG\",\"INFO\",\"WARN\",\"TRACE\", \"ERROR\" or \"ALL\"",
         example = "DEBUG"
@@ -135,6 +129,26 @@ public class LogEntry {
         return level.levelStr;
     }
 
+    @ApiModelProperty(
+        required = true,
+        notes = "The log context",
+        example = "org.foo.Bar"
+    )
+    public String getContext() {
+        return context;
+    }
+
+    @ApiModelProperty(
+        required = true,
+        notes = "The log message",
+        example = "Some log message"
+    )
+    @JsonProperty("message")
+    public String getMessage() {
+        return message;
+    }
+
+    @Override
     public String toString() {
         return String.format("LogEntry [timestamp='%d', message='%s', level='%s']", timestamp, message, level);
     }
