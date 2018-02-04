@@ -77,19 +77,7 @@ public class NodeStack {
         this.openPorts.addAll(visitor.getPorts());
         dockerfilePath = "output/docker/" + getStackName();
     }
-
-    public List<ContainerPort> getOpenContainerPorts() {
-        List<ContainerPort> ports = new ArrayList<>();
-        openPorts.forEach(e -> ports.add(new ContainerPortBuilder().withContainerPort(e).build()));
-        return Collections.unmodifiableList(ports);
-    }
-
-    public List<ServicePort> getOpenServicePorts() {
-        List<ServicePort> ports = new ArrayList<>();
-        openPorts.forEach(e -> ports.add(new ServicePortBuilder().withPort(e).build()));
-        return Collections.unmodifiableList(ports);
-    }
-
+    
     public List<Port> getOpenPorts() {
         return openPorts.stream().map(e -> new Port(e, this.getCleanStackName())).collect(Collectors.toList());
     }

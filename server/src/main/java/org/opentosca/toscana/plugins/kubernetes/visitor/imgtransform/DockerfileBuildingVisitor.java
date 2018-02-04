@@ -11,6 +11,8 @@ import java.util.Set;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.model.artifact.Artifact;
 import org.opentosca.toscana.model.capability.EndpointCapability;
+import org.opentosca.toscana.model.datatype.Port;
+import org.opentosca.toscana.model.datatype.PortSpec;
 import org.opentosca.toscana.model.node.Apache;
 import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.Database;
@@ -104,6 +106,8 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
         if (!node.getAppEndpoint().getPort().isPresent()) {
             ports.add(80);
             ports.add(443);
+            //set the ports in the model
+            node.getAppEndpoint().setPort(new Port(80));
         }
         handleDefault(node);
     }
@@ -114,6 +118,7 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
             ports.add(node.getPort().get());
         } else {
             //Add mysql default port if none is set
+            node.setPort(3306);
             ports.add(3306);
         }
         builder.env("MYSQL_ROOT_PASSWORD", node.getRootPassword().get());
@@ -206,10 +211,12 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
                 }
                 if (path.endsWith(".sql")) return;
                 builder.copyFromCsar(path, nodeName, nodeName + "-" + opName);
+                
+                String command = "sh " + nodeName + "-" + opName;
                 if (!isStartup) {
-                    builder.run("sh " + nodeName + "-" + opName);
+                    builder.run(command);
                 } else {
-                    startCommands.add("sh " + nodeName + "-" + opName);
+                    startCommands.add(command);
                 }
             }
         }
