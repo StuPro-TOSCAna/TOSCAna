@@ -18,8 +18,8 @@
 					"artifact": {
 						"href": "http://localhost:8080/csars/mongo-db/transformations/p-a/artifact"
 					},
-					"properties": {
-						"href": "http://localhost:8080/csars/mongo-db/transformations/p-a/properties"
+					"inputs": {
+						"href": "http://localhost:8080/csars/mongo-db/transformations/p-a/inputs"
 					},
 					"delete": {
 						"href": "http://localhost:8080/csars/mongo-db/transformations/p-a/delete"

@@ -6,7 +6,7 @@ import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin;
 import org.opentosca.toscana.retrofit.BlockingToscanaApi;
 import org.opentosca.toscana.retrofit.ToscanaApi;
-import org.opentosca.toscana.retrofit.model.TransformationProperties;
+import org.opentosca.toscana.retrofit.model.TransformationInputs;
 import org.opentosca.toscana.retrofit.model.TransformationProperty;
 import org.opentosca.toscana.retrofit.util.TOSCAnaServerException;
 
@@ -23,19 +23,19 @@ public class UserInputIT extends BaseSpringIntegrationTest {
     private ToscanaApi api;
     private String csarName = "lamp";
     private String platformId = new CloudFoundryPlugin().getPlatform().id;
-    private TransformationProperties properties;
+    private TransformationInputs properties;
 
     @Before
     public void setUp() throws IOException, TOSCAnaServerException {
         this.api = new BlockingToscanaApi(getHttpUrl());
         api.uploadCsar(csarName, TestCsars.VALID_LAMP_INPUT);
         api.createTransformation(csarName, platformId);
-        properties = api.getProperties(csarName, platformId);
+        properties = api.getInputs(csarName, platformId);
     }
 
     @Test
     public void transformationWithModelInputs() throws IOException, TOSCAnaServerException {
-        for (TransformationProperty property : properties.getProperties()) {
+        for (TransformationProperty property : properties.getInputs()) {
             property.setValue("1");
         }
         api.updateProperties(csarName, platformId, properties);
@@ -45,12 +45,12 @@ public class UserInputIT extends BaseSpringIntegrationTest {
 
     @Test
     public void setInputsToNullTest() throws IOException, TOSCAnaServerException {
-        this.properties.getProperties().stream().forEach(p -> p.setValue(null));
+        this.properties.getInputs().stream().forEach(p -> p.setValue(null));
         api.updateProperties(csarName, platformId, properties);
-        TransformationProperties newProperties = api.getProperties(csarName, platformId);
-        for (int i = 0; i < this.properties.getProperties().size(); i++) {
-            assertEquals(this.properties.getProperties().get(i).getValue(),
-                newProperties.getProperties().get(i).getValue());
+        TransformationInputs newProperties = api.getInputs(csarName, platformId);
+        for (int i = 0; i < this.properties.getInputs().size(); i++) {
+            assertEquals(this.properties.getInputs().get(i).getValue(),
+                newProperties.getInputs().get(i).getValue());
         }
     }
 }

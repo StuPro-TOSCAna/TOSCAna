@@ -15,7 +15,7 @@ import org.opentosca.toscana.retrofit.model.LogEntry;
 import org.opentosca.toscana.retrofit.model.Platform;
 import org.opentosca.toscana.retrofit.model.Transformation;
 import org.opentosca.toscana.retrofit.model.TransformationLogs;
-import org.opentosca.toscana.retrofit.model.TransformationProperties;
+import org.opentosca.toscana.retrofit.model.TransformationInputs;
 import org.opentosca.toscana.retrofit.model.TransformationProperty;
 import org.opentosca.toscana.retrofit.model.TransformerStatus;
 import org.opentosca.toscana.retrofit.model.embedded.CsarResources;
@@ -346,11 +346,11 @@ public class ApiController {
      @return output for the CLI
      */
     public String inputList(String csar, String plat) {
-        TransformationProperties propertiesList;
+        TransformationInputs propertiesList;
         StringBuilder stringProperties = new StringBuilder();
         try {
-            propertiesList = toscanaApi.getProperties(csar, plat);
-            List<TransformationProperty> list = propertiesList.getProperties();
+            propertiesList = toscanaApi.getInputs(csar, plat);
+            List<TransformationProperty> list = propertiesList.getInputs();
             if (list != null) {
                 for (TransformationProperty p : list) {
                     stringProperties.append(p.getKey()).append(", ")
@@ -391,7 +391,7 @@ public class ApiController {
             p.setValue(mapEntry.getValue());
             properties.add(p);
         }
-        TransformationProperties sendProp = new TransformationProperties(properties);
+        TransformationInputs sendProp = new TransformationInputs(properties);
 
         //get Return of the update if it was successfull
         Map<String, Boolean> propertiesReturn;

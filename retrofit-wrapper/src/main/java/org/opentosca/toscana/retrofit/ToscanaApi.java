@@ -12,13 +12,13 @@ import org.opentosca.toscana.retrofit.model.ServerError;
 import org.opentosca.toscana.retrofit.model.Transformation;
 import org.opentosca.toscana.retrofit.model.TransformationLogs;
 import org.opentosca.toscana.retrofit.model.TransformationOutputs;
-import org.opentosca.toscana.retrofit.model.TransformationProperties;
+import org.opentosca.toscana.retrofit.model.TransformationInputs;
 import org.opentosca.toscana.retrofit.model.TransformerStatus;
 import org.opentosca.toscana.retrofit.model.embedded.CsarResources;
 import org.opentosca.toscana.retrofit.model.embedded.PlatformResources;
 import org.opentosca.toscana.retrofit.model.embedded.TransformationResources;
 import org.opentosca.toscana.retrofit.model.hal.HALResource;
-import org.opentosca.toscana.retrofit.service.TOSCAnaAPIService;
+import org.opentosca.toscana.retrofit.service.ToscanaApiService;
 import org.opentosca.toscana.retrofit.util.LoggingMode;
 import org.opentosca.toscana.retrofit.util.RetrofitLoggerWrapper;
 import org.opentosca.toscana.retrofit.util.TOSCAnaServerException;
@@ -46,7 +46,7 @@ public class ToscanaApi {
 
     private String url;
     private Retrofit retrofit;
-    private TOSCAnaAPIService apiService;
+    private ToscanaApiService apiService;
 
     private ObjectMapper objectMapper;
 
@@ -77,7 +77,7 @@ public class ToscanaApi {
             .build();
         //Create the service
         logger.debug("Creating TOSCAna API service");
-        this.apiService = retrofit.create(TOSCAnaAPIService.class);
+        this.apiService = retrofit.create(ToscanaApiService.class);
 
         //Create the Jackson Object Mapper used by this class
         this.objectMapper = new ObjectMapper();
@@ -173,9 +173,9 @@ public class ToscanaApi {
         return performCall(apiService.getTransformationLogs(csarName, platform, start));
     }
 
-    public TransformationProperties getProperties(String csarName, String platform)
+    public TransformationInputs getInputs(String csarName, String platform)
         throws IOException, TOSCAnaServerException {
-        return performCall(apiService.getProperties(csarName, platform));
+        return performCall(apiService.getInputs(csarName, platform));
     }
     
     public TransformationOutputs getOutputs(String csarName, String platform)
@@ -186,21 +186,21 @@ public class ToscanaApi {
     public Map<String, Boolean> updateProperties(
         String csarName,
         String platform,
-        TransformationProperties props
+        TransformationInputs props
     ) throws IOException, TOSCAnaServerException {
-        Call<ResponseBody> call = apiService.updateProperties(csarName, platform, props);
+        Call<ResponseBody> call = apiService.setProperties(csarName, platform, props);
         Response<ResponseBody> response = call.execute();
         if (response.code() == 400) {
             return objectMapper.readValue(response.errorBody().string(), Map.class);
         } else if (response.code() == 406) {
-            TransformationProperties properties =
-                objectMapper.readValue(response.errorBody().string(), TransformationProperties.class);
+            TransformationInputs properties =
+                objectMapper.readValue(response.errorBody().string(), TransformationInputs.class);
             Map<String, Boolean> validPropsMap = new HashMap<>();
-            properties.getProperties().forEach(e -> validPropsMap.put(e.getKey(), e.isValid()));
+            properties.getInputs().forEach(e -> validPropsMap.put(e.getKey(), e.isValid()));
             return validPropsMap;
         } else if (response.isSuccessful()) {
             Map<String, Boolean> result = new HashMap<>();
-            props.getProperties()
+            props.getInputs()
                 .forEach(transformationProperty -> result.put(transformationProperty.getKey(), true));
             return result;
         } else {

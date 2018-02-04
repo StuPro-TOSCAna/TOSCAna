@@ -5,9 +5,9 @@ import java.util.Map;
 import org.opentosca.toscana.retrofit.model.Csar;
 import org.opentosca.toscana.retrofit.model.Platform;
 import org.opentosca.toscana.retrofit.model.Transformation;
+import org.opentosca.toscana.retrofit.model.TransformationInputs;
 import org.opentosca.toscana.retrofit.model.TransformationLogs;
 import org.opentosca.toscana.retrofit.model.TransformationOutputs;
-import org.opentosca.toscana.retrofit.model.TransformationProperties;
 import org.opentosca.toscana.retrofit.model.TransformerStatus;
 import org.opentosca.toscana.retrofit.model.embedded.CsarResources;
 import org.opentosca.toscana.retrofit.model.embedded.PlatformResources;
@@ -27,7 +27,7 @@ import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
-public interface TOSCAnaAPIService {
+public interface ToscanaApiService {
     @DELETE("/api/csars/{csarName}/delete")
     Call<ResponseBody> deleteCsar(
         @Path("csarName") String name
@@ -96,8 +96,8 @@ public interface TOSCAnaAPIService {
         @Path("platform") String platform
     );
 
-    @GET("/api/csars/{csarName}/transformations/{platform}/properties")
-    Call<TransformationProperties> getProperties(
+    @GET("/api/csars/{csarName}/transformations/{platform}/inputs")
+    Call<TransformationInputs> getInputs(
         @Path("csarName") String csarName,
         @Path("platform") String platform
     );
@@ -108,11 +108,11 @@ public interface TOSCAnaAPIService {
         @Path("platform") String platform
     );
 
-    @PUT("/api/csars/{csarName}/transformations/{platform}/properties")
-    Call<ResponseBody> updateProperties(
+    @PUT("/api/csars/{csarName}/transformations/{platform}/inputs")
+    Call<ResponseBody> setProperties(
         @Path("csarName") String csarName,
         @Path("platform") String platform,
-        @Body TransformationProperties body
+        @Body TransformationInputs body
     );
 
     @Multipart
@@ -121,5 +121,4 @@ public interface TOSCAnaAPIService {
         @Part MultipartBody.Part body,
         @Path("name") String name
     );
-
 }

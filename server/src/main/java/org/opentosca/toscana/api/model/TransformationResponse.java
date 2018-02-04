@@ -43,8 +43,8 @@ public class TransformationResponse extends HiddenResourceSupport {
         this.add(ControllerLinkBuilder.linkTo(methodOn(PlatformController.class)
             .getPlatform(platform)).withRel("platform"));
         this.add(linkTo(methodOn(TransformationController.class)
-            .getTransformationProperties(csarName, platform))
-            .withRel("properties").expand(csarName));
+            .getInputs(csarName, platform))
+            .withRel("inputs").expand(csarName));
         this.add(linkTo(methodOn(TransformationController.class)
             .deleteTransformation(csarName, platform))
             .withRel("delete").expand(csarName));

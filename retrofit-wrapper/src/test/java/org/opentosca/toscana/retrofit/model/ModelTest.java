@@ -10,7 +10,7 @@ import org.opentosca.toscana.retrofit.model.embedded.PlatformResources;
 import org.opentosca.toscana.retrofit.model.embedded.TransformationResources;
 import org.opentosca.toscana.retrofit.model.validation.CsarsValidator;
 import org.opentosca.toscana.retrofit.model.validation.ErrorValidator;
-import org.opentosca.toscana.retrofit.model.validation.GetPropertiesValidator;
+import org.opentosca.toscana.retrofit.model.validation.GetInputsValidator;
 import org.opentosca.toscana.retrofit.model.validation.HealthValidator;
 import org.opentosca.toscana.retrofit.model.validation.IModelValidator;
 import org.opentosca.toscana.retrofit.model.validation.LogValidator;
@@ -54,7 +54,7 @@ public class ModelTest {
     @Parameters(name = "{index}: {3}")
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][] {
-            {"json/get_properties.json", TransformationProperties.class, new GetPropertiesValidator(), "Get Properties"},
+            {"json/get_inputs.json", TransformationInputs.class, new GetInputsValidator(), "Get Properties"},
             {"json/logs.json", TransformationLogs.class, new LogValidator(), "Log"},
             {"json/health.json", TransformerStatus.class, new HealthValidator(), "Health"},
             {"json/metrics.json", Map.class, new MetricsValidator(), "Metrics Model"},
@@ -62,7 +62,7 @@ public class ModelTest {
             {"json/platforms.json", PlatformResources.class, new PlatformsValidator(), "Platforms"},
             {"json/csars.json", CsarResources.class, new CsarsValidator(), "Csars Model"},
             {"json/regular_error.json", ServerError.class, new ErrorValidator(false), "Regular Error"},
-            {"json/parse_error.json", ServerError.class, new ErrorValidator(true), "Parsing Error"}
+            {"json/parse_error.json", ServerError.class, new ErrorValidator(true),"Parsing Error"}
         });
     }
 

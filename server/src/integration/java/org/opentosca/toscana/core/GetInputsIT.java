@@ -12,7 +12,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class GetPropertiesIT extends BaseSpringIntegrationTest {
+public class GetInputsIT extends BaseSpringIntegrationTest {
 
     /**
      Tests whether transformation inputs can be retrieved when the Transformation reached state DONE or ERROR.
@@ -26,6 +26,6 @@ public class GetPropertiesIT extends BaseSpringIntegrationTest {
         api.createTransformation(csarName, platformId);
         api.startTransformation(csarName, platformId);
         assertEquals(Transformation.TransformationState.DONE, api.getTransformation(csarName, platformId).getState());
-        api.getProperties(csarName, platformId);
+        api.getInputs(csarName, platformId);
     }
 }

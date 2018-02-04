@@ -13,7 +13,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class PropertyValidationIT extends BaseSpringIntegrationTest {
+public class InputValidationIT extends BaseSpringIntegrationTest {
 
     /**
      Input properties marked as required but having a default value result in state READY

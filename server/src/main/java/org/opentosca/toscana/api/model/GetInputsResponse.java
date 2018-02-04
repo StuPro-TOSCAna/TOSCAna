@@ -13,18 +13,18 @@ import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 @ApiModel
-public class GetPropertiesResponse extends HiddenResourceSupport {
+public class GetInputsResponse extends HiddenResourceSupport {
 
-    private final List<PropertyWrap> properties;
+    private final List<PropertyWrap> inputs;
 
-    public GetPropertiesResponse(
+    public GetInputsResponse(
         String csarName,
         String platformName,
-        @JsonProperty("properties") List<PropertyWrap> properties
+        @JsonProperty("inputs") List<PropertyWrap> inputs
     ) {
-        this.properties = properties;
+        this.inputs = inputs;
         add(ControllerLinkBuilder.linkTo(methodOn(TransformationController.class)
-            .getTransformationProperties(null, null))
+            .getInputs(null, null))
             .withSelfRel().expand(csarName, platformName)
         );
     }
@@ -34,8 +34,8 @@ public class GetPropertiesResponse extends HiddenResourceSupport {
         notes = "The list of properties associated with this transformation, if this list is empty, the transformation " +
             "doesn't have any properties to set."
     )
-    @JsonProperty("properties")
-    public List<PropertyWrap> getProperties() {
-        return properties;
+    @JsonProperty("inputs")
+    public List<PropertyWrap> getInputs() {
+        return inputs;
     }
 }

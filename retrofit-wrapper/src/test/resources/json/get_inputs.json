@@ -1,37 +1,37 @@
 {
-    "properties": [
+    "inputs": [
         {
-            "key": "text_property",
+            "key": "text_input",
             "type": "text",
             "required": true,
             "description": ""
         },
         {
-            "key": "float_property",
+            "key": "float_input",
             "type": "float",
             "required": true,
             "description": ""
         },
         {
-            "key": "name_property",
+            "key": "name_input",
             "type": "name",
             "required": true,
             "description": ""
         },
         {
-            "key": "unsigned_integer_property",
+            "key": "unsigned_integer_input",
             "type": "unsigned_integer",
             "required": true,
             "description": ""
         },
         {
-            "key": "secret_property",
+            "key": "secret_input",
             "type": "secret",
             "required": true,
             "description": ""
         },
         {
-            "key": "integer_property",
+            "key": "integer_input",
             "type": "integer",
             "required": true,
             "description": ""
@@ -39,7 +39,7 @@
     ],
     "_links": {
         "self": {
-            "href": "http://localhost:8080/csars/mongo-db/transformations/p-a/properties"
+            "href": "http://localhost:8080/csars/mongo-db/transformations/p-a/input"
         }
     }
 }

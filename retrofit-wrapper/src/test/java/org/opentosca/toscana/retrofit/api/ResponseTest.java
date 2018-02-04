@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.Map;
 
 import org.opentosca.toscana.retrofit.model.ServerError;
-import org.opentosca.toscana.retrofit.model.TransformationProperties;
+import org.opentosca.toscana.retrofit.model.TransformationInputs;
 import org.opentosca.toscana.retrofit.model.TransformationProperty;
 import org.opentosca.toscana.retrofit.model.TransformationProperty.PropertyType;
 import org.opentosca.toscana.retrofit.model.TransformerStatus;
@@ -32,12 +32,12 @@ public class ResponseTest extends BaseToscanaApiTest {
     //TODO Consider fixing this test after the property update
     @Test
     public void setInvalidPropertiesTest() throws Exception {
-        enqueResponse("json/set_invalid_properties.json", 406, "application/json");
+        enqueResponse("json/set_invalid_inputs.json", 406, "application/json");
         TransformationProperty property = new TransformationProperty();
         property.setType(PropertyType.UNSIGNED_INTEGER);
         property.setKey("unsigned_integer");
         property.setValue("-11");
-        TransformationProperties properties = new TransformationProperties(Arrays.asList(property));
+        TransformationInputs properties = new TransformationInputs(Arrays.asList(property));
         Map<String, Boolean> res = api.updateProperties("test", "test", properties);
         assertEquals(false, res.get("unsigned_integer"));
     }

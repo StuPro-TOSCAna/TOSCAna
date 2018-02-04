@@ -6,7 +6,7 @@ import java.util.Set;
 import org.opentosca.toscana.core.plugin.TOSCAnaPlugin;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.core.transformation.platform.Platform;
-import org.opentosca.toscana.core.transformation.properties.PlatformProperty;
+import org.opentosca.toscana.core.transformation.properties.PlatformInput;
 import org.opentosca.toscana.core.transformation.properties.PropertyType;
 
 import com.amazonaws.auth.AWSCredentials;
@@ -31,7 +31,7 @@ public class CloudFormationPlugin extends TOSCAnaPlugin<CloudFormationLifecycle>
     private static Platform getPlatformDetails() {
         String platformId = "cloudformation";
         String platformName = "AWS CloudFormation";
-        Set<PlatformProperty> platformProperties = new HashSet<>();
+        Set<PlatformInput> platformProperties = new HashSet<>();
         String defaultKeyId = "";
         String defaultKeySecret = "";
         try {
@@ -43,21 +43,21 @@ public class CloudFormationPlugin extends TOSCAnaPlugin<CloudFormationLifecycle>
             logger.debug("Did not find credentials on the system");
         }
         String defaultRegion = AWS_REGION_DEFAULT;
-        platformProperties.add(new PlatformProperty(
+        platformProperties.add(new PlatformInput(
             AWS_REGION_KEY,
             PropertyType.TEXT,
             "The AWS Region this should be transformed to. (The imageId of possible EC2 machines depend on this)",
             true,
             defaultRegion
         ));
-        platformProperties.add(new PlatformProperty(
+        platformProperties.add(new PlatformInput(
             AWS_ACCESS_KEY_ID_KEY,
             PropertyType.TEXT,
             "The Access key id",
             true,
             defaultKeyId
         ));
-        platformProperties.add(new PlatformProperty(
+        platformProperties.add(new PlatformInput(
             AWS_SECRET_KEY_KEY,
             PropertyType.SECRET,
             "The Access key secret",
