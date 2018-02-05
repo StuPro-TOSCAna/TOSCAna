@@ -159,7 +159,7 @@ public class CsarController {
         ),
         @ApiResponse(
             code = 406,
-            message = "cSAR upload rejected - given ID already in use",
+            message = "CSAR upload rejected - given ID already in use",
             response = Void.class
         ),
         @ApiResponse(
