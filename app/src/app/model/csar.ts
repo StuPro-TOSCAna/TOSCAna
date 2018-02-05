@@ -1,19 +1,21 @@
 import {Transformation} from './transformation';
 import {isNullOrUndefined} from 'util';
-import {TransformationResponse} from '../api';
+import {LifecyclePhase, TransformationResponse} from '../api';
 import StateEnum = TransformationResponse.StateEnum;
 
 export class Csar {
     name: string;
     transformations: Transformation[];
+    phases: Array<LifecyclePhase>;
 
-    constructor(name: string, transformations: Transformation[]) {
+    constructor(name: string, phases: Array<LifecyclePhase>, transformations: Transformation[]) {
         this.name = name;
         if (isNullOrUndefined(transformations)) {
             this.transformations = [];
         } else {
             this.transformations = transformations;
         }
+        this.phases = phases;
     }
 
     public addTransformation(platform: string, platformFullName: string) {

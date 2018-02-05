@@ -4,8 +4,10 @@
 nav {
     margin-bottom: 10px;
 }
-
-.left {
-    border-right: 1px solid $secondary;
+.bg-dark {
+    background-color: #FEA94E !important;
+}
+.left-border {
+    border-left: 1px solid $secondary;
 }
 

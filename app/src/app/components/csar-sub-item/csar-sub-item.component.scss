@@ -1,10 +1,19 @@
-
+.btn-outline-secondary:hover {
+    background-color: #FAA875;
+    border-color: #FAA875;
+}
+.btn-outline-secondary:not(:disabled):not(.disabled).active{
+    background-color: #FA6305;
+    border-color: #FA6305;
+}
 .item {
     display: flex;
     align-items: center;
     border-radius: 0;
     position: relative;
-    width: 100%;
+    width: 90%;
+    line-height: 1;
+    float: right;
     text-align: left;
     margin-bottom: 5px;
     .button {
@@ -24,7 +33,7 @@
     }
 
     .fa {
-        font-size: 22px;
+        font-size: 18px;
     }
 
 }

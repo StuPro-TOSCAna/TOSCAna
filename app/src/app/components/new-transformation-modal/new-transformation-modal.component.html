@@ -20,15 +20,7 @@
 </div>
 
 <nav class="navbar navbar-dark bg-dark">
-    <div *ngIf="!platformSelected" class="place-holder"><i class="fa fa-times"
-                                                           aria-hidden="true"></i></div>
-    <div *ngIf="platformSelected" (click)="toogle()" class="back-button"><i class="fa fa-chevron-left"
-                                                                            aria-hidden="true"></i></div>
     <div class="navbar-brand">{{title}}</div>
-    <!--TODO readd click this-->
-    <div  class="back-button"><i class="fa fa-times"
-                                                            aria-hidden="true"></i>
-    </div>
 </nav>
 <div *ngIf="notNullOrUndefined(csar)">
     <div *ngIf="!platformSelected" class="target-platforms">

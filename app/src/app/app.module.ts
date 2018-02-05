@@ -17,15 +17,18 @@ import {NewTransformationModalComponent} from './components/new-transformation-m
 import {PlatformsProvider} from './providers/platforms/platforms.provider';
 import {InputComponent} from './components/input/input.component';
 import {TransformationsProvider} from './providers/transformations/transformations.provider';
-import { LogComponent } from './components/log/log.component';
+import {LogComponent} from './components/log/log.component';
 import {RouteHandler} from './handler/route/route.service';
+import {CsarViewComponent} from './components/csar-view/csar-view.component';
+import { MessageComponent } from './components/message/message.component';
+import {MessageService} from './providers/message/message.service';
 
 @NgModule({
-    entryComponents: [NewTransformationModalComponent],
+    entryComponents: [],
     declarations: [AppComponent, MainViewComponent,
-        CsarItemComponent, CsarSubItemComponent, TransformationViewComponent, NewTransformationModalComponent, InputComponent, LogComponent],
+        CsarItemComponent, CsarSubItemComponent, TransformationViewComponent, NewTransformationModalComponent, InputComponent, LogComponent, CsarViewComponent, MessageComponent],
     imports: [BrowserModule, ApiModule.forRoot(apiConfig), RoutingModule, AngularFilePickerModule, FormsModule, ModalModule.forRoot()],
-    providers: [CsarProvider, PlatformsProvider, TransformationsProvider, RouteHandler],
+    providers: [CsarProvider, PlatformsProvider, TransformationsProvider, RouteHandler, MessageService],
     bootstrap: [AppComponent]
 })
 export class AppModule {

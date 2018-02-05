@@ -1,11 +1,16 @@
-<nav class="navbar navbar-dark bg-dark">
+<app-message></app-message>
+<nav class="navbar navbar-dark bg-secondary">
     <a class="navbar-brand" href="#">TOSCAna</a>
 </nav>
 
 
 <div class="container-fluid">
     <div class="row">
-        <div [className]="mainView"><app-main-view [split]="split" class="center"></app-main-view></div>
-        <div [className]="splitPane"><router-outlet></router-outlet></div>
+        <div [ngClass]="{'col-sm-5': listNotEmpty, 'col':!listNotEmpty}">
+            <app-main-view [csars]="csars" class="center"></app-main-view>
+        </div>
+        <div [ngClass]="{'col': listNotEmpty, 'left-border':listNotEmpty}">
+            <router-outlet class="router"></router-outlet>
+        </div>
     </div>
 </div>

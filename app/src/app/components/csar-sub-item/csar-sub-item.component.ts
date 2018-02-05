@@ -1,8 +1,7 @@
 import {Router} from '@angular/router';
 import {Component, Input, OnInit} from '@angular/core';
 import {Csar} from '../../model/csar';
-import {ActiveTransformation, RouteHandler} from '../../handler/route/route.service';
-import {isNullOrUndefined} from 'util';
+import {RouteHandler, TransformationOpen} from '../../handler/route/route.service';
 import {TransformationsProvider} from '../../providers/transformations/transformations.provider';
 import {CsarProvider} from '../../providers/csar/csar.provider';
 
@@ -13,34 +12,36 @@ import {CsarProvider} from '../../providers/csar/csar.provider';
 })
 export class CsarSubItemComponent implements OnInit {
     @Input() csar: Csar;
-    activeTransformation: ActiveTransformation;
+    viewState: TransformationOpen;
+    activePlatform = '';
 
     constructor(private router: Router, private csarProvider: CsarProvider, private transformationProvider: TransformationsProvider,
                 private routeHandler: RouteHandler) {
     }
 
     ngOnInit() {
-        this.routeHandler.transformations.subscribe(data => {
-            this.activeTransformation = data;
+        this.routeHandler.viewState.subscribe(data => {
+            if (data instanceof TransformationOpen) {
+                this.viewState = data;
+                console.log('update platform');
+                if (this.viewState.csarId === this.csar.name) {
+                    this.activePlatform = this.viewState.platform;
+                }
+            } else {
+                this.activePlatform = '';
+            }
         });
     }
 
-    deleteTransformation() {
-        this.routeHandler.close();
-        this.transformationProvider.deleteTransformation(this.csar.name, this.activeTransformation.platform).subscribe(() => {
-            const transformation = this.csar.transformations.find(item => item.platform === this.activeTransformation.platform);
+    deleteTransformation(platform: string) {
+        console.log(platform);
+        this.transformationProvider.deleteTransformation(this.csar.name, platform).subscribe(() => {
+            const transformation = this.csar.transformations.find(item => item.platform === platform);
             const pos = this.csar.transformations.indexOf(transformation);
-            this.csar.transformations.slice(pos, 1);
+            this.csar.transformations.splice(pos, 1);
             this.csarProvider.updateCsar(this.csar);
+            this.routeHandler.openCsar(this.csar.name);
         });
-    }
-
-    isActive(platform: string) {
-        if (!isNullOrUndefined(this.activeTransformation)) {
-            return this.activeTransformation.platform === platform
-                && this.activeTransformation.csarId === this.csar.name;
-        }
-        return false;
     }
 
     gotoTransformation(platform: string) {

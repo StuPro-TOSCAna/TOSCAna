@@ -19,7 +19,7 @@ export class InputComponent implements OnInit {
     selectedPlatform: string;
     csarId: string;
     invalid = 'invalid';
-    properties: InputWrap[] = [];
+    inputs: InputWrap[] = [];
     errorMsg = false;
     csar: Csar;
     transformation: Transformation;
@@ -29,16 +29,6 @@ export class InputComponent implements OnInit {
                 private csarsProvider: CsarProvider,
                 private platformsProvider: PlatformsProvider,
                 private route: ActivatedRoute) {
-    }
-
-    close() {
-        if (this.routeHandler.inputLazyLoad) {
-            this.routeHandler.openTransformation(this.csarId, this.selectedPlatform);
-        } else {
-            this.transformationsProvider.deleteTransformation(this.csarId, this.selectedPlatform);
-            this.csarsProvider.loadCsars();
-            this.routeHandler.newTransformation(this.csarId);
-        }
     }
 
     validateProperty(item: InputWrap) {
@@ -88,18 +78,20 @@ export class InputComponent implements OnInit {
     }
 
     async submit() {
-        await this.transformationsProvider.setTransformationProperties(this.csarId, this.selectedPlatform, this.properties).then(result => {
+        await this.transformationsProvider.setTransformationProperties(this.csarId, this.selectedPlatform, this.inputs).then(result => {
             this.onSubmit();
         }, err => {
             console.log(err);
             if (err.status === 406) {
-                console.log(this.properties);
-                this.properties = err.error.properties;
-                console.log(this.properties);
+                console.log(this.inputs);
+                this.inputs = err.error.inputs;
+                console.log(this.inputs);
             }
+            console.log(err);
             this.errorMsg = true;
         });
     }
+
 
     async ngOnInit() {
         this.routeHandler.setUp();
@@ -113,15 +105,14 @@ export class InputComponent implements OnInit {
             });
             return this.transformationsProvider.getTransformationProperties(this.csarId, this.selectedPlatform);
         }).subscribe(data => {
-            this.properties = data.inputs;
-            console.log(this.properties);
+            this.inputs = data.inputs;
             this.checkIfEverythingIsValid();
         }, err => console.log(err));
     }
 
     private checkIfEverythingIsValid() {
         this.everythingValid = true;
-        for (const property of this.properties) {
+        for (const property of this.inputs) {
             if (!property.valid) {
                 this.everythingValid = false;
             }

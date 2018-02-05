@@ -1,10 +1,10 @@
 import {Component, Input, OnInit} from '@angular/core';
 import 'rxjs/add/observable/combineLatest';
 import {Csar} from '../../model/csar';
-import {NewTransformationModalComponent} from '../new-transformation-modal/new-transformation-modal.component';
-import {BsModalRef, BsModalService} from 'ngx-bootstrap';
+import {BsModalRef} from 'ngx-bootstrap';
 import {CsarProvider} from '../../providers/csar/csar.provider';
-import {RouteHandler} from '../../handler/route/route.service';
+import {RouteHandler, ViewState} from '../../handler/route/route.service';
+import {isNullOrUndefined} from 'util';
 
 @Component({
     selector: 'app-csar-item',
@@ -13,8 +13,9 @@ import {RouteHandler} from '../../handler/route/route.service';
 })
 export class CsarItemComponent implements OnInit {
     @Input() csar: Csar;
-    openItems: string[] = [];
     modalRef: BsModalRef;
+    viewState: ViewState;
+    active = false;
     config = {
         animated: true,
         keyboard: false,
@@ -26,30 +27,26 @@ export class CsarItemComponent implements OnInit {
     constructor(private routeHandler: RouteHandler, private csarProvider: CsarProvider) {
     }
 
-    public collapse(csarId: string) {
-        this.routeHandler.toogleCsar(csarId);
-    }
-
-    isCollapsed(csarId: string) {
-        return this.openItems.lastIndexOf(csarId) === -1;
+    public open() {
+        this.routeHandler.openCsar(this.csar.name);
     }
 
     newTransformation() {
+        this.routeHandler.setUpCsar(this.csar.name);
         this.routeHandler.newTransformation(this.csar.name);
     }
 
     deleteCsar() {
+        this.routeHandler.closeCsar();
         this.csarProvider.deleteCsar(this.csar.name);
-        this.routeHandler.transformations.subscribe(data => {
-            if (data.csarId === this.csar.name) {
-                this.routeHandler.close();
-            }
-        });
     }
 
     ngOnInit() {
-        this.routeHandler.csars.subscribe(data => {
-            this.openItems = data;
+        this.routeHandler.viewState.subscribe(data => {
+            if (!isNullOrUndefined(data)) {
+                this.viewState = data;
+                this.active = this.viewState.csarId === this.csar.name;
+            }
         });
     }
 }

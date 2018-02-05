@@ -2,7 +2,6 @@ import {Csar} from './../../model/csar';
 import {CsarsService} from './../../api/api/csars.service';
 import {Injectable} from '@angular/core';
 import {PlatformsProvider} from '../platforms/platforms.provider';
-import {log} from 'util';
 import {Transformation} from '../../model/transformation';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Helper} from '../../helper/helper';
@@ -10,6 +9,8 @@ import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/map';
 import {CsarResponse} from '../../api';
 import {Observable} from 'rxjs/Observable';
+import {MessageService} from '../message/message.service';
+import {ErrorMessage} from '../../model/message';
 
 @Injectable()
 export class CsarProvider {
@@ -22,7 +23,7 @@ export class CsarProvider {
     };
     private requested = false;
 
-    constructor(public csarService: CsarsService, private platformsProvider: PlatformsProvider) {
+    constructor(private messageService: MessageService, public csarService: CsarsService, private platformsProvider: PlatformsProvider) {
         this.dataStore = {csars: []};
         this._csars = <BehaviorSubject<Csar[]>>new BehaviorSubject([]);
     }
@@ -54,7 +55,7 @@ export class CsarProvider {
             this.res.subscribe(data => {
                 data.then(csarResult => {
                     this.dataStore.csars = csarResult;
-                    this._csars.next(Object.assign({}, this.dataStore).csars);
+                    this.updateSubject();
                     this.loading = true;
                 });
             }, err => console.log(err));
@@ -69,7 +70,7 @@ export class CsarProvider {
             if (transformationsPromise._embedded !== undefined) {
                 this.addFullNameToTransformations(transformationsPromise, transformations);
             }
-            const csarObject = new Csar(csar.name, transformations);
+            const csarObject = new Csar(csar.name, csar.phases, transformations);
             res.push(csarObject);
         }
         return res;
@@ -95,7 +96,7 @@ export class CsarProvider {
             this.updateSubject();
             console.log(csar);
         }, error => {
-            log(error);
+            this.messageService.add(new ErrorMessage('fail'));
         });
     }
 
@@ -106,12 +107,16 @@ export class CsarProvider {
             }
             this.updateSubject();
         });
+    }
 
-
+    addEmptyTransformationToCsar(csarId, platform: string) {
+        const res = this.dataStore.csars.find(csar => csar.name = csarId);
+        const fullName = this.platformsProvider.getFullPlatformName(platform);
+        res.addTransformation(platform, fullName);
+        this.updateSubject();
     }
 
     private updateSubject() {
-        console.log('next');
         this._csars.next((Object.assign({}, this.dataStore).csars));
     }
 
@@ -120,7 +125,19 @@ export class CsarProvider {
         return promise.toPromise();
     }
 
+
+    getCsarByName(csarId: string) {
+        return this.csarService.getCSARInfoUsingGET(csarId).map(async data => {
+            let res = await this.createCsarWithTransformations([data]);
+            return res[0];
+        });
+    }
+
     getCsarById(csarId: string): Csar {
         return this.dataStore.csars.find(csar => csar.name === csarId);
+    }
+
+    getLogs(csarId: string, last: number) {
+        return this.csarService.getLogsUsingGET(csarId, last);
     }
 }
