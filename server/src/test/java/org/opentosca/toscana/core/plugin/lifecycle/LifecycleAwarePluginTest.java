@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
@@ -35,6 +36,9 @@ public class LifecycleAwarePluginTest extends BaseUnitTest {
 
     private TestTransformationLifecycle lifecycle;
 
+    private boolean checkEnvironment = true;
+    private boolean checkModel = true;
+
     private LifecycleTestPlugin plugin;
     private Platform platform;
 
@@ -43,8 +47,9 @@ public class LifecycleAwarePluginTest extends BaseUnitTest {
         Csar csar = new CsarImpl(tmpdir, "csarId", logMock());
         Transformation t = new TransformationImpl(csar, TestPlugins.PLATFORM1, logMock(), mock(EffectiveModel.class));
         context = spy(new TransformationContext(t, tmpdir));
+        doReturn(false).when(context).performDeployment();
         lifecycle = spy(new TestTransformationLifecycle(context));
-        lifecycle.checkModel = true;
+        checkModel = true;
         plugin = new LifecycleTestPlugin(TestPlugins.PLATFORM1);
     }
 
@@ -53,7 +58,7 @@ public class LifecycleAwarePluginTest extends BaseUnitTest {
         when(context.performDeployment()).thenReturn(true);
         plugin = new LifecycleTestPlugin(new Platform("test", "test", true, new HashSet<>()));
         lifecycle = spy(new TestTransformationLifecycle(context));
-        lifecycle.checkModel = true;
+        checkModel = true;
         plugin.transform(lifecycle);
         verify(lifecycle, times(1)).deploy();
     }
@@ -68,7 +73,7 @@ public class LifecycleAwarePluginTest extends BaseUnitTest {
 
     @Test
     public void checkEnvFailure() throws Exception {
-        lifecycle.checkEnvironment = false;
+        checkEnvironment = false;
         plugin = new LifecycleTestPlugin(TestPlugins.PLATFORM4);
         try {
             plugin.transform(lifecycle);
@@ -82,7 +87,7 @@ public class LifecycleAwarePluginTest extends BaseUnitTest {
 
     @Test
     public void checkModelFailure() throws Exception {
-        lifecycle.checkModel = false;
+        checkModel = false;
         try {
             plugin.transform(lifecycle);
         } catch (ValidationFailureException e) {
@@ -114,41 +119,41 @@ public class LifecycleAwarePluginTest extends BaseUnitTest {
     }
 
     private class TestTransformationLifecycle extends AbstractLifecycle {
-
-        boolean checkEnvironment = true;
-        boolean checkModel = true;
-
+        
         public TestTransformationLifecycle(TransformationContext context) throws IOException {
             super(context);
         }
 
         @Override
         public boolean checkEnvironment() {
+            System.out.println("Check Env");
             return checkEnvironment;
         }
 
         @Override
         public boolean checkModel() {
+            System.out.println("Check Model");
             return checkModel;
         }
 
         @Override
         public void prepare() throws NoSuchPropertyException {
-
+            System.out.println("Prepare");
         }
 
         @Override
         public void transform() {
-
+            System.out.println("Transform");
         }
 
         @Override
         public void cleanup() {
-
+            System.out.println("Cleanup");
         }
 
         @Override
         public void deploy() {
+            System.out.println("Deploy");
         }
     }
 }
