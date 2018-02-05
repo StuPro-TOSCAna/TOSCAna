@@ -43,13 +43,14 @@ public class CloudFoundryLampIT extends BaseTransformTest {
 
     @Override
     protected EffectiveModel getModel() throws Exception {
-        return new EffectiveModelFactory().create(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, logMock());
+        //return new EffectiveModelFactory().create(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, logMock());
+        return new EffectiveModelFactory().create(TestCsars.VALID_LAMP_NO_INPUT_MULTI_COMPUTE_TEMPLATE, logMock());
     }
 
     @Override
     protected void onSuccess(File outputDir) throws Exception {
-        //System.out.println("You can stop me now");
-        //Thread.sleep(5000);
+        System.out.println("You can stop me now");
+        Thread.sleep(5000);
     }
 
     @Override

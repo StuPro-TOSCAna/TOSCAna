@@ -1,5 +1,6 @@
 package org.opentosca.toscana.plugins.cloudfoundry;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,6 +28,7 @@ import org.opentosca.toscana.plugins.kubernetes.util.NodeStack;
 import org.opentosca.toscana.plugins.kubernetes.visitor.check.NodeTypeCheckVisitor;
 import org.opentosca.toscana.plugins.kubernetes.visitor.check.OsCheckNodeVisitor;
 import org.opentosca.toscana.plugins.kubernetes.visitor.util.ComputeNodeFindingVisitor;
+import org.opentosca.toscana.plugins.util.TransformationFailureException;
 
 import org.jgrapht.Graph;
 import org.json.JSONException;
@@ -183,6 +185,8 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
         try {
             FileCreator fileCreator = new FileCreator(fileAccess, filledApplications, context);
             fileCreator.createFiles();
+        } catch (FileNotFoundException f) {
+            throw new TransformationFailureException("A file which is declared in the template could not be found", f);
         } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
