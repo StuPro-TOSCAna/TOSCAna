@@ -1,7 +1,6 @@
 package org.opentosca.toscana.plugins.kubernetes;
 
 import org.opentosca.toscana.core.BaseUnitTest;
-import org.opentosca.toscana.core.plugin.lifecycle.AbstractLifecycle;
 import org.opentosca.toscana.core.plugin.lifecycle.ValidationFailureException;
 import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.transformation.TransformationContext;

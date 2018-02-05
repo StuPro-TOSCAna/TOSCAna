@@ -121,7 +121,7 @@ public class TransformationServiceImplTest extends BaseSpringTest {
         startTransformationInternal(TransformationState.ERROR, FAILING_WRITING_DUMMY.getPlatform());
     }
 
-//    @Test(timeout = TEST_EXECUTION_TIMEOUT_MS)
+    //    @Test(timeout = TEST_EXECUTION_TIMEOUT_MS)
     @Test
     public void executionStopWithSleep() throws Exception {
         Transformation t = service.createTransformation(csar, PASSING_DUMMY.getPlatform());

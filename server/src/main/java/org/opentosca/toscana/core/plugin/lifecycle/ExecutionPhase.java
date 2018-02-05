@@ -3,7 +3,6 @@ package org.opentosca.toscana.core.plugin.lifecycle;
 import java.util.function.Predicate;
 
 import org.opentosca.toscana.core.transformation.TransformationContext;
-import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.util.ExceptionAwareVoidFunction;
 
 import io.swagger.annotations.ApiModel;

@@ -7,13 +7,11 @@ import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarImpl;
 import org.opentosca.toscana.core.plugin.lifecycle.AbstractLifecycle;
 import org.opentosca.toscana.core.plugin.lifecycle.ToscanaPlugin;
-import org.opentosca.toscana.core.plugin.lifecycle.TransformationLifecycle;
 import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.core.transformation.TransformationImpl;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
 import org.opentosca.toscana.model.EffectiveModel;
-import org.opentosca.toscana.retrofit.model.Platform;
 
 import org.junit.Before;
 import org.junit.Test;

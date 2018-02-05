@@ -68,7 +68,7 @@ public class DeploymentPropertyTest extends BaseUnitTest {
                 instance.set(Platform.DEPLOY_AFTER_TRANSFORMATION_KEY, this.input);
             }
             Csar csar = new CsarImpl(input, "csarId", logMock());
-            Transformation t = new TransformationImpl(csar,platform, logMock(), mock(EffectiveModel.class));
+            Transformation t = new TransformationImpl(csar, platform, logMock(), mock(EffectiveModel.class));
             Transformation transformation = spy(t);
             when(transformation.getInputs()).thenReturn(instance);
             TransformationContext context = new TransformationContext(transformation, output);

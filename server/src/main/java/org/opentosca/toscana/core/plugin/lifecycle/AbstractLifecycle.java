@@ -86,7 +86,7 @@ public abstract class AbstractLifecycle implements TransformationLifecycle, Life
         List<ExecutionPhase> executionPhases = new ArrayList<>();
 
         //Environment validation
-        executionPhases.add(new ExecutionPhase<>("check environment", (e) ->{
+        executionPhases.add(new ExecutionPhase<>("check environment", (e) -> {
             if (!checkEnvironment()) {
                 throw new ValidationFailureException("Transformation Failed," +
                     " because the Environment check has failed!");

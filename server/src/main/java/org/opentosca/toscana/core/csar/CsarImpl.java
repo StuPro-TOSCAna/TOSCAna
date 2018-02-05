@@ -10,9 +10,9 @@ import java.util.Optional;
 
 import org.opentosca.toscana.core.parse.EntrypointDetector;
 import org.opentosca.toscana.core.parse.InvalidCsarException;
+import org.opentosca.toscana.core.plugin.lifecycle.LifecyclePhase;
 import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.logging.Log;
-import org.opentosca.toscana.core.plugin.lifecycle.LifecyclePhase;
 import org.opentosca.toscana.model.EffectiveModelFactory;
 
 import org.apache.commons.lang3.builder.HashCodeBuilder;
