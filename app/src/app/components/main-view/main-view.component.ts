@@ -1,10 +1,8 @@
 import {Csar} from './../../model/csar';
 import {CsarProvider} from '../../providers/csar/csar.provider';
-import {ChangeDetectorRef, Component, forwardRef, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, forwardRef, Input, OnInit, ViewChild} from '@angular/core';
 import {PickedFile} from 'angular-file-picker-fixed/picked-file';
 import {FilePickerDirective} from 'angular-file-picker-fixed';
-import {PlatformsProvider} from '../../providers/platforms/platforms.provider';
-import {log} from 'util';
 
 const b64toBlob = require('b64-to-blob');
 
@@ -14,29 +12,21 @@ const b64toBlob = require('b64-to-blob');
     styleUrls: ['./main-view.component.scss']
 })
 export class MainViewComponent implements OnInit {
-    @Input() split;
+    @Input() csars;
 
     @ViewChild(forwardRef(() =>
         FilePickerDirective)
     )
     private filePicker;
     public picked: PickedFile;
-    csars: Csar[] = [];
     upload = false;
     validFile = false;
     input = '';
 
-    constructor(private changeDetection: ChangeDetectorRef, public csarProvider: CsarProvider,
-                private platformsProvider: PlatformsProvider) {
+    constructor(public csarProvider: CsarProvider) {
     }
 
     async ngOnInit() {
-        await this.platformsProvider.loadPlatforms();
-        await this.csarProvider.loadCsars();
-        await this.csarProvider.csars.subscribe(csars => {
-            console.log(csars);
-            this.csars = <Csar[]> csars;
-        });
     }
 
 
@@ -62,7 +52,7 @@ export class MainViewComponent implements OnInit {
         if (this.input === '') {
             return;
         }
-        const csar = new Csar(this.input, null);
+        const csar = new Csar(this.input, [], null);
 
         const data = this.picked.content.split(',')[1];
         // noinspection TypeScriptValidateTypes
@@ -71,14 +61,6 @@ export class MainViewComponent implements OnInit {
         this.input = '';
         this.picked = null;
         this.toogle();
-    }
-
-    setFlexWrap() {
-        if (this.split) {
-            return {'flex-wrap': 'wrap'};
-        } else {
-            return '';
-        }
     }
 
     disableButton(validInput: boolean) {

@@ -1,36 +1,30 @@
 <nav class="navbar navbar-dark bg-dark">
-    <div class="place-holder"><i class="fa fa-times"
-                                 aria-hidden="true"></i></div>
     <div class="navbar-brand">Enter Inputs</div>
-    <div (click)="close()" class="back-button"><i class="fa fa-times"
-                                aria-hidden="true"></i>
-    </div>
 </nav>
 
 <form (ngSubmit)="submit()" #propertiesForm="ngForm">
-    <table class="table table-striped" *ngIf="properties.length > 0">
+    <table class="table table-striped" *ngIf="inputs.length > 0">
         <thead>
         <tr>
             <th scope="col">key</th>
             <th scope="col">type</th>
-            <th scope="col">required</th>
             <th scope="col">value</th>
+            <th scope="col">info</th>
         </tr>
         </thead>
         <tbody>
-        <tr *ngFor="let item of properties; let n=index">
+        <tr *ngFor="let item of inputs; let n=index">
             <td>{{item.key}}</td>
             <td>{{item.type}}</td>
-            <td>{{item.required}}</td>
-
             <td><input [value]="item.value"  (input)="change(item, $event.target.value)" name="item.key"
                        [ngClass]="{'invalid': !item.valid, 'valid':item.valid}"/>
             </td>
+        <td><i class="fa fa-info-circle"></i></td>
         </tr>
         </tbody>
     </table>
 
-    <div *ngIf="properties.length === 0">
+    <div *ngIf="inputs.length === 0">
         <h5>No properties needed for the given CSAR and platform.</h5>
     </div>
     <div class="alert alert-danger" role="alert" *ngIf="errorMsg">Some inputs are invalid please recheck.</div>

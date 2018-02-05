@@ -1,7 +1,38 @@
-.log-entry {
-    width: 100%;
+.log {
     font-family: monospace;
-    padding:2px 0px 2px 5px;
+    overflow-y: hidden;
+}
+.select-log-level {
+    font-size: 1.5em;
+    position: absolute;
+    right: 40px;
+    margin-top: 5px;
+    z-index: 100;
+}
+
+.first {
+    width: 200px;
+}
+
+.level {
+    padding-left: 0.7rem;
+    width:80px;
+    text-align: center;
+}
+.message {
+    word-break: break-all;
+}
+
+table {
+    table-layout: fixed;
+}
+
+td {
+    overflow: hidden;
+    width: auto;
+    padding: 0.1rem;
+    padding-left: 0.2rem;
+    padding-right: 0.75rem;
 }
 
 .log-entry:nth-child(odd) {

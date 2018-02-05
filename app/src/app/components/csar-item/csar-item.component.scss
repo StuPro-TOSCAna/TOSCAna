@@ -4,11 +4,15 @@
     flex-wrap: wrap;
 
     .sub-item {
-        margin-bottom: 10px;
+        margin-bottom: 5px;
     }
 }
-
+.btn-outline-primary:hover {
+    background-color: #4EA2FE;
+    border-color: #4EA2FE;
+}
 .item {
+    color: black;
     display: flex;
     align-items: center;
     border-radius: 0;

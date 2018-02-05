@@ -77,17 +77,11 @@ export class NewTransformationModalComponent implements OnInit {
 
     private async createNewTransformation(id: string) {
         await this.transformationProvider.createNewTransformation(this.csar.name, id);
-        this.toogle();
+        this.openInputs();
     }
 
-    toogle() {
+    openInputs() {
+        this.csarsProvider.addEmptyTransformationToCsar(this.csar.name, this.platform);
         this.routeHandler.openInputs(this.csar.name, this.platform);
-    }
-
-    onExit() {
-        if (this.platformSelected) {
-            this.deleteTransformation();
-        }
-        this.platformSelected = false;
     }
 }

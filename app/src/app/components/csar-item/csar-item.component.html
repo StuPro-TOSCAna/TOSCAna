@@ -1,6 +1,6 @@
 <div class="_container">
-    <div class="item btn btn-primary">
-        <div class="button" (click)="collapse(csar.name)">
+    <div class="item btn btn-outline-primary" [class.active]="active">
+        <div class="button" (click)="open()">
             <div class="icon">
                 <i class="fa fa-file-archive-o" aria-hidden="true"></i>
             </div>
@@ -11,5 +11,5 @@
             <i (click)="deleteCsar()" class="fa fa-trash" aria-hidden="true"></i>
         </div>
     </div>
-    <app-csar-sub-item class="sub-item" [hidden]="isCollapsed(csar.name)" [csar]="csar"></app-csar-sub-item>
+    <app-csar-sub-item [class.sub-item]="active" [hidden]="!active" [csar]="csar"></app-csar-sub-item>
 </div>
