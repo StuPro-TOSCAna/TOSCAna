@@ -1,6 +1,7 @@
 package org.opentosca.toscana.plugins.kubernetes;
 
 import org.opentosca.toscana.core.BaseUnitTest;
+import org.opentosca.toscana.core.plugin.lifecycle.AbstractLifecycle;
 import org.opentosca.toscana.core.plugin.lifecycle.ValidationFailureException;
 import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.transformation.TransformationContext;
@@ -36,6 +37,7 @@ public class KubernetesPluginTest extends BaseUnitTest {
     public void modelCheckTest() throws Exception {
         EffectiveModel singleComputeModel = new EffectiveModelFactory().create(TestCsars.VALID_SINGLE_COMPUTE_WINDOWS_TEMPLATE, logMock());
         TransformationContext context = setUpMockTransformationContext(singleComputeModel);
-        plugin.transform(context);
+        KubernetesLifecycle lifecycle = plugin.getInstance(context);
+        plugin.transform(lifecycle);
     }
 }

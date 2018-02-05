@@ -1,9 +1,10 @@
 package org.opentosca.toscana.core.testdata.dummyplugins;
 
+import org.opentosca.toscana.core.plugin.lifecycle.AbstractLifecycle;
 import org.opentosca.toscana.core.plugin.lifecycle.ToscanaPlugin;
-import org.opentosca.toscana.core.plugin.lifecycle.TransformationLifecycle;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.core.transformation.platform.Platform;
+import org.opentosca.toscana.core.transformation.properties.NoSuchPropertyException;
 
 import org.slf4j.Logger;
 
@@ -17,10 +18,11 @@ public class ExecutionDummyPlugin extends ToscanaPlugin {
     }
 
     @Override
-    public void transform(TransformationContext transformation) throws Exception {
-        Logger logger = transformation.getLogger(getClass());
+    public void transform(AbstractLifecycle lifecycle) throws Exception {
+        TransformationContext context = lifecycle.getContext();
+        Logger logger = context.getLogger(getClass());
         int i = 0;
-        transformation.getPluginFileAccess().access("some-output-file").append("some transformation result").close();
+        context.getPluginFileAccess().access("some-output-file").append("some transformation result").close();
         logger.info("Waiting 500ms until completion");
         while (!Thread.currentThread().isInterrupted() && i < 5) {
             Thread.sleep(100);
@@ -33,7 +35,27 @@ public class ExecutionDummyPlugin extends ToscanaPlugin {
     }
 
     @Override
-    protected TransformationLifecycle getInstance(TransformationContext context) throws Exception {
-        return null;
+    public AbstractLifecycle getInstance(TransformationContext context) throws Exception {
+        return new AbstractLifecycle(context) {
+            @Override
+            public boolean checkModel() {
+                return true;
+            }
+
+            @Override
+            public void prepare() throws NoSuchPropertyException {
+
+            }
+
+            @Override
+            public void transform() {
+
+            }
+
+            @Override
+            public void cleanup() {
+
+            }
+        };
     }
 }

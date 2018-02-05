@@ -44,12 +44,12 @@ public final class TransformationContext {
     }
 
     /**
-     This Method returns true if the plugin should deploy after the transformation is performed.
-     False is resturned otherwise.
+     This method returns true if the plugin should deploy after the transformation is performed.
+     False is returned otherwise.
      <p>
-     A Small note to Plugin Developers:
+     A small note to plugin developers:
      This method is only intended to be called byt the AbstractLifecycle implementation.
-     Plaese DO NOT check if the platform should perform a deployment while performing the Transformation!
+     Please DO NOT check if the platform should perform a deployment while performing the transformation!
      */
     public boolean performDeployment() {
         try {

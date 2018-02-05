@@ -1,11 +1,12 @@
 package org.opentosca.toscana.core.plugin.lifecycle;
 
 import org.opentosca.toscana.core.transformation.properties.NoSuchPropertyException;
+import org.opentosca.toscana.core.util.LifecycleAccess;
 
 /**
  The basic interface to implement the TransformationLifecycle
  */
-public interface TransformationLifecycle {
+public interface TransformationLifecycle extends LifecycleAccess {
 
     /**
      Checks if all required environment parameters like installed CLIs, running services (such as docker) are available

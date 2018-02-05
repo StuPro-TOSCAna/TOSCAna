@@ -3,15 +3,25 @@ package org.opentosca.toscana.plugins;
 import java.io.File;
 
 import org.opentosca.toscana.core.BaseIntegrationTest;
+import org.opentosca.toscana.core.csar.Csar;
+import org.opentosca.toscana.core.csar.CsarImpl;
+import org.opentosca.toscana.core.plugin.lifecycle.AbstractLifecycle;
 import org.opentosca.toscana.core.plugin.lifecycle.ToscanaPlugin;
+import org.opentosca.toscana.core.plugin.lifecycle.TransformationLifecycle;
+import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.TransformationContext;
+import org.opentosca.toscana.core.transformation.TransformationImpl;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
 import org.opentosca.toscana.model.EffectiveModel;
+import org.opentosca.toscana.retrofit.model.Platform;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 /**
  This class represents a integration test that tries to transform a Transformation of a model using
@@ -23,11 +33,11 @@ import org.slf4j.LoggerFactory;
  A transformation executed with this test never produces a log file.
  That means: The resulting transformation directory will not contain a log file!
  */
-public abstract class BaseTransformTest extends BaseIntegrationTest {
+public abstract class BaseTransformTest<LifecycleT extends AbstractLifecycle> extends BaseIntegrationTest {
 
     private static final Logger logger = LoggerFactory.getLogger(BaseTransformTest.class);
 
-    protected final ToscanaPlugin plugin;
+    protected final ToscanaPlugin<LifecycleT> plugin;
     protected EffectiveModel model;
     protected TransformationContext context;
     protected File workingDir;
@@ -74,7 +84,8 @@ public abstract class BaseTransformTest extends BaseIntegrationTest {
     public void performTransformation() throws Exception {
         logger.info("Starting Transformation");
         try {
-            plugin.transform(context);
+            LifecycleT lifecycle = plugin.getInstance(context);
+            plugin.transform(lifecycle);
         } catch (Exception e) {
             logger.error("Transformation Failed", e);
             onFailure(workingDir, e);
@@ -98,7 +109,11 @@ public abstract class BaseTransformTest extends BaseIntegrationTest {
      initializes the transformation context
      */
     protected TransformationContext initContext() throws Exception {
-        return new TransformationContext(contentDir, workingDir, logMock(), model, getProperties());
+        Csar csar = new CsarImpl(contentDir, "csarId", logMock());
+        Transformation t = new TransformationImpl(csar, plugin.getPlatform(), logMock(), model);
+        Transformation transformation = spy(t);
+        when(transformation.getInputs()).thenReturn(getProperties());
+        return new TransformationContext(transformation, workingDir);
     }
 
     /**

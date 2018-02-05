@@ -52,8 +52,7 @@ public class CsarImpl implements Csar {
     private List<LifecyclePhase> initLifecyclePhases() {
         List<LifecyclePhase> phases = new ArrayList<>();
         for (Phase phaseName : Phase.values()) {
-            LifecyclePhase phase = new LifecyclePhase(phaseName.getName(), this);
-            phase.setLogger(log.getLogger(LifecyclePhase.class));
+            LifecyclePhase phase = new LifecyclePhase(phaseName.getName(), this, log.getLogger(LifecyclePhase.class));
             phases.add(phase);
         }
         return phases;

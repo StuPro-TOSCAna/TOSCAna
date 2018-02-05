@@ -43,7 +43,6 @@ public class ExecutionTask implements Runnable {
         this.artifactService = ams;
         this.csarId = transformation.getCsar().getIdentifier();
         this.platformId = transformation.getPlatform().id;
-        transformation.setLifecyclePhases(plugin.getLifecyclePhases());
     }
 
     @Override
@@ -55,6 +54,19 @@ public class ExecutionTask implements Runnable {
         serveArtifact();
         transformation.setState(failed ? TransformationState.ERROR : TransformationState.DONE);
         transformation.getLog().close();
+    }
+
+    private void transform() {
+        try {
+            AbstractLifecycle lifecycle = plugin.getInstance(new TransformationContext(transformation, transformationRootDir));
+            transformation.setLifecyclePhases(lifecycle.getLifecyclePhases());
+            plugin.transform(lifecycle);
+            transformation.setState(TransformationState.DONE);
+        } catch (Exception e) {
+            logger.info("Transformation of {}/{} failed", csarId, platformId);
+            logger.error("Something went wrong while transforming", e);
+            failed = true;
+        }
     }
 
     private void serveArtifact() {
@@ -71,19 +83,6 @@ public class ExecutionTask implements Runnable {
         } else {
             failed = true;
             logger.error("Logfile missing! Not compressing target artifacts: Transformation generated no output files");
-        }
-    }
-
-    private void transform() {
-        try {
-            AbstractLifecycle lifecycle = plugin.getInstance(new TransformationContext(transformation, transformationRootDir));
-            transformation.setState(TransformationState.DONE);
-            transformation.setLifecyclePhases(lifecycle.getLifecyclePhases());
-            plugin.transform(lifecycle);
-        } catch (Exception e) {
-            logger.info("Transformation of {}/{} failed", csarId, platformId);
-            logger.error("Something went wrong while transforming", e);
-            failed = true;
         }
     }
 }

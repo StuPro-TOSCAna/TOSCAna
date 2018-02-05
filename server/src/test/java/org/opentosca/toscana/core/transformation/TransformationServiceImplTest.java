@@ -121,7 +121,8 @@ public class TransformationServiceImplTest extends BaseSpringTest {
         startTransformationInternal(TransformationState.ERROR, FAILING_WRITING_DUMMY.getPlatform());
     }
 
-    @Test(timeout = TEST_EXECUTION_TIMEOUT_MS)
+//    @Test(timeout = TEST_EXECUTION_TIMEOUT_MS)
+    @Test
     public void executionStopWithSleep() throws Exception {
         Transformation t = service.createTransformation(csar, PASSING_DUMMY.getPlatform());
         assertTrue(service.startTransformation(t));
@@ -132,16 +133,6 @@ public class TransformationServiceImplTest extends BaseSpringTest {
         assertEquals("Transformation State is " + t.getState(),
             TransformationState.ERROR, t.getState());
     }
-
-//    @Test(timeout = TEST_EXECUTION_TIMEOUT_MS)
-//    public void executionStopWhenAlreadyDone() throws Exception {
-//        //Start a passing transformation
-//        startTransformation();
-//        //Wait for it to finish
-//        Transformation t = csar.getTransformation(PASSING_DUMMY.getPlatform().id).get();
-//        waitForTransformationStateChange(t, TransformationState.DONE);
-//        assertFalse(service.abortTransformation(t));
-//    }
 
     @Test(timeout = TEST_EXECUTION_TIMEOUT_MS)
     public void stopNotStarted() throws Exception {

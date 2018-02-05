@@ -8,13 +8,13 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.opentosca.toscana.core.csar.Csar;
+import org.opentosca.toscana.core.plugin.lifecycle.LifecyclePhase;
 import org.opentosca.toscana.core.transformation.artifacts.TargetArtifact;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.InputProperty;
 import org.opentosca.toscana.core.transformation.properties.OutputProperty;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
-import org.opentosca.toscana.core.plugin.lifecycle.LifecyclePhase;
 import org.opentosca.toscana.model.EffectiveModel;
 
 import static java.lang.String.format;
@@ -29,7 +29,7 @@ public class TransformationImpl implements Transformation {
     private final EffectiveModel model;
     private TransformationState state = TransformationState.READY;
     private TargetArtifact targetArtifact;
-    private List<LifecyclePhase> lifecyclePhases = new ArrayList<>();
+    private List<? extends LifecyclePhase> lifecyclePhases = new ArrayList<>();
 
     /**
      Creates a new transformation for given csar to given targetPlatform.
@@ -77,12 +77,7 @@ public class TransformationImpl implements Transformation {
     }
 
     @Override
-    public List<LifecyclePhase> getLifecyclePhase() {
-        return lifecyclePhases;
-    }
-
-    @Override
-    public void setLifecyclePhases(List<LifecyclePhase> lifecyclePhases) {
+    public void setLifecyclePhases(List<? extends LifecyclePhase> lifecyclePhases) {
         this.lifecyclePhases = lifecyclePhases;
     }
 
@@ -124,5 +119,10 @@ public class TransformationImpl implements Transformation {
     public boolean equals(Object o) {
         return (o instanceof Transformation && ((Transformation) o).getPlatform().equals(this.getPlatform())
             && ((Transformation) o).getCsar().equals(this.getCsar()));
+    }
+
+    @Override
+    public List<? extends LifecyclePhase> getLifecyclePhases() {
+        return lifecyclePhases;
     }
 }

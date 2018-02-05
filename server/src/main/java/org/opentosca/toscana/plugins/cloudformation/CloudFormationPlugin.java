@@ -68,7 +68,7 @@ public class CloudFormationPlugin extends ToscanaPlugin<CloudFormationLifecycle>
     }
 
     @Override
-    protected CloudFormationLifecycle getInstance(TransformationContext context) throws Exception {
+    public CloudFormationLifecycle getInstance(TransformationContext context) throws Exception {
         return new CloudFormationLifecycle(context);
     }
 }

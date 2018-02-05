@@ -11,6 +11,7 @@ import javax.validation.constraints.NotNull;
 
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.core.transformation.TransformationContext;
+import org.opentosca.toscana.core.util.LifecycleAccess;
 
 import org.apache.commons.io.Charsets;
 import org.apache.commons.io.IOUtils;
@@ -20,7 +21,7 @@ import org.slf4j.Logger;
  This class describes a base class that can be used by the plugins to implement
  their lifecycle. This already contains the context and a transformation specific logger
  */
-public abstract class AbstractLifecycle implements TransformationLifecycle {
+public abstract class AbstractLifecycle implements TransformationLifecycle, LifecycleAccess {
 
     /**
      Declare transformation content specific directories name and paths
@@ -49,6 +50,7 @@ public abstract class AbstractLifecycle implements TransformationLifecycle {
      It probably gets called by the <code>getInstance</code> method of the LifecycleAwarePlugin
      */
     public AbstractLifecycle(@NotNull TransformationContext context) throws IOException {
+        this.logger = context.getLogger(getClass());
         logger.info("Building Lifecycle interface");
         this.context = context;
         this.logger = context.getLogger(getClass());
@@ -84,7 +86,7 @@ public abstract class AbstractLifecycle implements TransformationLifecycle {
         List<ExecutionPhase> executionPhases = new ArrayList<>();
 
         //Environment validation
-        executionPhases.add(new ExecutionPhase<>("check environment", (e) -> {
+        executionPhases.add(new ExecutionPhase<>("check environment", (e) ->{
             if (!checkEnvironment()) {
                 throw new ValidationFailureException("Transformation Failed," +
                     " because the Environment check has failed!");
@@ -112,11 +114,12 @@ public abstract class AbstractLifecycle implements TransformationLifecycle {
         return Collections.unmodifiableList(executionPhases);
     }
 
-    List<ExecutionPhase> getLifecyclePhases() {
+    @Override
+    public List<ExecutionPhase> getLifecyclePhases() {
         return executionPhases;
     }
-    
-    TransformationContext getContext(){
+
+    public TransformationContext getContext() {
         return context;
     }
 }

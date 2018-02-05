@@ -78,7 +78,7 @@ public class KubernetesPlugin extends ToscanaPlugin<KubernetesLifecycle> {
     }
 
     @Override
-    protected KubernetesLifecycle getInstance(TransformationContext context) throws Exception {
+    public KubernetesLifecycle getInstance(TransformationContext context) throws Exception {
         return new KubernetesLifecycle(context, mapper);
     }
 }
