@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -13,6 +14,7 @@ import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.core.plugin.lifecycle.AbstractLifecycle;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 
+import org.opentosca.toscana.core.transformation.properties.InputProperty;
 import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.model.node.Compute;
 
@@ -58,15 +60,15 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
     public CloudFoundryLifecycle(TransformationContext context) throws IOException {
         super(context);
         model = context.getModel();
-        Map<String, String> properties = context.getProperties().getPropertyValues();
-
+        Map<String, InputProperty> properties = context.getProperties().getProperties();
+        
         logger.debug("Checking for Properties");
         if (!properties.isEmpty()) {
-            String username = properties.get(CF_PROPERTY_KEY_USERNAME).orElse(null);
-            String password = properties.get(CF_PROPERTY_KEY_PASSWORD).orElse(null);
-            String organization = properties.get(CF_PROPERTY_KEY_ORGANIZATION).orElse(null);
-            String space = properties.get(CF_PROPERTY_KEY_SPACE).orElse(null);
-            String apiHost = properties.get(CF_PROPERTY_KEY_API).orElse(null);
+            String username = properties.get(CF_PROPERTY_KEY_USERNAME).getValue().orElse(null);
+            String password = properties.get(CF_PROPERTY_KEY_PASSWORD).getValue().orElse(null);
+            String organization = properties.get(CF_PROPERTY_KEY_ORGANIZATION).getValue().orElse(null);
+            String space = properties.get(CF_PROPERTY_KEY_SPACE).getValue().orElse(null);
+            String apiHost = properties.get(CF_PROPERTY_KEY_API).getValue().orElse(null);
 
             if (isNotNull(username, password, organization, space, apiHost)) {
 
