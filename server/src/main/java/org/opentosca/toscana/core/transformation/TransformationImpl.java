@@ -14,7 +14,7 @@ import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.InputProperty;
 import org.opentosca.toscana.core.transformation.properties.OutputProperty;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
-import org.opentosca.toscana.core.util.LifecyclePhase;
+import org.opentosca.toscana.core.plugin.lifecycle.LifecyclePhase;
 import org.opentosca.toscana.model.EffectiveModel;
 
 import static java.lang.String.format;

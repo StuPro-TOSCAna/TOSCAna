@@ -3,7 +3,7 @@ package org.opentosca.toscana.plugins.cloudformation;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.opentosca.toscana.core.plugin.TOSCAnaPlugin;
+import org.opentosca.toscana.core.plugin.lifecycle.ToscanaPlugin;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.PlatformInput;
@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CloudFormationPlugin extends TOSCAnaPlugin<CloudFormationLifecycle> {
+public class CloudFormationPlugin extends ToscanaPlugin<CloudFormationLifecycle> {
     public static final String AWS_REGION_KEY = "AWS Region";
     public static final String AWS_REGION_DEFAULT = "us-west-2";
     public static final String AWS_ACCESS_KEY_ID_KEY = "AWS Access Key ID";

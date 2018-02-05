@@ -1,11 +1,11 @@
 package org.opentosca.toscana.core.testdata.dummyplugins;
 
-import org.opentosca.toscana.core.plugin.TOSCAnaPlugin;
+import org.opentosca.toscana.core.plugin.lifecycle.ToscanaPlugin;
 import org.opentosca.toscana.core.plugin.lifecycle.TransformationLifecycle;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 
-public class DummyPlugin extends TOSCAnaPlugin {
+public class DummyPlugin extends ToscanaPlugin {
 
     public DummyPlugin(Platform platform) {
         super(platform);

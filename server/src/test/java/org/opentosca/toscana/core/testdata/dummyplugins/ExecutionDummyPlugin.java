@@ -1,13 +1,13 @@
 package org.opentosca.toscana.core.testdata.dummyplugins;
 
-import org.opentosca.toscana.core.plugin.TOSCAnaPlugin;
+import org.opentosca.toscana.core.plugin.lifecycle.ToscanaPlugin;
 import org.opentosca.toscana.core.plugin.lifecycle.TransformationLifecycle;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 
 import org.slf4j.Logger;
 
-public class ExecutionDummyPlugin extends TOSCAnaPlugin {
+public class ExecutionDummyPlugin extends ToscanaPlugin {
 
     protected final boolean failDuringExec;
 

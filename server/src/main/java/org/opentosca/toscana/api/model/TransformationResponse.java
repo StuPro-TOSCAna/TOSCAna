@@ -7,7 +7,7 @@ import org.opentosca.toscana.api.PlatformController;
 import org.opentosca.toscana.api.TransformationController;
 import org.opentosca.toscana.api.docs.HiddenResourceSupport;
 import org.opentosca.toscana.core.transformation.TransformationState;
-import org.opentosca.toscana.core.util.LifecyclePhase;
+import org.opentosca.toscana.core.plugin.lifecycle.LifecyclePhase;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;

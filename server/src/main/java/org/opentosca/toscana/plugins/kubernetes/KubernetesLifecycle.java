@@ -52,12 +52,12 @@ public class KubernetesLifecycle extends AbstractLifecycle {
         this.baseImageMapper = mapper;
         model = context.getModel();
         //Fix failing K8s plugin test
-        if (context.getProperties() == null) {
+        if (context.getInputs() == null) {
             pushToRegistry = false;
             return;
         }
         pushToRegistry = Boolean.parseBoolean(
-            context.getProperties().getOrThrow(KubernetesPlugin.DOCKER_PUSH_TO_REGISTRY_PROPERTY_KEY)
+            context.getInputs().getOrThrow(KubernetesPlugin.DOCKER_PUSH_TO_REGISTRY_PROPERTY_KEY)
         );
     }
 

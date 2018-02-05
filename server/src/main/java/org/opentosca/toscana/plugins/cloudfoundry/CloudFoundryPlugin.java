@@ -3,7 +3,7 @@ package org.opentosca.toscana.plugins.cloudfoundry;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.opentosca.toscana.core.plugin.TOSCAnaPlugin;
+import org.opentosca.toscana.core.plugin.lifecycle.ToscanaPlugin;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.PlatformInput;
@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CloudFoundryPlugin extends TOSCAnaPlugin<CloudFoundryLifecycle> {
+public class CloudFoundryPlugin extends ToscanaPlugin<CloudFoundryLifecycle> {
 
     public final static String CF_PROPERTY_KEY_USERNAME = "username";
     public final static String CF_PROPERTY_KEY_PASSWORD = "password";

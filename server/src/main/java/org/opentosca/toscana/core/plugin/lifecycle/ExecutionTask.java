@@ -1,23 +1,24 @@
-package org.opentosca.toscana.core.transformation.execution;
+package org.opentosca.toscana.core.plugin.lifecycle;
 
 import java.io.File;
 import java.io.IOException;
 
 import org.opentosca.toscana.core.plugin.PluginService;
-import org.opentosca.toscana.core.plugin.TOSCAnaPlugin;
+import org.opentosca.toscana.core.plugin.lifecycle.AbstractLifecycle;
+import org.opentosca.toscana.core.plugin.lifecycle.ToscanaPlugin;
+import org.opentosca.toscana.core.plugin.lifecycle.TransformationLifecycle;
 import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.core.transformation.TransformationState;
 import org.opentosca.toscana.core.transformation.artifacts.ArtifactService;
 import org.opentosca.toscana.core.transformation.artifacts.TargetArtifact;
-import org.opentosca.toscana.model.EffectiveModel;
 
 import org.slf4j.Logger;
 
 public class ExecutionTask implements Runnable {
 
     private final Transformation transformation;
-    private final TOSCAnaPlugin plugin;
+    private final ToscanaPlugin plugin;
     private final File csarContentDir;
     private final File transformationRootDir;
     private final String platformId;
@@ -75,10 +76,10 @@ public class ExecutionTask implements Runnable {
 
     private void transform() {
         try {
-            EffectiveModel model = transformation.getModel();
-            plugin.transform(new TransformationContext(csarContentDir, transformationRootDir,
-                transformation.getLog(), model, transformation.getInputs()));
+            AbstractLifecycle lifecycle = plugin.getInstance(new TransformationContext(transformation, transformationRootDir));
             transformation.setState(TransformationState.DONE);
+            transformation.setLifecyclePhases(lifecycle.getLifecyclePhases());
+            plugin.transform(lifecycle);
         } catch (Exception e) {
             logger.info("Transformation of {}/{} failed", csarId, platformId);
             logger.error("Something went wrong while transforming", e);

@@ -16,7 +16,7 @@ import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.TransformationDao;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.logging.LogImpl;
-import org.opentosca.toscana.core.util.LifecyclePhase;
+import org.opentosca.toscana.core.plugin.lifecycle.LifecyclePhase;
 import org.opentosca.toscana.core.util.Preferences;
 import org.opentosca.toscana.core.util.ZipUtility;
 

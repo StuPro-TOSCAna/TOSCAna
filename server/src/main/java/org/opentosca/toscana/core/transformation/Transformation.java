@@ -9,7 +9,7 @@ import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.OutputProperty;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
-import org.opentosca.toscana.core.util.LifecyclePhase;
+import org.opentosca.toscana.core.plugin.lifecycle.LifecyclePhase;
 import org.opentosca.toscana.model.EffectiveModel;
 
 public interface Transformation {
@@ -64,7 +64,7 @@ public interface Transformation {
      */
     List<OutputProperty> getOutputs() throws IllegalStateException;
 
-    void setLifecyclePhases(List<LifecyclePhase> lifecyclePhases);
+    void setLifecyclePhases(List<? extends LifecyclePhase> lifecyclePhases);
 
     List<LifecyclePhase> getLifecyclePhase();
 }

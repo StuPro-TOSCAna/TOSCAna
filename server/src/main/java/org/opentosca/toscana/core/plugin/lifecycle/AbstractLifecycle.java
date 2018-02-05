@@ -3,6 +3,8 @@ package org.opentosca.toscana.core.plugin.lifecycle;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.validation.constraints.NotNull;
@@ -40,16 +42,19 @@ public abstract class AbstractLifecycle implements TransformationLifecycle {
      */
     protected TransformationContext context;
 
+    private final List<ExecutionPhase> executionPhases;
+
     /**
      @param context because the context is always needed this should never be null
      It probably gets called by the <code>getInstance</code> method of the LifecycleAwarePlugin
      */
     public AbstractLifecycle(@NotNull TransformationContext context) throws IOException {
+        logger.info("Building Lifecycle interface");
         this.context = context;
         this.logger = context.getLogger(getClass());
         PluginFileAccess access = context.getPluginFileAccess();
-
         setUpDirectories(access);
+        this.executionPhases = populateExecutionPhases();
     }
 
     private void setUpDirectories(PluginFileAccess access) throws IOException {
@@ -72,5 +77,46 @@ public abstract class AbstractLifecycle implements TransformationLifecycle {
                 output.close();
             }
         }
+    }
+
+    private List<ExecutionPhase> populateExecutionPhases() {
+        Logger phaseLogger = context.getLogger(ExecutionPhase.class);
+        List<ExecutionPhase> executionPhases = new ArrayList<>();
+
+        //Environment validation
+        executionPhases.add(new ExecutionPhase<>("check environment", (e) -> {
+            if (!checkEnvironment()) {
+                throw new ValidationFailureException("Transformation Failed," +
+                    " because the Environment check has failed!");
+            }
+        }, this, phaseLogger));
+        //Model validation
+        executionPhases.add(new ExecutionPhase<>("check model", (e) -> {
+            if (!e.checkModel()) {
+                throw new ValidationFailureException("Transformation Failed," +
+                    " because the model check has failed!");
+            }
+        }, this, phaseLogger));
+        //Transformation phases
+        executionPhases.add(new ExecutionPhase<>("prepare", TransformationLifecycle::prepare, this, phaseLogger));
+        executionPhases.add(new ExecutionPhase<>("transformation", TransformationLifecycle::transform, this, phaseLogger));
+        executionPhases.add(new ExecutionPhase<>("cleanup", TransformationLifecycle::cleanup, this, phaseLogger));
+        // Add Deployment Phase
+        if (context.performDeployment()) {
+            executionPhases.add(new ExecutionPhase<>(
+                "deploy",
+                TransformationLifecycle::deploy,
+                this, phaseLogger
+            ));
+        }
+        return Collections.unmodifiableList(executionPhases);
+    }
+
+    List<ExecutionPhase> getLifecyclePhases() {
+        return executionPhases;
+    }
+    
+    TransformationContext getContext(){
+        return context;
     }
 }

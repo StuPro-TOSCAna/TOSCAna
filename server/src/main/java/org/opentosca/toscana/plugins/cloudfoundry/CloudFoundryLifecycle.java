@@ -44,7 +44,7 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
 
     @Override
     public void prepare() throws NoSuchPropertyException {
-        PropertyInstance properties = context.getProperties();
+        PropertyInstance properties = context.getInputs();
 
         if (!properties.isEmpty()) {
             String username = properties.get(CF_PROPERTY_KEY_USERNAME).orElse(null);

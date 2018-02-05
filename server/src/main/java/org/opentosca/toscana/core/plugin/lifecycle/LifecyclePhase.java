@@ -1,4 +1,4 @@
-package org.opentosca.toscana.core.util;
+package org.opentosca.toscana.core.plugin.lifecycle;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
@@ -7,13 +7,14 @@ import org.slf4j.Logger;
 public class LifecyclePhase {
 
     private final String name;
-    private final Lifecycle lifecycle;
+    private final AbstractLifecycle lifecycle;
+    private final Logger logger;
     private State state = State.PENDING;
-    private Logger logger;
 
-    public LifecyclePhase(String name, Lifecycle lifecycle) {
+    public LifecyclePhase(String name, AbstractLifecycle lifecycle, Logger logger) {
         this.name = name;
         this.lifecycle = lifecycle;
+        this.logger = logger;
     }
 
     @ApiModelProperty(
@@ -43,10 +44,6 @@ public class LifecyclePhase {
         if (state == State.FAILED) {
             setSuccessorsToSkipped();
         }
-    }
-
-    public void setLogger(Logger logger) {
-        this.logger = logger;
     }
 
     private void setSuccessorsToSkipped() {

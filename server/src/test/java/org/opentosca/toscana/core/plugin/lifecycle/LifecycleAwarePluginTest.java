@@ -1,7 +1,6 @@
 package org.opentosca.toscana.core.plugin.lifecycle;
 
 import org.opentosca.toscana.core.BaseUnitTest;
-import org.opentosca.toscana.core.plugin.TOSCAnaPlugin;
 import org.opentosca.toscana.core.testdata.TestPlugins;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.core.transformation.platform.Platform;
@@ -87,7 +86,7 @@ public class LifecycleAwarePluginTest extends BaseUnitTest {
         verify(lifecycle).cleanup();
     }
 
-    private class LifecycleTestPlugin extends TOSCAnaPlugin {
+    private class LifecycleTestPlugin extends ToscanaPlugin {
 
         //Not using mockito because it somehow did not work as expected using spy()
         private boolean envCheckReturnValue = true;

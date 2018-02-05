@@ -3,11 +3,11 @@ package org.opentosca.toscana.core.plugin.lifecycle;
 import java.util.function.Predicate;
 
 import org.opentosca.toscana.core.transformation.TransformationContext;
-import org.opentosca.toscana.core.util.Lifecycle;
-import org.opentosca.toscana.core.util.LifecyclePhase;
+import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.util.ExceptionAwareVoidFunction;
 
 import io.swagger.annotations.ApiModel;
+import org.slf4j.Logger;
 
 /**
  This represents a wrapper for a execution phase e.g. the transform phase.
@@ -25,9 +25,10 @@ public class ExecutionPhase<LifecycleT extends TransformationLifecycle> extends 
     public ExecutionPhase(
         String name,
         ExceptionAwareVoidFunction<LifecycleT> function,
-        Lifecycle lifecycle
+        AbstractLifecycle lifecycle,
+        Logger logger
     ) {
-        super(name, lifecycle);
+        super(name, lifecycle, logger);
         this.function = function;
         this.executionCheck = (e) -> true;
     }
@@ -36,9 +37,10 @@ public class ExecutionPhase<LifecycleT extends TransformationLifecycle> extends 
         String name,
         ExceptionAwareVoidFunction<LifecycleT> function,
         Predicate<TransformationContext> validation,
-        Lifecycle lifecycle
+        AbstractLifecycle lifecycle,
+        Logger logger
     ) {
-        this(name, function, lifecycle);
+        this(name, function, lifecycle, logger);
         this.executionCheck = validation;
     }
 

@@ -8,7 +8,7 @@ import java.util.Optional;
 import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.util.Lifecycle;
-import org.opentosca.toscana.core.util.LifecyclePhase;
+import org.opentosca.toscana.core.plugin.lifecycle.LifecyclePhase;
 
 public interface Csar extends Lifecycle {
 
