@@ -2,6 +2,7 @@ package org.opentosca.toscana.api.model;
 
 import java.util.List;
 
+import org.opentosca.toscana.api.CsarController;
 import org.opentosca.toscana.api.TransformationController;
 import org.opentosca.toscana.api.docs.HiddenResourceSupport;
 import org.opentosca.toscana.core.transformation.logging.LogEntry;
@@ -39,6 +40,25 @@ public class LogResponse extends HiddenResourceSupport {
         //Add link to retrieve only new log messages (next link)
         this.add(linkTo(methodOn(TransformationController.class)
             .getTransformationLogs(csarName, platform, end))
+            .withRel("next").expand(csarName));
+    }
+
+    public LogResponse(
+        @JsonProperty("start") long start,
+        @JsonProperty("end") long end,
+        @JsonProperty("logs") List<LogEntry> logEntries,
+        String csarName
+    ) {
+        this.start = start;
+        this.end = end;
+        this.logEntries = logEntries;
+        //Add Self Link
+        this.add(ControllerLinkBuilder.linkTo(methodOn(CsarController.class)
+            .getLogs(csarName, start))
+            .withSelfRel().expand(csarName));
+        //Add link to retrieve only new log messages (next link)
+        this.add(linkTo(methodOn(CsarController.class)
+            .getLogs(csarName, end))
             .withRel("next").expand(csarName));
     }
 

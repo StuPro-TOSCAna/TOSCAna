@@ -13,7 +13,6 @@ import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.RootNode;
-import org.opentosca.toscana.model.requirement.Requirement;
 import org.opentosca.toscana.plugins.kubernetes.docker.image.ExportingImageBuilder;
 import org.opentosca.toscana.plugins.kubernetes.docker.image.ImageBuilder;
 import org.opentosca.toscana.plugins.kubernetes.docker.image.PushingImageBuilder;
@@ -21,6 +20,7 @@ import org.opentosca.toscana.plugins.kubernetes.docker.mapper.BaseImageMapper;
 import org.opentosca.toscana.plugins.kubernetes.docker.util.DockerRegistryCredentials;
 import org.opentosca.toscana.plugins.kubernetes.exceptions.UnsupportedOsTypeException;
 import org.opentosca.toscana.plugins.kubernetes.model.Pod;
+import org.opentosca.toscana.plugins.kubernetes.model.RelationshipGraph;
 import org.opentosca.toscana.plugins.kubernetes.util.KubernetesNodeContainer;
 import org.opentosca.toscana.plugins.kubernetes.util.NodeStack;
 import org.opentosca.toscana.plugins.kubernetes.visitor.check.NodeTypeCheckVisitor;
@@ -29,7 +29,6 @@ import org.opentosca.toscana.plugins.kubernetes.visitor.util.ComputeNodeFindingV
 import org.opentosca.toscana.plugins.util.TransformationFailureException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import org.jgrapht.Graph;
 
 import static org.opentosca.toscana.plugins.kubernetes.util.GraphOperations.buildTopologyStacks;
 import static org.opentosca.toscana.plugins.kubernetes.util.GraphOperations.determineTopLevelNodes;
@@ -58,8 +57,7 @@ public class KubernetesLifecycle extends AbstractLifecycle {
             return;
         }
         pushToRegistry = Boolean.parseBoolean(
-            context.getProperties().getPropertyValue(KubernetesPlugin.DOCKER_PUSH_TO_REGISTRY_PROPERTY_KEY)
-                .orElse("false")
+            context.getProperties().getOrThrow(KubernetesPlugin.DOCKER_PUSH_TO_REGISTRY_PROPERTY_KEY)
         );
     }
 
@@ -232,8 +230,7 @@ public class KubernetesLifecycle extends AbstractLifecycle {
      Creates the Dockerfiles (that means the dockerfile and all its dependesies get written to disk)
      */
     private void createDockerfiles() {
-        Graph<NodeStack, Requirement> connectionGraph = RelationshipAnalyzer.buildRelationshipGraph(stacks);
-//        throw new TransformationFailureException();
+        RelationshipGraph connectionGraph = new RelationshipGraph(stacks);
         stacks.forEach(e -> {
             logger.info("Creating Dockerfile for {}", e);
             try {

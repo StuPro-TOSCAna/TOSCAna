@@ -7,8 +7,15 @@ import java.util.Optional;
 
 import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.logging.Log;
+import org.opentosca.toscana.core.util.Lifecycle;
+import org.opentosca.toscana.core.util.LifecyclePhase;
 
-public interface Csar {
+public interface Csar extends Lifecycle {
+
+    /**
+     Validates this csar. Caution: This call is expensive
+     */
+    boolean validate();
 
     /**
      @return a map of all transformation objects of this csar. This includes scheduled, ongoing and finished
@@ -22,6 +29,13 @@ public interface Csar {
      */
     Optional<Transformation> getTransformation(String platformId);
 
+    void setTransformations(List<Transformation> transformations);
+
+    @Override
+    List<LifecyclePhase> getLifecyclePhases();
+
+    LifecyclePhase getLifecyclePhase(Phase phase);
+
     /**
      @return the identifier of the CSAR
      */
@@ -32,10 +46,24 @@ public interface Csar {
      */
     Log getLog();
 
-    void setTransformations(List<Transformation> transformations);
-
     /**
      @return the root directory of the unzipped csar.
      */
     File getContentDir();
+
+    enum Phase {
+        UNZIP("unzip"),
+        VALIDATE("validate"),
+        PARSE("parse");
+
+        private final String name;
+
+        Phase(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+    }
 }

@@ -8,7 +8,6 @@ import org.opentosca.toscana.model.util.ToscaKey;
 
 public class EntityId implements Comparable<EntityId> {
 
-    public static final String WILDCARD = "*";
     private final List<String> path;
     private final String name;
 

@@ -6,6 +6,7 @@ import java.util.Set;
 import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.core.testdata.TestCsars;
+import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.model.EffectiveModelFactory;
 import org.opentosca.toscana.model.capability.OsCapability;
@@ -13,7 +14,7 @@ import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.visitor.VisitableNode;
 import org.opentosca.toscana.plugins.cloudformation.mapper.CapabilityMapper;
-import org.opentosca.toscana.plugins.cloudformation.visitor.CloudFormationNodeVisitor;
+import org.opentosca.toscana.plugins.cloudformation.visitor.TransformModelNodeVisitor;
 import org.opentosca.toscana.plugins.util.TransformationFailureException;
 
 import com.amazonaws.SdkClientException;
@@ -32,7 +33,7 @@ public class CloudFormationPluginTest extends BaseUnitTest {
     private final static Logger logger = LoggerFactory.getLogger(CloudFormationPluginTest.class);
     private static CloudFormationModule cfnModule;
     private static PluginFileAccess fileAccess;
-    private static CloudFormationNodeVisitor cfnNodeVisitor;
+    private static TransformModelNodeVisitor cfnNodeVisitor;
     private EffectiveModel lamp;
 
     @Before
@@ -40,14 +41,17 @@ public class CloudFormationPluginTest extends BaseUnitTest {
         lamp = new EffectiveModelFactory().create(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, logMock());
         fileAccess = new PluginFileAccess(new File("src/test/resources/csars/yaml/valid/lamp-input/"), tmpdir, logMock());
         cfnModule = new CloudFormationModule(fileAccess, "us-west-2", new BasicAWSCredentials("", ""));
-        CloudFormationNodeVisitor cfnNodeVisitorL = new CloudFormationNodeVisitor(logger, cfnModule);
+        TransformationContext context = mock(TransformationContext.class);
+        when(context.getModel()).thenReturn(lamp);
+        when(context.getLogger((Class<?>) any(Class.class))).thenReturn(LoggerFactory.getLogger("Dummy Logger"));
+        TransformModelNodeVisitor cfnNodeVisitorL = new TransformModelNodeVisitor(context, cfnModule);
         cfnNodeVisitor = spy(cfnNodeVisitorL);
         CapabilityMapper capabilityMapper = mock(CapabilityMapper.class);
         when(capabilityMapper.mapOsCapabilityToImageId(any(OsCapability.class))).thenReturn("ami-testami");
         when(cfnNodeVisitor.createCapabilityMapper()).thenReturn(capabilityMapper);
     }
 
-    @Test
+    @Test(expected = TransformationFailureException.class)
     public void testLamp() {
         try {
             Set<RootNode> nodes = lamp.getNodes();

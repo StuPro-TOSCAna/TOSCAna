@@ -4,8 +4,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.opentosca.toscana.core.transformation.properties.PlatformProperty;
-import org.opentosca.toscana.core.transformation.properties.Property;
+import org.opentosca.toscana.core.transformation.properties.InputProperty;
+import org.opentosca.toscana.core.transformation.properties.PlatformInput;
 import org.opentosca.toscana.core.transformation.properties.PropertyType;
 
 public class Platform {
@@ -13,7 +13,7 @@ public class Platform {
     public static final String DEPLOY_AFTER_TRANSFORMATION_KEY = "deploy_after_transformation";
     public final String id;
     public final String name;
-    public final Set<PlatformProperty> properties;
+    public final Set<PlatformInput> properties;
     public final boolean supportsDeployment;
 
     /**
@@ -24,7 +24,7 @@ public class Platform {
      @param supportsDeployment set this to true if the plugin supports deployment within the TOSCAna Transformer
      @param properties         the properties the platform requires.
      */
-    public Platform(String id, String name, boolean supportsDeployment, Set<PlatformProperty> properties) {
+    public Platform(String id, String name, boolean supportsDeployment, Set<PlatformInput> properties) {
         this.id = id;
         this.name = name;
         this.properties = properties;
@@ -36,7 +36,7 @@ public class Platform {
 
         // Add Deploy After transformation property if the platform supports deployment
         if (supportsDeployment) {
-            this.properties.add(new PlatformProperty(
+            this.properties.add(new PlatformInput(
                 DEPLOY_AFTER_TRANSFORMATION_KEY,
                 PropertyType.BOOLEAN,
                 "Should the Application be deployed after the Transformation?",
@@ -53,7 +53,7 @@ public class Platform {
      @param name       displayable name of platform. must not be an empty string
      @param properties the properties the platform requires.
      */
-    public Platform(String id, String name, Set<PlatformProperty> properties) {
+    public Platform(String id, String name, Set<PlatformInput> properties) {
         this(id, name, false, properties);
     }
 
@@ -71,8 +71,8 @@ public class Platform {
     /**
      @return a list of properties which are necessary for a transformation to this platform.
      */
-    public Set<Property> getProperties() {
-        Set<Property> props = new HashSet<>();
+    public Set<InputProperty> getProperties() {
+        Set<InputProperty> props = new HashSet<>();
         this.properties.forEach(e -> props.add(e.copy()));
         return Collections.unmodifiableSet(props);
     }

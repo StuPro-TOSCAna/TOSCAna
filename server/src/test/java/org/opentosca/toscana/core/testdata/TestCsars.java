@@ -31,8 +31,14 @@ public class TestCsars {
     public final static File VALID_LAMP_INPUT_TEMPLATE = new File(YAML_DIR, "valid/lamp-input/template.yaml");
     public final static File VALID_INPUTS = new File(YAML_DIR, "valid/inputs.csar");
     public final static File VALID_INPUTS_TEMPLATE = new File(YAML_DIR, "valid/inputs/inputs.yaml");
+    public final static File VALID_OUTPUTS = new File(YAML_DIR, "valid/outputs.csar");
+    public final static File VALID_OUTPUTS_TEMPLATE = new File(YAML_DIR, "valid/outputs/outputs.yaml");
     public static final File VALID_SINGLE_COMPUTE_WINDOWS_TEMPLATE = new File(YAML_DIR, "valid/single-compute-windows/single-compute-windows.yaml");
     public static final File VALID_SINGLE_COMPUTE_UBUNTU_TEMPLATE = new File(YAML_DIR, "valid/single-compute-ubuntu/single-compute-ubuntu.yaml");
+    public static final File VALID_EXPRESS = new File(YAML_DIR, "valid/express.csar");
+    public static final File VALID_EXPRESS_TEMPLATE = new File(YAML_DIR, "valid/express/template.yml");
+    
+    
     public final static File INVALID_DEPENDENCIES_MISSING = new File(YAML_DIR, "invalid/dependencies_missing.csar");
     public final static File INVALID_DOCKERAPP_MISSING = new File(YAML_DIR, "invalid/dockerapp_missing.csar");
     public final static File INVALID_ENTRYPOINT_MISSING = new File(YAML_DIR, "invalid/entrypoint_missing.csar");

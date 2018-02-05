@@ -1,0 +1,45 @@
+{
+    "inputs": [
+        {
+            "key": "text_input",
+            "type": "text",
+            "required": true,
+            "description": ""
+        },
+        {
+            "key": "float_input",
+            "type": "float",
+            "required": true,
+            "description": ""
+        },
+        {
+            "key": "name_input",
+            "type": "name",
+            "required": true,
+            "description": ""
+        },
+        {
+            "key": "unsigned_integer_input",
+            "type": "unsigned_integer",
+            "required": true,
+            "description": ""
+        },
+        {
+            "key": "secret_input",
+            "type": "secret",
+            "required": true,
+            "description": ""
+        },
+        {
+            "key": "integer_input",
+            "type": "integer",
+            "required": true,
+            "description": ""
+        }
+    ],
+    "_links": {
+        "self": {
+            "href": "http://localhost:8080/csars/mongo-db/transformations/p-a/input"
+        }
+    }
+}

@@ -7,7 +7,7 @@ public enum LoggingMode {
     LOW(HttpLoggingInterceptor.Level.BASIC),
     MEDIUM(HttpLoggingInterceptor.Level.HEADERS),
     HIGH(HttpLoggingInterceptor.Level.BODY);
-    
+
     private HttpLoggingInterceptor.Level level;
 
     LoggingMode(HttpLoggingInterceptor.Level level) {

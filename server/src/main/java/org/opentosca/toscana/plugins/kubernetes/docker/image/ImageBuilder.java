@@ -2,6 +2,7 @@ package org.opentosca.toscana.plugins.kubernetes.docker.image;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.function.Consumer;
 
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.core.transformation.TransformationContext;
@@ -64,17 +65,35 @@ public abstract class ImageBuilder implements ProgressHandler {
 
     @Override
     public void progress(ProgressMessage progressMessage) throws DockerException {
-        String stream = progressMessage.stream();
-        String error = progressMessage.error();
-        String progress = progressMessage.progress();
-        if (stream != null) {
-            logger.info(stream.replace("\n", " "));
+        if (logger.isDebugEnabled()) {
+            log(progressMessage.progress(), logger::trace);
+            log(progressMessage.status(), logger::trace);
         }
-        if (progress != null) {
-            logger.trace(progress.replace("\n", " "));
-        }
-        if (error != null) {
-            logger.error(error.replace("\n", " "));
+        log(progressMessage.stream(), logger::info);
+        log(progressMessage.error(), logger::error);
+    }
+
+    private String cleanString(String s) {
+        //Replace Carriage Return with newline
+        return s.replace((char) 0x0D, (char) 0x0A);
+    }
+
+    private void log(String s, Consumer<String> loggingFunc) {
+
+        if (s != null) {
+            String[] lines = s.split("\n");
+            for (String line : lines) {
+                String[] cleanLine = cleanString(line)
+                    //Remove ansi Shell colors
+                    .replaceAll("\\x1b\\[[0-9;]*m","")
+                    .split("\n");
+                for (String partialLine : cleanLine) {
+                    if (partialLine.replaceAll("(\\.| |_|-|\\:|;)", "").length() == 0) {
+                        continue;
+                    }
+                    loggingFunc.accept(partialLine);
+                }
+            }
         }
     }
 }

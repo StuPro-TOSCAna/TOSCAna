@@ -22,28 +22,24 @@ public class LogImpl implements Log {
 
     private final static org.slf4j.Logger exceptionHandlingLogger = LoggerFactory.getLogger(LogImpl.class);
 
-    private final List<LogEntry> logEntries;
-    private final AtomicLong index;
-    private final File logFile;
+    private final List<LogEntry> logEntries = Collections.synchronizedList(new LinkedList<>());
+    private final AtomicLong index = new AtomicLong(0);
 
-    private MemoryAppender memoryAppender;
-    private PersistentAppender persistentAppender;
+    private final MemoryAppender memoryAppender = new MemoryAppender(this);
+    private final PersistentAppender persistentAppender;
 
     /**
      @param logFile the logFile to which the Logger will write to
      */
     public LogImpl(File logFile) {
-        this.logFile = logFile;
-        //Create Synchronized linked list. to prevent any issues regarding concurrency
-        this.logEntries = Collections.synchronizedList(new LinkedList<>());
-        memoryAppender = new MemoryAppender(this);
         persistentAppender = new PersistentAppender(logFile);
-        index = new AtomicLong(0);
-        readLogFromFile();
+        if (logFile.exists()){
+            readLogFromFile(logFile);
+        }
     }
 
-    private void readLogFromFile() {
-        try (Scanner scanner = new Scanner(new BufferedReader(new FileReader(logFile)))) {
+    private void readLogFromFile(File file) {
+        try (Scanner scanner = new Scanner(new BufferedReader(new FileReader(file)))) {
             LogEntry predecessor = null;
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
@@ -52,7 +48,7 @@ public class LogImpl implements Log {
                     addLogEntry(entry);
                     predecessor = entry;
                 } catch (LogParserException e) {
-                    exceptionHandlingLogger.error("Failed to parse log line from file '{}'", logFile, e);
+                    exceptionHandlingLogger.error("Failed to parse log line from file '{}'", file, e);
                 }
             }
         } catch (FileNotFoundException e) {
@@ -88,7 +84,7 @@ public class LogImpl implements Log {
     @Override
     public Logger getLogger(String context) {
         Logger logger = (Logger) LoggerFactory.getLogger(context);
-        
+
         logger.addAppender(memoryAppender);
         logger.addAppender(persistentAppender);
         logger.setLevel(Level.DEBUG);
@@ -103,6 +99,7 @@ public class LogImpl implements Log {
 
     @Override
     public void close() {
+        getLogger("EOL").info("End of log");
         memoryAppender.stop();
         persistentAppender.stop();
     }

@@ -67,7 +67,7 @@ pipeline {
         stage('Deploy') {
             when {
                 allOf {
-                  branch 'master'
+                  branch 'feature/app/implement-web-app'
                   environment name: 'TOSCANA_DEPLOY_ON_BUILD', value: 'true'
                 }
             }

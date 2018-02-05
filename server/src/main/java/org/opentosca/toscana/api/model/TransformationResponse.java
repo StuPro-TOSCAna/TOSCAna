@@ -1,10 +1,13 @@
 package org.opentosca.toscana.api.model;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.opentosca.toscana.api.PlatformController;
 import org.opentosca.toscana.api.TransformationController;
 import org.opentosca.toscana.api.docs.HiddenResourceSupport;
+import org.opentosca.toscana.core.transformation.TransformationState;
+import org.opentosca.toscana.core.util.LifecyclePhase;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
@@ -18,18 +21,18 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 @ApiModel
 @Relation(collectionRelation = "transformation")
 public class TransformationResponse extends HiddenResourceSupport {
-    private final int progress;
-    private final String status;
+    private final List<LifecyclePhase> phases;
+    private final TransformationState state;
     private final String platform;
 
     public TransformationResponse(
-        @JsonProperty("progress") int progress,
-        @JsonProperty("status") String status,
+        @JsonProperty("phases") List<LifecyclePhase> phases,
+        @JsonProperty("state") TransformationState state,
         @JsonProperty("platform") String platform,
         String csarName
     ) {
-        this.progress = progress;
-        this.status = status;
+        this.phases = phases;
+        this.state = state;
         this.platform = platform;
         this.add(ControllerLinkBuilder.linkTo(methodOn(TransformationController.class)
             .getCSARTransformation(csarName, platform))
@@ -40,8 +43,8 @@ public class TransformationResponse extends HiddenResourceSupport {
         this.add(ControllerLinkBuilder.linkTo(methodOn(PlatformController.class)
             .getPlatform(platform)).withRel("platform"));
         this.add(linkTo(methodOn(TransformationController.class)
-            .getTransformationProperties(csarName, platform))
-            .withRel("properties").expand(csarName));
+            .getInputs(csarName, platform))
+            .withRel("inputs").expand(csarName));
         this.add(linkTo(methodOn(TransformationController.class)
             .deleteTransformation(csarName, platform))
             .withRel("delete").expand(csarName));
@@ -56,12 +59,11 @@ public class TransformationResponse extends HiddenResourceSupport {
 
     @ApiModelProperty(
         required = true,
-        notes = "The progress in % of how much is done to complete the transformation",
-        example = "0"
+        notes = "The phases of the transformation"
     )
-    @JsonProperty("progress")
-    public int getProgress() {
-        return progress;
+    @JsonProperty("phases")
+    public List<LifecyclePhase> getPhases() {
+        return phases;
     }
 
     @ApiModelProperty(
@@ -71,9 +73,9 @@ public class TransformationResponse extends HiddenResourceSupport {
             "\"READY\", \"INPUT_REQUIRED\", \"TRANSFORMING\", \"DONE\" or \"ERROR\"",
         example = "READY"
     )
-    @JsonProperty("status")
-    public String getStatus() {
-        return status;
+    @JsonProperty("state")
+    public TransformationState getState() {
+        return state;
     }
 
     @ApiModelProperty(

@@ -1,0 +1,17 @@
+{
+    "_links": {
+        "self": {
+            "href": "http://localhost:8080/csars/mongo-db/transformations/p-a/inputs"
+        }
+    },
+    "inputs": [
+        {
+            "valid": false,
+            "key": "unsigned_integer",
+            "type": "unsigned_integer",
+            "description": "",
+            "required": true,
+            "value": "-111"
+        }
+    ]
+}

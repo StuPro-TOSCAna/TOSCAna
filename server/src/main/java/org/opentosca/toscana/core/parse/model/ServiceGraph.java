@@ -12,14 +12,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.opentosca.toscana.core.parse.ToscaTemplateException;
 import org.opentosca.toscana.core.parse.converter.GraphNormalizer;
 import org.opentosca.toscana.core.parse.converter.LinkResolver;
 import org.opentosca.toscana.core.parse.converter.TypeWrapper;
 import org.opentosca.toscana.core.parse.converter.util.ToscaStructure;
 import org.opentosca.toscana.core.transformation.logging.Log;
-import org.opentosca.toscana.core.transformation.properties.Property;
+import org.opentosca.toscana.core.transformation.logging.LogFormat;
+import org.opentosca.toscana.core.transformation.properties.InputProperty;
+import org.opentosca.toscana.core.transformation.properties.OutputProperty;
 import org.opentosca.toscana.model.EntityId;
 import org.opentosca.toscana.model.Parameter;
 
@@ -41,12 +45,13 @@ public class ServiceGraph extends SimpleDirectedGraph<Entity, Connection> {
 
     // guard that makes sure graph finalization can only be done once
     private boolean finalized = false;
-    private Map<String, Property> inputs;
+    private Map<String, InputProperty> inputs;
 
     public ServiceGraph(Log log) {
         super((sourceVertex, targetVertex) -> new Connection(targetVertex.getName(), sourceVertex, targetVertex));
         this.log = log;
         this.logger = log.getLogger(getClass());
+        logger.info("Constructing service graph");
         root = new MappingEntity(ToscaStructure.SERVICE_TEMPLATE, this);
         addVertex(root);
     }
@@ -54,11 +59,13 @@ public class ServiceGraph extends SimpleDirectedGraph<Entity, Connection> {
     public ServiceGraph(File template, Log log) {
         this(log);
         try {
+            logger.info("Parsing service template");
             Node snakeNode = new Yaml().compose(new FileReader(template));
             EntityId id = new EntityId(new ArrayList<>());
             ToscaStructure.buildBasicStructure(this); // in case this has not already been established automatically
+            logger.info("Populating service graph");
             populateGraph(snakeNode, id);
-            if (requiredInputsSet()) {
+            if (inputsValid()) {
                 finalizeGraph();
             }
         } catch (FileNotFoundException e) {
@@ -108,35 +115,46 @@ public class ServiceGraph extends SimpleDirectedGraph<Entity, Connection> {
      */
     public void finalizeGraph() {
         if (finalized) return;
+        logger.info("Finalizing service graph");
         finalized = true;
-        if (!requiredInputsSet()) {
-            logger.error("Required inputs must be set before graph can get finalized.");
+        if (!inputsValid()) {
+            logger.error("Inputs must be set and valid before graph can get finalized.");
             throw new IllegalStateException();
         }
-        GraphNormalizer.normalize(this);
-        LinkResolver.resolveLinks(this);
+        GraphNormalizer.normalize(this, log);
+        LinkResolver.resolveLinks(this, log);
     }
 
     /**
      @return true if all declared tosca inputs have a value assigned
      (or have a default value, or are flagged as not required), false otherwise.
      */
-    public boolean requiredInputsSet() {
-        Map<String, Property> inputs = getInputs();
+    public boolean inputsValid() {
+        Map<String, InputProperty> inputs = getInputs();
         return inputs.values().stream()
-            .allMatch(p -> p.getValue().isPresent() || p.getDefaultValue().isPresent() || !p.isRequired());
+            .allMatch(InputProperty::isValid);
     }
 
-    public Map<String, Property> getInputs() {
+    public Map<String, InputProperty> getInputs() {
         if (inputs == null) {
+            logger.info("Collecting TOSCA inputs from service graph");
             inputs = new HashMap<>();
             Collection<Entity> inputEntities = getChildren(ToscaStructure.INPUTS);
             for (Entity inputEntity : inputEntities) {
                 Parameter input = TypeWrapper.wrapEntity((MappingEntity) inputEntity, Parameter.class);
                 inputs.put(input.getEntityName(), input);
             }
+            logger.debug("Found {} TOSCA inputs in graph", inputs.size());
+            inputs.keySet().forEach(key -> logger.debug(LogFormat.indent(1, key)));
         }
         return inputs;
+    }
+
+    public Map<String, OutputProperty> getOutputs() {
+        return getChildren(ToscaStructure.OUTPUTS)
+            .stream()
+            .map(o -> (Parameter) TypeWrapper.wrapEntity((MappingEntity) o, Parameter.class))
+            .collect(Collectors.toMap(Parameter::getKey, Function.identity()));
     }
 
     /**
@@ -186,7 +204,7 @@ public class ServiceGraph extends SimpleDirectedGraph<Entity, Connection> {
 
     public Entity getEntityOrThrow(EntityId id) {
         Optional<Entity> optionalEntity = getEntity(id);
-        return optionalEntity.orElseThrow(() -> new IllegalStateException(
+        return optionalEntity.orElseThrow(() -> new ToscaTemplateException(
             String.format("Entity '%s' is referenced but does not exist", id)
         ));
     }

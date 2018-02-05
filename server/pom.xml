@@ -62,7 +62,7 @@
         <dependency>
             <groupId>com.github.StuPro-TOSCAna</groupId>
             <artifactId>cloudformation-builder</artifactId>
-            <version>1294a9af6c8dff82d7cca757ecbbdb2a004643c1</version>
+            <version>4dbd6cb8743e1ecb778ea34b1afc32fc939fa04f</version>
         </dependency>
         <!--AWS Java SDK ec2 module-->
         <dependency>
@@ -102,14 +102,14 @@
         <dependency>
             <groupId>io.fabric8</groupId>
             <artifactId>kubernetes-client</artifactId>
-            <version>2.6.2</version>
+            <version>3.1.8</version>
         </dependency>
         <!--Base Image Mapper-->
         <!--Retrofit (Used to access the docker Registry API)-->
         <dependency>
             <groupId>com.squareup.retrofit2</groupId>
             <artifactId>retrofit</artifactId>
-            <version>LATEST</version>
+            <version>2.3.0</version>
         </dependency>
         <dependency>
             <groupId>com.spotify</groupId>
@@ -119,24 +119,24 @@
         <dependency>
             <groupId>com.squareup.retrofit2</groupId>
             <artifactId>converter-jackson</artifactId>
-            <version>LATEST</version>
+            <version>2.3.0</version>
         </dependency>
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>logging-interceptor</artifactId>
-            <version>LATEST</version>
+            <version>3.9.1</version>
         </dependency>
         <!--Semantic Versioning Library-->
         <dependency>
             <groupId>com.vdurmont</groupId>
             <artifactId>semver4j</artifactId>
-            <version>2.1.0</version>
+            <version>2.2.0</version>
         </dependency>
         <!-- Winery -->
         <dependency>
             <groupId>com.github.stupro-toscana.winery</groupId>
             <artifactId>org.eclipse.winery.yaml.common</artifactId>
-            <version>de13b2c156a8bf3fa88bf8d330b4378c4ae3f85c</version>
+            <version>3f556dfe5175a02acbad26c2e9cad3bdd2c1708d</version>
         </dependency>
         <!--<dependency>-->
         <!--<groupId>com.github.eclipse.winery</groupId>-->
@@ -165,12 +165,12 @@
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger2</artifactId>
-            <version>2.7.0</version>
+            <version>2.8.0</version>
         </dependency>
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger-ui</artifactId>
-            <version>2.7.0</version>
+            <version>2.8.0</version>
         </dependency>
         <!-- Test Dependencies -->
         <dependency>
@@ -187,7 +187,7 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>2.11.0</version>
+            <version>2.13.0</version>
             <scope>test</scope>
         </dependency>
         <!--Retrofit + bindings-->

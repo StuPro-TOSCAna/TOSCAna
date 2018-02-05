@@ -5,7 +5,7 @@ import java.util.Optional;
 import org.opentosca.toscana.core.parse.converter.ParameterConverter;
 import org.opentosca.toscana.core.parse.model.MappingEntity;
 import org.opentosca.toscana.core.parse.model.ServiceGraph;
-import org.opentosca.toscana.core.transformation.properties.Property;
+import org.opentosca.toscana.core.transformation.properties.InputProperty;
 import org.opentosca.toscana.core.transformation.properties.PropertyType;
 import org.opentosca.toscana.model.util.ToscaKey;
 
@@ -17,7 +17,7 @@ import lombok.ToString;
  */
 @EqualsAndHashCode
 @ToString
-public class Parameter extends DescribableEntity implements Property {
+public class Parameter extends DescribableEntity implements InputProperty {
 
     public static final ToscaKey<String> TYPE = new ToscaKey<>("type");
 
@@ -60,7 +60,7 @@ public class Parameter extends DescribableEntity implements Property {
      @return {@link #VALUE}
      */
     @Override
-    public Optional<String> getValue() {
+    public Optional<String> getValueWithoutDefault() {
         return Optional.ofNullable(get(VALUE));
     }
 
@@ -72,7 +72,7 @@ public class Parameter extends DescribableEntity implements Property {
 
     private void finalizeGraph() {
         ServiceGraph graph = getBackingEntity().getGraph();
-        if (graph.requiredInputsSet()) {
+        if (graph.inputsValid()) {
             graph.finalizeGraph();
         }
     }

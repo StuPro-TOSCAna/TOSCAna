@@ -3,7 +3,11 @@ package org.opentosca.toscana.core.plugin.lifecycle;
 import java.util.function.Predicate;
 
 import org.opentosca.toscana.core.transformation.TransformationContext;
+import org.opentosca.toscana.core.util.Lifecycle;
+import org.opentosca.toscana.core.util.LifecyclePhase;
 import org.opentosca.toscana.util.ExceptionAwareVoidFunction;
+
+import io.swagger.annotations.ApiModel;
 
 /**
  This represents a wrapper for a execution phase e.g. the transform phase.
@@ -12,16 +16,18 @@ import org.opentosca.toscana.util.ExceptionAwareVoidFunction;
  @param <LifecycleT> The type of the Transformation Lifecycle Interface,
  this is equal to the <code>LifecycleT</code> of the Plugin that implements the
  LifecycleAware Plugin Class. */
-public class ExecutionPhase<LifecycleT extends TransformationLifecycle> {
-    private String name;
+@ApiModel
+public class ExecutionPhase<LifecycleT extends TransformationLifecycle> extends LifecyclePhase {
+
     private ExceptionAwareVoidFunction<LifecycleT> function;
     private Predicate<TransformationContext> executionCheck;
 
     public ExecutionPhase(
         String name,
-        ExceptionAwareVoidFunction<LifecycleT> function
+        ExceptionAwareVoidFunction<LifecycleT> function,
+        Lifecycle lifecycle
     ) {
-        this.name = name;
+        super(name, lifecycle);
         this.function = function;
         this.executionCheck = (e) -> true;
     }
@@ -29,30 +35,39 @@ public class ExecutionPhase<LifecycleT extends TransformationLifecycle> {
     public ExecutionPhase(
         String name,
         ExceptionAwareVoidFunction<LifecycleT> function,
-        Predicate<TransformationContext> validation
+        Predicate<TransformationContext> validation,
+        Lifecycle lifecycle
     ) {
-        this(name, function);
+        this(name, function, lifecycle);
         this.executionCheck = validation;
     }
 
     public boolean shouldExecute(TransformationContext context) {
-        return executionCheck.test(context);
+        boolean shouldExecute = executionCheck.test(context);
+        if (!shouldExecute && getState() == State.PENDING) {
+            setState(State.SKIPPING);
+        }
+        return shouldExecute;
     }
 
     /**
-     Calls the given function
+     Calls the given function if the phase should execute. Else does nothing.
 
      @param lifecycle the lifecycle object to call the function on/with
      @throws Exception if you throw an exception inside of the Function, the transformation will fail.
      */
     public void execute(LifecycleT lifecycle) throws Exception {
-        function.apply(lifecycle);
+        try {
+            setState(State.EXECUTING);
+            function.apply(lifecycle);
+            setState(State.DONE);
+        } catch (Exception e) {
+            setState(State.FAILED);
+            throw e;
+        }
     }
 
-    /**
-     @return the display name of the execution phase
-     */
-    public String getName() {
-        return name;
+    public void skip() {
+        setState(State.SKIPPED);
     }
 }

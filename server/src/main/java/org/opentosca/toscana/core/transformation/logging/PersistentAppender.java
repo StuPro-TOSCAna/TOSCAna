@@ -12,10 +12,10 @@ import org.slf4j.LoggerFactory;
 
 public class PersistentAppender extends FileAppender<ILoggingEvent> {
 
-    // important: if you change the date format, also change the date regex!!
+    // important: if you change the date format, also change the date regex
     public final static String DATE_FORMAT = "yyyy-MM-dd/HH:mm:ss.SSS/zzz";
     public final static Pattern DATE_FORMAT_REGEX = Pattern.compile("[0-9]{4}-[01][0-9]-[0123][0-9]/[012][0-9]:[012345][0-9]:[012345][0-9].[0-9]{3}/.{3}");
-    public final static String PATTERN_LAYOUT = "%d{" + DATE_FORMAT + "} %-5level %-36logger{36} %msg%n";
+    public final static String PATTERN_LAYOUT = "%d{" + DATE_FORMAT + "} %level %logger %msg%n";
 
     private final static org.slf4j.Logger logger = LoggerFactory.getLogger(PersistentAppender.class);
 

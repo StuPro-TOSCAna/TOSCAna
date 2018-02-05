@@ -16,6 +16,7 @@ public final class TransformationContext {
     private final PluginFileAccess access;
     private final EffectiveModel model;
     private final PropertyInstance properties;
+    private final Logger logger;
 
     public TransformationContext(File csarContentDir, File transformationRootDir, Log log,
                                  EffectiveModel model, PropertyInstance properties) {
@@ -23,6 +24,7 @@ public final class TransformationContext {
         this.model = model;
         this.properties = properties;
         this.access = new PluginFileAccess(csarContentDir, transformationRootDir, log);
+        this.logger = getLogger(getClass());
     }
 
     public EffectiveModel getModel() {
@@ -54,10 +56,11 @@ public final class TransformationContext {
      Plaese DO NOT check if the platform should perform a deployment while performing the Transformation!
      */
     public boolean performDeployment() {
-        String value = properties.getPropertyValue(Platform.DEPLOY_AFTER_TRANSFORMATION_KEY).orElse("false");
         try {
+            String value = properties.get(Platform.DEPLOY_AFTER_TRANSFORMATION_KEY).orElse("false");
             return Boolean.parseBoolean(value);
         } catch (Exception e) {
+            logger.error("Cannot parse deployment flag in properties", e);
             return false;
         }
     }

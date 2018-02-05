@@ -52,6 +52,7 @@ class MemoryAppender extends AppenderBase<ILoggingEvent> {
         log.addLogEntry(
             new LogEntry(
                 loggingEvent.getTimeStamp(),
+                loggingEvent.getLoggerName(),
                 message,
                 loggingEvent.getLevel()
             )

@@ -8,6 +8,10 @@
         </encoder>
     </appender>
 
+    <root level="DEBUG">
+        <appender-ref ref="STDOUT"/>
+    </root>
+    
     <!--set individual log levels for individual namespaces here -->
     <logger name="org.springframework" level="WARN"/>
     <logger name="org.hibernate" level="WARN"/>
@@ -22,9 +26,5 @@
     <logger name="reactor.ipc.netty" level="WARN"/>
     <logger name="com.amazonaws" level="WARN"/>
     <logger name="org.eclipse.winery" level="WARN"/>
-  
 
-    <root level="DEBUG">
-        <appender-ref ref="STDOUT"/>
-    </root>
 </configuration>

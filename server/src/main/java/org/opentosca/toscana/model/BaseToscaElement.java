@@ -62,7 +62,7 @@ public abstract class BaseToscaElement {
             mappingEntity.setValue(key, value);
         }
     }
-
+    
     public String getEntityName() {
         return name;
     }

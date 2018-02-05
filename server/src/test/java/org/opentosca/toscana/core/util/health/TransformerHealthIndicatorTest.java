@@ -17,7 +17,6 @@ import org.opentosca.toscana.core.plugin.PluginService;
 import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.TransformationImpl;
 import org.opentosca.toscana.core.transformation.TransformationState;
-import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -129,7 +128,7 @@ public class TransformerHealthIndicatorTest extends BaseUnitTest {
     private void initTestEnvironment() {
         //Create Dummy Csar
         //DummyCsar csar = new DummyCsar("test");
-        Csar csar = new CsarImpl(new File(""), MOCK_CSAR_NAME, mock(Log.class));
+        Csar csar = new CsarImpl(new File(""), MOCK_CSAR_NAME, logMock());
         csar = spy(csar);
 
         Map<String, Transformation> transformations = new HashMap<>();
@@ -137,7 +136,7 @@ public class TransformerHealthIndicatorTest extends BaseUnitTest {
 
         for (Object[] d : MOCK_DATA) {
             //Initialize transformation Mock
-            Transformation transformation = new TransformationImpl(csar, (Platform) d[0], mock(Log.class), modelMock());
+            Transformation transformation = new TransformationImpl(csar, (Platform) d[0], logMock(), modelMock());
             transformation.setState((TransformationState) d[1]);
             transformations.put(((Platform) d[0]).id, transformation);
 

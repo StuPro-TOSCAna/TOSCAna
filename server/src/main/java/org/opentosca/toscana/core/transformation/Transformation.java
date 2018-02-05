@@ -1,12 +1,15 @@
 package org.opentosca.toscana.core.transformation;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.transformation.artifacts.TargetArtifact;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.platform.Platform;
+import org.opentosca.toscana.core.transformation.properties.OutputProperty;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
+import org.opentosca.toscana.core.util.LifecyclePhase;
 import org.opentosca.toscana.model.EffectiveModel;
 
 public interface Transformation {
@@ -27,40 +30,9 @@ public interface Transformation {
     Platform getPlatform();
 
     /**
-     Sets the value of the property with its given name.
-
-     @throws IllegalArgumentException if a property with the given name cannot be found or if entered value is invalid
-     */
-    default void setProperty(String key, String value) {
-        getProperties().setPropertyValue(key, value);
-    }
-
-    /**
      @return Key(SimpleProperty Name)-Value map of all properties that have been set explicitly!
      */
-    PropertyInstance getProperties();
-
-    /**
-     Checks if all Properties for the given Requirement type are set.
-     <p>
-     This is just a "shortcut" for <code>getProperties().allPropertiesSet(type)</code>
-
-     @return true if all properties have been set and are valid, false otherwise
-     */
-    default boolean allPropertiesSet() {
-        return getProperties().allPropertiesSet();
-    }
-
-    /**
-     Checks if all Properties for the given Requirement type are set.
-     <p>
-     This is just a "shortcut" for <code>getProperties().requiredPropertiesSet(type)</code>
-
-     @return true if all required properties have been set and are valid, false otherwise
-     */
-    default boolean allRequiredPropertiesSet() {
-        return getProperties().requiredPropertiesSet();
-    }
+    PropertyInstance getInputs();
 
     /**
      Returns the log of this transformation
@@ -84,4 +56,15 @@ public interface Transformation {
      Returns the underlying model of this transformation.
      */
     EffectiveModel getModel();
+
+    /**
+     Returns the outputs of the transformation.
+     If the Transformation is not Done or has errored (The state is not DONE or ERROR)
+     this will throw a IllegalStateExecption
+     */
+    List<OutputProperty> getOutputs() throws IllegalStateException;
+
+    void setLifecyclePhases(List<LifecyclePhase> lifecyclePhases);
+
+    List<LifecyclePhase> getLifecyclePhase();
 }

@@ -4,7 +4,6 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
 import lombok.EqualsAndHashCode;
-import lombok.ToString;
 
 /**
  Defines a network port.
@@ -12,7 +11,6 @@ import lombok.ToString;
  Originates from TOSCA's type 'PortDef' (TOSCA Simple Profile in YAML Version 1.1, p. 145)
  */
 @EqualsAndHashCode
-@ToString
 public class Port implements Comparable<Port> {
 
     @Min(1)
@@ -32,5 +30,10 @@ public class Port implements Comparable<Port> {
     @Override
     public int compareTo(Port port) {
         return Integer.compare(this.port, port.port);
+    }
+
+    @Override
+    public String toString() {
+        return String.valueOf(port);
     }
 }

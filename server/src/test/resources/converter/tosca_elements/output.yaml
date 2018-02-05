@@ -7,6 +7,11 @@ metadata:
   template_version: 1.0
 
 topology_template:
+  node_templates:
+    test_node:
+      type: Database
+      properties:
+        port: 8084
   outputs:
     test_output:
       type: string
@@ -14,3 +19,8 @@ topology_template:
       required: true
       default: test-default
       value: test-value
+    test_output_linked:
+      type: integer
+      description: test-description2
+      required: false
+      value: { get_property: [ test_node, port ] }

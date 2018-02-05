@@ -30,10 +30,7 @@ topology_template:
       type: tosca.nodes.WebApplication
       requirements:
         - host: apache_web_server
-        - database_endpoint: 
-            node: my_db
-            capability: database_endpoint
-            relationship: ConnectsTo
+        - database_endpoint: my_db
       interfaces:
         Standard:
           create:
@@ -106,6 +103,6 @@ topology_template:
       description: Public address of the server
       value: { get_attribute: [ server, public_address ] }
     port:
-      type: string
-      description: Port of the server
-      value: { get_attribute: [ server, port ] }
+      type: integer
+      description: Port of the application
+      value: { get_attribute: [ my_app, app_endpoint, port ] }

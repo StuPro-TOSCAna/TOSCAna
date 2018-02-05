@@ -6,9 +6,12 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -20,11 +23,12 @@ import org.opentosca.toscana.api.exceptions.IllegalTransformationStateException;
 import org.opentosca.toscana.api.exceptions.PlatformNotFoundException;
 import org.opentosca.toscana.api.exceptions.TransformationAlreadyPresentException;
 import org.opentosca.toscana.api.exceptions.TransformationNotFoundException;
-import org.opentosca.toscana.api.model.GetPropertiesResponse;
+import org.opentosca.toscana.api.model.GetInputsResponse;
+import org.opentosca.toscana.api.model.GetOutputsResponse;
+import org.opentosca.toscana.api.model.InputWrap;
+import org.opentosca.toscana.api.model.InputsResponse;
 import org.opentosca.toscana.api.model.LogResponse;
-import org.opentosca.toscana.api.model.PropertyWrap;
-import org.opentosca.toscana.api.model.SetPropertiesRequest;
-import org.opentosca.toscana.api.model.SetPropertiesResponse;
+import org.opentosca.toscana.api.model.OutputWrap;
 import org.opentosca.toscana.api.model.TransformationResponse;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarService;
@@ -36,8 +40,11 @@ import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.logging.LogEntry;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.platform.PlatformService;
-import org.opentosca.toscana.core.transformation.properties.Property;
+import org.opentosca.toscana.core.transformation.properties.InputProperty;
+import org.opentosca.toscana.core.transformation.properties.NoSuchPropertyException;
+import org.opentosca.toscana.core.transformation.properties.OutputProperty;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
+import org.opentosca.toscana.core.transformation.properties.PropertyType;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -155,8 +162,8 @@ public class TransformationController {
         List<TransformationResponse> transformations = new ArrayList<>();
         for (Map.Entry<String, Transformation> entry : csar.getTransformations().entrySet()) {
             transformations.add(new TransformationResponse(
-                0,
-                entry.getValue().getState().name(),
+                entry.getValue().getLifecyclePhase(),
+                entry.getValue().getState(),
                 entry.getKey(),
                 csar.getIdentifier()
             ));
@@ -219,8 +226,8 @@ public class TransformationController {
         Csar csar = findByCsarId(name);
         Transformation transformation = findTransformationByPlatform(csar, platform);
         return ResponseEntity.ok().body(new TransformationResponse(
-            0,
-            transformation.getState().name(),
+            transformation.getLifecyclePhase(),
+            transformation.getState(),
             platform, name
         ));
     }
@@ -292,7 +299,7 @@ public class TransformationController {
         //Return 404 if the platform does not exist
         Optional<Platform> optionalPlatform = platformService.findPlatformById(platform);
         Platform p = optionalPlatform.orElseThrow(PlatformNotFoundException::new);
-        Transformation transformation = transformationService.createTransformation(csar, p);
+        transformationService.createTransformation(csar, p);
         return ResponseEntity.ok().build();
     }
 
@@ -315,7 +322,7 @@ public class TransformationController {
      <td>400</td>
      <td>application/json</td>
      <td>Returned if the transformation is not in a valid state (Required Properties missing, Already running/Done) to
-     set properties</td>
+     set inputs</td>
      </tr>
      <tr>
      <td>404</td>
@@ -543,7 +550,7 @@ public class TransformationController {
      <tr>
      <td>400</td>
      <td>application/json</td>
-     <td>Returned if the transformation is not in a valid state (has to be in DONE or ERROR) to set properties</td>
+     <td>Returned if the transformation is not in a valid state (has to be in DONE or ERROR) to set inputs</td>
      </tr>
      <tr>
      <td>404</td>
@@ -611,9 +618,9 @@ public class TransformationController {
     }
 
     /**
-     Returns a list of properties (name-value pairs) that might have to be set (if they are required) in order to start
+     Returns a list of inputs that might have to be set (if they are required) in order to start
      the transformation <p>
-     Accessed with http call <code>GET /csars/{csar}/transformations/{platform}/properties</code>
+     Accessed with http call <code>GET /csars/{csar}/transformations/{platform}/inputs</code>
      <table summary="">
      <tr>
      <td>HTTP-Code</td>
@@ -634,24 +641,24 @@ public class TransformationController {
      </table>
      */
     @RequestMapping(
-        path = "/{platform}/properties",
+        path = "/{platform}/inputs",
         method = RequestMethod.GET,
         produces = "application/hal+json"
     )
     @ApiOperation(
-        value = "Retrieve the Properties and their current values",
+        value = "Retrieve the inputs of this transformation",
         tags = {"transformations"},
-        notes = "This Operation returns a list of properties, specific to the csar and the platform. " +
-            "If the value is null and the property is required it has to be set in order to proceed with " +
-            "launching the transformation. Setting the properties is done with a POST or PUT to the same URL " +
-            "(See Set Properties Operation). If the Transformation does not need any properties a empty list (Json Array) " +
+        notes = "This Operation returns a list of inputs, specific to the csar and the platform. " +
+            "If the input is invalid it has to be set in order to proceed with " +
+            "starting the transformation. Setting the inputs is done with a POST or PUT to the same URL " +
+            "(See Set Inputs Operation). If Transformation does not have any inputs, an empty array " +
             "is returned"
     )
     @ApiResponses({
         @ApiResponse(
             code = 200,
             message = "The operation was executed successfully",
-            response = GetPropertiesResponse.class
+            response = GetInputsResponse.class
         ),
         @ApiResponse(
             code = 404,
@@ -660,36 +667,23 @@ public class TransformationController {
             response = RestErrorResponse.class
         )
     })
-    public ResponseEntity<GetPropertiesResponse> getTransformationProperties(
-        @ApiParam(value = "The unique identifier for the CSAR", required = true, example = "test")
+    public ResponseEntity<GetInputsResponse> getInputs(
+        @ApiParam(value = "The identifier for the CSAR", required = true, example = "test")
         @PathVariable(name = "csarId") String csarId,
         @ApiParam(value = "The identifier for the platform", required = true, example = "kubernetes")
         @PathVariable(name = "platform") String platformId
     ) {
         Csar csar = findByCsarId(csarId);
         Transformation transformation = findTransformationByPlatform(csar, platformId);
-        checkTransformationsForProperties(transformation, true);
-        List<PropertyWrap> propertyWrapList = new ArrayList<>();
-        //TODO add filtering depending on the transformation state (i.e. Transforming, Deploying...)
-        PropertyInstance instance = transformation.getProperties();
-        for (Property property : transformation.getProperties().getPropertySchema()) {
-            propertyWrapList.add(new PropertyWrap(
-                    property.getKey(),
-                    property.getType().getTypeName(),
-                    property.getDescription().orElse(null),
-                    instance.getPropertyValues().get(property.getKey()),
-                    property.isRequired()
-                )
-            );
-        }
-        GetPropertiesResponse response = new GetPropertiesResponse(csarId, platformId, propertyWrapList);
+        List<InputWrap> inputWrapList = toPropertyWrapList(transformation.getInputs(), null);
+        GetInputsResponse response = new GetInputsResponse(csarId, platformId, inputWrapList);
         return ResponseEntity.ok(response);
     }
 
     /**
-     This Mapping is used to post the inputs (properties) to the server. this will set the properties internally
+     This mapping is used to post the inputs to the server.
      <p>
-     Accessed with http call <code>PUT or POST /csars/{csar}/transformations/{platform}/properties</code>
+     Accessed with http call <code>PUT or POST /csars/{csar}/transformations/{platform}/inputs</code>
      <table summary="">
      <tr>
      <td>HTTP-Code</td>
@@ -699,33 +693,32 @@ public class TransformationController {
      <tr>
      <td>200</td>
      <td>application/hal+json</td>
-     <td>Returns a empty body if all required properties have been set</td>
+     <td>Returns a empty body if all required inputs have been set</td>
      </tr>
      <tr>
      <td>400</td>
      <td>application/json</td>
-     <td>Returned if the transformation is not in a valid state (has to be in INPUT_REQUIRED) to set properties</td>
+     <td>Returned if the transformation is not in a valid state (has to be in INPUT_REQUIRED or READY)</td>
      </tr>
      <tr>
      <td>404</td>
      <td>application/json</td>
-     <td>Returns a error message if the csar is not found or if the csar does not have a transformation for the given
-     name (see returned error message for details)</td>
+     <td>Returns an error message if the csar is not found or if the csar does not have a transformation for the given
+     platformId (see returned error message for details)</td>
      </tr>
      </table>
      */
     @RequestMapping(
-        path = "/{platform}/properties",
+        path = "/{platform}/inputs",
         method = {RequestMethod.POST, RequestMethod.PUT},
         produces = "application/json"
     )
     @ApiOperation(
-        value = "Set the value of Properties",
+        value = "Set the value of inputs",
         tags = {"transformations"},
-        notes = "With this method it is possible to set the value of a property or multiple properties at once. The values " +
-            "of properties can be set as long as they are in the READY or INPUT_REQUIRED state. The transformation changes its state " +
-            "to ready once all required properties have a value assigned to them. Once this is done the value can be changed or you can still " +
-            "set non required properties."
+        notes = "With this method it is possible to set the value of an input or multiple inputs at once. The values " +
+            "of inputs can be set as long as they are in the READY or INPUT_REQUIRED state. The transformation changes its state " +
+            "to ready once all required inputs have a valid value assigned to them."
     )
     @ApiResponses({
         @ApiResponse(
@@ -735,76 +728,150 @@ public class TransformationController {
         ),
         @ApiResponse(
             code = 400,
-            message = "Properties cannot get set once the transformation has been started.",
+            message = "Inputs cannot get set once the transformation has been started.",
             response = RestErrorResponse.class
         ),
         @ApiResponse(
             code = 404,
             message = "There is no CSAR for the given identifier or the CSAR does not have " +
-                "a Transformation for the specified platform.",
+                "a transformation for the specified platform.",
             response = RestErrorResponse.class
         ),
         @ApiResponse(
             code = 406,
-            message = "At least one of the properties could not get set because either the key does not exist or the " +
-                "Syntax validation of the value has failed.",
-            response = SetPropertiesResponse.class
+            message = "At least one of the inputs could not get set because either the key does not exist or the " +
+                "syntax validation of the value has failed.",
+            response = InputsResponse.class
         )
     })
-    public ResponseEntity<SetPropertiesResponse> setTransformationProperties(
+    public ResponseEntity<InputsResponse> setInputs(
         @ApiParam(value = "The unique identifier for the CSAR", required = true, example = "test")
         @PathVariable(name = "csarId") String csarId,
         @ApiParam(value = "The identifier for the platform", required = true, example = "kubernetes")
         @PathVariable(name = "platform") String platformId,
-        @RequestBody SetPropertiesRequest setPropertiesRequest
+        @RequestBody InputsResponse propertiesRequest
     ) {
         Csar csar = findByCsarId(csarId);
         Transformation transformation = findTransformationByPlatform(csar, platformId);
-        checkTransformationsForProperties(transformation, false);
+        List<TransformationState> validStates = Arrays.asList(INPUT_REQUIRED, READY);
+        if (!Arrays.asList(INPUT_REQUIRED, READY).contains(transformation.getState())) {
+            throw new IllegalTransformationStateException(
+                String.format("The transformation is not in one of the states '%s'", validStates));
+        }
+        PropertyInstance inputs = transformation.getInputs();
         Map<String, Boolean> successes = new HashMap<>();
         boolean somethingFailed = false;
-        //Set The Properties and check their validity
-        for (PropertyWrap entry : setPropertiesRequest.getProperties()) {
+        //Set the properties and check their validity
+        for (InputWrap entry : propertiesRequest.getInputs()) {
             try {
-                transformation.setProperty(entry.getKey(), entry.getValue());
-                successes.put(entry.getKey(), true);
-            } catch (Exception e) {
+                boolean success = inputs.set(entry.getKey(), entry.getValue());
+                successes.put(entry.getKey(), success);
+                if (!success) {
+                    somethingFailed = true;
+                }
+            } catch (NoSuchPropertyException e) {
+                logger.error("Failed to set inputs for transformation '%s'", transformation, e);
                 somethingFailed = true;
                 successes.put(entry.getKey(), false);
             }
         }
-        //Return the result (with code 200 if all inputs were valid and 400 if at least 1 was invalid)
-//        PropertyInstance instance = transformation.getProperties();
-//        //TODO if other requirement types get used, this needs a change!
-//        //Change state of the transformation to show the user that all required properties have been set
-//        if(instance.requiredPropertiesSet(RequirementType.TRANSFORMATION)) {
-//            //TODO Maybe a different method to change the state is needed!
-//            transformation.setState(TransformationState.READY);
-//        }
         if (!somethingFailed) {
             return ResponseEntity.ok().build();
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(new SetPropertiesResponse(successes));
+            Set<String> requestedKeys = new HashSet<>(successes.keySet());
+            List<InputWrap> propWrapList = toPropertyWrapList(inputs, requestedKeys);
+            //The request contains invalid values
+            if (requestedKeys.size() > propWrapList.size()) {
+                Set<String> knownKeys = propWrapList.stream().map(InputWrap::getKey).collect(Collectors.toSet());
+                requestedKeys.removeAll(knownKeys); // Remove all known (valid) keys
+                requestedKeys.forEach(e -> {
+                    propWrapList.add(new InputWrap(e, PropertyType.INVALID_KEY, "Invalid Key",
+                        null, false, null, false));
+                });
+            }
+            InputsResponse response = new InputsResponse(propWrapList);
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(response);
         }
     }
 
     /**
-     Checks if the given transformation exists and is in the required state otherwise a
-     TransformationNotFoundException or IllegalTransformationsStateException is thrown
+     Returns the outputs of a Transformation.
+     <p>
+     <table summary="">
+     <tr>
+     <td>HTTP-Code</td>
+     <td>Mime-Type</td>
+     <td>Description (Returned if)</td>
+     </tr>
+     <tr>
+     <td>200</td>
+     <td>application/hal+json</td>
+     <td>Returns a List of the outputs. (Empty if no deployment has been executed)</td>
+     </tr>
+     <tr>
+     <td>400</td>
+     <td>application/json</td>
+     <td>Returned if the transformation is not in a valid state (has to be in DONE or ERROR) to set inputs</td>
+     </tr>
+     <tr>
+     <td>404</td>
+     <td>application/json</td>
+     <td>Returns a error message if the csar is not found or if the csar does not have a transformation for the given
+     name (see returned error message for details)</td>
+     </tr>
+     </table>
      */
-    private void checkTransformationsForProperties(Transformation transformation, boolean isGetProps) {
-        List<TransformationState> validStates = Arrays.asList(INPUT_REQUIRED, READY);
-        if (transformation == null) {
-            throw new TransformationNotFoundException();
-        } else if (!validStates.contains(transformation.getState()) && !isGetProps) {
-            throw new IllegalTransformationStateException("The transformation is not in the INPUT_REQUIRED state");
+    @ApiOperation(
+        value = "Retrieve the outputs and their values",
+        tags = {"transformations"},
+        notes = "This operation returns the outputs of a deployment. Retrieval of the outputs is not possible " +
+            "if the transformation (including deployment) is not done yet"
+    )
+    @ApiResponses({
+        @ApiResponse(
+            code = 200,
+            message = "The operation was executed successfully",
+            response = InputsResponse.class
+        ),
+        @ApiResponse(
+            code = 404,
+            message = "There is no CSAR for the given identifier or the CSAR does not have " +
+                "a transformation for the specified platform",
+            response = RestErrorResponse.class
+        ),
+        @ApiResponse(
+            code = 400,
+            message = "The state of the transformation is invalid (not ERROR or DONE)",
+            response = RestErrorResponse.class
+        )
+    })
+    @RequestMapping(
+        path = "/{platform}/outputs",
+        method = {RequestMethod.GET},
+        produces = "application/hal+json"
+    )
+    public ResponseEntity<GetOutputsResponse> getOutputs(
+        @ApiParam(value = "The unique identifier for the CSAR", required = true, example = "test")
+        @PathVariable(name = "csarId") String csarId,
+        @ApiParam(value = "The identifier for the platform", required = true, example = "kubernetes")
+        @PathVariable(name = "platform") String platformId
+    ) {
+        Csar csar = findByCsarId(csarId);
+        Transformation transformation = findTransformationByPlatform(csar, platformId);
+        if (transformation.getState() != TransformationState.DONE && transformation.getState() != TransformationState.ERROR) {
+            throw new IllegalTransformationStateException("The Transformation has not finished yet!");
         }
+        List<OutputProperty> outputs = transformation.getOutputs();
+        List<OutputWrap> wrappedOutputs = outputs.stream()
+            .map(o -> new OutputWrap(o))
+            .collect(Collectors.toList());
+        return ResponseEntity.ok(new GetOutputsResponse(csarId, platformId, wrappedOutputs));
     }
 
     @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "Cannot delete csar with running transformations")
     @ExceptionHandler(IndexOutOfBoundsException.class)
     public void handleLogIndexLessThanZero() {
-        //Nop
+        // noop
     }
 
     /**
@@ -822,5 +889,15 @@ public class TransformationController {
         Optional<Transformation> transformation = csar.getTransformation(platformId);
         return transformation.orElseThrow(() -> new TransformationNotFoundException(
             format("The Csar '%s' does not have a transformation for platform '%s'", csar.getIdentifier(), platformId)));
+    }
+
+    private List<InputWrap> toPropertyWrapList(PropertyInstance instance, Set<String> validKeys) {
+        List<InputWrap> inputWrapList = new ArrayList<>();
+        for (InputProperty property : instance.getProperties().values()) {
+            if (validKeys == null || validKeys.contains(property.getKey())) {
+                inputWrapList.add(new InputWrap(property));
+            }
+        }
+        return inputWrapList;
     }
 }
