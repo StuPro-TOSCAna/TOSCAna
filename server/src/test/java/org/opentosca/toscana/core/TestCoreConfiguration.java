@@ -67,7 +67,7 @@ public class TestCoreConfiguration extends CoreConfiguration {
 
     @Bean
     public CsarService csarService(CsarDao repo) {
-        return new CsarServiceImpl(repo, effectiveModelFactory());
+        return new CsarServiceImpl(repo);
     }
 
     @Bean

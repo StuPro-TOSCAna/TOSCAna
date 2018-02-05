@@ -16,8 +16,10 @@ public interface CsarService {
      @return the newly created Csar instance
      @throws InvalidCsarException if parsing, based on the content of given csarStream, failed The exception contains
      the parsing log)
+     
+     @throws CsarIdNotUniqueException if a csar with the same identifier already exists
      */
-    Csar submitCsar(String identifier, InputStream csarStream) throws InvalidCsarException;
+    Csar submitCsar(String identifier, InputStream csarStream) throws InvalidCsarException, CsarIdNotUniqueException;
 
     /**
      Deletes given Csar and all associated transformations from in-memory and persistence layer.

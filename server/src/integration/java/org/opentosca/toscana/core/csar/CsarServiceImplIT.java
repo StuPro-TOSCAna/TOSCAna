@@ -2,6 +2,7 @@ package org.opentosca.toscana.core.csar;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.List;
 
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -38,7 +40,7 @@ public class CsarServiceImplIT extends BaseSpringIntegrationTest {
         EffectiveModelFactory modelFactory = mock(EffectiveModelFactory.class);
         EffectiveModel model = modelMock();
         when(modelFactory.create(any(Csar.class))).thenReturn(model);
-        csarService = new CsarServiceImpl(csarDao, modelFactory);
+        csarService = new CsarServiceImpl(csarDao);
         Log log = new LogImpl(new File(tmpdir, "log"));
         csar = new CsarImpl(new File(""), identifier, log);
     }
@@ -50,6 +52,21 @@ public class CsarServiceImplIT extends BaseSpringIntegrationTest {
 
         Csar result = csarService.submitCsar(identifier, stream);
         assertEquals(csar, result);
+    }
+
+    @Test(expected = CsarIdNotUniqueException.class)
+    public void submitCsarTwice() throws FileNotFoundException, InvalidCsarException, CsarIdNotUniqueException {
+        File file = TestCsars.VALID_EMPTY_TOPOLOGY;
+        InputStream stream = new FileInputStream(file);
+
+        try {
+            csarService.submitCsar(identifier, stream);
+        } catch (InvalidCsarException | CsarIdNotUniqueException e) {
+            e.printStackTrace();
+            fail();
+        }
+        stream = new FileInputStream(file);
+        csarService.submitCsar(identifier, stream);
     }
 
     @Test

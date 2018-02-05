@@ -12,6 +12,7 @@ import org.opentosca.toscana.api.exceptions.CsarNotFoundException;
 import org.opentosca.toscana.api.model.CsarResponse;
 import org.opentosca.toscana.api.model.LogResponse;
 import org.opentosca.toscana.core.csar.Csar;
+import org.opentosca.toscana.core.csar.CsarIdNotUniqueException;
 import org.opentosca.toscana.core.csar.CsarService;
 import org.opentosca.toscana.core.transformation.TransformationState;
 import org.opentosca.toscana.core.transformation.logging.Log;
@@ -157,8 +158,13 @@ public class CsarController {
             response = Void.class
         ),
         @ApiResponse(
+            code = 406,
+            message = "cSAR upload rejected - given ID already in use",
+            response = Void.class
+        ),
+        @ApiResponse(
             code = 500,
-            message = "The server encountered a unexcpected problem.",
+            message = "The server encountered a unexpected problem",
             response = Void.class
         )
     })
@@ -177,6 +183,9 @@ public class CsarController {
         try {
             csarService.submitCsar(name, file.getInputStream());
             return ResponseEntity.status(HttpStatus.CREATED).build();
+        } catch (CsarIdNotUniqueException e) {
+            log.info("Rejecting csar upload: Id '{}' already in use", name);
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
@@ -188,17 +197,17 @@ public class CsarController {
     @ApiOperation(
         value = "Deletes a Existing CSAR",
         notes = "Deletes the Resulting CSAR and its transformations (if none of them is running). " +
-            "If a transformation is running (in the state TRANSFORMING) the csar cannot be deleted!"
+            "If a transformation is running (in the state TRANSFORMING) the CSAR cannot be deleted"
     )
     @ApiResponses({
         @ApiResponse(
             code = 200,
-            message = "The deletion of the csar was sucessful!",
+            message = "The deletion of the CSAR was successful",
             response = Void.class
         ),
         @ApiResponse(
             code = 400,
-            message = "The deletion of the csar failed, because there is one or more transformations still running.",
+            message = "The deletion of the CSAR failed, because there is one or more transformations still running.",
             response = RestErrorResponse.class
         ),
         @ApiResponse(
@@ -213,7 +222,7 @@ public class CsarController {
         produces = "application/hal+json"
     )
     public ResponseEntity<Void> deleteCsar(
-        @ApiParam(value = "The unique identifier for the CSAR", required = true, example = "test")
+        @ApiParam(value = "The unique identifier for the CSAR", required = true, example = "my-csar-name")
         @PathVariable("name") String name
     ) {
         Csar csar = getCsarForName(name);
