@@ -12,12 +12,14 @@ import org.opentosca.toscana.retrofit.util.TOSCAnaServerException;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.test.annotation.DirtiesContext;
 
 import static org.junit.Assert.assertEquals;
 
 /**
  Tests whether user inputs are correctly propagated into the EffectiveModel and provided for the transformation.
  */
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class UserInputIT extends BaseSpringIntegrationTest {
 
     private ToscanaApi api;

@@ -27,7 +27,9 @@ public class TOSCAnaServerException extends Exception {
 
     public void printLog() {
         System.err.printf("%s: %s%n", getMessage(), getStatusCode());
-        System.err.printf("%s: %n%s%n", getErrorResponse().getException(), getErrorResponse().getMessage());
-        errorResponse.getLogs().stream().forEach(System.err::println);
+        if (errorResponse != null) {
+            System.err.printf("%s: %n%s%n", getErrorResponse().getException(), getErrorResponse().getMessage());
+            errorResponse.getLogs().stream().forEach(System.err::println);
+        }
     }
 }
