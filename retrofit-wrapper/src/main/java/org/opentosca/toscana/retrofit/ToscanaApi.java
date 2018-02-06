@@ -259,7 +259,7 @@ public class ToscanaApi {
     ) throws TOSCAnaServerException, IOException {
         ResponseBody errorBody = response.errorBody();
         TOSCAnaServerException exception = new TOSCAnaServerException(
-            "Execution of HTTP call " + call.request().url() + " failed",
+            String.format("Execution of HTTP call %s failed", call.request().url()),
             errorBody == null || errorBody.contentLength() == 0 ?
                 null : objectMapper.readValue(errorBody.string(), ServerError.class),
             response.code()
