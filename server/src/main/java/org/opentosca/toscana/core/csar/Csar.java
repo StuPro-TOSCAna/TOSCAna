@@ -13,6 +13,11 @@ import org.opentosca.toscana.core.util.LifecycleAccess;
 public interface Csar extends LifecycleAccess {
 
     /**
+     the name of the directory which contains the unzipped content of the uploaded CSAR
+     */
+    String CONTENT_DIR = "content";
+    
+    /**
      Validates this csar. Caution: This call is expensive
      */
     boolean validate();

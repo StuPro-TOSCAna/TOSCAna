@@ -23,10 +23,6 @@ import org.slf4j.Logger;
 public class CsarImpl implements Csar {
 
     /**
-     the name of the directory which contains the unzipped content of the uploaded CSAR
-     */
-    public final static String CONTENT_DIR = "content";
-    /**
      Stores all scheduled, ongoing or finished transformations of this CSAR. Key is the platform identifier.
      */
     private final Map<String, Transformation> transformations = new HashMap<>();

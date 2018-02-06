@@ -4,6 +4,7 @@ import java.io.File;
 
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.core.transformation.platform.Platform;
+import org.opentosca.toscana.core.transformation.properties.NoSuchPropertyException;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
 import org.opentosca.toscana.model.EffectiveModel;
 
@@ -55,6 +56,8 @@ public final class TransformationContext {
         try {
             String value = getInputs().get(Platform.DEPLOY_AFTER_TRANSFORMATION_KEY).orElse("false");
             return Boolean.parseBoolean(value);
+        } catch (NoSuchPropertyException e) {
+            return false;
         } catch (Exception e) {
             logger.error("Cannot parse deployment flag in properties", e);
             return false;

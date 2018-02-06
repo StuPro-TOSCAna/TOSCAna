@@ -100,7 +100,7 @@ public abstract class BaseTransformTest<LifecycleT extends AbstractLifecycle> ex
      */
     protected void createDirectories() throws Exception {
         workingDir = new File(tmpdir, "workdir");
-        contentDir = new File(tmpdir, "contentdir");
+        contentDir = new File(tmpdir, Csar.CONTENT_DIR);
         workingDir.mkdirs();
         contentDir.mkdirs();
     }
@@ -109,7 +109,7 @@ public abstract class BaseTransformTest<LifecycleT extends AbstractLifecycle> ex
      initializes the transformation context
      */
     protected TransformationContext initContext() throws Exception {
-        Csar csar = new CsarImpl(contentDir, "csarId", logMock());
+        Csar csar = new CsarImpl(tmpdir, "csarId", logMock());
         Transformation t = new TransformationImpl(csar, plugin.getPlatform(), logMock(), model);
         Transformation transformation = spy(t);
         when(transformation.getInputs()).thenReturn(inputs);
