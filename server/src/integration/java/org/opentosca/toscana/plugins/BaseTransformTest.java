@@ -63,6 +63,7 @@ public abstract class BaseTransformTest<LifecycleT extends AbstractLifecycle> ex
         checkAssumptions();
         createDirectories();
 
+        inputs = getInputs();
         this.model = getModel();
         copyArtifacts(contentDir);
         context = initContext();
@@ -82,7 +83,6 @@ public abstract class BaseTransformTest<LifecycleT extends AbstractLifecycle> ex
     @Test
     public void performTransformation() throws Exception {
         logger.info("Starting Transformation");
-        inputs = getInputs();
         try {
             LifecycleT lifecycle = plugin.getInstance(context);
             plugin.transform(lifecycle);
