@@ -37,6 +37,7 @@ public abstract class BaseTransformTest<LifecycleT extends AbstractLifecycle> ex
 
     protected final ToscanaPlugin<LifecycleT> plugin;
     protected EffectiveModel model;
+    protected PropertyInstance inputs;
     protected TransformationContext context;
     protected File workingDir;
     protected File contentDir;
@@ -81,6 +82,7 @@ public abstract class BaseTransformTest<LifecycleT extends AbstractLifecycle> ex
     @Test
     public void performTransformation() throws Exception {
         logger.info("Starting Transformation");
+        inputs = getInputs();
         try {
             LifecycleT lifecycle = plugin.getInstance(context);
             plugin.transform(lifecycle);
@@ -110,7 +112,7 @@ public abstract class BaseTransformTest<LifecycleT extends AbstractLifecycle> ex
         Csar csar = new CsarImpl(contentDir, "csarId", logMock());
         Transformation t = new TransformationImpl(csar, plugin.getPlatform(), logMock(), model);
         Transformation transformation = spy(t);
-        when(transformation.getInputs()).thenReturn(getProperties());
+        when(transformation.getInputs()).thenReturn(inputs);
         return new TransformationContext(transformation, workingDir);
     }
 
@@ -154,5 +156,5 @@ public abstract class BaseTransformTest<LifecycleT extends AbstractLifecycle> ex
     /**
      This method is intended to return the properties the "user" has entered. They should be pre defined of course
      */
-    protected abstract PropertyInstance getProperties() throws Exception;
+    protected abstract PropertyInstance getInputs() throws Exception;
 }

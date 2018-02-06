@@ -30,7 +30,7 @@ public class KubernetesLampIT extends BaseTransformTest {
 
     @Rule
     public Timeout timeout = Timeout.builder().withTimeout(600, TimeUnit.SECONDS).build();
-    
+
     public KubernetesLampIT() throws Exception {
         super(new KubernetesPlugin(MapperTest.init()));
     }
@@ -62,7 +62,7 @@ public class KubernetesLampIT extends BaseTransformTest {
     }
 
     @Override
-    protected PropertyInstance getProperties() throws NoSuchPropertyException {
+    protected PropertyInstance getInputs() throws NoSuchPropertyException {
         PropertyInstance props = new PropertyInstance(new HashSet<>(plugin.getPlatform().properties), mock(Transformation.class));
 
         if (System.getenv("DH_USERNAME") != null) {
