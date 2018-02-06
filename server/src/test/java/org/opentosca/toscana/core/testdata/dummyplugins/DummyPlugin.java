@@ -18,5 +18,6 @@ public class DummyPlugin extends ToscanaPlugin {
 
     @Override
     public void transform(AbstractLifecycle lifecycle) throws Exception {
+        // noop
     }
 }

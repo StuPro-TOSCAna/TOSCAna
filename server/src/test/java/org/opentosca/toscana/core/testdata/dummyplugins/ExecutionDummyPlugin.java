@@ -4,7 +4,6 @@ import org.opentosca.toscana.core.plugin.lifecycle.AbstractLifecycle;
 import org.opentosca.toscana.core.plugin.lifecycle.ToscanaPlugin;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.core.transformation.platform.Platform;
-import org.opentosca.toscana.core.transformation.properties.NoSuchPropertyException;
 
 import org.slf4j.Logger;
 
@@ -43,18 +42,18 @@ public class ExecutionDummyPlugin extends ToscanaPlugin {
             }
 
             @Override
-            public void prepare() throws NoSuchPropertyException {
-
+            public void prepare() {
+                // noop
             }
 
             @Override
             public void transform() {
-
+                // noop
             }
 
             @Override
             public void cleanup() {
-
+                // noop
             }
         };
     }
