@@ -1,0 +1,16 @@
+ tosca.nodes.SoftwareComponent.WordPress: 
+  derived_from: tosca.nodes.SoftwareComponent 
+  properties: 
+    admin_user: 
+      type: string 
+    admin_password: 
+      type: string 
+    db_host: 
+      type: string 
+  requirements: 
+    - database_endpoint:  
+        capability: tosca.capabilities.Endpoint.Database   
+        node: tosca.nodes.Database 
+        relationship: tosca.relationships.ConnectsTo 
+9.3.5 tosca.nodes.WebServer.Nodejs 
+3702 
