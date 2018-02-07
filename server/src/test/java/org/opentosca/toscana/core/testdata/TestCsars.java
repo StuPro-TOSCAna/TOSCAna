@@ -37,6 +37,8 @@ public class TestCsars {
     public static final File VALID_SINGLE_COMPUTE_UBUNTU_TEMPLATE = new File(YAML_DIR, "valid/single-compute-ubuntu/single-compute-ubuntu.yaml");
     public static final File VALID_EXPRESS = new File(YAML_DIR, "valid/express.csar");
     public static final File VALID_EXPRESS_TEMPLATE = new File(YAML_DIR, "valid/express/template.yml");
+    public static final File VALID_TASKTRANSLATOR = new File(YAML_DIR, "valid/task-translator.csar");
+    public static final File VALID_TASKTRANSLATOR_TEMPLATE = new File(YAML_DIR, "valid/task-translator/template.yaml");
     
     
     public final static File INVALID_DEPENDENCIES_MISSING = new File(YAML_DIR, "invalid/dependencies_missing.csar");

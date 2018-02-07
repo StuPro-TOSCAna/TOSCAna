@@ -33,6 +33,7 @@ public class TestTemplates {
 
     public static class Nodes {
         public static final File SOFTWARE_COMPONENT = new File(NODES, "software-component.yaml");
+        public static final File JAVA = new File(NODES, "java.yaml");
     }
 
     public static class ToscaElements {

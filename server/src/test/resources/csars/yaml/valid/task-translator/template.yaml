@@ -24,7 +24,7 @@ topology_template:
       type: string
       description: User name for the database
     translator_api_key:
-      type: String
+      type: string
       required: false
       description: The optional api key for the external translation service. You can obtain a (non-free) key at http://funtranslations.com. Without a valid key, rate limit is 5 translations per hour
     translator_update_interval:
@@ -52,6 +52,7 @@ topology_template:
               update_interval: { get_input: translator_update_interval }
       requirements:
         - host: jre
+        - database_endpoint: my_db
       # uncomment when dynamic requirement parsing is implemented
       # - database_endpoint: 
       #     node: my_db
