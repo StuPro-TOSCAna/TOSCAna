@@ -35,16 +35,13 @@ topology_template:
 
   node_templates:
 
-    # todo add middleware requirement?
-    # requirement: connects to db?
     translator:
-      type: tosca.nodes.SoftwareComponent
+      type: toscana.nodes.JavaApplication
       artifacts:
         jar: translator/translator.jar
       interfaces:
         Standard:
           start:
-            implementation: translator/start_translator.sh
             inputs:
               database_host: { get_attribute: [ db_server, public_address ] }
               database_user: { get_property: [ my_db,  user ] }
@@ -54,7 +51,20 @@ topology_template:
               api_key: { get_input: translator_api_key }
               update_interval: { get_input: translator_update_interval }
       requirements:
+        - host: jre
+      # uncomment when dynamic requirement parsing is implemented
+      # - database_endpoint: 
+      #     node: my_db
+      #     relationship: ConnectsTo
+      #     capability: 
+
+    jre:
+      type: toscana.nodes.JavaApplication
+      properties:
+        component_version: 1.8
+      requirements:
         - host: translator_server
+
 
     translator_server:
       type: tosca.nodes.Compute
