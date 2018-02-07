@@ -29,6 +29,6 @@ public class CustomNodeTypeIT extends BaseSpringTest {
         InputStream stream = new FileInputStream(csarFile);
         Csar csar = service.submitCsar("csarId", stream);
         LifecyclePhase phase = csar.getLifecyclePhase(Csar.Phase.VALIDATE);
-        assertEquals(LifecyclePhase.State.DONE, phase);
+        assertEquals(LifecyclePhase.State.DONE, phase.getState());
     }
 }

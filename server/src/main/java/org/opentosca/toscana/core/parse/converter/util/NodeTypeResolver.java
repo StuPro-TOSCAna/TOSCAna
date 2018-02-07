@@ -47,7 +47,7 @@ public class NodeTypeResolver {
         put("WebServer", WebServer.class);
         put("WebServer", "Apache", Apache.class);
         put("WebServer", "Nodejs", Nodejs.class);
-        
+
         // custom types
         TYPE_MAP.put("toscana.nodes.JavaApplication", JavaApplication.class);
         TYPE_MAP.put("toscana.nodes.JavaRuntime", JavaRuntime.class);

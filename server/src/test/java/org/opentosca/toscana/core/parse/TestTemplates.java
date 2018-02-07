@@ -47,7 +47,7 @@ public class TestTemplates {
         public static final File REQUIREMENT = new File(TOSCA_ELEMENTS, "requirement.yaml");
         public static final File NODE = new File(TOSCA_ELEMENTS, "node.yaml");
     }
-    
+
     public static class Datatypes {
         public static final File PORT = new File(DATATYPES, "port.yaml");
     }

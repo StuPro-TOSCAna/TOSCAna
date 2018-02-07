@@ -39,7 +39,7 @@ public class TemplateConverterTest extends BaseUnitTest {
         EffectiveModel model = new EffectiveModelFactory().create(TestCsars.VALID_EXPRESS_TEMPLATE, logMock());
         assertNotNull(model);
     }
-    
+
     @Test
     public void taskTranslatorConverter() {
         EffectiveModel model = new EffectiveModelFactory().create(TestCsars.VALID_TASKTRANSLATOR_TEMPLATE, logMock());

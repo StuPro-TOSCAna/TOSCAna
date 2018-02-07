@@ -39,8 +39,7 @@ public class TestCsars {
     public static final File VALID_EXPRESS_TEMPLATE = new File(YAML_DIR, "valid/express/template.yml");
     public static final File VALID_TASKTRANSLATOR = new File(YAML_DIR, "valid/task-translator.csar");
     public static final File VALID_TASKTRANSLATOR_TEMPLATE = new File(YAML_DIR, "valid/task-translator/template.yaml");
-    
-    
+
     public final static File INVALID_DEPENDENCIES_MISSING = new File(YAML_DIR, "invalid/dependencies_missing.csar");
     public final static File INVALID_DOCKERAPP_MISSING = new File(YAML_DIR, "invalid/dockerapp_missing.csar");
     public final static File INVALID_ENTRYPOINT_MISSING = new File(YAML_DIR, "invalid/entrypoint_missing.csar");

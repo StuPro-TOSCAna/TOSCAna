@@ -60,7 +60,7 @@ topology_template:
       #     capability: 
 
     jre:
-      type: toscana.nodes.JavaApplication
+      type: toscana.nodes.JavaRuntime
       properties:
         component_version: 1.8
       requirements:
