@@ -6,8 +6,11 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import org.opentosca.toscana.core.BaseUnitTest;
+import org.opentosca.toscana.core.csar.Csar;
+import org.opentosca.toscana.core.csar.CsarImpl;
 import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.TransformationContext;
+import org.opentosca.toscana.core.transformation.TransformationImpl;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.NoSuchPropertyException;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
@@ -22,6 +25,8 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 @RunWith(Parameterized.class)
 public class DeploymentPropertyTest extends BaseUnitTest {
@@ -62,7 +67,11 @@ public class DeploymentPropertyTest extends BaseUnitTest {
             if (this.input != null) {
                 instance.set(Platform.DEPLOY_AFTER_TRANSFORMATION_KEY, this.input);
             }
-            TransformationContext context = new TransformationContext(input, output, logMock(), mock(EffectiveModel.class), instance);
+            Csar csar = new CsarImpl(input, "csarId", logMock());
+            Transformation t = new TransformationImpl(csar, platform, logMock(), mock(EffectiveModel.class));
+            Transformation transformation = spy(t);
+            when(transformation.getInputs()).thenReturn(instance);
+            TransformationContext context = new TransformationContext(transformation, output);
 
             Assert.assertEquals(expected, context.performDeployment());
         } catch (Exception e) {

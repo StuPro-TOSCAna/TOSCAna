@@ -27,10 +27,10 @@ public class DockerRegistryCredentials {
      */
     public static DockerRegistryCredentials fromContext(TransformationContext context) {
         return new DockerRegistryCredentials(
-            context.getProperties().getOrThrow(DOCKER_REGISTRY_URL_PROPERTY_KEY),
-            context.getProperties().getOrThrow(DOCKER_REGISTRY_USERNAME_PROPERTY_KEY),
-            context.getProperties().getOrThrow(DOCKER_REGISTRY_PASSWORD_PROPERTY_KEY),
-            context.getProperties().getOrThrow(DOCKER_REGISTRY_REPOSITORY_PROPERTY_KEY)
+            context.getInputs().getOrThrow(DOCKER_REGISTRY_URL_PROPERTY_KEY),
+            context.getInputs().getOrThrow(DOCKER_REGISTRY_USERNAME_PROPERTY_KEY),
+            context.getInputs().getOrThrow(DOCKER_REGISTRY_PASSWORD_PROPERTY_KEY),
+            context.getInputs().getOrThrow(DOCKER_REGISTRY_REPOSITORY_PROPERTY_KEY)
         );
     }
 

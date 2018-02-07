@@ -3,6 +3,7 @@ package org.opentosca.toscana.core.testdata.dummyplugins;
 import java.io.IOException;
 import java.util.Random;
 
+import org.opentosca.toscana.core.plugin.lifecycle.AbstractLifecycle;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 
@@ -12,7 +13,8 @@ public class FileCreationExcecutionDummy extends ExecutionDummyPlugin {
     }
 
     @Override
-    public void transform(TransformationContext transformation) throws Exception {
+    public void transform(AbstractLifecycle lifecycle) throws Exception {
+        TransformationContext transformation = lifecycle.getContext();
         Random rnd = new Random(123456);
         for (int i = 0; i < 5; i++) {
             String outerPath = "outer-" + i;
@@ -25,7 +27,7 @@ public class FileCreationExcecutionDummy extends ExecutionDummyPlugin {
         for (int l = 0; l < 20; l++) {
             writeFilepath(transformation, rnd, "file-" + l + ".bin");
         }
-        super.transform(transformation);
+        super.transform(lifecycle);
     }
 
     public void writeFilepath(TransformationContext transformation, Random rnd, String path) throws IOException {

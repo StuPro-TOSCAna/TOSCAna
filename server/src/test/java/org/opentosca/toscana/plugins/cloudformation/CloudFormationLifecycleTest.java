@@ -51,10 +51,10 @@ public class CloudFormationLifecycleTest extends BaseUnitTest {
         String secretKey = System.getenv("AWS_SECRET_KEY");
         Assume.assumeNotNull(accessKey);
         Assume.assumeNotNull(secretKey);
-        when(context.getProperties()).thenReturn(mock(PropertyInstance.class));
-        when(context.getProperties().getOrThrow(AWS_ACCESS_KEY_ID_KEY)).thenReturn(accessKey);
-        when(context.getProperties().getOrThrow(AWS_SECRET_KEY_KEY)).thenReturn(secretKey);
-        when(context.getProperties().getOrThrow(AWS_REGION_KEY)).thenReturn(AWS_REGION_DEFAULT);
+        when(context.getInputs()).thenReturn(mock(PropertyInstance.class));
+        when(context.getInputs().getOrThrow(AWS_ACCESS_KEY_ID_KEY)).thenReturn(accessKey);
+        when(context.getInputs().getOrThrow(AWS_SECRET_KEY_KEY)).thenReturn(secretKey);
+        when(context.getInputs().getOrThrow(AWS_REGION_KEY)).thenReturn(AWS_REGION_DEFAULT);
         cloudFormationLifecycle = new CloudFormationLifecycle(context);
     }
 

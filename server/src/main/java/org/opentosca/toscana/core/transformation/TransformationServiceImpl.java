@@ -10,8 +10,8 @@ import org.opentosca.toscana.api.exceptions.PlatformNotFoundException;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarDao;
 import org.opentosca.toscana.core.plugin.PluginService;
+import org.opentosca.toscana.core.plugin.lifecycle.ExecutionTask;
 import org.opentosca.toscana.core.transformation.artifacts.ArtifactService;
-import org.opentosca.toscana.core.transformation.execution.ExecutionTask;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 
 import org.springframework.beans.factory.annotation.Autowired;

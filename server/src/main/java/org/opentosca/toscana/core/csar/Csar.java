@@ -5,13 +5,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.opentosca.toscana.core.plugin.lifecycle.LifecyclePhase;
 import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.logging.Log;
-import org.opentosca.toscana.core.util.Lifecycle;
-import org.opentosca.toscana.core.util.LifecyclePhase;
+import org.opentosca.toscana.core.util.LifecycleAccess;
 
-public interface Csar extends Lifecycle {
+public interface Csar extends LifecycleAccess {
 
+    /**
+     the name of the directory which contains the unzipped content of the uploaded CSAR
+     */
+    String CONTENT_DIR = "content";
+    
     /**
      Validates this csar. Caution: This call is expensive
      */
@@ -30,9 +35,6 @@ public interface Csar extends Lifecycle {
     Optional<Transformation> getTransformation(String platformId);
 
     void setTransformations(List<Transformation> transformations);
-
-    @Override
-    List<LifecyclePhase> getLifecyclePhases();
 
     LifecyclePhase getLifecyclePhase(Phase phase);
 

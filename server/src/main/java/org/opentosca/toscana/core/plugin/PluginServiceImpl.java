@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import org.opentosca.toscana.core.plugin.lifecycle.ToscanaPlugin;
 import org.opentosca.toscana.core.transformation.platform.Platform;
 
 import org.slf4j.Logger;
@@ -18,14 +19,14 @@ import org.springframework.stereotype.Component;
 public class PluginServiceImpl implements PluginService {
 
     private final static Logger logger = LoggerFactory.getLogger(PluginServiceImpl.class);
-    private final List<TOSCAnaPlugin> plugins;
+    private final List<ToscanaPlugin> plugins;
     private final Set<Platform> platforms = new HashSet<>();
 
     @Autowired
-    public PluginServiceImpl(List<TOSCAnaPlugin> plugins) {
+    public PluginServiceImpl(List<ToscanaPlugin> plugins) {
         this.plugins = plugins;
-        Map<String, TOSCAnaPlugin> pluginMap = new HashMap<>();
-        for (TOSCAnaPlugin plugin : plugins) {
+        Map<String, ToscanaPlugin> pluginMap = new HashMap<>();
+        for (ToscanaPlugin plugin : plugins) {
             if (pluginMap.get(plugin.getPlatform().id) != null) {
                 logger.error("Found duplicate plugin identifier '{}'", plugin.getPlatform().id);
                 throw new IllegalArgumentException("The platform id '"
@@ -33,7 +34,7 @@ public class PluginServiceImpl implements PluginService {
             }
             pluginMap.put(plugin.getPlatform().id, plugin);
         }
-        for (TOSCAnaPlugin plugin : plugins) {
+        for (ToscanaPlugin plugin : plugins) {
             platforms.add(plugin.getPlatform());
         }
         logger.info("Loaded {} Plugins", plugins.size());
@@ -53,7 +54,7 @@ public class PluginServiceImpl implements PluginService {
     }
 
     @Override
-    public List<TOSCAnaPlugin> getPlugins() {
+    public List<ToscanaPlugin> getPlugins() {
         return plugins;
     }
 
