@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class HttpLogger implements TraceRepository {
 
-    private static final Logger LOG = LoggerFactory.getLogger(HttpLogger.class);
+    private static final Logger logger = LoggerFactory.getLogger(HttpLogger.class);
     private final TraceRepository delegate = new InMemoryTraceRepository();
 
     @Override
@@ -33,7 +33,7 @@ public class HttpLogger implements TraceRepository {
 //        Map<String, String> requestMap = headerMap.get("request");
         Map<String, String> responseMap = headerMap.get("response");
         String responseStatus = responseMap.get("status");
-        LOG.info("Request: \"{} {}\", response: {} after {}ms", method, path, responseStatus, timeTaken);
+        logger.debug("Request: \"{} {}\", response: {} after {}ms", method, path, responseStatus, timeTaken);
         this.delegate.add(traceInfo);
     }
 }
