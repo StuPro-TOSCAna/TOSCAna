@@ -66,6 +66,6 @@ retrofit-wrapper/\.classpath
 
 server/\.classpath
 
-**/node
+app/node
 
 **/.vscode

@@ -3,6 +3,7 @@ package org.opentosca.toscana.core.parse.model;
 import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.model.EffectiveModelFactory;
+import org.opentosca.toscana.model.artifact.Artifact;
 import org.opentosca.toscana.model.datatype.Credential;
 import org.opentosca.toscana.model.node.SoftwareComponent;
 import org.opentosca.toscana.model.node.custom.JavaApplication;
@@ -32,6 +33,8 @@ public class NodeConvertTest extends BaseUnitTest {
         JavaApplication app = (JavaApplication) model.getNodeMap().get("app");
         assertEquals("test-vm_options", app.getVmOptions().get());
         assertEquals("test-arguments", app.getArguments().get());
+        Artifact artifact = app.getJar();
+        assertEquals("test-artifact-path", artifact.getFilePath());
         JavaRuntime jre = (JavaRuntime) model.getNodeMap().get("jre");
         assertEquals("1.8", jre.getComponentVersion().get());
     }

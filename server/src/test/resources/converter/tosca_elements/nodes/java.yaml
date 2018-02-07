@@ -10,6 +10,8 @@ topology_template:
   node_templates:
     app:
       type: toscana.nodes.JavaApplication
+      artifacts:
+        test-artifact: test-artifact-path
       properties:
         vm_options: test-vm_options
         arguments: test-arguments
