@@ -80,7 +80,7 @@ public class ScalableCapability extends Capability {
     /**
      @return {@link #DEFAULT_INSTANCES}
      */
-    public Optional<Integer> getDefaultInstances() {
+    public Optional<String> getDefaultInstances() {
         return Optional.ofNullable(get(DEFAULT_INSTANCES));
     }
 
@@ -88,7 +88,7 @@ public class ScalableCapability extends Capability {
      Sets {@link #DEFAULT_INSTANCES}
      */
     public ScalableCapability setDefaultInstances(Integer defaultInstances) {
-        set(DEFAULT_INSTANCES, defaultInstances);
+        set(DEFAULT_INSTANCES, defaultInstances.toString());
         return this;
     }
 

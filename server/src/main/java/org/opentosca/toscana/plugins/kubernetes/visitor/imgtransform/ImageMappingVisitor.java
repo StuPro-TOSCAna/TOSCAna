@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.opentosca.toscana.model.node.Apache;
 import org.opentosca.toscana.model.node.Compute;
+import org.opentosca.toscana.model.node.DockerApplication;
 import org.opentosca.toscana.model.node.MysqlDatabase;
 import org.opentosca.toscana.model.node.MysqlDbms;
 import org.opentosca.toscana.model.node.Nodejs;
@@ -18,6 +19,7 @@ public class ImageMappingVisitor implements NodeVisitor {
 
     private String baseImage = null;
     private boolean hasInstallScripts = false;
+    private boolean requiresBuilding = true;
 
     public ImageMappingVisitor(BaseImageMapper mapper) {
         this.mapper = mapper;
@@ -65,6 +67,16 @@ public class ImageMappingVisitor implements NodeVisitor {
     }
 
     @Override
+    public void visit(DockerApplication node) {
+        this.requiresBuilding = false;
+        //TODO Implement error handling
+        //TODO Maybe support other registries
+        this.baseImage = node.getStandardLifecycle().getCreate().get().getArtifact().get().getFilePath();
+        
+        //TODO implement check if the docker application has children.
+    }
+
+    @Override
     public void visit(WebApplication node) {
         // Parent has to be visited to determine image
     }
@@ -72,6 +84,10 @@ public class ImageMappingVisitor implements NodeVisitor {
     @Override
     public void visit(MysqlDatabase node) {
         // Parent has to be visited to determine image
+    }
+
+    public boolean containerRequiresBuilding() {
+        return requiresBuilding;
     }
 
     public Optional<String> getBaseImage() {
