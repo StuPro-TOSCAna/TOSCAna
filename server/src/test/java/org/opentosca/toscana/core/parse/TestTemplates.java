@@ -11,6 +11,7 @@ public class TestTemplates {
     private static final File TOSCA_ELEMENTS = new File(BASE_PATH, "tosca_elements");
     private static final File DATATYPES = new File(BASE_PATH, "datatypes");
     private static final File NODES = new File(TOSCA_ELEMENTS, "nodes");
+    private static final File CAPABILITIES = new File(TOSCA_ELEMENTS, "capabilities");
 
     public static class Normalization {
         public static final File REPOSITORY = new File(NORMALIZATION, "repository_norm.yaml");
@@ -35,6 +36,10 @@ public class TestTemplates {
         public static final File SOFTWARE_COMPONENT = new File(NODES, "software-component.yaml");
     }
 
+    public static class Capabilities {
+        public static final File SCALABLE = new File(CAPABILITIES, "scalable.yaml");
+    }
+
     public static class ToscaElements {
         public static final File REPOSITORY = new File(TOSCA_ELEMENTS, "repository.yaml");
         public static final File CREDENTIAL = new File(TOSCA_ELEMENTS, "credential.yaml");
@@ -46,7 +51,7 @@ public class TestTemplates {
         public static final File REQUIREMENT = new File(TOSCA_ELEMENTS, "requirement.yaml");
         public static final File NODE = new File(TOSCA_ELEMENTS, "node.yaml");
     }
-    
+
     public static class Datatypes {
         public static final File PORT = new File(DATATYPES, "port.yaml");
     }
