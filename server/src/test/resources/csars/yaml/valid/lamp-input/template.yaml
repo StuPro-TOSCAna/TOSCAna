@@ -30,7 +30,10 @@ topology_template:
       type: tosca.nodes.WebApplication
       requirements:
         - host: apache_web_server
-        - database_endpoint: my_db
+        - database_endpoint:
+            node: my_db
+            capability: Endpoint.Database
+            relationship: ConnectsTo
       interfaces:
         Standard:
           create:
