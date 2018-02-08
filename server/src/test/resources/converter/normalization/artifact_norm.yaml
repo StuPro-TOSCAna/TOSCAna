@@ -1,0 +1,14 @@
+tosca_definitions_version: tosca_simple_yaml_1_1
+
+description: template for testing normalization of operation short notations
+metadata:
+  template_name: operation_norm
+  template_author: stupro-toscana
+  template_version: 1.0
+
+topology_template:
+  node_templates:
+    test-node:
+      type: WebApplication
+      artifacts:
+        test-artifact: test-artifact-file
