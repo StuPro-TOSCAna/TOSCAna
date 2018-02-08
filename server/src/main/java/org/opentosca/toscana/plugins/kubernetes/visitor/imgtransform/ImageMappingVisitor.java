@@ -79,7 +79,7 @@ public class ImageMappingVisitor implements NodeVisitor {
             .getFilePath();
 
         if (this.baseImage == null) {
-            throw new TransformationFailureException(String.format(NO_IMAGE_PATH_ERROR_MESSAGE, node.getEntityName());
+            throw new TransformationFailureException(String.format(NO_IMAGE_PATH_ERROR_MESSAGE, node.getEntityName()));
         }
 
         //TODO implement check if the docker application has children.
