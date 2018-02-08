@@ -30,10 +30,10 @@ public class TypeWrapper {
         return nodes;
     }
 
-    public static <T> T wrapTypedElement(MappingEntity nodeEntity) {
-        String typeString = nodeEntity.getValue(TYPE);
-        Class nodeType = TypeResolver.resolve(typeString);
-        return wrap(nodeEntity, nodeType);
+    public static <T> T wrapTypedElement(MappingEntity entity) {
+        String typeString = entity.getValue(TYPE);
+        Class type = TypeResolver.resolve(typeString);
+        return wrap(entity, type);
     }
 
     public static <T> T wrapEntity(MappingEntity entity, Class type) {
@@ -41,7 +41,11 @@ public class TypeWrapper {
             return null;
         }
         if (entity.getChild(BaseToscaElement.TYPE.name).isPresent()) {
-            return wrapTypedElement(entity);
+            try {
+                return wrapTypedElement(entity);
+            } catch (UnsupportedOperationException e) {
+                return wrap(entity, type);
+            }
         } else {
             return wrap(entity, type);
         }

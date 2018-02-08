@@ -80,7 +80,6 @@ public class TypeResolver {
         put(CAPABILITY, "Endpoint.Admin", AdminEndpointCapability.class);
         put(CAPABILITY, "Attachment", AttachmentCapability.class);
         put(CAPABILITY, "network.Bindable", BindableCapability.class);
-        put(CAPABILITY, "Compute", ComputeCapability.class);
         put(CAPABILITY, "Container", ContainerCapability.class);
         put(CAPABILITY, "Endpoint.Database", DatabaseEndpointCapability.class);
         put(CAPABILITY, "Container.Docker", DockerContainerCapability.class);
@@ -91,6 +90,10 @@ public class TypeResolver {
         put(CAPABILITY, "Endpoint.Public", PublicEndpointCapability.class);
         put(CAPABILITY, "Scalable", ScalableCapability.class);
         put(CAPABILITY, "Storage", StorageCapability.class);
+
+        // 'Compute' short notation clashes with the Compute node short notation
+        // only normal notation is supported
+        TYPE_MAP.put(CAPABILITY.prefix + "Compute", ComputeCapability.class);
     }
 
     private static void defineRelationshipMappings() {

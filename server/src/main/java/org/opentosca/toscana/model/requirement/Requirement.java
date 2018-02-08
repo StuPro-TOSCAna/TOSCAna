@@ -4,9 +4,7 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import org.opentosca.toscana.core.parse.model.Entity;
 import org.opentosca.toscana.core.parse.model.MappingEntity;
-import org.opentosca.toscana.core.parse.model.ScalarEntity;
 import org.opentosca.toscana.model.BaseToscaElement;
 import org.opentosca.toscana.model.capability.Capability;
 import org.opentosca.toscana.model.datatype.Range;
@@ -72,20 +70,7 @@ public class Requirement<CapabilityT extends Capability, NodeT extends RootNode,
 
     public Requirement(MappingEntity mappingEntity) {
         super(mappingEntity);
-        setDefaultRelationship();
-    }
-
-    private void setDefaultRelationship() {
-        // TODO
-        Optional<Entity> optionalRelationshipEntity = getBackingEntity().getChild(RELATIONSHIP);
-        if (optionalRelationshipEntity.isPresent()) {
-            Entity relationshipEntity = optionalRelationshipEntity.get();
-            if (relationshipEntity instanceof ScalarEntity) {
-
-            }
-        } else {
-            setDefault(RELATIONSHIP, new DependsOn(getChildEntity(RELATIONSHIP)));
-        }
+        setDefault(RELATIONSHIP, new DependsOn(getChildEntity(RELATIONSHIP)));
     }
 
     public Range getOccurrence() {
