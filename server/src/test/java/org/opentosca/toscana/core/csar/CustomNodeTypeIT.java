@@ -21,7 +21,7 @@ import static org.junit.Assert.assertEquals;
 public class CustomNodeTypeIT extends BaseSpringTest {
 
     @Autowired
-    CsarService service;
+    private CsarService service;
 
     @Test
     public void customNodeTypeTest() throws FileNotFoundException, CsarIdNotUniqueException {
