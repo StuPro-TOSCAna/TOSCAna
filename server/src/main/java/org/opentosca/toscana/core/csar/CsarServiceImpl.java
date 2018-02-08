@@ -21,6 +21,7 @@ public class CsarServiceImpl implements CsarService {
     public Csar submitCsar(String identifier, InputStream csarStream) throws CsarIdNotUniqueException {
         if (!csarDao.find(identifier).isPresent()) {
             Csar csar = csarDao.create(identifier, csarStream);
+            new CustomTypeInjector(csar.getLog()).inject(csar);
             csar.validate();
             csar.getLog().close();
             return csar;

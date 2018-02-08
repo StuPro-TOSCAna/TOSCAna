@@ -12,6 +12,7 @@ import org.opentosca.toscana.core.parse.model.ServiceGraph;
 import org.opentosca.toscana.model.EntityId;
 import org.opentosca.toscana.model.artifact.Artifact;
 import org.opentosca.toscana.model.node.RootNode;
+import org.opentosca.toscana.model.node.WebApplication;
 import org.opentosca.toscana.model.operation.Operation;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
 
@@ -20,6 +21,7 @@ import org.junit.Test;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
+import static org.opentosca.toscana.core.parse.TestTemplates.Normalization.ARTIFACT;
 import static org.opentosca.toscana.core.parse.TestTemplates.Normalization.OPERATION;
 import static org.opentosca.toscana.core.parse.TestTemplates.Normalization.REPOSITORY;
 
@@ -58,5 +60,16 @@ public class GraphNormalizerTest extends BaseUnitTest {
         assertTrue(start.getArtifact().isPresent());
         Artifact startArtifact = start.getArtifact().get();
         assertEquals("test-artifact2", startArtifact.getFilePath());
+    }
+
+    @Test
+    public void artifactNormalization() {
+        ServiceGraph graph = new ServiceGraph(ARTIFACT, logMock());
+        EntityId nodeId = ToscaStructure.NODE_TEMPLATES.descend("test-node");
+        Entity nodeEntity = graph.getEntityOrThrow(nodeId);
+        WebApplication webApplication = new TypeWrapper().wrapEntity((MappingEntity) nodeEntity, WebApplication.class);
+        Artifact artifact = webApplication.getArtifacts().iterator().next();
+        assertEquals("test-artifact", artifact.getEntityName());
+        assertEquals("test-artifact-file", artifact.getFilePath());
     }
 }

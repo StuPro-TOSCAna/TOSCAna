@@ -41,10 +41,6 @@ public class SoftwareComponent extends RootNode {
 
     public SoftwareComponent(MappingEntity mappingEntity) {
         super(mappingEntity);
-        init();
-    }
-
-    private void init() {
         setDefault(HOST, new HostRequirement(getChildEntity(HOST)));
     }
 

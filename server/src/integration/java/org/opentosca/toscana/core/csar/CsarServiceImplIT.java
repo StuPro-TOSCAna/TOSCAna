@@ -55,13 +55,13 @@ public class CsarServiceImplIT extends BaseSpringIntegrationTest {
     }
 
     @Test(expected = CsarIdNotUniqueException.class)
-    public void submitCsarTwice() throws FileNotFoundException, InvalidCsarException, CsarIdNotUniqueException {
+    public void submitCsarTwice() throws FileNotFoundException, CsarIdNotUniqueException {
         File file = TestCsars.VALID_EMPTY_TOPOLOGY;
         InputStream stream = new FileInputStream(file);
 
         try {
             csarService.submitCsar(identifier, stream);
-        } catch (InvalidCsarException | CsarIdNotUniqueException e) {
+        } catch (CsarIdNotUniqueException e) {
             e.printStackTrace();
             fail();
         }

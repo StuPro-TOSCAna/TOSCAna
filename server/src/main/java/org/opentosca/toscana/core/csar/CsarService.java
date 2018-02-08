@@ -4,8 +4,6 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
 
-import org.opentosca.toscana.core.parse.InvalidCsarException;
-
 public interface CsarService {
 
     /**
@@ -14,18 +12,15 @@ public interface CsarService {
      @param identifier identifying name of csar, must match [a-z0-9_-]+
      @param csarStream the actual cloud service archive as InputStream
      @return the newly created Csar instance
-     @throws InvalidCsarException if parsing, based on the content of given csarStream, failed The exception contains
-     the parsing log)
-     
      @throws CsarIdNotUniqueException if a csar with the same identifier already exists
      */
-    Csar submitCsar(String identifier, InputStream csarStream) throws InvalidCsarException, CsarIdNotUniqueException;
+    Csar submitCsar(String identifier, InputStream csarStream) throws CsarIdNotUniqueException;
 
     /**
      Deletes given Csar and all associated transformations from in-memory and persistence layer.
      */
     void deleteCsar(Csar csar);
-    
+
     /**
      Returns all Csars currently managed by the application.
      */

@@ -1,0 +1,24 @@
+tosca_definitions_version: tosca_simple_yaml_1_1
+
+description: a template containing a java application and a java runtime
+metadata:
+  template_name: java
+  template_author: stupro-toscana
+  template_version: 1.0
+
+topology_template:
+  node_templates:
+    app:
+      type: toscana.nodes.JavaApplication
+      artifacts:
+        test-artifact: test-artifact-path
+      properties:
+        vm_options: test-vm_options
+        arguments: test-arguments
+      requirements:
+        - host: jre
+      
+    jre:
+      type: toscana.nodes.JavaRuntime
+      properties:
+        component_version: 1.8

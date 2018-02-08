@@ -21,6 +21,8 @@ import org.opentosca.toscana.model.node.SoftwareComponent;
 import org.opentosca.toscana.model.node.WebApplication;
 import org.opentosca.toscana.model.node.WebServer;
 import org.opentosca.toscana.model.node.WordPress;
+import org.opentosca.toscana.model.node.custom.JavaApplication;
+import org.opentosca.toscana.model.node.custom.JavaRuntime;
 
 public class NodeTypeResolver {
 
@@ -45,6 +47,10 @@ public class NodeTypeResolver {
         put("WebServer", WebServer.class);
         put("WebServer", "Apache", Apache.class);
         put("WebServer", "Nodejs", Nodejs.class);
+
+        // custom types
+        TYPE_MAP.put("toscana.nodes.JavaApplication", JavaApplication.class);
+        TYPE_MAP.put("toscana.nodes.JavaRuntime", JavaRuntime.class);
     }
 
     public static Class<? extends RootNode> resolve(String nodeType) {
