@@ -18,6 +18,7 @@ public class KubernetesScaleIT extends KubernetesLampIT {
 
     @Override
     protected void copyArtifacts(File contentDir) throws Exception {
-
+        //No files have to be copied, because the model does not have any
+        //binary artifacts
     }
 }
