@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.opentosca.toscana.core.parse.converter.util.NodeTypeResolver;
+import org.opentosca.toscana.core.parse.converter.resolve.TypeResolver;
 import org.opentosca.toscana.core.parse.converter.util.ToscaStructure;
 import org.opentosca.toscana.core.parse.model.Entity;
 import org.opentosca.toscana.core.parse.model.MappingEntity;
@@ -31,7 +31,7 @@ public class TypeWrapper {
 
     public static <T> T wrapNode(MappingEntity nodeEntity) {
         String typeString = nodeEntity.getValue(TYPE);
-        Class nodeType = NodeTypeResolver.resolve(typeString);
+        Class nodeType = TypeResolver.resolve(typeString);
         return wrap(nodeEntity, nodeType);
     }
 
