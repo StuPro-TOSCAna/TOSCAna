@@ -31,6 +31,7 @@ public class GraphNormalizer {
         logger = log.getLogger(GraphNormalizer.class);
         logger.info("Expanding short notations to extended notations");
         normalizeRepositories(graph);
+        normalizeArtifacts(graph);
         normalizeOperations(graph);
         normalizeRequirements(graph);
     }
@@ -40,6 +41,18 @@ public class GraphNormalizer {
         for (Entity repository : graph.getChildren(ToscaStructure.REPOSITORIES)) {
             logger.debug(LogFormat.indent(2, repository.getId()));
             normalize(graph, repository, Repository.URL.name);
+        }
+    }
+
+    private static void normalizeArtifacts(ServiceGraph graph) {
+        logger.debug(LogFormat.indent(1, "artifacts"));
+        for (Entity node : graph.getChildren(ToscaStructure.NODE_TEMPLATES)) {
+            Optional<Entity> artifacts = node.getChild(RootNode.ARTIFACTS);
+            if (artifacts.isPresent()) {
+                for (Entity artifactEntity : artifacts.get().getChildren()) {
+                    normalize(graph, artifactEntity, Artifact.FILE_PATH.name);
+                }
+            }
         }
     }
 

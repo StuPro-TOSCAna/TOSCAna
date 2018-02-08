@@ -1,0 +1,12 @@
+  toscana.nodes.JavaApplication: 
+    derived_from: tosca.nodes.SoftwareComponent 
+    properties:
+      vm_options:
+        type: string
+        description: The options which are given to the jvm on startup
+      arguments:
+        type: string
+        description: The arguments which are given to the application on startup
+    requirements:
+      - host:
+          node: toscana.nodes.JavaRuntime

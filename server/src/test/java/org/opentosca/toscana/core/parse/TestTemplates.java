@@ -17,6 +17,7 @@ public class TestTemplates {
     public static class Normalization {
         public static final File REPOSITORY = new File(NORMALIZATION, "repository_norm.yaml");
         public static final File OPERATION = new File(NORMALIZATION, "operation_norm.yaml");
+        public static final File ARTIFACT = new File(NORMALIZATION, "artifact_norm.yaml");
     }
 
     public static class SymbolicLinks {
@@ -35,6 +36,7 @@ public class TestTemplates {
 
     public static class Nodes {
         public static final File SOFTWARE_COMPONENT = new File(NODES, "software-component.yaml");
+        public static final File JAVA = new File(NODES, "java.yaml");
     }
 
     public static class Capabilities {

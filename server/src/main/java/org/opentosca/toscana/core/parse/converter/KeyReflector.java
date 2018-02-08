@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.opentosca.toscana.core.parse.converter.resolve.TypeResolver;
+import org.opentosca.toscana.core.parse.converter.util.TypeResolver;
 import org.opentosca.toscana.core.parse.converter.util.NavigationUtil;
 import org.opentosca.toscana.core.parse.model.MappingEntity;
 import org.opentosca.toscana.model.BaseToscaElement;

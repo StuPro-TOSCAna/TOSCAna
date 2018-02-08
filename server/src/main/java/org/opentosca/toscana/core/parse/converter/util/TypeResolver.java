@@ -1,4 +1,4 @@
-package org.opentosca.toscana.core.parse.converter.resolve;
+package org.opentosca.toscana.core.parse.converter.util;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,6 +35,8 @@ import org.opentosca.toscana.model.node.SoftwareComponent;
 import org.opentosca.toscana.model.node.WebApplication;
 import org.opentosca.toscana.model.node.WebServer;
 import org.opentosca.toscana.model.node.WordPress;
+import org.opentosca.toscana.model.node.custom.JavaApplication;
+import org.opentosca.toscana.model.node.custom.JavaRuntime;
 import org.opentosca.toscana.model.relation.AttachesTo;
 import org.opentosca.toscana.model.relation.ConnectsTo;
 import org.opentosca.toscana.model.relation.DependsOn;
@@ -42,9 +44,9 @@ import org.opentosca.toscana.model.relation.HostedOn;
 import org.opentosca.toscana.model.relation.RootRelationship;
 import org.opentosca.toscana.model.relation.RoutesTo;
 
-import static org.opentosca.toscana.core.parse.converter.resolve.TypeResolver.ElementType.CAPABILITY;
-import static org.opentosca.toscana.core.parse.converter.resolve.TypeResolver.ElementType.NODE;
-import static org.opentosca.toscana.core.parse.converter.resolve.TypeResolver.ElementType.RELATIONSHIP;
+import static org.opentosca.toscana.core.parse.converter.util.TypeResolver.ElementType.CAPABILITY;
+import static org.opentosca.toscana.core.parse.converter.util.TypeResolver.ElementType.NODE;
+import static org.opentosca.toscana.core.parse.converter.util.TypeResolver.ElementType.RELATIONSHIP;
 
 public class TypeResolver {
 
@@ -74,6 +76,10 @@ public class TypeResolver {
         put(NODE, "WebServer", WebServer.class);
         put(NODE, "WebServer", "Apache", Apache.class);
         put(NODE, "WebServer", "Nodejs", Nodejs.class);
+        
+        // custom types
+        TYPE_MAP.put("toscana.nodes.JavaApplication", JavaApplication.class);
+        TYPE_MAP.put("toscana.nodes.JavaRuntime", JavaRuntime.class);
     }
 
     private static void defineCapabilityMappings() {

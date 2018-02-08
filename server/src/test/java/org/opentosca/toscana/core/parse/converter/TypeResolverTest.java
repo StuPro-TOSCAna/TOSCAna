@@ -6,7 +6,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.opentosca.toscana.core.BaseUnitTest;
-import org.opentosca.toscana.core.parse.converter.resolve.TypeResolver;
+import org.opentosca.toscana.core.parse.converter.util.TypeResolver;
 import org.opentosca.toscana.core.parse.converter.util.ToscaStructure;
 import org.opentosca.toscana.core.parse.model.MappingEntity;
 import org.opentosca.toscana.core.parse.model.ScalarEntity;
@@ -20,9 +20,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertNotNull;
-import static org.opentosca.toscana.core.parse.converter.resolve.TypeResolver.ElementType.CAPABILITY;
-import static org.opentosca.toscana.core.parse.converter.resolve.TypeResolver.ElementType.NODE;
-import static org.opentosca.toscana.core.parse.converter.resolve.TypeResolver.ElementType.RELATIONSHIP;
+import static org.opentosca.toscana.core.parse.converter.util.TypeResolver.ElementType.CAPABILITY;
+import static org.opentosca.toscana.core.parse.converter.util.TypeResolver.ElementType.NODE;
+import static org.opentosca.toscana.core.parse.converter.util.TypeResolver.ElementType.RELATIONSHIP;
 
 /**
  Tests whether all natively supported node types of the winery parser are also known to the {@link TypeResolver}.
