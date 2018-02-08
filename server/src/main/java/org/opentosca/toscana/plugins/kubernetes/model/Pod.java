@@ -16,12 +16,26 @@ public class Pod {
 
     private Set<Port> ports;
     private Compute computeNode;
+    private int replicaCount = 1;
 
     public Pod(List<NodeStack> containers, Compute compute) {
         this.ports = new HashSet<>();
         this.containers = containers;
         this.computeNode = compute;
         updatePorts();
+        computeReplicaCount();
+    }
+
+    private void computeReplicaCount() {
+        if (computeNode.getScalable().getDefaultInstances().isPresent()) {
+            this.replicaCount = computeNode.getScalable().getDefaultInstances().get();
+        } else {
+            if (computeNode.getScalable().getMaxInstances() == Integer.MAX_VALUE) {
+                this.replicaCount = computeNode.getScalable().getMinInstances();
+            } else {
+                this.replicaCount = computeNode.getScalable().getMaxInstances();
+            }
+        }
     }
 
     public List<NodeStack> getContainers() {
@@ -40,7 +54,7 @@ public class Pod {
     }
 
     public String getName() {
-        //TODO find better mechanism to name the pod
+        //TODO (LOW PRIORITY) find better mechanism to name the pod
         return containers.get(0).getCleanStackName();
     }
 
@@ -54,6 +68,10 @@ public class Pod {
 
     public Compute getComputeNode() {
         return computeNode;
+    }
+
+    public int getReplicaCount() {
+        return replicaCount;
     }
 
     public static List<Pod> getPods(Collection<NodeStack> stacks) {
