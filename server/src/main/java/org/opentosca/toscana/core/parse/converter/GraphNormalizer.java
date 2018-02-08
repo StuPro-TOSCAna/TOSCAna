@@ -2,6 +2,7 @@ package org.opentosca.toscana.core.parse.converter;
 
 import java.util.Optional;
 
+import org.opentosca.toscana.core.parse.ToscaTemplateException;
 import org.opentosca.toscana.core.parse.converter.util.ToscaStructure;
 import org.opentosca.toscana.core.parse.model.Entity;
 import org.opentosca.toscana.core.parse.model.MappingEntity;
@@ -9,6 +10,7 @@ import org.opentosca.toscana.core.parse.model.ScalarEntity;
 import org.opentosca.toscana.core.parse.model.ServiceGraph;
 import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.logging.LogFormat;
+import org.opentosca.toscana.model.BaseToscaElement;
 import org.opentosca.toscana.model.EntityId;
 import org.opentosca.toscana.model.artifact.Artifact;
 import org.opentosca.toscana.model.artifact.Repository;
@@ -67,9 +69,26 @@ public class GraphNormalizer {
             if (requirements.isPresent()) {
                 for (Entity requirement : requirements.get().getChildren()) {
                     logger.info(LogFormat.indent(2, requirement.getId()));
-                    normalize(graph, requirement, Requirement.NODE_NAME);
+                    if (requirement instanceof ScalarEntity) {
+                        normalize(graph, requirement, Requirement.NODE_NAME);
+                    } else {
+                        // dynamic requirement
+                        normalizeDynamicRequirement(graph, (MappingEntity) requirement);
+                    }
                 }
             }
+        }
+    }
+
+    private static void normalizeDynamicRequirement(ServiceGraph graph, MappingEntity requirement) {
+        try {
+            ScalarEntity relationship = (ScalarEntity) requirement.getChildOrThrow(Requirement.RELATIONSHIP_NAME);
+            normalize(graph, relationship, BaseToscaElement.TYPE.name);
+            ScalarEntity capability = (ScalarEntity) requirement.getChildOrThrow(Requirement.CAPABILITY_NAME);
+            normalize(graph, capability, BaseToscaElement.TYPE.name);
+        } catch (ClassCastException | ToscaTemplateException e) {
+            logger.error("Detected invalid extended requirement assignment");
+            throw e;
         }
     }
 

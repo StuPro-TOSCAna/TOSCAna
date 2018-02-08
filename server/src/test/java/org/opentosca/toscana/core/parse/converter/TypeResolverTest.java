@@ -41,7 +41,7 @@ public class TypeResolverTest extends BaseUnitTest {
             graph.addEntity(nodeEntity);
             ScalarEntity typeEntity = new ScalarEntity(nodeType, nodeEntity.getId().descend("type"), graph);
             graph.addEntity(typeEntity);
-            BaseToscaElement node = TypeWrapper.wrapNode(nodeEntity);
+            BaseToscaElement node = TypeWrapper.wrapTypedElement(nodeEntity);
             assertNotNull(node);
             logger.info("Node Type '{}': known", nodeType);
             System.out.println();

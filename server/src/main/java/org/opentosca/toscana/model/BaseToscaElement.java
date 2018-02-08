@@ -16,6 +16,7 @@ import lombok.ToString;
 @ToString
 public abstract class BaseToscaElement {
 
+    public static final ToscaKey<String> TYPE = new ToscaKey<>("type");
     public static ToscaKey<Set<?>> PROPERTIES = new ToscaKey<>("properties")
         .type(Object.class);
     public static ToscaKey<Set<?>> ATTRIBUTES = new ToscaKey<>("attributes")

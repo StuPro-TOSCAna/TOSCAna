@@ -68,9 +68,7 @@ public abstract class Entity implements Comparable<Entity> {
     }
 
     /**
-     Returns the associated child for given name and source entity.
-
-     @return null if no child associated with given name was found
+     Returns the optional associated child for given name and source entity.
      */
     public Optional<Entity> getChild(String key) {
         for (Connection connection : graph.outgoingEdgesOf(this)) {
@@ -81,6 +79,9 @@ public abstract class Entity implements Comparable<Entity> {
         return Optional.empty();
     }
 
+    /**
+     @throws ToscaTemplateException
+     */
     public Entity getChildOrThrow(String key) {
         Optional<Entity> optionalEntity = getChild(key);
         return optionalEntity.orElseThrow(() -> new ToscaTemplateException(
@@ -88,6 +89,9 @@ public abstract class Entity implements Comparable<Entity> {
         ));
     }
 
+    /**
+     @throws ToscaTemplateException
+     */
     public Entity getChildOrThrow(ToscaKey key) {
         Optional<Entity> optionalEntity = getChild(key);
         return optionalEntity.orElseThrow(() -> new ToscaTemplateException(
