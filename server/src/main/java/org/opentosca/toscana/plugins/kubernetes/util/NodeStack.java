@@ -72,7 +72,7 @@ public class NodeStack {
             this.dockerImageTag = baseImage;
             this.requiresBuilding = false;
             
-            //TODO this is only Proof of concept (add port detection later)
+            //TODO (IMPORTANT) this is only Proof of concept (add port detection later)
             this.openPorts.add(80);
             
             return;

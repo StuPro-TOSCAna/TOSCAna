@@ -28,7 +28,13 @@ public class Pod {
 
     private void computeReplicaCount() {
         if (computeNode.getScalable().getDefaultInstances().isPresent()) {
-            this.replicaCount = Integer.parseInt(computeNode.getScalable().getDefaultInstances().get().toString());
+            this.replicaCount = computeNode.getScalable().getDefaultInstances().get();
+        } else {
+            if (computeNode.getScalable().getMaxInstances() == Integer.MAX_VALUE) {
+                this.replicaCount = computeNode.getScalable().getMinInstances();
+            } else {
+                this.replicaCount = computeNode.getScalable().getMaxInstances();
+            }
         }
     }
 
@@ -45,11 +51,10 @@ public class Pod {
         if (ports.isEmpty()) {
             this.containers.forEach(e -> this.ports.addAll(e.getOpenPorts()));
         }
-        //TODO Look for minimum and maximum
     }
 
     public String getName() {
-        //TODO find better mechanism to name the pod
+        //TODO (LOW PRIORITY) find better mechanism to name the pod
         return containers.get(0).getCleanStackName();
     }
 
