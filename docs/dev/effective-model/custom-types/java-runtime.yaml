@@ -1,5 +1,0 @@
-toscana.nodes.JavaRuntime: 
-  derived_from: tosca.nodes.SoftwareComponent 
-  capabilities:
-    host:
-      valid_source_types: [toscana.nodes.JavaApplication]
