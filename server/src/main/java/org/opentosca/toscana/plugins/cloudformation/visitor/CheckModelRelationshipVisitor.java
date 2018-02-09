@@ -1,6 +1,7 @@
 package org.opentosca.toscana.plugins.cloudformation.visitor;
 
 import org.opentosca.toscana.core.transformation.TransformationContext;
+import org.opentosca.toscana.model.node.Database;
 import org.opentosca.toscana.model.node.MysqlDatabase;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.node.WebApplication;
@@ -16,7 +17,7 @@ public class CheckModelRelationshipVisitor extends CloudFormationVisitorExtensio
 
     /**
      Create a <tt>CheckModelRelationshipVisitor</tt> to check a models relationships
-     Only hostedOn and connectsTo from a WebApplication to a MysqlDatabase are supported
+     Only hostedOn and connectsTo from a WebApplication to a Database or MysqlDatabase are supported
 
      @param context TransformationContext to extract topology and logger
      */
@@ -28,7 +29,8 @@ public class CheckModelRelationshipVisitor extends CloudFormationVisitorExtensio
     public void visit(ConnectsTo relation) {
         RootNode source = topology.getEdgeSource(relation);
         RootNode target = topology.getEdgeTarget(relation);
-        if (!(source instanceof WebApplication && target instanceof MysqlDatabase)) {
+        if (!(source instanceof WebApplication && target instanceof MysqlDatabase) &&
+            !(source instanceof WebApplication && target instanceof Database)) {
             throw new UnsupportedTypeException("ConnectsTo relationship from source: " + source + " to target: " +
                 target + " not supported.");
         }

@@ -74,6 +74,18 @@ public abstract class CloudFormationVisitorExtension {
     }
 
     /**
+     Get the Compute node this dbms is ultimately hosted on
+
+     @param dbms the webServer to find the host for
+     @return the underlying Compute node
+     */
+    protected static Compute getCompute(Dbms dbms) {
+        return dbms.getHost().getNode().orElseThrow(
+            () -> new IllegalStateException("Dbms is missing Compute")
+        );
+    }
+
+    /**
      Get the Compute node this nodejs is ultimately hosted on.
      
      @param nodejs the host of which should be returned

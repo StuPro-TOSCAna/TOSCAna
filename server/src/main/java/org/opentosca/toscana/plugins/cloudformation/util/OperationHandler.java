@@ -2,6 +2,7 @@ package org.opentosca.toscana.plugins.cloudformation.util;
 
 import java.io.File;
 
+import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.operation.Operation;
 import org.opentosca.toscana.model.operation.OperationVariable;
@@ -11,6 +12,7 @@ import com.scaleset.cfbuilder.ec2.metadata.CFNCommand;
 import com.scaleset.cfbuilder.ec2.metadata.CFNFile;
 import org.slf4j.Logger;
 
+import static org.opentosca.toscana.plugins.cloudformation.CloudFormationLifecycle.toAlphanumerical;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.ABSOLUTE_FILE_PATH;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.CONFIG_CONFIGURE;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.CONFIG_CREATE;
@@ -83,10 +85,10 @@ public class OperationHandler {
 
     /**
      Adds all dependencies to file uploads and to the EC2 Instance in the CloudFormation template.
-     
-     @param operation to be handled
+
+     @param operation  to be handled
      @param serverName name of the Compute/EC2 where the dependencies must be stored
-     @param config name of the config (Create/Start/Configure)
+     @param config     name of the config (Create/Start/Configure)
      */
     private void handleDependency(Operation operation, String serverName, String config) {
         //Add dependencies
@@ -118,10 +120,10 @@ public class OperationHandler {
     /**
      Adds all artifacts to file uploads and to the EC2 Instance in the CloudFormation template.
      Also adds them as commands with input variables as environment variables to the given config.
-     
-     @param operation to be handled
+
+     @param operation  to be handled
      @param serverName name of the Compute/EC2 where the artifacts must be stored and executed
-     @param config name of the config (Create/Start/Configure)
+     @param config     name of the config (Create/Start/Configure)
      */
     private void handleArtifact(Operation operation, String serverName, String config) {
         //Add artifact
@@ -166,5 +168,18 @@ public class OperationHandler {
                 .putFile(cfnFile)
                 .putCommand(cfnCommand);
         }
+    }
+
+    /**
+     Handles the create, configure and start lifecycle operations for the given node.
+
+     @param node        node which the operations belong to
+     @param computeHost Compute host of the node
+     */
+    public void handleGenericHostedNode(RootNode node, Compute computeHost) {
+        String computeHostName = toAlphanumerical(computeHost.getEntityName());
+        handleCreate(node, computeHostName);
+        handleConfigure(node, computeHostName);
+        handleStart(node, computeHostName);
     }
 }

@@ -7,6 +7,8 @@ import org.opentosca.toscana.model.capability.ComputeCapability;
 import org.opentosca.toscana.model.capability.OsCapability;
 import org.opentosca.toscana.model.node.Apache;
 import org.opentosca.toscana.model.node.Compute;
+import org.opentosca.toscana.model.node.Database;
+import org.opentosca.toscana.model.node.Dbms;
 import org.opentosca.toscana.model.node.MysqlDatabase;
 import org.opentosca.toscana.model.node.MysqlDbms;
 import org.opentosca.toscana.model.node.Nodejs;
@@ -37,7 +39,7 @@ import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.
  */
 public class TransformModelNodeVisitor extends CloudFormationVisitorExtension implements StrictNodeVisitor {
     private OperationHandler operationHandler;
-    
+
     /**
      Creates a <tt>TransformModelNodeVisitor<tt> in order to build a template with the given
      <tt>CloudFormationModule<tt>.
@@ -93,6 +95,17 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
     }
 
     @Override
+    public void visit(Database node) {
+        try {
+            Compute computeHost = getCompute(node);
+            operationHandler.handleGenericHostedNode(node, computeHost);
+        } catch (Exception e) {
+            logger.error("Error while creating Database resource.");
+            throw new TransformationFailureException("Failed at Database node " + node.getEntityName(), e);
+        }
+    }
+
+    @Override
     public void visit(MysqlDatabase node) {
         try {
             String nodeName = toAlphanumerical(node.getEntityName());
@@ -133,8 +146,21 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
                 .storageType(storageType)
                 .vPCSecurityGroups(cfnModule.fnGetAtt(securityGroupName, "GroupId"));
         } catch (Exception e) {
-            logger.error("Error while creating DBInstance resource.");
-            throw new TransformationFailureException("Failed at MysqlDatabase node " + node.getEntityName(), e);
+            logger.error("Error while creating Dbms resource.");
+            throw new TransformationFailureException("Failed at Dbms node " + node.getEntityName(), e);
+        }
+    }
+
+    @Override
+    public void visit(Dbms node) {
+        try {
+            String nodeName = toAlphanumerical(node.getEntityName());
+            //get the compute where the dbms this node is hosted on, is hosted on
+            Compute computeHost = getCompute(node);
+            operationHandler.handleGenericHostedNode(node, computeHost);
+        } catch (Exception e) {
+            logger.error("Error while creating Database resource.");
+            throw new TransformationFailureException("Failed at Database node " + node.getEntityName(), e);
         }
     }
 
@@ -155,12 +181,12 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
                     //TODO apt only if linux
                     new CFNPackage("apt")
                         .addPackage("apache2"));
-            
+
             //handle configure
             operationHandler.handleConfigure(node, computeName);
             //handle start
             operationHandler.handleStart(node, computeName);
-            
+
             //Add restart apache2 command to the configscript
             cfnModule.getCFNInit(computeName)
                 .getOrAddConfig(CONFIG_SETS, CONFIG_START)
@@ -177,7 +203,7 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
             //get the compute where the apache this node is hosted on, is hosted on
             Compute compute = getCompute(node);
             String computeName = toAlphanumerical(compute.getEntityName());
-            
+
             //handle create
             operationHandler.handleCreate(node, computeName);
             //handle configure
@@ -189,7 +215,7 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
             throw new TransformationFailureException("Failed at WebApplication node " + node.getEntityName(), e);
         }
     }
-    
+
     @Override
     public void visit(Nodejs node) {
         try {
@@ -203,8 +229,8 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
                     //TODO apt only if linux
                     new CFNPackage("apt")
                         .addPackage("nodejs"))
-                ;            
-            
+            ;
+
             //handle configure
             operationHandler.handleConfigure(node, computeHostName);
             //handle start

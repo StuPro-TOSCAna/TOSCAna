@@ -2,12 +2,17 @@ package org.opentosca.toscana.plugins.cloudformation.visitor;
 
 import java.util.List;
 
+import javax.xml.crypto.Data;
+
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.model.capability.OsCapability;
 import org.opentosca.toscana.model.node.Apache;
 import org.opentosca.toscana.model.node.Compute;
+import org.opentosca.toscana.model.node.Database;
+import org.opentosca.toscana.model.node.Dbms;
 import org.opentosca.toscana.model.node.MysqlDatabase;
 import org.opentosca.toscana.model.node.MysqlDbms;
+import org.opentosca.toscana.model.node.Nodejs;
 import org.opentosca.toscana.model.node.WebApplication;
 import org.opentosca.toscana.model.visitor.StrictNodeVisitor;
 import org.opentosca.toscana.model.visitor.UnsupportedTypeException;
@@ -55,19 +60,34 @@ public class CheckModelNodeVisitor extends CloudFormationVisitorExtension implem
             }
         }
     }
+    
+    @Override
+    public void visit(Database node) {
+        // noop
+    }
 
     @Override
     public void visit(MysqlDatabase node) {
         // noop
     }
-
+    
+    @Override
+    public void visit(Dbms dbms) {
+        // noop
+    }
+    
     @Override
     public void visit(MysqlDbms node) {
         // noop
     }
-
+    
     @Override
     public void visit(WebApplication node) {
+        // noop
+    }
+
+    @Override
+    public void visit(Nodejs nodejs) {
         // noop
     }
 }
