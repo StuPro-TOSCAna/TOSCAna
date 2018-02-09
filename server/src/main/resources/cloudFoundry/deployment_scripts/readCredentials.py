@@ -1,6 +1,7 @@
 import subprocess as sub
 import sys
 import json
+import ast
 
 database_uri = ""
 database_username = ""
@@ -83,7 +84,7 @@ def readEnvironmentConfigFile(appName):
     with open (appName + "_environment_config.txt", "r") as configFile:
         envConfig = configFile.read()
         global env
-        env = eval(envConfig)
+        env = ast.literal_eval(envConfig)
     
     
 if __name__ == "__main__":

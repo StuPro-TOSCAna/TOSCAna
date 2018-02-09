@@ -45,13 +45,13 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
 
     @Override
     public void prepare() throws NoSuchPropertyException {
-        
+
         //just for testing in this branch
         PrepareVisitor prepareVisitor = new PrepareVisitor(logger);
-        for (RootNode node : context.getModel().getNodes()){
+        for (RootNode node : context.getModel().getNodes()) {
             node.accept(prepareVisitor);
         }
-        
+
         PropertyInstance properties = context.getInputs();
 
         if (!properties.isEmpty()) {

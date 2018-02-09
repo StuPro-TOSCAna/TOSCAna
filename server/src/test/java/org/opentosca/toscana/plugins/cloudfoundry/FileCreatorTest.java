@@ -106,7 +106,7 @@ public class FileCreatorTest extends BaseUnitTest {
         File targetFile = new File(targetDir, MANIFEST_PATH);
         File deployFile = new File(targetDir, outputPath + FILEPRAEFIX_DEPLOY + deploy_name + FILESUFFIX_DEPLOY);
         File buildPackAdditions = new File(targetDir, "/" + APPLICATION_FOLDER + testApp.getApplicationNumber() + "/" + BUILDPACK_FILEPATH_PHP);
-        File environmentConfig = new File(targetDir, appName + ENVIRONMENT_CONFIG_FILE);
+        File environmentConfig = new File(targetDir, outputPath + appName + ENVIRONMENT_CONFIG_FILE);
 
         assertTrue(targetFile.exists());
         assertTrue(deployFile.exists());
