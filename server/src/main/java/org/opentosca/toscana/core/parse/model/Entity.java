@@ -116,7 +116,8 @@ public abstract class Entity implements Comparable<Entity> {
                     T value = TypeConverter.convert(grandChild, key, child.get());
                     values.add(value);
                 } catch (AttributeNotSetException e) {
-                    logger.warn("Trying to access an unset attribute - skipping.", e);
+                    logger.warn("Trying to access an unset attribute - skipping.");
+                    logger.warn(e.getMessage());
                 }
             }
         }
