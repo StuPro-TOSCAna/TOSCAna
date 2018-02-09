@@ -9,12 +9,11 @@ metadata:
 topology_template:
   node_templates:
     test-node:
-      type: WebServer
+      type: WebApplication
       requirements:
-        - test-requirement1: test-node
-        - test-requirement2:
+        - dynamic-requirement:
             node: test-node
-            capability: Endpoint.Database
+            capability: Endpoint
             relationship: ConnectsTo
             occurrences: [ 1, 2 ]
 

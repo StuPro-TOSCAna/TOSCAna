@@ -6,14 +6,10 @@ import org.opentosca.toscana.core.parse.ToscaTemplateException;
 import org.opentosca.toscana.core.parse.model.MappingEntity;
 import org.opentosca.toscana.model.artifact.Artifact;
 import org.opentosca.toscana.model.capability.ContainerCapability;
-import org.opentosca.toscana.model.capability.EndpointCapability;
-import org.opentosca.toscana.model.node.MysqlDatabase;
 import org.opentosca.toscana.model.node.SoftwareComponent;
-import org.opentosca.toscana.model.relation.ConnectsTo;
 import org.opentosca.toscana.model.relation.HostedOn;
 import org.opentosca.toscana.model.requirement.HostRequirement;
 import org.opentosca.toscana.model.requirement.JavaRuntimeRequirement;
-import org.opentosca.toscana.model.requirement.Requirement;
 import org.opentosca.toscana.model.util.RequirementKey;
 import org.opentosca.toscana.model.util.ToscaKey;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
@@ -40,9 +36,6 @@ public class JavaApplication extends SoftwareComponent {
 
     public static ToscaKey<JavaRuntimeRequirement> HOST = new RequirementKey<>("host")
         .subTypes(ContainerCapability.class, JavaRuntime.class, HostedOn.class);
-
-    public static ToscaKey<Requirement<EndpointCapability, MysqlDatabase, ConnectsTo>> DATABASE_ENDPOINT = new RequirementKey<>("database_endpoint")
-        .subTypes(EndpointCapability.class, MysqlDatabase.class, ConnectsTo.class);
 
     public JavaApplication(MappingEntity mappingEntity) {
         super(mappingEntity);
