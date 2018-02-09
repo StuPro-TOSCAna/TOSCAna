@@ -196,7 +196,14 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
             Compute computeHost = getCompute(node);
             String computeHostName = toAlphanumerical(computeHost.getEntityName());
 
-            // TODO install Nodejs on Compute
+            // Add package nodejs to configset
+            cfnModule.getCFNInit(computeHostName)
+                .getOrAddConfig(CONFIG_SETS, CONFIG_CREATE)
+                .putPackage(
+                    //TODO apt only if linux
+                    new CFNPackage("apt")
+                        .addPackage("nodejs"))
+                ;            
             
             //handle configure
             operationHandler.handleConfigure(node, computeHostName);
