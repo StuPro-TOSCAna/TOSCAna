@@ -26,6 +26,7 @@ topology_template:
     translator_api_key:
       type: string
       required: false
+      default: ""
       description: The optional api key for the external translation service. You can obtain a (non-free) key at http://funtranslations.com. Without a valid key, rate limit is 5 translations per hour
     translator_update_interval:
       type: integer
