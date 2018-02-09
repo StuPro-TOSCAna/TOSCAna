@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.opentosca.toscana.core.parse.EntrypointDetector;
 import org.opentosca.toscana.core.parse.InvalidCsarException;
 import org.opentosca.toscana.core.transformation.logging.Log;
 
@@ -32,7 +31,7 @@ public class CustomTypeInjector {
      */
     public void inject(Csar csar) {
         try {
-            File serviceTemplate = new EntrypointDetector(log).findEntryPoint(csar.getContentDir());
+            File serviceTemplate = csar.getTemplate();
             String templateContent = FileUtils.readFileToString(serviceTemplate);
             List<String> template = Lists.newArrayList(templateContent.split("\n"));
 
