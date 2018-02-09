@@ -85,4 +85,16 @@ public class StackUtils {
 
         return Fn.fnDelimiter(USERDATA_NAME, USERDATA_DELIMITER, params.toArray());
     }
+
+    /**
+     Returns the URL to the file in the given S3Bucket.
+     e.g. http://bucketName.s3.amazonaws.com/objectKey
+
+     @param bucketName name of the bucket containing the file
+     @param objectKey  key belonging to the file in the bucket
+     @return URL for the file
+     */
+    public static String getFileURL(String bucketName, String objectKey) {
+        return CloudFormationModule.URL_HTTP + bucketName + CloudFormationModule.URL_S3_AMAZONAWS + "/" + objectKey;
+    }
 }

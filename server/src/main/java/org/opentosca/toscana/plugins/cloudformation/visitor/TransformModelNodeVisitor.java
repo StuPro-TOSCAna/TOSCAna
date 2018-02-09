@@ -1,6 +1,5 @@
 package org.opentosca.toscana.plugins.cloudformation.visitor;
 
-import java.io.File;
 import java.util.Set;
 
 import org.opentosca.toscana.core.transformation.TransformationContext;
@@ -10,32 +9,26 @@ import org.opentosca.toscana.model.node.Apache;
 import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.MysqlDatabase;
 import org.opentosca.toscana.model.node.MysqlDbms;
+import org.opentosca.toscana.model.node.Nodejs;
 import org.opentosca.toscana.model.node.WebApplication;
-import org.opentosca.toscana.model.operation.Operation;
-import org.opentosca.toscana.model.operation.OperationVariable;
 import org.opentosca.toscana.model.visitor.StrictNodeVisitor;
 import org.opentosca.toscana.plugins.cloudformation.CloudFormationModule;
 import org.opentosca.toscana.plugins.cloudformation.mapper.CapabilityMapper;
+import org.opentosca.toscana.plugins.cloudformation.util.OperationHandler;
 import org.opentosca.toscana.plugins.util.TransformationFailureException;
 
 import com.amazonaws.SdkClientException;
 import com.scaleset.cfbuilder.ec2.Instance;
 import com.scaleset.cfbuilder.ec2.SecurityGroup;
 import com.scaleset.cfbuilder.ec2.metadata.CFNCommand;
-import com.scaleset.cfbuilder.ec2.metadata.CFNFile;
 import com.scaleset.cfbuilder.ec2.metadata.CFNInit;
 import com.scaleset.cfbuilder.ec2.metadata.CFNPackage;
 import com.scaleset.cfbuilder.rds.DBInstance;
 
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationLifecycle.toAlphanumerical;
-import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.ABSOLUTE_FILE_PATH;
-import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.CONFIG_CONFIGURE;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.CONFIG_CREATE;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.CONFIG_SETS;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.CONFIG_START;
-import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.MODE_500;
-import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.MODE_644;
-import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.OWNER_GROUP_ROOT;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.SECURITY_GROUP;
 
 /**
@@ -43,7 +36,8 @@ import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.
  supports LAMP-stacks built with Compute, WebApplication, Apache, MySQL, MySQL nodes.
  */
 public class TransformModelNodeVisitor extends CloudFormationVisitorExtension implements StrictNodeVisitor {
-
+    private OperationHandler operationHandler;
+    
     /**
      Creates a <tt>TransformModelNodeVisitor<tt> in order to build a template with the given
      <tt>CloudFormationModule<tt>.
@@ -53,6 +47,7 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
      */
     public TransformModelNodeVisitor(TransformationContext context, CloudFormationModule cfnModule) {
         super(context, cfnModule);
+        this.operationHandler = new OperationHandler(cfnModule, logger);
     }
 
     @Override
@@ -160,17 +155,13 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
                     //TODO apt only if linux
                     new CFNPackage("apt")
                         .addPackage("apache2"));
+            
             //handle configure
-            if (node.getStandardLifecycle().getConfigure().isPresent()) {
-                Operation configure = node.getStandardLifecycle().getConfigure().get();
-                handleOperation(configure, computeName, CONFIG_CONFIGURE);
-            }
+            operationHandler.handleConfigure(node, computeName);
             //handle start
-            if (node.getStandardLifecycle().getStart().isPresent()) {
-                Operation start = node.getStandardLifecycle().getStart().get();
-                handleOperation(start, computeName, CONFIG_START);
-            }
-            //we add restart apache2 command to the configscript
+            operationHandler.handleStart(node, computeName);
+            
+            //Add restart apache2 command to the configscript
             cfnModule.getCFNInit(computeName)
                 .getOrAddConfig(CONFIG_SETS, CONFIG_START)
                 .putCommand(new CFNCommand("restart apache2", "service apache2 restart"));
@@ -186,108 +177,35 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
             //get the compute where the apache this node is hosted on, is hosted on
             Compute compute = getCompute(node);
             String computeName = toAlphanumerical(compute.getEntityName());
-
+            
             //handle create
-            if (node.getStandardLifecycle().getCreate().isPresent()) {
-                Operation create = node.getStandardLifecycle().getCreate().get();
-                handleOperation(create, computeName, CONFIG_CREATE);
-            }
+            operationHandler.handleCreate(node, computeName);
             //handle configure
-            if (node.getStandardLifecycle().getConfigure().isPresent()) {
-                Operation configure = node.getStandardLifecycle().getConfigure().get();
-                handleOperation(configure, computeName, CONFIG_CONFIGURE);
-            }
+            operationHandler.handleConfigure(node, computeName);
             //handle start
-            if (node.getStandardLifecycle().getStart().isPresent()) {
-                Operation start = node.getStandardLifecycle().getStart().get();
-                handleOperation(start, computeName, CONFIG_START);
-            }
+            operationHandler.handleStart(node, computeName);
         } catch (Exception e) {
             logger.error("Error while creating WebApplication");
             throw new TransformationFailureException("Failed at WebApplication node " + node.getEntityName(), e);
         }
     }
+    
+    @Override
+    public void visit(Nodejs node) {
+        try {
+            Compute computeHost = getCompute(node);
+            String computeHostName = toAlphanumerical(computeHost.getEntityName());
 
-    private void handleOperation(Operation operation, String serverName, String config) {
-        //Add dependencies
-        for (String dependency : operation.getDependencies()) {
-            String cfnSource = getFileURL(cfnModule.getBucketName(), dependency);
-
-            logger.debug("Marking '{}' as file to be uploaded.", dependency);
-            cfnModule.putFileToBeUploaded(dependency);
-            if (!cfnModule.getAuthenticationSet().contains(serverName)) {
-                logger.debug("Marking '{}' as instance in need of authentication.", serverName);
-                cfnModule.putAuthentication(serverName);
-            } else {
-                logger.debug("'{}' already marked as instance in need of authentication. " +
-                    "Skipping authentication marking.", serverName);
-            }
-            CFNFile cfnFile = new CFNFile(ABSOLUTE_FILE_PATH + dependency)
-                .setSource(cfnSource)
-                .setMode(MODE_644) //TODO Check what mode is needed (only read?)
-                .setOwner(OWNER_GROUP_ROOT) //TODO Check what Owner is needed
-                .setGroup(OWNER_GROUP_ROOT); //TODO Check what Group is needed
-
-            // Add file to config
-            cfnModule.getCFNInit(serverName)
-                .getOrAddConfig(CONFIG_SETS, config)
-                .putFile(cfnFile);
+            // TODO install Nodejs on Compute
+            
+            //handle configure
+            operationHandler.handleConfigure(node, computeHostName);
+            //handle start
+            operationHandler.handleStart(node, computeHostName);
+        } catch (Exception e) {
+            logger.error("Error while creating Nodejs");
+            throw new TransformationFailureException("Failed at Nodejs node " + node.getEntityName(), e);
         }
-
-        //Add artifact
-        if (operation.getArtifact().isPresent()) {
-            String artifact = operation.getArtifact().get().getFilePath();
-            String cfnSource = getFileURL(cfnModule.getBucketName(), artifact);
-
-            logger.debug("Marking '{}' as file to be uploaded.", artifact);
-            cfnModule.putFileToBeUploaded(artifact);
-            if (!cfnModule.getAuthenticationSet().contains(serverName)) {
-                logger.debug("Marking '{}' as instance in need of authentication.", serverName);
-            } else {
-                logger.debug("'{}' already marked as instance in need of authentication. " +
-                    "Skipping authentication marking.", serverName);
-            }
-            cfnModule.putAuthentication(serverName);
-
-            CFNFile cfnFile = new CFNFile(ABSOLUTE_FILE_PATH + artifact)
-                .setSource(cfnSource)
-                .setMode(MODE_500) //TODO Check what mode is needed (read? + execute?)
-                .setOwner(OWNER_GROUP_ROOT) //TODO Check what Owner is needed
-                .setGroup(OWNER_GROUP_ROOT); //TODO Check what Group is needed
-
-            CFNCommand cfnCommand = new CFNCommand(artifact,
-                ABSOLUTE_FILE_PATH + artifact) //file is the full path, so need for "./"
-                .setCwd(ABSOLUTE_FILE_PATH + new File(artifact).getParent());
-            // add inputs to environment
-            for (OperationVariable input : operation.getInputs()) {
-                String value = input.getValue().orElseThrow(
-                    () -> new IllegalArgumentException("Input value of " + input.getKey() + " expected to not be " +
-                        "null")
-                );
-                if (cfnModule.checkFn(value)) {
-                    cfnCommand.addEnv(input.getKey(), cfnModule.getFn(value));
-                } else {
-                    cfnCommand.addEnv(input.getKey(), value);
-                }
-            }
-            // Add file to config and execution command
-            cfnModule.getCFNInit(serverName)
-                .getOrAddConfig(CONFIG_SETS, config)
-                .putFile(cfnFile)
-                .putCommand(cfnCommand);
-        }
-    }
-
-    /**
-     Returns the URL to the file in the given S3Bucket.
-     e.g. http://bucketName.s3.amazonaws.com/objectKey
-
-     @param bucketName name of the bucket containing the file
-     @param objectKey  key belonging to the file in the bucket
-     @return URL for the file
-     */
-    private String getFileURL(String bucketName, String objectKey) {
-        return CloudFormationModule.URL_HTTP + bucketName + CloudFormationModule.URL_S3_AMAZONAWS + "/" + objectKey;
     }
 
     public CapabilityMapper createCapabilityMapper() {
