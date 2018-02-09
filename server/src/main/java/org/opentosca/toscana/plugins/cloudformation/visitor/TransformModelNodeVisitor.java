@@ -59,11 +59,9 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
                 logger.debug("Compute '{}' will be transformed to EC2", node.getEntityName());
                 String nodeName = toAlphanumerical(node.getEntityName());
                 //default security group the EC2 Instance opens for port 80 and 22 to the whole internet
-                Object cidrIp = "0.0.0.0/0";
                 SecurityGroup webServerSecurityGroup = cfnModule.resource(SecurityGroup.class,
                     nodeName + SECURITY_GROUP)
-                    .groupDescription("Enable ports 80 and 22")
-                    .ingress(ingress -> ingress.cidrIp(cidrIp), "tcp", 80, 22);
+                    .groupDescription("Enables ports for " + nodeName + ".");
 
                 // check what image id should be taken
                 CapabilityMapper capabilityMapper = createCapabilityMapper();
@@ -98,7 +96,13 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
     public void visit(Database node) {
         try {
             Compute computeHost = getCompute(node);
+            String computeHostName = toAlphanumerical(computeHost.getEntityName());
             operationHandler.handleGenericHostedNode(node, computeHost);
+
+            //Open Database port
+            String SecurityGroupName = computeHostName + SECURITY_GROUP;
+            SecurityGroup securityGroup = (SecurityGroup) cfnModule.getResource(SecurityGroupName);
+            securityGroup.ingress(ingress -> ingress.cidrIp("0.0.0.0/0"), "tcp", node.getPort());
         } catch (Exception e) {
             logger.error("Error while creating Database resource.");
             throw new TransformationFailureException("Failed at Database node " + node.getEntityName(), e);
@@ -228,13 +232,19 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
                 .putPackage(
                     //TODO apt only if linux
                     new CFNPackage("apt")
-                        .addPackage("nodejs"))
-            ;
-
+                        .addPackage("nodejs")
+                        .addPackage("npm"));
+            
             //handle configure
             operationHandler.handleConfigure(node, computeHostName);
             //handle start
             operationHandler.handleStart(node, computeHostName);
+            
+            //Open port 3000
+            String SecurityGroupName = computeHostName + SECURITY_GROUP;
+            SecurityGroup securityGroup = (SecurityGroup) cfnModule.getResource(SecurityGroupName);
+            securityGroup.ingress(ingress -> ingress.cidrIp("0.0.0.0/0"), "tcp", 3000);
+                
         } catch (Exception e) {
             logger.error("Error while creating Nodejs");
             throw new TransformationFailureException("Failed at Nodejs node " + node.getEntityName(), e);
