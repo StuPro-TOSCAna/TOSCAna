@@ -1,14 +1,14 @@
 package org.opentosca.toscana.plugins.cloudfoundry.visitors;
 
 import org.opentosca.toscana.model.node.MysqlDatabase;
-import org.opentosca.toscana.model.visitor.StrictNodeVisitor;
+import org.opentosca.toscana.model.visitor.NodeVisitor;
 
 import org.slf4j.Logger;
 
 /**
  Prepare the model
  */
-public class PrepareVisitor implements StrictNodeVisitor {
+public class PrepareVisitor implements NodeVisitor {
 
     public final static String CF_PREPARE_DB_PLACEHOLDER_USER = "cf_database_user_placeholder";
     public final static String CF_PREPARE_DB_PLACEHOLDER_NAME = "cf_database_name_placeholder";

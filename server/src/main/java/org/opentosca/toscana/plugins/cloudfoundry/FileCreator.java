@@ -20,6 +20,7 @@ import org.json.JSONException;
 import org.slf4j.Logger;
 
 import static org.opentosca.toscana.core.plugin.lifecycle.AbstractLifecycle.OUTPUT_DIR;
+import static org.opentosca.toscana.core.plugin.lifecycle.AbstractLifecycle.SCRIPTS_DIR_PATH;
 import static org.opentosca.toscana.plugins.cloudfoundry.application.ManifestAttributes.DOMAIN;
 import static org.opentosca.toscana.plugins.cloudfoundry.application.ManifestAttributes.ENVIRONMENT;
 import static org.opentosca.toscana.plugins.cloudfoundry.application.ManifestAttributes.PATH;
@@ -154,8 +155,8 @@ public class FileCreator {
         }
         dictEnv = dictEnv + "}";
 
-        logger.info("Create environment config file {}", applicationName + ENVIRONMENT_CONFIG_FILE);
-        fileAccess.access(applicationName + ENVIRONMENT_CONFIG_FILE).append(dictEnv).close();
+        logger.info("Create environment config file {}", SCRIPTS_DIR_PATH + applicationName + ENVIRONMENT_CONFIG_FILE);
+        fileAccess.access(SCRIPTS_DIR_PATH + applicationName + ENVIRONMENT_CONFIG_FILE).append(dictEnv).close();
     }
 
     /**

@@ -16,6 +16,7 @@ import org.opentosca.toscana.plugins.cloudfoundry.application.Application;
 import org.opentosca.toscana.plugins.cloudfoundry.application.Provider;
 import org.opentosca.toscana.plugins.cloudfoundry.client.Connection;
 import org.opentosca.toscana.plugins.cloudfoundry.visitors.NodeVisitor;
+import org.opentosca.toscana.plugins.cloudfoundry.visitors.PrepareVisitor;
 import org.opentosca.toscana.plugins.util.TransformationFailureException;
 
 import org.json.JSONException;
@@ -44,6 +45,13 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
 
     @Override
     public void prepare() throws NoSuchPropertyException {
+        
+        //just for testing in this branch
+        PrepareVisitor prepareVisitor = new PrepareVisitor(logger);
+        for (RootNode node : context.getModel().getNodes()){
+            node.accept(prepareVisitor);
+        }
+        
         PropertyInstance properties = context.getInputs();
 
         if (!properties.isEmpty()) {
