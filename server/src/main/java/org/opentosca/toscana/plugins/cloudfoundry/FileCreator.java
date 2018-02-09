@@ -151,7 +151,7 @@ public class FileCreator {
         String dictEnv = "{";
 
         for (Map.Entry<String, String> env : environmentVariables.entrySet()) {
-            dictEnv = String.format("%s \"%s”:\"%s\", ", dictEnv, env.getKey(), env.getValue());
+            dictEnv = String.format("%s \'%s\':\'%s\', ", dictEnv, env.getValue(), env.getKey());
         }
         dictEnv = dictEnv + "}";
 
