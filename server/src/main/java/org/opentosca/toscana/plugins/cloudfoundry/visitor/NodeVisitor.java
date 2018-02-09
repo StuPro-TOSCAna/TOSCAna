@@ -146,12 +146,7 @@ public class NodeVisitor implements StrictNodeVisitor {
     public void visit(MysqlDbms node) {
         handleStandardLifecycle(node, false, myApp);
     }
-
-    @Override
-    public void visit(Database node) {
-        // TODO: check how to configure Database
-        handleStandardLifecycle(node, false, myApp);
-    }
+    
 
     @Override
     public void visit(Apache node) {

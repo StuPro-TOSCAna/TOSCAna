@@ -3,7 +3,6 @@ package org.opentosca.toscana.plugins.cloudfoundry.filecreator;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Observable;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -63,8 +62,6 @@ public class ApplicationHandler {
 
         //sort checked applications by application number
         //checkedApplications.sort(Comparator.comparing(application -> application.getApplicationNumber()));
-
-       
 
         return checkedApplications;
     }

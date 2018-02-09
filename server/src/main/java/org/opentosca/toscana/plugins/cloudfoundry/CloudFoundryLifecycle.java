@@ -13,23 +13,22 @@ import java.util.stream.Collectors;
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.core.plugin.lifecycle.AbstractLifecycle;
 import org.opentosca.toscana.core.transformation.TransformationContext;
-
-import org.opentosca.toscana.core.transformation.properties.InputProperty;
+import org.opentosca.toscana.core.transformation.properties.NoSuchPropertyException;
+import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
 import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.model.node.Compute;
-
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.relation.RootRelationship;
 import org.opentosca.toscana.plugins.cloudfoundry.application.Application;
 import org.opentosca.toscana.plugins.cloudfoundry.application.Provider;
 import org.opentosca.toscana.plugins.cloudfoundry.client.Connection;
 import org.opentosca.toscana.plugins.cloudfoundry.filecreator.FileCreator;
+import org.opentosca.toscana.plugins.cloudfoundry.visitor.NodeTypeCheck;
 import org.opentosca.toscana.plugins.cloudfoundry.visitor.NodeVisitor;
+import org.opentosca.toscana.plugins.cloudfoundry.visitor.OSCheck;
 import org.opentosca.toscana.plugins.kubernetes.exceptions.UnsupportedOsTypeException;
 import org.opentosca.toscana.plugins.kubernetes.util.KubernetesNodeContainer;
 import org.opentosca.toscana.plugins.kubernetes.util.NodeStack;
-import org.opentosca.toscana.plugins.kubernetes.visitor.check.NodeTypeCheckVisitor;
-import org.opentosca.toscana.plugins.kubernetes.visitor.check.OsCheckNodeVisitor;
 import org.opentosca.toscana.plugins.kubernetes.visitor.util.ComputeNodeFindingVisitor;
 import org.opentosca.toscana.plugins.util.TransformationFailureException;
 
@@ -57,19 +56,19 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
     private Graph<RootNode, RootRelationship> graph;
     private List<Application> filledApplications;
 
-    public CloudFoundryLifecycle(TransformationContext context) throws IOException {
+    public CloudFoundryLifecycle(TransformationContext context) throws IOException, NoSuchPropertyException {
         super(context);
         model = context.getModel();
-        Map<String, InputProperty> properties = context.getProperties().getProperties();
-        
+        PropertyInstance properties = context.getInputs();
+
         logger.debug("Checking for Properties");
 
         if (!properties.isEmpty()) {
-            String username = properties.get(CF_PROPERTY_KEY_USERNAME).getValue().orElse(null);
-            String password = properties.get(CF_PROPERTY_KEY_PASSWORD).getValue().orElse(null);
-            String organization = properties.get(CF_PROPERTY_KEY_ORGANIZATION).getValue().orElse(null);
-            String space = properties.get(CF_PROPERTY_KEY_SPACE).getValue().orElse(null);
-            String apiHost = properties.get(CF_PROPERTY_KEY_API).getValue().orElse(null);
+            String username = properties.getOrThrow(CF_PROPERTY_KEY_USERNAME);
+            String password = properties.getOrThrow(CF_PROPERTY_KEY_PASSWORD);
+            String organization = properties.getOrThrow(CF_PROPERTY_KEY_ORGANIZATION);
+            String space = properties.getOrThrow(CF_PROPERTY_KEY_SPACE);
+            String apiHost = properties.getOrThrow(CF_PROPERTY_KEY_API);
 
             if (isNotNull(username, password, organization, space, apiHost)) {
 
@@ -98,14 +97,12 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
      @return boolean - true if successful, false otherwise
      */
     private boolean checkOsType(Set<RootNode> nodes) {
-        OsCheckNodeVisitor nodeVisitor = new OsCheckNodeVisitor(logger);
-        for (RootNode node : nodes) {
-            try {
-                node.accept(nodeVisitor);
-            } catch (UnsupportedOsTypeException e) {
-                logger.warn(e.getMessage(), e);
-                return false;
-            }
+        OSCheck osCheck = new OSCheck(logger);
+        try {
+            nodes.forEach(node -> node.accept(osCheck));
+        } catch (UnsupportedOsTypeException e) {
+            logger.error("Check OS Type finished with failure");
+            return false;
         }
         return true;
     }
@@ -117,11 +114,13 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
      @return boolean - true if successful, false otherwise
      */
     private boolean checkNodeTypes(Set<RootNode> nodes) {
+        NodeTypeCheck nodeTypeCheck = new NodeTypeCheck();
         for (RootNode node : nodes)
             try {
-                node.accept(new NodeTypeCheckVisitor());
+                node.accept(nodeTypeCheck);
             } catch (UnsupportedOperationException e) {
-                logger.warn("Transformation of the type {} is not supported", node.getClass().getName(), e);
+                logger.warn("Transformation of the type {} is not supported yet by the Cloud Foundry plugin"
+                    , node.getClass().getName(), e);
                 return false;
             }
         return true;

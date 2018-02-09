@@ -107,14 +107,15 @@ public class Application {
      @param pathOnContainer must be the path inside the container
      */
     public void addExecuteFile(String pathToFile, String pathOnContainer) {
+        String pathToFileNew = pathToFile;
 
         if (pathToFile.contains("../../" + APPLICATION_FOLDER)) {
-            String[] paths = pathToFile.split("../../" + APPLICATION_FOLDER + "[0-9]*/");
-            pathToFile = paths[1];
+            String[] paths = pathToFileNew.split("../../" + APPLICATION_FOLDER + "[0-9]*/");
+            pathToFileNew = paths[1];
         }
-        pathToFile = "../../" + APPLICATION_FOLDER + this.getApplicationNumber() + "/" + pathToFile;
+        pathToFileNew = "../../" + APPLICATION_FOLDER + this.getApplicationNumber() + "/" + pathToFileNew;
         
-        executeCommand.put(pathToFile, pathOnContainer);
+        executeCommand.put(pathToFileNew, pathOnContainer);
     }
 
     /**

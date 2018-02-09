@@ -59,7 +59,7 @@ public class CloudFoundryPlugin extends ToscanaPlugin<CloudFoundryLifecycle> {
     }
 
     @Override
-    protected CloudFoundryLifecycle getInstance(TransformationContext context) throws Exception {
+    public CloudFoundryLifecycle getInstance(TransformationContext context) throws Exception {
         return new CloudFoundryLifecycle(context);
     }
 }

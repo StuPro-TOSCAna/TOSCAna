@@ -2,9 +2,7 @@ package org.opentosca.toscana.plugins.cloudfoundry;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
@@ -20,13 +18,20 @@ import org.opentosca.toscana.plugins.cloudfoundry.filecreator.FileCreator;
 
 import org.apache.commons.io.FileUtils;
 import org.jgrapht.Graph;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin.CF_PROPERTY_KEY_API;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin.CF_PROPERTY_KEY_ORGANIZATION;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin.CF_PROPERTY_KEY_PASSWORD;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin.CF_PROPERTY_KEY_SPACE;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin.CF_PROPERTY_KEY_USERNAME;
 import static org.opentosca.toscana.plugins.cloudfoundry.filecreator.FileCreator.FILEPRAEFIX_DEPLOY;
 import static org.opentosca.toscana.plugins.cloudfoundry.filecreator.FileCreator.FILESUFFIX_DEPLOY;
 import static org.opentosca.toscana.plugins.cloudfoundry.filecreator.FileCreator.MANIFEST_PATH;
@@ -35,29 +40,39 @@ import static org.opentosca.toscana.plugins.util.TestUtil.setUpMockTransformatio
 
 public class CloudFoundryPluginTest extends BaseUnitTest {
 
-    private final String appName = "my_app";
-    private final String appNameClearedUp = "my-app";
     private final ArrayList<String> paths = new ArrayList<>();
     private final String resourcesPath = "src/test/resources/";
 
     @Mock
     private TransformationContext context;
-    EffectiveModel lamp;
+    private EffectiveModel lamp;
     private File targetDir;
 
-    Map<RootNode, Application> nodeMap = new HashMap();
-    Graph<RootNode, RootRelationship> topology;
-    CloudFoundryLifecycle cfCycle;
+    private Graph<RootNode, RootRelationship> topology;
+    private CloudFoundryLifecycle cfCycle;
 
     @Before
     public void setUp() throws Exception {
         lamp = new EffectiveModelFactory().create(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, logMock());
         context = setUpMockTransformationContext(lamp);
 
-        CloudFoundryLampIT cfLamp = new CloudFoundryLampIT();
-        PropertyInstance props = cfLamp.getProperties();
+        String userName = System.getenv("TEST_CF_USER");
+        String pw = System.getenv("TEST_CF_PW");
+        String host = System.getenv("TEST_CF_HOST");
+        String space = System.getenv("TEST_CF_SPACE");
+        String orga = System.getenv("TEST_CF_ORGA");
+        Assume.assumeNotNull(userName);
+        Assume.assumeNotNull(pw);
+        Assume.assumeNotNull(host);
+        Assume.assumeNotNull(space);
+        Assume.assumeNotNull(orga);
+        when(context.getInputs()).thenReturn(mock(PropertyInstance.class));
+        when(context.getInputs().getOrThrow(CF_PROPERTY_KEY_USERNAME)).thenReturn(userName);
+        when(context.getInputs().getOrThrow(CF_PROPERTY_KEY_PASSWORD)).thenReturn(pw);
+        when(context.getInputs().getOrThrow(CF_PROPERTY_KEY_API)).thenReturn(host);
+        when(context.getInputs().getOrThrow(CF_PROPERTY_KEY_SPACE)).thenReturn(space);
+        when(context.getInputs().getOrThrow(CF_PROPERTY_KEY_ORGANIZATION)).thenReturn(orga);
 
-        when(context.getProperties()).thenReturn(props);
         topology = lamp.getTopology();
 
         cfCycle = new CloudFoundryLifecycle(context);
