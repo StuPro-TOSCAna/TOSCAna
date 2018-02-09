@@ -12,6 +12,7 @@ import org.opentosca.toscana.model.requirement.HostRequirement;
 import org.opentosca.toscana.model.requirement.JavaRuntimeRequirement;
 import org.opentosca.toscana.model.util.RequirementKey;
 import org.opentosca.toscana.model.util.ToscaKey;
+import org.opentosca.toscana.model.visitor.NodeVisitor;
 
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -97,5 +98,10 @@ public class JavaApplication extends SoftwareComponent {
     public JavaApplication setHost(JavaRuntimeRequirement host) {
         set(HOST, host);
         return this;
+    }
+
+    @Override
+    public void accept(NodeVisitor v) {
+        v.visit(this);
     }
 }
