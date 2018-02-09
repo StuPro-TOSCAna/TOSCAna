@@ -3,6 +3,7 @@ package org.opentosca.toscana.core.util;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -10,12 +11,14 @@ import java.util.Random;
 import java.util.zip.ZipInputStream;
 
 import org.opentosca.toscana.core.BaseUnitTest;
+import org.opentosca.toscana.core.testdata.TestCsars;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class ZipUtilityTest extends BaseUnitTest {
@@ -42,6 +45,19 @@ public class ZipUtilityTest extends BaseUnitTest {
     }
 
     @Test
+    public void unzipFile() throws IOException {
+        ZipInputStream is = new ZipInputStream(new FileInputStream(TestCsars.VALID_LAMP_INPUT));
+        boolean result = ZipUtility.unzip(is, tmpdir.toString());
+        assertTrue(result);
+    }
+
+    @Test
+    public void unzipNotAFile() throws IOException {
+        ZipInputStream is = new ZipInputStream(new FileInputStream(TestCsars.VALID_LAMP_INPUT_TEMPLATE));
+        boolean result = ZipUtility.unzip(is, tmpdir.toString());
+        assertFalse(result);
+    }
+
     public void compressionTest() throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ZipUtility.compressDirectory(original, out);
