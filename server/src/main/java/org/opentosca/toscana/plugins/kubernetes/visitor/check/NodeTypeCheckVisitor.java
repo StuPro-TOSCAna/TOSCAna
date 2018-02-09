@@ -11,6 +11,8 @@ import org.opentosca.toscana.model.node.MysqlDatabase;
 import org.opentosca.toscana.model.node.MysqlDbms;
 import org.opentosca.toscana.model.node.Nodejs;
 import org.opentosca.toscana.model.node.WebApplication;
+import org.opentosca.toscana.model.node.custom.JavaApplication;
+import org.opentosca.toscana.model.node.custom.JavaRuntime;
 import org.opentosca.toscana.model.visitor.StrictNodeVisitor;
 
 /**
@@ -71,5 +73,15 @@ public class NodeTypeCheckVisitor implements StrictNodeVisitor {
     @Override
     public void visit(DockerApplication node) {
         //noop 
+    }
+
+    @Override
+    public void visit(JavaRuntime node) {
+        //noop
+    }
+
+    @Override
+    public void visit(JavaApplication node) {
+        //noop
     }
 }
