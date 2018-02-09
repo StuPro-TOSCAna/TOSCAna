@@ -43,6 +43,7 @@ public class FileCreator {
     public static final String FILEPRAEFIX_DEPLOY = "deploy_";
     public static final String FILESUFFIX_DEPLOY = ".sh";
     public static final String APPLICATION_FOLDER = "app";
+    public static final String ENVIRONMENT_CONFIG_FILE = "_environment_config.txt";
     public static String deploy_name = "application";
 
     private TransformationContext context;
@@ -72,6 +73,7 @@ public class FileCreator {
         for (Application application : applications) {
             createBuildpackAdditionsFile(application);
             insertFiles(application);
+            createEnvironmentConfigFile(application, application.getEnvironmentVariables());
         }
     }
 
@@ -134,6 +136,26 @@ public class FileCreator {
                 fileAccess.access(MANIFEST_PATH).appendln(env).close();
             }
         }
+    }
+
+    /**
+     creates a environment config file which contains all environment variables.
+     this file will be read by a python script
+
+     @param application          the current application. Each application gets its own file
+     @param environmentVariables all environment variables of the current application
+     */
+    private void createEnvironmentConfigFile(Application application, Map<String, String> environmentVariables) throws IOException {
+        String applicationName = application.getName();
+        String dictEnv = "{";
+
+        for (Map.Entry<String, String> env : environmentVariables.entrySet()) {
+            dictEnv = String.format("%s \"%s”:\"%s\", ", dictEnv, env.getKey(), env.getValue());
+        }
+        dictEnv = dictEnv + "}";
+
+        logger.info("Create environment config file {}", applicationName + ENVIRONMENT_CONFIG_FILE);
+        fileAccess.access(applicationName + ENVIRONMENT_CONFIG_FILE).append(dictEnv).close();
     }
 
     /**

@@ -15,10 +15,10 @@ public class PrepareVisitor implements StrictNodeVisitor {
     public final static String CF_PREPARE_DB_PLACEHOLDER_PW = "cf_database_password_placeholder";
     //yet not sure if to set the port here
     public final static int CF_PREPARE_DB_PLACEHOLDER_PORT = 3306;
-    
+
     private final Logger logger;
 
-    public PrepareVisitor(Logger logger){
+    public PrepareVisitor(Logger logger) {
         this.logger = logger;
     }
 

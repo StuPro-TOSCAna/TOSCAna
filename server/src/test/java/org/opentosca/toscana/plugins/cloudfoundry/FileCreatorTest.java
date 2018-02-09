@@ -30,6 +30,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeNotNull;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.APPLICATION_FOLDER;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.CLI_PATH_TO_MANIFEST;
+import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.ENVIRONMENT_CONFIG_FILE;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.FILEPRAEFIX_DEPLOY;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.FILESUFFIX_DEPLOY;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.MANIFEST_NAME;
@@ -105,10 +106,12 @@ public class FileCreatorTest extends BaseUnitTest {
         File targetFile = new File(targetDir, MANIFEST_PATH);
         File deployFile = new File(targetDir, outputPath + FILEPRAEFIX_DEPLOY + deploy_name + FILESUFFIX_DEPLOY);
         File buildPackAdditions = new File(targetDir, "/" + APPLICATION_FOLDER + testApp.getApplicationNumber() + "/" + BUILDPACK_FILEPATH_PHP);
+        File environmentConfig = new File(targetDir, appName + ENVIRONMENT_CONFIG_FILE);
 
         assertTrue(targetFile.exists());
         assertTrue(deployFile.exists());
         assertTrue(buildPackAdditions.exists());
+        assertTrue(environmentConfig.exists());
     }
 
     @Test
