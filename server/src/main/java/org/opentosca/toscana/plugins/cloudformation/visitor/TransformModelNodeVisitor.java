@@ -102,7 +102,12 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
             //Open Database port
             String SecurityGroupName = computeHostName + SECURITY_GROUP;
             SecurityGroup securityGroup = (SecurityGroup) cfnModule.getResource(SecurityGroupName);
-            securityGroup.ingress(ingress -> ingress.cidrIp("0.0.0.0/0"), "tcp", node.getPort());
+            if (node.getPort().isPresent()) {
+                Integer databasePort = node.getPort().orElseThrow(() -> new IllegalArgumentException("Database " +
+                    "port not set"));
+                securityGroup.ingress(ingress -> ingress.cidrIp("0.0.0.0/0"), "tcp", databasePort);
+            }
+            
         } catch (Exception e) {
             logger.error("Error while creating Database resource.");
             throw new TransformationFailureException("Failed at Database node " + node.getEntityName(), e);
@@ -161,7 +166,17 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
             String nodeName = toAlphanumerical(node.getEntityName());
             //get the compute where the dbms this node is hosted on, is hosted on
             Compute computeHost = getCompute(node);
+            String computeHostName = toAlphanumerical(computeHost.getEntityName());
             operationHandler.handleGenericHostedNode(node, computeHost);
+
+            //Open Dbms port
+            String SecurityGroupName = computeHostName + SECURITY_GROUP;
+            SecurityGroup securityGroup = (SecurityGroup) cfnModule.getResource(SecurityGroupName);
+            if (node.getPort().isPresent()) {
+                Integer dbmsPort = node.getPort().orElseThrow(() -> new IllegalArgumentException("Database " +
+                    "port not set"));
+                securityGroup.ingress(ingress -> ingress.cidrIp("0.0.0.0/0"), "tcp", dbmsPort);
+            }
         } catch (Exception e) {
             logger.error("Error while creating Database resource.");
             throw new TransformationFailureException("Failed at Database node " + node.getEntityName(), e);
@@ -243,7 +258,7 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
             //Open port 3000
             String SecurityGroupName = computeHostName + SECURITY_GROUP;
             SecurityGroup securityGroup = (SecurityGroup) cfnModule.getResource(SecurityGroupName);
-            securityGroup.ingress(ingress -> ingress.cidrIp("0.0.0.0/0"), "tcp", 3000);
+            securityGroup.ingress(ingress -> ingress.cidrIp("0.0.0.0/0"), "tcp", 3000, 3000);
                 
         } catch (Exception e) {
             logger.error("Error while creating Nodejs");
