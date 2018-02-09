@@ -19,24 +19,23 @@ public class ScalableCapability extends Capability {
 
     /**
      Indicates the maximum number of instances that should be created for the associated node.
-     <p>
-     Same as the max value of the Range connected to #SCALE_RANGE
      */
-    public static ToscaKey<Integer> MAX_INSTANCES = new ToscaKey<>(PROPERTIES, "min_instances");
+    public static ToscaKey<Integer> MAX_INSTANCES = new ToscaKey<>(PROPERTIES, "max_instances")
+        .type(Integer.class);
 
     /**
      Indicates the minimum number of instances that should be created for the associated node.
-     <p>
-     Same as the min value of the Range connected to #SCALE_RANGE
      */
-    public static ToscaKey<Integer> MIN_INSTANCES = new ToscaKey<>(PROPERTIES, "max_instances");
+    public static ToscaKey<Integer> MIN_INSTANCES = new ToscaKey<>(PROPERTIES, "min_instances")
+        .type(Integer.class);
 
     /**
      The optional default number of instances that should be the starting number of instances
      a TOSCA orchestrator should attempt to allocate.
      (TOSCA Simple Profile in YAML Version 1.1, p. 157)
      */
-    public static ToscaKey<Integer> DEFAULT_INSTANCES = new ToscaKey<>(PROPERTIES, "default_instances");
+    public static ToscaKey<Integer> DEFAULT_INSTANCES = new ToscaKey<>(PROPERTIES, "default_instances")
+        .type(Integer.class);
 
     public ScalableCapability(MappingEntity mappingEntity) {
         super(mappingEntity);

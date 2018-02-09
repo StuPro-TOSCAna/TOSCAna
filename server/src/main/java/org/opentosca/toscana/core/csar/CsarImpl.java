@@ -10,9 +10,9 @@ import java.util.Optional;
 
 import org.opentosca.toscana.core.parse.EntrypointDetector;
 import org.opentosca.toscana.core.parse.InvalidCsarException;
+import org.opentosca.toscana.core.plugin.lifecycle.LifecyclePhase;
 import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.logging.Log;
-import org.opentosca.toscana.core.util.LifecyclePhase;
 import org.opentosca.toscana.model.EffectiveModelFactory;
 
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -22,10 +22,6 @@ import org.slf4j.Logger;
 
 public class CsarImpl implements Csar {
 
-    /**
-     the name of the directory which contains the unzipped content of the uploaded CSAR
-     */
-    public final static String CONTENT_DIR = "content";
     /**
      Stores all scheduled, ongoing or finished transformations of this CSAR. Key is the platform identifier.
      */
@@ -52,8 +48,7 @@ public class CsarImpl implements Csar {
     private List<LifecyclePhase> initLifecyclePhases() {
         List<LifecyclePhase> phases = new ArrayList<>();
         for (Phase phaseName : Phase.values()) {
-            LifecyclePhase phase = new LifecyclePhase(phaseName.getName(), this);
-            phase.setLogger(log.getLogger(LifecyclePhase.class));
+            LifecyclePhase phase = new LifecyclePhase(phaseName.getName(), this, log.getLogger(LifecyclePhase.class));
             phases.add(phase);
         }
         return phases;

@@ -6,8 +6,8 @@ import java.util.List;
 import org.opentosca.toscana.api.PlatformController;
 import org.opentosca.toscana.api.TransformationController;
 import org.opentosca.toscana.api.docs.HiddenResourceSupport;
+import org.opentosca.toscana.core.plugin.lifecycle.LifecyclePhase;
 import org.opentosca.toscana.core.transformation.TransformationState;
-import org.opentosca.toscana.core.util.LifecyclePhase;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
@@ -21,12 +21,12 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 @ApiModel
 @Relation(collectionRelation = "transformation")
 public class TransformationResponse extends HiddenResourceSupport {
-    private final List<LifecyclePhase> phases;
+    private final List<? extends LifecyclePhase> phases;
     private final TransformationState state;
     private final String platform;
 
     public TransformationResponse(
-        @JsonProperty("phases") List<LifecyclePhase> phases,
+        @JsonProperty("phases") List<? extends LifecyclePhase> phases,
         @JsonProperty("state") TransformationState state,
         @JsonProperty("platform") String platform,
         String csarName
@@ -62,7 +62,7 @@ public class TransformationResponse extends HiddenResourceSupport {
         notes = "The phases of the transformation"
     )
     @JsonProperty("phases")
-    public List<LifecyclePhase> getPhases() {
+    public List<? extends LifecyclePhase> getPhases() {
         return phases;
     }
 

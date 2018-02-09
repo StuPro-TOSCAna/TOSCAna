@@ -63,6 +63,7 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
         Map<String, InputProperty> properties = context.getProperties().getProperties();
         
         logger.debug("Checking for Properties");
+
         if (!properties.isEmpty()) {
             String username = properties.get(CF_PROPERTY_KEY_USERNAME).getValue().orElse(null);
             String password = properties.get(CF_PROPERTY_KEY_PASSWORD).getValue().orElse(null);

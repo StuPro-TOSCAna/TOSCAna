@@ -37,7 +37,7 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
     public CloudFormationLifecycle(TransformationContext context) throws IOException {
         super(context);
         model = context.getModel();
-        PropertyInstance properties = context.getProperties();
+        PropertyInstance properties = context.getInputs();
         String awsRegion = properties.getOrThrow(AWS_REGION_KEY);
         String keyId = properties.getOrThrow(AWS_ACCESS_KEY_ID_KEY);
         String secretKey = properties.getOrThrow(AWS_SECRET_KEY_KEY);

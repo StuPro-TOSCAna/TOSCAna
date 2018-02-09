@@ -3,8 +3,13 @@ package org.opentosca.toscana.plugins;
 import java.io.File;
 
 import org.opentosca.toscana.core.BaseIntegrationTest;
-import org.opentosca.toscana.core.plugin.TOSCAnaPlugin;
+import org.opentosca.toscana.core.csar.Csar;
+import org.opentosca.toscana.core.csar.CsarImpl;
+import org.opentosca.toscana.core.plugin.lifecycle.AbstractLifecycle;
+import org.opentosca.toscana.core.plugin.lifecycle.ToscanaPlugin;
+import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.TransformationContext;
+import org.opentosca.toscana.core.transformation.TransformationImpl;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
 import org.opentosca.toscana.model.EffectiveModel;
 
@@ -12,6 +17,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 /**
  This class represents a integration test that tries to transform a Transformation of a model using
@@ -23,12 +31,13 @@ import org.slf4j.LoggerFactory;
  A transformation executed with this test never produces a log file.
  That means: The resulting transformation directory will not contain a log file!
  */
-public abstract class BaseTransformTest extends BaseIntegrationTest {
+public abstract class BaseTransformTest<LifecycleT extends AbstractLifecycle> extends BaseIntegrationTest {
 
     private static final Logger logger = LoggerFactory.getLogger(BaseTransformTest.class);
 
-    protected final TOSCAnaPlugin plugin;
+    protected final ToscanaPlugin<LifecycleT> plugin;
     protected EffectiveModel model;
+    protected PropertyInstance inputs;
     protected TransformationContext context;
     protected File workingDir;
     protected File contentDir;
@@ -36,7 +45,7 @@ public abstract class BaseTransformTest extends BaseIntegrationTest {
     /**
      Create a new Test instance using the given plugin
      */
-    public BaseTransformTest(TOSCAnaPlugin plugin) {
+    public BaseTransformTest(ToscanaPlugin plugin) {
         this.plugin = plugin;
     }
 
@@ -54,6 +63,7 @@ public abstract class BaseTransformTest extends BaseIntegrationTest {
         checkAssumptions();
         createDirectories();
 
+        inputs = getInputs();
         this.model = getModel();
         copyArtifacts(contentDir);
         context = initContext();
@@ -74,7 +84,8 @@ public abstract class BaseTransformTest extends BaseIntegrationTest {
     public void performTransformation() throws Exception {
         logger.info("Starting Transformation");
         try {
-            plugin.transform(context);
+            LifecycleT lifecycle = plugin.getInstance(context);
+            plugin.transform(lifecycle);
         } catch (Exception e) {
             logger.error("Transformation Failed", e);
             onFailure(workingDir, e);
@@ -89,7 +100,7 @@ public abstract class BaseTransformTest extends BaseIntegrationTest {
      */
     protected void createDirectories() throws Exception {
         workingDir = new File(tmpdir, "workdir");
-        contentDir = new File(tmpdir, "contentdir");
+        contentDir = new File(tmpdir, Csar.CONTENT_DIR);
         workingDir.mkdirs();
         contentDir.mkdirs();
     }
@@ -98,7 +109,11 @@ public abstract class BaseTransformTest extends BaseIntegrationTest {
      initializes the transformation context
      */
     protected TransformationContext initContext() throws Exception {
-        return new TransformationContext(contentDir, workingDir, logMock(), model, getProperties());
+        Csar csar = new CsarImpl(tmpdir, "csarId", logMock());
+        Transformation t = new TransformationImpl(csar, plugin.getPlatform(), logMock(), model);
+        Transformation transformation = spy(t);
+        when(transformation.getInputs()).thenReturn(inputs);
+        return new TransformationContext(transformation, workingDir);
     }
 
     /**
@@ -141,5 +156,5 @@ public abstract class BaseTransformTest extends BaseIntegrationTest {
     /**
      This method is intended to return the properties the "user" has entered. They should be pre defined of course
      */
-    protected abstract PropertyInstance getProperties() throws Exception;
+    protected abstract PropertyInstance getInputs() throws Exception;
 }
