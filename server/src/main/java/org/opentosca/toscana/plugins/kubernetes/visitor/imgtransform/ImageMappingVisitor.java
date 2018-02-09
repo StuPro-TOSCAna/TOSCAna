@@ -10,6 +10,8 @@ import org.opentosca.toscana.model.node.MysqlDbms;
 import org.opentosca.toscana.model.node.Nodejs;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.node.WebApplication;
+import org.opentosca.toscana.model.node.custom.JavaApplication;
+import org.opentosca.toscana.model.node.custom.JavaRuntime;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 import org.opentosca.toscana.plugins.kubernetes.docker.mapper.BaseImageMapper;
 import org.opentosca.toscana.plugins.util.TransformationFailureException;
@@ -70,6 +72,16 @@ public class ImageMappingVisitor implements NodeVisitor {
     }
 
     @Override
+    public void visit(JavaRuntime node) {
+        if (!hasInstallScripts) {
+            if (!hasCreateScript(node)) {
+                //Use OpenJDK JRE version 8
+                baseImage = "library/openjdk:8";
+            }
+        }
+    }
+
+    @Override
     public void visit(DockerApplication node) {
         this.requiresBuilding = false;
         this.baseImage = node.getStandardLifecycle().getCreate()
@@ -84,6 +96,7 @@ public class ImageMappingVisitor implements NodeVisitor {
 
         //TODO implement check if the docker application has children.
     }
+    
 
     @Override
     public void visit(WebApplication node) {
@@ -92,6 +105,11 @@ public class ImageMappingVisitor implements NodeVisitor {
 
     @Override
     public void visit(MysqlDatabase node) {
+        // Parent has to be visited to determine image
+    }
+
+    @Override
+    public void visit(JavaApplication node) {
         // Parent has to be visited to determine image
     }
 

@@ -129,8 +129,11 @@ public class KubernetesLifecycle extends AbstractLifecycle {
         logger.debug("Grouping Stacks in Pods");
         this.pods = Pod.getPods(stacks);
 
-        logger.debug("Setting Private addresses of Compute Nodes");
-        pods.forEach(e -> e.getComputeNode().setPrivateAddress(e.getServiceName()));
+        logger.debug("Setting Private and Public addresses of Compute Nodes");
+        pods.forEach(e -> {
+            e.getComputeNode().setPrivateAddress(e.getServiceName());
+            e.getComputeNode().setPublicAddress(e.getServiceName());
+        });
     }
 
     @Override

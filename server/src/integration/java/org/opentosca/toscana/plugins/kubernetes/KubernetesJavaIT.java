@@ -23,7 +23,7 @@ public class KubernetesJavaIT extends KubernetesLampIT {
         instance.set("database_name", "stadb");
         instance.set("database_user", "stadb");
         instance.set("database_port", "3306");
-        instance.set("database_password", "!TOSCA_rulez");
+        instance.set("database_password", "TOSCA_rulez");
 
         return instance;
     }

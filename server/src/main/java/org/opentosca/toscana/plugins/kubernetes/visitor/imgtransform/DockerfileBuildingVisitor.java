@@ -23,6 +23,8 @@ import org.opentosca.toscana.model.node.MysqlDbms;
 import org.opentosca.toscana.model.node.Nodejs;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.node.WebApplication;
+import org.opentosca.toscana.model.node.custom.JavaApplication;
+import org.opentosca.toscana.model.node.custom.JavaRuntime;
 import org.opentosca.toscana.model.operation.Operation;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
 import org.opentosca.toscana.model.relation.ConnectsTo;
@@ -74,6 +76,33 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
     @Override
     public void visit(Nodejs node) {
         handleDefault(node);
+    }
+
+    @Override
+    public void visit(JavaRuntime node) {
+        handleDefault(node);
+    }
+
+    @Override
+    public void visit(JavaApplication node) {
+        handleDefault(node);
+        //Copy over jar and add command to entrypoint
+        String jarPath = node.getJar().getFilePath();
+        try {
+            builder.copyFromCsar(jarPath, "", node.getEntityName() + ".jar");
+        } catch (IOException e) {
+            throw new TransformationFailureException(
+                String.format("Copying jar artifact for node '%s' failed!", node.getEntityName()), e
+            );
+        }
+        startCommands.add(
+            String.format(
+                "java %s -jar %s.jar %s",
+                node.getVmOptions().orElse(""),
+                node.getEntityName(),
+                node.getArguments().orElse("")
+            )
+        );
     }
 
     @Override
@@ -130,6 +159,13 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
     @Override
     public void visit(MysqlDatabase node) {
         builder.env("MYSQL_DATABASE", node.getDatabaseName());
+        if (node.getUser().isPresent() && !node.getUser().get().equals("root")) {
+            builder.env("MYSQL_USER", node.getUser().get());
+            builder.env("MYSQL_PASSWORD", node.getPassword().orElse(""));
+            if (!node.getPassword().isPresent()) {
+                builder.env("MYSQL_ALLOW_EMPTY_PASSWORD", "true");
+            }
+        }
         handleDefault(node);
         List<Optional<Operation>> lifecycles = new ArrayList<>();
         lifecycles.add(node.getStandardLifecycle().getConfigure());
@@ -219,6 +255,7 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
         if (optionalOperation.isPresent()) {
             optionalOperation.get().getInputs().forEach(e -> {
                 if (e.getValue().isPresent()) {
+                    logger.info("Adding Environment Variable {}:{}", e.getKey(), e.getValue().get());
                     builder.env(e.getKey(), e.getValue().get());
                 }
             });

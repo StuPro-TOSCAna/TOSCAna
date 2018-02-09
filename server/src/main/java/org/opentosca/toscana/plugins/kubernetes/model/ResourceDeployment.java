@@ -27,6 +27,7 @@ public class ResourceDeployment {
             Container container = new ContainerBuilder()
                 .withImage(e.getDockerImageTag().get())
                 .withName(e.getCleanStackName())
+                .withImagePullPolicy("Always") //TODO Consider removing this (only needed during development)
                 .addAllToPorts(e.getOpenPorts().stream().map(Port::toContainerPort).collect(Collectors.toList()))
                 .build();
 
