@@ -39,6 +39,7 @@ public class ResourceDeployment {
             .addToLabels("app", name)
             .endMetadata()
             .withNewSpec()
+            .withReplicas(pod.getReplicaCount())
             .withNewSelector()
             .addToMatchLabels("app", name)
             .endSelector()

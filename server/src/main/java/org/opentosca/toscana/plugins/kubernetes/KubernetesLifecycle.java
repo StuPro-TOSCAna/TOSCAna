@@ -204,7 +204,7 @@ public class KubernetesLifecycle extends AbstractLifecycle {
 
     private void instantiateImageBuilders() {
         logger.debug("Instantiating Docker Image Builders");
-        stacks.forEach(e -> {
+        stacks.stream().filter(NodeStack::stackRequiresBuilding).forEach(e -> {
             ImageBuilder builder;
             if (!pushToRegistry) {
                 builder = new ExportingImageBuilder(

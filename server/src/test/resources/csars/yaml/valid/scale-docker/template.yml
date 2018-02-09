@@ -1,0 +1,50 @@
+tosca_definitions_version: tosca_simple_yaml_1_1
+
+repositories:
+  docker_hub: https://registry.hub.docker.com/
+
+topology_template:
+  node_templates:
+  
+    hello-world:
+      type: Application.Docker
+      requirements:
+        - host: dockerRuntime
+      artifacts:
+        my_image:
+          file: tutum/hello-world:latest
+          type: tosca.artifacts.Deployment.Image.Container.Docker
+          repository: docker_hub
+      interfaces:
+        Standard:
+          create:
+            implementation: my_image
+
+    dockerRuntime:
+      type: Container.Runtime
+      requirements:
+        - host: server
+
+    server:
+      type: tosca.nodes.Compute
+      capabilities:
+        scalable:
+          properties:
+            min_instances: 5
+            max_instances: 10
+            default_instances: 7
+        host:
+          properties:
+            num_cpus: 1
+            disk_size: 4 GB
+            mem_size: 1024 MB
+        os:
+          properties:
+            type: linux
+            distribution: ubuntu
+            version: 16.04
+
+  outputs:
+    endpoint:
+      value: { get_attribute: [ simpleTaskApp, endpoint ] }
+      type: string
