@@ -29,6 +29,11 @@ public class KubernetesJavaIT extends KubernetesLampIT {
     }
 
     @Override
+    protected void onFailure(File outputDir, Exception e) {
+        //noop
+    }
+
+    @Override
     protected void copyArtifacts(File contentDir) throws Exception {
         File inputDir = new File(getClass().getResource("/csars/yaml/valid/task-translator").getFile());
         FileUtils.copyDirectory(inputDir, contentDir);
