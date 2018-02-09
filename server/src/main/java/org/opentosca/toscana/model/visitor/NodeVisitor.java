@@ -17,6 +17,8 @@ import org.opentosca.toscana.model.node.SoftwareComponent;
 import org.opentosca.toscana.model.node.WebApplication;
 import org.opentosca.toscana.model.node.WebServer;
 import org.opentosca.toscana.model.node.WordPress;
+import org.opentosca.toscana.model.node.custom.JavaApplication;
+import org.opentosca.toscana.model.node.custom.JavaRuntime;
 
 public interface NodeVisitor {
 
@@ -85,6 +87,14 @@ public interface NodeVisitor {
     }
 
     default void visit(WordPress node) {
+        // noop
+    }
+
+    default void visit(JavaApplication node) {
+        // noop
+    }
+
+    default void visit(JavaRuntime node) {
         // noop
     }
 }
