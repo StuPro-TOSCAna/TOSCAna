@@ -53,12 +53,10 @@ topology_template:
               update_interval: { get_input: translator_update_interval }
       requirements:
         - host: jre
-        - database_endpoint: my_db
-      # uncomment when dynamic requirement parsing is implemented
-      # - database_endpoint: 
-      #     node: my_db
-      #     relationship: ConnectsTo
-      #     capability: 
+        - database_endpoint:
+            node: my_db
+            capability: Endpoint.Database
+            relationship: ConnectsTo
 
     jre:
       type: toscana.nodes.JavaRuntime
@@ -75,7 +73,10 @@ topology_template:
       type: tosca.nodes.WebApplication
       requirements:
         - host: apache_web_server
-        - database_endpoint: my_db
+        - database_endpoint:
+            node: my_db
+            capability: Endpoint.Database
+            relationship: ConnectsTo
       interfaces:
         Standard:
           create:

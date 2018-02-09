@@ -30,13 +30,11 @@ import lombok.ToString;
 @EqualsAndHashCode
 @ToString
 public class Requirement<CapabilityT extends Capability, NodeT extends RootNode, RelationshipT extends RootRelationship> extends BaseToscaElement {
-    
 
     public static String CAPABILITY_NAME = "capability";
     public static String NODE_NAME = "node";
     public static String RELATIONSHIP_NAME = "relationship";
 
-    public RequirementType REQUIREMENT_TYPE = new RequirementType(Requirement.class, Capability.class, RootNode.class, RootRelationship.class);
     public ToscaKey<Capability> CAPABILITY = new ToscaKey<>(CAPABILITY_NAME)
         .type(Capability.class);
     public ToscaKey<? extends RootNode> NODE = new ToscaKey<>(NODE_NAME)
@@ -108,19 +106,5 @@ public class Requirement<CapabilityT extends Capability, NodeT extends RootNode,
     public Requirement setRelationship(RelationshipT relationship) {
         set(RELATIONSHIP, relationship);
         return this;
-    }
-    
-    public static class RequirementType {
-        public final Class<? extends Requirement> WRAPPER_TYPE;
-        public final Class<? extends Capability> CAPABILITY_TYPE;
-        public final Class<? extends RootNode> NODE_TYPE;
-        public final Class<? extends RootRelationship> RELATIONSHIP_TYPE;
-
-        public RequirementType(Class<? extends Requirement> wrapper, Class<? extends Capability> capability, Class<? extends RootNode> node, Class<? extends RootRelationship> relationship) {
-            this.WRAPPER_TYPE = wrapper;
-            this.CAPABILITY_TYPE = capability;
-            this.NODE_TYPE = node;
-            this.RELATIONSHIP_TYPE = relationship;
-        }
     }
 }

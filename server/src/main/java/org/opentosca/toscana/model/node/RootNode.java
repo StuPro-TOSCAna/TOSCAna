@@ -23,8 +23,6 @@ import lombok.ToString;
 @ToString
 public abstract class RootNode extends DescribableEntity implements VisitableNode {
 
-    public static final ToscaKey<String> TYPE = new ToscaKey<>("type");
-
     public static ToscaKey<Requirement> REQUIREMENTS = new ToscaKey<>("requirements")
         .type(Requirement.class).list();
     public static ToscaKey<Capability> CAPABILITIES = new ToscaKey<>("capabilities")
