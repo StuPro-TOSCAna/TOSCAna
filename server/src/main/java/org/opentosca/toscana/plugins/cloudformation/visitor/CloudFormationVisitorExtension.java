@@ -1,6 +1,5 @@
 package org.opentosca.toscana.plugins.cloudformation.visitor;
 
-import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -12,23 +11,11 @@ import org.opentosca.toscana.model.node.Nodejs;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.node.WebApplication;
 import org.opentosca.toscana.model.node.WebServer;
-import org.opentosca.toscana.model.operation.Operation;
-import org.opentosca.toscana.model.operation.OperationVariable;
 import org.opentosca.toscana.model.relation.RootRelationship;
 import org.opentosca.toscana.plugins.cloudformation.CloudFormationModule;
 
-import com.scaleset.cfbuilder.ec2.metadata.CFNCommand;
-import com.scaleset.cfbuilder.ec2.metadata.CFNFile;
 import org.jgrapht.Graph;
 import org.slf4j.Logger;
-
-import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.ABSOLUTE_FILE_PATH;
-import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.CONFIG_SETS;
-import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.CONFIG_START;
-import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.MODE_500;
-import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.MODE_644;
-import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.OWNER_GROUP_ROOT;
-import static org.opentosca.toscana.plugins.cloudformation.util.StackUtils.getFileURL;
 
 public abstract class CloudFormationVisitorExtension {
 
