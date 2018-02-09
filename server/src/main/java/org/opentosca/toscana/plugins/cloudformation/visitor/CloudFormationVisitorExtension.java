@@ -65,7 +65,7 @@ public abstract class CloudFormationVisitorExtension {
     /**
      Get the Compute node this webServer is ultimately hosted on
 
-     @param webServer the mysqlDatabase to find the host for
+     @param webServer the webServer to find the host for
      @return the underlying Compute node
      */
     protected static Compute getCompute(WebServer webServer) {
