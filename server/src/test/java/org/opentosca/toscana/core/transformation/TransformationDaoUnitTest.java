@@ -9,6 +9,7 @@ import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarDao;
 import org.opentosca.toscana.core.csar.CsarImpl;
 import org.opentosca.toscana.core.parse.InvalidCsarException;
+import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.platform.PlatformService;
 import org.opentosca.toscana.core.util.Preferences;
 import org.opentosca.toscana.model.EffectiveModel;
@@ -21,7 +22,9 @@ import org.mockito.Mock;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.opentosca.toscana.core.testdata.TestPlugins.PLATFORM1;
 
@@ -42,7 +45,9 @@ public class TransformationDaoUnitTest extends BaseUnitTest {
     public void setUp() throws IOException, InvalidCsarException {
         when(platformService.findPlatformById(PLATFORM1.id)).thenReturn(Optional.ofNullable(PLATFORM1));
         when(preferences.getDataDir()).thenReturn(tmpdir);
-        csar = new CsarImpl(new File(""), "csarIdentifier", logMock());
+        Log log = logMock();
+        csar = spy(new CsarImpl(new File(""), "csarIdentifier", log));
+        doReturn(new File("")).when(csar).getTemplate();
         File csarTransformationDir = new File(tmpdir, "transformationDir");
         csarTransformationDir.mkdir();
         when(csarDao.getTransformationsDir(csar)).thenReturn(csarTransformationDir);
@@ -51,7 +56,8 @@ public class TransformationDaoUnitTest extends BaseUnitTest {
         File someTransformationFile = new File(platformDir, "some-file");
         someTransformationFile.createNewFile();
         EffectiveModelFactory modelFactory = mock(EffectiveModelFactory.class);
-        when(modelFactory.create(any(Csar.class))).thenReturn(mock(EffectiveModel.class));
+        EffectiveModel model = modelMock();
+        when(modelFactory.create(any(File.class), any(Log.class))).thenReturn(model);
 
         dao = new TransformationFilesystemDao(platformService, modelFactory);
         dao.setCsarDao(csarDao);
