@@ -48,10 +48,14 @@ public class ScalarTypeConverter {
         } else if (OperationVariable.class.isAssignableFrom(targetType)) {
             Connection c = scalarEntity.getGraph().getEdge(parent, scalarEntity);
             String name = null;
+            OperationVariable var;
             if (c != null) {
                 name = c.getKey();
+                var = new OperationVariable(scalarEntity, name);
+            } else {
+                var = new OperationVariable(scalarEntity);
             }
-            return (T) new OperationVariable(scalarEntity, name);
+            return (T) var;
         } else if (SizeUnit.class.isAssignableFrom(targetType)) {
             SizeUnit.Unit fromDefaultUnit = (SizeUnit.Unit) key.getDirectives().get(SizeUnit.FROM);
             SizeUnit.Unit toUnit = (SizeUnit.Unit) key.getDirectives().get(SizeUnit.TO);

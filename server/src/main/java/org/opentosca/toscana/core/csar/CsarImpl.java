@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.opentosca.toscana.core.parse.EntrypointDetector;
 import org.opentosca.toscana.core.parse.InvalidCsarException;
 import org.opentosca.toscana.core.plugin.lifecycle.LifecyclePhase;
 import org.opentosca.toscana.core.transformation.Transformation;
@@ -34,6 +33,7 @@ public class CsarImpl implements Csar {
     private final Logger logger;
     private final File rootDir;
     private final File contentDir;
+    private File template;
     private final List<LifecyclePhase> lifecyclePhases;
 
     public CsarImpl(File rootDir, String identifier, Log log) {
@@ -66,8 +66,7 @@ public class CsarImpl implements Csar {
         logger.info("Validating csar '{}'", identifier);
         logger.debug("  > Validating TOSCA template", identifier);
         try {
-            File entryPoint = new EntrypointDetector(this.log).findEntryPoint(this.contentDir);
-            Reader.getReader().parse(Paths.get(this.contentDir.toString()), Paths.get(entryPoint.toString()));
+            Reader.getReader().parse(Paths.get(this.contentDir.toString()), Paths.get(getTemplate().toString()));
             logger.info("Template validation successful");
             phase.setState(LifecyclePhase.State.DONE);
             return true;
@@ -153,6 +152,14 @@ public class CsarImpl implements Csar {
     @Override
     public File getContentDir() {
         return contentDir;
+    }
+
+    @Override
+    public File getTemplate() throws InvalidCsarException {
+        if (template == null) {
+            template = new EntrypointDetector(log).findEntryPoint(contentDir);
+        }
+        return template;
     }
 
     @Override

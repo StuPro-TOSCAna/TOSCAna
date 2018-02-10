@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.opentosca.toscana.core.parse.InvalidCsarException;
 import org.opentosca.toscana.core.plugin.lifecycle.LifecyclePhase;
 import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.logging.Log;
@@ -53,6 +54,12 @@ public interface Csar extends LifecycleAccess {
      */
     File getContentDir();
 
+    /**
+     Returns the service template of this csar
+     @return
+     */
+    File getTemplate() throws InvalidCsarException;
+    
     enum Phase {
         UNZIP("unzip"),
         VALIDATE("validate"),
@@ -68,4 +75,5 @@ public interface Csar extends LifecycleAccess {
             return name;
         }
     }
+    
 }
