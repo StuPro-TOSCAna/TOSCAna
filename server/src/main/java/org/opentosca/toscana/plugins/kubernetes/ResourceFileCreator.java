@@ -23,9 +23,13 @@ public class ResourceFileCreator {
         for (Pod pod : pods) {
             ResourceDeployment replicationController
                 = new ResourceDeployment(pod);
-            ResourceService service = new ResourceService(pod);
             result.put(pod.getDeploymentName(), replicationController.build().toYaml());
-            result.put(pod.getServiceName(), service.build().toYaml());
+            
+            //Create a Service if the Pod has exposed ports
+            if (pod.getPorts().size() != 0 ) {
+                ResourceService service = new ResourceService(pod);
+                result.put(pod.getServiceName(), service.build().toYaml());
+            }
         }
         return result;
     }
