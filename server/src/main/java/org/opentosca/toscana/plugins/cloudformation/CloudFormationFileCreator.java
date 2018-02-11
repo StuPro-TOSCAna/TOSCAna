@@ -22,13 +22,18 @@ import org.slf4j.Logger;
  */
 public class CloudFormationFileCreator {
     public static final String CLI_COMMAND_CREATESTACK = "aws cloudformation deploy ";
+    public static final String CLI_COMMAND_DELETESTACK = "aws cloudformation delete-stack ";
+    public static final String CLI_COMMAND_DELETEBUCKET = "aws s3api delete-bucket --bucket ";
     public static final String CLI_PARAM_STACKNAME = "--stack-name ";
     public static final String CLI_PARAM_TEMPLATEFILE = "--template-file ";
     public static final String CLI_PARAM_PARAMOVERRIDES = "--parameter-overrides ";
     public static final String CLI_PARAM_CAPABILITIES = "--capabilities";
+    public static final String CLI_PARAM_BUCKET = "--bucket ";
     public static final String CAPABILITY_IAM = "CAPABILITY_IAM";
     public static final String FILENAME_DEPLOY = "deploy";
     public static final String FILENAME_UPLOAD = "file-upload";
+    public static final String FILENAME_CREATE_STACK = "create-stack";
+    public static final String FILENAME_CLEANUP = "cleanup";
     public static final String TEMPLATE_YAML = "template.yaml";
     public static final String CHANGE_TO_PARENT_DIRECTORY = "cd ..";
     public static final String RELATIVE_DIRECTORY_PREFIX = "../files/";
@@ -75,7 +80,9 @@ public class CloudFormationFileCreator {
      */
     public void createScripts() throws IOException {
         createFileUploadScript();
+        createCreateStackScript();
         createDeployScript();
+//        createCleanUpScript(); // for debugging
     }
 
     /**
@@ -90,29 +97,7 @@ public class CloudFormationFileCreator {
         if (!filesToBeUploaded.isEmpty()) {
             deployScript.append("source " + FILENAME_UPLOAD + ".sh");
         }
-        deployScript.append(CHANGE_TO_PARENT_DIRECTORY);
-        StringBuilder deployCommand = new StringBuilder("");
-        deployCommand.append(CLI_COMMAND_CREATESTACK + CLI_PARAM_STACKNAME)
-            .append(cfnModule.getStackName()).append(" ")
-            .append(CLI_PARAM_TEMPLATEFILE).append(TEMPLATE_YAML);
-
-        // Add IAM capability if needed
-        if (!filesToBeUploaded.isEmpty()) {
-            deployCommand.append(" " + CLI_PARAM_CAPABILITIES + " " + CAPABILITY_IAM);
-        }
-
-        // Add parameters if needed
-        Map<String, Parameter> parameters = cfnModule.getParameters();
-        if (!parameters.isEmpty()) {
-            deployCommand.append(" " + CLI_PARAM_PARAMOVERRIDES);
-            for (Map.Entry<String, Parameter> entry : parameters.entrySet()) {
-                String id = entry.getKey();
-                deployCommand.append(" ").append(id).append("=$").append(id).append("Var");
-            }
-        }
-
-        deployCommand.append(" &");
-        deployScript.append(deployCommand.toString());
+        deployScript.append("source " + FILENAME_CREATE_STACK + ".sh");
     }
 
     /**
@@ -139,6 +124,52 @@ public class CloudFormationFileCreator {
         } else {
             logger.debug("No files to be uploaded found. Skipping creation of file upload script.");
         }
+    }
+
+    /**
+     Creates the script for creating the CloudFormation stack from the template.
+     */
+    private void createCreateStackScript() throws IOException {
+        logger.debug("Creating create-stack script.");
+        BashScript createStackScript = new BashScript(cfnModule.getFileAccess(), FILENAME_CREATE_STACK);
+
+        // Build deploy command
+        StringBuilder deployCommand = new StringBuilder("");
+        deployCommand.append(CLI_COMMAND_CREATESTACK + CLI_PARAM_STACKNAME)
+            .append(cfnModule.getStackName()).append(" ")
+            .append(CLI_PARAM_TEMPLATEFILE).append("../").append(TEMPLATE_YAML);
+
+        // Add IAM capability if needed
+        List<String> filesToBeUploaded = cfnModule.getFilesToBeUploaded();
+        if (!filesToBeUploaded.isEmpty()) {
+            deployCommand.append(" " + CLI_PARAM_CAPABILITIES + " " + CAPABILITY_IAM);
+        }
+
+        // Add parameters if needed
+        Map<String, Parameter> parameters = cfnModule.getParameters();
+        if (!parameters.isEmpty()) {
+            deployCommand.append(" " + CLI_PARAM_PARAMOVERRIDES);
+            for (Map.Entry<String, Parameter> entry : parameters.entrySet()) {
+                String id = entry.getKey();
+                deployCommand.append(" ").append(id).append("=$").append(id).append("Var");
+            }
+        }
+
+        deployCommand.append(" &");
+        createStackScript.append(deployCommand.toString());
+    }
+
+    /**
+     Creates a script to delete the S3Bucket and the deployed Stack.
+     Note: May or may not be included in the final version. Currently used for quicker manual debugging.
+     */
+    private void createCleanUpScript() throws IOException {
+        logger.debug("Creating cleanup script.");
+        BashScript cleanupScript = new BashScript(cfnModule.getFileAccess(), FILENAME_CLEANUP);
+        // Delete Bucket
+        cleanupScript.append(CLI_COMMAND_DELETEBUCKET + cfnModule.getBucketName());
+        // Delete stack
+        cleanupScript.append(CLI_COMMAND_DELETESTACK + CLI_PARAM_STACKNAME + cfnModule.getStackName());
     }
 
     /**
