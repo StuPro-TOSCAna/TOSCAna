@@ -29,7 +29,6 @@ import static org.opentosca.toscana.core.plugin.lifecycle.AbstractLifecycle.UTIL
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationFileCreator.CAPABILITY_IAM;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationFileCreator.CLI_COMMAND_CREATESTACK;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationFileCreator.CLI_PARAM_CAPABILITIES;
-import static org.opentosca.toscana.plugins.cloudformation.CloudFormationFileCreator.CLI_PARAM_PARAMOVERRIDES;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationFileCreator.CLI_PARAM_STACKNAME;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationFileCreator.CLI_PARAM_TEMPLATEFILE;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationFileCreator.FILENAME_CREATE_STACK;
@@ -38,7 +37,6 @@ import static org.opentosca.toscana.plugins.cloudformation.CloudFormationFileCre
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationFileCreator.RELATIVE_DIRECTORY_PREFIX;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationFileCreator.TEMPLATE_YAML;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.FILEPATH_TARGET;
-import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.KEYNAME;
 import static org.opentosca.toscana.plugins.scripts.BashScript.SHEBANG;
 import static org.opentosca.toscana.plugins.scripts.BashScript.SOURCE_UTIL_ALL;
 import static org.opentosca.toscana.plugins.scripts.BashScript.SUBCOMMAND_EXIT;
@@ -111,8 +109,7 @@ public class CloudFormationFileCreatorTest extends BaseUnitTest {
             SUBCOMMAND_EXIT + "\n" +
             CLI_COMMAND_CREATESTACK + CLI_PARAM_STACKNAME + cfnModule.getStackName()
             + " " + CLI_PARAM_TEMPLATEFILE + "../" + TEMPLATE_YAML + " "
-            + CLI_PARAM_CAPABILITIES + " " + CAPABILITY_IAM
-            + " " + CLI_PARAM_PARAMOVERRIDES + " " + KEYNAME + "=$" + KEYNAME + "Var &" + "\n";
+            + CLI_PARAM_CAPABILITIES + " " + CAPABILITY_IAM + " &" + "\n";
         String actualDeployContent = FileUtils.readFileToString(deployScript, StandardCharsets.UTF_8);
         String actualFileUploadContent = FileUtils.readFileToString(fileUploadScript, StandardCharsets.UTF_8);
         String actualCreateStackContent = FileUtils.readFileToString(createStackScript, StandardCharsets.UTF_8);

@@ -23,9 +23,11 @@ import org.opentosca.toscana.plugins.util.TransformationFailureException;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
+import org.apache.commons.lang3.StringUtils;
 import org.jgrapht.Graph;
 
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationPlugin.AWS_ACCESS_KEY_ID_KEY;
+import static org.opentosca.toscana.plugins.cloudformation.CloudFormationPlugin.AWS_KEYPAIR_KEY;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationPlugin.AWS_REGION_KEY;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationPlugin.AWS_SECRET_KEY_KEY;
 
@@ -41,9 +43,15 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
         String awsRegion = properties.getOrThrow(AWS_REGION_KEY);
         String keyId = properties.getOrThrow(AWS_ACCESS_KEY_ID_KEY);
         String secretKey = properties.getOrThrow(AWS_SECRET_KEY_KEY);
+        String keypair = properties.getOrThrow(AWS_KEYPAIR_KEY);
         AWSCredentials awsCredentials = new BasicAWSCredentials(keyId, secretKey);
         this.fileAccess = context.getPluginFileAccess();
         this.cfnModule = new CloudFormationModule(fileAccess, awsRegion, awsCredentials);
+        if (StringUtils.equals("true", keypair)) {
+            cfnModule.setKeyPair(true);
+        } else {
+            cfnModule.setKeyPair(false);
+        }
     }
 
     /**

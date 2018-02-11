@@ -82,7 +82,7 @@ public class CloudFormationFileCreator {
         createFileUploadScript();
         createCreateStackScript();
         createDeployScript();
-//        createCleanUpScript(); // for debugging
+        createCleanUpScript();
     }
 
     /**
@@ -142,12 +142,14 @@ public class CloudFormationFileCreator {
         // Add IAM capability if needed
         List<String> filesToBeUploaded = cfnModule.getFilesToBeUploaded();
         if (!filesToBeUploaded.isEmpty()) {
+            logger.debug("Adding IAM capability to create stack command.");
             deployCommand.append(" " + CLI_PARAM_CAPABILITIES + " " + CAPABILITY_IAM);
         }
 
         // Add parameters if needed
         Map<String, Parameter> parameters = cfnModule.getParameters();
         if (!parameters.isEmpty()) {
+            logger.debug("Adding parameters to create stack command.");
             deployCommand.append(" " + CLI_PARAM_PARAMOVERRIDES);
             for (Map.Entry<String, Parameter> entry : parameters.entrySet()) {
                 String id = entry.getKey();
