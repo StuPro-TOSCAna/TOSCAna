@@ -15,8 +15,8 @@ export class TransformationsProvider {
         return this.transformationsService.getInputsUsingGET(csarId, platform);
     }
 
-    public async createNewTransformation(csarId: string, platform: string) {
-        let result = await  this.transformationsService.addTransformationUsingPOST(csarId, platform).toPromise();
+    public createNewTransformation(csarId: string, platform: string) {
+        return this.transformationsService.addTransformationUsingPOST(csarId, platform);
     }
 
     public setTransformationProperties(csarId: string, platform: string, inputs: InputWrap[]) {
