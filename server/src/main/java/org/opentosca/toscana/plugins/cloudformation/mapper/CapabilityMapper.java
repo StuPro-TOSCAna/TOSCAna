@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 
 import org.opentosca.toscana.model.capability.ComputeCapability;
 import org.opentosca.toscana.model.capability.OsCapability;
+import org.opentosca.toscana.plugins.cloudformation.CloudFormationModule;
 import org.opentosca.toscana.plugins.util.TransformationFailureException;
 
 import com.amazonaws.SdkClientException;
@@ -25,6 +26,9 @@ import com.amazonaws.services.ec2.model.DescribeImagesResult;
 import com.amazonaws.services.ec2.model.Filter;
 import com.amazonaws.services.ec2.model.Image;
 import com.google.common.collect.ImmutableList;
+import com.scaleset.cfbuilder.ec2.Instance;
+import com.scaleset.cfbuilder.ec2.instance.EC2BlockDeviceMapping;
+import com.scaleset.cfbuilder.ec2.instance.ec2blockdevicemapping.EC2EBSBlockDevice;
 import org.slf4j.Logger;
 
 public class CapabilityMapper {
@@ -168,7 +172,6 @@ public class CapabilityMapper {
      */
     public String mapComputeCapabilityToInstanceType(ComputeCapability computeCapability, String distinction) throws
         IllegalArgumentException {
-        //TODO what to do with disk size?
         Integer numCpus = computeCapability.getNumCpus().orElse(0);
         Integer memSize = computeCapability.getMemSizeInMb().orElse(0);
         //default type the smallest
@@ -227,6 +230,33 @@ public class CapabilityMapper {
         return diskSize;
     }
 
+    /**
+     Maps the disk_size property of a ComputeCapability to an EC2 Instance.
+     
+     @param computeCapability Capability containing the disk_size property
+     @param cfnModule Module containing the Instance
+     @param nodeName name of the Instance
+     */
+    public void mapDiskSize(ComputeCapability computeCapability, CloudFormationModule cfnModule, String nodeName) {
+        // If disk_size is not set, default to 8000 Mb
+        Integer diskSizeInMb = computeCapability.getDiskSizeInMb().orElse(8000);
+        // Convert disk_size to Gb
+        Integer diskSizeInGb = diskSizeInMb / 1000;
+        if (diskSizeInGb < 8) {
+            logger.warn("disk_size of {} smaller than the minimun value required by EC2 Instances.", nodeName);
+            logger.warn("Setting the disk_size of {} to the minimum allowed value of 8 Gb.", nodeName);
+            diskSizeInGb = 8;
+        }
+        // Add BlockDeviceMapping if needed
+        if (diskSizeInGb != 8) {
+            Instance computeAsInstance = (Instance) cfnModule.getResource(nodeName);
+            computeAsInstance.blockDeviceMappings(new EC2BlockDeviceMapping()
+                .deviceName("/dev/sda1")
+                .ebs(new EC2EBSBlockDevice()
+                    .volumeSize(diskSizeInGb.toString())));
+        }
+    }
+    
     /**
      Check if the value is in the list checker, if not take the next bigger. If there is none throw an
      IllegalArgumentException
@@ -289,7 +319,7 @@ public class CapabilityMapper {
         }
         return instanceType;
     }
-
+    
     private List<Integer> getMemByCpu(Integer numCpus, ImmutableList<InstanceType> instanceTypes) {
         return instanceTypes.stream()
             .filter(u -> u.getNumCpus().equals(numCpus))
