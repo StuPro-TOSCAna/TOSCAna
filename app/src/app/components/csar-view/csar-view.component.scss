@@ -1,0 +1,44 @@
+.content {
+    height: 100%;
+}
+.view-title {
+    text-decoration: underline;
+    font-size: 2rem;
+}
+.app-log {
+    height: 100%;
+}
+.items {
+    display: inline-flex;
+    width: 100%;
+    margin-bottom: 20px;
+    .phases {
+        font-size: larger;
+        margin-top: 15px;
+        .phase-title {
+            font-size: 1.5rem;
+        }
+        width: 100%;
+        .fa {
+            font-size: 22px;
+        }
+        .active {
+            font-weight: bold;
+        }
+        .phase {
+            display: grid;
+            grid-template-columns: 20% auto;
+            .state {
+                font-weight: bold;
+            }
+        }
+    }
+    .download {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 10px;
+        width: 100%;
+    }
+}
+

@@ -1,0 +1,66 @@
+._container {
+    display: flex;
+    flex-flow: column;
+    height: 100%;
+}
+.log {
+    height: 100%;
+}
+.top {
+    height: auto;
+    flex: 0 1 auto;
+}
+.bottom {
+    height: 75%;
+    flex: 1 1 auto;
+}
+.footer {
+    flex: 0 1 40px;
+}
+.content {
+    border-right: 1px solid black;
+}
+
+.view-title {
+    text-decoration: underline;
+    font-size: 2rem;
+}
+
+.items {
+    display: inline-flex;
+    width: 100%;
+    margin-bottom: 20px;
+    .phases {
+        font-size: larger;
+        width: 100%;
+        margin-top: 15px;
+        .phase-title {
+            font-size: 1.5rem;
+        }
+        fa {
+            font-size: 22px;
+        }
+        .active {
+            font-weight: bold;
+        }
+
+        .phase {
+            display: grid;
+            grid-template-columns: 50% auto;
+            .name {
+                word-wrap: break-word;
+            }
+            .state {
+                font-weight: bold;
+            }
+        }
+    }
+    .download {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 10px;
+        width: 100%;
+    }
+}
+

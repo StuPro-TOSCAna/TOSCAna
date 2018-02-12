@@ -1,0 +1,31 @@
+<div bsModal #template="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title pull-left">Transformation already exists</h4>
+                <button type="button" class="close pull-right" aria-label="Close" (click)="template.hide()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Do you want to delete the existing transformation?
+            </div>
+            <div class="actions">
+                <button type="button" class="btn btn-secondary" (click)="template.hide()">Cancel</button>
+                <button type="submit" class="btn btn-danger" (click)="overwriteTransformation()">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<nav class="navbar navbar-dark bg-dark">
+    <div class="navbar-brand">{{title}}</div>
+</nav>
+<div *ngIf="notNullOrUndefined(csar)">
+    <div *ngIf="!platformSelected" class="target-platforms">
+        <button (click)="onPlatformSelected(item.id)" *ngFor="let item of platforms" type="button"
+                class="btn btn-secondary btn-lg btn-block">{{item.name}}
+        </button>
+    </div>
+</div>

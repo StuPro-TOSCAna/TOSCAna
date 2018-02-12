@@ -1,0 +1,50 @@
+._container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+
+    .sub-item {
+        margin-bottom: 5px;
+    }
+}
+.btn-outline-primary:hover {
+    background-color: #4EA2FE;
+    border-color: #4EA2FE;
+}
+.item {
+    color: black;
+    display: flex;
+    align-items: center;
+    border-radius: 0;
+    position: relative;
+    width: 100%;
+    text-align: left;
+    margin-bottom: 5px;
+    .button {
+        width: 100%;
+        height: 100%;
+    }
+    div {
+        display: inline-block;
+    }
+
+    .icon {
+        margin-right: 5px;
+    }
+
+    .actions {
+        float: right;
+    }
+
+    .fa {
+        font-size: 22px;
+    }
+
+}
+
+.sub-item {
+    width: 100%;
+    display: block;
+}
+
+
