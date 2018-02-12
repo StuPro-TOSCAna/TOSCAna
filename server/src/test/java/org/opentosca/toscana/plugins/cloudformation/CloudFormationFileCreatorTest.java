@@ -78,9 +78,9 @@ public class CloudFormationFileCreatorTest extends BaseUnitTest {
     }
 
     @Test
-    public void createScripts() throws Exception {
+    public void testWriteScripts() throws Exception {
         cfnModule.putFileToBeUploaded(FILENAME_TEST_FILE);
-        fileCreator.createScripts();
+        fileCreator.writeScripts();
 
         File deployScript = new File(targetDir,
             SCRIPTS_DIR_PATH + FILENAME_DEPLOY + BASH_FILE_ENDING);

@@ -78,17 +78,17 @@ public class CloudFormationFileCreator {
     /**
      Creates all Scripts necessary for AWS CloudFormation deployment.
      */
-    public void createScripts() throws IOException {
-        createFileUploadScript();
-        createCreateStackScript();
-        createDeployScript();
-        createCleanUpScript();
+    public void writeScripts() throws IOException {
+        writeFileUploadScript();
+        writeStackCreationScript();
+        writeDeployScript();
+        writeCleanUpScript();
     }
 
     /**
      Creates a deploy script for deploying the cloudformation template.
      */
-    private void createDeployScript() throws IOException {
+    private void writeDeployScript() throws IOException {
         logger.debug("Creating deploy script.");
         BashScript deployScript = new BashScript(cfnModule.getFileAccess(), FILENAME_DEPLOY);
         deployScript.append(EnvironmentCheck.checkEnvironment("aws"));
@@ -103,7 +103,7 @@ public class CloudFormationFileCreator {
     /**
      Creates the script for File Uploads if files need to be uploaded.
      */
-    private void createFileUploadScript() throws IOException {
+    private void writeFileUploadScript() throws IOException {
         List<String> filesToBeUploaded = cfnModule.getFilesToBeUploaded();
 
         logger.debug("Checking if files need to be uploaded.");
@@ -129,7 +129,7 @@ public class CloudFormationFileCreator {
     /**
      Creates the script for creating the CloudFormation stack from the template.
      */
-    private void createCreateStackScript() throws IOException {
+    private void writeStackCreationScript() throws IOException {
         logger.debug("Creating create-stack script.");
         BashScript createStackScript = new BashScript(cfnModule.getFileAccess(), FILENAME_CREATE_STACK);
 
@@ -165,7 +165,7 @@ public class CloudFormationFileCreator {
      Creates a script to delete the S3Bucket and the deployed Stack.
      Note: May or may not be included in the final version. Currently used for quicker manual debugging.
      */
-    private void createCleanUpScript() throws IOException {
+    private void writeCleanUpScript() throws IOException {
         logger.debug("Creating cleanup script.");
         BashScript cleanupScript = new BashScript(cfnModule.getFileAccess(), FILENAME_CLEANUP);
         // Delete Bucket
