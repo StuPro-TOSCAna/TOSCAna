@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.opentosca.toscana.model.capability.ComputeCapability;
@@ -30,6 +29,11 @@ import com.scaleset.cfbuilder.ec2.Instance;
 import com.scaleset.cfbuilder.ec2.instance.EC2BlockDeviceMapping;
 import com.scaleset.cfbuilder.ec2.instance.ec2blockdevicemapping.EC2EBSBlockDevice;
 import org.slf4j.Logger;
+
+import static org.opentosca.toscana.plugins.cloudformation.util.MappingUtils.checkValue;
+import static org.opentosca.toscana.plugins.cloudformation.util.MappingUtils.getCpuByMem;
+import static org.opentosca.toscana.plugins.cloudformation.util.MappingUtils.getInstanceType;
+import static org.opentosca.toscana.plugins.cloudformation.util.MappingUtils.getMemByCpu;
 
 public class CapabilityMapper {
 
@@ -256,28 +260,6 @@ public class CapabilityMapper {
                     .volumeSize(diskSizeInGb.toString())));
         }
     }
-    
-    /**
-     Check if the value is in the list checker, if not take the next bigger. If there is none throw an
-     IllegalArgumentException
-
-     @param value   The value to check.
-     @param checker The List to check in.
-     @return A valid value of the checker list.
-     @throws IllegalArgumentException If the value is too big
-     */
-    private Integer checkValue(Integer value, List<Integer> checker) throws IllegalArgumentException {
-        if (!checker.contains(value)) {
-            for (Integer num : checker) {
-                if (num > value) {
-                    return num;
-                }
-            }
-            throw new IllegalArgumentException("Can't support value: " + value);
-        } else {
-            return value;
-        }
-    }
 
     private String findCombination(Integer numCpus, Integer memSize, ImmutableList<InstanceType> instanceTypes,
                                    List<Integer> allNumCpus, List<Integer> allMemSizes) throws
@@ -319,52 +301,27 @@ public class CapabilityMapper {
         }
         return instanceType;
     }
-    
-    private List<Integer> getMemByCpu(Integer numCpus, ImmutableList<InstanceType> instanceTypes) {
-        return instanceTypes.stream()
-            .filter(u -> u.getNumCpus().equals(numCpus))
-            .map(InstanceType::getMemSize)
-            .collect(Collectors.toList());
-    }
 
-    private List<Integer> getCpuByMem(Integer memSize, ImmutableList<InstanceType> instanceTypes) {
-        return instanceTypes.stream()
-            .filter(u -> u.getMemSize().equals(memSize))
-            .map(InstanceType::getNumCpus)
-            .collect(Collectors.toList());
-    }
-
-    private String getInstanceType(Integer numCpus, Integer memSize, ImmutableList<InstanceType> instanceTypes) {
-        Optional<InstanceType> instanceType = instanceTypes.stream()
-            .filter(u -> u.getNumCpus().equals(numCpus) && u.getMemSize().equals(memSize))
-            .findAny();
-        if (instanceType.isPresent()) {
-            return instanceType.get().getType();
-        } else {
-            return "";
-        }
-    }
-
-    private class InstanceType {
+    public class InstanceType {
         private String type;
         private Integer memSize;
         private Integer numCpus;
 
-        protected InstanceType(String type, Integer numCpus, Integer memSize) {
+        public InstanceType(String type, Integer numCpus, Integer memSize) {
             this.type = type;
             this.numCpus = numCpus;
             this.memSize = memSize;
         }
 
-        protected String getType() {
+        public String getType() {
             return type;
         }
 
-        protected Integer getMemSize() {
+        public Integer getMemSize() {
             return memSize;
         }
 
-        protected Integer getNumCpus() {
+        public Integer getNumCpus() {
             return numCpus;
         }
     }
