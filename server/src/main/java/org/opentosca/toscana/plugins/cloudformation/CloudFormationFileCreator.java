@@ -156,8 +156,6 @@ public class CloudFormationFileCreator {
                 deployCommand.append(" ").append(id).append("=$").append(id).append("Var");
             }
         }
-
-        deployCommand.append(" &");
         createStackScript.append(deployCommand.toString());
     }
 

@@ -109,7 +109,7 @@ public class CloudFormationFileCreatorTest extends BaseUnitTest {
             SUBCOMMAND_EXIT + "\n" +
             CLI_COMMAND_CREATESTACK + CLI_PARAM_STACKNAME + cfnModule.getStackName()
             + " " + CLI_PARAM_TEMPLATEFILE + "../" + TEMPLATE_YAML + " "
-            + CLI_PARAM_CAPABILITIES + " " + CAPABILITY_IAM + " &" + "\n";
+            + CLI_PARAM_CAPABILITIES + " " + CAPABILITY_IAM + "\n";
         String actualDeployContent = FileUtils.readFileToString(deployScript, StandardCharsets.UTF_8);
         String actualFileUploadContent = FileUtils.readFileToString(fileUploadScript, StandardCharsets.UTF_8);
         String actualCreateStackContent = FileUtils.readFileToString(createStackScript, StandardCharsets.UTF_8);
