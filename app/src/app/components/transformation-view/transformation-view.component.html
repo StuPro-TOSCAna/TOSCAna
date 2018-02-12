@@ -1,0 +1,30 @@
+<div class="_container" *ngIf="transformation !== undefined">
+        <div class="view-title">{{csarId}}/{{transformation.fullName}}</div>
+        <div class="items">
+            <div class="phases">
+                <div class="phase-title">Phases</div>
+                <div class="phase" *ngFor="let item of transformation.phases"
+                     [ngClass]="{'active': isActive(item)}">
+                    <div class="name"> {{item.name}}</div>
+                    <div [style.color]="getIcon(item)" class="state"> {{item.state}}</div>
+                </div>
+            </div>
+            <div class="download">
+                <a *ngIf="transformationDone" class="btn btn-success btn-lg btn-block"
+                   href="{{url}}">Download Artifact</a>
+            </div>
+        </div>
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link active">
+                    Log
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link">Inputs</a>
+            </li>
+        </ul>
+        <app-log #Log class="log" type="transformation" [csarId]="csarId" [platformId]="platform"></app-log>
+</div>
+
+

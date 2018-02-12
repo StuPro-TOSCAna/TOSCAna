@@ -18,12 +18,11 @@ import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 
 import { Observable }                                        from 'rxjs/Observable';
 
-import { GetPropertiesResponse } from '../model/getPropertiesResponse';
+import { GetInputsResponse } from '../model/getInputsResponse';
+import { InputsResponse } from '../model/inputsResponse';
 import { LogResponse } from '../model/logResponse';
 import { ResponseEntity } from '../model/responseEntity';
 import { RestErrorResponse } from '../model/restErrorResponse';
-import { SetPropertiesRequest } from '../model/setPropertiesRequest';
-import { SetPropertiesResponse } from '../model/setPropertiesResponse';
 import { TransformationResources } from '../model/transformationResources';
 import { TransformationResponse } from '../model/transformationResponse';
 
@@ -34,7 +33,7 @@ import { Configuration }                                     from '../configurat
 @Injectable()
 export class TransformationsService {
 
-    protected basePath = 'https://stupro-toscana.de';
+    protected basePath = '';
     public defaultHeaders = new HttpHeaders();
     public configuration = new Configuration();
 
@@ -187,7 +186,6 @@ export class TransformationsService {
 
         // to determine the Content-Type header
         let consumes: string[] = [
-            'application/json'
         ];
 
         return this.httpClient.delete<any>(`${this.basePath}/api/csars/${encodeURIComponent(String(csarId))}/transformations/${encodeURIComponent(String(platform))}/delete`,
@@ -232,7 +230,6 @@ export class TransformationsService {
 
         // to determine the Content-Type header
         let consumes: string[] = [
-            'application/json'
         ];
 
         return this.httpClient.get<TransformationResponse>(`${this.basePath}/api/csars/${encodeURIComponent(String(csarId))}/transformations/${encodeURIComponent(String(platform))}`,
@@ -273,10 +270,97 @@ export class TransformationsService {
 
         // to determine the Content-Type header
         let consumes: string[] = [
-            'application/json'
         ];
 
         return this.httpClient.get<TransformationResources>(`${this.basePath}/api/csars/${encodeURIComponent(String(csarId))}/transformations`,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Retrieve the inputs of this transformation
+     * This Operation returns a list of inputs, specific to the csar and the platform. If the input is invalid it has to be set in order to proceed with starting the transformation. Setting the inputs is done with a POST or PUT to the same URL (See Set Inputs Operation). If Transformation does not have any inputs, an empty array is returned
+     * @param csarId The identifier for the CSAR
+     * @param platform The identifier for the platform
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public getInputsUsingGET(csarId: string, platform: string, observe?: 'body', reportProgress?: boolean): Observable<GetInputsResponse>;
+    public getInputsUsingGET(csarId: string, platform: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<GetInputsResponse>>;
+    public getInputsUsingGET(csarId: string, platform: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<GetInputsResponse>>;
+    public getInputsUsingGET(csarId: string, platform: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+        if (csarId === null || csarId === undefined) {
+            throw new Error('Required parameter csarId was null or undefined when calling getInputsUsingGET.');
+        }
+        if (platform === null || platform === undefined) {
+            throw new Error('Required parameter platform was null or undefined when calling getInputsUsingGET.');
+        }
+
+        let headers = this.defaultHeaders;
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            'application/hal+json'
+        ];
+        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set("Accept", httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        let consumes: string[] = [
+        ];
+
+        return this.httpClient.get<GetInputsResponse>(`${this.basePath}/api/csars/${encodeURIComponent(String(csarId))}/transformations/${encodeURIComponent(String(platform))}/inputs`,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Retrieve the outputs and their values
+     * This operation returns the outputs of a deployment. Retrieval of the outputs is not possible if the transformation (including deployment) is not done yet
+     * @param csarId The unique identifier for the CSAR
+     * @param platform The identifier for the platform
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public getOutputsUsingGET(csarId: string, platform: string, observe?: 'body', reportProgress?: boolean): Observable<InputsResponse>;
+    public getOutputsUsingGET(csarId: string, platform: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<InputsResponse>>;
+    public getOutputsUsingGET(csarId: string, platform: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<InputsResponse>>;
+    public getOutputsUsingGET(csarId: string, platform: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+        if (csarId === null || csarId === undefined) {
+            throw new Error('Required parameter csarId was null or undefined when calling getOutputsUsingGET.');
+        }
+        if (platform === null || platform === undefined) {
+            throw new Error('Required parameter platform was null or undefined when calling getOutputsUsingGET.');
+        }
+
+        let headers = this.defaultHeaders;
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            'application/hal+json'
+        ];
+        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set("Accept", httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        let consumes: string[] = [
+        ];
+
+        return this.httpClient.get<InputsResponse>(`${this.basePath}/api/csars/${encodeURIComponent(String(csarId))}/transformations/${encodeURIComponent(String(platform))}/outputs`,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
@@ -318,7 +402,6 @@ export class TransformationsService {
 
         // to determine the Content-Type header
         let consumes: string[] = [
-            'application/json'
         ];
 
         return this.httpClient.get<any>(`${this.basePath}/api/csars/${encodeURIComponent(String(csarId))}/transformations/${encodeURIComponent(String(platform))}/artifact`,
@@ -372,7 +455,6 @@ export class TransformationsService {
 
         // to determine the Content-Type header
         let consumes: string[] = [
-            'application/json'
         ];
 
         return this.httpClient.get<LogResponse>(`${this.basePath}/api/csars/${encodeURIComponent(String(csarId))}/transformations/${encodeURIComponent(String(platform))}/logs`,
@@ -387,71 +469,26 @@ export class TransformationsService {
     }
 
     /**
-     * Retrieve the Properties and their current values
-     * This Operation returns a list of properties, specific to the csar and the platform. If the value is null and the property is required it has to be set in order to proceed with launching the transformation. Setting the properties is done with a POST or PUT to the same URL (See Set Properties Operation). If the Transformation does not need any properties a empty list (Json Array) is returned
+     * Set the value of inputs
+     * With this method it is possible to set the value of an input or multiple inputs at once. The values of inputs can be set as long as they are in the READY or INPUT_REQUIRED state. The transformation changes its state to ready once all required inputs have a valid value assigned to them.
      * @param csarId The unique identifier for the CSAR
      * @param platform The identifier for the platform
+     * @param propertiesRequest propertiesRequest
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getTransformationPropertiesUsingGET(csarId: string, platform: string, observe?: 'body', reportProgress?: boolean): Observable<GetPropertiesResponse>;
-    public getTransformationPropertiesUsingGET(csarId: string, platform: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<GetPropertiesResponse>>;
-    public getTransformationPropertiesUsingGET(csarId: string, platform: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<GetPropertiesResponse>>;
-    public getTransformationPropertiesUsingGET(csarId: string, platform: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public setInputsUsingPOST(csarId: string, platform: string, propertiesRequest: InputsResponse, observe?: 'body', reportProgress?: boolean): Observable<InputsResponse>;
+    public setInputsUsingPOST(csarId: string, platform: string, propertiesRequest: InputsResponse, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<InputsResponse>>;
+    public setInputsUsingPOST(csarId: string, platform: string, propertiesRequest: InputsResponse, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<InputsResponse>>;
+    public setInputsUsingPOST(csarId: string, platform: string, propertiesRequest: InputsResponse, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (csarId === null || csarId === undefined) {
-            throw new Error('Required parameter csarId was null or undefined when calling getTransformationPropertiesUsingGET.');
+            throw new Error('Required parameter csarId was null or undefined when calling setInputsUsingPOST.');
         }
         if (platform === null || platform === undefined) {
-            throw new Error('Required parameter platform was null or undefined when calling getTransformationPropertiesUsingGET.');
+            throw new Error('Required parameter platform was null or undefined when calling setInputsUsingPOST.');
         }
-
-        let headers = this.defaultHeaders;
-
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-            'application/hal+json'
-        ];
-        let httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set("Accept", httpHeaderAcceptSelected);
-        }
-
-        // to determine the Content-Type header
-        let consumes: string[] = [
-            'application/json'
-        ];
-
-        return this.httpClient.get<GetPropertiesResponse>(`${this.basePath}/api/csars/${encodeURIComponent(String(csarId))}/transformations/${encodeURIComponent(String(platform))}/properties`,
-            {
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
-    }
-
-    /**
-     * Set the value of Properties
-     * With this method it is possible to set the value of a property or multiple properties at once. The values of properties can be set as long as they are in the READY or INPUT_REQUIRED state. The transformation changes its state to ready once all required properties have a value assigned to them. Once this is done the value can be changed or you can still set non required properties.
-     * @param csarId The unique identifier for the CSAR
-     * @param platform The identifier for the platform
-     * @param setPropertiesRequest setPropertiesRequest
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
-     */
-    public setTransformationPropertiesUsingPOST(csarId: string, platform: string, setPropertiesRequest: SetPropertiesRequest, observe?: 'body', reportProgress?: boolean): Observable<SetPropertiesResponse>;
-    public setTransformationPropertiesUsingPOST(csarId: string, platform: string, setPropertiesRequest: SetPropertiesRequest, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<SetPropertiesResponse>>;
-    public setTransformationPropertiesUsingPOST(csarId: string, platform: string, setPropertiesRequest: SetPropertiesRequest, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<SetPropertiesResponse>>;
-    public setTransformationPropertiesUsingPOST(csarId: string, platform: string, setPropertiesRequest: SetPropertiesRequest, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
-        if (csarId === null || csarId === undefined) {
-            throw new Error('Required parameter csarId was null or undefined when calling setTransformationPropertiesUsingPOST.');
-        }
-        if (platform === null || platform === undefined) {
-            throw new Error('Required parameter platform was null or undefined when calling setTransformationPropertiesUsingPOST.');
-        }
-        if (setPropertiesRequest === null || setPropertiesRequest === undefined) {
-            throw new Error('Required parameter setPropertiesRequest was null or undefined when calling setTransformationPropertiesUsingPOST.');
+        if (propertiesRequest === null || propertiesRequest === undefined) {
+            throw new Error('Required parameter propertiesRequest was null or undefined when calling setInputsUsingPOST.');
         }
 
         let headers = this.defaultHeaders;
@@ -474,8 +511,8 @@ export class TransformationsService {
             headers = headers.set("Content-Type", httpContentTypeSelected);
         }
 
-        return this.httpClient.post<SetPropertiesResponse>(`${this.basePath}/api/csars/${encodeURIComponent(String(csarId))}/transformations/${encodeURIComponent(String(platform))}/properties`,
-            setPropertiesRequest,
+        return this.httpClient.post<InputsResponse>(`${this.basePath}/api/csars/${encodeURIComponent(String(csarId))}/transformations/${encodeURIComponent(String(platform))}/inputs`,
+            propertiesRequest,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
@@ -486,26 +523,26 @@ export class TransformationsService {
     }
 
     /**
-     * Set the value of Properties
-     * With this method it is possible to set the value of a property or multiple properties at once. The values of properties can be set as long as they are in the READY or INPUT_REQUIRED state. The transformation changes its state to ready once all required properties have a value assigned to them. Once this is done the value can be changed or you can still set non required properties.
+     * Set the value of inputs
+     * With this method it is possible to set the value of an input or multiple inputs at once. The values of inputs can be set as long as they are in the READY or INPUT_REQUIRED state. The transformation changes its state to ready once all required inputs have a valid value assigned to them.
      * @param csarId The unique identifier for the CSAR
      * @param platform The identifier for the platform
-     * @param setPropertiesRequest setPropertiesRequest
+     * @param propertiesRequest propertiesRequest
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public setTransformationPropertiesUsingPUT(csarId: string, platform: string, setPropertiesRequest: SetPropertiesRequest, observe?: 'body', reportProgress?: boolean): Observable<SetPropertiesResponse>;
-    public setTransformationPropertiesUsingPUT(csarId: string, platform: string, setPropertiesRequest: SetPropertiesRequest, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<SetPropertiesResponse>>;
-    public setTransformationPropertiesUsingPUT(csarId: string, platform: string, setPropertiesRequest: SetPropertiesRequest, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<SetPropertiesResponse>>;
-    public setTransformationPropertiesUsingPUT(csarId: string, platform: string, setPropertiesRequest: SetPropertiesRequest, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public setInputsUsingPUT(csarId: string, platform: string, propertiesRequest: InputsResponse, observe?: 'body', reportProgress?: boolean): Observable<InputsResponse>;
+    public setInputsUsingPUT(csarId: string, platform: string, propertiesRequest: InputsResponse, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<InputsResponse>>;
+    public setInputsUsingPUT(csarId: string, platform: string, propertiesRequest: InputsResponse, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<InputsResponse>>;
+    public setInputsUsingPUT(csarId: string, platform: string, propertiesRequest: InputsResponse, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (csarId === null || csarId === undefined) {
-            throw new Error('Required parameter csarId was null or undefined when calling setTransformationPropertiesUsingPUT.');
+            throw new Error('Required parameter csarId was null or undefined when calling setInputsUsingPUT.');
         }
         if (platform === null || platform === undefined) {
-            throw new Error('Required parameter platform was null or undefined when calling setTransformationPropertiesUsingPUT.');
+            throw new Error('Required parameter platform was null or undefined when calling setInputsUsingPUT.');
         }
-        if (setPropertiesRequest === null || setPropertiesRequest === undefined) {
-            throw new Error('Required parameter setPropertiesRequest was null or undefined when calling setTransformationPropertiesUsingPUT.');
+        if (propertiesRequest === null || propertiesRequest === undefined) {
+            throw new Error('Required parameter propertiesRequest was null or undefined when calling setInputsUsingPUT.');
         }
 
         let headers = this.defaultHeaders;
@@ -528,8 +565,8 @@ export class TransformationsService {
             headers = headers.set("Content-Type", httpContentTypeSelected);
         }
 
-        return this.httpClient.put<SetPropertiesResponse>(`${this.basePath}/api/csars/${encodeURIComponent(String(csarId))}/transformations/${encodeURIComponent(String(platform))}/properties`,
-            setPropertiesRequest,
+        return this.httpClient.put<InputsResponse>(`${this.basePath}/api/csars/${encodeURIComponent(String(csarId))}/transformations/${encodeURIComponent(String(platform))}/inputs`,
+            propertiesRequest,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,

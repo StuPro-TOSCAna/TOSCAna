@@ -1,27 +1,40 @@
-# ToscanaWebApp
+# TOSCAna WebApp
+> The Readme asumes you operate in the `project_root/app`-folder.
+This document contains information about how to develop our web app.
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.6.4.
+## Prerequisites
 
-## Development server
+- [`yarn`](https://yarnpkg.com) - for package management
+- [`angular-cli`](https://cli.angular.io/) - used to build and run our app,  can be installed width `yarn global add @angular/cli`
+- a editor with TypeScript support, Visual Studio Code or JetBrains WebStorm are recommended
+
+## SetUp
+
+open a terminal and run `yarn install`, this will install all necessary dependencies
+
+## Develop
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
-## Code scaffolding
-
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+**Important:** replace `basePath` in  `src/app/app.module.ts` with the adress of the REST Api you want to develop against.
 
 ## Build
 
+### WebApp only
+
 Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `-prod` flag for a production build.
 
-## Running unit tests
+### WebApp and Server component together
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+In the project root folder run `mvn install -P build` to build everything toghether. Now you can run the whole stack with `java -jar project_root/server/target/server-1.0-SNAPSHOT.jar`.  The WebApp is reachable under [`http://localhost:8084`](http://localhost:8084) if you use default server settings.
 
-## Running end-to-end tests
+## Generate the api code with `swagger-codegen`
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+### Prerequisites
 
-## Further help
+- latest Version of [swagger-codegen](https://github.com/swagger-api/swagger-codegen)
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+### Generate api
+
+1. Change line `4` in the `api-gen` script to the location of your codegen jar file or binary and the url of your REST api
+2. run `./api-gen`

@@ -9,19 +9,30 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
+import { LifecyclePhase } from './lifecyclePhase';
 
 
 export interface TransformationResponse {
+    /**
+     * The phases of the transformation
+     */
+    phases: Array<LifecyclePhase>;
     /**
      * The platform identifier for this transformation
      */
     platform: string;
     /**
-     * The progress in % of how much is done to complete the transformation
-     */
-    progress: number;
-    /**
      * The Current State of the transformation. Has to be one of the following: \"READY\", \"INPUT_REQUIRED\", \"TRANSFORMING\", \"DONE\" or \"ERROR\"
      */
-    status: string;
+    state: TransformationResponse.StateEnum;
+}
+export namespace TransformationResponse {
+    export type StateEnum = 'READY' | 'INPUT_REQUIRED' | 'TRANSFORMING' | 'DONE' | 'ERROR';
+    export const StateEnum = {
+        READY: 'READY' as StateEnum,
+        INPUTREQUIRED: 'INPUT_REQUIRED' as StateEnum,
+        TRANSFORMING: 'TRANSFORMING' as StateEnum,
+        DONE: 'DONE' as StateEnum,
+        ERROR: 'ERROR' as StateEnum
+    }
 }

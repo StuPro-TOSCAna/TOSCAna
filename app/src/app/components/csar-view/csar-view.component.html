@@ -1,0 +1,18 @@
+<div class="content" *ngIf="csar !== undefined">
+    <div class="view-title">{{csar.name}}</div>
+    <div class="items">
+        <div class="phases">
+            <div class="phase-title">Phases</div>
+            <div class="phase" *ngFor="let item of csar.phases"
+                 [ngClass]="{'active': isActive(item)}">
+                <div class="name"> {{item.name}}</div>
+                <div [class]="getIcon(item)">{{item.state}}</div>
+            </div>
+        </div>
+    </div>
+    <ul class="nav nav-tabs">
+        <li class="nav-item"><a class="nav-link active"> Log </a></li>
+        <li class="nav-item"><a class="nav-link">Inputs</a></li>
+    </ul>
+    <app-log #Log class="app-log" type="csar" [csarId]="csarId" [platformId]=""></app-log>
+</div>

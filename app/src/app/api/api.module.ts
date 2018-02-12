@@ -9,24 +9,24 @@ import { PlatformsService } from './api/platforms.service';
 import { TransformationsService } from './api/transformations.service';
 
 @NgModule({
-    imports: [CommonModule, HttpClientModule],
-    declarations: [],
-    exports: [],
-    providers: [CsarsService, HypermediaService, PlatformsService, TransformationsService]
+  imports:      [ CommonModule, HttpClientModule ],
+  declarations: [],
+  exports:      [],
+  providers: [
+    CsarsService,
+    HypermediaService,
+    PlatformsService,
+    TransformationsService ]
 })
 export class ApiModule {
     public static forRoot(configurationFactory: () => Configuration): ModuleWithProviders {
         return {
             ngModule: ApiModule,
-            providers: [{ provide: Configuration, useFactory: configurationFactory }]
-        };
+            providers: [ { provide: Configuration, useFactory: configurationFactory } ]
+        }
     }
 
-    constructor(
-        @Optional()
-        @SkipSelf()
-        parentModule: ApiModule
-    ) {
+    constructor( @Optional() @SkipSelf() parentModule: ApiModule) {
         if (parentModule) {
             throw new Error('ApiModule is already loaded. Import your base AppModule only.');
         }
