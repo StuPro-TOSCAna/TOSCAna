@@ -65,6 +65,7 @@ public class CloudFormationModule extends Module {
     private PluginFileAccess fileAccess;
     private String bucketName;
     private String stackName;
+    private boolean keyPair;
 
     /**
      Create a Module which uses the cloudformation-builder to build an AWS CloudFormation template
@@ -73,8 +74,6 @@ public class CloudFormationModule extends Module {
      */
     public CloudFormationModule(PluginFileAccess fileAccess, String awsRegion, AWSCredentials awsCredentials) {
         this.id("").template(new Template());
-        strParam(KEYNAME).type(KEYNAME_TYPE).description(KEYNAME_DESCRIPTION).constraintDescription
-            (KEYNAME_CONSTRAINT_DESCRIPTION);
         this.keyNameVar = template.ref(KEYNAME);
         this.cfnInitMap = new HashMap<>();
         this.computeToEc2 = new HashSet<>();
@@ -192,7 +191,7 @@ public class CloudFormationModule extends Module {
     public PluginFileAccess getFileAccess() {
         return fileAccess;
     }
-    
+
     /**
      Returns the parameters of the template belonging to this module.
 
@@ -212,7 +211,20 @@ public class CloudFormationModule extends Module {
         }
         return "";
     }
-    
+
+    public boolean hasKeyPair() {
+        return keyPair;
+    }
+
+    public void setKeyPair(boolean keyPair) {
+        this.keyPair = keyPair;
+    }
+
+    public CloudFormationModule withKeyPair(boolean keyPair) {
+        this.keyPair = keyPair;
+        return this;
+    }
+
     /**
      Build the template
      1. Add CFNInit to corresponding instance resource
@@ -247,6 +259,10 @@ public class CloudFormationModule extends Module {
                         .iamInstanceProfile(ref(INSTANCE_PROFILE));
                 }
             }
+        }
+        if (this.hasKeyPair()) {
+            strParam(KEYNAME).type(KEYNAME_TYPE).description(KEYNAME_DESCRIPTION).constraintDescription
+                (KEYNAME_CONSTRAINT_DESCRIPTION);
         }
     }
 }

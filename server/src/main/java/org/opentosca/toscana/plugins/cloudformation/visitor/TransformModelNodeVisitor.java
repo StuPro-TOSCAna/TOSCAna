@@ -80,11 +80,15 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
                 CFNInit init = new CFNInit(CONFIG_SETS);
                 cfnModule.putCFNInit(nodeName, init);
                 cfnModule.resource(Instance.class, nodeName)
-                    .keyName(cfnModule.getKeyNameVar())
                     .securityGroupIds(webServerSecurityGroup)
                     .imageId(imageId)
                     .instanceType(instanceType);
                 capabilityMapper.mapDiskSize(computeCompute, cfnModule, nodeName);
+                // Add Reference to keyName if KeyPair needed
+                if (cfnModule.hasKeyPair()) {
+                    Instance instance = (Instance) cfnModule.getResource(nodeName);
+                    instance.keyName(cfnModule.getKeyNameVar());
+                }
             } else {
                 logger.debug("Compute '{}' will not be transformed to EC2", node.getEntityName());
             }
