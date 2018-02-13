@@ -4,13 +4,13 @@ dist: trusty
 service: docker
 
 before_install:
-- wget -O ~/codacy-coverage-reporter-assembly-latest.jar $(curl https://api.github.com/repos/codacy/codacy-coverage-reporter/releases/latest
+- wget -q -O ~/codacy-coverage-reporter-assembly-latest.jar $(curl https://api.github.com/repos/codacy/codacy-coverage-reporter/releases/latest
   | jq -r .assets[0].browser_download_url)
 install:
-- mvn install -DskipTests -P build
+- mvn install -DskipTests -B -P build | grep -v "\[INFO\] Downloaded\|\[INFO\] Downloading"
 script:
 # Use verify on the Profile all to execute unit and integration tests.
-- mvn verify -P all
+- mvn verify -B -P all | grep -v "\[INFO\] Downloaded\|\[INFO\] Downloading"
 after_success:
 - bash <(curl -s https://codecov.io/bash)
 - java -cp ~/codacy-coverage-reporter-assembly-latest.jar com.codacy.CodacyCoverageReporter -l Java -r target/site/jacoco/jacoco.xml

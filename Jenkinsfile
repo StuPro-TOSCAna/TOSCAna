@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh 'mvn install -P build'
+                sh 'mvn install -B -P build'
                 archiveArtifacts(onlyIfSuccessful: true, artifacts: '**/target/*.jar')
             }
         }
