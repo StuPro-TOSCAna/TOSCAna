@@ -1,0 +1,20 @@
+#!/bin/bash
+# generate swagger client api code
+cd src/app/api
+java -jar $HOME/.local/bin/swagger-codegen-cli.jar generate -i http://localhost:8084/v2/api-docs -l typescript-angular
+echo
+echo Swagger agi generated
+
+### apply post-generation fixes
+
+# replace all embedded fields with _embedded to fix the rest response mapping
+echo Apply embedded field fix
+find model/ -type f | xargs sed -i 's/embedded/_embedded/g'
+
+# fix basepath
+echo Apply basepath fix
+api_dir=api
+files="csars hypermedia transformations platforms"
+for file in $files; do
+    sed -i "s/basePath = '.*'/basePath = ''/g" $api_dir/${file}.service.ts 
+done

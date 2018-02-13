@@ -19,9 +19,19 @@ public class OperationVariable {
     private ScalarEntity backingEntity;
     private final String name;
 
+    /**
+     Use when the variable's key differs from the scalar entity's parent name (e.g., when the value is a function)
+     */
     public OperationVariable(ScalarEntity entity, @Nullable String name) {
         this.backingEntity = entity;
         this.name = name;
+    }
+
+    /**
+     Use when the variable's key is the scalar entity's parent name
+     */
+    public OperationVariable(ScalarEntity entity) {
+        this(entity, entity.getParent().get().getName());
     }
 
     public Optional<String> getValue() {
@@ -33,7 +43,7 @@ public class OperationVariable {
     }
 
     public String getKey() {
-        return (name != null) ? name : backingEntity.getName();
+        return name;
     }
 
     @Override

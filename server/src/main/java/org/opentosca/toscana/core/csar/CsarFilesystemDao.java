@@ -78,16 +78,26 @@ public class CsarFilesystemDao implements CsarDao {
     }
 
     private void unzip(String identifier, InputStream inputStream, Csar csar, File csarDir) {
+        Logger logger = csar.getLog().getLogger(getClass());
         File contentDir = new File(csarDir, CsarImpl.CONTENT_DIR);
         LifecyclePhase unzipPhase = csar.getLifecyclePhase(Csar.Phase.UNZIP);
         unzipPhase.setState(LifecyclePhase.State.EXECUTING);
+        ZipInputStream zipIn = new ZipInputStream(inputStream);
         try {
-            ZipUtility.unzip(new ZipInputStream(inputStream), contentDir.getPath());
-            unzipPhase.setState(LifecyclePhase.State.DONE);
-            logger.info("Extracted csar '{}' into '{}'", identifier, contentDir.getPath());
-        } catch (IOException e) {
+            boolean success = ZipUtility.unzip(zipIn, contentDir.getPath());
+            if (success) {
+                logger.info("Extracted csar '{}' into '{}'", identifier, contentDir.getPath());
+                unzipPhase.setState(LifecyclePhase.State.DONE);
+            } else {
+                logger.error("Extracting failed: Submitted file is not a valid .zip file");
+                unzipPhase.setState(LifecyclePhase.State.FAILED);
+            }
+        } catch (
+            IOException e)
+
+        {
+            logger.error("Failed to extract csar with identifier '{}'", identifier, e);
             unzipPhase.setState(LifecyclePhase.State.FAILED);
-            logger.error("Failed to unzip csar with identifier '{}'", identifier, e);
         }
     }
 
@@ -158,12 +168,19 @@ public class CsarFilesystemDao implements CsarDao {
         for (File file : files) {
             if (isCsarDir(file)) {
                 String id = file.getName();
+                new File(getRootDir(id), id + ".log").delete();
                 CsarImpl csar = new CsarImpl(getRootDir(id), id, getLog(id));
-                csar.getLifecyclePhase(Csar.Phase.UNZIP).setState(LifecyclePhase.State.SKIPPED);
-                csar.validate();
+                LifecyclePhase unzip = csar.getLifecyclePhase(Csar.Phase.UNZIP);
+                if (csar.getContentDir().listFiles().length != 0) {
+                    unzip.setState(LifecyclePhase.State.DONE);
+                    csar.validate();
+                } else {
+                    unzip.setState(LifecyclePhase.State.FAILED);
+                }
                 csarMap.put(csar.getIdentifier(), csar);
                 List<Transformation> transformations = transformationDao.find(csar);
                 csar.setTransformations(transformations);
+                csar.getLog().close();
             }
         }
         logger.info("Found {} CSARs in repository", csarMap.size());

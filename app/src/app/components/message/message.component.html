@@ -1,0 +1,8 @@
+<div class="message-container">
+    <div *ngFor="let message of messages" class="message" [style.background-color]="getColor(message)">
+        <div class="text">
+            {{message.text}}
+        </div>
+        <div class="exit"><i class="fa fa-times-circle" (click)="delete(message)"></i></div>
+    </div>
+</div>

@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.opentosca.toscana.core.csar.Csar;
-import org.opentosca.toscana.core.parse.EntrypointDetector;
 import org.opentosca.toscana.core.parse.InvalidCsarException;
 import org.opentosca.toscana.core.parse.ToscaTemplateException;
 import org.opentosca.toscana.core.parse.converter.TypeWrapper;
@@ -35,21 +34,13 @@ public class EffectiveModel {
     private boolean initialized = false;
 
     protected EffectiveModel(Csar csar) throws InvalidCsarException {
-        this.log = csar.getLog();
-        this.logger = log.getLogger(getClass());
-        try {
-            logger.info("Constructing TOSCA element graph");
-            EntrypointDetector entrypointDetector = new EntrypointDetector(log);
-            File template = entrypointDetector.findEntryPoint(csar.getContentDir());
-            this.serviceGraph = new ServiceGraph(template, csar.getLog());
-        } catch (Exception e) {
-            throw e;
-        }
+        this(csar.getTemplate(), csar.getLog());
     }
 
     protected EffectiveModel(File template, Log log) {
         this.log = log;
         this.logger = log.getLogger(getClass());
+        logger.info("Constructing TOSCA element graph");
         this.serviceGraph = new ServiceGraph(template, log);
     }
 

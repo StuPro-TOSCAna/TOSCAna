@@ -12,11 +12,10 @@ topology_template:
       type: tosca.nodes.WebApplication
       requirements:
         - host: node_srv
-        #- database_endpoint:
-        #    node: redis_db
-        #    capability: database_endpoint
-        #    relationship: ConnectsTo
-        - database_endpoint: redis_db
+        - database_endpoint:
+            node: redis_db
+            capability: Endpoint.Database
+            relationship: ConnectsTo
       capabilities:
         app_endpoint:
           properties:
