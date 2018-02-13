@@ -246,13 +246,14 @@ public class CapabilityMapper {
         Integer diskSizeInMb = computeCapability.getDiskSizeInMb().orElse(8000);
         // Convert disk_size to Gb
         Integer diskSizeInGb = diskSizeInMb / 1000;
+        logger.debug("Check diskSize: '{}' Gb", diskSizeInGb);
         if (diskSizeInGb < 8) {
-            logger.warn("disk_size of {} smaller than the minimun value required by EC2 Instances.", nodeName);
-            logger.warn("Setting the disk_size of {} to the minimum allowed value of 8 Gb.", nodeName);
+            logger.warn("Disk size of '{}' smaller than the minimum value required by EC2 Instances. Setting the disk size of '{}' to the minimum allowed value of 8 Gb.", nodeName, nodeName);
             diskSizeInGb = 8;
         }
         // Add BlockDeviceMapping if needed
-        if (diskSizeInGb != 8) {
+        if (diskSizeInGb > 8) {
+            logger.debug("Disk size of '{}' bigger than the default value of EC2 Instances. Adding a BlockDeviceMapping to '{}'.", nodeName, nodeName);
             Instance computeAsInstance = (Instance) cfnModule.getResource(nodeName);
             computeAsInstance.blockDeviceMappings(new EC2BlockDeviceMapping()
                 .deviceName("/dev/sda1")
