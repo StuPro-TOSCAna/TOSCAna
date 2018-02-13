@@ -8,10 +8,9 @@ import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 
 import com.spotify.docker.client.DefaultDockerClient;
-import com.spotify.docker.client.DockerCertificateException;
 import com.spotify.docker.client.DockerClient;
-import com.spotify.docker.client.DockerException;
 import com.spotify.docker.client.ProgressHandler;
+import com.spotify.docker.client.exceptions.DockerCertificateException;
 import com.spotify.docker.client.messages.ProgressMessage;
 import org.slf4j.Logger;
 
@@ -64,7 +63,7 @@ public abstract class ImageBuilder implements ProgressHandler {
     }
 
     @Override
-    public void progress(ProgressMessage progressMessage) throws DockerException {
+    public void progress(ProgressMessage progressMessage) {
         if (logger.isDebugEnabled()) {
             log(progressMessage.progress(), logger::trace);
             log(progressMessage.status(), logger::trace);
@@ -85,7 +84,7 @@ public abstract class ImageBuilder implements ProgressHandler {
             for (String line : lines) {
                 String[] cleanLine = cleanString(line)
                     //Remove ansi Shell colors
-                    .replaceAll("\\x1b\\[[0-9;]*m","")
+                    .replaceAll("\\x1b\\[[0-9;]*m", "")
                     .split("\n");
                 for (String partialLine : cleanLine) {
                     if (partialLine.replaceAll("(\\.| |_|-|\\:|;)", "").length() == 0) {

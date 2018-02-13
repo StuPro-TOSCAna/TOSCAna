@@ -41,7 +41,7 @@ public class LifecyclePhase {
 
     public void setState(State state) {
         if (this.state == state) return;
-        logger.info(String.format("%-20s  %-10s ==> %s", "Phase '" + this.name + "':", this.state, state));
+        logger.debug(String.format("%-20s  %-10s ==> %s", "Phase '" + this.name + "':", this.state, state));
         this.state = state;
         if (state == State.FAILED) {
             setSuccessorsToSkipped();

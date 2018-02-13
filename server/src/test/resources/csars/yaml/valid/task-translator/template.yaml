@@ -39,7 +39,7 @@ topology_template:
     translator:
       type: toscana.nodes.JavaApplication
       artifacts:
-        jar: translator/translator.jar
+        jar: translator/task-translator.jar
       interfaces:
         Standard:
           start:

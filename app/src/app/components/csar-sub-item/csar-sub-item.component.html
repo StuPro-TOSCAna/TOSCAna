@@ -1,0 +1,14 @@
+<div *ngFor="let item of csar.transformations">
+    <div class="item btn btn-outline-secondary" [class.active]="activePlatform === item.platform">
+        <div class="button" (click)="gotoTransformation(item.platform)">
+            <div class="icon">
+                <i class="fa fa-exchange" aria-hidden="true"></i>
+            </div>
+            <div class="name">{{item.fullName}}</div>
+        </div>
+        <div class="actions">
+            <i (click)="deleteTransformation(item.platform)" class="fa fa-trash" aria-hidden="true"></i>
+        </div>
+    </div>
+</div>
+

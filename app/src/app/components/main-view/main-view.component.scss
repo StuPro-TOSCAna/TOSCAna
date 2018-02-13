@@ -1,0 +1,43 @@
+.header {
+    display: flex;
+    align-items: center;
+    position: relative;
+    width: 100%;
+    margin-bottom: 10px;
+    .action {
+        margin-left: auto;
+    }
+    .title {
+        font-weight: 800;
+    }
+}
+
+.no-csars {
+    width: 100%;
+    text-align: center;
+}
+
+.form {
+    .ng-valid[required], .ng-valid.required {
+        border-left: 5px solid #42A948; /* green */
+    }
+
+    .ng-invalid:not(form) {
+        border-left: 5px solid #a94442; /* red */
+    }
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    //align-content: space-between;
+    margin-bottom: 10px;
+    width: 100%;
+    .name {
+        flex-shrink: 20;
+    }
+    .fa {
+        margin-right: 2px;
+    }
+    button {
+        margin: 2px;
+    }
+}

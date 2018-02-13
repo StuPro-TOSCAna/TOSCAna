@@ -69,3 +69,5 @@ server/\.classpath
 app/node
 
 **/.vscode
+
+!translator.jar

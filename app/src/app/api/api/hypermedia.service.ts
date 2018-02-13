@@ -27,7 +27,7 @@ import { Configuration }                                     from '../configurat
 @Injectable()
 export class HypermediaService {
 
-    protected basePath = 'https://stupro-toscana.de';
+    protected basePath = '';
     public defaultHeaders = new HttpHeaders();
     public configuration = new Configuration();
 
@@ -80,7 +80,6 @@ export class HypermediaService {
 
         // to determine the Content-Type header
         let consumes: string[] = [
-            'application/json'
         ];
 
         return this.httpClient.get<ResourceSupport>(`${this.basePath}/api/`,
@@ -117,7 +116,6 @@ export class HypermediaService {
 
         // to determine the Content-Type header
         let consumes: string[] = [
-            'application/json'
         ];
 
         return this.httpClient.get<ResourceSupport>(`${this.basePath}/api/status`,

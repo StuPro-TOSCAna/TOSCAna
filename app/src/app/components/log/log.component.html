@@ -1,0 +1,14 @@
+<div id="scroll-me" class="log">
+    <select (change)="setLogLevel()" class="select-log-level" [(ngModel)]="logLevel" name="log">
+        <option *ngFor="let s of logLevels" [value]="s">{{s | uppercase}}</option>
+    </select>
+    <table class="table table-striped">
+        <tbody>
+        <tr [style.color]="getColor(item.level)" *ngFor="let item of visibleLogs">
+            <td class="first">{{getClassName(item.context)}}</td>
+            <td class="level">{{item.level}}</td>
+            <td class="message" ><div [innerHtml]="item.message"></div></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
