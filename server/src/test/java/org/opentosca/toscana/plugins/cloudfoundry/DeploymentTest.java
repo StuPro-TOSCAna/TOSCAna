@@ -81,7 +81,7 @@ public class DeploymentTest extends BaseUnitTest {
     public void readCredentials() throws IOException {
         String pythonFilename = "readCredentials.py";
         Deployment deployment = new Deployment(deployScript, testApp, fileAccess, context);
-        deployment.readCredentials(appName, service, ServiceTypes.MYSQL);
+        deployment.readCredentials(appName, service, ServiceTypes.MYSQL, "my_db");
         File targetFile = new File(targetDir, outputPath + pythonFilename);
         File deployFile = new File(targetDir, outputPath + "deploy_" + appName + ".sh");
         String contentDeploy = FileUtils.readFileToString(deployFile);
@@ -90,7 +90,7 @@ public class DeploymentTest extends BaseUnitTest {
             SOURCE_UTIL_ALL + "\n" +
             SUBCOMMAND_EXIT + "\n" +
             "check python\n" +
-            "python %s %s %s %s\n", pythonFilename, appName, service, ServiceTypes.MYSQL.getName());
+            "python %s %s %s %s %s\n", pythonFilename, appName, service, ServiceTypes.MYSQL.getName(), "my_db");
 
         assertTrue(targetFile.exists());
         assertEquals(expectedDeployContent, contentDeploy);

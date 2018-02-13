@@ -247,7 +247,7 @@ public class FileCreator {
     private void readCredentials(Deployment deployment, Application application) throws IOException {
         if (!CollectionUtils.isEmpty(application.getServicesMatchedToProvider())) {
             for (Service service : application.getServicesMatchedToProvider()) {
-                deployment.readCredentials(application.getName(), service.getServiceName(), service.getServiceType());
+                deployment.readCredentials(application.getName(), service.getServiceName(), service.getServiceType(), service.getServiceInstanceName());
             }
         }
     }

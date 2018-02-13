@@ -25,9 +25,10 @@ public class PrepareVisitor implements NodeVisitor {
     @Override
     public void visit(MysqlDatabase node) {
         logger.debug("Prepare Model. Set placeholders for mysql database node");
-        node.setUser(CF_PREPARE_DB_PLACEHOLDER_USER);
-        node.setDatabaseName(CF_PREPARE_DB_PLACEHOLDER_NAME);
-        node.setPassword(CF_PREPARE_DB_PLACEHOLDER_PW);
+        String nodeName = "_" + node.getEntityName();
+        node.setUser(CF_PREPARE_DB_PLACEHOLDER_USER + nodeName);
+        node.setDatabaseName(CF_PREPARE_DB_PLACEHOLDER_NAME + nodeName);
+        node.setPassword(CF_PREPARE_DB_PLACEHOLDER_PW + nodeName);
         node.setPort(CF_PREPARE_DB_PLACEHOLDER_PORT);
     }
 }

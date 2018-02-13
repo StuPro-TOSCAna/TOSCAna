@@ -271,6 +271,7 @@ public class FileCreatorTest extends BaseUnitTest {
 
     @Test
     public void checkMultipleApplicationServices() throws IOException, JSONException {
+        String serviceName = "mydb";
         envUser = System.getenv(CF_ENVIRONMENT_USER);
         envPw = System.getenv(CF_ENVIRONMENT_PW);
         envHost = System.getenv(CF_ENVIRONMENT_HOST);
@@ -289,7 +290,7 @@ public class FileCreatorTest extends BaseUnitTest {
         secondApp.setConnection(connection);
 
         app.addService(service1, ServiceTypes.MYSQL);
-        secondApp.addService("mydb", ServiceTypes.MYSQL);
+        secondApp.addService(serviceName, ServiceTypes.MYSQL);
 
         EffectiveModel lamp = new EffectiveModelFactory().create(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, logMock());
         RootNode webApplicationNode = null;
@@ -323,10 +324,10 @@ public class FileCreatorTest extends BaseUnitTest {
                 "python replace.py ../../app2/database/dbinit.sh /var/www/html/ /home/vcap/app/htdocs/\n" +
                 "cf push app -f ../manifest.yml\n" +
                 "cf push appSec -f ../manifest.yml\n" +
-                "python readCredentials.py app cleardb mysql\n" +
+                "python readCredentials.py app cleardb mysql " + service1 + "\n" +
                 "python executeCommand.py app /home/vcap/app/htdocs/my_app/configure_myphpapp.sh\n" +
                 "python configureMysql.py ../../app1/my_db/configSql.sql\n" +
-                "python readCredentials.py appSec cleardb mysql\n" +
+                "python readCredentials.py appSec cleardb mysql " + serviceName + "\n" +
                 "python executeCommand.py appSec /home/vcap/app/database/dbinit.sh\n" +
                 "python configureMysql.py ../../app2/database/config.sql\n";
 
