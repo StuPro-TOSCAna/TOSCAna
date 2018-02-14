@@ -33,7 +33,6 @@ export class NewTransformationModalComponent implements OnInit {
     constructor(private csarsProvider: CsarProvider, private platformsProvider: PlatformsProvider,
                 private transformationProvider: TransformationsProvider, private route: ActivatedRoute,
                 private routeHandler: RouteHandler) {
-        this.routeHandler.setUp();
         this.title = this.selectPlatformString;
     }
 
@@ -76,12 +75,12 @@ export class NewTransformationModalComponent implements OnInit {
     }
 
     private async createNewTransformation(id: string) {
-        await this.transformationProvider.createNewTransformation(this.csar.name, id);
+        await this.transformationProvider.createNewTransformation(this.csar.name, id).toPromise();
         this.openInputs();
     }
 
     openInputs() {
-        this.csarsProvider.addEmptyTransformationToCsar(this.csar.name, this.platform);
         this.routeHandler.openInputs(this.csar.name, this.platform);
+        this.csarsProvider.addEmptyTransformationToCsar(this.csar.name, this.platform);
     }
 }

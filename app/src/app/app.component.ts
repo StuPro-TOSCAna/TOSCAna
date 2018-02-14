@@ -27,7 +27,7 @@ export class AppComponent implements OnInit {
             this.listNotEmpty = csars.length > 0;
             if (viewState === null && this.listNotEmpty) {
                 this.routeHandler.openCsar(this.csars[0].name);
-            } else {
+            } else if (viewState === null) {
                 this.routeHandler.close();
             }
         });
