@@ -1,0 +1,13 @@
+@import "../../node_modules/bootstrap/scss/functions";
+@import "../../node_modules/bootstrap/scss/variables";
+
+nav {
+    margin-bottom: 10px;
+}
+.bg-dark {
+    background-color: #FEA94E !important;
+}
+.left-border {
+    border-left: 1px solid $secondary;
+}
+

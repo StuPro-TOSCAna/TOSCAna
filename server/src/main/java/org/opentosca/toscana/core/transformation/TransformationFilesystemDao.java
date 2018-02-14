@@ -71,9 +71,9 @@ public class TransformationFilesystemDao implements TransformationDao {
 
     private Transformation createTransformation(Csar csar, Platform platform) {
         try {
-            EffectiveModel model = effectiveModelFactory.create(csar);
-            Transformation transformation = new TransformationImpl(csar, platform, getLog(csar, platform), model);
-            return transformation;
+            Log log = getLog(csar, platform);
+            EffectiveModel model = effectiveModelFactory.create(csar.getTemplate(), log);
+            return new TransformationImpl(csar, platform, getLog(csar, platform), model);
         } catch (InvalidCsarException e) {
             throw new IllegalStateException("Failed to create csar. Should not have happened - csar upload should have" +
                 "already failed", e);

@@ -7,9 +7,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.opentosca.toscana.core.parse.converter.util.TypeResolver;
 import org.opentosca.toscana.core.parse.converter.util.NavigationUtil;
-import org.opentosca.toscana.core.parse.converter.util.NodeTypeResolver;
 import org.opentosca.toscana.core.parse.model.MappingEntity;
+import org.opentosca.toscana.model.BaseToscaElement;
 import org.opentosca.toscana.model.capability.Capability;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.relation.RootRelationship;
@@ -28,8 +29,8 @@ public class KeyReflector {
 
     public static Class detectRealSubtype(MappingEntity entity, Class type) {
         MappingEntity nodeEntity = NavigationUtil.getEnclosingNode(entity);
-        String nodeTypeIdentifier = nodeEntity.getValue(RootNode.TYPE);
-        Class nodeType = NodeTypeResolver.resolve(nodeTypeIdentifier);
+        String nodeTypeIdentifier = nodeEntity.getValue(BaseToscaElement.TYPE);
+        Class nodeType = TypeResolver.resolve(nodeTypeIdentifier);
         String filterName;
         Class toscaKeyType;
         ToscaKey result;

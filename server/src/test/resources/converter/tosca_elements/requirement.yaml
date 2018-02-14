@@ -14,7 +14,7 @@ topology_template:
         - test-requirement1: test-node
         - test-requirement2:
             node: test-node
-            capability: DatabaseEndpoint
+            capability: Endpoint.Database
             relationship: ConnectsTo
             occurrences: [ 1, 2 ]
 

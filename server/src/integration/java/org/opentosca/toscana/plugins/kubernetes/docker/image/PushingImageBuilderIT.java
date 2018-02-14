@@ -10,9 +10,12 @@ import org.opentosca.toscana.plugins.kubernetes.docker.util.DockerRegistryCreden
 
 import com.spotify.docker.client.DefaultDockerClient;
 import com.spotify.docker.client.DockerClient;
+import com.spotify.docker.client.auth.FixedRegistryAuthSupplier;
 import com.spotify.docker.client.messages.ContainerConfig;
 import com.spotify.docker.client.messages.HostConfig;
 import com.spotify.docker.client.messages.PortBinding;
+import com.spotify.docker.client.messages.RegistryAuth;
+import com.spotify.docker.client.messages.RegistryConfigs;
 import org.junit.After;
 import org.junit.Assume;
 import org.slf4j.Logger;
@@ -75,7 +78,18 @@ public class PushingImageBuilderIT extends ExportingImageBuilderIT {
 
     @Override
     public void validate(String tag) throws Exception {
-        DockerClient client = DefaultDockerClient.fromEnv().authConfig(creds.toAuthConfig()).build();
+        RegistryAuth auth = creds.toRegistryAuth();
+        
+        DockerClient client = DefaultDockerClient.fromEnv()
+            .registryAuthSupplier(
+                new FixedRegistryAuthSupplier(
+                    auth,
+                    RegistryConfigs.create(
+                        Collections.singletonMap(creds.getRegistryURL(), auth)
+                    )
+                )
+            )
+            .build();
         client.removeImage(tag);
         //Pull the image from the registry
         client.pull(tag);

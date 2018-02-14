@@ -20,4 +20,8 @@ export interface PlatformResponse {
      * The name for this platform (plugin)
      */
     name: string;
+    /**
+     * This value is true if a plugin supports in app deployment.
+     */
+    supportsDeployment: boolean;
 }

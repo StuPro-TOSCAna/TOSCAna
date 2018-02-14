@@ -9,6 +9,7 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
+import { LifecyclePhase } from './lifecyclePhase';
 
 
 export interface CsarResponse {
@@ -16,4 +17,8 @@ export interface CsarResponse {
      * This value represents the name (Identifier) of this CSAR
      */
     name: string;
+    /**
+     * The lifecycle phases of this CSAR
+     */
+    phases: Array<LifecyclePhase>;
 }

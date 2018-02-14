@@ -1,0 +1,45 @@
+@import "../../../../node_modules/bootstrap/scss/functions";
+@import "../../../../node_modules/bootstrap/scss/variables";
+nav {
+    .back-button {
+        color: #ffffff;
+        font-size: 1.25rem;
+        flex-grow: 1;
+    }
+
+    .place-holder {
+        visibility: hidden;
+        font-size: 1.25rem;
+        flex-grow: 1;
+    }
+
+    .navbar-brand {
+        margin-right: 0;
+        flex-grow: 8;
+    }
+    align-items: center;
+    text-align: center;
+    justify-content: space-between;
+}
+form {
+    .valid {
+        border-left: 5px solid #42A948; /* green */
+    }
+
+    .invalid {
+        border-left: 5px solid #a94442; /* red */
+    }
+    .alert {
+        margin: 0 auto;
+        width: 95%;
+    }
+    .actions {
+        margin: 10px 10px 10px 0;
+        display: flex;
+        justify-content: flex-end;
+
+        button {
+            margin: 2px;
+        }
+    }
+}

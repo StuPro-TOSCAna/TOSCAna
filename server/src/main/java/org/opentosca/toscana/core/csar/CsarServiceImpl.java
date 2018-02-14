@@ -4,6 +4,8 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
 
+import org.opentosca.toscana.core.plugin.lifecycle.LifecyclePhase;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,8 +23,10 @@ public class CsarServiceImpl implements CsarService {
     public Csar submitCsar(String identifier, InputStream csarStream) throws CsarIdNotUniqueException {
         if (!csarDao.find(identifier).isPresent()) {
             Csar csar = csarDao.create(identifier, csarStream);
-            new CustomTypeInjector(csar.getLog()).inject(csar);
-            csar.validate();
+            if (csar.getLifecyclePhase(Csar.Phase.UNZIP).getState() == LifecyclePhase.State.DONE) {
+                new CustomTypeInjector(csar.getLog()).inject(csar);
+                csar.validate();
+            }
             csar.getLog().close();
             return csar;
         } else {

@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh 'mvn install -P build'
+                sh 'mvn install -B -P build'
                 archiveArtifacts(onlyIfSuccessful: true, artifacts: '**/target/*.jar')
             }
         }
@@ -67,7 +67,7 @@ pipeline {
         stage('Deploy') {
             when {
                 allOf {
-                  branch 'feature/app/implement-web-app'
+                  branch 'master'
                   environment name: 'TOSCANA_DEPLOY_ON_BUILD', value: 'true'
                 }
             }

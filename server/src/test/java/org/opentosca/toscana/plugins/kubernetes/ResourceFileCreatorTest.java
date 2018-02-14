@@ -35,7 +35,6 @@ public class ResourceFileCreatorTest extends BaseUnitTest {
         String service = result.get(appServiceName);
         String deployment = result.get(appDeploymentName);
         Yaml yaml = new Yaml();
-        serviceTest((Map) yaml.load(service));
         deploymentTest((Map) yaml.load(deployment));
     }
 
@@ -64,13 +63,5 @@ public class ResourceFileCreatorTest extends BaseUnitTest {
         assertEquals(name, templateMetadata.get("name"));
         assertEquals(name, ((Map) templateMetadata.get("labels")).get("app"));
     }
-
-    private void serviceTest(Map map) {
-        // test the metadata
-        metadataTest(appServiceName.replaceAll("_", "-"), (Map) map.get("metadata"));
-
-        //test the spec
-        Map spec = (Map) map.get("spec");
-        assertEquals(appName, ((Map) spec.get("selector")).get("app"));
-    }
+    
 }

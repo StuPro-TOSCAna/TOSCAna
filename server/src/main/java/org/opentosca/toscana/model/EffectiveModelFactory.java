@@ -4,6 +4,7 @@ import java.io.File;
 
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.parse.InvalidCsarException;
+import org.opentosca.toscana.core.transformation.Transformation;
 import org.opentosca.toscana.core.transformation.logging.Log;
 
 import org.springframework.stereotype.Service;

@@ -15,8 +15,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ZipUtility {
-
     private final static Logger logger = LoggerFactory.getLogger(ZipUtility.class.getName());
+
     /**
      Size of the buffer to read/access data
      */
@@ -28,13 +28,17 @@ public class ZipUtility {
 
      @param zipIn         ZipInputStream of zip archive
      @param destDirectory target directory for unzipping
+     @return true if successfully extracted, false if given zip was empty or not a zip at all
      */
-    public static void unzip(ZipInputStream zipIn, String destDirectory) throws IOException {
+    public static boolean unzip(ZipInputStream zipIn, String destDirectory) throws IOException {
         File destDir = new File(destDirectory);
         if (!destDir.exists()) {
             destDir.mkdir();
         }
         ZipEntry entry = zipIn.getNextEntry();
+        if (entry == null) {
+            return false;
+        }
         while (entry != null) {
             String filePath = destDirectory + File.separator + entry.getName();
             if (!entry.isDirectory()) {
@@ -48,6 +52,7 @@ public class ZipUtility {
             entry = zipIn.getNextEntry();
         }
         zipIn.close();
+        return true;
     }
 
     /**
@@ -115,4 +120,5 @@ public class ZipUtility {
         zipOut.close();
         logger.debug("Closing stream");
     }
+
 }

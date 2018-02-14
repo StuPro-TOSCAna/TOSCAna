@@ -7,7 +7,10 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.opentosca.toscana.core.BaseUnitTest;
+import org.opentosca.toscana.core.parse.converter.TypeWrapper;
 import org.opentosca.toscana.model.EntityId;
+import org.opentosca.toscana.model.capability.DatabaseEndpointCapability;
+import org.opentosca.toscana.model.relation.ConnectsTo;
 
 import com.google.common.collect.Lists;
 import org.junit.Test;
@@ -15,6 +18,7 @@ import org.junit.Test;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.opentosca.toscana.core.parse.TestTemplates.ToscaElements.CAPABILITY;
 import static org.opentosca.toscana.core.parse.TestTemplates.ToscaElements.CREDENTIAL;
 import static org.opentosca.toscana.core.parse.TestTemplates.ToscaElements.INPUT;
@@ -111,10 +115,16 @@ public class ServiceGraphTest extends BaseUnitTest {
         Optional<Entity> fulfiller2 = getGraph().getEntity(Lists.newArrayList("topology_template",
             "node_templates", "test-node", "requirements", "test-requirement2", "node"));
         assertTrue(fulfiller2.isPresent());
-        assertEquals("DatabaseEndpoint", get("topology_template", "node_templates", "test-node", "requirements",
-            "test-requirement2", "capability"));
-        assertEquals("ConnectsTo", get("topology_template", "node_templates", "test-node", "requirements",
-            "test-requirement2", "relationship"));
+        MappingEntity capabilityEntity = (MappingEntity) getGraph().getEntity(new EntityId(Lists.newArrayList(
+            "topology_template", "node_templates", "test-node", "requirements", 
+            "test-requirement2", "capability"))).get();
+        DatabaseEndpointCapability capability = TypeWrapper.wrapTypedElement(capabilityEntity);
+        assertNotNull(capability);
+        MappingEntity relationshipEntity = (MappingEntity) getGraph().getEntity(new EntityId(Lists.newArrayList(
+            "topology_template", "node_templates", "test-node", "requirements",
+            "test-requirement2", "relationship"))).get();
+        ConnectsTo relationship = TypeWrapper.wrapTypedElement(relationshipEntity);
+        assertNotNull(relationship);
         assertEquals(Lists.newArrayList("1", "2"), getList("topology_template", "node_templates", "test-node", "requirements",
             "test-requirement2", "occurrences"));
     }

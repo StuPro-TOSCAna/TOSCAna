@@ -6,11 +6,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.opentosca.toscana.core.parse.converter.util.NodeTypeResolver;
+import org.opentosca.toscana.core.parse.converter.util.TypeResolver;
 import org.opentosca.toscana.core.parse.converter.util.ToscaStructure;
 import org.opentosca.toscana.core.parse.model.Entity;
 import org.opentosca.toscana.core.parse.model.MappingEntity;
 import org.opentosca.toscana.core.parse.model.ServiceGraph;
+import org.opentosca.toscana.model.BaseToscaElement;
 import org.opentosca.toscana.model.node.RootNode;
 
 import org.apache.commons.lang.reflect.ConstructorUtils;
@@ -23,24 +24,28 @@ public class TypeWrapper {
         Map<String, RootNode> nodes = new HashMap<>();
         Iterator<Entity> it = graph.iterator(ToscaStructure.NODE_TEMPLATES);
         while (it.hasNext()) {
-            RootNode node = wrapNode((MappingEntity) it.next());
+            RootNode node = wrapTypedElement((MappingEntity) it.next());
             nodes.put(node.getEntityName(), node);
         }
         return nodes;
     }
 
-    public static <T> T wrapNode(MappingEntity nodeEntity) {
-        String typeString = nodeEntity.getValue(TYPE);
-        Class nodeType = NodeTypeResolver.resolve(typeString);
-        return wrap(nodeEntity, nodeType);
+    public static <T> T wrapTypedElement(MappingEntity entity) {
+        String typeString = entity.getValue(TYPE);
+        Class type = TypeResolver.resolve(typeString);
+        return wrap(entity, type);
     }
 
     public static <T> T wrapEntity(MappingEntity entity, Class type) {
         if (entity == null) {
             return null;
         }
-        if (RootNode.class.isAssignableFrom(type)) {
-            return wrapNode(entity);
+        if (entity.getChild(BaseToscaElement.TYPE.name).isPresent()) {
+            try {
+                return wrapTypedElement(entity);
+            } catch (UnsupportedOperationException e) {
+                return wrap(entity, type);
+            }
         } else {
             return wrap(entity, type);
         }

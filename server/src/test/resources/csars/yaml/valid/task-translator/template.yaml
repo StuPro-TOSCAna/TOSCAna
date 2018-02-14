@@ -26,6 +26,7 @@ topology_template:
     translator_api_key:
       type: string
       required: false
+      default: ""
       description: The optional api key for the external translation service. You can obtain a (non-free) key at http://funtranslations.com. Without a valid key, rate limit is 5 translations per hour
     translator_update_interval:
       type: integer
@@ -38,7 +39,7 @@ topology_template:
     translator:
       type: toscana.nodes.JavaApplication
       artifacts:
-        jar: translator/translator.jar
+        jar: translator/task-translator.jar
       interfaces:
         Standard:
           start:
@@ -52,12 +53,10 @@ topology_template:
               update_interval: { get_input: translator_update_interval }
       requirements:
         - host: jre
-        - database_endpoint: my_db
-      # uncomment when dynamic requirement parsing is implemented
-      # - database_endpoint: 
-      #     node: my_db
-      #     relationship: ConnectsTo
-      #     capability: 
+        - database_endpoint:
+            node: my_db
+            capability: Endpoint.Database
+            relationship: ConnectsTo
 
     jre:
       type: toscana.nodes.JavaRuntime
@@ -74,7 +73,10 @@ topology_template:
       type: tosca.nodes.WebApplication
       requirements:
         - host: apache_web_server
-        - database_endpoint: my_db
+        - database_endpoint:
+            node: my_db
+            capability: Endpoint.Database
+            relationship: ConnectsTo
       interfaces:
         Standard:
           create:
@@ -130,7 +132,7 @@ topology_template:
         - host: mysql_dbms
       artifacts:
         my_sql_table:
-          file: mysql/createtable.sql
+          file: my_db/createtable.sql
           type: SQL
 
     mysql_dbms:

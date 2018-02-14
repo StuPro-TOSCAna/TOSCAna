@@ -9,8 +9,12 @@ Currently, it aims to support multiple cloud ecosystems, with Kubernetes, CloudF
 - [`docs/dev`](docs/dev) - Documentation aimed at developers
 - [`server`](server) - Folder for the server - Module
 - [`cli`](cli) - Folder for the CLI - Module
+- [`retrofit-wrapper`](retrofit-wrapper) - Java interface for REST Api provided by the server
+- [`app`](app) - Folder containing the web app
+
 ## Contributing
 See our [contribution guidelines](CONTRIBUTING.md) for detailed information on how to contribute to TOSCAna.
+
 ## Tools
 Tools that are used in this project.
 

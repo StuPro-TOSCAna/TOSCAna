@@ -12,6 +12,7 @@ import org.opentosca.toscana.core.csar.CsarDao;
 import org.opentosca.toscana.core.csar.CsarFilesystemDao;
 import org.opentosca.toscana.core.csar.CsarImpl;
 import org.opentosca.toscana.core.parse.InvalidCsarException;
+import org.opentosca.toscana.core.transformation.logging.Log;
 import org.opentosca.toscana.core.transformation.platform.PlatformService;
 import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.model.EffectiveModelFactory;
@@ -26,7 +27,9 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.opentosca.toscana.core.testdata.TestPlugins.PLATFORM1;
 import static org.opentosca.toscana.core.testdata.TestPlugins.PLATFORM2;
@@ -47,10 +50,11 @@ public class TransformationFilesystemDaoTest extends BaseUnitTest {
 
     @Before
     public void setUp() throws InvalidCsarException {
-        csar = new CsarImpl(new File(""), "csar1", logMock());
+        csar = spy(new CsarImpl(new File(""), "csar1", logMock()));
+        doReturn(new File("")).when(csar).getTemplate();
         EffectiveModelFactory modelFactory = mock(EffectiveModelFactory.class);
         EffectiveModel model = modelMock();
-        when(modelFactory.create(any(Csar.class))).thenReturn(model);
+        when(modelFactory.create(any(File.class), any(Log.class))).thenReturn(model);
         transformationDao = new TransformationFilesystemDao(platformService, modelFactory);
         transformationDao.setCsarDao(csarDao);
         transformation = new TransformationImpl(csar, PLATFORM1, logMock(), modelMock());
@@ -59,9 +63,9 @@ public class TransformationFilesystemDaoTest extends BaseUnitTest {
 
     @Test
     public void getRootDir() {
-        when(csarDao.getTransformationsDir(csar)).thenReturn(new File(new File(tmpdir, csar.getIdentifier()),
-            CsarFilesystemDao.TRANSFORMATION_DIR));
-        when(csarDao.getRootDir(csar)).thenReturn(new File(tmpdir, csar.getIdentifier()));
+        doReturn(new File(new File(tmpdir, csar.getIdentifier()),
+            CsarFilesystemDao.TRANSFORMATION_DIR)).when(csarDao).getTransformationsDir(csar);
+        doReturn(new File(tmpdir, csar.getIdentifier())).when(csarDao).getRootDir(csar);
         File expectedParent = new File(csarDao.getRootDir(csar), CsarFilesystemDao.TRANSFORMATION_DIR);
         File expected = new File(expectedParent, PLATFORM1.id);
         File actual = transformationDao.getRootDir(transformation);

@@ -1,8 +1,10 @@
 package org.opentosca.toscana.plugins.kubernetes.docker.util;
 
+import javax.security.auth.message.config.AuthConfig;
+
 import org.opentosca.toscana.core.transformation.TransformationContext;
 
-import com.spotify.docker.client.messages.AuthConfig;
+import com.spotify.docker.client.messages.RegistryAuth;
 
 import static org.opentosca.toscana.plugins.kubernetes.KubernetesPlugin.DOCKER_REGISTRY_PASSWORD_PROPERTY_KEY;
 import static org.opentosca.toscana.plugins.kubernetes.KubernetesPlugin.DOCKER_REGISTRY_REPOSITORY_PROPERTY_KEY;
@@ -50,8 +52,8 @@ public class DockerRegistryCredentials {
         return repository;
     }
 
-    public AuthConfig toAuthConfig() {
-        return AuthConfig.builder()
+    public RegistryAuth toRegistryAuth() {
+        return RegistryAuth.builder()
             .username(username)
             .password(getPassword())
             .serverAddress(registryURL)
