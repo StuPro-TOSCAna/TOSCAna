@@ -50,7 +50,7 @@ public class CloudFormationLampIT extends BaseTransformTest {
     }
 
     @Override
-    protected PropertyInstance getInputs(EffectiveModel model) throws NoSuchPropertyException {
+    protected PropertyInstance getInputs() throws NoSuchPropertyException {
         PropertyInstance props = new PropertyInstance(new HashSet<>(plugin.getPlatform().properties), mock
             (Transformation.class));
         props.set(AWS_ACCESS_KEY_ID_KEY, accessKey);

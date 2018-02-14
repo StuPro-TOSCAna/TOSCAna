@@ -159,7 +159,7 @@ public class CsarFilesystemDao implements CsarDao {
             if (isCsarDir(file)) {
                 String id = file.getName();
                 CsarImpl csar = new CsarImpl(getRootDir(id), id, getLog(id));
-                csar.getLifecyclePhase(Csar.Phase.UNZIP).setState(LifecyclePhase.State.DONE);
+                csar.getLifecyclePhase(Csar.Phase.UNZIP).setState(LifecyclePhase.State.SKIPPED);
                 csar.validate();
                 csarMap.put(csar.getIdentifier(), csar);
                 List<Transformation> transformations = transformationDao.find(csar);

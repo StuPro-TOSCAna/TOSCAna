@@ -63,9 +63,8 @@ public abstract class BaseTransformTest<LifecycleT extends AbstractLifecycle> ex
         checkAssumptions();
         createDirectories();
 
-        model = getModel();
-        inputs = getInputs(this.model);
-        
+        inputs = getInputs();
+        this.model = getModel();
         copyArtifacts(contentDir);
         context = initContext();
     }
@@ -157,5 +156,5 @@ public abstract class BaseTransformTest<LifecycleT extends AbstractLifecycle> ex
     /**
      This method is intended to return the properties the "user" has entered. They should be pre defined of course
      */
-    protected abstract PropertyInstance getInputs(EffectiveModel model) throws Exception;
+    protected abstract PropertyInstance getInputs() throws Exception;
 }

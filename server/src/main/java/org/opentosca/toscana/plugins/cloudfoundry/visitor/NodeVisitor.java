@@ -9,13 +9,11 @@ import java.util.stream.Collectors;
 import org.opentosca.toscana.model.artifact.Artifact;
 import org.opentosca.toscana.model.node.Apache;
 import org.opentosca.toscana.model.node.Compute;
+import org.opentosca.toscana.model.node.Database;
 import org.opentosca.toscana.model.node.MysqlDatabase;
 import org.opentosca.toscana.model.node.MysqlDbms;
-import org.opentosca.toscana.model.node.Nodejs;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.node.WebApplication;
-import org.opentosca.toscana.model.node.custom.JavaApplication;
-import org.opentosca.toscana.model.node.custom.JavaRuntime;
 import org.opentosca.toscana.model.operation.Operation;
 import org.opentosca.toscana.model.operation.OperationVariable;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
@@ -148,6 +146,7 @@ public class NodeVisitor implements StrictNodeVisitor {
     public void visit(MysqlDbms node) {
         handleStandardLifecycle(node, false, myApp);
     }
+    
 
     @Override
     public void visit(Apache node) {
@@ -156,30 +155,24 @@ public class NodeVisitor implements StrictNodeVisitor {
 
     @Override
     public void visit(WebApplication node) {
-        logger.debug("Visit Web Application");
         myApp.setName(node.getEntityName());
-        getScripts(node);
-        handleStandardLifecycle(node, true, myApp);
-    }
 
-    @Override
-    public void visit(Nodejs node) {
-        //TODO: Implementation WIP
-        logger.debug("Visit Nodejs");
-    }
+        StandardLifecycle lifecycle = node.getStandardLifecycle();
+        Optional<Operation> configureOptional = lifecycle.getConfigure();
 
-    @Override
-    public void visit(JavaRuntime node) {
-        //TODO: Implementation WIP
-        logger.debug("Visit Java Runtime");
-    }
+        //get configure script
+        if (configureOptional.isPresent()) {
+            Optional<Artifact> configureArtifact = configureOptional.get().getArtifact();
+            configureArtifact.ifPresent(artifact -> myApp.addExecuteFile(artifact.getFilePath(), node));
+        }
 
-    @Override
-    public void visit(JavaApplication node) {
-        //TODO: Implementation WIP
-        logger.debug("Visit Java Application");
-        myApp.setName(node.getEntityName());
-        getScripts(node);
+        //get create script
+        Optional<Operation> createOptional = lifecycle.getCreate();
+        if (createOptional.isPresent()) {
+            Optional<Artifact> createArtifact = createOptional.get().getArtifact();
+            createArtifact.ifPresent(artifact -> myApp.addExecuteFile(artifact.getFilePath(), node));
+        }
+
         handleStandardLifecycle(node, true, myApp);
     }
 
@@ -223,24 +216,6 @@ public class NodeVisitor implements StrictNodeVisitor {
         myApp.addFilePath(path);
         if (myApp.getPathToApplication() == null && isTopNode) {
             myApp.setPathToApplication(path);
-        }
-    }
-
-    private void getScripts(RootNode node) {
-        StandardLifecycle lifecycle = node.getStandardLifecycle();
-        Optional<Operation> configureOptional = lifecycle.getConfigure();
-
-        //get configure script
-        if (configureOptional.isPresent()) {
-            Optional<Artifact> configureArtifact = configureOptional.get().getArtifact();
-            configureArtifact.ifPresent(artifact -> myApp.addExecuteFile(artifact.getFilePath(), node));
-        }
-
-        //get create script
-        Optional<Operation> createOptional = lifecycle.getCreate();
-        if (createOptional.isPresent()) {
-            Optional<Artifact> createArtifact = createOptional.get().getArtifact();
-            createArtifact.ifPresent(artifact -> myApp.addExecuteFile(artifact.getFilePath(), node));
         }
     }
 }

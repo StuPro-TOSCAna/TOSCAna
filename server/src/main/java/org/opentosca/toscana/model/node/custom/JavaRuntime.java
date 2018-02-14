@@ -4,7 +4,6 @@ import org.opentosca.toscana.core.parse.model.MappingEntity;
 import org.opentosca.toscana.model.capability.ContainerCapability;
 import org.opentosca.toscana.model.node.SoftwareComponent;
 import org.opentosca.toscana.model.util.ToscaKey;
-import org.opentosca.toscana.model.visitor.NodeVisitor;
 
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -43,10 +42,5 @@ public class JavaRuntime extends SoftwareComponent {
     public JavaRuntime setJreHost(ContainerCapability jreHost) {
         set(JRE_HOST, jreHost);
         return this;
-    }
-
-    @Override
-    public void accept(NodeVisitor v) {
-        v.visit(this);
     }
 }

@@ -2,12 +2,10 @@ package org.opentosca.toscana.plugins.kubernetes;
 
 import java.io.File;
 import java.util.HashSet;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.opentosca.toscana.core.testdata.TestCsars;
 import org.opentosca.toscana.core.transformation.Transformation;
-import org.opentosca.toscana.core.transformation.properties.InputProperty;
 import org.opentosca.toscana.core.transformation.properties.NoSuchPropertyException;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
 import org.opentosca.toscana.model.EffectiveModel;
@@ -64,22 +62,20 @@ public class KubernetesLampIT extends BaseTransformTest {
     }
 
     @Override
-    protected PropertyInstance getInputs(EffectiveModel model) throws NoSuchPropertyException {
-        Set<InputProperty> prop = new HashSet<>(plugin.getPlatform().properties);
-        prop.addAll(model.getInputs().values());
-        PropertyInstance instance = new PropertyInstance(prop, mock(Transformation.class));
+    protected PropertyInstance getInputs() throws NoSuchPropertyException {
+        PropertyInstance props = new PropertyInstance(new HashSet<>(plugin.getPlatform().properties), mock(Transformation.class));
 
         if (System.getenv("DH_USERNAME") != null) {
             //This Transformation is performed by pushing to a registry
-            instance.set(DOCKER_PUSH_TO_REGISTRY_PROPERTY_KEY, "true");
-            instance.set(DOCKER_REGISTRY_USERNAME_PROPERTY_KEY, System.getenv("DH_USERNAME"));
-            instance.set(DOCKER_REGISTRY_PASSWORD_PROPERTY_KEY, System.getenv("DH_PASSWORD"));
-            instance.set(DOCKER_REGISTRY_URL_PROPERTY_KEY, System.getenv("DH_URL"));
-            instance.set(DOCKER_REGISTRY_REPOSITORY_PROPERTY_KEY, System.getenv("DH_REPOSITORY"));
+            props.set(DOCKER_PUSH_TO_REGISTRY_PROPERTY_KEY, "true");
+            props.set(DOCKER_REGISTRY_USERNAME_PROPERTY_KEY, System.getenv("DH_USERNAME"));
+            props.set(DOCKER_REGISTRY_PASSWORD_PROPERTY_KEY, System.getenv("DH_PASSWORD"));
+            props.set(DOCKER_REGISTRY_URL_PROPERTY_KEY, System.getenv("DH_URL"));
+            props.set(DOCKER_REGISTRY_REPOSITORY_PROPERTY_KEY, System.getenv("DH_REPOSITORY"));
         } else {
             //This Transformation is performed by storing the files in Tar archives
-            instance.set(DOCKER_PUSH_TO_REGISTRY_PROPERTY_KEY, "false");
+            props.set(DOCKER_PUSH_TO_REGISTRY_PROPERTY_KEY, "false");
         }
-        return instance;
+        return props;
     }
 }

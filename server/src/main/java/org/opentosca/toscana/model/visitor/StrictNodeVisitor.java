@@ -17,8 +17,6 @@ import org.opentosca.toscana.model.node.SoftwareComponent;
 import org.opentosca.toscana.model.node.WebApplication;
 import org.opentosca.toscana.model.node.WebServer;
 import org.opentosca.toscana.model.node.WordPress;
-import org.opentosca.toscana.model.node.custom.JavaApplication;
-import org.opentosca.toscana.model.node.custom.JavaRuntime;
 
 /**
  Unimplemented methods throw an {@link UnsupportedTypeException} when invoked.
@@ -108,15 +106,5 @@ public interface StrictNodeVisitor extends NodeVisitor {
     @Override
     default void visit(WordPress node) {
         throw new UnsupportedTypeException(WordPress.class);
-    }
-
-    @Override
-    default void visit(JavaRuntime node) {
-        throw new UnsupportedTypeException(node.getClass());
-    }
-
-    @Override
-    default void visit(JavaApplication node) {
-        throw new UnsupportedTypeException(node.getClass());
     }
 }
