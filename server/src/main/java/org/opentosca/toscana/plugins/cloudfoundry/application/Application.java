@@ -6,21 +6,24 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.node.WebApplication;
 import org.opentosca.toscana.plugins.cloudfoundry.client.Connection;
+import org.opentosca.toscana.plugins.kubernetes.util.NodeStack;
+
+import static org.opentosca.toscana.plugins.cloudfoundry.filecreator.FileCreator.APPLICATION_FOLDER;
 
 import org.slf4j.Logger;
 
-import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.APPLICATION_FOLDER;
 
 /**
  This class should describe a Application with all needed information to deploy it
  */
 public class Application {
-
+    
     private Logger logger;
 
     private String name;
@@ -36,6 +39,9 @@ public class Application {
     private Provider provider;
     private String pathToApplication;
     private String applicationSuffix;
+    private NodeStack stack;
+    private boolean realApplication = true;
+    private Set<Application> parentApplications = null;
 
     private Connection connection;
 
@@ -58,11 +64,16 @@ public class Application {
      @param pathToFile must be the path inside the csar. The method will create a relative path from it
      */
     public void addConfigMysql(String pathToFile) {
+        if (pathToFile.contains("../../" + APPLICATION_FOLDER)) {
+            String[] paths = pathToFile.split("../../" + APPLICATION_FOLDER + "[0-9]*/");
+            pathToFile = paths[1];
+        }
         String relativePath = "../../" + APPLICATION_FOLDER + this.applicationNumber + "/" + pathToFile;
 
         logger.debug("Add a config mysql command to deploy script. Relative path to file is {}", relativePath);
         configureSqlDatabase.add(relativePath);
     }
+    
 
     /**
      execute the given file on the warden container
@@ -77,11 +88,43 @@ public class Application {
         if (parentTopNode instanceof WebApplication) {
             pathToFileOnContainer = "/home/vcap/app/htdocs/";
         }
-
+        
+        if (pathToFile.contains("../../" + APPLICATION_FOLDER)) {
+            String[] paths = pathToFile.split("../../" + APPLICATION_FOLDER + "[0-9]*/");
+            pathToFile = paths[1];
+        }
+        
         logger.debug("Add python script to execute {} on cloud foundry warden container", pathToFile);
-
+        
         executeCommand.put("../../" + APPLICATION_FOLDER + this.getApplicationNumber() + "/" + pathToFile,
             pathToFileOnContainer + pathToFile);
+    }
+
+    /**
+     execute the given file on the warden container
+
+     @param pathToFile      must be the path inside the csar. The method will create a path on the warden container
+     @param pathOnContainer must be the path inside the container
+     */
+    public void addExecuteFile(String pathToFile, String pathOnContainer) {
+        String pathToFileNew = pathToFile;
+
+        if (pathToFile.contains("../../" + APPLICATION_FOLDER)) {
+            String[] paths = pathToFileNew.split("../../" + APPLICATION_FOLDER + "[0-9]*/");
+            pathToFileNew = paths[1];
+        }
+        pathToFileNew = "../../" + APPLICATION_FOLDER + this.getApplicationNumber() + "/" + pathToFileNew;
+        
+        executeCommand.put(pathToFileNew, pathOnContainer);
+    }
+
+    /**
+     to update the paths if the applicationnumber changes
+     */
+    private void updateExecuteFiles() {
+        Map<String, String> oldExecuteCommand = new HashMap<>(executeCommand);
+        executeCommand.clear();
+        oldExecuteCommand.forEach((pathToFile, pathOnContainer)->this.addExecuteFile(pathToFile,pathOnContainer));
     }
 
     /**
@@ -99,9 +142,14 @@ public class Application {
     public Map<String, String> getExecuteCommands() {
         return executeCommand;
     }
-
+    
     public int getApplicationNumber() {
         return this.applicationNumber;
+    }
+
+    public void setApplicationNumber(int applicationNumber) {
+        this.applicationNumber = applicationNumber;
+        this.updateExecuteFiles();
     }
 
     public void setConnection(Connection connection) {
@@ -138,6 +186,14 @@ public class Application {
             this.environmentVariables.put(environmentVariableName, value);
             logger.debug("Add environment variable {} with value {} to manifest", environmentVariableName, value);
         }
+    }
+
+    public void addStack(NodeStack stack) {
+        this.stack = stack;
+    }
+
+    public NodeStack getStack() {
+        return stack;
     }
 
     public void addEnvironmentVariables(String environmentVariableName) {
@@ -219,5 +275,32 @@ public class Application {
 
     public String getPathToApplication() {
         return pathToApplication;
+    }
+
+    /**
+     true if the application is a real application
+     false if the application is a dummy application e.g. a service
+     default is true
+     */
+    public boolean isRealApplication() {
+        return realApplication;
+    }
+
+    /**
+     if the application is a dummy application e.g. a service
+     default is true
+
+     @param parentApplications a set of applications to which this application belongs to
+     */
+    public void applicationIsNotReal(Set<Application> parentApplications) {
+        this.realApplication = false;
+        this.parentApplications = parentApplications;
+    }
+
+    /**
+     @return the application to which this dummy application belongs to. Null if there is no parent.
+     */
+    public Set<Application> getParentApplications() {
+        return parentApplications;
     }
 }

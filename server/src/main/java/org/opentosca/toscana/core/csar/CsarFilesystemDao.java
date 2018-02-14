@@ -177,6 +177,7 @@ public class CsarFilesystemDao implements CsarDao {
                 } else {
                     unzip.setState(LifecyclePhase.State.FAILED);
                 }
+
                 csarMap.put(csar.getIdentifier(), csar);
                 List<Transformation> transformations = transformationDao.find(csar);
                 csar.setTransformations(transformations);
