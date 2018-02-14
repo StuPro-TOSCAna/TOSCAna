@@ -17,6 +17,7 @@ import org.junit.Assume;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationPlugin.AWS_ACCESS_KEY_ID_KEY;
+import static org.opentosca.toscana.plugins.cloudformation.CloudFormationPlugin.AWS_KEYPAIR_KEY;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationPlugin.AWS_SECRET_KEY_KEY;
 
 public class CloudFormationLampIT extends BaseTransformTest {
@@ -55,6 +56,7 @@ public class CloudFormationLampIT extends BaseTransformTest {
             (Transformation.class));
         props.set(AWS_ACCESS_KEY_ID_KEY, accessKey);
         props.set(AWS_SECRET_KEY_KEY, secretKey);
+        props.set(AWS_KEYPAIR_KEY, "true");
         return props;
     }
 

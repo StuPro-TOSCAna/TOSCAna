@@ -81,10 +81,14 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
                 cfnModule.putCFNInit(nodeName, init);
                 //takes default 8GB storage but volume
                 cfnModule.resource(Instance.class, nodeName)
-                    .keyName(cfnModule.getKeyNameVar())
                     .securityGroupIds(webServerSecurityGroup)
                     .imageId(imageId)
                     .instanceType(instanceType);
+                // Add Reference to keyName if KeyPair needed
+                if (cfnModule.hasKeyPair()) {
+                    Instance instance = (Instance) cfnModule.getResource(nodeName);
+                    instance.keyName(cfnModule.getKeyNameVar());
+                }
             } else {
                 logger.debug("Compute '{}' will not be transformed to EC2", node.getEntityName());
             }

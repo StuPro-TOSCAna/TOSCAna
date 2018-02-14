@@ -21,6 +21,7 @@ public class CloudFormationPlugin extends ToscanaPlugin<CloudFormationLifecycle>
     public static final String AWS_REGION_DEFAULT = "us-west-2";
     public static final String AWS_ACCESS_KEY_ID_KEY = "AWS Access Key ID";
     public static final String AWS_SECRET_KEY_KEY = "AWS Secret Key";
+    public static final String AWS_KEYPAIR_KEY = "Add AWS KeyPair to template";
 
     private final static Logger logger = LoggerFactory.getLogger(CloudFormationPlugin.class);
 
@@ -63,6 +64,14 @@ public class CloudFormationPlugin extends ToscanaPlugin<CloudFormationLifecycle>
             "The Access key secret",
             true,
             defaultKeySecret
+        ));
+        
+        platformProperties.add(new PlatformInput(
+            AWS_KEYPAIR_KEY,
+            PropertyType.BOOLEAN,
+            "If enabled, adds a AWS 'Keypair' Parameter to the template in order to access EC2 Instances via SSH. Must be specified during Deplyoment.",
+            true,
+            "false"
         ));
         return new Platform(platformId, platformName, platformProperties);
     }
