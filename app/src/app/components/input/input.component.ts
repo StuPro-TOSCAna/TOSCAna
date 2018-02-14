@@ -94,7 +94,6 @@ export class InputComponent implements OnInit {
 
 
     async ngOnInit() {
-        this.routeHandler.setUp();
         this.route.paramMap.switchMap((params: ParamMap) => {
             this.csarId = params.get('csar');
             this.selectedPlatform = params.get('platform');

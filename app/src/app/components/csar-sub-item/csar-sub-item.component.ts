@@ -23,7 +23,6 @@ export class CsarSubItemComponent implements OnInit {
         this.routeHandler.viewState.subscribe(data => {
             if (data instanceof TransformationOpen) {
                 this.viewState = data;
-                console.log('update platform');
                 if (this.viewState.csarId === this.csar.name) {
                     this.activePlatform = this.viewState.platform;
                 }
@@ -34,7 +33,6 @@ export class CsarSubItemComponent implements OnInit {
     }
 
     deleteTransformation(platform: string) {
-        console.log(platform);
         this.transformationProvider.deleteTransformation(this.csar.name, platform).subscribe(() => {
             const transformation = this.csar.transformations.find(item => item.platform === platform);
             const pos = this.csar.transformations.indexOf(transformation);
