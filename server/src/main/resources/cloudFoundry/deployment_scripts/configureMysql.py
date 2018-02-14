@@ -17,7 +17,7 @@ def main():
         print("needs an .sql File for db init")
         exit(1)
     
-     print("Try to execute SQL-File {} in database".format(strConfigureFile))
+    print("Try to execute SQL-File {} in database".format(strConfigureFile))
 
     try:
         with open(strConfigureFile, 'r') as dbinit_file:
