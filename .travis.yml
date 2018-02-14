@@ -10,7 +10,8 @@ install:
 - mvn install -DskipTests -B -P build | grep -v "\[INFO\] Downloaded\|\[INFO\] Downloading"
 script:
 # Use verify on the Profile all to execute unit and integration tests.
-- mvn verify -B -P all | grep -v "\[INFO\] Downloaded\|\[INFO\] Downloading"
+#- mvn verify -B -P all | grep -v "\[INFO\] Downloaded\|\[INFO\] Downloading"
+- mvn verify -B -P all 
 after_success:
 - bash <(curl -s https://codecov.io/bash)
 - java -cp ~/codacy-coverage-reporter-assembly-latest.jar com.codacy.CodacyCoverageReporter -l Java -r target/site/jacoco/jacoco.xml
