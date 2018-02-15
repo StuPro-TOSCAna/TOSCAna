@@ -7,8 +7,14 @@ import {Csar} from '../../model/csar';
 import {RouteHandler} from '../../handler/route/route.service';
 import {PlatformsProvider} from '../../providers/platforms/platforms.provider';
 import {Transformation} from '../../model/transformation';
+import {isNullOrUndefined} from 'util';
 import StateEnum = TransformationResponse.StateEnum;
 import TypeEnum = InputWrap.TypeEnum;
+
+export interface BooleanWrapper {
+    key: string;
+    value: boolean;
+}
 
 @Component({
     selector: 'app-input',
@@ -24,6 +30,7 @@ export class InputComponent implements OnInit {
     csar: Csar;
     transformation: Transformation;
     everythingValid = true;
+    wrappedBools: BooleanWrapper[] = [];
 
     constructor(private routeHandler: RouteHandler, private transformationsProvider: TransformationsProvider,
                 private csarsProvider: CsarProvider,
@@ -60,6 +67,7 @@ export class InputComponent implements OnInit {
     }
 
     change(item: InputWrap, input: string) {
+        console.log(input);
         item.value = input;
         const parse = this.validateProperty(item);
         item.valid = true;
@@ -73,21 +81,22 @@ export class InputComponent implements OnInit {
         console.log(this.everythingValid);
     }
 
+    hasTypeBoolean(item: InputWrap) {
+        return item.type === TypeEnum.Boolean;
+    }
+
     getClass(item: InputWrap) {
         return item.valid;
     }
 
     async submit() {
+        this.populateInputsWithBoolWrapperItems();
         await this.transformationsProvider.setTransformationProperties(this.csarId, this.selectedPlatform, this.inputs).then(result => {
             this.onSubmit();
         }, err => {
-            console.log(err);
             if (err.status === 406) {
-                console.log(this.inputs);
                 this.inputs = err.error.inputs;
-                console.log(this.inputs);
             }
-            console.log(err);
             this.errorMsg = true;
         });
     }
@@ -105,6 +114,7 @@ export class InputComponent implements OnInit {
             return this.transformationsProvider.getTransformationProperties(this.csarId, this.selectedPlatform);
         }).subscribe(data => {
             this.inputs = data.inputs;
+            this.convertToBoolWrapper(this.inputs);
             this.checkIfEverythingIsValid();
         }, err => console.log(err));
     }
@@ -125,6 +135,43 @@ export class InputComponent implements OnInit {
             this.csarsProvider.updateCsar(this.csar);
             this.routeHandler.openTransformation(this.csar.name, this.selectedPlatform);
         });
+    }
 
+    getDefaultValue(defaultValue: string) {
+        if (isNullOrUndefined(defaultValue)) {
+            return '';
+        } else {
+            return defaultValue;
+        }
+    }
+
+    changeWrappedBool(key: string) {
+        let res = this.wrappedBools.find(item => item.key === key);
+        res.value = !res.value;
+        console.log(this.wrappedBools);
+    }
+
+    getWrappedBool(key: string) {
+        return this.wrappedBools.find(item => item.key === key).value;
+    }
+
+    private convertToBoolWrapper(inputs: InputWrap[]) {
+        inputs.forEach(input => {
+            if (input.type === TypeEnum.Boolean) {
+                console.log(input.value);
+                const newBool: BooleanWrapper = {
+                    key: input.key,
+                    value: (input.value === 'true')
+                };
+                this.wrappedBools.push(newBool);
+            }
+        });
+    }
+
+    private populateInputsWithBoolWrapperItems() {
+        this.wrappedBools.forEach(item => {
+            const input = this.inputs.find(i => i.key === item.key);
+            input.value = String(item.value);
+        });
     }
 }
