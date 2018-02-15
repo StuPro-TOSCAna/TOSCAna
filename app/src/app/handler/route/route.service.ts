@@ -24,6 +24,12 @@ export class TransformationOpen extends ViewState {
     }
 }
 
+export class InputFormOpen extends TransformationOpen {
+    constructor(csarId: string, platform: string) {
+        super(csarId, platform);
+    }
+}
+
 export class CsarOpen extends ViewState {
     constructor(csarId: string) {
         super(csarId);
@@ -32,53 +38,20 @@ export class CsarOpen extends ViewState {
 
 @Injectable()
 export class RouteHandler {
-    _activeCsars: BehaviorSubject<string[]>;
     _viewState: BehaviorSubject<ViewState>;
-    _open: BehaviorSubject<boolean>;
     inputLazyLoad = false;
     v;
     private dataStore: {
-        activeCsars: string[]
         viewState: ViewState;
-        open: boolean;
     };
 
     constructor(private router: Router) {
-        this.dataStore = {activeCsars: [], viewState: null, open: false};
-        this._activeCsars = new BehaviorSubject<string[]>([]);
+        this.dataStore = {viewState: null};
         this._viewState = new BehaviorSubject<ViewState>(this.dataStore.viewState);
-        this._open = new BehaviorSubject<boolean>(false);
-    }
-
-    setUp() {
-        const url = this.router.url;
-        // if (url.indexOf('transformation') !== -1) {
-        //     const parts = url.split('/');
-        //     const csar = parts[parts.length - 2];
-        //     const platform = parts[parts.length - 1];
-        //     this.addTransformation(csar, platform);
-        // } else if (url.indexOf('new') !== -1) {
-        //     this.openSplit();
-        // } else if (url.indexOf('inputs') !== -1) {
-        //     this.openSplit();
-        // }
-    }
-
-
-    get open() {
-        return this._open.asObservable();
     }
 
     get viewState() {
         return this._viewState.asObservable();
-    }
-
-    private updateCsarSubject() {
-        this._activeCsars.next(Object.assign({}, this.dataStore).activeCsars);
-    }
-
-    private updateOpenSubject() {
-        this._open.next(Object.assign({}, this.dataStore).open);
     }
 
     private updateViewStateSubject() {
@@ -103,6 +76,8 @@ export class RouteHandler {
 
     openInputs(csarId: string, platform: string) {
         this.inputLazyLoad = false;
+        this.dataStore.viewState = new InputFormOpen(csarId, platform);
+        this.updateViewStateSubject();
         this.router.navigate(['/inputs', csarId, platform]);
     }
 

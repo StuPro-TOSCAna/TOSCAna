@@ -96,9 +96,9 @@ public class Deployment {
      @param serviceName must be the service name of the provider not the service instance name
      @param serviceType e.g. "mysql" for a mysql service
      */
-    public void readCredentials(String appName, String serviceName, ServiceTypes serviceType) throws IOException {
+    public void readCredentials(String appName, String serviceName, ServiceTypes serviceType, String serviceInstanceName) throws IOException {
         copyFile(PYTHON_READ_CREDENTIALS_FILENAME);
-        deploymentScript.append(String.format("python %s %s %s %s", PYTHON_READ_CREDENTIALS_FILENAME, appName, serviceName, serviceType.getName()));
+        deploymentScript.append(String.format("python %s %s %s %s %s", PYTHON_READ_CREDENTIALS_FILENAME, appName, serviceName, serviceType.getName(), serviceInstanceName));
     }
 
     /**
