@@ -132,7 +132,7 @@ topology_template:
         - host: mysql_dbms
       artifacts:
         my_sql_table:
-          file: mysql/createtable.sql
+          file: my_db/createtable.sql
           type: SQL
 
     mysql_dbms:

@@ -1,6 +1,7 @@
 import subprocess as sub
 import sys
 import json
+import ast
 
 database_uri = ""
 database_username = ""
@@ -8,25 +9,31 @@ database_port = ""
 database_password = ""
 database_name = ""
 database_host = ""
+strServiceInstanceName = ""
 
 def main():
     strAppName = sys.argv[1]
     strService = sys.argv[2]
     strServiceType = str(sys.argv[3])
+    global strServiceInstanceName
+    strServiceInstanceName = str(sys.argv[4])
     if strServiceType == "mysql":
         print("Read credentials from mysql service " + strService)
+        readEnvironmentConfigFile(strAppName)
         read_mysql_credentials(strAppName, strService)
         createConfigureFile()
+        
     return
 
 def read_mysql_credentials(appName, serviceName):
     # required environment variable names for the database connection.
     strDatabaseUri = "database_uri"
-    strEnvDatabaseUser = "database_user"
-    strEnvDatabaseName = "database_name"
+    strEnvDatabaseUser = env["cf_database_user_placeholder_" + strServiceInstanceName]
+    strEnvDatabaseName = env["cf_database_name_placeholder_" + strServiceInstanceName]
     strEnvDatabaseHost = "database_host"
-    strEnvDatabasePort = "database_port"
-    strEnvDatabasePassword = "database_password"
+    strEnvDatabasePort = env["3306"]
+    strEnvDatabasePassword =  env["cf_database_password_placeholder_" + strServiceInstanceName]
+    
 
     # find the VCAP_SERVICES block
     serviceBlock = get_Service_Env_Block_MySql(appName)
@@ -76,5 +83,12 @@ def createConfigureFile():
     'raise_on_warnings': True,}""" %(database_username, database_password,
     database_host, database_name))
 
+def readEnvironmentConfigFile(appName):
+    with open (appName + "_environment_config.txt", "r") as configFile:
+        envConfig = configFile.read()
+        global env
+        env = ast.literal_eval(envConfig)
+    
+    
 if __name__ == "__main__":
     main()

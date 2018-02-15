@@ -20,6 +20,7 @@ import org.json.JSONException;
 import org.slf4j.Logger;
 
 import static org.opentosca.toscana.core.plugin.lifecycle.AbstractLifecycle.OUTPUT_DIR;
+import static org.opentosca.toscana.core.plugin.lifecycle.AbstractLifecycle.SCRIPTS_DIR_PATH;
 import static org.opentosca.toscana.plugins.cloudfoundry.application.ManifestAttributes.DOMAIN;
 import static org.opentosca.toscana.plugins.cloudfoundry.application.ManifestAttributes.ENVIRONMENT;
 import static org.opentosca.toscana.plugins.cloudfoundry.application.ManifestAttributes.PATH;
@@ -43,6 +44,7 @@ public class FileCreator {
     public static final String FILEPRAEFIX_DEPLOY = "deploy_";
     public static final String FILESUFFIX_DEPLOY = ".sh";
     public static final String APPLICATION_FOLDER = "app";
+    public static final String ENVIRONMENT_CONFIG_FILE = "_environment_config.txt";
     public static String deploy_name = "application";
 
     private TransformationContext context;
@@ -72,6 +74,7 @@ public class FileCreator {
         for (Application application : applications) {
             createBuildpackAdditionsFile(application);
             insertFiles(application);
+            createEnvironmentConfigFile(application, application.getEnvironmentVariables());
         }
     }
 
@@ -134,6 +137,26 @@ public class FileCreator {
                 fileAccess.access(MANIFEST_PATH).appendln(env).close();
             }
         }
+    }
+
+    /**
+     creates a environment config file which contains all environment variables.
+     this file will be read by a python script
+
+     @param application          the current application. Each application gets its own file
+     @param environmentVariables all environment variables of the current application
+     */
+    private void createEnvironmentConfigFile(Application application, Map<String, String> environmentVariables) throws IOException {
+        String applicationName = application.getName();
+        String dictEnv = "{";
+
+        for (Map.Entry<String, String> env : environmentVariables.entrySet()) {
+            dictEnv = String.format("%s \'%s\':\'%s\', ", dictEnv, env.getValue(), env.getKey());
+        }
+        dictEnv = dictEnv + "}";
+
+        logger.info("Create environment config file {}", SCRIPTS_DIR_PATH + applicationName + ENVIRONMENT_CONFIG_FILE);
+        fileAccess.access(SCRIPTS_DIR_PATH + applicationName + ENVIRONMENT_CONFIG_FILE).append(dictEnv).close();
     }
 
     /**
@@ -224,7 +247,7 @@ public class FileCreator {
     private void readCredentials(Deployment deployment, Application application) throws IOException {
         if (!CollectionUtils.isEmpty(application.getServicesMatchedToProvider())) {
             for (Service service : application.getServicesMatchedToProvider()) {
-                deployment.readCredentials(application.getName(), service.getServiceName(), service.getServiceType());
+                deployment.readCredentials(application.getName(), service.getServiceName(), service.getServiceType(), service.getServiceInstanceName());
             }
         }
     }

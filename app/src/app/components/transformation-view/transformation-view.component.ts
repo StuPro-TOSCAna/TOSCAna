@@ -57,7 +57,6 @@ export class TransformationViewComponent implements OnInit {
 
 
     async ngOnInit() {
-        this.routeHandler.setUp();
         this.route.paramMap.switchMap((params: ParamMap) => {
             this.csarId = params.get('csar');
             this.platform = params.get('platform');

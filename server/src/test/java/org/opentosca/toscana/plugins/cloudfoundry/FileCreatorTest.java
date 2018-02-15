@@ -30,6 +30,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeNotNull;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.APPLICATION_FOLDER;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.CLI_PATH_TO_MANIFEST;
+import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.ENVIRONMENT_CONFIG_FILE;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.FILEPRAEFIX_DEPLOY;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.FILESUFFIX_DEPLOY;
 import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.MANIFEST_NAME;
@@ -105,10 +106,12 @@ public class FileCreatorTest extends BaseUnitTest {
         File targetFile = new File(targetDir, MANIFEST_PATH);
         File deployFile = new File(targetDir, outputPath + FILEPRAEFIX_DEPLOY + deploy_name + FILESUFFIX_DEPLOY);
         File buildPackAdditions = new File(targetDir, "/" + APPLICATION_FOLDER + testApp.getApplicationNumber() + "/" + BUILDPACK_FILEPATH_PHP);
+        File environmentConfig = new File(targetDir, outputPath + appName + ENVIRONMENT_CONFIG_FILE);
 
         assertTrue(targetFile.exists());
         assertTrue(deployFile.exists());
         assertTrue(buildPackAdditions.exists());
+        assertTrue(environmentConfig.exists());
     }
 
     @Test
@@ -268,6 +271,7 @@ public class FileCreatorTest extends BaseUnitTest {
 
     @Test
     public void checkMultipleApplicationServices() throws IOException, JSONException {
+        String serviceName = "mydb";
         envUser = System.getenv(CF_ENVIRONMENT_USER);
         envPw = System.getenv(CF_ENVIRONMENT_PW);
         envHost = System.getenv(CF_ENVIRONMENT_HOST);
@@ -286,7 +290,7 @@ public class FileCreatorTest extends BaseUnitTest {
         secondApp.setConnection(connection);
 
         app.addService(service1, ServiceTypes.MYSQL);
-        secondApp.addService("mydb", ServiceTypes.MYSQL);
+        secondApp.addService(serviceName, ServiceTypes.MYSQL);
 
         EffectiveModel lamp = new EffectiveModelFactory().create(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, logMock());
         RootNode webApplicationNode = null;
@@ -320,10 +324,10 @@ public class FileCreatorTest extends BaseUnitTest {
                 "python replace.py ../../app2/database/dbinit.sh /var/www/html/ /home/vcap/app/htdocs/\n" +
                 "cf push app -f ../manifest.yml\n" +
                 "cf push appSec -f ../manifest.yml\n" +
-                "python readCredentials.py app cleardb mysql\n" +
+                "python readCredentials.py app cleardb mysql " + service1 + "\n" +
                 "python executeCommand.py app /home/vcap/app/htdocs/my_app/configure_myphpapp.sh\n" +
                 "python configureMysql.py ../../app1/my_db/configSql.sql\n" +
-                "python readCredentials.py appSec cleardb mysql\n" +
+                "python readCredentials.py appSec cleardb mysql " + serviceName + "\n" +
                 "python executeCommand.py appSec /home/vcap/app/database/dbinit.sh\n" +
                 "python configureMysql.py ../../app2/database/config.sql\n";
 
