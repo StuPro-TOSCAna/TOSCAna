@@ -23,7 +23,7 @@ export class MainViewComponent implements OnInit {
     upload = false;
     validFile = false;
     input = '';
-    errorMessage = '';
+    message = '';
 
     constructor(public csarProvider: CsarProvider) {
     }
@@ -54,15 +54,16 @@ export class MainViewComponent implements OnInit {
         let res = 'fa';
         let valid = true;
         if (!nameValid) {
-            this.errorMessage = 'Csar name is empty';
+            this.message = 'Csar name is empty';
             valid = false;
         } else if (this.duplicatedCsarNameExists(this.input)) {
-            this.errorMessage = 'A csar with this name already exists.';
+            this.message = 'A csar with this name already exists.';
             valid = false;
         }
         if (!valid) {
             res += ' fa-exclamation-circle text-danger';
         } else {
+            this.message = 'Everything is ok.';
             res += ' fa-check text-success';
         }
         return res;
