@@ -184,6 +184,15 @@ public class NodeVisitor implements StrictNodeVisitor {
     }
 
     private void handleStandardLifecycle(RootNode node, boolean isTopNode, Application application) {
+
+        //get node artifacts
+        node.getArtifacts().stream().forEach(artifact -> {
+            String filePath = artifact.getFilePath();
+            application.setPathToApplication(filePath);
+            application.addFilePath(filePath);
+        });
+        
+        
         // get StandardLifecycle inputs
         for (OperationVariable lifecycleInput : node.getStandardLifecycle().getInputs()) {
             addEnvironmentVariable(lifecycleInput);
