@@ -3,6 +3,7 @@ import {CsarProvider} from '../../providers/csar/csar.provider';
 import {Component, forwardRef, Input, OnInit, ViewChild} from '@angular/core';
 import {PickedFile} from 'angular-file-picker-fixed/picked-file';
 import {FilePickerDirective} from 'angular-file-picker-fixed';
+import {isNullOrUndefined} from 'util';
 
 const b64toBlob = require('b64-to-blob');
 
@@ -22,6 +23,7 @@ export class MainViewComponent implements OnInit {
     upload = false;
     validFile = false;
     input = '';
+    errorMessage = '';
 
     constructor(public csarProvider: CsarProvider) {
     }
@@ -48,6 +50,24 @@ export class MainViewComponent implements OnInit {
 
     }
 
+    getIcon(nameValid: boolean) {
+        let res = 'fa';
+        let valid = true;
+        if (!nameValid) {
+            this.errorMessage = 'Csar name is empty';
+            valid = false;
+        } else if (this.duplicatedCsarNameExists(this.input)) {
+            this.errorMessage = 'A csar with this name already exists.';
+            valid = false;
+        }
+        if (!valid) {
+            res += ' fa-exclamation-circle text-danger';
+        } else {
+            res += ' fa-check text-success';
+        }
+        return res;
+    }
+
     submit() {
         if (this.input === '') {
             return;
@@ -63,8 +83,13 @@ export class MainViewComponent implements OnInit {
         this.toogle();
     }
 
+    duplicatedCsarNameExists(csarId: string) {
+        const res = this.csars.find(csar => csar.name === csarId);
+        return (!isNullOrUndefined(res));
+    }
+
     disableButton(validInput: boolean) {
-        return !validInput || !this.validFile;
+        return !validInput || !this.validFile || this.duplicatedCsarNameExists(this.input);
     }
 
 

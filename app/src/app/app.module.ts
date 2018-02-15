@@ -5,7 +5,7 @@ import {Configuration} from './api/configuration';
 import {BrowserModule} from '@angular/platform-browser';
 import {NgModule} from '@angular/core';
 import {ModalModule} from 'ngx-bootstrap';
-
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import {AppComponent} from './app.component';
 import {ApiModule} from './api/api.module';
 import {MainViewComponent} from './components/main-view/main-view.component';
@@ -27,7 +27,7 @@ import {MessageService} from './providers/message/message.service';
     entryComponents: [],
     declarations: [AppComponent, MainViewComponent,
         CsarItemComponent, CsarSubItemComponent, TransformationViewComponent, NewTransformationModalComponent, InputComponent, LogComponent, CsarViewComponent, MessageComponent],
-    imports: [BrowserModule, ApiModule.forRoot(apiConfig), RoutingModule, AngularFilePickerModule, FormsModule, ModalModule.forRoot()],
+    imports: [BrowserModule, ApiModule.forRoot(apiConfig), RoutingModule, AngularFilePickerModule, FormsModule, ModalModule.forRoot(), TooltipModule.forRoot()],
     providers: [CsarProvider, PlatformsProvider, TransformationsProvider, RouteHandler, MessageService],
     bootstrap: [AppComponent]
 })
