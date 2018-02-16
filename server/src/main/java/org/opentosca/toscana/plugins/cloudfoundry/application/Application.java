@@ -14,20 +14,15 @@ import org.opentosca.toscana.model.node.WebApplication;
 import org.opentosca.toscana.plugins.cloudfoundry.client.Connection;
 import org.opentosca.toscana.plugins.kubernetes.util.NodeStack;
 
-import static org.opentosca.toscana.plugins.cloudfoundry.filecreator.FileCreator.APPLICATION_FOLDER;
-
 import org.slf4j.Logger;
 
+import static org.opentosca.toscana.plugins.cloudfoundry.filecreator.FileCreator.APPLICATION_FOLDER;
 
 /**
  This class should describe a Application with all needed information to deploy it
  */
 public class Application {
-    
-    private Logger logger;
 
-    private String name;
-    private int applicationNumber;
     private final ArrayList<String> configureSqlDatabase = new ArrayList<>();
     private final Map<String, String> executeCommand = new HashMap<>();
     private final ArrayList<String> filePaths = new ArrayList<>();
@@ -36,6 +31,9 @@ public class Application {
     private final Map<String, ServiceTypes> services = new HashMap<>();
     private final ArrayList<Service> servicesMatchedToProvider = new ArrayList<>();
     private final ArrayList<String> invalidApplicationSuffixes = new ArrayList<>(Arrays.asList("sh", "sql"));
+    private Logger logger;
+    private String name;
+    private int applicationNumber;
     private Provider provider;
     private String pathToApplication;
     private String applicationSuffix;
@@ -73,7 +71,6 @@ public class Application {
         logger.debug("Add a config mysql command to deploy script. Relative path to file is {}", relativePath);
         configureSqlDatabase.add(relativePath);
     }
-    
 
     /**
      execute the given file on the warden container
@@ -88,14 +85,14 @@ public class Application {
         if (parentTopNode instanceof WebApplication) {
             pathToFileOnContainer = "/home/vcap/app/htdocs/";
         }
-        
+
         if (pathToFile.contains("../../" + APPLICATION_FOLDER)) {
             String[] paths = pathToFile.split("../../" + APPLICATION_FOLDER + "[0-9]*/");
             pathToFile = paths[1];
         }
-        
+
         logger.debug("Add python script to execute {} on cloud foundry warden container", pathToFile);
-        
+
         executeCommand.put("../../" + APPLICATION_FOLDER + this.getApplicationNumber() + "/" + pathToFile,
             pathToFileOnContainer + pathToFile);
     }
@@ -114,7 +111,7 @@ public class Application {
             pathToFileNew = paths[1];
         }
         pathToFileNew = "../../" + APPLICATION_FOLDER + this.getApplicationNumber() + "/" + pathToFileNew;
-        
+
         executeCommand.put(pathToFileNew, pathOnContainer);
     }
 
@@ -124,7 +121,7 @@ public class Application {
     private void updateExecuteFiles() {
         Map<String, String> oldExecuteCommand = new HashMap<>(executeCommand);
         executeCommand.clear();
-        oldExecuteCommand.forEach((pathToFile, pathOnContainer)->this.addExecuteFile(pathToFile,pathOnContainer));
+        oldExecuteCommand.forEach((pathToFile, pathOnContainer) -> this.addExecuteFile(pathToFile, pathOnContainer));
     }
 
     /**
@@ -142,7 +139,7 @@ public class Application {
     public Map<String, String> getExecuteCommands() {
         return executeCommand;
     }
-    
+
     public int getApplicationNumber() {
         return this.applicationNumber;
     }
@@ -152,12 +149,16 @@ public class Application {
         this.updateExecuteFiles();
     }
 
+    public Connection getConnection() {
+        return connection;
+    }
+
     public void setConnection(Connection connection) {
         this.connection = connection;
     }
 
-    public Connection getConnection() {
-        return connection;
+    public String getName() {
+        return name;
     }
 
     /**
@@ -168,10 +169,6 @@ public class Application {
         String clearedUpName = name.replaceAll("[:/?#@$&'()*+,;=_]", "-");
         logger.debug("Replace all occurence of forbidden signs in the application name with \"-\"");
         this.name = clearedUpName;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public Map<String, String> getEnvironmentVariables() {
@@ -250,6 +247,14 @@ public class Application {
         return applicationSuffix;
     }
 
+    private boolean isValidApplicationSuffix(String suffix) {
+        return !invalidApplicationSuffixes.contains(suffix);
+    }
+
+    public String getPathToApplication() {
+        return pathToApplication;
+    }
+
     /**
      sets the path to the main application which should be executed
      */
@@ -269,17 +274,9 @@ public class Application {
         }
     }
 
-    private boolean isValidApplicationSuffix(String suffix) {
-        return !invalidApplicationSuffixes.contains(suffix);
-    }
-
-    public String getPathToApplication() {
-        return pathToApplication;
-    }
-
     /**
-     true if the application is a real application
-     false if the application is a dummy application e.g. a service
+     true if the application is an application
+     false if the application is a service
      default is true
      */
     public boolean isRealApplication() {

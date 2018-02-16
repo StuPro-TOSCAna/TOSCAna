@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 import org.opentosca.toscana.model.artifact.Artifact;
 import org.opentosca.toscana.model.node.Apache;
 import org.opentosca.toscana.model.node.Compute;
-import org.opentosca.toscana.model.node.Database;
 import org.opentosca.toscana.model.node.MysqlDatabase;
 import org.opentosca.toscana.model.node.MysqlDbms;
 import org.opentosca.toscana.model.node.RootNode;
@@ -34,10 +33,10 @@ import static org.opentosca.toscana.plugins.cloudfoundry.application.ManifestAtt
 
 public class NodeVisitor implements StrictNodeVisitor {
 
+    private final Logger logger;
     private Application myApp;
     private Map<RootNode, Application> nodeApplicationMap;
     private Graph<RootNode, RootRelationship> topology;
-    private final Logger logger;
 
     public NodeVisitor(Application myApp, Map<RootNode, Application> nodeApplicationMap, Graph<RootNode, RootRelationship> topology, Logger logger) {
         this.myApp = myApp;
@@ -146,7 +145,6 @@ public class NodeVisitor implements StrictNodeVisitor {
     public void visit(MysqlDbms node) {
         handleStandardLifecycle(node, false, myApp);
     }
-    
 
     @Override
     public void visit(Apache node) {

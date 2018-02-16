@@ -128,8 +128,6 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
 
     @Override
     public void prepare() {
-        logger.info("Begin preparation for transformation to Cloud Foundry.");
-
         logger.debug("Collecting Compute Nodes in topology");
         ComputeNodeFindingVisitor computeFinder = new ComputeNodeFindingVisitor();
         model.getNodes().forEach(e -> {
@@ -179,7 +177,6 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
 
     @Override
     public void transform() {
-        logger.info("Begin transformation to Cloud Foundry.");
         PluginFileAccess fileAccess = context.getPluginFileAccess();
 
         fillApplications();
