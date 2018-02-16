@@ -11,11 +11,6 @@ import {isNullOrUndefined} from 'util';
 import StateEnum = TransformationResponse.StateEnum;
 import TypeEnum = InputWrap.TypeEnum;
 
-export interface BooleanWrapper {
-    key: string;
-    value: boolean;
-}
-
 @Component({
     selector: 'app-input',
     templateUrl: './input.component.html',
@@ -30,7 +25,6 @@ export class InputComponent implements OnInit {
     csar: Csar;
     transformation: Transformation;
     everythingValid = true;
-    wrappedBools: BooleanWrapper[] = [];
 
     constructor(private routeHandler: RouteHandler, private transformationsProvider: TransformationsProvider,
                 private csarsProvider: CsarProvider,
@@ -67,7 +61,6 @@ export class InputComponent implements OnInit {
     }
 
     change(item: InputWrap, input: string) {
-        console.log(input);
         item.value = input;
         const parse = this.validateProperty(item);
         item.valid = true;
@@ -78,7 +71,6 @@ export class InputComponent implements OnInit {
             item.valid = false;
         }
         this.checkIfEverythingIsValid();
-        console.log(this.everythingValid);
     }
 
     hasTypeBoolean(item: InputWrap) {
@@ -90,7 +82,6 @@ export class InputComponent implements OnInit {
     }
 
     async submit() {
-        this.populateInputsWithBoolWrapperItems();
         await this.transformationsProvider.setTransformationProperties(this.csarId, this.selectedPlatform, this.inputs).then(result => {
             this.onSubmit();
         }, err => {
@@ -100,7 +91,6 @@ export class InputComponent implements OnInit {
             this.errorMsg = true;
         });
     }
-
 
     async ngOnInit() {
         this.route.paramMap.switchMap((params: ParamMap) => {
@@ -114,7 +104,6 @@ export class InputComponent implements OnInit {
             return this.transformationsProvider.getTransformationProperties(this.csarId, this.selectedPlatform);
         }).subscribe(data => {
             this.inputs = data.inputs;
-            this.convertToBoolWrapper(this.inputs);
             this.checkIfEverythingIsValid();
         }, err => console.log(err));
     }
@@ -145,33 +134,7 @@ export class InputComponent implements OnInit {
         }
     }
 
-    changeWrappedBool(key: string) {
-        let res = this.wrappedBools.find(item => item.key === key);
-        res.value = !res.value;
-        console.log(this.wrappedBools);
-    }
-
-    getWrappedBool(key: string) {
-        return this.wrappedBools.find(item => item.key === key).value;
-    }
-
-    private convertToBoolWrapper(inputs: InputWrap[]) {
-        inputs.forEach(input => {
-            if (input.type === TypeEnum.Boolean) {
-                console.log(input.value);
-                const newBool: BooleanWrapper = {
-                    key: input.key,
-                    value: (input.value === 'true')
-                };
-                this.wrappedBools.push(newBool);
-            }
-        });
-    }
-
-    private populateInputsWithBoolWrapperItems() {
-        this.wrappedBools.forEach(item => {
-            const input = this.inputs.find(i => i.key === item.key);
-            input.value = String(item.value);
-        });
+    convertAndSetBool(key: string, checked: boolean) {
+        this.inputs.find(input => input.key === key).value = String(checked);
     }
 }

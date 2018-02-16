@@ -26,7 +26,7 @@ import {MessageService} from './providers/message/message.service';
 @NgModule({
     entryComponents: [],
     declarations: [AppComponent, MainViewComponent,
-        CsarItemComponent, CsarSubItemComponent, TransformationViewComponent, NewTransformationModalComponent, InputComponent, LogComponent, CsarViewComponent, MessageComponent],
+        CsarItemComponent, CsarSubItemComponent, TransformationViewComponent, NewTransformationModalComponent, InputComponent, LogComponent, CsarViewComponent, MessageComponent ],
     imports: [BrowserModule, ApiModule.forRoot(apiConfig), RoutingModule, AngularFilePickerModule, FormsModule, ModalModule.forRoot(), TooltipModule.forRoot()],
     providers: [CsarProvider, PlatformsProvider, TransformationsProvider, RouteHandler, MessageService],
     bootstrap: [AppComponent]
