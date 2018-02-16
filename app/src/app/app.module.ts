@@ -4,8 +4,8 @@ import {CsarProvider} from './providers/csar/csar.provider';
 import {Configuration} from './api/configuration';
 import {BrowserModule} from '@angular/platform-browser';
 import {NgModule} from '@angular/core';
-import {ModalModule} from 'ngx-bootstrap';
-import { TooltipModule } from 'ngx-bootstrap/tooltip';
+import {ModalModule, TooltipModule} from 'ngx-bootstrap';
+
 import {AppComponent} from './app.component';
 import {ApiModule} from './api/api.module';
 import {MainViewComponent} from './components/main-view/main-view.component';
