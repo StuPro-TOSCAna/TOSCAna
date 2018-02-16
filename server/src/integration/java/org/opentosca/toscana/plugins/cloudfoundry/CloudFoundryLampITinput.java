@@ -30,9 +30,9 @@ import static org.opentosca.toscana.plugins.cloudfoundry.ServiceTest.CF_ENVIRONM
 import static org.opentosca.toscana.plugins.cloudfoundry.ServiceTest.CF_ENVIRONMENT_USER;
 
 /**
- Created by jensmuller on 03.01.18.
+ Created by jensmuller on 16.02.18.
  */
-public class CloudFoundryLampIT extends BaseTransformTest {
+public class CloudFoundryLampITinput extends BaseTransformTest{
 
     private final String envUser = System.getenv(CF_ENVIRONMENT_USER);
     private final String envPw = System.getenv(CF_ENVIRONMENT_PW);
@@ -40,13 +40,13 @@ public class CloudFoundryLampIT extends BaseTransformTest {
     private final String envOrga = System.getenv(CF_ENVIRONMENT_ORGA);
     private final String envSpace = System.getenv(CF_ENVIRONMENT_SPACE);
 
-    public CloudFoundryLampIT() {
+    public CloudFoundryLampITinput() {
         super(new CloudFoundryPlugin());
     }
 
     @Override
     protected EffectiveModel getModel() throws Exception {
-        return new EffectiveModelFactory().create(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, logMock());
+        return new EffectiveModelFactory().create(TestCsars.VALID_LAMP_INPUT, logMock());
     }
 
     @Override
@@ -64,6 +64,12 @@ public class CloudFoundryLampIT extends BaseTransformTest {
         Set<InputProperty> prop = new HashSet<>(plugin.getPlatform().properties);
         prop.addAll(model.getInputs().values());
         PropertyInstance props = new PropertyInstance(prop, mock(Transformation.class));
+
+        props.set("database_name", "name");
+        props.set("database_user", "user");
+        props.set("database_port", "3333");
+        props.set("database_password", "secrets");
+        
         props.set(CF_PROPERTY_KEY_USERNAME, envUser);
         props.set(CF_PROPERTY_KEY_PASSWORD, envPw);
         props.set(CF_PROPERTY_KEY_API, envHost);
@@ -84,3 +90,5 @@ public class CloudFoundryLampIT extends BaseTransformTest {
         assumeNotNull(envUser, envPw, envHost, envOrga, envSpace);
     }
 }
+
+
