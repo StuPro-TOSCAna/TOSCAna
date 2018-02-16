@@ -1,2 +1,2 @@
 #!/bin/bash  
-java -jar translator.jar
+java -jar task-translator.jar
