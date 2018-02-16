@@ -9,7 +9,7 @@
 </div>
 <div class="form" *ngIf="upload" [ngClass]="csars.length > 0 && {'flex-wrap':'wrap'}">
     <div class="name">
-        <i [class]="getIcon(name.valid)" [tooltip]="errorMessage" placement="auto"></i>
+        <i [class]="getIcon(name.valid)" [tooltip]="message" placement="auto"></i>
         <input type="text" placeholder="Enter name" class="form-control" id="name" name="name" [(ngModel)]="input"
                required
                [ngModelOptions]="{standalone: true}" #name="ngModel">
