@@ -11,7 +11,6 @@ import org.opentosca.toscana.model.node.Apache;
 import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.MysqlDatabase;
 import org.opentosca.toscana.model.node.MysqlDbms;
-import org.opentosca.toscana.model.node.Nodejs;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.node.WebApplication;
 import org.opentosca.toscana.model.node.custom.JavaApplication;
@@ -23,6 +22,7 @@ import org.opentosca.toscana.model.relation.ConnectsTo;
 import org.opentosca.toscana.model.relation.RootRelationship;
 import org.opentosca.toscana.model.visitor.StrictNodeVisitor;
 import org.opentosca.toscana.plugins.cloudfoundry.application.Application;
+import org.opentosca.toscana.plugins.cloudfoundry.application.ManifestAttributes;
 import org.opentosca.toscana.plugins.cloudfoundry.application.ServiceTypes;
 import org.opentosca.toscana.plugins.util.TransformationFailureException;
 
@@ -63,15 +63,15 @@ public class NodeVisitor implements StrictNodeVisitor {
         */
 
         if (node.getPublicAddress().isPresent()) {
-            myApp.addAttribute(DOMAIN.getName(), node.getPublicAddress().get());
+            myApp.addAttribute(DOMAIN, node.getPublicAddress().get());
         }
 
         if (node.getHost().getDiskSizeInMb().isPresent()) {
-            myApp.addAttribute(DISKSIZE.getName(), node.getHost().getDiskSizeInMb().get() + "MB");
+            myApp.addAttribute(DISKSIZE, node.getHost().getDiskSizeInMb().get() + "MB");
         }
 
         if (node.getHost().getMemSizeInMb().isPresent()) {
-            myApp.addAttribute(MEMORY.getName(), node.getHost().getMemSizeInMb().get() + "MB");
+            myApp.addAttribute(MEMORY, node.getHost().getMemSizeInMb().get() + "MB");
         }
     }
 
@@ -163,12 +163,6 @@ public class NodeVisitor implements StrictNodeVisitor {
     }
 
     @Override
-    public void visit(Nodejs node) {
-        //TODO: Implementation WIP
-        logger.debug("Visit Nodejs");
-    }
-
-    @Override
     public void visit(JavaRuntime node) {
         //TODO: Implementation WIP
         logger.debug("Visit Java Runtime");
@@ -176,9 +170,10 @@ public class NodeVisitor implements StrictNodeVisitor {
 
     @Override
     public void visit(JavaApplication node) {
-        //TODO: Implementation WIP
         logger.debug("Visit Java Application");
         myApp.setName(node.getEntityName());
+        myApp.addAttribute(ManifestAttributes.NO_ROUTE, "true");
+        myApp.setEnablePathToApplication(true);
         getScripts(node);
         handleStandardLifecycle(node, true, myApp);
     }
@@ -191,8 +186,7 @@ public class NodeVisitor implements StrictNodeVisitor {
             application.setPathToApplication(filePath);
             application.addFilePath(filePath);
         });
-        
-        
+
         // get StandardLifecycle inputs
         for (OperationVariable lifecycleInput : node.getStandardLifecycle().getInputs()) {
             addEnvironmentVariable(lifecycleInput);

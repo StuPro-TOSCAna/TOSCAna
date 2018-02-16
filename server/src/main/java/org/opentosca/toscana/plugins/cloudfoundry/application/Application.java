@@ -14,16 +14,15 @@ import org.opentosca.toscana.model.node.WebApplication;
 import org.opentosca.toscana.plugins.cloudfoundry.client.Connection;
 import org.opentosca.toscana.plugins.kubernetes.util.NodeStack;
 
-import static org.opentosca.toscana.plugins.cloudfoundry.filecreator.FileCreator.APPLICATION_FOLDER;
-
 import org.slf4j.Logger;
 
+import static org.opentosca.toscana.plugins.cloudfoundry.filecreator.FileCreator.APPLICATION_FOLDER;
 
 /**
  This class should describe a Application with all needed information to deploy it
  */
 public class Application {
-    
+
     private Logger logger;
 
     private String name;
@@ -42,6 +41,7 @@ public class Application {
     private NodeStack stack;
     private boolean realApplication = true;
     private Set<Application> parentApplications = null;
+    private boolean enablePathToApplication = false;
 
     private Connection connection;
 
@@ -73,7 +73,6 @@ public class Application {
         logger.debug("Add a config mysql command to deploy script. Relative path to file is {}", relativePath);
         configureSqlDatabase.add(relativePath);
     }
-    
 
     /**
      execute the given file on the warden container
@@ -88,14 +87,14 @@ public class Application {
         if (parentTopNode instanceof WebApplication) {
             pathToFileOnContainer = "/home/vcap/app/htdocs/";
         }
-        
+
         if (pathToFile.contains("../../" + APPLICATION_FOLDER)) {
             String[] paths = pathToFile.split("../../" + APPLICATION_FOLDER + "[0-9]*/");
             pathToFile = paths[1];
         }
-        
+
         logger.debug("Add python script to execute {} on cloud foundry warden container", pathToFile);
-        
+
         executeCommand.put("../../" + APPLICATION_FOLDER + this.getApplicationNumber() + "/" + pathToFile,
             pathToFileOnContainer + pathToFile);
     }
@@ -114,7 +113,7 @@ public class Application {
             pathToFileNew = paths[1];
         }
         pathToFileNew = "../../" + APPLICATION_FOLDER + this.getApplicationNumber() + "/" + pathToFileNew;
-        
+
         executeCommand.put(pathToFileNew, pathOnContainer);
     }
 
@@ -124,7 +123,7 @@ public class Application {
     private void updateExecuteFiles() {
         Map<String, String> oldExecuteCommand = new HashMap<>(executeCommand);
         executeCommand.clear();
-        oldExecuteCommand.forEach((pathToFile, pathOnContainer)->this.addExecuteFile(pathToFile,pathOnContainer));
+        oldExecuteCommand.forEach((pathToFile, pathOnContainer) -> this.addExecuteFile(pathToFile, pathOnContainer));
     }
 
     /**
@@ -142,7 +141,7 @@ public class Application {
     public Map<String, String> getExecuteCommands() {
         return executeCommand;
     }
-    
+
     public int getApplicationNumber() {
         return this.applicationNumber;
     }
@@ -216,6 +215,10 @@ public class Application {
         this.services.put(serviceName, serviceType);
     }
 
+    public void addAttribute(ManifestAttributes attributeName, String attributeValue) {
+        addAttribute(attributeName.getName(), attributeValue);
+    }
+
     public void addAttribute(String attributeName, String attributeValue) {
         attributes.put(attributeName, attributeValue);
         logger.debug("Add attribute variable {} with value {} to manifest", attributeName, attributeValue);
@@ -254,6 +257,7 @@ public class Application {
      sets the path to the main application which should be executed
      */
     public void setPathToApplication(String pathToApplication) {
+
         int lastOccurenceOfBackslash = pathToApplication.lastIndexOf("/");
         int lastOccurenceOfDot = pathToApplication.lastIndexOf(".");
 
@@ -263,7 +267,7 @@ public class Application {
                 this.applicationSuffix = pathToApplication.substring(lastOccurenceOfDot + 1, pathToApplication.length());
 
                 if (lastOccurenceOfBackslash != -1) {
-                    this.pathToApplication = pathToApplication.substring(0, lastOccurenceOfBackslash);
+                    this.pathToApplication = pathToApplication;
                 }
             }
         }
@@ -302,5 +306,22 @@ public class Application {
      */
     public Set<Application> getParentApplications() {
         return parentApplications;
+    }
+
+    /**
+     enable the path to the application file
+     should use if only one file is for the application like .jar
+
+     @param enablePathToApplication default is false. True means that there is no special path to application
+     */
+    public void setEnablePathToApplication(boolean enablePathToApplication) {
+        this.enablePathToApplication = enablePathToApplication;
+    }
+
+    /**
+     if true the application has one file which should be added to the path attribute
+     */
+    public boolean isEnablePathToApplication() {
+        return enablePathToApplication;
     }
 }

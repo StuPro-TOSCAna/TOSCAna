@@ -23,6 +23,7 @@ import static org.opentosca.toscana.core.plugin.lifecycle.AbstractLifecycle.OUTP
 import static org.opentosca.toscana.core.plugin.lifecycle.AbstractLifecycle.SCRIPTS_DIR_PATH;
 import static org.opentosca.toscana.plugins.cloudfoundry.application.ManifestAttributes.DOMAIN;
 import static org.opentosca.toscana.plugins.cloudfoundry.application.ManifestAttributes.ENVIRONMENT;
+import static org.opentosca.toscana.plugins.cloudfoundry.application.ManifestAttributes.NO_ROUTE;
 import static org.opentosca.toscana.plugins.cloudfoundry.application.ManifestAttributes.PATH;
 import static org.opentosca.toscana.plugins.cloudfoundry.application.ManifestAttributes.RANDOM_ROUTE;
 import static org.opentosca.toscana.plugins.cloudfoundry.application.ManifestAttributes.SERVICE;
@@ -116,7 +117,13 @@ public class FileCreator {
      adds the relative path of the application folder to the manifest
      */
     private void addPathToApplication(Application application) throws IOException {
-        String pathAddition = String.format("  %s: ../%s", PATH.getName(), APPLICATION_FOLDER + application.getApplicationNumber());
+
+        String pathAddition = String.format("  %s: ../%s", PATH.getName(),
+            APPLICATION_FOLDER + application.getApplicationNumber());
+
+        if (application.isEnablePathToApplication()) {
+            pathAddition = String.format("%s/%s", pathAddition, application.getPathToApplication());
+        }
 
         logger.info("Add path to application {} to manifest", pathAddition);
         fileAccess.access(MANIFEST_PATH).appendln(pathAddition).close();
@@ -314,7 +321,8 @@ public class FileCreator {
                 attributes.add(String.format("  %s: %s", attribute.getKey(), attribute.getValue()));
             }
 
-            if (!application.getAttributes().containsKey(DOMAIN.getName())) {
+            if (!application.getAttributes().containsKey(DOMAIN.getName())
+                && !application.getAttributes().containsKey(NO_ROUTE.getName())) {
                 attributes.add(String.format("  %s: %s", RANDOM_ROUTE.getName(), "true"));
             }
             for (String attribute : attributes) {
