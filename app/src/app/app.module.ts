@@ -22,6 +22,7 @@ import {RouteHandler} from './handler/route/route.service';
 import {CsarViewComponent} from './components/csar-view/csar-view.component';
 import { MessageComponent } from './components/message/message.component';
 import {MessageService} from './providers/message/message.service';
+import {environment} from '../environments/environment';
 
 @NgModule({
     entryComponents: [],
@@ -36,6 +37,6 @@ export class AppModule {
 
 export function apiConfig() {
     return new Configuration({
-        basePath: 'http://localhost:8084'
+        basePath: environment.apiUrl
     });
 }

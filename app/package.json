@@ -4,8 +4,8 @@
     "license": "MIT",
     "scripts": {
         "ng": "ng",
-        "start": "sed -i \"s|basePath: ''|basePath: 'http://localhost:8084'|\" src/app/app.module.ts && ng serve",
-        "build": "sed -i \"s/basePath: '.*'/basePath: ''/\" src/app/app.module.ts && ng build --prod",
+        "start": "ng serve",
+        "build": "ng build --prod --env=prod",
         "test": "ng test",
         "lint": "ng lint",
         "e2e": "ng e2e"
