@@ -11,6 +11,7 @@ import {RouteHandler} from '../../handler/route/route.service';
 import {LifecyclePhase, TransformationResponse} from '../../api';
 import TransformationStateEnum = TransformationResponse.StateEnum;
 import  LifecycleStateEnum = LifecyclePhase.StateEnum;
+import {environment} from '../../../environments/environment';
 
 @Component({
     selector: 'app-transformation-view',
@@ -52,7 +53,7 @@ export class TransformationViewComponent implements OnInit {
     }
 
     generateDownloadUrl() {
-        this.url = `http://localhost:8084/api/csars/${this.csarId}/transformations/${this.platform}/artifact`;
+        this.url = `${environment.apiUrl}/api/csars/${this.csarId}/transformations/${this.platform}/artifact`;
     }
 
 
