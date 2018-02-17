@@ -15,13 +15,24 @@ import org.opentosca.toscana.plugins.cloudfoundry.application.Application;
 import org.opentosca.toscana.plugins.cloudfoundry.filecreator.FileCreator;
 
 import org.apache.commons.io.FileUtils;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin.CF_PROPERTY_KEY_API;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin.CF_PROPERTY_KEY_ORGANIZATION;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin.CF_PROPERTY_KEY_PASSWORD;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin.CF_PROPERTY_KEY_SPACE;
+import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin.CF_PROPERTY_KEY_USERNAME;
+import static org.opentosca.toscana.plugins.cloudfoundry.filecreator.FileCreator.FILEPRAEFIX_DEPLOY;
+import static org.opentosca.toscana.plugins.cloudfoundry.filecreator.FileCreator.FILESUFFIX_DEPLOY;
+import static org.opentosca.toscana.plugins.cloudfoundry.filecreator.FileCreator.MANIFEST_PATH;
+import static org.opentosca.toscana.plugins.cloudfoundry.filecreator.FileCreator.deploy_name;
 import static org.opentosca.toscana.plugins.util.TestUtil.setUpMockTransformationContext;
 
 public class CloudFoundryPluginTest extends BaseUnitTest {
@@ -33,14 +44,24 @@ public class CloudFoundryPluginTest extends BaseUnitTest {
     private TransformationContext context;
     private File targetDir;
     
+    private CloudFoundryLifecycle cfCycle;
 
     @Before
     public void setUp() throws Exception {
         EffectiveModel lamp = new EffectiveModelFactory().create(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, logMock());
         context = setUpMockTransformationContext(lamp);
 
+        String userName = System.getenv("TEST_CF_USER");
+        String pw = System.getenv("TEST_CF_PW");
+        String host = System.getenv("TEST_CF_HOST");
+        String space = System.getenv("TEST_CF_SPACE");
+        String orga = System.getenv("TEST_CF_ORGA");
         Assume.assumeNotNull(userName, pw, host, space, orga);
-
+        when(context.getInputs()).thenReturn(mock(PropertyInstance.class));
+        when(context.getInputs().getOrThrow(CF_PROPERTY_KEY_USERNAME)).thenReturn(userName);
+        when(context.getInputs().getOrThrow(CF_PROPERTY_KEY_PASSWORD)).thenReturn(pw);
+        when(context.getInputs().getOrThrow(CF_PROPERTY_KEY_API)).thenReturn(host);
+        when(context.getInputs().getOrThrow(CF_PROPERTY_KEY_SPACE)).thenReturn(space);
         when(context.getInputs().getOrThrow(CF_PROPERTY_KEY_ORGANIZATION)).thenReturn(orga);
 
         cfCycle = new CloudFoundryLifecycle(context);
