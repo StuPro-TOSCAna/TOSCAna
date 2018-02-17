@@ -46,6 +46,10 @@ public class NodeStack {
         return stackNodes.size();
     }
 
+    public List<KubernetesNodeContainer> getNodes() {
+        return stackNodes;
+    }
+
     public KubernetesNodeContainer getRootNode() {
         return stackNodes.get(stackNodes.size() - 1);
     }

@@ -28,11 +28,6 @@ public class CloudFoundryPlugin extends ToscanaPlugin<CloudFoundryLifecycle> {
         super(getPlatformDetails());
     }
 
-    @Override
-    public CloudFoundryLifecycle getInstance(TransformationContext context) throws Exception {
-        return new CloudFoundryLifecycle(context);
-    }
-
     private static Platform getPlatformDetails() {
         String platformId = "cloud-foundry";
         String platformName = "CloudFoundry";
@@ -61,5 +56,9 @@ public class CloudFoundryPlugin extends ToscanaPlugin<CloudFoundryLifecycle> {
         platformProperties.add(cfOrganization);
 
         return new Platform(platformId, platformName, platformProperties);
+    }
+
+    @Override
+        return new CloudFoundryLifecycle(context);
     }
 }

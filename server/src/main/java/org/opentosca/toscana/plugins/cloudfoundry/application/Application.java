@@ -33,9 +33,13 @@ public class Application {
     private final Map<String, ServiceTypes> services = new HashMap<>();
     private final ArrayList<Service> servicesMatchedToProvider = new ArrayList<>();
     private final ArrayList<String> invalidApplicationSuffixes = new ArrayList<>(Arrays.asList("sh", "sql"));
+    private Logger logger;
+    private String name;
+    private int applicationNumber;
     private Provider provider;
     private String pathToApplication;
     private String applicationSuffix;
+    private NodeStack stack;
 
     private Connection connection;
 
@@ -78,6 +82,7 @@ public class Application {
             pathToFileOnContainer = "/home/vcap/app/htdocs/";
         }
 
+
         logger.debug("Add python script to execute {} on cloud foundry warden container", pathToFile);
 
         executeCommand.put("../../" + APPLICATION_FOLDER + this.getApplicationNumber() + "/" + pathToFile,
@@ -85,6 +90,10 @@ public class Application {
     }
 
     /**
+
+
+        oldExecuteCommand.forEach((pathToFile, pathOnContainer) -> this.addExecuteFile(pathToFile, pathOnContainer));
+
      returns a list with realtive paths which should be executed with the python script configMysql
      */
     public List<String> getConfigMysql() {
@@ -112,6 +121,8 @@ public class Application {
         return connection;
     }
 
+    public String getName() {
+        return name;
     /**
      set the application name.
      all forbidden signs will be replaced by -
@@ -138,6 +149,14 @@ public class Application {
             this.environmentVariables.put(environmentVariableName, value);
             logger.debug("Add environment variable {} with value {} to manifest", environmentVariableName, value);
         }
+    }
+
+    public void addStack(NodeStack stack) {
+        this.stack = stack;
+    }
+
+    public NodeStack getStack() {
+        return stack;
     }
 
     public void addEnvironmentVariables(String environmentVariableName) {
@@ -194,6 +213,14 @@ public class Application {
         return applicationSuffix;
     }
 
+    private boolean isValidApplicationSuffix(String suffix) {
+        return !invalidApplicationSuffixes.contains(suffix);
+    }
+
+    public String getPathToApplication() {
+        return pathToApplication;
+    }
+
     /**
      sets the path to the main application which should be executed
      */
@@ -215,6 +242,8 @@ public class Application {
 
     private boolean isValidApplicationSuffix(String suffix) {
         return !invalidApplicationSuffixes.contains(suffix);
+     true if the application is an application
+     false if the application is a service
     }
 
     public String getPathToApplication() {

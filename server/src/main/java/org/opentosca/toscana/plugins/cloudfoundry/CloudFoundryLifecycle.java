@@ -2,23 +2,33 @@ package org.opentosca.toscana.plugins.cloudfoundry;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.core.plugin.lifecycle.AbstractLifecycle;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.core.transformation.properties.NoSuchPropertyException;
 import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
+import org.opentosca.toscana.model.EffectiveModel;
+import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.RootNode;
-import org.opentosca.toscana.model.visitor.VisitableNode;
+import org.opentosca.toscana.model.relation.RootRelationship;
 import org.opentosca.toscana.plugins.cloudfoundry.application.Application;
 import org.opentosca.toscana.plugins.cloudfoundry.application.Provider;
 import org.opentosca.toscana.plugins.cloudfoundry.client.Connection;
-import org.opentosca.toscana.plugins.cloudfoundry.visitors.NodeVisitor;
-import org.opentosca.toscana.plugins.cloudfoundry.visitors.PrepareVisitor;
+import org.opentosca.toscana.plugins.cloudfoundry.filecreator.FileCreator;
+import org.opentosca.toscana.plugins.cloudfoundry.visitor.NodeVisitor;
+import org.opentosca.toscana.plugins.kubernetes.exceptions.UnsupportedOsTypeException;
+import org.opentosca.toscana.plugins.kubernetes.util.KubernetesNodeContainer;
+import org.opentosca.toscana.plugins.kubernetes.util.NodeStack;
+import org.opentosca.toscana.plugins.kubernetes.visitor.util.ComputeNodeFindingVisitor;
 import org.opentosca.toscana.plugins.util.TransformationFailureException;
 
+import org.jgrapht.Graph;
 import org.json.JSONException;
 
 import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin.CF_PROPERTY_KEY_API;
@@ -26,33 +36,25 @@ import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin.CF_P
 import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin.CF_PROPERTY_KEY_PASSWORD;
 import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin.CF_PROPERTY_KEY_SPACE;
 import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin.CF_PROPERTY_KEY_USERNAME;
+import static org.opentosca.toscana.plugins.kubernetes.util.GraphOperations.buildTopologyStacks;
+import static org.opentosca.toscana.plugins.kubernetes.util.GraphOperations.determineTopLevelNodes;
 
 public class CloudFoundryLifecycle extends AbstractLifecycle {
 
+    private final EffectiveModel model;
     private Provider provider;
     private Connection connection;
     private List<Application> applications;
-
-    public CloudFoundryLifecycle(TransformationContext context) throws IOException {
-        super(context);
-    }
-
-    @Override
-    public boolean checkModel() {
-        //throw new UnsupportedOperationException();
-        return true;
-    }
-
-    @Override
-    public void prepare() throws NoSuchPropertyException {
-
-        PrepareVisitor prepareVisitor = new PrepareVisitor(logger);
-        for (RootNode node : context.getModel().getNodes()) {
-            node.accept(prepareVisitor);
-        }
-
+    private Map<String, KubernetesNodeContainer> nodes = new HashMap<>();
+    private Set<KubernetesNodeContainer> computeNodes = new HashSet<>();
+    private Set<NodeStack> stacks = new HashSet<>();
+    private Map<RootNode, Application> nodeApplicationMap = new HashMap<>();
+    private Graph<RootNode, RootRelationship> graph;
+    private List<Application> filledApplications;
+        model = context.getModel();
         PropertyInstance properties = context.getInputs();
 
+        logger.debug("Checking for Properties");
         if (!properties.isEmpty()) {
             String username = properties.get(CF_PROPERTY_KEY_USERNAME).orElse(null);
             String password = properties.get(CF_PROPERTY_KEY_PASSWORD).orElse(null);
@@ -70,14 +72,71 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
                 provider.setOfferedService(connection.getServices());
             }
         }
+        Set<RootNode> nodes = model.getNodes();
+        boolean nodeTypeCheck = checkNodeTypes(nodes);
+        boolean osTypeCheck = checkOsType(nodes);
+        return nodeTypeCheck && osTypeCheck;
+    }
+
+    /**
+     Checks if the model contains a unsupported os
+
+     @param nodes - Nodes to be checked
+     @return boolean - true if successful, false otherwise
+     */
+    private boolean checkOsType(Set<RootNode> nodes) {
+        }
+        return true;
+    }
+
+    /**
+     Checks if there are any unsupported node types
+
+     @param nodes - Nodes to be checked
+     @return boolean - true if successful, false otherwise
+     */
+    private boolean checkNodeTypes(Set<RootNode> nodes) {
+        NodeTypeCheck nodeTypeCheck = new NodeTypeCheck();
+        for (RootNode node : nodes)
+            try {
+            } catch (UnsupportedOperationException e) {
+                return false;
+            }
+        logger.debug("Collecting Compute Nodes in topology");
+        ComputeNodeFindingVisitor computeFinder = new ComputeNodeFindingVisitor();
+        model.getNodes().forEach(e -> {
+            e.accept(computeFinder);
+            KubernetesNodeContainer container = new KubernetesNodeContainer(e);
+            nodes.put(e.getEntityName(), container);
+        });
+        computeFinder.getComputeNodes().forEach(e -> computeNodes.add(nodes.get(e.getEntityName())));
+
+        logger.debug("Finding top Level Nodes");
+        graph = model.getTopology();
+        Set<RootNode> topLevelNodes = determineTopLevelNodes(
+            context.getModel(),
+            computeFinder.getComputeNodes().stream().map(Compute.class::cast).collect(Collectors.toList()),
+            e -> nodes.get(e.getEntityName()).activateParentComputeNode()
+        );
+
+        logger.debug("Building complete Topology stacks");
+        this.stacks.addAll(buildTopologyStacks(model, topLevelNodes, nodes));
 
         //TODO: check how many different applications there are and fill list with them
         //probably there must be a combination of application and set of nodes
         applications = new ArrayList<>();
-        Application myApp = new Application(1, context);
-        myApp.setProvider(provider);
-        myApp.setConnection(connection);
-        applications.add(myApp);
+        int i = 1;
+
+        for (NodeStack stack : stacks) {
+            i++;
+            myApp.setProvider(provider);
+            myApp.setConnection(connection);
+
+            myApp.setName(stack.getStackName());
+            myApp.addStack(stack);
+
+            applications.add(myApp);
+        }
     }
 
     private boolean isNotNull(String... elements) {
@@ -91,25 +150,15 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
 
     @Override
     public void transform() {
-        Application myApp = new Application(1, context);
         PluginFileAccess fileAccess = context.getPluginFileAccess();
-        Set<RootNode> nodes = context.getModel().getNodes();
-        List<Application> filledApplications = new ArrayList<>();
-        for (Application application : applications) {
-            NodeVisitor visitor = new NodeVisitor(application);
-            for (VisitableNode node : nodes) {
-                node.accept(visitor);
-            }
 
-            Application filledApplication = visitor.getFilledApp();
-            filledApplications.add(filledApplication);
-        }
+        fillApplications();
 
         try {
             FileCreator fileCreator = new FileCreator(fileAccess, filledApplications, context);
             fileCreator.createFiles();
         } catch (IOException | JSONException e) {
-            throw new TransformationFailureException("Something went wrong while creating the output files", e);
+            e.printStackTrace();
         }
     }
 
@@ -117,5 +166,26 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
     public void cleanup() {
         //throw new UnsupportedOperationException();
     }
-}
+
+    /**
+     Fills the Applications with the sorted Node structure
+     */
+    public void fillApplications() {
+        filledApplications = new ArrayList<>();
+
+        for (Application app : applications) {
+            for (int i = 0; i < app.getStack().getNodes().size(); i++) {
+                nodeApplicationMap.put(app.getStack().getNodes().get(i).getNode(), app);
+            }
+        }
+
+            NodeVisitor visitor = new NodeVisitor(application, nodeApplicationMap, graph, logger);
+
+            for (KubernetesNodeContainer s : application.getStack().getNodes()) {
+                s.getNode().accept(visitor);
+
+            filledApplications.add(filledApplication);
+    public List<Application> getFilledApplications() {
+        return filledApplications;
+}   
 
