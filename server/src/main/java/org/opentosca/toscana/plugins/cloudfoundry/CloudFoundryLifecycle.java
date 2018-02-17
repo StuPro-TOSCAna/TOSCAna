@@ -1,10 +1,12 @@
 package org.opentosca.toscana.plugins.cloudfoundry;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -21,7 +23,9 @@ import org.opentosca.toscana.plugins.cloudfoundry.application.Application;
 import org.opentosca.toscana.plugins.cloudfoundry.application.Provider;
 import org.opentosca.toscana.plugins.cloudfoundry.client.Connection;
 import org.opentosca.toscana.plugins.cloudfoundry.filecreator.FileCreator;
+import org.opentosca.toscana.plugins.cloudfoundry.visitor.NodeTypeCheck;
 import org.opentosca.toscana.plugins.cloudfoundry.visitor.NodeVisitor;
+import org.opentosca.toscana.plugins.cloudfoundry.visitor.OSCheck;
 import org.opentosca.toscana.plugins.kubernetes.exceptions.UnsupportedOsTypeException;
 import org.opentosca.toscana.plugins.kubernetes.util.KubernetesNodeContainer;
 import org.opentosca.toscana.plugins.kubernetes.util.NodeStack;
@@ -51,16 +55,20 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
     private Map<RootNode, Application> nodeApplicationMap = new HashMap<>();
     private Graph<RootNode, RootRelationship> graph;
     private List<Application> filledApplications;
+
+    public CloudFoundryLifecycle(TransformationContext context) throws IOException, NoSuchPropertyException {
+        super(context);
         model = context.getModel();
         PropertyInstance properties = context.getInputs();
 
         logger.debug("Checking for Properties");
+
         if (!properties.isEmpty()) {
-            String username = properties.get(CF_PROPERTY_KEY_USERNAME).orElse(null);
-            String password = properties.get(CF_PROPERTY_KEY_PASSWORD).orElse(null);
-            String organization = properties.get(CF_PROPERTY_KEY_ORGANIZATION).orElse(null);
-            String space = properties.get(CF_PROPERTY_KEY_SPACE).orElse(null);
-            String apiHost = properties.get(CF_PROPERTY_KEY_API).orElse(null);
+            String username = properties.getOrThrow(CF_PROPERTY_KEY_USERNAME);
+            String password = properties.getOrThrow(CF_PROPERTY_KEY_PASSWORD);
+            String organization = properties.getOrThrow(CF_PROPERTY_KEY_ORGANIZATION);
+            String space = properties.getOrThrow(CF_PROPERTY_KEY_SPACE);
+            String apiHost = properties.getOrThrow(CF_PROPERTY_KEY_API);
 
             if (isNotNull(username, password, organization, space, apiHost)) {
 
@@ -72,6 +80,10 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
                 provider.setOfferedService(connection.getServices());
             }
         }
+    }
+
+    @Override
+    public boolean checkModel() {
         Set<RootNode> nodes = model.getNodes();
         boolean nodeTypeCheck = checkNodeTypes(nodes);
         boolean osTypeCheck = checkOsType(nodes);
@@ -85,6 +97,12 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
      @return boolean - true if successful, false otherwise
      */
     private boolean checkOsType(Set<RootNode> nodes) {
+        OSCheck osCheck = new OSCheck(logger);
+        try {
+            nodes.forEach(node -> node.accept(osCheck));
+        } catch (UnsupportedOsTypeException e) {
+            logger.error("Check OS Type finished with failure");
+            return false;
         }
         return true;
     }
@@ -99,9 +117,17 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
         NodeTypeCheck nodeTypeCheck = new NodeTypeCheck();
         for (RootNode node : nodes)
             try {
+                node.accept(nodeTypeCheck);
             } catch (UnsupportedOperationException e) {
+                logger.warn("Transformation of the type {} is not supported yet by the Cloud Foundry plugin"
+                    , node.getClass().getName(), e);
                 return false;
             }
+        return true;
+    }
+
+    @Override
+    public void prepare() {
         logger.debug("Collecting Compute Nodes in topology");
         ComputeNodeFindingVisitor computeFinder = new ComputeNodeFindingVisitor();
         model.getNodes().forEach(e -> {
@@ -128,6 +154,7 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
         int i = 1;
 
         for (NodeStack stack : stacks) {
+            Application myApp = new Application(i, context);
             i++;
             myApp.setProvider(provider);
             myApp.setConnection(connection);
@@ -157,6 +184,8 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
         try {
             FileCreator fileCreator = new FileCreator(fileAccess, filledApplications, context);
             fileCreator.createFiles();
+        } catch (FileNotFoundException f) {
+            throw new TransformationFailureException("A file which is declared in the template could not be found", f);
         } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
@@ -179,13 +208,20 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
             }
         }
 
+        for (Application application : applications) {
             NodeVisitor visitor = new NodeVisitor(application, nodeApplicationMap, graph, logger);
 
             for (KubernetesNodeContainer s : application.getStack().getNodes()) {
                 s.getNode().accept(visitor);
+            }
 
+            Application filledApplication = visitor.getFilledApp();
             filledApplications.add(filledApplication);
+        }
+    }
+
     public List<Application> getFilledApplications() {
         return filledApplications;
+    }
 }   
 

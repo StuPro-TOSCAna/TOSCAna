@@ -16,8 +16,8 @@ import org.cloudfoundry.operations.services.ServiceOffering;
 import org.cloudfoundry.operations.services.ServicePlan;
 import org.slf4j.Logger;
 
-import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.CLI_CREATE_SERVICE;
-import static org.opentosca.toscana.plugins.cloudfoundry.FileCreator.CLI_CREATE_SERVICE_DEFAULT;
+import static org.opentosca.toscana.plugins.cloudfoundry.filecreator.FileCreator.CLI_CREATE_SERVICE;
+import static org.opentosca.toscana.plugins.cloudfoundry.filecreator.FileCreator.CLI_CREATE_SERVICE_DEFAULT;
 
 /**
  this class provides methods to handle the services
