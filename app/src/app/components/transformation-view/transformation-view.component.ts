@@ -7,7 +7,7 @@ import {Transformation} from '../../model/transformation';
 import 'rxjs/add/observable/fromPromise';
 import 'rxjs/add/operator/takeWhile';
 import {RouteHandler} from '../../handler/route/route.service';
-import {InputWrap, LifecyclePhase, TransformationResponse} from '../../api';
+import {InputWrap, LifecyclePhase, OutputWrap, TransformationResponse} from '../../api';
 import {environment} from '../../../environments/environment';
 import {isNullOrUndefined} from 'util';
 import {Observable} from 'rxjs/Observable';
@@ -31,7 +31,7 @@ export class TransformationViewComponent implements OnInit, OnDestroy {
     url = '';
     state = 'log';
     private inputs: InputWrap[];
-    private inputOrOutputs: InputWrap[];
+    private outputs: Array<OutputWrap> = [];
 
     constructor(private routeHandler: RouteHandler, private route: ActivatedRoute,
                 private transformationProvider: TransformationsProvider, public platformsProvider: PlatformsProvider) {
@@ -109,15 +109,11 @@ export class TransformationViewComponent implements OnInit, OnDestroy {
         return '-';
     }
 
-    changeState(state: string) {
-        this.state = state;
-        if (state === 'inputs') {
-            this.inputOrOutputs = this.inputs;
-        } else if (state === 'outputs') {
-            this.transformationProvider.getTransformationOutputs(this.csarId, this.platform).subscribe(data => {
-                this.inputOrOutputs = data.outputs;
-            });
-        }
+    changeState() {
+        this.state = 'outputs';
+        this.transformationProvider.getTransformationOutputs(this.csarId, this.platform).subscribe(data => {
+            this.outputs = data.outputs;
+        });
     }
 
     ngOnDestroy() {

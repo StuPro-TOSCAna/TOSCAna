@@ -21,14 +21,16 @@
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="javascript:void(0)" [class.active]="state === 'inputs'" (click)="changeState('inputs')">Inputs</a>
+            <a class="nav-link" href="javascript:void(0)" [class.active]="state === 'inputs'"
+               (click)="state = 'inputs'">Inputs</a>
         </li>
         <li *ngIf="transformationDone" class="nav-item">
-            <a class="nav-link" href="javascript:void(0)" [class.active]="state === 'outputs'" (click)="changeState('outputs')">Outputs</a>
+            <a class="nav-link" href="javascript:void(0)" [class.active]="state === 'outputs'"
+               (click)="changeState()">Outputs</a>
         </li>
     </ul>
-    <div *ngIf="state === 'inputs' || state === 'outputs'">
-        <table class="table table-striped" *ngIf="inputOrOutputs.length > 0">
+    <div *ngIf="state === 'inputs'">
+        <table class="table table-striped" *ngIf="inputs.length > 0">
             <thead>
             <tr>
                 <th scope="col">key</th>
@@ -37,7 +39,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr *ngFor="let item of inputOrOutputs; let n=index">
+            <tr *ngFor="let item of inputs; let n=index">
                 <td>{{item.key}}</td>
                 <td>
                     {{getValue(item.value)}}
@@ -50,6 +52,31 @@
         </table>
 
     </div>
+
+    <div *ngIf="state === 'outputs'">
+        <table class="table table-striped" *ngIf="outputs.length > 0">
+            <thead>
+            <tr>
+                <th scope="col">key</th>
+                <th scope="col">value</th>
+                <th scope="col">info</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let item of outputs; let n=index">
+                <td>{{item.key}}</td>
+                <td>
+                    {{getValue(item.value)}}
+                </td>
+                <td>
+                    <i class="fa fa-info-circle" [tooltip]="item.description" placement="left" container="body"> </i>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+    </div>
+
 
     <app-log *ngIf="state === 'log'" #Log class="log" type="transformation" [csarId]="csarId"
              [platformId]="platform"></app-log>
