@@ -7,6 +7,7 @@ import {Csar} from '../../model/csar';
 import {RouteHandler} from '../../handler/route/route.service';
 import {PlatformsProvider} from '../../providers/platforms/platforms.provider';
 import {Transformation} from '../../model/transformation';
+import {isNullOrUndefined} from 'util';
 import StateEnum = TransformationResponse.StateEnum;
 import TypeEnum = InputWrap.TypeEnum;
 
@@ -70,7 +71,10 @@ export class InputComponent implements OnInit {
             item.valid = false;
         }
         this.checkIfEverythingIsValid();
-        console.log(this.everythingValid);
+    }
+
+    hasTypeBoolean(item: InputWrap) {
+        return item.type === TypeEnum.Boolean;
     }
 
     getClass(item: InputWrap) {
@@ -81,17 +85,12 @@ export class InputComponent implements OnInit {
         await this.transformationsProvider.setTransformationProperties(this.csarId, this.selectedPlatform, this.inputs).then(result => {
             this.onSubmit();
         }, err => {
-            console.log(err);
             if (err.status === 406) {
-                console.log(this.inputs);
                 this.inputs = err.error.inputs;
-                console.log(this.inputs);
             }
-            console.log(err);
             this.errorMsg = true;
         });
     }
-
 
     async ngOnInit() {
         this.route.paramMap.switchMap((params: ParamMap) => {
@@ -125,6 +124,17 @@ export class InputComponent implements OnInit {
             this.csarsProvider.updateCsar(this.csar);
             this.routeHandler.openTransformation(this.csar.name, this.selectedPlatform);
         });
+    }
 
+    getDefaultValue(defaultValue: string) {
+        if (isNullOrUndefined(defaultValue)) {
+            return '';
+        } else {
+            return defaultValue;
+        }
+    }
+
+    convertAndSetBool(key: string, checked: boolean) {
+        this.inputs.find(input => input.key === key).value = String(checked);
     }
 }

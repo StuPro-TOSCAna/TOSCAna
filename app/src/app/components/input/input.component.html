@@ -16,10 +16,20 @@
         <tr *ngFor="let item of inputs; let n=index">
             <td>{{item.key}}</td>
             <td>{{item.type}}</td>
-            <td><input [value]="item.value"  (input)="change(item, $event.target.value)" name="item.key"
+            <td *ngIf="!hasTypeBoolean(item)">
+                <input [value]="item.value"
+                       [placeholder]="getDefaultValue(item.defaultValue)"
+                       (input)="change(item, $event.target.value)"
+                       name="item.key"
                        [ngClass]="{'invalid': !item.valid, 'valid':item.valid}"/>
             </td>
-        <td><i class="fa fa-info-circle"></i></td>
+            <td *ngIf="hasTypeBoolean(item)">
+                <input type="checkbox" name="item.key" id="item.key" [checked]="item.value === 'true'"
+                       (change)="convertAndSetBool(item.key, $event.target.checked)"/>
+            </td>
+            <td>
+                <i class="fa fa-info-circle" [tooltip]="item.description" placement="left" container="body"> </i>
+            </td>
         </tr>
         </tbody>
     </table>
