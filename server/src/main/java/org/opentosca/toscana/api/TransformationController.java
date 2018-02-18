@@ -832,7 +832,7 @@ public class TransformationController {
         @ApiResponse(
             code = 200,
             message = "The operation was executed successfully",
-            response = OutputsResponse.class
+            response = GetOutputsResponse.class
         ),
         @ApiResponse(
             code = 404,
