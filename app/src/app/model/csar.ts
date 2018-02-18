@@ -23,7 +23,7 @@ export class Csar {
         let valid = true;
         const validStates = [StateEnum.DONE, StateEnum.SKIPPING];
         this.phases.forEach(phase => {
-            if (!(phase.state in validStates)) {
+            if (!(validStates.indexOf(phase.state) !== -1)) {
                 valid = false;
                 return;
             }
