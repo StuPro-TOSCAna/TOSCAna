@@ -16,7 +16,7 @@ import { Link } from './link';
 export interface InputsResponse {
     links?: Array<Link>;
     /**
-     * The list of inputs associated with this transformation, if this list is empty, the transformation doesn't have any inputs to set.
+     * The list of properties associated with this transformation, if this list is empty, the transformation doesn't have any properties to set.
      */
-    inputs: Array<InputWrap>;
+    outputs: Array<InputWrap>;
 }

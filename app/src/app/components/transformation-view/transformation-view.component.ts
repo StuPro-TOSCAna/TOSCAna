@@ -71,6 +71,7 @@ export class TransformationViewComponent implements OnInit, OnDestroy {
         }).subscribe(data => {
             this.transformationDone = false;
             this.transformation = data;
+            console.log(this.transformation);
             this.transformationProvider.getTransformationInputs(this.csarId, this.platform).subscribe(inputs => {
                 this.inputs = inputs.inputs;
             });
@@ -109,14 +110,14 @@ export class TransformationViewComponent implements OnInit, OnDestroy {
     }
 
     changeState(state: string) {
+        this.state = state;
         if (state === 'inputs') {
             this.inputOrOutputs = this.inputs;
         } else if (state === 'outputs') {
             this.transformationProvider.getTransformationOutputs(this.csarId, this.platform).subscribe(data => {
-                this.inputOrOutputs = data.inputs;
+                this.inputOrOutputs = data.outputs;
             });
         }
-        this.state = state;
     }
 
     ngOnDestroy() {
