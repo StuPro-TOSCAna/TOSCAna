@@ -1,6 +1,10 @@
 <?php
-// include the credentials to connect to the db
-include_once "mysql-credentials.php";
+
+$db_host = getenv('database_host');
+$db_user = getenv('database_user');
+$db_password = getenv('database_password');
+$db_name = getenv('database_name');
+$db_port = getenv('database_port');
 
 // get task from post after task was entered in form
 $post = $_POST['task'];
@@ -80,7 +84,7 @@ function newDbConnection()
    <body>
       <h1>SimpleTaskApp</h1>
       <!-- form to enter tasks -->
-      <form class="insertTask" action="myphpapp.php" method="post">
+      <form class="insertTask" action="index.php" method="post">
          <input type="text" name="task" />
          <button type="submit" name="button">submit</button>
       </form>
