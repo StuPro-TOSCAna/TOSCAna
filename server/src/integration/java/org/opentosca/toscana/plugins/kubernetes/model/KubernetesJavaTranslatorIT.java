@@ -1,4 +1,4 @@
-package org.opentosca.toscana.plugins.kubernetes;
+package org.opentosca.toscana.plugins.kubernetes.model;
 
 import java.io.File;
 
@@ -10,8 +10,8 @@ import org.opentosca.toscana.model.EffectiveModelFactory;
 
 import org.apache.commons.io.FileUtils;
 
-public class KubernetesJavaIT extends KubernetesLampIT {
-    public KubernetesJavaIT() throws Exception {
+public class KubernetesJavaTranslatorIT extends KubernetesLampIT {
+    public KubernetesJavaTranslatorIT() throws Exception {
         super();
     }
 

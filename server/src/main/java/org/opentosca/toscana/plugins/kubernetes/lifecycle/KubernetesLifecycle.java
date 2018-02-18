@@ -17,8 +17,7 @@ import org.opentosca.toscana.plugins.kubernetes.util.KubernetesNodeContainer;
 import org.opentosca.toscana.plugins.kubernetes.util.NodeStack;
 
 public class KubernetesLifecycle extends AbstractLifecycle {
-
-    //<editor-fold desc="Field Definition">
+    
     final EffectiveModel model;
 
     Map<String, KubernetesNodeContainer> nodes = new HashMap<>();
@@ -29,21 +28,20 @@ public class KubernetesLifecycle extends AbstractLifecycle {
     private CheckHandler checkHandler;
     private PrepareHandler prepareHandler;
     private TransformHandler transformHandler;
-    //</editor-fold>
 
     public KubernetesLifecycle(TransformationContext context, BaseImageMapper mapper) throws IOException {
         super(context);
         model = context.getModel();
         //Fix failing K8s plugin test
-        boolean pushToRegistry = false;
+        boolean pushToRegistry;
         if (context.getInputs() == null) {
             pushToRegistry = false;
-            return;
+        } else {
+            pushToRegistry = Boolean.parseBoolean(
+                context.getInputs().getOrThrow(KubernetesPlugin.DOCKER_PUSH_TO_REGISTRY_PROPERTY_KEY)
+            );
         }
-        pushToRegistry = Boolean.parseBoolean(
-            context.getInputs().getOrThrow(KubernetesPlugin.DOCKER_PUSH_TO_REGISTRY_PROPERTY_KEY)
-        );
-
+        
         // Initialize Handlers
         this.checkHandler = new CheckHandler(this);
         this.prepareHandler = new PrepareHandler(this);
@@ -69,6 +67,4 @@ public class KubernetesLifecycle extends AbstractLifecycle {
     public void cleanup() {
         transformHandler.cleanup();
     }
-
-    //</editor-fold>
 }
