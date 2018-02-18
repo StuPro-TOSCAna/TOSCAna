@@ -23,6 +23,7 @@ import org.opentosca.toscana.plugins.kubernetes.model.Pod;
 import org.opentosca.toscana.plugins.kubernetes.model.RelationshipGraph;
 import org.opentosca.toscana.plugins.kubernetes.util.KubernetesNodeContainer;
 import org.opentosca.toscana.plugins.kubernetes.util.NodeStack;
+import org.opentosca.toscana.plugins.kubernetes.util.ScriptHelper;
 import org.opentosca.toscana.plugins.kubernetes.visitor.check.NodeTypeCheckVisitor;
 import org.opentosca.toscana.plugins.kubernetes.visitor.check.OsCheckNodeVisitor;
 import org.opentosca.toscana.plugins.kubernetes.visitor.util.ComputeNodeFindingVisitor;
@@ -35,6 +36,7 @@ import static org.opentosca.toscana.plugins.kubernetes.util.GraphOperations.dete
 
 public class KubernetesLifecycle extends AbstractLifecycle {
 
+    //<editor-fold desc="Field Definition">
     private final EffectiveModel model;
 
     private final BaseImageMapper baseImageMapper;
@@ -46,6 +48,7 @@ public class KubernetesLifecycle extends AbstractLifecycle {
 
     private boolean pushToRegistry = false;
     private Map<NodeStack, ImageBuilder> imageBuilders = new HashMap<>();
+    //</editor-fold>
 
     public KubernetesLifecycle(TransformationContext context, BaseImageMapper mapper) throws IOException {
         super(context);
@@ -60,7 +63,8 @@ public class KubernetesLifecycle extends AbstractLifecycle {
             context.getInputs().getOrThrow(KubernetesPlugin.DOCKER_PUSH_TO_REGISTRY_PROPERTY_KEY)
         );
     }
-
+    
+    //<editor-fold desc="Checking Phase">
     @Override
     public boolean checkModel() {
         Set<RootNode> nodes = model.getNodes();
@@ -104,9 +108,43 @@ public class KubernetesLifecycle extends AbstractLifecycle {
             }
         return true;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="Prepare Phase">
     @Override
     public void prepare() {
+        ComputeNodeFindingVisitor computeFinder = findComputeNodes();
+        Set<RootNode> topLevelNodes = findTopLevelNodes(computeFinder);
+        groupStacks(topLevelNodes);
+        updateAddresses();
+    }
+
+    private void groupStacks(Set<RootNode> topLevelNodes) {
+        logger.debug("Building complete Topology stacks");
+        this.stacks.addAll(buildTopologyStacks(model, topLevelNodes, nodes));
+
+        logger.debug("Grouping Stacks in Pods");
+        this.pods = Pod.getPods(stacks);
+    }
+
+    private void updateAddresses() {
+        logger.debug("Setting Private and Public addresses of Compute Nodes");
+        pods.forEach(e -> {
+            e.getComputeNode().setPrivateAddress(e.getServiceName());
+            e.getComputeNode().setPublicAddress(e.getServiceName());
+        });
+    }
+
+    private Set<RootNode> findTopLevelNodes(ComputeNodeFindingVisitor computeFinder) {
+        logger.debug("Finding top Level Nodes");
+        return determineTopLevelNodes(
+            context.getModel(),
+            computeFinder.getComputeNodes().stream().map(Compute.class::cast).collect(Collectors.toList()),
+            e -> nodes.get(e.getEntityName()).activateParentComputeNode()
+        );
+    }
+
+    private ComputeNodeFindingVisitor findComputeNodes() {
         logger.debug("Collecting Compute Nodes in topology");
         ComputeNodeFindingVisitor computeFinder = new ComputeNodeFindingVisitor();
         model.getNodes().forEach(e -> {
@@ -115,54 +153,18 @@ public class KubernetesLifecycle extends AbstractLifecycle {
             nodes.put(e.getEntityName(), container);
         });
         computeFinder.getComputeNodes().forEach(e -> computeNodes.add(nodes.get(e.getEntityName())));
-
-        logger.debug("Finding top Level Nodes");
-        Set<RootNode> topLevelNodes = determineTopLevelNodes(
-            context.getModel(),
-            computeFinder.getComputeNodes().stream().map(Compute.class::cast).collect(Collectors.toList()),
-            e -> nodes.get(e.getEntityName()).activateParentComputeNode()
-        );
-
-        logger.debug("Building complete Topology stacks");
-        this.stacks.addAll(buildTopologyStacks(model, topLevelNodes, nodes));
-
-        logger.debug("Grouping Stacks in Pods");
-        this.pods = Pod.getPods(stacks);
-
-        logger.debug("Setting Private and Public addresses of Compute Nodes");
-        pods.forEach(e -> {
-            e.getComputeNode().setPrivateAddress(e.getServiceName());
-            e.getComputeNode().setPublicAddress(e.getServiceName());
-        });
+        return computeFinder;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="Transform Phase">
     @Override
     public void transform() {
         logger.info("Transforming...");
         createDockerfiles();
         buildDockerImages();
         createKubernetesResources();
-    }
-
-    @Override
-    public void cleanup() {
-        removeDockerImages();
-    }
-
-    private void removeDockerImages() {
-        logger.info("Removing built Docker Images");
-
-        for (ImageBuilder builder : imageBuilders.values()) {
-            try {
-                builder.cleanup();
-            } catch (Exception e) {
-                logger.error("Docker Image Cleanup failed!", e);
-                throw new TransformationFailureException(
-                    "Transformaton Cleanup failed, while cleaning up Docker Images",
-                    e
-                );
-            }
-        }
+        writeHelperScripts();
     }
 
     /**
@@ -268,4 +270,37 @@ public class KubernetesLifecycle extends AbstractLifecycle {
             e.printStackTrace();
         }
     }
+
+    private void writeHelperScripts() {
+        logger.info("Writing Helper Scripts");
+        try {
+            ScriptHelper.copyScripts(pushToRegistry, context.getPluginFileAccess());
+        } catch (IOException e) {
+            throw new TransformationFailureException("Copying of Helper scripts failed", e);
+        }
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Cleanup Phase">
+    @Override
+    public void cleanup() {
+        removeDockerImages();
+    }
+
+    private void removeDockerImages() {
+        logger.info("Removing built Docker Images");
+
+        for (ImageBuilder builder : imageBuilders.values()) {
+            try {
+                builder.cleanup();
+            } catch (Exception e) {
+                logger.error("Docker Image Cleanup failed!", e);
+                throw new TransformationFailureException(
+                    "Transformaton Cleanup failed, while cleaning up Docker Images",
+                    e
+                );
+            }
+        }
+    }
+    //</editor-fold>
 }
