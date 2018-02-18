@@ -27,7 +27,7 @@ export class AppComponent implements OnInit {
                 if (data.transformer.running_transformations.length === 0) {
                     this.status = 'IDLING';
                 } else {
-                    this.status = 'RUNNING';
+                    this.status = 'TRANSFORMING';
                 }
                 this.memory = this.convertToGb(data.diskSpace.total - data.diskSpace.free) + '/' + this.convertToGb(data.diskSpace.total) +
                     ' GB';
