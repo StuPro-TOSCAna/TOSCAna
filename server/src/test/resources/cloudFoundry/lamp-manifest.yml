@@ -6,9 +6,9 @@ applications:
   mem_size: 1024MB
   random-route: true
   env:
-    database_user: root
-    database_name: mydb
+    database_user: cf_database_user_placeholder_my_db
+    database_name: cf_database_name_placeholder_my_db
     database_port: 3306
-    database_password: abc
+    database_password: cf_database_password_placeholder_my_db
   services:
     - my_db
