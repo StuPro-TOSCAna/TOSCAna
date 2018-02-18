@@ -18,10 +18,12 @@ export class TransformationsProvider {
     }
 
     public createNewTransformation(csarId: string, platform: string) {
-        return this.transformationsService.addTransformationUsingPOST(csarId, platform).subscribe(() => {
+        const observable = this.transformationsService.addTransformationUsingPOST(csarId, platform);
+        observable.subscribe(() => {
         }, err => {
             this.messageService.addErrorMessage('Creating a transformation failed.');
         });
+        return observable;
     }
 
     public setTransformationProperties(csarId: string, platform: string, inputs: InputWrap[]) {
