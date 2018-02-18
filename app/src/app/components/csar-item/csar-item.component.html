@@ -7,7 +7,7 @@
             <div class="name">{{csar.name}}</div>
         </div>
         <div class="actions">
-            <i (click)="newTransformation()" class="fa fa-plus-circle" aria-hidden="true"></i>
+            <i *ngIf="csar.successfulParsed()" (click)="newTransformation()" class="fa fa-plus-circle" aria-hidden="true"></i>
             <i (click)="deleteCsar()" class="fa fa-trash" aria-hidden="true"></i>
         </div>
     </div>

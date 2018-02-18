@@ -1,4 +1,4 @@
-package org.opentosca.toscana.plugins.cloudfoundry;
+package org.opentosca.toscana.plugins.cloudfoundry.filecreator;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -55,7 +55,9 @@ public class FileCreator {
 
     public FileCreator(PluginFileAccess fileAccess, List<Application> applications, TransformationContext context) {
         this.fileAccess = fileAccess;
-        this.applications = applications;
+
+        //check applications and remove dummy applications
+        this.applications = new ApplicationHandler(applications).handleApplications();
         this.logger = context.getLogger(getClass());
         this.context = context;
     }
@@ -307,9 +309,11 @@ public class FileCreator {
 
         if (!application.getAttributes().isEmpty()) {
             ArrayList<String> attributes = new ArrayList<>();
+
             for (Map.Entry<String, String> attribute : application.getAttributes().entrySet()) {
                 attributes.add(String.format("  %s: %s", attribute.getKey(), attribute.getValue()));
             }
+
             if (!application.getAttributes().containsKey(DOMAIN.getName())) {
                 attributes.add(String.format("  %s: %s", RANDOM_ROUTE.getName(), "true"));
             }

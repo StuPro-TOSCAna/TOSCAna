@@ -46,6 +46,10 @@ public class NodeStack {
         return stackNodes.size();
     }
 
+    public List<KubernetesNodeContainer> getNodes() {
+        return stackNodes;
+    }
+
     public KubernetesNodeContainer getRootNode() {
         return stackNodes.get(stackNodes.size() - 1);
     }
@@ -56,15 +60,7 @@ public class NodeStack {
         BaseImageMapper mapper
     ) throws IOException {
         Logger logger = context.getLogger(NodeStack.class);
-        ImageMappingVisitor mappingVisitor = new ImageMappingVisitor(mapper);
-        for (int i = stackNodes.size() - 1; i >= 0; i--) {
-            KubernetesNodeContainer c = stackNodes.get(i);
-            c.getNode().accept(mappingVisitor);
-        }
-
-        if (!mappingVisitor.getBaseImage().isPresent()) {
-            throw new UnsupportedOperationException("Transformation of the Stack " + this + " is not possible!");
-        }
+        ImageMappingVisitor mappingVisitor = mapToBaseImage(mapper);
         String baseImage = mappingVisitor.getBaseImage().get();
         logger.info("Determined Base Image {} for stack {}", baseImage, this);
 
@@ -78,10 +74,24 @@ public class NodeStack {
             return;
         }
         
-        DockerfileBuildingVisitor visitor = new DockerfileBuildingVisitor(baseImage, this, connectionGraph, context);
+        DockerfileBuildingVisitor visitor = 
+            new DockerfileBuildingVisitor(baseImage, this, connectionGraph, context);
         visitor.buildAndWriteDockerfile();
         this.openPorts.addAll(visitor.getPorts());
         dockerfilePath = "output/docker/" + getStackName();
+    }
+
+    private ImageMappingVisitor mapToBaseImage(BaseImageMapper mapper) {
+        ImageMappingVisitor mappingVisitor = new ImageMappingVisitor(mapper);
+        for (int i = stackNodes.size() - 1; i >= 0; i--) {
+            KubernetesNodeContainer c = stackNodes.get(i);
+            c.getNode().accept(mappingVisitor);
+        }
+
+        if (!mappingVisitor.getBaseImage().isPresent()) {
+            throw new UnsupportedOperationException("Transformation of the Stack " + this + " is not possible!");
+        }
+        return mappingVisitor;
     }
 
     public List<Port> getOpenPorts() {

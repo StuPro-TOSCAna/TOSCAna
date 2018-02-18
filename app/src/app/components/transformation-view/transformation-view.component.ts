@@ -1,14 +1,17 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, ParamMap} from '@angular/router';
 import 'rxjs/add/operator/switchMap';
 import {PlatformsProvider} from '../../providers/platforms/platforms.provider';
 import {TransformationsProvider} from '../../providers/transformations/transformations.provider';
 import {Transformation} from '../../model/transformation';
 import 'rxjs/add/observable/fromPromise';
-import {IntervalObservable} from 'rxjs/observable/IntervalObservable';
 import 'rxjs/add/operator/takeWhile';
 import {RouteHandler} from '../../handler/route/route.service';
 import {LifecyclePhase, TransformationResponse} from '../../api';
+import {environment} from '../../../environments/environment';
+import {isNullOrUndefined} from 'util';
+import {Observable} from 'rxjs/Observable';
+import 'rxjs/add/observable/interval';
 import TransformationStateEnum = TransformationResponse.StateEnum;
 import  LifecycleStateEnum = LifecyclePhase.StateEnum;
 
@@ -17,7 +20,8 @@ import  LifecycleStateEnum = LifecyclePhase.StateEnum;
     templateUrl: './transformation-view.component.html',
     styleUrls: ['./transformation-view.component.scss']
 })
-export class TransformationViewComponent implements OnInit {
+export class TransformationViewComponent implements OnInit, OnDestroy {
+    observable: Observable<number>;
     @ViewChild('Log') logView;
     transformation: Transformation;
     status: string;
@@ -52,7 +56,7 @@ export class TransformationViewComponent implements OnInit {
     }
 
     generateDownloadUrl() {
-        this.url = `http://localhost:8084/api/csars/${this.csarId}/transformations/${this.platform}/artifact`;
+        this.url = `${environment.apiUrl}/api/csars/${this.csarId}/transformations/${this.platform}/artifact`;
     }
 
 
@@ -69,7 +73,8 @@ export class TransformationViewComponent implements OnInit {
                 this.routeHandler.openInputs(this.csarId, this.platform);
             }
             this.checkTransformationstate();
-            IntervalObservable.create(1000).takeWhile(() => !this.transformationDone).subscribe(() => {
+            this.observable = Observable.interval(1000);
+            this.observable.takeWhile(() => !this.transformationDone).subscribe(() => {
                 this.transformationProvider.getTransformationByCsarAndPlatform(this.csarId, this.platform)
                     .subscribe(res => {
                         this.transformation = res;
@@ -81,7 +86,14 @@ export class TransformationViewComponent implements OnInit {
     }
 
     private checkTransformationstate() {
-        if (this.transformation.state === TransformationStateEnum.DONE || this.transformation.state === TransformationStateEnum.ERROR || this.transformation.state === TransformationStateEnum.INPUTREQUIRED) {
+        if (this.transformation.state === TransformationStateEnum.DONE || this.transformation.state === TransformationStateEnum.ERROR ||
+            this.transformation.state === TransformationStateEnum.INPUTREQUIRED) {
+            this.transformationDone = true;
+        }
+    }
+
+    ngOnDestroy() {
+        if (!isNullOrUndefined(this.observable)) {
             this.transformationDone = true;
         }
     }
