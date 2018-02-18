@@ -36,10 +36,10 @@ import static org.opentosca.toscana.plugins.cloudfoundry.application.ManifestAtt
 
 public class NodeVisitor implements StrictNodeVisitor {
 
+    private final Logger logger;
     private Application myApp;
     private Map<RootNode, Application> nodeApplicationMap;
     private Graph<RootNode, RootRelationship> topology;
-    private final Logger logger;
 
     public NodeVisitor(Application myApp, Map<RootNode, Application> nodeApplicationMap, Graph<RootNode, RootRelationship> topology, Logger logger) {
         this.myApp = myApp;
@@ -156,25 +156,23 @@ public class NodeVisitor implements StrictNodeVisitor {
 
     @Override
     public void visit(WebApplication node) {
-        logger.debug("Visit Web Application");
         myApp.setName(node.getEntityName());
-        getScripts(node);
+        getScripts(node, myApp);
         handleStandardLifecycle(node, true, myApp);
     }
 
     @Override
     public void visit(JavaRuntime node) {
-        //TODO: Implementation WIP
-        logger.debug("Visit Java Runtime");
+        logger.debug("Visit JavaRuntime");
     }
 
     @Override
     public void visit(JavaApplication node) {
-        logger.debug("Visit Java Application");
+        logger.debug("Visit JavaApplication");
         myApp.setName(node.getEntityName());
         myApp.addAttribute(ManifestAttributes.NO_ROUTE, "true");
         myApp.setEnablePathToApplication(true);
-        getScripts(node);
+        getScripts(node, myApp);
         handleStandardLifecycle(node, true, myApp);
     }
 
@@ -229,21 +227,21 @@ public class NodeVisitor implements StrictNodeVisitor {
         }
     }
 
-    private void getScripts(RootNode node) {
+    private void getScripts(RootNode node, Application application) {
         StandardLifecycle lifecycle = node.getStandardLifecycle();
         Optional<Operation> configureOptional = lifecycle.getConfigure();
 
         //get configure script
         if (configureOptional.isPresent()) {
             Optional<Artifact> configureArtifact = configureOptional.get().getArtifact();
-            configureArtifact.ifPresent(artifact -> myApp.addExecuteFile(artifact.getFilePath(), node));
+            configureArtifact.ifPresent(artifact -> application.addExecuteFile(artifact.getFilePath(), node));
         }
 
         //get create script
         Optional<Operation> createOptional = lifecycle.getCreate();
         if (createOptional.isPresent()) {
             Optional<Artifact> createArtifact = createOptional.get().getArtifact();
-            createArtifact.ifPresent(artifact -> myApp.addExecuteFile(artifact.getFilePath(), node));
+            createArtifact.ifPresent(artifact -> application.addExecuteFile(artifact.getFilePath(), node));
         }
     }
 }

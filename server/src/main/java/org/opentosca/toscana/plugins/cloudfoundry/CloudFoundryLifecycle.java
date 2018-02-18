@@ -130,6 +130,7 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
 
     @Override
     public void prepare() {
+
         logger.info("Begin preparation for transformation to Cloud Foundry.");
 
         PrepareVisitor prepareVisitor = new PrepareVisitor(logger);
@@ -187,6 +188,7 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
     @Override
     public void transform() {
         logger.info("Begin transformation to Cloud Foundry.");
+
         PluginFileAccess fileAccess = context.getPluginFileAccess();
 
         fillApplications();

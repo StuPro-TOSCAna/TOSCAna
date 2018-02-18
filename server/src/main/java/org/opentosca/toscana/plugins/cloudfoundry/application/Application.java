@@ -23,10 +23,6 @@ import static org.opentosca.toscana.plugins.cloudfoundry.filecreator.FileCreator
  */
 public class Application {
 
-    private Logger logger;
-
-    private String name;
-    private int applicationNumber;
     private final ArrayList<String> configureSqlDatabase = new ArrayList<>();
     private final Map<String, String> executeCommand = new HashMap<>();
     private final ArrayList<String> filePaths = new ArrayList<>();
@@ -35,6 +31,9 @@ public class Application {
     private final Map<String, ServiceTypes> services = new HashMap<>();
     private final ArrayList<Service> servicesMatchedToProvider = new ArrayList<>();
     private final ArrayList<String> invalidApplicationSuffixes = new ArrayList<>(Arrays.asList("sh", "sql"));
+    private Logger logger;
+    private String name;
+    private int applicationNumber;
     private Provider provider;
     private String pathToApplication;
     private String applicationSuffix;
@@ -151,12 +150,16 @@ public class Application {
         this.updateExecuteFiles();
     }
 
+    public Connection getConnection() {
+        return connection;
+    }
+
     public void setConnection(Connection connection) {
         this.connection = connection;
     }
 
-    public Connection getConnection() {
-        return connection;
+    public String getName() {
+        return name;
     }
 
     /**
@@ -167,10 +170,6 @@ public class Application {
         String clearedUpName = name.replaceAll("[:/?#@$&'()*+,;=_]", "-");
         logger.debug("Replace all occurence of forbidden signs in the application name with \"-\"");
         this.name = clearedUpName;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public Map<String, String> getEnvironmentVariables() {
@@ -253,6 +252,14 @@ public class Application {
         return applicationSuffix;
     }
 
+    private boolean isValidApplicationSuffix(String suffix) {
+        return !invalidApplicationSuffixes.contains(suffix);
+    }
+
+    public String getPathToApplication() {
+        return pathToApplication;
+    }
+
     /**
      sets the path to the main application which should be executed
      */
@@ -271,14 +278,6 @@ public class Application {
                 }
             }
         }
-    }
-
-    private boolean isValidApplicationSuffix(String suffix) {
-        return !invalidApplicationSuffixes.contains(suffix);
-    }
-
-    public String getPathToApplication() {
-        return pathToApplication;
     }
 
     /**

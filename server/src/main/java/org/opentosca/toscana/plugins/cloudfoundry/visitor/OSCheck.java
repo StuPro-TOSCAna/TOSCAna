@@ -33,7 +33,7 @@ public class OSCheck implements NodeVisitor {
         Set<Capability> capabilities = node.getCapabilities();
         OSCapCheck osCapCheck = new OSCapCheck();
         capabilities.forEach(capability -> capability.accept(osCapCheck));
-        logger.debug("Checked successfully OS types");
+        logger.debug("OS Type Check was successful");
     }
 
     private class OSCapCheck implements CapabilityVisitor {
