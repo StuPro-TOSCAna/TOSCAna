@@ -105,22 +105,18 @@ public class CloudFormationFileCreator {
      */
     private void writeFileUploadScript() throws IOException {
         List<String> filesToBeUploaded = cfnModule.getFilesToBeUploaded();
+        List<String> utilFilesToBeUploaded = cfnModule.getUtilFilesToBeUploaded();
 
         logger.debug("Checking if files need to be uploaded.");
-        if (!filesToBeUploaded.isEmpty()) {
+        if (!filesToBeUploaded.isEmpty() || !utilFilesToBeUploaded.isEmpty()) {
             logger.debug("Files to be uploaded found. Creating file upload script.");
             BashScript fileUploadScript = new BashScript(cfnModule.getFileAccess(), FILENAME_UPLOAD);
             fileUploadScript.append(createBucket());
 
             logger.debug("Adding file upload commands.");
-            filesToBeUploaded.forEach((filePath) -> {
-                String localFilePath = RELATIVE_DIRECTORY_PREFIX + filePath;
-                try {
-                    fileUploadScript.append(uploadFile(filePath, localFilePath));
-                } catch (IOException e) {
-                    throw new TransformationFailureException("Failed to add file uploads to the script.", e);
-                }
-            });
+            addFileUploadsToScript(filesToBeUploaded, fileUploadScript);
+            logger.debug("Adding util file upload commands.");
+            addFileUploadsToScript(utilFilesToBeUploaded, fileUploadScript);
         } else {
             logger.debug("No files to be uploaded found. Skipping creation of file upload script.");
         }
@@ -196,7 +192,6 @@ public class CloudFormationFileCreator {
     public void copyUtilScripts() throws IOException {
         String resourcePath = "/cloudformation/scripts/util/";
         String outputPath = "output/scripts/util/";
-        PluginFileAccess fileAccess = cfnModule.getFileAccess();
 
         //Iterate over all files in the script list
         List<String> utilScripts = IOUtils.readLines(
@@ -205,14 +200,49 @@ public class CloudFormationFileCreator {
         );
 
         logger.debug("Copying util scripts to the target artifact.");
-        for (String utilScript : utilScripts) {
-            if (!utilScript.isEmpty()) {
+        copyUtilFile(utilScripts, resourcePath, outputPath);
+    }
+
+    /**
+     Copies all needed cloudformation utility files to the target artifact.
+     Note: Theses are the files that actually need to be uploaded and accessed by EC2 instances unlike the util scripts.
+     */
+    public void copyUtilDependencies() throws IOException {
+        String resourcePath = "/cloudformation/files/util/";
+        String outputPath = "output/files/";
+
+        //Iterate over all files in the script list
+        logger.debug("Copying util files to the target artifact.");
+        copyUtilFile(cfnModule.getUtilFilesToBeUploaded(), resourcePath, outputPath);
+    }
+
+    /**
+     Adds file upload commands for all given files to the given script.
+     
+     @param files to be uploaded
+     @param script to add the file upload commands to
+     */
+    private void addFileUploadsToScript(List<String> files, BashScript script) {
+        files.forEach((filePath) -> {
+            String localFilePath = RELATIVE_DIRECTORY_PREFIX + filePath;
+            try {
+                script.append(uploadFile(filePath, localFilePath));
+            } catch (IOException e) {
+                throw new TransformationFailureException("Failed to add file uploads to the script.", e);
+            }
+        });
+    }
+    
+    public void copyUtilFile(List<String> files, String resourcePath, String outputPath) throws IOException {
+        PluginFileAccess fileAccess = cfnModule.getFileAccess();
+        for (String file : files) {
+            if (!file.isEmpty()) {
                 //Copy the file into the desired directory
-                logger.debug("Adding " + utilScript + " to the target artifact.");
+                logger.debug("Adding " + file + " to the target artifact.");
                 InputStreamReader input = new InputStreamReader(
-                    getClass().getResourceAsStream(resourcePath + utilScript)
+                    getClass().getResourceAsStream(resourcePath + file)
                 );
-                BufferedWriter output = fileAccess.access(outputPath + utilScript);
+                BufferedWriter output = fileAccess.access(outputPath + file);
                 IOUtils.copy(input, output);
                 input.close();
                 output.close();

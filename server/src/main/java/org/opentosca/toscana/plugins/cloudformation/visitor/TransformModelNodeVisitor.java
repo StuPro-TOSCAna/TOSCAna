@@ -31,6 +31,7 @@ import static org.opentosca.toscana.plugins.cloudformation.CloudFormationLifecyc
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.CONFIG_CREATE;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.CONFIG_SETS;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.CONFIG_START;
+import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.FILEPATH_NODEJS_CREATE;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.SECURITY_GROUP;
 
 /**
@@ -109,9 +110,14 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
             if (node.getPort().isPresent()) {
                 Integer databasePort = node.getPort().orElseThrow(() -> new IllegalArgumentException("Database " +
                     "port not set"));
-                securityGroup.ingress(ingress -> ingress.cidrIp("0.0.0.0/0"), "tcp", databasePort);
-            }
-            
+                Set<Compute> hostsOfConnectedTo = getHostsOfConnectedTo(node);
+                for (Compute hostOfConnectedTo : hostsOfConnectedTo) {
+                    securityGroup.ingress(ingress -> ingress.sourceSecurityGroupName(
+                        cfnModule.ref(toAlphanumerical(hostOfConnectedTo.getEntityName()) + SECURITY_GROUP)),
+                        "tcp",
+                        databasePort);
+                }
+            }            
         } catch (Exception e) {
             logger.error("Error while creating Database resource.");
             throw new TransformationFailureException("Failed at Database node " + node.getEntityName(), e);
@@ -244,20 +250,13 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
         try {
             Compute computeHost = getCompute(node);
             String computeHostName = toAlphanumerical(computeHost.getEntityName());
-
-            // Add package nodejs to configset
-            cfnModule.getCFNInit(computeHostName)
-                .getOrAddConfig(CONFIG_SETS, CONFIG_CREATE)
-                .putPackage(
-                    //TODO apt only if linux
-                    new CFNPackage("apt")
-                        .addPackage("nodejs")
-                        .addPackage("npm"));
             
             //handle configure
             operationHandler.handleConfigure(node, computeHostName);
             //handle start
             operationHandler.handleStart(node, computeHostName);
+            //add NodeJs create script
+            operationHandler.addCreate(FILEPATH_NODEJS_CREATE, computeHostName);            
             
             //Open port 3000
             String SecurityGroupName = computeHostName + SECURITY_GROUP;
