@@ -75,7 +75,7 @@ public class CloudFoundryLampMultiNode extends BaseTransformTest {
 
     @Override
     protected void copyArtifacts(File contentDir) throws Exception {
-        File inputDir = new File(getClass().getResource("/csars/yaml/valid/lamp-noinput").getFile());
+        File inputDir = new File(getClass().getResource("/csars/yaml/valid/lamp-multinode").getFile());
         FileUtils.copyDirectory(inputDir, contentDir);
     }
 
