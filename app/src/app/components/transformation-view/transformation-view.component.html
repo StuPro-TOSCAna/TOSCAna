@@ -16,15 +16,15 @@
     </div>
     <ul class="nav nav-tabs">
         <li class="nav-item">
-            <a class="nav-link active" [class.active]="state === 'log'" (click)="state = 'log'">
+            <a class="nav-link" href="javascript:void(0)" [class.active]="state === 'log'" (click)="state = 'log'">
                 Log
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" [class.active]="state === 'inputs'" (click)="changeState('inputs')">Inputs</a>
+            <a class="nav-link" href="javascript:void(0)" [class.active]="state === 'inputs'" (click)="changeState('inputs')">Inputs</a>
         </li>
         <li *ngIf="transformationDone" class="nav-item">
-            <a class="nav-link" [class.active]="state === 'outputs'" (click)="changeState('outputs')">Outputs</a>
+            <a class="nav-link" href="javascript:void(0)" [class.active]="state === 'outputs'" (click)="changeState('outputs')">Outputs</a>
         </li>
     </ul>
     <div *ngIf="state === 'inputs' || state === 'outputs'">
