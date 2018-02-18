@@ -7,7 +7,7 @@ import org.opentosca.toscana.plugins.kubernetes.exceptions.UnsupportedOsTypeExce
 import org.opentosca.toscana.plugins.kubernetes.visitor.check.NodeTypeCheckVisitor;
 import org.opentosca.toscana.plugins.kubernetes.visitor.check.OsCheckNodeVisitor;
 
-public class CheckHandler extends LifecycleHandler {
+class CheckHandler extends LifecycleHandler {
 
     CheckHandler(KubernetesLifecycle lifecycle) {
         super(lifecycle);

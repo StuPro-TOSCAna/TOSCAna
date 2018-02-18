@@ -17,10 +17,10 @@ import org.opentosca.toscana.plugins.util.TransformationFailureException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-public class TransformHandler extends LifecycleHandler {
-    
+class TransformHandler extends LifecycleHandler {
+
     private final BaseImageMapper baseImageMapper;
-    private final boolean pushToRegistry;    
+    private final boolean pushToRegistry;
     private final Map<NodeStack, ImageBuilder> imageBuilders = new HashMap<>();
 
     TransformHandler(

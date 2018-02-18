@@ -25,7 +25,7 @@ public class NodeStack {
     private String dockerImageTag = null;
 
     private boolean requiresBuilding = true;
-    
+
     private List<Integer> openPorts = new ArrayList<>();
 
     public NodeStack(List<KubernetesNodeContainer> stackNodes) {
@@ -67,14 +67,14 @@ public class NodeStack {
         if (!mappingVisitor.containerRequiresBuilding()) {
             this.dockerImageTag = baseImage;
             this.requiresBuilding = false;
-            
+
             //TODO (IMPORTANT) this is only Proof of concept (add port detection later)
             this.openPorts.add(80);
-            
+
             return;
         }
-        
-        DockerfileBuildingVisitor visitor = 
+
+        DockerfileBuildingVisitor visitor =
             new DockerfileBuildingVisitor(baseImage, this, connectionGraph, context);
         visitor.buildAndWriteDockerfile();
         this.openPorts.addAll(visitor.getPorts());
@@ -122,7 +122,7 @@ public class NodeStack {
         return (Compute) this.stackNodes.stream().filter(e -> e.getNode() instanceof Compute)
             .findFirst().orElseThrow(IllegalArgumentException::new).getNode();
     }
-    
+
     public boolean hasNode(RootNode node) {
         return stackNodes.stream().filter(e -> e.getNode().equals(node)).count() == 1;
     }

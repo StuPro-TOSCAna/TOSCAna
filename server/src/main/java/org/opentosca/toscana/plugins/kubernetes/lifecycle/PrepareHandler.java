@@ -12,8 +12,8 @@ import org.opentosca.toscana.plugins.kubernetes.visitor.util.ComputeNodeFindingV
 import static org.opentosca.toscana.plugins.kubernetes.util.GraphOperations.buildTopologyStacks;
 import static org.opentosca.toscana.plugins.kubernetes.util.GraphOperations.determineTopLevelNodes;
 
-public class PrepareHandler extends LifecycleHandler {
-    
+class PrepareHandler extends LifecycleHandler {
+
     PrepareHandler(KubernetesLifecycle lifecycle) {
         super(lifecycle);
     }

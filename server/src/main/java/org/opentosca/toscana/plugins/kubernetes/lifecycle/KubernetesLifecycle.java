@@ -16,15 +16,15 @@ import org.opentosca.toscana.plugins.kubernetes.model.transform.Pod;
 import org.opentosca.toscana.plugins.kubernetes.util.KubernetesNodeContainer;
 import org.opentosca.toscana.plugins.kubernetes.util.NodeStack;
 
-public class KubernetesLifecycle extends AbstractLifecycle {
-    
-    final EffectiveModel model;
+public final class KubernetesLifecycle extends AbstractLifecycle {
 
-    Map<String, KubernetesNodeContainer> nodes = new HashMap<>();
-    Set<KubernetesNodeContainer> computeNodes = new HashSet<>();
-    Set<NodeStack> stacks = new HashSet<>();
-    List<Pod> pods = null;
-    
+    protected final EffectiveModel model;
+
+    protected Map<String, KubernetesNodeContainer> nodes = new HashMap<>();
+    protected Set<KubernetesNodeContainer> computeNodes = new HashSet<>();
+    protected Set<NodeStack> stacks = new HashSet<>();
+    protected List<Pod> pods = null;
+
     private CheckHandler checkHandler;
     private PrepareHandler prepareHandler;
     private TransformHandler transformHandler;
@@ -41,7 +41,7 @@ public class KubernetesLifecycle extends AbstractLifecycle {
                 context.getInputs().getOrThrow(KubernetesPlugin.DOCKER_PUSH_TO_REGISTRY_PROPERTY_KEY)
             );
         }
-        
+
         // Initialize Handlers
         this.checkHandler = new CheckHandler(this);
         this.prepareHandler = new PrepareHandler(this);

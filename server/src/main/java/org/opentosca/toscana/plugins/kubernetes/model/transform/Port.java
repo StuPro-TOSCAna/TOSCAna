@@ -20,7 +20,7 @@ public class Port {
 
     public String getName() {
         String name = namePrefix + "-" + port;
-        
+
         //Simplify the name if its bigger than 15 Chars
         if (name.length() >= 15) {
             StringBuilder builder = new StringBuilder();
@@ -33,7 +33,7 @@ public class Port {
             builder.append("-").append(port);
             name = builder.toString();
         }
-        
+
         return name;
     }
 
