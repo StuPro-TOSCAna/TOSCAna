@@ -104,13 +104,14 @@ export class CsarProvider {
         this.dataStore.csars.forEach((c, i) => {
             if (c.name === csar.name) {
                 this.dataStore.csars[i] = csar;
+                return;
             }
             this.updateSubject();
         });
     }
 
     addEmptyTransformationToCsar(csarId, platform: string) {
-        const res = this.dataStore.csars.find(csar => csar.name = csarId);
+        const res = this.dataStore.csars.find(csar => csar.name === csarId);
         const fullName = this.platformsProvider.getFullPlatformName(platform);
         res.addTransformation(platform, fullName);
         this.updateSubject();
