@@ -12,8 +12,8 @@ import {IntervalObservable} from 'rxjs/observable/IntervalObservable';
     styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-    status = 'RUNNING';
-    memory = '6GB/10GB';
+    status = '';
+    memory = '';
     csars: Csar[] = [];
     listNotEmpty = false;
 
