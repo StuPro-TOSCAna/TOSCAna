@@ -81,7 +81,7 @@ topology_template:
         Standard:
           start:
             inputs:
-              database_host: { get_attribute: [ server, private_address ] }
+              database_host: { get_attribute: [ db_server, private_address ] }
               database_user: { get_property: [ my_db,  user ] }
               database_password: { get_property: [ my_db, password ] }
               database_name: { get_property: [ my_db, name ] }
