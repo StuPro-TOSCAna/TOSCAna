@@ -14,6 +14,7 @@ import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/observable/interval';
 import TransformationStateEnum = TransformationResponse.StateEnum;
 import  LifecycleStateEnum = LifecyclePhase.StateEnum;
+import {CsarProvider} from '../../providers/csar/csar.provider';
 
 @Component({
     selector: 'app-transformation-view',
@@ -33,7 +34,7 @@ export class TransformationViewComponent implements OnInit, OnDestroy {
     private inputs: InputWrap[];
     private outputs: Array<OutputWrap> = [];
 
-    constructor(private routeHandler: RouteHandler, private route: ActivatedRoute,
+    constructor(private csarProvider: CsarProvider, private routeHandler: RouteHandler, private route: ActivatedRoute,
                 private transformationProvider: TransformationsProvider, public platformsProvider: PlatformsProvider) {
     }
 
@@ -93,6 +94,7 @@ export class TransformationViewComponent implements OnInit, OnDestroy {
     }
 
     private checkTransformationstate() {
+        this.csarProvider.updateTransformationState(this.csarId, this.transformation.platform, this.transformation.state);
         if (this.transformation.state === TransformationStateEnum.DONE || this.transformation.state === TransformationStateEnum.ERROR ||
             this.transformation.state === TransformationStateEnum.INPUTREQUIRED) {
             this.transformationDone = true;
