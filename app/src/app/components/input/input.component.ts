@@ -8,6 +8,7 @@ import {RouteHandler} from '../../handler/route/route.service';
 import {PlatformsProvider} from '../../providers/platforms/platforms.provider';
 import {Transformation} from '../../model/transformation';
 import {isNullOrUndefined} from 'util';
+import {MessageService} from '../../providers/message/message.service';
 import StateEnum = TransformationResponse.StateEnum;
 import TypeEnum = InputWrap.TypeEnum;
 
@@ -26,7 +27,8 @@ export class InputComponent implements OnInit {
     transformation: Transformation;
     everythingValid = true;
 
-    constructor(private routeHandler: RouteHandler, private transformationsProvider: TransformationsProvider,
+    constructor(private messageService: MessageService, private routeHandler: RouteHandler,
+                private transformationsProvider: TransformationsProvider,
                 private csarsProvider: CsarProvider,
                 private platformsProvider: PlatformsProvider,
                 private route: ActivatedRoute) {
@@ -105,7 +107,7 @@ export class InputComponent implements OnInit {
         }).subscribe(data => {
             this.inputs = data.inputs;
             this.checkIfEverythingIsValid();
-        }, err => console.log(err));
+        }, err => this.messageService.addErrorMessage('Loading the inputs failed.'));
     }
 
     private checkIfEverythingIsValid() {

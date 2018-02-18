@@ -12,6 +12,7 @@ import {environment} from '../../../environments/environment';
 import {isNullOrUndefined} from 'util';
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/observable/interval';
+import {MessageService} from '../../providers/message/message.service';
 import TransformationStateEnum = TransformationResponse.StateEnum;
 import  LifecycleStateEnum = LifecyclePhase.StateEnum;
 
@@ -30,7 +31,7 @@ export class TransformationViewComponent implements OnInit, OnDestroy {
     transformationDone = false;
     url = '';
 
-    constructor(private routeHandler: RouteHandler, private route: ActivatedRoute,
+    constructor(private messageService: MessageService, private routeHandler: RouteHandler, private route: ActivatedRoute,
                 private transformationProvider: TransformationsProvider, public platformsProvider: PlatformsProvider) {
     }
 
@@ -82,7 +83,7 @@ export class TransformationViewComponent implements OnInit, OnDestroy {
                         this.logView.refresh();
                     });
             });
-        });
+        }, err => this.messageService.addErrorMessage('Loading the transformation failed.'));
     }
 
     private checkTransformationstate() {

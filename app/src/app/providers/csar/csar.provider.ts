@@ -33,6 +33,9 @@ export class CsarProvider {
             let csar = this.dataStore.csars.find(item => item.name === csarId);
             this.dataStore.csars.splice(this.dataStore.csars.indexOf(csar), 1);
             this.updateSubject();
+            this.messageService.addSuccessMessage('CSAR successfully deleted.');
+        }, err => {
+            this.messageService.addErrorMessage('CSAR deletion went wrong.');
         });
     }
 
@@ -58,7 +61,7 @@ export class CsarProvider {
                     this.updateSubject();
                     this.loading = true;
                 });
-            }, err => console.log(err));
+            }, err => this.messageService.addErrorMessage('Loading the CSARs went wrong.'));
         }
     }
 
@@ -96,7 +99,7 @@ export class CsarProvider {
             this.updateSubject();
             console.log(csar);
         }, error => {
-            this.messageService.add(new ErrorMessage('fail'));
+            this.messageService.add(new ErrorMessage('CSAR upload failed.'));
         });
     }
 
@@ -131,6 +134,8 @@ export class CsarProvider {
         return this.csarService.getCSARInfoUsingGET(csarId).map(async data => {
             let res = await this.createCsarWithTransformations([data]);
             return res[0];
+        }, err => {
+            this.messageService.addErrorMessage(`Loading the csar with the id "${csarId}" failed.`);
         });
     }
 
