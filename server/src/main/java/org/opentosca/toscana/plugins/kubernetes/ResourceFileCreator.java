@@ -3,9 +3,9 @@ package org.opentosca.toscana.plugins.kubernetes;
 import java.util.Collection;
 import java.util.HashMap;
 
-import org.opentosca.toscana.plugins.kubernetes.model.Pod;
-import org.opentosca.toscana.plugins.kubernetes.model.ResourceDeployment;
-import org.opentosca.toscana.plugins.kubernetes.model.ResourceService;
+import org.opentosca.toscana.plugins.kubernetes.model.transform.Pod;
+import org.opentosca.toscana.plugins.kubernetes.model.kuberesource.ResourceDeployment;
+import org.opentosca.toscana.plugins.kubernetes.model.kuberesource.ResourceService;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 

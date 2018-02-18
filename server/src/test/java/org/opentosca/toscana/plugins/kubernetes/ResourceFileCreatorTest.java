@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.opentosca.toscana.core.BaseUnitTest;
-import org.opentosca.toscana.plugins.kubernetes.model.Pod;
+import org.opentosca.toscana.plugins.kubernetes.model.transform.Pod;
 import org.opentosca.toscana.plugins.kubernetes.model.TestNodeStacks;
 
 import com.fasterxml.jackson.core.JsonProcessingException;

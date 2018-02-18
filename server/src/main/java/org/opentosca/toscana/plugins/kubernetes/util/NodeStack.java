@@ -11,8 +11,8 @@ import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.plugins.kubernetes.docker.mapper.BaseImageMapper;
-import org.opentosca.toscana.plugins.kubernetes.model.Port;
-import org.opentosca.toscana.plugins.kubernetes.model.RelationshipGraph;
+import org.opentosca.toscana.plugins.kubernetes.model.transform.Port;
+import org.opentosca.toscana.plugins.kubernetes.model.transform.RelationshipGraph;
 import org.opentosca.toscana.plugins.kubernetes.visitor.imgtransform.DockerfileBuildingVisitor;
 import org.opentosca.toscana.plugins.kubernetes.visitor.imgtransform.ImageMappingVisitor;
 
