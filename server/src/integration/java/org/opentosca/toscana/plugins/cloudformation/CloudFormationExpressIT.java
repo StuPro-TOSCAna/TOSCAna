@@ -36,6 +36,7 @@ public class CloudFormationExpressIT extends BaseTransformTest {
 
     @Override
     protected void onSuccess(File outputDir) {
+        // noop
     }
 
     @Override
