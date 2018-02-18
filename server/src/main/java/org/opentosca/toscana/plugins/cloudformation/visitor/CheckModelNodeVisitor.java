@@ -2,8 +2,6 @@ package org.opentosca.toscana.plugins.cloudformation.visitor;
 
 import java.util.List;
 
-import javax.xml.crypto.Data;
-
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.model.capability.OsCapability;
 import org.opentosca.toscana.model.node.Apache;

@@ -173,7 +173,6 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
     @Override
     public void visit(Dbms node) {
         try {
-            String nodeName = toAlphanumerical(node.getEntityName());
             //get the compute where the dbms this node is hosted on, is hosted on
             Compute computeHost = getCompute(node);
             String computeHostName = toAlphanumerical(computeHost.getEntityName());
