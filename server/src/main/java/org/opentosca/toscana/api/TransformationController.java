@@ -29,6 +29,7 @@ import org.opentosca.toscana.api.model.InputWrap;
 import org.opentosca.toscana.api.model.InputsResponse;
 import org.opentosca.toscana.api.model.LogResponse;
 import org.opentosca.toscana.api.model.OutputWrap;
+import org.opentosca.toscana.api.model.OutputsResponse;
 import org.opentosca.toscana.api.model.TransformationResponse;
 import org.opentosca.toscana.core.csar.Csar;
 import org.opentosca.toscana.core.csar.CsarService;
@@ -831,7 +832,7 @@ public class TransformationController {
         @ApiResponse(
             code = 200,
             message = "The operation was executed successfully",
-            response = InputsResponse.class
+            response = OutputsResponse.class
         ),
         @ApiResponse(
             code = 404,
@@ -863,7 +864,7 @@ public class TransformationController {
         }
         List<OutputProperty> outputs = transformation.getOutputs();
         List<OutputWrap> wrappedOutputs = outputs.stream()
-            .map(o -> new OutputWrap(o))
+            .map(OutputWrap::new)
             .collect(Collectors.toList());
         return ResponseEntity.ok(new GetOutputsResponse(csarId, platformId, wrappedOutputs));
     }
