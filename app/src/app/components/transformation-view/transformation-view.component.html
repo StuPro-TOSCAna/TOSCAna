@@ -23,8 +23,8 @@
         <li class="nav-item">
             <a class="nav-link" [class.active]="state === 'inputs'" (click)="changeState('inputs')">Inputs</a>
         </li>
-        <li class="nav-item">
-        <a class="nav-link" [class.active]="state === 'outputs'" (click)="changeState('outputs')">Outputs</a>
+        <li *ngIf="transformationDone" class="nav-item">
+            <a class="nav-link" [class.active]="state === 'outputs'" (click)="changeState('outputs')">Outputs</a>
         </li>
     </ul>
     <div *ngIf="state === 'inputs' || state === 'outputs'">

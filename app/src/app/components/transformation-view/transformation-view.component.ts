@@ -30,8 +30,8 @@ export class TransformationViewComponent implements OnInit, OnDestroy {
     transformationDone = false;
     url = '';
     state = 'log';
-    private inputs: InputWrap;
-    private inputOrOutputs: InputWrap;
+    private inputs: InputWrap[];
+    private inputOrOutputs: InputWrap[];
 
     constructor(private routeHandler: RouteHandler, private route: ActivatedRoute,
                 private transformationProvider: TransformationsProvider, public platformsProvider: PlatformsProvider) {
