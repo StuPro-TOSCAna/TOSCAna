@@ -62,7 +62,7 @@ export class CsarsService {
 
     /**
      * Deletes a Existing CSAR
-     * Deletes the Resulting CSAR and its transformations (if none of them is running). If a transformation is running (in the state TRANSFORMING) the csar cannot be deleted!
+     * Deletes the Resulting CSAR and its transformations (if none of them is running). If a transformation is running (in the state TRANSFORMING) the CSAR cannot be deleted
      * @param name The unique identifier for the CSAR
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.

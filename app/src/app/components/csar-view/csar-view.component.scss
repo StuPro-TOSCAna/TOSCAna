@@ -8,6 +8,10 @@
 .app-log {
     height: 100%;
 }
+.nav-link.active {
+    color:black;
+    background-color: #e7e7e7;
+}
 .items {
     display: inline-flex;
     width: 100%;
