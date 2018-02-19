@@ -25,10 +25,6 @@ export class MessageService {
         this.dataStore.messages = [];
     }
 
-    public addSuccessMessage(message: string) {
-        this.add(new SuccessMessage(message));
-    }
-
     public addErrorMessage(message: string) {
         this.add(new ErrorMessage(message));
     }

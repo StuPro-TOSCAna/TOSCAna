@@ -18,11 +18,11 @@ export class MessageComponent implements OnInit {
         this.messageService.messages.subscribe(messages => {
             this.messages = messages;
         });
-        IntervalObservable.create(4000).subscribe(() => {
+        IntervalObservable.create(2000).subscribe(() => {
             const currentDate = Date.now();
             for (const message of this.messages) {
                 const diff = currentDate - message.timestamp;
-                if (diff >= 4000) {
+                if (diff >= 2000) {
                     this.delete(message);
                 }
             }
@@ -37,7 +37,7 @@ export class MessageComponent implements OnInit {
         if (message instanceof SuccessMessage) {
             return '#28a745';
         } else {
-            return '#dc3545';
+            return '#db3747';
         }
     }
 

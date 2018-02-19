@@ -18,7 +18,6 @@ export class AppComponent implements OnInit {
     }
 
     async ngOnInit() {
-
         await this.platformsProvider.loadPlatforms();
         await this.csarProvider.loadCsars();
         await this.csarProvider.csars.subscribe(async csars => {

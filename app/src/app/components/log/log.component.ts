@@ -65,11 +65,11 @@ export class LogComponent implements OnInit, OnChanges {
         if (this.type === 'transformation') {
             this.transformationProvider.getLogs(this.csarId, this.platformId, this.last).subscribe(data => {
                 this.updateLogs(data);
-            },err => this.messageService.addErrorMessage('Loading the Logs failed.'));
+            },err => this.messageService.addErrorMessage('Failed to load logs'));
         } else if (this.type === 'csar') {
             this.csarsProvider.getLogs(this.csarId, this.last).subscribe(data => {
                 this.updateLogs(data);
-            }, err => this.messageService.addErrorMessage('Loading the Logs failed.'));
+            }, err => this.messageService.addErrorMessage('Failed to load logs'));
         }
     }
 

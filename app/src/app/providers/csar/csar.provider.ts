@@ -33,9 +33,8 @@ export class CsarProvider {
             let csar = this.dataStore.csars.find(item => item.name === csarId);
             this.dataStore.csars.splice(this.dataStore.csars.indexOf(csar), 1);
             this.updateSubject();
-            this.messageService.addSuccessMessage('CSAR successfully deleted.');
         }, err => {
-            this.messageService.addErrorMessage('CSAR deletion went wrong.');
+            this.messageService.addErrorMessage('Failed to delete csar');
         });
     }
 
@@ -61,7 +60,7 @@ export class CsarProvider {
                     this.updateSubject();
                     this.loading = true;
                 });
-            }, err => this.messageService.addErrorMessage('Loading the CSARs went wrong.'));
+            }, err => this.messageService.addErrorMessage('Failed to load csars'));
         }
     }
 
@@ -135,7 +134,7 @@ export class CsarProvider {
             let res = await this.createCsarWithTransformations([data]);
             return res[0];
         }, err => {
-            this.messageService.addErrorMessage(`Loading the csar with the id "${csarId}" failed.`);
+            this.messageService.addErrorMessage(`Failed to load the csar "${csarId}"`);
         });
     }
 

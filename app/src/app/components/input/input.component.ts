@@ -107,7 +107,7 @@ export class InputComponent implements OnInit {
         }).subscribe(data => {
             this.inputs = data.inputs;
             this.checkIfEverythingIsValid();
-        }, err => this.messageService.addErrorMessage('Loading the inputs failed.'));
+        }, err => this.messageService.addErrorMessage('Failed to load inputs'));
     }
 
     private checkIfEverythingIsValid() {

@@ -83,7 +83,7 @@ export class TransformationViewComponent implements OnInit, OnDestroy {
                         this.logView.refresh();
                     });
             });
-        }, err => this.messageService.addErrorMessage('Loading the transformation failed.'));
+        }, err => this.messageService.addErrorMessage('Failed to load transformation'));
     }
 
     private checkTransformationstate() {

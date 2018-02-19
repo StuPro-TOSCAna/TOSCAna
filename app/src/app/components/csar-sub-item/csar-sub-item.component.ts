@@ -41,8 +41,7 @@ export class CsarSubItemComponent implements OnInit {
             this.csar.transformations.splice(pos, 1);
             this.csarProvider.updateCsar(this.csar);
             this.routeHandler.openCsar(this.csar.name);
-            this.messageService.addSuccessMessage('Transformation deletion was successful.');
-        }, err => this.messageService.addErrorMessage('Deleting the transformation went wrong.'));
+        }, err => this.messageService.addErrorMessage('Failed to delete transformation'));
     }
 
     gotoTransformation(platform: string) {

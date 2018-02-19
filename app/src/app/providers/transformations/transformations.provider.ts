@@ -21,7 +21,7 @@ export class TransformationsProvider {
         const observable = this.transformationsService.addTransformationUsingPOST(csarId, platform);
         observable.subscribe(() => {
         }, err => {
-            this.messageService.addErrorMessage('Creating a transformation failed.');
+            this.messageService.addErrorMessage('Failed to create transformation');
         });
         return observable;
     }
