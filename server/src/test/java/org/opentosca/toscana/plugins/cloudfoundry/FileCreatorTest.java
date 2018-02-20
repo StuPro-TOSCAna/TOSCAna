@@ -305,10 +305,10 @@ public class FileCreatorTest extends BaseUnitTest {
             }
         }
 
-        app.addConfigMysql("my_db/configSql.sql");
+        app.addConfigMysql(service1, "my_db/configSql.sql");
         app.addExecuteFile("my_app/configure_myphpapp.sh", webApplicationNode);
 
-        secondApp.addConfigMysql("database/config.sql");
+        secondApp.addConfigMysql(serviceName, "database/config.sql");
         secondApp.addExecuteFile("database/dbinit.sh", mysqlDatabaseNode);
 
         List<Application> applications = new ArrayList<>();

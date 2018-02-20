@@ -23,7 +23,7 @@ import static org.opentosca.toscana.plugins.cloudfoundry.filecreator.FileCreator
  */
 public class Application {
 
-    private final ArrayList<String> configureSqlDatabase = new ArrayList<>();
+    private final Map<String, String> configureSqlDatabase = new HashMap<>();
     private final Map<String, String> executeCommand = new HashMap<>();
     private final ArrayList<String> filePaths = new ArrayList<>();
     private final Map<String, String> environmentVariables = new HashMap<>();
@@ -60,9 +60,10 @@ public class Application {
      must be a .sql File
      If there is a script file to configure the database you have to use the executeFile method
 
-     @param pathToFile must be the path inside the csar. The method will create a relative path from it
+     @param serviceInstanceName is the name of the service
+     @param pathToFile          must be the path inside the csar. The method will create a relative path from it
      */
-    public void addConfigMysql(String pathToFile) {
+    public void addConfigMysql(String serviceInstanceName, String pathToFile) {
         if (pathToFile.contains("../../" + APPLICATION_FOLDER)) {
             String[] paths = pathToFile.split("../../" + APPLICATION_FOLDER + "[0-9]*/");
             pathToFile = paths[1];
@@ -70,7 +71,7 @@ public class Application {
         String relativePath = "../../" + APPLICATION_FOLDER + this.applicationNumber + "/" + pathToFile;
 
         logger.debug("Add a config mysql command to deploy script. Relative path to file is {}", relativePath);
-        configureSqlDatabase.add(relativePath);
+        configureSqlDatabase.put(serviceInstanceName, relativePath);
     }
 
     /**
@@ -126,9 +127,9 @@ public class Application {
     }
 
     /**
-     returns a list with realtive paths which should be executed with the python script configMysql
+     returns a map with realtive paths which should be executed with the python script configMysql
      */
-    public List<String> getConfigMysql() {
+    public Map<String, String> getConfigMysql() {
         return configureSqlDatabase;
     }
 

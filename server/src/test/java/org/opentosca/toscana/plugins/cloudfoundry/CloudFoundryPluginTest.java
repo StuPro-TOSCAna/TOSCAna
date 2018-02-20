@@ -79,10 +79,8 @@ public class CloudFoundryPluginTest extends BaseUnitTest {
         //  Set<RootNode> nodes = lamp.getNodes();
         when(context.getPluginFileAccess()).thenReturn(fileAccess);
 
-        paths.add("app1/my_app/myphpapp.php");
-        paths.add("app1/my_app/mysql-credentials.php");
+        paths.add("app1/my_app/index.php");
         paths.add("app1/my_app/create_myphpapp.sh");
-        paths.add("app1/my_app/configure_myphpapp.sh");
         paths.add("app1/my_db/createtable.sql");
 
         List<Application> applications = cfCycle.getFilledApplications();
@@ -120,8 +118,7 @@ public class CloudFoundryPluginTest extends BaseUnitTest {
             FILESUFFIX_DEPLOY);
         String deployScript = FileUtils.readFileToString(targetFile);
         String expectedOutput =
-            "python executeCommand.py my-app /home/vcap/app/htdocs/my_app/configure_myphpapp.sh\n" +
-                "python executeCommand.py my-app /home/vcap/app/htdocs/my_app/create_myphpapp.sh\n" +
+            "python executeCommand.py my-app /home/vcap/app/htdocs/my_app/create_myphpapp.sh\n" +
                 "python configureMysql.py ../../app1/my_db/createtable.sql\n";
 
         assertTrue(deployScript.contains(expectedOutput));

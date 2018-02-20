@@ -131,7 +131,7 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
     @Override
     public void prepare() {
 
-        logger.info("Begin preparation for transformation to Cloud Foundry.");
+        logger.info("Begin preparation for transformation to Cloud Foundry");
 
         PrepareVisitor prepareVisitor = new PrepareVisitor(logger);
         for (RootNode node : context.getModel().getNodes()) {

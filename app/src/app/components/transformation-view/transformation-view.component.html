@@ -1,30 +1,85 @@
 <div class="_container" *ngIf="transformation !== undefined">
-        <div class="view-title">{{csarId}}/{{transformation.fullName}}</div>
-        <div class="items">
-            <div class="phases">
-                <div class="phase-title">Phases</div>
-                <div class="phase" *ngFor="let item of transformation.phases"
-                     [ngClass]="{'active': isActive(item)}">
-                    <div class="name"> {{item.name}}</div>
-                    <div [style.color]="getIcon(item)" class="state"> {{item.state}}</div>
-                </div>
-            </div>
-            <div class="download">
-                <a *ngIf="transformationDone" class="btn btn-success btn-lg btn-block"
-                   href="{{url}}">Download Artifact</a>
+    <div class="view-title">{{csarId}}/{{transformation.fullName}}</div>
+    <div class="items">
+        <div class="phases">
+            <div class="phase-title">Phases</div>
+            <div class="phase" *ngFor="let item of transformation.phases"
+                 [ngClass]="{'active': isActive(item)}">
+                <div class="name"> {{item.name}}</div>
+                <div [style.color]="getIcon(item)" class="state"> {{item.state}}</div>
             </div>
         </div>
-        <ul class="nav nav-tabs">
-            <li class="nav-item">
-                <a class="nav-link active">
-                    Log
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link">Inputs</a>
-            </li>
-        </ul>
-        <app-log #Log class="log" type="transformation" [csarId]="csarId" [platformId]="platform"></app-log>
+        <div class="download">
+            <a *ngIf="transformationDone" class="btn btn-success btn-lg btn-block"
+               href="{{url}}">Download Artifact</a>
+        </div>
+    </div>
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link" href="javascript:void(0)" [class.active]="state === 'log'" (click)="state = 'log'">
+                Log
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="javascript:void(0)" [class.active]="state === 'inputs'"
+               (click)="state = 'inputs'">Inputs</a>
+        </li>
+        <li *ngIf="transformationDone" class="nav-item">
+            <a class="nav-link" href="javascript:void(0)" [class.active]="state === 'outputs'"
+               (click)="changeState()">Outputs</a>
+        </li>
+    </ul>
+    <div *ngIf="state === 'inputs'">
+        <table class="table table-striped" *ngIf="inputs.length > 0">
+            <thead>
+            <tr>
+                <th scope="col">key</th>
+                <th scope="col">value</th>
+                <th scope="col">info</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let item of inputs; let n=index">
+                <td>{{item.key}}</td>
+                <td>
+                    {{getValue(item.value)}}
+                </td>
+                <td>
+                    <i class="fa fa-info-circle" [tooltip]="item.description" placement="left" container="body"> </i>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+    <div *ngIf="state === 'outputs'">
+        <table class="table table-striped" *ngIf="outputs.length > 0">
+            <thead>
+            <tr>
+                <th scope="col">key</th>
+                <th scope="col">value</th>
+                <th scope="col">info</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let item of outputs; let n=index">
+                <td>{{item.key}}</td>
+                <td>
+                    {{getValue(item.value)}}
+                </td>
+                <td>
+                    <i class="fa fa-info-circle" [tooltip]="item.description" placement="left" container="body"> </i>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+
+    <app-log *ngIf="state === 'log'" #Log class="log" type="transformation" [csarId]="csarId"
+             [platformId]="platform"></app-log>
 </div>
 
 

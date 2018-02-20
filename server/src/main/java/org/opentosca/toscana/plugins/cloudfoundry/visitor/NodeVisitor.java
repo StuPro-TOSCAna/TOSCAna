@@ -106,7 +106,7 @@ public class NodeVisitor implements StrictNodeVisitor {
             myApp.addFilePath(path);
             logger.debug("Add artifact path {} to application", path);
             if (path.endsWith("sql")) {
-                myApp.addConfigMysql(path);
+                myApp.addConfigMysql(node.getEntityName(), path);
                 logger.info("Found a SQL script in artifact paths. Will execute it with python script in deployment phase");
             }
         }
@@ -171,6 +171,7 @@ public class NodeVisitor implements StrictNodeVisitor {
         logger.debug("Visit JavaApplication");
         myApp.setName(node.getEntityName());
         myApp.addAttribute(ManifestAttributes.NO_ROUTE, "true");
+        myApp.addAttribute(ManifestAttributes.HEALTHCHECK_TYPE, "process");
         myApp.setEnablePathToApplication(true);
         getScripts(node, myApp);
         handleStandardLifecycle(node, true, myApp);

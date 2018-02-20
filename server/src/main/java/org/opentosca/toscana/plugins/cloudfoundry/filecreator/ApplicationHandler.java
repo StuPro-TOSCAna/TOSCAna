@@ -81,7 +81,7 @@ public class ApplicationHandler {
         unrealApplication.getExecuteCommands().forEach((k, v) -> parentApplication.addExecuteFile(k, v));
 
         //copy mysql configure file
-        unrealApplication.getConfigMysql().forEach(sqlFile -> parentApplication.addConfigMysql(sqlFile));
+        unrealApplication.getConfigMysql().forEach((service, sqlFile) -> parentApplication.addConfigMysql(service, sqlFile));
 
         //copy environment variables
         unrealApplication.getEnvironmentVariables().forEach((k, v) -> parentApplication.addEnvironmentVariables(k, v));

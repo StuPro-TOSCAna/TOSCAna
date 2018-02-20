@@ -35,7 +35,7 @@ export class Csar {
         const transformation: Transformation = {
             platform: platform,
             fullName: platformFullName,
-            state: TransformationStateEnum.TRANSFORMING,
+            state: TransformationStateEnum.INPUTREQUIRED,
             phases: null
         };
         const existingTransformation = this.transformations.find(item => item.platform === platform);

@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, ParamMap} from '@angular/router';
 import 'rxjs/add/operator/switchMap';
 import {PlatformsProvider} from '../../providers/platforms/platforms.provider';
@@ -9,6 +9,7 @@ import {CsarProvider} from '../../providers/csar/csar.provider';
 import {Csar} from '../../model/csar';
 import {LifecyclePhase} from '../../api';
 import {isNullOrUndefined} from 'util';
+import {Observable} from 'rxjs/Observable';
 import StateEnum = LifecyclePhase.StateEnum;
 
 @Component({
@@ -16,7 +17,8 @@ import StateEnum = LifecyclePhase.StateEnum;
     templateUrl: './csar-view.component.html',
     styleUrls: ['./csar-view.component.scss']
 })
-export class CsarViewComponent implements OnInit {
+export class CsarViewComponent implements OnInit, OnDestroy {
+    observable: Observable<number>;
     @ViewChild('Log') logView;
     csar: Csar;
     status: string;
@@ -66,20 +68,34 @@ export class CsarViewComponent implements OnInit {
                 this.csar = csar;
                 this.routeHandler.setUpCsar(this.csarId);
             });
-            // IntervalObservable.create(1000).takeWhile(() => !this.transformationDone).subscribe(() => {
-            //     this.csarProvider.getCsarByName(this.csarId)
-            //         .subscribe(res => {
-            //             this.csar = res;
-            //             this.checkTransformationstate();
-            //             //this.logView.refresh();
-            //         });
-            // });
+            this.observable = Observable.interval(1000);
+            this.observable.takeWhile(() => !this.transformationDone).subscribe(() => {
+                this.csarProvider.getCsarByName(this.csarId)
+                    .subscribe(res => {
+                        res.then(data => {
+                            this.csar = data;
+                        });
+                        this.checkTransformationstate();
+                        this.logView.refresh();
+                    });
+            });
         });
     }
 
     private checkTransformationstate() {
-        // if (this.csar. === TransformationStateEnum.DONE || this.transformation.state === TransformationStateEnum.ERROR || this.transformation.state === TransformationStateEnum.INPUTREQUIRED) {
-        //   this.transformationDone = true;
-        //}
+        this.csarProvider.updateCsar(this.csar);
+        const invalidPhases = [StateEnum.EXECUTING, StateEnum.PENDING];
+        for (const phase of this.csar.phases) {
+            if (invalidPhases.indexOf(phase.state) !== -1) {
+                this.transformationDone = false;
+            }
+        }
+        this.transformationDone = true;
+    }
+
+    ngOnDestroy() {
+        if (!isNullOrUndefined(this.observable)) {
+            this.transformationDone = true;
+        }
     }
 }

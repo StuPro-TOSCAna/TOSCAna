@@ -65,10 +65,12 @@ public class Deployment {
      will add a python script which executes the given sql file to the database.
      Only works with a mysql service and a .sql file
 
+     @param serviceInstanceName            is the service instance name to which the config file belongs to
      @param relativePathToSQLConfigureFile must be the relative path started from the output/scripts folder to the .sql
      file
      */
-    public void configureSql(String relativePathToSQLConfigureFile) throws IOException {
+    public void configureSql(String serviceInstanceName, String relativePathToSQLConfigureFile) throws IOException {
+
         copyFile(PYTHON_CONFIGURE_SQL_FILENAME);
 
         String command = String.format("python %s %s", PYTHON_CONFIGURE_SQL_FILENAME, relativePathToSQLConfigureFile);

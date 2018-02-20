@@ -62,7 +62,7 @@ public class DeploymentTest extends BaseUnitTest {
         String pythonFilename = "configureMysql.py";
         String pathToSqlFile = "../../test/configMysql.sql";
         Deployment deployment = new Deployment(deployScript, testApp, fileAccess, context);
-        deployment.configureSql(pathToSqlFile);
+        deployment.configureSql(service ,pathToSqlFile);
         File targetFile = new File(targetDir, outputPath + pythonFilename);
         File deployFile = new File(targetDir, outputPath + "deploy_" + appName + ".sh");
         String contentDeploy = FileUtils.readFileToString(deployFile);

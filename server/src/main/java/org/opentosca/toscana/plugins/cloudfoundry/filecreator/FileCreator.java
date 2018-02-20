@@ -41,6 +41,8 @@ public class FileCreator {
     public static final String CLI_CREATE_SERVICE_DEFAULT = "cf create-service {plan} {service} ";
     public static final String CLI_CREATE_SERVICE = "cf create-service ";
     public static final String CLI_PUSH = "cf push ";
+    public static final String CLI_NO_START = " --no-start";
+    public static final String CLI_START = "cf start ";
     public static final String CLI_PATH_TO_MANIFEST = " -f ../";
     public static final String FILEPRAEFIX_DEPLOY = "deploy_";
     public static final String FILESUFFIX_DEPLOY = ".sh";
@@ -50,6 +52,7 @@ public class FileCreator {
 
     private TransformationContext context;
     private Logger logger;
+    private List<String> seenServices = new ArrayList<>();
 
     private final PluginFileAccess fileAccess;
     private List<Application> applications;
@@ -207,7 +210,7 @@ public class FileCreator {
 
         //push applications
         for (Application application : applications) {
-            deployScript.append(CLI_PUSH + application.getName() + CLI_PATH_TO_MANIFEST + MANIFEST_NAME);
+            deployScript.append(CLI_PUSH + application.getName() + CLI_PATH_TO_MANIFEST + MANIFEST_NAME + CLI_NO_START);
         }
 
         //read credentials, replace, executeScript, configureMysql
@@ -217,11 +220,14 @@ public class FileCreator {
             //read credentials
             readCredentials(deployment, application);
 
-            //execute
-            executeFiles(deployment, application);
-
             //configureSql
             configureSql(deployment, application);
+
+            //start application
+            deployScript.append(CLI_START + application.getName());
+
+            //execute
+            executeFiles(deployment, application);
         }
     }
 
@@ -230,8 +236,14 @@ public class FileCreator {
      */
     private void configureSql(Deployment deployment, Application application) throws IOException {
         if (!application.getConfigMysql().isEmpty()) {
-            for (String file : application.getConfigMysql()) {
-                deployment.configureSql(file);
+
+            for (Map.Entry<String, String> entry : application.getConfigMysql().entrySet()) {
+                if (!seenServices.contains(entry.getKey())) {
+                    deployment.configureSql(entry.getKey(), entry.getValue());
+                    seenServices.add(entry.getKey());
+                } else {
+                    logger.debug("Do not add the configure sql file twice. The database is already configured by another command");
+                }
             }
         }
     }
