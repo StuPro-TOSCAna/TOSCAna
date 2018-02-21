@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.core.transformation.TransformationContext;
@@ -51,25 +52,24 @@ public class Deployment {
     /**
      look for suitable services which match to the requirements of the user
      */
-    public void treatServices() throws IOException {
+    public List<String> treatServices(List<String> alreadyHandledServices) throws IOException {
         ServiceHandler serviceHandler = new ServiceHandler(application, deploymentScript, context);
 
         String scriptPath = deploymentScript.getScriptPath();
         File scriptFile = new File(scriptPath);
         String contentScript = FileUtils.readFileToString(scriptFile);
 
-        serviceHandler.addServiceCommands(!contentScript.contains("cf create-service"));
+        return serviceHandler.addServiceCommands(!contentScript.contains("cf create-service"), alreadyHandledServices);
     }
 
     /**
      will add a python script which executes the given sql file to the database.
      Only works with a mysql service and a .sql file
 
-     @param serviceInstanceName            is the service instance name to which the config file belongs to
      @param relativePathToSQLConfigureFile must be the relative path started from the output/scripts folder to the .sql
      file
      */
-    public void configureSql(String serviceInstanceName, String relativePathToSQLConfigureFile) throws IOException {
+    public void configureSql(String relativePathToSQLConfigureFile) throws IOException {
 
         copyFile(PYTHON_CONFIGURE_SQL_FILENAME);
 

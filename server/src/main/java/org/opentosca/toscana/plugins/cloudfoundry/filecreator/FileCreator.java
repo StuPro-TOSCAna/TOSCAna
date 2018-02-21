@@ -52,7 +52,10 @@ public class FileCreator {
 
     private TransformationContext context;
     private Logger logger;
-    private List<String> seenServices = new ArrayList<>();
+    private List<String> seenConfiguredServices = new ArrayList<>();
+    
+    // this list contains services which are already matched to a service of a provider and already created.
+    private List<String> alreadyHandledServices = new ArrayList<>();
 
     private final PluginFileAccess fileAccess;
     private List<Application> applications;
@@ -238,9 +241,9 @@ public class FileCreator {
         if (!application.getConfigMysql().isEmpty()) {
 
             for (Map.Entry<String, String> entry : application.getConfigMysql().entrySet()) {
-                if (!seenServices.contains(entry.getKey())) {
-                    deployment.configureSql(entry.getKey(), entry.getValue());
-                    seenServices.add(entry.getKey());
+                if (!seenConfiguredServices.contains(entry.getKey())) {
+                    deployment.configureSql(entry.getValue());
+                    seenConfiguredServices.add(entry.getKey());
                 } else {
                     logger.debug("Do not add the configure sql file twice. The database is already configured by another command");
                 }
@@ -284,7 +287,7 @@ public class FileCreator {
             Deployment deployment = new Deployment(deployScript, application, fileAccess, context);
 
             //only one time all service offerings should be printed to the deploy script
-            deployment.treatServices();
+            this.alreadyHandledServices = deployment.treatServices(alreadyHandledServices);
         }
     }
 

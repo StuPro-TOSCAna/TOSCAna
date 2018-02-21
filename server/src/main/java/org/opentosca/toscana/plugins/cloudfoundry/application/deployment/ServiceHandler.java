@@ -40,10 +40,10 @@ public class ServiceHandler {
 
      @param showAllServiceOfferings if yes then adds all service offerings to deploymentscript
      */
-    public void addServiceCommands(Boolean showAllServiceOfferings) {
+    public List<String> addServiceCommands(Boolean showAllServiceOfferings, List<String> alreadyHandledServices) {
         try {
             logger.info("Try to read service offerings of provider");
-            readProviderServices();
+            List<String> adaptServiceList = readProviderServices(alreadyHandledServices);
 
             if (showAllServiceOfferings) {
                 if (application.getProvider() != null && !application.getServices().isEmpty()
@@ -52,6 +52,7 @@ public class ServiceHandler {
                     addProviderServiceOfferings();
                 }
             }
+            return adaptServiceList;
         } catch (IOException e) {
             throw new TransformationFailureException("Fail to add services to deployment Script", e);
         }
@@ -62,33 +63,45 @@ public class ServiceHandler {
      tries to find a suitable service for the needed purpose.
      always add a service with a free plan
      */
-    private void readProviderServices() throws IOException {
+    private List<String> readProviderServices(List<String> alreadyHandledServices) throws IOException {
         if (application.getProvider() != null && !application.getServices().isEmpty() && application.getConnection() != null) {
             Provider provider = application.getProvider();
             logger.debug("Read service offerings from provider");
             provider.setOfferedService(application.getConnection().getServices());
 
             for (Map.Entry<String, ServiceTypes> service : application.getServices().entrySet()) {
-                String description = service.getValue().getName();
-                List<ServiceOffering> services = provider.getOfferedService();
-                boolean isSet;
-
-                //checks if a offered service of the provider contains the description of the needed service
-                //if yes then add the service to the script with a free plan
-                logger.info("Try to find a suitable service from provider which matches to the requested service");
-                isSet = addMatchedServices(services, deploymentScript, description, service);
-
-                //if not then add the default create command to the deploy script
-                if (!isSet) {
-                    logger.error("Could not find a suitable service, add the default value {}. Please adapt the line in the deploy script!", CLI_CREATE_SERVICE_DEFAULT);
-                    deploymentScript.append(CLI_CREATE_SERVICE_DEFAULT + service);
+                if (!alreadyHandledServices.contains(service.getKey())) {
+                    alreadyHandledServices.add(service.getKey());
+                    matchingServices(service, provider, true);
+                } else {
+                    matchingServices(service, provider, false);
                 }
             }
         } else {
             for (Map.Entry<String, ServiceTypes> service : application.getServices().entrySet()) {
-                logger.error("Could not find a suitable service, add the default value {}. Please adapt the line in the deploy script!", CLI_CREATE_SERVICE_DEFAULT);
-                deploymentScript.append(CLI_CREATE_SERVICE_DEFAULT + service.getKey());
+                if (!alreadyHandledServices.contains(service.getKey())) {
+                    alreadyHandledServices.add(service.getKey());
+                    logger.error("Could not find a suitable service, add the default value {}. Please adapt the line in the deploy script!", CLI_CREATE_SERVICE_DEFAULT);
+                    deploymentScript.append(CLI_CREATE_SERVICE_DEFAULT + service.getKey());
+                }
             }
+        }
+        return alreadyHandledServices;
+    }
+
+    private void matchingServices(Map.Entry<String, ServiceTypes> service, Provider provider, boolean insertCreateCommand) throws IOException {
+        String description = service.getValue().getName();
+        List<ServiceOffering> services = provider.getOfferedService();
+        boolean isSet;
+        //checks if a offered service of the provider contains the description of the needed service
+        //if yes then add the service to the script with a free plan
+        logger.info("Try to find a suitable service from provider which matches to the requested service");
+        isSet = addMatchedServices(services, deploymentScript, description, service, insertCreateCommand);
+
+        //if not then add the default create command to the deploy script
+        if (!isSet) {
+            logger.error("Could not find a suitable service, add the default value {}. Please adapt the line in the deploy script!", CLI_CREATE_SERVICE_DEFAULT);
+            deploymentScript.append(CLI_CREATE_SERVICE_DEFAULT + service);
         }
     }
 
@@ -98,7 +111,8 @@ public class ServiceHandler {
     private boolean addMatchedServices(List<ServiceOffering> services,
                                        BashScript deployScript,
                                        String description,
-                                       Map.Entry<String, ServiceTypes> service) throws IOException {
+                                       Map.Entry<String, ServiceTypes> service,
+                                       boolean insertCreateCommand) throws IOException {
         boolean isSet = false;
 
         for (ServiceOffering offeredService : services) {
@@ -108,14 +122,19 @@ public class ServiceHandler {
                         String serviceName = offeredService.getLabel();
                         String planName = plan.getName();
                         String serviceInstanceName = service.getKey();
-                        logger.info("A suitable service could be found, named {}. Add a free plan named {}, you could adpat the plan in the deploy script", serviceName, planName);
-                        deployScript.append(String.format("%s%s %s %s", CLI_CREATE_SERVICE,
-                            serviceName, planName, serviceInstanceName));
+                        if (insertCreateCommand) {
+                            logger.info("A suitable service could be found, named {}. Add a free plan named {}, you could adpat the plan in the deploy script", serviceName, planName);
+                            deployScript.append(String.format("%s%s %s %s", CLI_CREATE_SERVICE,
+                                serviceName, planName, serviceInstanceName));
+                        }
                         application.addMatchedService(
                             new Service(serviceName, serviceInstanceName, planName, service.getValue()));
                         isSet = true;
                         break;
                     }
+                }
+                if (isSet) {
+                    break;
                 }
             }
         }
