@@ -66,6 +66,7 @@ public class CloudFormationModule extends Module {
     private String bucketName;
     private String stackName;
     private boolean keyPair;
+    private Map<String, Map<String, String>> environmentMap;
 
     /**
      Create a Module which uses the cloudformation-builder to build an AWS CloudFormation template
@@ -85,6 +86,7 @@ public class CloudFormationModule extends Module {
         this.stackName = getRandomStackName();
         this.awsRegion = awsRegion;
         this.awsCredentials = awsCredentials;
+        this.environmentMap = new HashMap<>();
     }
 
     /**
@@ -199,6 +201,15 @@ public class CloudFormationModule extends Module {
      */
     public Map<String, Parameter> getParameters() {
         return this.template.getParameters();
+    }
+
+    public Map<String, Map<String, String>> getEnvironmentMap() {
+        return environmentMap;
+    }
+
+    public void putEnvironmentMap(String instanceName, String key, String value) {
+        this.environmentMap.computeIfAbsent(instanceName, k -> new HashMap<>());
+        this.environmentMap.get(instanceName).put(key, value);
     }
 
     @Override
