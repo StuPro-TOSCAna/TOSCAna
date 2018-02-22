@@ -6,6 +6,7 @@ import {TransformationsProvider} from '../../providers/transformations/transform
 import {CsarProvider} from '../../providers/csar/csar.provider';
 import {TransformationResponse} from '../../api';
 import StateEnum = TransformationResponse.StateEnum;
+import {MessageService} from '../../providers/message/message.service';
 
 @Component({
     selector: 'app-csar-sub-item',
@@ -17,7 +18,8 @@ export class CsarSubItemComponent implements OnInit {
     viewState: TransformationOpen;
     activePlatform = '';
     stateEnum = StateEnum.TRANSFORMING;
-    constructor(private router: Router, private csarProvider: CsarProvider, private transformationProvider: TransformationsProvider,
+    constructor(private messageService: MessageService, private router: Router, private csarProvider: CsarProvider,
+                private transformationProvider: TransformationsProvider,
                 private routeHandler: RouteHandler) {
     }
 
@@ -41,7 +43,7 @@ export class CsarSubItemComponent implements OnInit {
             this.csar.transformations.splice(pos, 1);
             this.csarProvider.updateCsar(this.csar);
             this.routeHandler.openCsar(this.csar.name);
-        });
+        }, err => this.messageService.addErrorMessage('Failed to delete transformation'));
     }
 
     gotoTransformation(platform: string) {
