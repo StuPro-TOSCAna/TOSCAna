@@ -83,6 +83,7 @@ export class CsarViewComponent implements OnInit, OnDestroy {
     }
 
     private checkTransformationstate() {
+        this.csarProvider.updateCsar(this.csar);
         const invalidPhases = [StateEnum.EXECUTING, StateEnum.PENDING];
         for (const phase of this.csar.phases) {
             if (invalidPhases.indexOf(phase.state) !== -1) {

@@ -26,6 +26,7 @@ import org.opentosca.toscana.plugins.cloudfoundry.filecreator.FileCreator;
 import org.opentosca.toscana.plugins.cloudfoundry.visitor.NodeTypeCheck;
 import org.opentosca.toscana.plugins.cloudfoundry.visitor.NodeVisitor;
 import org.opentosca.toscana.plugins.cloudfoundry.visitor.OSCheck;
+import org.opentosca.toscana.plugins.cloudfoundry.visitors.PrepareVisitor;
 import org.opentosca.toscana.plugins.kubernetes.exceptions.UnsupportedOsTypeException;
 import org.opentosca.toscana.plugins.kubernetes.util.KubernetesNodeContainer;
 import org.opentosca.toscana.plugins.kubernetes.util.NodeStack;
@@ -128,6 +129,14 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
 
     @Override
     public void prepare() {
+
+        logger.info("Begin preparation for transformation to Cloud Foundry");
+
+        PrepareVisitor prepareVisitor = new PrepareVisitor(logger);
+        for (RootNode node : context.getModel().getNodes()) {
+            node.accept(prepareVisitor);
+        }
+
         logger.debug("Collecting Compute Nodes in topology");
         ComputeNodeFindingVisitor computeFinder = new ComputeNodeFindingVisitor();
         model.getNodes().forEach(e -> {

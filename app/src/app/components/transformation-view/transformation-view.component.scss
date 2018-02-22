@@ -3,6 +3,14 @@
     flex-flow: column;
     height: 100%;
 }
+.nav-link {
+    border-color: #dee2e6 #dee2e6 #fff;
+    color: black;
+}
+.nav-link.active {
+    color:black;
+    background-color: #e7e7e7;
+}
 .log {
     height: 100%;
 }

@@ -4,6 +4,8 @@ import {Csar} from '../../model/csar';
 import {RouteHandler, TransformationOpen} from '../../handler/route/route.service';
 import {TransformationsProvider} from '../../providers/transformations/transformations.provider';
 import {CsarProvider} from '../../providers/csar/csar.provider';
+import {TransformationResponse} from '../../api';
+import StateEnum = TransformationResponse.StateEnum;
 
 @Component({
     selector: 'app-csar-sub-item',
@@ -14,7 +16,7 @@ export class CsarSubItemComponent implements OnInit {
     @Input() csar: Csar;
     viewState: TransformationOpen;
     activePlatform = '';
-
+    stateEnum = StateEnum.TRANSFORMING;
     constructor(private router: Router, private csarProvider: CsarProvider, private transformationProvider: TransformationsProvider,
                 private routeHandler: RouteHandler) {
     }
