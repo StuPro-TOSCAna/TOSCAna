@@ -26,7 +26,7 @@ public class CloudFormationFileCreator {
     public static final String CLI_COMMAND_DELETEBUCKET = "aws s3 rb s3://";
     public static final String CLI_PARAM_STACKNAME = "--stack-name ";
     public static final String CLI_PARAM_TEMPLATEFILE = "--template-file ";
-    public static final String CLI_PARAM_PARAMOVERRIDES = "--parameter-overrides ";
+    public static final String CLI_PARAM_PARAMOVERRIDES = "--parameter-overrides";
     public static final String CLI_PARAM_CAPABILITIES = "--capabilities";
     public static final String CLI_PARAM_BUCKET = "--bucket ";
     public static final String CLI_PARAM_FORCE = "--force";
