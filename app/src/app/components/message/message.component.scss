@@ -1,18 +1,35 @@
 .message-container {
-    width: 25%;
     position: absolute;
+    max-width: 20%;
     right: 10px;
+    top: 10px;
     z-index: 1000;
     .message {
-        padding: 4px 10px 4px 8px;
+        padding: 4px 15px 4px 15px;
         border-radius: 5px;
         font-size: 1.2rem;
         border: 1px solid black;
         color: white;
-        margin: 5px;
-        width: 100%;
-        display: inline-grid;
-        grid-template-columns: 95% auto;
+        -webkit-box-shadow: 0px 1px 30px -12px rgba(0, 0, 0, 0.75);
+        -moz-box-shadow: 0px 1px 30px -12px rgba(0, 0, 0, 0.75);
+        box-shadow: 0px 1px 30px -12px rgba(0, 0, 0, 0.75);
     }
+}
 
+@media screen and (max-width: 990px) {
+    .message-container {
+        max-width: 95%;
+        margin: 0 auto;
+        margin-top: 5px;
+        margin-bottom: 10px;
+        position: relative;
+        top:auto;
+        right: auto;
+    }
+}
+@media screen and (min-width: 1920px) {
+    .message-container {
+        max-width: 10%;
+        right: calc(50vw - 1900px/2);
+    }
 }
