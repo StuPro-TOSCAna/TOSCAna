@@ -28,7 +28,7 @@ export class MainViewComponent implements OnInit {
     constructor(public csarProvider: CsarProvider) {
     }
 
-    async ngOnInit() {
+    ngOnInit() {
     }
 
 

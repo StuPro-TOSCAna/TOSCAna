@@ -3,12 +3,14 @@ import {InputsResponse, InputWrap, TransformationsService} from '../../api';
 import {PlatformsProvider} from '../platforms/platforms.provider';
 import {Transformation} from '../../model/transformation';
 import {Observable} from 'rxjs/Observable';
+import {MessageService} from '../message/message.service';
 
 
 @Injectable()
 export class TransformationsProvider {
 
-    constructor(private transformationsService: TransformationsService, private platformsProvider: PlatformsProvider) {
+    constructor(private messageService: MessageService, private transformationsService: TransformationsService,
+                private platformsProvider: PlatformsProvider) {
     }
 
     public getTransformationInputs(csarId: string, platform: string) {
@@ -20,7 +22,12 @@ export class TransformationsProvider {
     }
 
     public createNewTransformation(csarId: string, platform: string) {
-        return this.transformationsService.addTransformationUsingPOST(csarId, platform);
+        const observable = this.transformationsService.addTransformationUsingPOST(csarId, platform);
+        observable.subscribe(() => {
+        }, err => {
+            this.messageService.addErrorMessage('Failed to create transformation');
+        });
+        return observable;
     }
 
     public setTransformationProperties(csarId: string, platform: string, inputs: InputWrap[]) {
