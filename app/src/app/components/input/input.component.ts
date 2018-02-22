@@ -103,7 +103,7 @@ export class InputComponent implements OnInit {
                     this.routeHandler.openTransformation(this.csarId, this.selectedPlatform);
                 }
             });
-            return this.transformationsProvider.getTransformationProperties(this.csarId, this.selectedPlatform);
+            return this.transformationsProvider.getTransformationInputs(this.csarId, this.selectedPlatform);
         }).subscribe(data => {
             this.inputs = data.inputs;
             this.checkIfEverythingIsValid();

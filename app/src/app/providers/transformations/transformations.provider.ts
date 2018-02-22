@@ -13,8 +13,12 @@ export class TransformationsProvider {
                 private platformsProvider: PlatformsProvider) {
     }
 
-    public getTransformationProperties(csarId: string, platform: string) {
+    public getTransformationInputs(csarId: string, platform: string) {
         return this.transformationsService.getInputsUsingGET(csarId, platform);
+    }
+
+    public getTransformationOutputs(csarId: string, platform: string) {
+        return this.transformationsService.getOutputsUsingGET(csarId, platform);
     }
 
     public createNewTransformation(csarId: string, platform: string) {

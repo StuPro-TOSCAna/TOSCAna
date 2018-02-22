@@ -1,6 +1,14 @@
 <div class="wrapper">
     <nav class="navbar navbar-dark bg-secondary">
         <a class="navbar-brand" href="#">TOSCAna</a>
+        <div class="navbar-right">
+            <div class="status"> Status:
+                <div class="item">{{status}}</div>
+            </div>
+            <div class="memory"> Disk Space:
+                <div class="item"> {{memory}}</div>
+            </div>
+        </div>
     </nav>
     <app-message></app-message>
     <div class="container-fluid">

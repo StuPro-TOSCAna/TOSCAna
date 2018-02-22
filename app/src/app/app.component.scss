@@ -4,15 +4,19 @@
 nav {
     margin-bottom: 10px;
 }
+
 .bg-dark {
     background-color: #FEA94E !important;
 }
+
 .left-border {
     border-left: 1px solid $secondary;
 }
+
 .wrapper {
     min-height: 100%;
 }
+
 @media screen and (min-width: 1920px) {
     .wrapper {
         width: 1920px;
@@ -20,8 +24,23 @@ nav {
         border-style: solid;
         border-color: lightgray;
         border-width: 0px 1px;
-        -webkit-box-shadow: 0px 1px 30px -12px rgba(0,0,0,0.75);
-        -moz-box-shadow: 0px 1px 30px -12px rgba(0,0,0,0.75);
-        box-shadow: 0px 1px 30px -12px rgba(0,0,0,0.75);
+        -webkit-box-shadow: 0px 1px 30px -12px rgba(0, 0, 0, 0.75);
+        -moz-box-shadow: 0px 1px 30px -12px rgba(0, 0, 0, 0.75);
+        box-shadow: 0px 1px 30px -12px rgba(0, 0, 0, 0.75);
+    }
+}
+
+.navbar-right {
+    display: inline-flex;
+    color: white;
+    div {
+        display: inline-flex;
+    }
+    .item {
+        margin: 0px 2px;
+        font-weight: bolder;
+    }
+    .status {
+        margin-right: 10px;
     }
 }

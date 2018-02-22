@@ -16,11 +16,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class CloudFoundryPlugin extends ToscanaPlugin<CloudFoundryLifecycle> {
 
-    public final static String CF_PROPERTY_KEY_USERNAME = "username";
-    public final static String CF_PROPERTY_KEY_PASSWORD = "password";
-    public final static String CF_PROPERTY_KEY_API = "apiHost";
-    public final static String CF_PROPERTY_KEY_SPACE = "space";
-    public final static String CF_PROPERTY_KEY_ORGANIZATION = "organization";
+    public final static String CF_PROPERTY_KEY_USERNAME = "CF_Instance_Username";
+    public final static String CF_PROPERTY_KEY_PASSWORD = "CF_Instance_Password";
+    public final static String CF_PROPERTY_KEY_API = "CF_Instance_Api";
+    public final static String CF_PROPERTY_KEY_SPACE = "CF_Instance_Space";
+    public final static String CF_PROPERTY_KEY_ORGANIZATION = "CF_Instance_Organization";
 
     private final static Logger logger = LoggerFactory.getLogger(CloudFoundryPlugin.class);
 
@@ -35,19 +35,19 @@ public class CloudFoundryPlugin extends ToscanaPlugin<CloudFoundryLifecycle> {
 
         PlatformInput cfUserName = new PlatformInput(CF_PROPERTY_KEY_USERNAME, PropertyType.TEXT,
             "Username of CloudFoundry provideraccount",
-            false);
+            true);
         PlatformInput cfUserPw = new PlatformInput(CF_PROPERTY_KEY_PASSWORD, PropertyType.SECRET,
             "Password of CloudFoundry provideraccount",
-            false);
+            true);
         PlatformInput cfEndpoint = new PlatformInput(CF_PROPERTY_KEY_API, PropertyType.TEXT,
             "The endpoint of the provider",
-            false);
+            true);
         PlatformInput cfSpace = new PlatformInput(CF_PROPERTY_KEY_SPACE, PropertyType.TEXT,
             "The space of the useraccount which should be used to deploy",
-            false);
+            true);
         PlatformInput cfOrganization = new PlatformInput(CF_PROPERTY_KEY_ORGANIZATION, PropertyType.TEXT,
-            "The space of the useraccount which should be used to deploy",
-            false);
+            "The organization of the useraccount which should be used to deploy",
+            true);
 
         platformProperties.add(cfUserName);
         platformProperties.add(cfUserPw);
