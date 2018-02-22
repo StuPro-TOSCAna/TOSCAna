@@ -79,11 +79,11 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
                 //create CFN init and store it
                 CFNInit init = new CFNInit(CONFIG_SETS);
                 cfnModule.putCFNInit(nodeName, init);
-                //takes default 8GB storage but volume
                 cfnModule.resource(Instance.class, nodeName)
                     .securityGroupIds(webServerSecurityGroup)
                     .imageId(imageId)
                     .instanceType(instanceType);
+                capabilityMapper.mapDiskSize(computeCompute, cfnModule, nodeName);
                 // Add Reference to keyName if KeyPair needed
                 if (cfnModule.hasKeyPair()) {
                     Instance instance = (Instance) cfnModule.getResource(nodeName);
