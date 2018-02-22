@@ -7,10 +7,11 @@ import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Helper} from '../../helper/helper';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/map';
-import {CsarResponse} from '../../api';
+import {CsarResponse, TransformationResponse} from '../../api';
 import {Observable} from 'rxjs/Observable';
 import {MessageService} from '../message/message.service';
 import {ErrorMessage} from '../../model/message';
+import StateEnum = TransformationResponse.StateEnum;
 
 @Injectable()
 export class CsarProvider {
@@ -104,15 +105,22 @@ export class CsarProvider {
         this.dataStore.csars.forEach((c, i) => {
             if (c.name === csar.name) {
                 this.dataStore.csars[i] = csar;
+                return;
             }
             this.updateSubject();
         });
     }
 
     addEmptyTransformationToCsar(csarId, platform: string) {
-        const res = this.dataStore.csars.find(csar => csar.name = csarId);
+        const res = this.dataStore.csars.find(csar => csar.name === csarId);
         const fullName = this.platformsProvider.getFullPlatformName(platform);
         res.addTransformation(platform, fullName);
+        this.updateSubject();
+    }
+
+    updateTransformationState(csarId: string, platform: string, state: StateEnum) {
+        const res = this.dataStore.csars.find(csar => csar.name === csarId);
+        res.transformations.find(t => t.platform === platform).state = state;
         this.updateSubject();
     }
 

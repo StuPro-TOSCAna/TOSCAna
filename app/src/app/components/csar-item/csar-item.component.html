@@ -11,5 +11,5 @@
             <i (click)="deleteCsar()" class="fa fa-trash" aria-hidden="true"></i>
         </div>
     </div>
-    <app-csar-sub-item [class.sub-item]="active" [hidden]="!active" [csar]="csar"></app-csar-sub-item>
+    <app-csar-sub-item [class.sub-item]="active && csar.transformations.length > 0" [hidden]="!active" [csar]="csar"></app-csar-sub-item>
 </div>

@@ -19,6 +19,7 @@ import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 import { Observable }                                        from 'rxjs/Observable';
 
 import { GetInputsResponse } from '../model/getInputsResponse';
+import { GetOutputsResponse } from '../model/getOutputsResponse';
 import { InputsResponse } from '../model/inputsResponse';
 import { LogResponse } from '../model/logResponse';
 import { ResponseEntity } from '../model/responseEntity';
@@ -334,9 +335,9 @@ export class TransformationsService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getOutputsUsingGET(csarId: string, platform: string, observe?: 'body', reportProgress?: boolean): Observable<InputsResponse>;
-    public getOutputsUsingGET(csarId: string, platform: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<InputsResponse>>;
-    public getOutputsUsingGET(csarId: string, platform: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<InputsResponse>>;
+    public getOutputsUsingGET(csarId: string, platform: string, observe?: 'body', reportProgress?: boolean): Observable<GetOutputsResponse>;
+    public getOutputsUsingGET(csarId: string, platform: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<GetOutputsResponse>>;
+    public getOutputsUsingGET(csarId: string, platform: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<GetOutputsResponse>>;
     public getOutputsUsingGET(csarId: string, platform: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
         if (csarId === null || csarId === undefined) {
             throw new Error('Required parameter csarId was null or undefined when calling getOutputsUsingGET.');
@@ -360,7 +361,7 @@ export class TransformationsService {
         let consumes: string[] = [
         ];
 
-        return this.httpClient.get<InputsResponse>(`${this.basePath}/api/csars/${encodeURIComponent(String(csarId))}/transformations/${encodeURIComponent(String(platform))}/outputs`,
+        return this.httpClient.get<GetOutputsResponse>(`${this.basePath}/api/csars/${encodeURIComponent(String(csarId))}/transformations/${encodeURIComponent(String(platform))}/outputs`,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
