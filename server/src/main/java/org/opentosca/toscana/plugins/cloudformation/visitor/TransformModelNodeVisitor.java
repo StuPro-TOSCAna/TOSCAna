@@ -59,7 +59,7 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
             if (cfnModule.checkComputeToEc2(node)) {
                 logger.debug("Compute '{}' will be transformed to EC2", node.getEntityName());
                 String nodeName = toAlphanumerical(node.getEntityName());
-                //default security group the EC2 Instance opens for port 80 and 22 to the whole internet
+                //default security group the EC2 Instance
                 SecurityGroup webServerSecurityGroup = cfnModule.resource(SecurityGroup.class,
                     nodeName + SECURITY_GROUP)
                     .groupDescription("Enables ports for " + nodeName + ".");
@@ -80,10 +80,13 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
                     .imageId(imageId)
                     .instanceType(instanceType);
                 capabilityMapper.mapDiskSize(computeCompute, cfnModule, nodeName);
-                // Add Reference to keyName if KeyPair needed
+                // Add Reference to keyName if KeyPair needed and open Port 22 (Allows SSH access)
                 if (cfnModule.hasKeyPair()) {
+                    Object cidrIp = "0.0.0.0/0";
                     Instance instance = (Instance) cfnModule.getResource(nodeName);
                     instance.keyName(cfnModule.getKeyNameVar());
+                    webServerSecurityGroup
+                    .ingress(ingress -> ingress.cidrIp(cidrIp), "tcp", 22);
                 }
             } else {
                 logger.debug("Compute '{}' will not be transformed to EC2", node.getEntityName());

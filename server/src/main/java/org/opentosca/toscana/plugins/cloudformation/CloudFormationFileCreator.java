@@ -23,12 +23,13 @@ import org.slf4j.Logger;
 public class CloudFormationFileCreator {
     public static final String CLI_COMMAND_CREATESTACK = "aws cloudformation deploy ";
     public static final String CLI_COMMAND_DELETESTACK = "aws cloudformation delete-stack ";
-    public static final String CLI_COMMAND_DELETEBUCKET = "aws s3api delete-bucket --bucket ";
+    public static final String CLI_COMMAND_DELETEBUCKET = "aws s3 rb s3://";
     public static final String CLI_PARAM_STACKNAME = "--stack-name ";
     public static final String CLI_PARAM_TEMPLATEFILE = "--template-file ";
-    public static final String CLI_PARAM_PARAMOVERRIDES = "--parameter-overrides ";
+    public static final String CLI_PARAM_PARAMOVERRIDES = "--parameter-overrides";
     public static final String CLI_PARAM_CAPABILITIES = "--capabilities";
     public static final String CLI_PARAM_BUCKET = "--bucket ";
+    public static final String CLI_PARAM_FORCE = "--force";
     public static final String CAPABILITY_IAM = "CAPABILITY_IAM";
     public static final String FILENAME_DEPLOY = "deploy";
     public static final String FILENAME_UPLOAD = "file-upload";
@@ -163,7 +164,7 @@ public class CloudFormationFileCreator {
         logger.debug("Creating cleanup script.");
         BashScript cleanupScript = new BashScript(cfnModule.getFileAccess(), FILENAME_CLEANUP);
         // Delete Bucket
-        cleanupScript.append(CLI_COMMAND_DELETEBUCKET + cfnModule.getBucketName());
+        cleanupScript.append(CLI_COMMAND_DELETEBUCKET + cfnModule.getBucketName() + " " + CLI_PARAM_FORCE);
         // Delete stack
         cleanupScript.append(CLI_COMMAND_DELETESTACK + CLI_PARAM_STACKNAME + cfnModule.getStackName());
     }
