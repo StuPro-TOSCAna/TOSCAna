@@ -4,6 +4,7 @@ import {LogEntry} from '../../api/index';
 import 'rxjs/add/operator/takeWhile';
 import {CsarProvider} from '../../providers/csar/csar.provider';
 import {isNullOrUndefined} from 'util';
+import {MessageService} from '../../providers/message/message.service';
 
 @Component({
     selector: 'app-log',
@@ -22,7 +23,7 @@ export class LogComponent implements OnInit, OnChanges {
     validLogLevels = this.logLevels;
 
 
-    constructor(private transformationProvider: TransformationsProvider, private csarsProvider: CsarProvider) {
+    constructor(private messageService: MessageService, private transformationProvider: TransformationsProvider, private csarsProvider: CsarProvider) {
     }
 
     getColor(level: string) {
@@ -64,11 +65,11 @@ export class LogComponent implements OnInit, OnChanges {
         if (this.type === 'transformation') {
             this.transformationProvider.getLogs(this.csarId, this.platformId, this.last).subscribe(data => {
                 this.updateLogs(data);
-            });
+            },err => this.messageService.addErrorMessage('Failed to load logs'));
         } else if (this.type === 'csar') {
             this.csarsProvider.getLogs(this.csarId, this.last).subscribe(data => {
                 this.updateLogs(data);
-            });
+            }, err => this.messageService.addErrorMessage('Failed to load logs'));
         }
     }
 

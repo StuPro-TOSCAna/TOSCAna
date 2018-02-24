@@ -12,9 +12,10 @@ import {environment} from '../../../environments/environment';
 import {isNullOrUndefined} from 'util';
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/observable/interval';
+import {MessageService} from '../../providers/message/message.service';
+import {CsarProvider} from '../../providers/csar/csar.provider';
 import TransformationStateEnum = TransformationResponse.StateEnum;
 import  LifecycleStateEnum = LifecyclePhase.StateEnum;
-import {CsarProvider} from '../../providers/csar/csar.provider';
 
 @Component({
     selector: 'app-transformation-view',
@@ -34,7 +35,8 @@ export class TransformationViewComponent implements OnInit, OnDestroy {
     private inputs: InputWrap[];
     private outputs: Array<OutputWrap> = [];
 
-    constructor(private csarProvider: CsarProvider, private routeHandler: RouteHandler, private route: ActivatedRoute,
+    constructor(private csarProvider: CsarProvider,
+                private messageService: MessageService, private routeHandler: RouteHandler, private route: ActivatedRoute,
                 private transformationProvider: TransformationsProvider, public platformsProvider: PlatformsProvider) {
     }
 
@@ -72,7 +74,6 @@ export class TransformationViewComponent implements OnInit, OnDestroy {
         }).subscribe(data => {
             this.transformationDone = false;
             this.transformation = data;
-            console.log(this.transformation);
             this.transformationProvider.getTransformationInputs(this.csarId, this.platform).subscribe(inputs => {
                 this.inputs = inputs.inputs;
             });
@@ -90,7 +91,7 @@ export class TransformationViewComponent implements OnInit, OnDestroy {
                         this.logView.refresh();
                     });
             });
-        });
+        }, err => this.messageService.addErrorMessage('Failed to load transformation'));
     }
 
     private checkTransformationstate() {

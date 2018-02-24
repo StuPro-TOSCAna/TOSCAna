@@ -8,11 +8,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.opentosca.toscana.model.capability.ComputeCapability;
 import org.opentosca.toscana.model.capability.OsCapability;
+import org.opentosca.toscana.plugins.cloudformation.CloudFormationModule;
 import org.opentosca.toscana.plugins.util.TransformationFailureException;
 
 import com.amazonaws.SdkClientException;
@@ -25,7 +25,15 @@ import com.amazonaws.services.ec2.model.DescribeImagesResult;
 import com.amazonaws.services.ec2.model.Filter;
 import com.amazonaws.services.ec2.model.Image;
 import com.google.common.collect.ImmutableList;
+import com.scaleset.cfbuilder.ec2.Instance;
+import com.scaleset.cfbuilder.ec2.instance.EC2BlockDeviceMapping;
+import com.scaleset.cfbuilder.ec2.instance.ec2blockdevicemapping.EC2EBSBlockDevice;
 import org.slf4j.Logger;
+
+import static org.opentosca.toscana.plugins.cloudformation.util.MappingUtils.checkValue;
+import static org.opentosca.toscana.plugins.cloudformation.util.MappingUtils.getCpuByMem;
+import static org.opentosca.toscana.plugins.cloudformation.util.MappingUtils.getInstanceType;
+import static org.opentosca.toscana.plugins.cloudformation.util.MappingUtils.getMemByCpu;
 
 public class CapabilityMapper {
 
@@ -168,7 +176,6 @@ public class CapabilityMapper {
      */
     public String mapComputeCapabilityToInstanceType(ComputeCapability computeCapability, String distinction) throws
         IllegalArgumentException {
-        //TODO what to do with disk size?
         Integer numCpus = computeCapability.getNumCpus().orElse(0);
         Integer memSize = computeCapability.getMemSizeInMb().orElse(0);
         //default type the smallest
@@ -228,24 +235,30 @@ public class CapabilityMapper {
     }
 
     /**
-     Check if the value is in the list checker, if not take the next bigger. If there is none throw an
-     IllegalArgumentException
-
-     @param value   The value to check.
-     @param checker The List to check in.
-     @return A valid value of the checker list.
-     @throws IllegalArgumentException If the value is too big
+     Maps the disk_size property of a ComputeCapability to an EC2 Instance.
+     
+     @param computeCapability Capability containing the disk_size property
+     @param cfnModule Module containing the Instance
+     @param nodeName name of the Instance
      */
-    private Integer checkValue(Integer value, List<Integer> checker) throws IllegalArgumentException {
-        if (!checker.contains(value)) {
-            for (Integer num : checker) {
-                if (num > value) {
-                    return num;
-                }
-            }
-            throw new IllegalArgumentException("Can't support value: " + value);
-        } else {
-            return value;
+    public void mapDiskSize(ComputeCapability computeCapability, CloudFormationModule cfnModule, String nodeName) {
+        // If disk_size is not set, default to 8000 Mb
+        Integer diskSizeInMb = computeCapability.getDiskSizeInMb().orElse(8000);
+        // Convert disk_size to Gb
+        Integer diskSizeInGb = diskSizeInMb / 1000;
+        logger.debug("Check diskSize: '{}' Gb", diskSizeInGb);
+        if (diskSizeInGb < 8) {
+            logger.warn("Disk size of '{}' smaller than the minimum value required by EC2 Instances. Setting the disk size of '{}' to the minimum allowed value of 8 Gb.", nodeName, nodeName);
+            diskSizeInGb = 8;
+        }
+        // Add BlockDeviceMapping if needed
+        if (diskSizeInGb > 8) {
+            logger.debug("Disk size of '{}' bigger than the default value of EC2 Instances. Adding a BlockDeviceMapping to '{}'.", nodeName, nodeName);
+            Instance computeAsInstance = (Instance) cfnModule.getResource(nodeName);
+            computeAsInstance.blockDeviceMappings(new EC2BlockDeviceMapping()
+                .deviceName("/dev/sda1")
+                .ebs(new EC2EBSBlockDevice()
+                    .volumeSize(diskSizeInGb.toString())));
         }
     }
 
@@ -290,51 +303,26 @@ public class CapabilityMapper {
         return instanceType;
     }
 
-    private List<Integer> getMemByCpu(Integer numCpus, ImmutableList<InstanceType> instanceTypes) {
-        return instanceTypes.stream()
-            .filter(u -> u.getNumCpus().equals(numCpus))
-            .map(InstanceType::getMemSize)
-            .collect(Collectors.toList());
-    }
-
-    private List<Integer> getCpuByMem(Integer memSize, ImmutableList<InstanceType> instanceTypes) {
-        return instanceTypes.stream()
-            .filter(u -> u.getMemSize().equals(memSize))
-            .map(InstanceType::getNumCpus)
-            .collect(Collectors.toList());
-    }
-
-    private String getInstanceType(Integer numCpus, Integer memSize, ImmutableList<InstanceType> instanceTypes) {
-        Optional<InstanceType> instanceType = instanceTypes.stream()
-            .filter(u -> u.getNumCpus().equals(numCpus) && u.getMemSize().equals(memSize))
-            .findAny();
-        if (instanceType.isPresent()) {
-            return instanceType.get().getType();
-        } else {
-            return "";
-        }
-    }
-
-    private class InstanceType {
+    public class InstanceType {
         private String type;
         private Integer memSize;
         private Integer numCpus;
 
-        protected InstanceType(String type, Integer numCpus, Integer memSize) {
+        public InstanceType(String type, Integer numCpus, Integer memSize) {
             this.type = type;
             this.numCpus = numCpus;
             this.memSize = memSize;
         }
 
-        protected String getType() {
+        public String getType() {
             return type;
         }
 
-        protected Integer getMemSize() {
+        public Integer getMemSize() {
             return memSize;
         }
 
-        protected Integer getNumCpus() {
+        public Integer getNumCpus() {
             return numCpus;
         }
     }

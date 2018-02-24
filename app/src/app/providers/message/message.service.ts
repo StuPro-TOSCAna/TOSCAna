@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {Message} from '../../model/message';
+import {ErrorMessage, Message, SuccessMessage} from '../../model/message';
 import {Observable} from 'rxjs/Observable';
 
 @Injectable()
@@ -25,4 +25,7 @@ export class MessageService {
         this.dataStore.messages = [];
     }
 
+    public addErrorMessage(message: string) {
+        this.add(new ErrorMessage(message));
+    }
 }
