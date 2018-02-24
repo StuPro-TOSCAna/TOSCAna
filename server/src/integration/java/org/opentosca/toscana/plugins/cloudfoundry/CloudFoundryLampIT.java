@@ -51,8 +51,8 @@ public class CloudFoundryLampIT extends BaseTransformTest {
 
     @Override
     protected void onSuccess(File outputDir) throws Exception {
-        System.out.println("You can stop me now");
-        Thread.sleep(5000);
+        //System.out.println("You can stop me now");
+        //Thread.sleep(5000);
     }
 
     @Override

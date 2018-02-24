@@ -38,6 +38,7 @@ public class ServiceHandler {
     /**
      Add the needed services to the deploymentscript and try to match a suitable service from the provider.
 
+     @param alreadyHandledServices  services which are already created, so there have not to created twice
      @param showAllServiceOfferings if yes then adds all service offerings to deploymentscript
      */
     public List<String> addServiceCommands(Boolean showAllServiceOfferings, List<String> alreadyHandledServices) {

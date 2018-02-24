@@ -64,11 +64,12 @@ public class Application {
      @param pathToFile          must be the path inside the csar. The method will create a relative path from it
      */
     public void addConfigMysql(String serviceInstanceName, String pathToFile) {
+        String path = pathToFile;
         if (pathToFile.contains("../../" + APPLICATION_FOLDER)) {
             String[] paths = pathToFile.split("../../" + APPLICATION_FOLDER + "[0-9]*/");
-            pathToFile = paths[1];
+            path = paths[1];
         }
-        String relativePath = "../../" + APPLICATION_FOLDER + this.applicationNumber + "/" + pathToFile;
+        String relativePath = "../../" + APPLICATION_FOLDER + this.applicationNumber + "/" + path;
 
         logger.debug("Add a config mysql command to deploy script. Relative path to file is {}", relativePath);
         configureSqlDatabase.put(serviceInstanceName, relativePath);

@@ -32,7 +32,7 @@ import static org.opentosca.toscana.plugins.cloudfoundry.ServiceTest.CF_ENVIRONM
 /**
  Created by jensmuller on 16.02.18.
  */
-public class CloudFoundryLampITinput extends BaseTransformTest{
+public class CloudFoundryLampITinput extends BaseTransformTest {
 
     private final String envUser = System.getenv(CF_ENVIRONMENT_USER);
     private final String envPw = System.getenv(CF_ENVIRONMENT_PW);
@@ -51,8 +51,8 @@ public class CloudFoundryLampITinput extends BaseTransformTest{
 
     @Override
     protected void onSuccess(File outputDir) throws Exception {
-        System.out.println("You can stop me now");
-        Thread.sleep(5000);
+        //System.out.println("You can stop me now");
+        //Thread.sleep(5000);
     }
 
     @Override
@@ -69,7 +69,7 @@ public class CloudFoundryLampITinput extends BaseTransformTest{
         props.set("database_user", "user");
         props.set("database_port", "3333");
         props.set("database_password", "secrets");
-        
+
         props.set(CF_PROPERTY_KEY_USERNAME, envUser);
         props.set(CF_PROPERTY_KEY_PASSWORD, envPw);
         props.set(CF_PROPERTY_KEY_API, envHost);
