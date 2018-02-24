@@ -29,18 +29,18 @@ public class CloudFoundryJavaIT extends CloudFoundryLampIT {
     private final String envHost = System.getenv(CF_ENVIRONMENT_HOST);
     private final String envOrga = System.getenv(CF_ENVIRONMENT_ORGA);
     private final String envSpace = System.getenv(CF_ENVIRONMENT_SPACE);
-    
+
     public CloudFoundryJavaIT() throws Exception {
         super();
     }
 
     @Override
-    protected EffectiveModel getModel() throws Exception {
+    protected EffectiveModel getModel() {
         return new EffectiveModelFactory().create(TestCsars.VALID_TASKTRANSLATOR_TEMPLATE, logMock());
     }
 
     @Override
-    protected void onSuccess(File outputDir) throws Exception {
+    protected void onSuccess(File outputDir) throws InterruptedException {
         //System.out.println("You can stop me now");
         //Thread.sleep(5000);
     }
@@ -63,7 +63,7 @@ public class CloudFoundryJavaIT extends CloudFoundryLampIT {
     }
 
     @Override
-    protected void onFailure(File outputDir, Exception e) throws Exception {
+    protected void onFailure(File outputDir, Exception e) {
         fail();
     }
 

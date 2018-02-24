@@ -29,9 +29,6 @@ import static org.opentosca.toscana.plugins.cloudfoundry.ServiceTest.CF_ENVIRONM
 import static org.opentosca.toscana.plugins.cloudfoundry.ServiceTest.CF_ENVIRONMENT_SPACE;
 import static org.opentosca.toscana.plugins.cloudfoundry.ServiceTest.CF_ENVIRONMENT_USER;
 
-/**
- Created by jensmuller on 16.02.18.
- */
 public class CloudFoundryLampITinput extends BaseTransformTest {
 
     private final String envUser = System.getenv(CF_ENVIRONMENT_USER);
@@ -45,18 +42,18 @@ public class CloudFoundryLampITinput extends BaseTransformTest {
     }
 
     @Override
-    protected EffectiveModel getModel() throws Exception {
+    protected EffectiveModel getModel() {
         return new EffectiveModelFactory().create(TestCsars.VALID_LAMP_INPUT_TEMPLATE, logMock());
     }
 
     @Override
-    protected void onSuccess(File outputDir) throws Exception {
+    protected void onSuccess(File outputDir) throws InterruptedException {
         //System.out.println("You can stop me now");
         //Thread.sleep(5000);
     }
 
     @Override
-    protected void onFailure(File outputDir, Exception e) throws Exception {
+    protected void onFailure(File outputDir, Exception e) {
         fail();
     }
 
