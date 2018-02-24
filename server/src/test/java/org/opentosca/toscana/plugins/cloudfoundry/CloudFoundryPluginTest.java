@@ -56,7 +56,9 @@ public class CloudFoundryPluginTest extends BaseUnitTest {
         String host = System.getenv("TEST_CF_HOST");
         String space = System.getenv("TEST_CF_SPACE");
         String orga = System.getenv("TEST_CF_ORGA");
+
         Assume.assumeNotNull(userName, pw, host, space, orga);
+
         when(context.getInputs()).thenReturn(mock(PropertyInstance.class));
         when(context.getInputs().getOrThrow(CF_PROPERTY_KEY_USERNAME)).thenReturn(userName);
         when(context.getInputs().getOrThrow(CF_PROPERTY_KEY_PASSWORD)).thenReturn(pw);
@@ -82,6 +84,7 @@ public class CloudFoundryPluginTest extends BaseUnitTest {
         paths.add("app1/my_db/createtable.sql");
 
         List<Application> applications = cfCycle.getFilledApplications();
+
         FileCreator fileCreator = new FileCreator(fileAccess, applications, context);
         fileCreator.createFiles();
     }
@@ -115,10 +118,16 @@ public class CloudFoundryPluginTest extends BaseUnitTest {
             FILESUFFIX_DEPLOY);
         String deployScript = FileUtils.readFileToString(targetFile);
         String expectedOutput =
-            "python executeCommand.py my-app /home/vcap/app/htdocs/my_app/create_myphpapp.sh\n" +
-                "python configureMysql.py ../../app1/my_db/createtable.sql\n";
+            "check python\n" +
+                "python replace.py ../../app1/my_app/create_myphpapp.sh /var/www/html/ /home/vcap/app/htdocs/\n" +
+                "cf push my-app -f ../manifest.yml --no-start\n" +
+                "python readCredentials.py my-app cleardb mysql my_db\n" +
+                "python configureMysql.py ../../app1/my_db/createtable.sql\n" +
+                "cf start my-app\n" +
+                "python executeCommand.py my-app /home/vcap/app/htdocs/my_app/create_myphpapp.sh";
 
         assertTrue(deployScript.contains(expectedOutput));
+        //assertEquals(expectedOutput, deployScript);
     }
 
     @Test

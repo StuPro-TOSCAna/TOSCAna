@@ -23,6 +23,7 @@ import static org.opentosca.toscana.core.plugin.lifecycle.AbstractLifecycle.OUTP
 import static org.opentosca.toscana.core.plugin.lifecycle.AbstractLifecycle.SCRIPTS_DIR_PATH;
 import static org.opentosca.toscana.plugins.cloudfoundry.application.ManifestAttributes.DOMAIN;
 import static org.opentosca.toscana.plugins.cloudfoundry.application.ManifestAttributes.ENVIRONMENT;
+import static org.opentosca.toscana.plugins.cloudfoundry.application.ManifestAttributes.NO_ROUTE;
 import static org.opentosca.toscana.plugins.cloudfoundry.application.ManifestAttributes.PATH;
 import static org.opentosca.toscana.plugins.cloudfoundry.application.ManifestAttributes.RANDOM_ROUTE;
 import static org.opentosca.toscana.plugins.cloudfoundry.application.ManifestAttributes.SERVICE;
@@ -40,6 +41,8 @@ public class FileCreator {
     public static final String CLI_CREATE_SERVICE_DEFAULT = "cf create-service {plan} {service} ";
     public static final String CLI_CREATE_SERVICE = "cf create-service ";
     public static final String CLI_PUSH = "cf push ";
+    public static final String CLI_NO_START = " --no-start";
+    public static final String CLI_START = "cf start ";
     public static final String CLI_PATH_TO_MANIFEST = " -f ../";
     public static final String FILEPRAEFIX_DEPLOY = "deploy_";
     public static final String FILESUFFIX_DEPLOY = ".sh";
@@ -49,6 +52,10 @@ public class FileCreator {
 
     private TransformationContext context;
     private Logger logger;
+    private List<String> seenConfiguredServices = new ArrayList<>();
+    
+    // this list contains services which are already matched to a service of a provider and already created.
+    private List<String> alreadyHandledServices = new ArrayList<>();
 
     private final PluginFileAccess fileAccess;
     private List<Application> applications;
@@ -116,7 +123,13 @@ public class FileCreator {
      adds the relative path of the application folder to the manifest
      */
     private void addPathToApplication(Application application) throws IOException {
-        String pathAddition = String.format("  %s: ../%s", PATH.getName(), APPLICATION_FOLDER + application.getApplicationNumber());
+
+        String pathAddition = String.format("  %s: ../%s", PATH.getName(),
+            APPLICATION_FOLDER + application.getApplicationNumber());
+
+        if (application.isEnablePathToApplication()) {
+            pathAddition = String.format("%s/%s", pathAddition, application.getPathToApplication());
+        }
 
         logger.info("Add path to application {} to manifest", pathAddition);
         fileAccess.access(MANIFEST_PATH).appendln(pathAddition).close();
@@ -200,7 +213,7 @@ public class FileCreator {
 
         //push applications
         for (Application application : applications) {
-            deployScript.append(CLI_PUSH + application.getName() + CLI_PATH_TO_MANIFEST + MANIFEST_NAME);
+            deployScript.append(CLI_PUSH + application.getName() + CLI_PATH_TO_MANIFEST + MANIFEST_NAME + CLI_NO_START);
         }
 
         //read credentials, replace, executeScript, configureMysql
@@ -210,11 +223,14 @@ public class FileCreator {
             //read credentials
             readCredentials(deployment, application);
 
-            //execute
-            executeFiles(deployment, application);
-
             //configureSql
             configureSql(deployment, application);
+
+            //start application
+            deployScript.append(CLI_START + application.getName());
+
+            //execute
+            executeFiles(deployment, application);
         }
     }
 
@@ -223,8 +239,14 @@ public class FileCreator {
      */
     private void configureSql(Deployment deployment, Application application) throws IOException {
         if (!application.getConfigMysql().isEmpty()) {
-            for (String file : application.getConfigMysql()) {
-                deployment.configureSql(file);
+
+            for (Map.Entry<String, String> entry : application.getConfigMysql().entrySet()) {
+                if (!seenConfiguredServices.contains(entry.getKey())) {
+                    deployment.configureSql(entry.getValue());
+                    seenConfiguredServices.add(entry.getKey());
+                } else {
+                    logger.debug("Do not add the configure sql file twice. The database is already configured by another command");
+                }
             }
         }
     }
@@ -265,7 +287,7 @@ public class FileCreator {
             Deployment deployment = new Deployment(deployScript, application, fileAccess, context);
 
             //only one time all service offerings should be printed to the deploy script
-            deployment.treatServices();
+            this.alreadyHandledServices = deployment.treatServices(alreadyHandledServices);
         }
     }
 
@@ -314,7 +336,8 @@ public class FileCreator {
                 attributes.add(String.format("  %s: %s", attribute.getKey(), attribute.getValue()));
             }
 
-            if (!application.getAttributes().containsKey(DOMAIN.getName())) {
+            if (!application.getAttributes().containsKey(DOMAIN.getName())
+                && !application.getAttributes().containsKey(NO_ROUTE.getName())) {
                 attributes.add(String.format("  %s: %s", RANDOM_ROUTE.getName(), "true"));
             }
             for (String attribute : attributes) {
