@@ -1,4 +1,4 @@
-package org.opentosca.toscana.plugins.cloudfoundry.visitors;
+package org.opentosca.toscana.plugins.cloudfoundry.visitor;
 
 import org.opentosca.toscana.model.node.MysqlDatabase;
 import org.opentosca.toscana.model.visitor.NodeVisitor;

@@ -17,12 +17,12 @@ import org.slf4j.LoggerFactory;
  Maybe there exists "unreal" applications which are just dummy application e.g. services.
  The data from these dummy applications must be copied to the application which they belong to.
  */
-public class ApplicationHandler {
+class ApplicationHandler {
 
     private final static Logger logger = LoggerFactory.getLogger(ApplicationHandler.class);
     private List<Application> uncheckedApplications;
 
-    public ApplicationHandler(List<Application> applications) {
+    ApplicationHandler(List<Application> applications) {
         this.uncheckedApplications = applications;
     }
 
@@ -32,10 +32,10 @@ public class ApplicationHandler {
 
      @return a list with only real applications with all needed data
      */
-    public List<Application> handleApplications() {
+    List<Application> handleApplications() {
         List<Application> checkedApplications = new ArrayList<>();
         List<Application> realApplications = uncheckedApplications.stream()
-            .filter(application -> application.isRealApplication())
+            .filter(Application::isRealApplication)
             .collect(Collectors.toList());
 
         //set new application number because the dummy applications are missing
@@ -44,7 +44,7 @@ public class ApplicationHandler {
         }
 
         //sort checked applications by application number
-        realApplications.sort(Comparator.comparing(application -> application.getApplicationNumber()));
+        realApplications.sort(Comparator.comparing(Application::getApplicationNumber));
 
         for (Application application : uncheckedApplications) {
             if (!application.isRealApplication()) {
@@ -59,10 +59,7 @@ public class ApplicationHandler {
                 logger.debug("Checked application {}", application.getName());
             }
         }
-
-        //sort checked applications by application number
-        //checkedApplications.sort(Comparator.comparing(application -> application.getApplicationNumber()));
-
+       
         return checkedApplications;
     }
 
@@ -72,18 +69,18 @@ public class ApplicationHandler {
     private void copyData(Application unrealApplication, Application parentApplication) {
         logger.debug("Copy data from unreal application to real parent application");
         //copy file paths
-        unrealApplication.getFilePaths().forEach(path -> parentApplication.addFilePath(path));
+        unrealApplication.getFilePaths().forEach(parentApplication::addFilePath);
 
         //copy attributes
-        unrealApplication.getAttributes().forEach((k, v) -> parentApplication.addAttribute(k, v));
+        unrealApplication.getAttributes().forEach(parentApplication::addAttribute);
 
         //copy executing files
-        unrealApplication.getExecuteCommands().forEach((k, v) -> parentApplication.addExecuteFile(k, v));
+        unrealApplication.getExecuteCommands().forEach(parentApplication::addExecuteFile);
 
         //copy mysql configure file
-        unrealApplication.getConfigMysql().forEach(sqlFile -> parentApplication.addConfigMysql(sqlFile));
+        unrealApplication.getConfigMysql().forEach(parentApplication::addConfigMysql);
 
         //copy environment variables
-        unrealApplication.getEnvironmentVariables().forEach((k, v) -> parentApplication.addEnvironmentVariables(k, v));
+        unrealApplication.getEnvironmentVariables().forEach(parentApplication::addEnvironmentVariables);
     }
 }

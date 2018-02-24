@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.core.transformation.TransformationContext;
@@ -51,14 +52,14 @@ public class Deployment {
     /**
      look for suitable services which match to the requirements of the user
      */
-    public void treatServices() throws IOException {
+    public List<String> treatServices(List<String> alreadyHandledServices) throws IOException {
         ServiceHandler serviceHandler = new ServiceHandler(application, deploymentScript, context);
 
         String scriptPath = deploymentScript.getScriptPath();
         File scriptFile = new File(scriptPath);
         String contentScript = FileUtils.readFileToString(scriptFile);
 
-        serviceHandler.addServiceCommands(!contentScript.contains("cf create-service"));
+        return serviceHandler.addServiceCommands(!contentScript.contains("cf create-service"), alreadyHandledServices);
     }
 
     /**
@@ -69,6 +70,7 @@ public class Deployment {
      file
      */
     public void configureSql(String relativePathToSQLConfigureFile) throws IOException {
+
         copyFile(PYTHON_CONFIGURE_SQL_FILENAME);
 
         String command = String.format("python %s %s", PYTHON_CONFIGURE_SQL_FILENAME, relativePathToSQLConfigureFile);

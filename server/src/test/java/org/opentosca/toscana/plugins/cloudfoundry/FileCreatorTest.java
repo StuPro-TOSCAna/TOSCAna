@@ -155,7 +155,8 @@ public class FileCreatorTest extends BaseUnitTest {
             SOURCE_UTIL_ALL + "\n" +
             SUBCOMMAND_EXIT + "\n" +
             "check \"cf\"\n" +
-            "cf push " + appName + CLI_PATH_TO_MANIFEST + MANIFEST_NAME + "\n";
+            "cf push " + appName + CLI_PATH_TO_MANIFEST + MANIFEST_NAME + " --no-start\n" +
+            "cf start testApp\n";
         assertEquals(expectedDeployContent, manifestContent);
     }
 
@@ -264,8 +265,10 @@ public class FileCreatorTest extends BaseUnitTest {
             "check \"cf\"\n" +
             "cf create-service {plan} {service} cleardb\n" +
             "cf create-service {plan} {service} p-mysql\n" +
-            "cf push app1 -f ../manifest.yml\n" +
-            "cf push app2 -f ../manifest.yml\n";
+            "cf push app1 -f ../manifest.yml --no-start\n" +
+            "cf push app2 -f ../manifest.yml --no-start\n" +
+            "cf start app1\n" +
+            "cf start app2\n";
 
         assertEquals(expectedContent, deployscriptContent);
     }
@@ -305,10 +308,10 @@ public class FileCreatorTest extends BaseUnitTest {
             }
         }
 
-        app.addConfigMysql("my_db/configSql.sql");
+        app.addConfigMysql(service1, "my_db/configSql.sql");
         app.addExecuteFile("my_app/configure_myphpapp.sh", webApplicationNode);
 
-        secondApp.addConfigMysql("database/config.sql");
+        secondApp.addConfigMysql(serviceName, "database/config.sql");
         secondApp.addExecuteFile("database/dbinit.sh", mysqlDatabaseNode);
 
         List<Application> applications = new ArrayList<>();
@@ -323,14 +326,16 @@ public class FileCreatorTest extends BaseUnitTest {
             "check python\n" +
                 "python replace.py ../../app1/my_app/configure_myphpapp.sh /var/www/html/ /home/vcap/app/htdocs/\n" +
                 "python replace.py ../../app2/database/dbinit.sh /var/www/html/ /home/vcap/app/htdocs/\n" +
-                "cf push app -f ../manifest.yml\n" +
-                "cf push appSec -f ../manifest.yml\n" +
-                "python readCredentials.py app cleardb mysql " + service1 + "\n" +
-                "python executeCommand.py app /home/vcap/app/htdocs/my_app/configure_myphpapp.sh\n" +
+                "cf push app -f ../manifest.yml --no-start\n" +
+                "cf push appSec -f ../manifest.yml --no-start\n" +
+                "python readCredentials.py app cleardb mysql cleardb\n" +
                 "python configureMysql.py ../../app1/my_db/configSql.sql\n" +
-                "python readCredentials.py appSec cleardb mysql " + serviceName + "\n" +
-                "python executeCommand.py appSec /home/vcap/app/database/dbinit.sh\n" +
-                "python configureMysql.py ../../app2/database/config.sql\n";
+                "cf start app\n" +
+                "python executeCommand.py app /home/vcap/app/htdocs/my_app/configure_myphpapp.sh\n" +
+                "python readCredentials.py appSec cleardb mysql mydb\n" +
+                "python configureMysql.py ../../app2/database/config.sql\n" +
+                "cf start appSec\n" +
+                "python executeCommand.py appSec /home/vcap/app/database/dbinit.sh\n";
 
         assertTrue(deployscriptContent.contains(expectedContent));
         //assertEquals(expectedContent, deployscriptContent);

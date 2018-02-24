@@ -26,7 +26,7 @@ import org.opentosca.toscana.plugins.cloudfoundry.filecreator.FileCreator;
 import org.opentosca.toscana.plugins.cloudfoundry.visitor.NodeTypeCheck;
 import org.opentosca.toscana.plugins.cloudfoundry.visitor.NodeVisitor;
 import org.opentosca.toscana.plugins.cloudfoundry.visitor.OSCheck;
-import org.opentosca.toscana.plugins.cloudfoundry.visitors.PrepareVisitor;
+import org.opentosca.toscana.plugins.cloudfoundry.visitor.PrepareVisitor;
 import org.opentosca.toscana.plugins.kubernetes.exceptions.UnsupportedOsTypeException;
 import org.opentosca.toscana.plugins.kubernetes.util.KubernetesNodeContainer;
 import org.opentosca.toscana.plugins.kubernetes.util.NodeStack;
@@ -60,6 +60,7 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
     public CloudFoundryLifecycle(TransformationContext context) throws IOException, NoSuchPropertyException {
         super(context);
         model = context.getModel();
+
         PropertyInstance properties = context.getInputs();
 
         logger.debug("Checking for Properties");
@@ -186,6 +187,8 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
 
     @Override
     public void transform() {
+        logger.info("Begin transformation to Cloud Foundry.");
+
         PluginFileAccess fileAccess = context.getPluginFileAccess();
 
         fillApplications();
