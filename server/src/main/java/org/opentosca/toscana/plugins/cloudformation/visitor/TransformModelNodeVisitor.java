@@ -269,12 +269,10 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
             List<Integer> portList = new ArrayList<>();
             node.getCapabilities().forEach(e -> {
                 try {
-                    if (e instanceof EndpointCapability) {
-                        if (((EndpointCapability) e).getPort().isPresent()) {
-                            int port = ((EndpointCapability) e).getPort().get().port;
-                            logger.debug("Marking '{}' as port to be opened for '{}'.", port, nodeName);
-                            portList.add(port);
-                        }
+                    if (e instanceof EndpointCapability && ((EndpointCapability) e).getPort().isPresent()) {
+                        int port = ((EndpointCapability) e).getPort().get().port;
+                        logger.debug("Marking '{}' as port to be opened for '{}'.", port, nodeName);
+                        portList.add(port);
                     }
                 } catch (Exception ex) {
                     logger.warn("Failed reading Port from node {}", nodeName, ex);
