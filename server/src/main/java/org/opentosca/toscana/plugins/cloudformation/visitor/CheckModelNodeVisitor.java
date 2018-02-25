@@ -58,7 +58,7 @@ public class CheckModelNodeVisitor extends CloudFormationVisitorExtension implem
             }
         }
     }
-    
+
     @Override
     public void visit(Database node) {
         // noop
@@ -68,17 +68,17 @@ public class CheckModelNodeVisitor extends CloudFormationVisitorExtension implem
     public void visit(MysqlDatabase node) {
         // noop
     }
-    
+
     @Override
     public void visit(Dbms dbms) {
         // noop
     }
-    
+
     @Override
     public void visit(MysqlDbms node) {
         // noop
     }
-    
+
     @Override
     public void visit(WebApplication node) {
         // noop
