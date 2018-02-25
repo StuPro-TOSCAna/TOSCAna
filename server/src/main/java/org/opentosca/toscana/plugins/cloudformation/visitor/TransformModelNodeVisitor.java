@@ -282,7 +282,7 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
             //Open ports
             String SecurityGroupName = computeHostName + SECURITY_GROUP;
             SecurityGroup securityGroup = (SecurityGroup) cfnModule.getResource(SecurityGroupName);
-            securityGroup.ingress(ingress -> ingress.cidrIp(IP_OPEN), PROTOCOL_TCP, portList);
+            securityGroup.ingress(ingress -> ingress.cidrIp(IP_OPEN), PROTOCOL_TCP, portList.toArray());
         } catch (Exception e) {
             logger.error("Error while creating Nodejs");
             throw new TransformationFailureException("Failed at Nodejs node " + node.getEntityName(), e);
