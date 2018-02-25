@@ -21,6 +21,8 @@ import static org.opentosca.toscana.plugins.cloudformation.CloudFormationLifecyc
 public class PrepareModelNodeVisitor extends CloudFormationVisitorExtension implements NodeVisitor {
 
     protected static final String AWS_ENDPOINT_REFERENCE = "Endpoint.Address";
+    private static final String AWS_INSTANCE_PRIVATE_IP = "PrivateIp";
+    private static final String AWS_INSTANCE_PUBLIC_IP = "PublicIp";
     private static final int minPWLength = 8;
     private static final String DEFAULT_USER = "root";
     private static final Integer DEFAULT_PORT = 3306;
@@ -84,6 +86,17 @@ public class PrepareModelNodeVisitor extends CloudFormationVisitorExtension impl
     public void visit(Compute node) {
         // compute nodes only get transformed if they are present in this map
         cfnModule.addComputeToEc2(node);
+        
+        // Set private and public address of this EC2 instance
+        String computeName = toAlphanumerical(node.getEntityName());
+        Fn privateIpFn = Fn.fnGetAtt(computeName, AWS_INSTANCE_PRIVATE_IP);
+        Fn publicIpFn = Fn.fnGetAtt(computeName, AWS_INSTANCE_PUBLIC_IP);
+        String privateIpFnString = privateIpFn.toString(true);
+        String publicIpFnString = publicIpFn.toString(true);
+        cfnModule.putFn(privateIpFnString, privateIpFn);
+        cfnModule.putFn(publicIpFnString, publicIpFn);
+        node.setPrivateAddress(privateIpFnString);
+        node.setPublicAddress(publicIpFnString);
     }
 
     /**

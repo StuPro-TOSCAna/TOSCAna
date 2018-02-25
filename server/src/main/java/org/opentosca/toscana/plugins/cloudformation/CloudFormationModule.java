@@ -22,6 +22,7 @@ import com.scaleset.cfbuilder.ec2.UserData;
 import com.scaleset.cfbuilder.ec2.metadata.CFNInit;
 import com.scaleset.cfbuilder.iam.Role;
 
+import static org.opentosca.toscana.core.plugin.lifecycle.AbstractLifecycle.OUTPUT_DIR;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationLifecycle.toAlphanumerical;
 import static org.opentosca.toscana.plugins.cloudformation.util.AuthenticationUtils.INSTANCE_PROFILE;
 import static org.opentosca.toscana.plugins.cloudformation.util.AuthenticationUtils.getS3Authentication;
@@ -42,11 +43,12 @@ public class CloudFormationModule extends Module {
     public static final String ABSOLUTE_FILE_PATH = "/opt/";
     public static final String URL_HTTP = "http://";
     public static final String URL_S3_AMAZONAWS = ".s3.amazonaws.com";
-    public static final String FILEPATH_TARGET = "output/files/";
+    public static final String FILEPATH_TARGET = OUTPUT_DIR + "files/";
     public static final String MODE_500 = "000500";
     public static final String MODE_644 = "000644";
     public static final String OWNER_GROUP_ROOT = "root";
     public static final String KEYNAME = "KeyName";
+    public static final String FILEPATH_NODEJS_CREATE = "create-nodejs.sh";
 
     // KeyName is a default input value
     private static final String KEYNAME_DESCRIPTION = "Name of an existing EC2 KeyPair to enable SSH access to the " +
@@ -62,6 +64,7 @@ public class CloudFormationModule extends Module {
     private Map<String, Fn> fnSaver;
     private Set<String> authenticationSet;
     private List<String> filesToBeUploaded;
+    private List<String> utilFilesToBeUploaded;
     private PluginFileAccess fileAccess;
     private String bucketName;
     private String stackName;
@@ -80,6 +83,7 @@ public class CloudFormationModule extends Module {
         this.fnSaver = new HashMap<>();
         this.authenticationSet = new HashSet<>();
         this.filesToBeUploaded = new ArrayList<>();
+        this.utilFilesToBeUploaded = new ArrayList<>();
         this.fileAccess = fileAccess;
         this.bucketName = getRandomBucketName();
         this.stackName = getRandomStackName();
@@ -154,6 +158,14 @@ public class CloudFormationModule extends Module {
 
     public void putFileToBeUploaded(String filePath) {
         this.filesToBeUploaded.add(filePath);
+    }
+
+    public List<String> getUtilFilesToBeUploaded() {
+        return utilFilesToBeUploaded;
+    }
+
+    public void addUtilFileToBeUploaded(String filePath) {
+        this.utilFilesToBeUploaded.add(filePath);
     }
 
     public Set<String> getAuthenticationSet() {
