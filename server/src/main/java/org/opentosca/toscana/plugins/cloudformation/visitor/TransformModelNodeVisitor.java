@@ -1,9 +1,12 @@
 package org.opentosca.toscana.plugins.cloudformation.visitor;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.model.capability.ComputeCapability;
+import org.opentosca.toscana.model.capability.EndpointCapability;
 import org.opentosca.toscana.model.capability.OsCapability;
 import org.opentosca.toscana.model.node.Apache;
 import org.opentosca.toscana.model.node.Compute;
@@ -39,6 +42,8 @@ import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.
  supports LAMP-stacks built with Compute, WebApplication, Apache, MySQL, MySQL nodes.
  */
 public class TransformModelNodeVisitor extends CloudFormationVisitorExtension implements StrictNodeVisitor {
+    private static final String IP_OPEN = "0.0.0.0/0";
+    private static final String PROTOCOL_TCP = "tcp";
     private OperationHandler operationHandler;
 
     /**
@@ -82,11 +87,10 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
                 capabilityMapper.mapDiskSize(computeCompute, cfnModule, nodeName);
                 // Add Reference to keyName if KeyPair needed and open Port 22 (Allows SSH access)
                 if (cfnModule.hasKeyPair()) {
-                    Object cidrIp = "0.0.0.0/0";
                     Instance instance = (Instance) cfnModule.getResource(nodeName);
                     instance.keyName(cfnModule.getKeyNameVar());
                     webServerSecurityGroup
-                    .ingress(ingress -> ingress.cidrIp(cidrIp), "tcp", 22);
+                        .ingress(ingress -> ingress.cidrIp(IP_OPEN), PROTOCOL_TCP, 22);
                 }
             } else {
                 logger.debug("Compute '{}' will not be transformed to EC2", node.getEntityName());
@@ -117,10 +121,10 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
                 for (Compute hostOfConnectedTo : hostsOfConnectedTo) {
                     securityGroup.ingress(ingress -> ingress.sourceSecurityGroupName(
                         cfnModule.ref(toAlphanumerical(hostOfConnectedTo.getEntityName()) + SECURITY_GROUP)),
-                        "tcp",
+                        PROTOCOL_TCP,
                         databasePort);
                 }
-            }            
+            }
         } catch (Exception e) {
             logger.error("Error while creating Database resource.");
             throw new TransformationFailureException("Failed at Database node " + node.getEntityName(), e);
@@ -155,7 +159,7 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
             for (Compute hostOfConnectedTo : hostsOfConnectedTo) {
                 securityGroup.ingress(ingress -> ingress.sourceSecurityGroupName(
                     cfnModule.ref(toAlphanumerical(hostOfConnectedTo.getEntityName()) + SECURITY_GROUP)),
-                    "tcp",
+                    PROTOCOL_TCP,
                     port);
             }
             cfnModule.resource(DBInstance.class, nodeName)
@@ -187,7 +191,7 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
             if (node.getPort().isPresent()) {
                 Integer dbmsPort = node.getPort().orElseThrow(() -> new IllegalArgumentException("Database " +
                     "port not set"));
-                securityGroup.ingress(ingress -> ingress.cidrIp("0.0.0.0/0"), "tcp", dbmsPort);
+                securityGroup.ingress(ingress -> ingress.cidrIp(IP_OPEN), PROTOCOL_TCP, dbmsPort);
             }
         } catch (Exception e) {
             logger.error("Error while creating Database resource.");
@@ -252,19 +256,35 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
         try {
             Compute computeHost = getCompute(node);
             String computeHostName = toAlphanumerical(computeHost.getEntityName());
-            
+            String nodeName = node.getEntityName();
+
             //handle configure
             operationHandler.handleConfigure(node, computeHostName);
             //handle start
             operationHandler.handleStart(node, computeHostName);
             //add NodeJs create script
-            operationHandler.addCreate(FILEPATH_NODEJS_CREATE, computeHostName);            
-            
-            //Open port 3000
+            operationHandler.addCreate(FILEPATH_NODEJS_CREATE, computeHostName);
+
+            //Get ports
+            List<Integer> portList = new ArrayList<>();
+            node.getCapabilities().forEach(e -> {
+                try {
+                    if (e instanceof EndpointCapability) {
+                        if (((EndpointCapability) e).getPort().isPresent()) {
+                            int port = ((EndpointCapability) e).getPort().get().port;
+                            logger.debug("Marking '{}' as port to be opened for '{}'.", port, nodeName);
+                            portList.add(port);
+                        }
+                    }
+                } catch (Exception ex) {
+                    logger.warn("Failed reading Port from node {}", nodeName, ex);
+                }
+            });
+
+            //Open ports
             String SecurityGroupName = computeHostName + SECURITY_GROUP;
             SecurityGroup securityGroup = (SecurityGroup) cfnModule.getResource(SecurityGroupName);
-            securityGroup.ingress(ingress -> ingress.cidrIp("0.0.0.0/0"), "tcp", 3000);
-                
+            securityGroup.ingress(ingress -> ingress.cidrIp(IP_OPEN), PROTOCOL_TCP, portList);
         } catch (Exception e) {
             logger.error("Error while creating Nodejs");
             throw new TransformationFailureException("Failed at Nodejs node " + node.getEntityName(), e);
