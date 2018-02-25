@@ -13,6 +13,8 @@ import org.opentosca.toscana.model.node.MysqlDatabase;
 import org.opentosca.toscana.model.node.MysqlDbms;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.node.WebApplication;
+import org.opentosca.toscana.model.node.custom.JavaApplication;
+import org.opentosca.toscana.model.node.custom.JavaRuntime;
 import org.opentosca.toscana.model.operation.Operation;
 import org.opentosca.toscana.model.operation.OperationVariable;
 import org.opentosca.toscana.model.operation.StandardLifecycle;
@@ -20,6 +22,7 @@ import org.opentosca.toscana.model.relation.ConnectsTo;
 import org.opentosca.toscana.model.relation.RootRelationship;
 import org.opentosca.toscana.model.visitor.StrictNodeVisitor;
 import org.opentosca.toscana.plugins.cloudfoundry.application.Application;
+import org.opentosca.toscana.plugins.cloudfoundry.application.ManifestAttributes;
 import org.opentosca.toscana.plugins.cloudfoundry.application.ServiceTypes;
 import org.opentosca.toscana.plugins.util.TransformationFailureException;
 
@@ -60,15 +63,15 @@ public class NodeVisitor implements StrictNodeVisitor {
         */
 
         if (node.getPublicAddress().isPresent()) {
-            myApp.addAttribute(DOMAIN.getName(), node.getPublicAddress().get());
+            myApp.addAttribute(DOMAIN, node.getPublicAddress().get());
         }
 
         if (node.getHost().getDiskSizeInMb().isPresent()) {
-            myApp.addAttribute(DISKSIZE.getName(), node.getHost().getDiskSizeInMb().get() + "MB");
+            myApp.addAttribute(DISKSIZE, node.getHost().getDiskSizeInMb().get() + "MB");
         }
 
         if (node.getHost().getMemSizeInMb().isPresent()) {
-            myApp.addAttribute(MEMORY.getName(), node.getHost().getMemSizeInMb().get() + "MB");
+            myApp.addAttribute(MEMORY, node.getHost().getMemSizeInMb().get() + "MB");
         }
     }
 
@@ -103,7 +106,7 @@ public class NodeVisitor implements StrictNodeVisitor {
             myApp.addFilePath(path);
             logger.debug("Add artifact path {} to application", path);
             if (path.endsWith("sql")) {
-                myApp.addConfigMysql(path);
+                myApp.addConfigMysql(node.getEntityName(), path);
                 logger.info("Found a SQL script in artifact paths. Will execute it with python script in deployment phase");
             }
         }
@@ -154,27 +157,35 @@ public class NodeVisitor implements StrictNodeVisitor {
     @Override
     public void visit(WebApplication node) {
         myApp.setName(node.getEntityName());
+        getScripts(node, myApp);
+        handleStandardLifecycle(node, true, myApp);
+    }
 
-        StandardLifecycle lifecycle = node.getStandardLifecycle();
-        Optional<Operation> configureOptional = lifecycle.getConfigure();
+    @Override
+    public void visit(JavaRuntime node) {
+        logger.debug("Visit JavaRuntime");
+    }
 
-        //get configure script
-        if (configureOptional.isPresent()) {
-            Optional<Artifact> configureArtifact = configureOptional.get().getArtifact();
-            configureArtifact.ifPresent(artifact -> myApp.addExecuteFile(artifact.getFilePath(), node));
-        }
-
-        //get create script
-        Optional<Operation> createOptional = lifecycle.getCreate();
-        if (createOptional.isPresent()) {
-            Optional<Artifact> createArtifact = createOptional.get().getArtifact();
-            createArtifact.ifPresent(artifact -> myApp.addExecuteFile(artifact.getFilePath(), node));
-        }
-
+    @Override
+    public void visit(JavaApplication node) {
+        logger.debug("Visit JavaApplication");
+        myApp.setName(node.getEntityName());
+        myApp.addAttribute(ManifestAttributes.NO_ROUTE, "true");
+        myApp.addAttribute(ManifestAttributes.HEALTHCHECK_TYPE, "process");
+        myApp.setEnablePathToApplication(true);
+        getScripts(node, myApp);
         handleStandardLifecycle(node, true, myApp);
     }
 
     private void handleStandardLifecycle(RootNode node, boolean isTopNode, Application application) {
+
+        //get node artifacts
+        node.getArtifacts().stream().forEach(artifact -> {
+            String filePath = artifact.getFilePath();
+            application.setPathToApplication(filePath);
+            application.addFilePath(filePath);
+        });
+
         // get StandardLifecycle inputs
         for (OperationVariable lifecycleInput : node.getStandardLifecycle().getInputs()) {
             addEnvironmentVariable(lifecycleInput);
@@ -214,6 +225,24 @@ public class NodeVisitor implements StrictNodeVisitor {
         myApp.addFilePath(path);
         if (myApp.getPathToApplication() == null && isTopNode) {
             myApp.setPathToApplication(path);
+        }
+    }
+
+    private void getScripts(RootNode node, Application application) {
+        StandardLifecycle lifecycle = node.getStandardLifecycle();
+        Optional<Operation> configureOptional = lifecycle.getConfigure();
+
+        //get configure script
+        if (configureOptional.isPresent()) {
+            Optional<Artifact> configureArtifact = configureOptional.get().getArtifact();
+            configureArtifact.ifPresent(artifact -> application.addExecuteFile(artifact.getFilePath(), node));
+        }
+
+        //get create script
+        Optional<Operation> createOptional = lifecycle.getCreate();
+        if (createOptional.isPresent()) {
+            Optional<Artifact> createArtifact = createOptional.get().getArtifact();
+            createArtifact.ifPresent(artifact -> application.addExecuteFile(artifact.getFilePath(), node));
         }
     }
 }

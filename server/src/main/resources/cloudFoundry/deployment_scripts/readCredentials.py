@@ -63,7 +63,7 @@ def read_mysql_credentials(appName, serviceName):
     sub.call(["cf" ,"set-env",appName, strEnvDatabasePassword, database_password])
 
     # ensure the env variables changes take effect
-    sub.call(["cf", "restage", appName])
+    # sub.call(["cf", "restage", appName])
     return
 
 def get_Service_Env_Block_MySql(appName):

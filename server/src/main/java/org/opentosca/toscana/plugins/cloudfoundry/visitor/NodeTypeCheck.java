@@ -5,6 +5,8 @@ import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.MysqlDatabase;
 import org.opentosca.toscana.model.node.MysqlDbms;
 import org.opentosca.toscana.model.node.WebApplication;
+import org.opentosca.toscana.model.node.custom.JavaApplication;
+import org.opentosca.toscana.model.node.custom.JavaRuntime;
 import org.opentosca.toscana.model.visitor.StrictNodeVisitor;
 
 /**
@@ -35,5 +37,15 @@ public class NodeTypeCheck implements StrictNodeVisitor {
     @Override
     public void visit(WebApplication node) {
         //no action here
+    }
+
+    @Override
+    public void visit(JavaRuntime node) {
+        //TODO: Implementation WIP
+    }
+
+    @Override
+    public void visit(JavaApplication node) {
+        //TODO: Implementation WIP
     }
 }
