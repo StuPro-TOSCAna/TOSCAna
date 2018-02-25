@@ -7,6 +7,7 @@ import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.Database;
 import org.opentosca.toscana.model.node.Dbms;
+import org.opentosca.toscana.model.node.Nodejs;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.node.WebApplication;
 import org.opentosca.toscana.model.node.WebServer;
@@ -21,8 +22,6 @@ public abstract class CloudFormationVisitorExtension {
     protected final Logger logger;
     protected Graph<RootNode, RootRelationship> topology;
     protected CloudFormationModule cfnModule;
-
-
 
     public CloudFormationVisitorExtension(TransformationContext context) {
         this.logger = context.getLogger(getClass());
@@ -65,12 +64,36 @@ public abstract class CloudFormationVisitorExtension {
     /**
      Get the Compute node this webServer is ultimately hosted on
 
-     @param webServer the mysqlDatabase to find the host for
+     @param webServer the webServer to find the host for
      @return the underlying Compute node
      */
     protected static Compute getCompute(WebServer webServer) {
         return webServer.getHost().getNode().orElseThrow(
             () -> new IllegalStateException("WebServer is missing Compute")
+        );
+    }
+
+    /**
+     Get the Compute node this dbms is ultimately hosted on
+
+     @param dbms the webServer to find the host for
+     @return the underlying Compute node
+     */
+    protected static Compute getCompute(Dbms dbms) {
+        return dbms.getHost().getNode().orElseThrow(
+            () -> new IllegalStateException("Dbms is missing Compute")
+        );
+    }
+
+    /**
+     Get the Compute node this nodejs is ultimately hosted on.
+     
+     @param nodejs the host of which should be returned
+     @return host of given Nodejs
+     */
+    protected static Compute getCompute(Nodejs nodejs) {
+        return nodejs.getHost().getNode().orElseThrow(
+            () -> new IllegalStateException("Nodejs is missing Compute")
         );
     }
 
@@ -80,7 +103,7 @@ public abstract class CloudFormationVisitorExtension {
         for (RootRelationship incomingEdge : incomingEdges) {
             RootNode source = topology.getEdgeSource(incomingEdge);
             if (source instanceof WebApplication) {
-                WebApplication webApplication = (WebApplication) source; 
+                WebApplication webApplication = (WebApplication) source;
                 Compute compute = getCompute(webApplication);
                 connected.add(compute);
             }
