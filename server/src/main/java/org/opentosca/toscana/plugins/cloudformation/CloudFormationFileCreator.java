@@ -17,6 +17,9 @@ import org.apache.commons.io.Charsets;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 
+import static org.opentosca.toscana.core.plugin.lifecycle.AbstractLifecycle.UTIL_DIR_PATH;
+import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.FILEPATH_TARGET;
+
 /**
  Class for building scripts and copying files needed for deployment of cloudformation templates.
  */
@@ -38,7 +41,10 @@ public class CloudFormationFileCreator {
     public static final String TEMPLATE_YAML = "template.yaml";
     public static final String CHANGE_TO_PARENT_DIRECTORY = "cd ..";
     public static final String RELATIVE_DIRECTORY_PREFIX = "../files/";
-
+    public static final String FILEPATH_CLOUDFORMATION = "/cloudformation/";
+    public static final String FILEPATH_SCRIPTS_UTIL = FILEPATH_CLOUDFORMATION + "scripts/util/";
+    public static final String FILEPATH_FILES_UTIL = FILEPATH_CLOUDFORMATION + "files/util/";
+    
     private final Logger logger;
     private CloudFormationModule cfnModule;
 
@@ -64,7 +70,7 @@ public class CloudFormationFileCreator {
         if (!filesToBeUploaded.isEmpty()) {
             logger.debug("Files to be copied found. Attempting to copy files to the target artifact.");
             filesToBeUploaded.forEach((filePath) -> {
-                String targetPath = CloudFormationModule.FILEPATH_TARGET + filePath;
+                String targetPath = FILEPATH_TARGET + filePath;
                 try {
                     cfnModule.getFileAccess().copy(filePath, targetPath);
                 } catch (IOException e) {
@@ -191,17 +197,14 @@ public class CloudFormationFileCreator {
      @throws IOException if scripts cannot be found
      */
     public void copyUtilScripts() throws IOException {
-        String resourcePath = "/cloudformation/scripts/util/";
-        String outputPath = "output/scripts/util/";
-
         //Iterate over all files in the script list
         List<String> utilScripts = IOUtils.readLines(
-            getClass().getResourceAsStream(resourcePath + "scripts-list"),
+            getClass().getResourceAsStream(FILEPATH_SCRIPTS_UTIL + "scripts-list"),
             Charsets.UTF_8
         );
 
         logger.debug("Copying util scripts to the target artifact.");
-        copyUtilFile(utilScripts, resourcePath, outputPath);
+        copyUtilFile(utilScripts, FILEPATH_SCRIPTS_UTIL, UTIL_DIR_PATH);
     }
 
     /**
@@ -209,12 +212,9 @@ public class CloudFormationFileCreator {
      Note: Theses are the files that actually need to be uploaded and accessed by EC2 instances unlike the util scripts.
      */
     public void copyUtilDependencies() throws IOException {
-        String resourcePath = "/cloudformation/files/util/";
-        String outputPath = "output/files/";
-
         //Iterate over all files in the script list
         logger.debug("Copying util files to the target artifact.");
-        copyUtilFile(cfnModule.getUtilFilesToBeUploaded(), resourcePath, outputPath);
+        copyUtilFile(cfnModule.getUtilFilesToBeUploaded(), FILEPATH_FILES_UTIL, FILEPATH_TARGET);
     }
 
     /**
@@ -239,7 +239,7 @@ public class CloudFormationFileCreator {
         for (String file : files) {
             if (!file.isEmpty()) {
                 //Copy the file into the desired directory
-                logger.debug("Adding " + file + " to the target artifact.");
+                logger.debug("Adding '{}' to the target artifact.", file);
                 InputStreamReader input = new InputStreamReader(
                     getClass().getResourceAsStream(resourcePath + file)
                 );

@@ -10,6 +10,8 @@ import org.opentosca.toscana.plugins.cloudformation.CloudFormationModule;
 import com.scaleset.cfbuilder.core.Fn;
 import com.scaleset.cfbuilder.core.Template;
 
+import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.URL_HTTP;
+
 /**
  Utility class for working with CloudFormation stacks.
  */
@@ -95,6 +97,6 @@ public class StackUtils {
      @return URL for the file
      */
     public static String getFileURL(String bucketName, String objectKey) {
-        return CloudFormationModule.URL_HTTP + bucketName + CloudFormationModule.URL_S3_AMAZONAWS + "/" + objectKey;
+        return URL_HTTP + bucketName + CloudFormationModule.URL_S3_AMAZONAWS + "/" + objectKey;
     }
 }
