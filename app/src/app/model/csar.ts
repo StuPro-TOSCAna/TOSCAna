@@ -32,12 +32,7 @@ export class Csar {
     }
 
     public addTransformation(platform: string, platformFullName: string) {
-        const transformation: Transformation = {
-            platform: platform,
-            fullName: platformFullName,
-            state: TransformationStateEnum.INPUTREQUIRED,
-            phases: null
-        };
+        const transformation: Transformation = new Transformation(platformFullName, null, platform, TransformationStateEnum.INPUTREQUIRED);
         const existingTransformation = this.transformations.find(item => item.platform === platform);
         if (!isNullOrUndefined(existingTransformation)) {
             this.transformations.splice(this.transformations.indexOf(existingTransformation), 1);

@@ -14,6 +14,7 @@ import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/observable/interval';
 import {MessageService} from '../../providers/message/message.service';
 import {CsarProvider} from '../../providers/csar/csar.provider';
+import {getColorForLifecyclePhase} from '../../helper/helper';
 import TransformationStateEnum = TransformationResponse.StateEnum;
 import  LifecycleStateEnum = LifecyclePhase.StateEnum;
 
@@ -34,37 +35,17 @@ export class TransformationViewComponent implements OnInit, OnDestroy {
     state = 'log';
     private inputs: InputWrap[];
     private outputs: Array<OutputWrap> = [];
+    getColorForLifecyclePhase = getColorForLifecyclePhase;
+    LifecycleStateEnum = LifecycleStateEnum;
 
     constructor(private csarProvider: CsarProvider,
                 private messageService: MessageService, private routeHandler: RouteHandler, private route: ActivatedRoute,
                 private transformationProvider: TransformationsProvider, public platformsProvider: PlatformsProvider) {
     }
 
-    isActive(phase: LifecyclePhase) {
-        if (phase.state === LifecycleStateEnum.EXECUTING) {
-            return true;
-        }
-        return false;
-    }
-
-    getIcon(phase: LifecyclePhase) {
-        if (phase.state === LifecycleStateEnum.DONE) {
-            return 'green';
-        } else if (phase.state === LifecycleStateEnum.FAILED) {
-            return 'red';
-        } else if (phase.state === LifecycleStateEnum.EXECUTING) {
-            return 'orange';
-        } else if (phase.state === LifecycleStateEnum.PENDING) {
-            return 'blue';
-        } else if (phase.state === LifecycleStateEnum.SKIPPING) {
-            return 'gray';
-        }
-    }
-
     generateDownloadUrl() {
         this.url = `${environment.apiUrl}/api/csars/${this.csarId}/transformations/${this.platform}/artifact`;
     }
-
 
     async ngOnInit() {
         this.route.paramMap.switchMap((params: ParamMap) => {
@@ -95,6 +76,9 @@ export class TransformationViewComponent implements OnInit, OnDestroy {
     }
 
     private checkTransformationstate() {
+        if (isNullOrUndefined(this.transformation.state)) {
+            return;
+        }
         this.csarProvider.updateTransformationState(this.csarId, this.transformation.platform, this.transformation.state);
         if (this.transformation.state === TransformationStateEnum.DONE || this.transformation.state === TransformationStateEnum.ERROR ||
             this.transformation.state === TransformationStateEnum.INPUTREQUIRED) {

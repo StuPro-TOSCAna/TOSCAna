@@ -6,7 +6,7 @@ import {CsarProvider} from '../../providers/csar/csar.provider';
 import {Csar} from '../../model/csar';
 import {RouteHandler} from '../../handler/route/route.service';
 import {PlatformsProvider} from '../../providers/platforms/platforms.provider';
-import {Transformation} from '../../model/transformation';
+import {TransformationInterface} from '../../model/transformation';
 import {isNullOrUndefined} from 'util';
 import {MessageService} from '../../providers/message/message.service';
 import StateEnum = TransformationResponse.StateEnum;
@@ -24,7 +24,7 @@ export class InputComponent implements OnInit {
     inputs: InputWrap[] = [];
     errorMsg = false;
     csar: Csar;
-    transformation: Transformation;
+    transformation: TransformationInterface;
     everythingValid = true;
 
     constructor(private messageService: MessageService, private routeHandler: RouteHandler,

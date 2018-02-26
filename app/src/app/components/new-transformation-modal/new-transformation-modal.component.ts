@@ -5,7 +5,6 @@ import {TransformationsProvider} from '../../providers/transformations/transform
 import {Csar} from '../../model/csar';
 import {ActivatedRoute} from '@angular/router';
 import {CsarProvider} from '../../providers/csar/csar.provider';
-import {Helper} from '../../helper/helper';
 import {isNullOrUndefined} from 'util';
 import {RouteHandler} from '../../handler/route/route.service';
 import 'rxjs/add/observable/fromPromise';
@@ -25,7 +24,7 @@ export class NewTransformationModalComponent implements OnInit {
     platform: string;
     platformSelected = false;
     selectPlatformString = 'Select Platform';
-    notNullOrUndefined = Helper.notNullOrUndefined;
+    isNullOrUndefined = isNullOrUndefined;
     config = {
         animated: true,
     };

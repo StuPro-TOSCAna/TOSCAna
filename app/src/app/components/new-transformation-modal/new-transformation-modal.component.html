@@ -22,7 +22,7 @@
 <nav class="navbar navbar-dark bg-dark">
     <div class="navbar-brand">{{title}}</div>
 </nav>
-<div *ngIf="notNullOrUndefined(csar)">
+<div *ngIf="!isNullOrUndefined(csar)">
     <div *ngIf="!platformSelected" class="target-platforms">
         <button (click)="onPlatformSelected(item.id)" *ngFor="let item of platforms" type="button"
                 class="btn btn-secondary btn-lg btn-block">{{item.name}}

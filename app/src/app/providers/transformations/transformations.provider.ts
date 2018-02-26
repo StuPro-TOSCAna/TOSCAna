@@ -39,11 +39,9 @@ export class TransformationsProvider {
     }
 
     public getTransformationByCsarAndPlatform(csarId: string, platform: string): Observable<Transformation> {
-        return this.transformationsService.getCSARTransformationUsingGET(csarId, platform).map(result => {
-            let fullName = this.platformsProvider.getFullPlatformName(result.platform);
-            let transformation: Transformation = <Transformation>result;
-            transformation.fullName = fullName;
-            return transformation;
+        return this.transformationsService.getCSARTransformationUsingGET(csarId, platform).map(transformation => {
+            const fullName = this.platformsProvider.getFullPlatformName(transformation.platform);
+            return new Transformation(fullName, transformation.phases, transformation.platform, transformation.state);
         });
     }
 
