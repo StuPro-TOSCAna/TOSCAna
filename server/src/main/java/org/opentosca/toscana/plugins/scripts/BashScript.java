@@ -14,10 +14,10 @@ public class BashScript {
     public static final String SHEBANG = "#!/bin/bash";
     public static final String SOURCE_UTIL_ALL = "for file in $(ls util); do source util/$file; done";
     public static final String SUBCOMMAND_EXIT = "set -e";
-    private final static Logger logger = LoggerFactory.getLogger(BashScript.class);
-    private String name;
-    private PluginFileAccess access;
-    private String scriptPath;
+    protected final static Logger logger = LoggerFactory.getLogger(BashScript.class);
+    protected String name;
+    protected PluginFileAccess access;
+    protected String scriptPath;
 
     /**
      Creates a bash scriptPath in the <i>content/scripts/</i> directory in the transformation content directory.
@@ -32,7 +32,7 @@ public class BashScript {
         this.setUpScript();
     }
 
-    private void setUpScript() throws IOException {
+    protected void setUpScript() throws IOException {
         scriptPath = SCRIPTS_DIR_PATH + name + ".sh";
 
         logger.info("Creating new bash scriptPath: " + this.scriptPath);
