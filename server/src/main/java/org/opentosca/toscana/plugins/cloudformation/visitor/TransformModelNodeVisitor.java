@@ -31,11 +31,13 @@ import com.scaleset.cfbuilder.ec2.metadata.CFNPackage;
 import com.scaleset.cfbuilder.rds.DBInstance;
 
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationLifecycle.toAlphanumerical;
+import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.CONFIG_CONFIGURE;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.CONFIG_CREATE;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.CONFIG_SETS;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.CONFIG_START;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.FILEPATH_NODEJS_CREATE;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.SECURITY_GROUP;
+import static org.opentosca.toscana.plugins.cloudformation.util.EnvironmentHandler.APACHE_ENV_IMPORT;
 
 /**
  Class for building a CloudFormation template from an effective model instance via the visitor pattern. Currently only
@@ -224,7 +226,7 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
             //Source environment variables in /etc/apache/envvars
             cfnModule.getCFNInit(computeName)
                 .getOrAddConfig(CONFIG_SETS, CONFIG_CONFIGURE)
-                .putCommand(new CFNCommand("add environment variables", "echo './etc/environment' >> /etc/apache2/envvars"));
+                .putCommand(new CFNCommand("add environment variables", APACHE_ENV_IMPORT));
             //we add restart apache2 command to the configscript
             cfnModule.getCFNInit(computeName)
                 .getOrAddConfig(CONFIG_SETS, CONFIG_START)

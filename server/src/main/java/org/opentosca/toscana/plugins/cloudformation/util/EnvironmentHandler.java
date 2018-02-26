@@ -7,10 +7,16 @@ import org.opentosca.toscana.plugins.cloudformation.CloudFormationModule;
 import org.slf4j.Logger;
 
 public class EnvironmentHandler {
-    private static final String ECHO = "echo";
-    private static final String REDIRECT_OUTPUT = ">>";
-    private static final String ETC_ENVIRONMENT = "/etc/environment";
-    
+    private static final String ECHO = "echo ";
+    private static final String REDIRECT_OUTPUT = ">> ";
+    private static final String ETC = "/etc/";
+    private static final String ETC_ENVIRONMENT = ETC + "environment";
+    private static final String ETC_APACHE2_ENVVARS = ETC + "apache2/envvars";
+
+    public static final String APACHE_ENV_IMPORT = ECHO
+        + "'." + ETC_ENVIRONMENT + "' "
+        + REDIRECT_OUTPUT + ETC_APACHE2_ENVVARS;
+
     private CloudFormationModule cfnModule;
     private final Logger logger;
 
@@ -33,7 +39,7 @@ public class EnvironmentHandler {
 
     /**
      Writes the setEnv scripts for each Instance.
-     
+
      @param environmentMap containing the instance names and environment variables
      */
     private void writeSetEnvScripts(Map<String, Map<String, String>> environmentMap) {
@@ -42,9 +48,9 @@ public class EnvironmentHandler {
             // TODO create setEnv-instance script
             for (Map.Entry<String, String> environmentVariable : instanceEnvironment.getValue().entrySet()) {
                 // Build the command to write environment variable to /etc/environment
-                String command = ECHO + 
-                    " '" + environmentVariable.getKey() + "=\"" + environmentVariable.getValue() + "\" "
-                    + REDIRECT_OUTPUT + " " + ETC_ENVIRONMENT;
+                String command = ECHO +
+                    "'" + environmentVariable.getKey() + "=\"" + environmentVariable.getValue() + "\" "
+                    + REDIRECT_OUTPUT + ETC_ENVIRONMENT;
                 // TODO append command to setEnv-instance  
             }
         }
@@ -52,7 +58,7 @@ public class EnvironmentHandler {
 
     /**
      Adds the setEnv scripts to their respective instances.
-     
+
      @param environmentMap containing the instance names and environment variables
      */
     private void addSetEnvScriptsToInstances(Map<String, Map<String, String>> environmentMap) {
@@ -64,7 +70,7 @@ public class EnvironmentHandler {
 
     /**
      Copies all the setEnv scripts to the target artifact.
-     
+
      @param environmentMap containing the instance names and environment variables
      */
     private void copySetEnvScripts(Map<String, Map<String, String>> environmentMap) {
@@ -76,7 +82,7 @@ public class EnvironmentHandler {
 
     /**
      Marks all the setEnv Scripts as files to be uploaded.
-     
+
      @param environmentMap containing the instance names and environment variables
      */
     private void addSetEnvScriptsToFileUploads(Map<String, Map<String, String>> environmentMap) {
