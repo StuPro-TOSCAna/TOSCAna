@@ -44,7 +44,7 @@ public class CloudFormationFileCreator {
     public static final String FILEPATH_CLOUDFORMATION = "/cloudformation/";
     public static final String FILEPATH_SCRIPTS_UTIL = FILEPATH_CLOUDFORMATION + "scripts/util/";
     public static final String FILEPATH_FILES_UTIL = FILEPATH_CLOUDFORMATION + "files/util/";
-    
+
     private final Logger logger;
     private CloudFormationModule cfnModule;
 
@@ -219,8 +219,8 @@ public class CloudFormationFileCreator {
 
     /**
      Adds file upload commands for all given files to the given script.
-     
-     @param files to be uploaded
+
+     @param files  to be uploaded
      @param script to add the file upload commands to
      */
     private void addFileUploadsToScript(List<String> files, BashScript script) {
@@ -233,7 +233,7 @@ public class CloudFormationFileCreator {
             }
         });
     }
-    
+
     public void copyUtilFile(List<String> files, String resourcePath, String outputPath) throws IOException {
         PluginFileAccess fileAccess = cfnModule.getFileAccess();
         for (String file : files) {
