@@ -4,19 +4,18 @@ import {Injectable} from '@angular/core';
 import {PlatformsProvider} from '../platforms/platforms.provider';
 import {Transformation} from '../../model/transformation';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {Helper} from '../../helper/helper';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/map';
 import {CsarResponse, TransformationResponse} from '../../api';
 import {Observable} from 'rxjs/Observable';
 import {MessageService} from '../message/message.service';
 import {ErrorMessage} from '../../model/message';
+import {isNullOrUndefined} from 'util';
 import StateEnum = TransformationResponse.StateEnum;
 
 @Injectable()
 export class CsarProvider {
     _csars: BehaviorSubject<Csar[]>;
-    notNullOrUndefined = Helper.notNullOrUndefined;
     loading = false;
     res = null;
     private dataStore: {
@@ -49,7 +48,7 @@ export class CsarProvider {
             this.requested = true;
             let observ = this.csarService.listCSARsUsingGET();
             this.res = observ.map(data => {
-                if (!this.notNullOrUndefined(data._embedded)) {
+                if (isNullOrUndefined(data._embedded)) {
                     return Observable.of();
                 }
                 const csars = data._embedded.csar;
@@ -68,25 +67,12 @@ export class CsarProvider {
     private async createCsarWithTransformations(csars: Array<CsarResponse>) {
         let res = [];
         for (const csar of csars) {
-            const transformationsPromise = await this.getTransformations(csar.name);
-            const transformations = [];
-            if (transformationsPromise._embedded !== undefined) {
-                this.addFullNameToTransformations(transformationsPromise, transformations);
-            }
+            const transformations = await this.getTransformations(csar.name).toPromise();
+            console.log(transformations);
             const csarObject = new Csar(csar.name, csar.phases, transformations);
             res.push(csarObject);
         }
         return res;
-    }
-
-    private addFullNameToTransformations(transformationsPromise: any, transformations: any[]) {
-        const transformationResponses = transformationsPromise._embedded.transformation;
-        for (const item of transformationResponses) {
-            const fullName: string = this.platformsProvider.getFullPlatformName(item.platform);
-            const transformation = <Transformation> item;
-            transformation.fullName = fullName;
-            transformations.push(transformation);
-        }
     }
 
     get csars() {
@@ -130,9 +116,19 @@ export class CsarProvider {
         this._csars.next((Object.assign({}, this.dataStore).csars));
     }
 
-    getTransformations(csarId: string) {
-        const promise = this.csarService.getCSARTransformationsUsingGET(csarId);
-        return promise.toPromise();
+    getTransformations(csarId: string): Observable<Transformation[]> {
+        return this.csarService.getCSARTransformationsUsingGET(csarId).map(result => {
+            if (isNullOrUndefined(result._embedded)) {
+                return new Array<Transformation[]>();
+            }
+            const res = result._embedded.transformation;
+            const transformations = [];
+            res.forEach(transformation => {
+                const fullName = this.platformsProvider.getFullPlatformName(transformation.platform);
+                transformations.push(new Transformation(fullName, transformation.phases, transformation.platform, transformation.state));
+            });
+            return transformations;
+        });
     }
 
 

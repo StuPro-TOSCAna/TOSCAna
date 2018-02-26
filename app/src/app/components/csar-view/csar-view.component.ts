@@ -11,6 +11,7 @@ import {LifecyclePhase} from '../../api';
 import {isNullOrUndefined} from 'util';
 import {Observable} from 'rxjs/Observable';
 import StateEnum = LifecyclePhase.StateEnum;
+import {getColorForLifecyclePhase} from '../../helper/helper';
 
 @Component({
     selector: 'app-csar-view',
@@ -26,34 +27,11 @@ export class CsarViewComponent implements OnInit, OnDestroy {
     platform: string;
     transformationDone = false;
     url = '';
-
+    getColorForLifecyclePhase = getColorForLifecyclePhase;
+    StateEnum = StateEnum;
     constructor(private csarProvider: CsarProvider, private routeHandler: RouteHandler, private route: ActivatedRoute,
                 public platformsProvider: PlatformsProvider) {
     }
-
-    isActive(phase: LifecyclePhase) {
-        if (phase.state === StateEnum.EXECUTING) {
-            return true;
-        }
-        return false;
-    }
-
-    getIcon(phase: LifecyclePhase) {
-        let res = '';
-        if (phase.state === StateEnum.DONE) {
-            res = 'text-success';
-        } else if (phase.state === StateEnum.FAILED) {
-            res = 'text-danger';
-        } else if (phase.state === StateEnum.EXECUTING) {
-            res = 'text-orange';
-        } else if (phase.state === StateEnum.PENDING) {
-            res = 'text-primary';
-        } else if (phase.state === StateEnum.SKIPPING) {
-            res = 'text-secondary';
-        }
-        return res + ' state';
-    }
-
 
     async ngOnInit() {
         this.route.paramMap.switchMap((params: ParamMap) => {
