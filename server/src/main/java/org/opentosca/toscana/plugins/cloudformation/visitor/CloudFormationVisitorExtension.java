@@ -7,15 +7,23 @@ import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.Database;
 import org.opentosca.toscana.model.node.Dbms;
+import org.opentosca.toscana.model.node.MysqlDatabase;
 import org.opentosca.toscana.model.node.Nodejs;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.node.WebApplication;
 import org.opentosca.toscana.model.node.WebServer;
 import org.opentosca.toscana.model.relation.RootRelationship;
 import org.opentosca.toscana.plugins.cloudformation.CloudFormationModule;
+import org.opentosca.toscana.plugins.cloudformation.util.StackUtils;
 
+import com.scaleset.cfbuilder.ec2.Instance;
+import com.scaleset.cfbuilder.ec2.SecurityGroup;
+import com.scaleset.cfbuilder.ec2.UserData;
 import org.jgrapht.Graph;
 import org.slf4j.Logger;
+
+import static org.opentosca.toscana.plugins.cloudformation.CloudFormationLifecycle.toAlphanumerical;
+import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.SECURITY_GROUP;
 
 public abstract class CloudFormationVisitorExtension {
 
@@ -109,5 +117,19 @@ public abstract class CloudFormationVisitorExtension {
             }
         }
         return connected;
+    }
+
+    protected String createSqlCompute(MysqlDatabase mysqlDatabase, String sqlQuery) {
+        String computeName = toAlphanumerical(mysqlDatabase.getEntityName() + "TmpSqlServer");
+        SecurityGroup webServerSecurityGroup = cfnModule.resource(SecurityGroup.class,
+            computeName + SECURITY_GROUP)
+            .groupDescription("Temporary group for accessing mysql database with SQLRequest");
+        cfnModule.resource(Instance.class, computeName)
+            .securityGroupIds(webServerSecurityGroup)
+            .imageId("ami-79873901")
+            .instanceType("t2.micro")
+            .instanceInitiatedShutdownBehavior("terminate")
+            .userData(new UserData(StackUtils.getUserDataDBConnFn(mysqlDatabase, sqlQuery)));
+        return computeName;
     }
 }
