@@ -1,8 +1,9 @@
+<i *ngIf="scrollToTop" (click)="goToTop()" class="fa fa-chevron-circle-up"></i>
 <div id="scroll-me" class="log">
     <select (change)="setLogLevel()" class="select-log-level" [(ngModel)]="logLevel" name="log">
         <option *ngFor="let s of logLevels" [value]="s">{{s | uppercase}}</option>
     </select>
-    <table class="table table-striped">
+    <table id="table" class="table table-striped">
         <tbody>
         <tr [style.color]="getColor(item.level)" *ngFor="let item of visibleLogs">
             <td class="first">{{getClassName(item.context)}}</td>
