@@ -9,6 +9,7 @@ import java.util.Set;
 
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.model.node.Compute;
+import org.opentosca.toscana.plugins.cloudformation.util.FileToBeUploaded;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.scaleset.cfbuilder.cloudformation.Authentication;
@@ -63,8 +64,7 @@ public class CloudFormationModule extends Module {
     private Set<String> computeToEc2;
     private Map<String, Fn> fnSaver;
     private Set<String> authenticationSet;
-    private List<String> filesToBeUploaded;
-    private List<String> utilFilesToBeUploaded;
+    private List<FileToBeUploaded> filesToBeUploaded;
     private PluginFileAccess fileAccess;
     private String bucketName;
     private String stackName;
@@ -84,7 +84,6 @@ public class CloudFormationModule extends Module {
         this.fnSaver = new HashMap<>();
         this.authenticationSet = new HashSet<>();
         this.filesToBeUploaded = new ArrayList<>();
-        this.utilFilesToBeUploaded = new ArrayList<>();
         this.fileAccess = fileAccess;
         this.bucketName = getRandomBucketName();
         this.stackName = getRandomStackName();
@@ -154,20 +153,12 @@ public class CloudFormationModule extends Module {
         return this.fnSaver.get(key);
     }
 
-    public List<String> getFilesToBeUploaded() {
+    public List<FileToBeUploaded> getFilesToBeUploaded() {
         return filesToBeUploaded;
     }
 
-    public void putFileToBeUploaded(String filePath) {
+    public void addFileToBeUploaded(FileToBeUploaded filePath) {
         this.filesToBeUploaded.add(filePath);
-    }
-
-    public List<String> getUtilFilesToBeUploaded() {
-        return utilFilesToBeUploaded;
-    }
-
-    public void addUtilFileToBeUploaded(String filePath) {
-        this.utilFilesToBeUploaded.add(filePath);
     }
 
     public Set<String> getAuthenticationSet() {

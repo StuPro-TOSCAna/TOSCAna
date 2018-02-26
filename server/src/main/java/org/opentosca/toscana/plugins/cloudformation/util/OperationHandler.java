@@ -24,6 +24,8 @@ import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.MODE_500;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.MODE_644;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.OWNER_GROUP_ROOT;
+import static org.opentosca.toscana.plugins.cloudformation.util.FileToBeUploaded.UploadFileType.FROM_CSAR;
+import static org.opentosca.toscana.plugins.cloudformation.util.FileToBeUploaded.UploadFileType.UTIL;
 import static org.opentosca.toscana.plugins.cloudformation.util.StackUtils.getFileURL;
 
 public class OperationHandler {
@@ -71,6 +73,18 @@ public class OperationHandler {
         if (node.getStandardLifecycle().getStart().isPresent()) {
             Operation start = node.getStandardLifecycle().getStart().get();
             handleOperation(start, computeHostName, CONFIG_START);
+
+            // Add environment variables
+            Set<OperationVariable> inputs = start.getInputs();
+            if (!inputs.isEmpty()) {
+                for (OperationVariable input : inputs) {
+                    String value = input.getValue().orElseThrow(
+                        () -> new IllegalArgumentException("Input value of " + input.getKey() + " expected to not be " +
+                            "null")
+                    );
+                    cfnModule.putEnvironmentMap(computeHostName, input.getKey(), value);
+                }
+            }
         }
     }
 
@@ -214,7 +228,7 @@ public class OperationHandler {
      */
     private void markFile(String filePath) {
         logger.debug("Marking '{}' as file to be uploaded.", filePath);
-        cfnModule.putFileToBeUploaded(filePath);
+        cfnModule.addFileToBeUploaded(new FileToBeUploaded(filePath, FROM_CSAR));
     }
 
     /**
@@ -224,7 +238,7 @@ public class OperationHandler {
      */
     private void markUtilFile(String filePath) {
         logger.debug("Marking '{}' as util file to be uploaded.", filePath);
-        cfnModule.addUtilFileToBeUploaded(filePath);
+        cfnModule.addFileToBeUploaded(new FileToBeUploaded(filePath, UTIL));
     }
 
     /**
