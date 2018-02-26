@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.opentosca.toscana.core.transformation.TransformationContext;
+import org.opentosca.toscana.model.artifact.Artifact;
 import org.opentosca.toscana.model.capability.ComputeCapability;
 import org.opentosca.toscana.model.capability.EndpointCapability;
 import org.opentosca.toscana.model.capability.OsCapability;
@@ -171,6 +172,18 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
                 .allocatedStorage(allocatedStorage)
                 .storageType(storageType)
                 .vPCSecurityGroups(cfnModule.fnGetAtt(securityGroupName, "GroupId"));
+            //handle sql artifact
+            for (Artifact artifact : node.getArtifacts()) {
+                String relPath = artifact.getFilePath();
+                if (relPath.endsWith(".sql")) {
+                    String sql = cfnModule.getFileAccess().read(artifact.getFilePath());
+                    String computeName = createSqlCompute(node, sql);
+                    securityGroup.ingress(ingress -> ingress.sourceSecurityGroupName(
+                        cfnModule.ref(toAlphanumerical(computeName) + SECURITY_GROUP)),
+                        PROTOCOL_TCP,
+                        port);
+                }
+            }
         } catch (Exception e) {
             logger.error("Error while creating Dbms resource.");
             throw new TransformationFailureException("Failed at Dbms node " + node.getEntityName(), e);
