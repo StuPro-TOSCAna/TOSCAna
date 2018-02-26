@@ -21,9 +21,10 @@ export class LogComponent implements OnInit, OnChanges {
     logLevel = 'debug';
     logLevels = ['trace', 'debug', 'info', 'warn', 'error'];
     validLogLevels = this.logLevels;
+    scrollToTop = false;
 
-
-    constructor(private messageService: MessageService, private transformationProvider: TransformationsProvider, private csarsProvider: CsarProvider) {
+    constructor(private messageService: MessageService, private transformationProvider: TransformationsProvider,
+                private csarsProvider: CsarProvider) {
     }
 
     getColor(level: string) {
@@ -58,6 +59,13 @@ export class LogComponent implements OnInit, OnChanges {
     scroll() {
         const element: Element = document.getElementById('scroll-me');
         element.scrollTop = element.scrollHeight;
+
+    }
+
+    showScrollToTop() {
+        const table: Element = document.getElementById('table');
+        const tableHeight = table.scrollHeight;
+        this.scrollToTop = tableHeight > document.body.offsetHeight;
     }
 
     refresh() {
@@ -65,7 +73,7 @@ export class LogComponent implements OnInit, OnChanges {
         if (this.type === 'transformation') {
             this.transformationProvider.getLogs(this.csarId, this.platformId, this.last).subscribe(data => {
                 this.updateLogs(data);
-            },err => this.messageService.addErrorMessage('Failed to load logs'));
+            }, err => this.messageService.addErrorMessage('Failed to load logs'));
         } else if (this.type === 'csar') {
             this.csarsProvider.getLogs(this.csarId, this.last).subscribe(data => {
                 this.updateLogs(data);
@@ -75,16 +83,20 @@ export class LogComponent implements OnInit, OnChanges {
 
     private updateLogs(data) {
         if (this.last !== data.end) {
-            const logs = data.logs;
-            for (let i = 0; i < logs.length - 1; i++) {
-                let item = logs[i];
+            let logs: LogEntry[] = data.logs;
+            for (let i = 0; i < logs.length; i++) {
+                let item: LogEntry = logs[i];
                 item.message = item.message.replace(/\ /g, '&nbsp;');
+                if (item.context === 'EOL') {
+                    logs = logs.splice(i, 1);
+                }
             }
             this.logs.push.apply(this.logs, data.logs);
             this.last = data.end;
             this.scroll();
         }
         this.visibleLogs = this.logs;
+        this.showScrollToTop();
         this.setLogLevel();
     }
 
@@ -99,4 +111,7 @@ export class LogComponent implements OnInit, OnChanges {
         this.refresh();
     }
 
+    goToTop() {
+        document.body.scrollTop = document.documentElement.scrollTop = 0;
+    }
 }
