@@ -120,10 +120,11 @@ public abstract class CloudFormationVisitorExtension {
     }
 
     protected String createSqlCompute(MysqlDatabase mysqlDatabase, String sqlQuery) {
-        String computeName = toAlphanumerical(mysqlDatabase.getEntityName() + "TmpSqlServer");
+        String computeName = toAlphanumerical(mysqlDatabase.getEntityName()) + "TmpSqlServer";
         SecurityGroup webServerSecurityGroup = cfnModule.resource(SecurityGroup.class,
             computeName + SECURITY_GROUP)
-            .groupDescription("Temporary group for accessing mysql database with SQLRequest");
+            .groupDescription("Temporary group for accessing mysqlDatabase" + toAlphanumerical(mysqlDatabase
+                .getEntityName()) + "  with SQLRequest");
         cfnModule.resource(Instance.class, computeName)
             .securityGroupIds(webServerSecurityGroup)
             .imageId("ami-79873901")

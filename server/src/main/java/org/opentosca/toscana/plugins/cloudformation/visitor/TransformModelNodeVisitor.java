@@ -214,7 +214,7 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
 
     @Override
     public void visit(MysqlDbms node) {
-        // TODO handle sql artifact if present
+        //noop
     }
 
     @Override
