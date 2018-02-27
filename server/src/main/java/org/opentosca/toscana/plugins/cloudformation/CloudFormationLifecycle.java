@@ -14,7 +14,7 @@ import org.opentosca.toscana.model.relation.RootRelationship;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 import org.opentosca.toscana.model.visitor.RelationshipVisitor;
 import org.opentosca.toscana.model.visitor.UnsupportedTypeException;
-import org.opentosca.toscana.plugins.cloudformation.util.EnvironmentHandler;
+import org.opentosca.toscana.plugins.cloudformation.handler.EnvironmentHandler;
 import org.opentosca.toscana.plugins.cloudformation.visitor.CheckModelNodeVisitor;
 import org.opentosca.toscana.plugins.cloudformation.visitor.CheckModelRelationshipVisitor;
 import org.opentosca.toscana.plugins.cloudformation.visitor.PrepareModelNodeVisitor;

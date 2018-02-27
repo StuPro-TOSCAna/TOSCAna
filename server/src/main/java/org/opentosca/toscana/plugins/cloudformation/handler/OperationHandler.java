@@ -1,7 +1,6 @@
-package org.opentosca.toscana.plugins.cloudformation.util;
+package org.opentosca.toscana.plugins.cloudformation.handler;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -10,6 +9,7 @@ import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.operation.Operation;
 import org.opentosca.toscana.model.operation.OperationVariable;
 import org.opentosca.toscana.plugins.cloudformation.CloudFormationModule;
+import org.opentosca.toscana.plugins.cloudformation.util.FileToBeUploaded;
 
 import com.scaleset.cfbuilder.ec2.metadata.CFNCommand;
 import com.scaleset.cfbuilder.ec2.metadata.CFNFile;
@@ -94,7 +94,7 @@ public class OperationHandler {
      @param filePath   path to the artifact
      @param serverName name of the Instance
      */
-    public void addCreate(String filePath, String serverName) throws IOException {
+    public void addCreate(String filePath, String serverName) {
         markUtilFile(filePath);
         CFNFile cfnFile = handleOperationFile(filePath, MODE_500, serverName);
         CFNCommand cfnCommand = handleOperationCommand(filePath, new HashSet<>());

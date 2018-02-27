@@ -18,8 +18,8 @@ import org.opentosca.toscana.model.node.Nodejs;
 import org.opentosca.toscana.model.node.WebApplication;
 import org.opentosca.toscana.model.visitor.StrictNodeVisitor;
 import org.opentosca.toscana.plugins.cloudformation.CloudFormationModule;
+import org.opentosca.toscana.plugins.cloudformation.handler.OperationHandler;
 import org.opentosca.toscana.plugins.cloudformation.mapper.CapabilityMapper;
-import org.opentosca.toscana.plugins.cloudformation.util.OperationHandler;
 import org.opentosca.toscana.plugins.util.TransformationFailureException;
 
 import com.amazonaws.SdkClientException;
@@ -37,7 +37,7 @@ import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.CONFIG_START;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.FILEPATH_NODEJS_CREATE;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.SECURITY_GROUP;
-import static org.opentosca.toscana.plugins.cloudformation.util.EnvironmentHandler.APACHE_ENV_IMPORT;
+import static org.opentosca.toscana.plugins.cloudformation.handler.EnvironmentHandler.APACHE_ENV_IMPORT;
 
 /**
  Class for building a CloudFormation template from an effective model instance via the visitor pattern. Currently only

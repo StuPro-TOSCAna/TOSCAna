@@ -1,10 +1,12 @@
-package org.opentosca.toscana.plugins.cloudformation.util;
+package org.opentosca.toscana.plugins.cloudformation.handler;
 
 import java.io.IOException;
 import java.util.Map;
 
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.plugins.cloudformation.CloudFormationModule;
+import org.opentosca.toscana.plugins.cloudformation.util.CloudFormationScript;
+import org.opentosca.toscana.plugins.cloudformation.util.FileToBeUploaded;
 
 import com.scaleset.cfbuilder.ec2.metadata.CFNCommand;
 import com.scaleset.cfbuilder.ec2.metadata.CFNFile;
