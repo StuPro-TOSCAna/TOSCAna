@@ -223,7 +223,7 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
             operationHandler.handleConfigure(node, computeName);
             //handle start
             operationHandler.handleStart(node, computeName);
-            //Source environment variables in /etc/apache/envvars
+            //Source environment variables in /etc/apache/envvars from /etc/environment
             cfnModule.getCFNInit(computeName)
                 .getOrAddConfig(CONFIG_SETS, CONFIG_CONFIGURE)
                 .putCommand(new CFNCommand("Add Apache environment variables", APACHE_ENV_IMPORT));

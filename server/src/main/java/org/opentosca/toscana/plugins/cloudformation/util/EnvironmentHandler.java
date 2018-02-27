@@ -25,9 +25,10 @@ public class EnvironmentHandler {
     private static final String ETC_ENVIRONMENT = ETC + "environment";
     private static final String ETC_APACHE2_ENVVARS = ETC + "apache2/envvars";
     private static final String SET_ENV = "set-env-";
+    private static final String EXPORT = "export ";
 
     public static final String APACHE_ENV_IMPORT = ECHO
-        + "'." + ETC_ENVIRONMENT + "' "
+        + ". " + ETC_ENVIRONMENT + " "
         + REDIRECT_OUTPUT + ETC_APACHE2_ENVVARS;
 
     private CloudFormationModule cfnModule;
@@ -61,7 +62,7 @@ public class EnvironmentHandler {
             CloudFormationScript setEnvScript = new CloudFormationScript(access, SET_ENV + instanceEnvironment.getKey());
             for (Map.Entry<String, String> environmentVariable : instanceEnvironment.getValue().entrySet()) {
                 // Build the command to write environment variable to /etc/environment
-                setEnvScript.append(ECHO
+                setEnvScript.append(ECHO + EXPORT
                     + environmentVariable.getKey() + "=$" + environmentVariable.getKey() + " "
                     + REDIRECT_OUTPUT + ETC_ENVIRONMENT);
             }
