@@ -13,10 +13,9 @@ import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.Database;
 import org.opentosca.toscana.model.node.Dbms;
 import org.opentosca.toscana.model.node.MysqlDatabase;
-import org.opentosca.toscana.model.node.MysqlDbms;
 import org.opentosca.toscana.model.node.Nodejs;
 import org.opentosca.toscana.model.node.WebApplication;
-import org.opentosca.toscana.model.visitor.StrictNodeVisitor;
+import org.opentosca.toscana.model.visitor.NodeVisitor;
 import org.opentosca.toscana.plugins.cloudformation.CloudFormationModule;
 import org.opentosca.toscana.plugins.cloudformation.mapper.CapabilityMapper;
 import org.opentosca.toscana.plugins.cloudformation.util.OperationHandler;
@@ -41,7 +40,7 @@ import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.
  Class for building a CloudFormation template from an effective model instance via the visitor pattern. Currently only
  supports LAMP-stacks built with Compute, WebApplication, Apache, MySQL, MySQL nodes.
  */
-public class TransformModelNodeVisitor extends CloudFormationVisitorExtension implements StrictNodeVisitor {
+public class TransformModelNodeVisitor extends CloudFormationVisitorExtension implements NodeVisitor {
     private static final String IP_OPEN = "0.0.0.0/0";
     private static final String PROTOCOL_TCP = "tcp";
     private OperationHandler operationHandler;
@@ -197,11 +196,6 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
             logger.error("Error while creating Database resource.");
             throw new TransformationFailureException("Failed at Database node " + node.getEntityName(), e);
         }
-    }
-
-    @Override
-    public void visit(MysqlDbms node) {
-        // TODO handle sql artifact if present
     }
 
     @Override
