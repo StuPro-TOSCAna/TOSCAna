@@ -27,6 +27,8 @@ public class CloudFormationFileCreator {
     public static final String CLI_COMMAND_CREATESTACK = "aws cloudformation deploy ";
     public static final String CLI_COMMAND_DELETESTACK = "aws cloudformation delete-stack ";
     public static final String CLI_COMMAND_DELETEBUCKET = "aws s3 rb s3://";
+    public static final String COMMAND_ECHO = "echo ";
+    public static final String STRING_DELETESTACK = "delete stack:";
     public static final String CLI_PARAM_STACKNAME = "--stack-name ";
     public static final String CLI_PARAM_TEMPLATEFILE = "--template-file ";
     public static final String CLI_PARAM_PARAMOVERRIDES = "--parameter-overrides";
@@ -171,6 +173,8 @@ public class CloudFormationFileCreator {
         BashScript cleanupScript = new BashScript(cfnModule.getFileAccess(), FILENAME_CLEANUP);
         // Delete Bucket
         cleanupScript.append(CLI_COMMAND_DELETEBUCKET + cfnModule.getBucketName() + " " + CLI_PARAM_FORCE);
+        // Echo delete Stack
+        cleanupScript.append(COMMAND_ECHO + " " + STRING_DELETESTACK + " " + cfnModule.getStackName());
         // Delete stack
         cleanupScript.append(CLI_COMMAND_DELETESTACK + CLI_PARAM_STACKNAME + cfnModule.getStackName());
     }
