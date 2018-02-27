@@ -6,7 +6,17 @@ import java.util.Map;
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.plugins.cloudformation.CloudFormationModule;
 
+import com.scaleset.cfbuilder.ec2.metadata.CFNCommand;
+import com.scaleset.cfbuilder.ec2.metadata.CFNFile;
 import org.slf4j.Logger;
+
+import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.ABSOLUTE_FILE_PATH;
+import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.CONFIG_CONFIGURE;
+import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.CONFIG_SETS;
+import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.MODE_500;
+import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.OWNER_GROUP_ROOT;
+import static org.opentosca.toscana.plugins.cloudformation.util.FileToBeUploaded.UploadFileType.OTHER;
+import static org.opentosca.toscana.plugins.cloudformation.util.StackUtils.getFileURL;
 
 public class EnvironmentHandler {
     private static final String ECHO = "echo ";
@@ -20,11 +30,13 @@ public class EnvironmentHandler {
         + "'." + ETC_ENVIRONMENT + "' "
         + REDIRECT_OUTPUT + ETC_APACHE2_ENVVARS;
 
+    private CloudFormationModule cfnModule;
     private PluginFileAccess access;
     private final Logger logger;
     private final Map<String, Map<String, String>> environmentMap;
 
     public EnvironmentHandler(CloudFormationModule cfnModule, Logger logger) {
+        this.cfnModule = cfnModule;
         this.access = cfnModule.getFileAccess();
         this.environmentMap = cfnModule.getEnvironmentMap();
         this.logger = logger;
@@ -37,7 +49,6 @@ public class EnvironmentHandler {
         logger.debug("Handling environment variables.");
         writeSetEnvScripts();
         addSetEnvScriptsToInstances();
-        copySetEnvScripts();
         addSetEnvScriptsToFileUploads();
     }
 
@@ -50,30 +61,46 @@ public class EnvironmentHandler {
             CloudFormationScript setEnvScript = new CloudFormationScript(access, SET_ENV + instanceEnvironment.getKey());
             for (Map.Entry<String, String> environmentVariable : instanceEnvironment.getValue().entrySet()) {
                 // Build the command to write environment variable to /etc/environment
-                setEnvScript.append(ECHO +
-                    "'" + environmentVariable.getKey() + "=\"" + environmentVariable.getValue() + "\" "
+                setEnvScript.append(ECHO
+                    + environmentVariable.getKey() + "=$" + environmentVariable.getKey() + " "
                     + REDIRECT_OUTPUT + ETC_ENVIRONMENT);
             }
         }
     }
 
     /**
-     Adds the setEnv scripts to their respective instances.
+     Adds the setEnv scripts to their respective instances and adds commands to execute them.
      */
     private void addSetEnvScriptsToInstances() {
         logger.debug("Adding setEnv scripts to Instances.");
         for (Map.Entry<String, Map<String, String>> instanceEnvironment : environmentMap.entrySet()) {
-            // TODO add setEnv -instance script to instance
-        }
-    }
+            String nodeName = instanceEnvironment.getKey();
+            String filePath = SET_ENV + instanceEnvironment.getKey() + ".sh";
+            String cfnSource = getFileURL(cfnModule.getBucketName(), filePath);
 
-    /**
-     Copies all the setEnv scripts to the target artifact.
-     */
-    private void copySetEnvScripts() {
-        logger.debug("Copying setEnv scripts.");
-        for (Map.Entry<String, Map<String, String>> instanceEnvironment : environmentMap.entrySet()) {
-            // TODO copy setEnv -instance script to target artifact
+            CFNFile cfnFile = new CFNFile(ABSOLUTE_FILE_PATH + filePath)
+                .setSource(cfnSource)
+                .setMode(MODE_500) //TODO Check what mode is needed (read? + execute?)
+                .setOwner(OWNER_GROUP_ROOT) //TODO Check what Owner is needed
+                .setGroup(OWNER_GROUP_ROOT);
+
+            CFNCommand cfnCommand = new CFNCommand(filePath,
+                ABSOLUTE_FILE_PATH + filePath) //file is the full path, so need for "./"
+                .setCwd(ABSOLUTE_FILE_PATH);
+            // Adds values of the environment variables to the environment of the setEnv scripts
+            for (Map.Entry<String, String> environmentVariable : instanceEnvironment.getValue().entrySet()) {
+                String value = environmentVariable.getValue();
+                if (cfnModule.checkFn(value)) {
+                    cfnCommand.addEnv(environmentVariable.getKey(), cfnModule.getFn(value));
+                } else {
+                    cfnCommand.addEnv(environmentVariable.getKey(), value);
+                }
+            }
+
+            cfnModule.getCFNInit(nodeName)
+                .getOrAddConfig(CONFIG_SETS, CONFIG_CONFIGURE)
+                .putFile(cfnFile)
+                .putCommand(cfnCommand);
         }
     }
 
@@ -83,7 +110,7 @@ public class EnvironmentHandler {
     private void addSetEnvScriptsToFileUploads() {
         logger.debug("Marking setEnv scripts to files to be uploaded.");
         for (Map.Entry<String, Map<String, String>> instanceEnvironment : environmentMap.entrySet()) {
-            //TODO mark setEnv-instance script as file to be uploaded
+            cfnModule.addFileToBeUploaded(new FileToBeUploaded(SET_ENV + instanceEnvironment.getKey() + ".sh", OTHER));
         }
     }
 }

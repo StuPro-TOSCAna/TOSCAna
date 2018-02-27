@@ -3,14 +3,12 @@ package org.opentosca.toscana.plugins.cloudformation;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.plugins.cloudformation.util.FileToBeUploaded;
-import org.opentosca.toscana.plugins.cloudformation.util.FileToBeUploaded.UploadFileType;
 import org.opentosca.toscana.plugins.scripts.BashScript;
 import org.opentosca.toscana.plugins.scripts.EnvironmentCheck;
 import org.opentosca.toscana.plugins.util.TransformationFailureException;
@@ -117,7 +115,7 @@ public class CloudFormationFileCreator {
      Creates the script for File Uploads if files need to be uploaded.
      */
     private void writeFileUploadScript() throws IOException {
-        List<String> filesToBeUploaded = getFilePaths(getFileToBeUploadedByType(cfnModule.getFilesToBeUploaded(), FROM_CSAR, UTIL));
+        List<String> filesToBeUploaded = getFilePaths(cfnModule.getFilesToBeUploaded());
 
         logger.debug("Checking if files need to be uploaded.");
         if (!filesToBeUploaded.isEmpty()) {
