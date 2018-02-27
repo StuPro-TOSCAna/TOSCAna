@@ -8,7 +8,7 @@ import java.util.Map;
 
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.core.transformation.TransformationContext;
-import org.opentosca.toscana.plugins.cloudformation.util.FileToBeUploaded;
+import org.opentosca.toscana.plugins.cloudformation.util.FileUpload;
 import org.opentosca.toscana.plugins.scripts.BashScript;
 import org.opentosca.toscana.plugins.scripts.EnvironmentCheck;
 import org.opentosca.toscana.plugins.util.TransformationFailureException;
@@ -20,10 +20,10 @@ import org.slf4j.Logger;
 
 import static org.opentosca.toscana.core.plugin.lifecycle.AbstractLifecycle.UTIL_DIR_PATH;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.FILEPATH_TARGET;
-import static org.opentosca.toscana.plugins.cloudformation.util.FileToBeUploaded.UploadFileType.FROM_CSAR;
-import static org.opentosca.toscana.plugins.cloudformation.util.FileToBeUploaded.UploadFileType.UTIL;
-import static org.opentosca.toscana.plugins.cloudformation.util.FileToBeUploaded.getFilePaths;
-import static org.opentosca.toscana.plugins.cloudformation.util.FileToBeUploaded.getFileToBeUploadedByType;
+import static org.opentosca.toscana.plugins.cloudformation.util.FileUpload.UploadFileType.FROM_CSAR;
+import static org.opentosca.toscana.plugins.cloudformation.util.FileUpload.UploadFileType.UTIL;
+import static org.opentosca.toscana.plugins.cloudformation.util.FileUpload.getFilePaths;
+import static org.opentosca.toscana.plugins.cloudformation.util.FileUpload.getFileUploadByType;
 
 /**
  Class for building scripts and copying files needed for deployment of cloudformation templates.
@@ -68,12 +68,12 @@ public class CloudFormationFileCreator {
      Copies all files that need to be uploaded to the target artifact.
      */
     public void copyFiles() {
-        List<String> filesToBeUploaded = getFilePaths(getFileToBeUploadedByType(cfnModule.getFilesToBeUploaded(), FROM_CSAR));
+        List<String> fileUploadList = getFilePaths(getFileUploadByType(cfnModule.getFileUploadList(), FROM_CSAR));
 
         logger.debug("Checking if files need to be copied.");
-        if (!filesToBeUploaded.isEmpty()) {
+        if (!fileUploadList.isEmpty()) {
             logger.debug("Files to be copied found. Attempting to copy files to the target artifact.");
-            filesToBeUploaded.forEach((filePath) -> {
+            fileUploadList.forEach((filePath) -> {
                 String targetPath = FILEPATH_TARGET + filePath;
                 try {
                     cfnModule.getFileAccess().copy(filePath, targetPath);
@@ -104,8 +104,8 @@ public class CloudFormationFileCreator {
         BashScript deployScript = new BashScript(cfnModule.getFileAccess(), FILENAME_DEPLOY);
         deployScript.append(EnvironmentCheck.checkEnvironment("aws"));
         // Source file-upload script if needed
-        List filesToBeUploaded = cfnModule.getFilesToBeUploaded();
-        if (!filesToBeUploaded.isEmpty()) {
+        List fileUploadList = cfnModule.getFileUploadList();
+        if (!fileUploadList.isEmpty()) {
             deployScript.append("source " + FILENAME_UPLOAD + ".sh");
         }
         deployScript.append("source " + FILENAME_CREATE_STACK + ".sh");
@@ -115,16 +115,16 @@ public class CloudFormationFileCreator {
      Creates the script for File Uploads if files need to be uploaded.
      */
     private void writeFileUploadScript() throws IOException {
-        List<String> filesToBeUploaded = getFilePaths(cfnModule.getFilesToBeUploaded());
+        List<String> fileUploadList = getFilePaths(cfnModule.getFileUploadList());
 
         logger.debug("Checking if files need to be uploaded.");
-        if (!filesToBeUploaded.isEmpty()) {
+        if (!fileUploadList.isEmpty()) {
             logger.debug("Files to be uploaded found. Creating file upload script.");
             BashScript fileUploadScript = new BashScript(cfnModule.getFileAccess(), FILENAME_UPLOAD);
             fileUploadScript.append(createBucket());
 
             logger.debug("Adding file upload commands.");
-            addFileUploadsToScript(filesToBeUploaded, fileUploadScript);
+            addFileUploadsToScript(fileUploadList, fileUploadScript);
         } else {
             logger.debug("No files to be uploaded found. Skipping creation of file upload script.");
         }
@@ -144,8 +144,8 @@ public class CloudFormationFileCreator {
             .append(CLI_PARAM_TEMPLATEFILE).append("../").append(TEMPLATE_YAML);
 
         // Add IAM capability if needed
-        List<FileToBeUploaded> filesToBeUploaded = cfnModule.getFilesToBeUploaded();
-        if (!filesToBeUploaded.isEmpty()) {
+        List<FileUpload> fileUploadList = cfnModule.getFileUploadList();
+        if (!fileUploadList.isEmpty()) {
             logger.debug("Adding IAM capability to create stack command.");
             deployCommand.append(" " + CLI_PARAM_CAPABILITIES + " " + CAPABILITY_IAM);
         }
@@ -215,9 +215,9 @@ public class CloudFormationFileCreator {
     public void copyUtilDependencies() throws IOException {
         logger.debug("Copying util files to the target artifact.");
 
-        List<String> utilFilesToBeUploaded = getFilePaths(
-            getFileToBeUploadedByType(cfnModule.getFilesToBeUploaded(), UTIL));
-        copyUtilFile(utilFilesToBeUploaded, FILEPATH_FILES_UTIL, FILEPATH_TARGET);
+        List<String> utilFileUploadList = getFilePaths(
+            getFileUploadByType(cfnModule.getFileUploadList(), UTIL));
+        copyUtilFile(utilFileUploadList, FILEPATH_FILES_UTIL, FILEPATH_TARGET);
     }
 
     /**

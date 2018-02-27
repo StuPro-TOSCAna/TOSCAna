@@ -6,7 +6,7 @@ import java.util.Map;
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.plugins.cloudformation.CloudFormationModule;
 import org.opentosca.toscana.plugins.cloudformation.util.CloudFormationScript;
-import org.opentosca.toscana.plugins.cloudformation.util.FileToBeUploaded;
+import org.opentosca.toscana.plugins.cloudformation.util.FileUpload;
 
 import com.scaleset.cfbuilder.ec2.metadata.CFNCommand;
 import com.scaleset.cfbuilder.ec2.metadata.CFNFile;
@@ -18,7 +18,7 @@ import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.MODE_500;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.OWNER_GROUP_ROOT;
 import static org.opentosca.toscana.plugins.cloudformation.handler.OperationHandler.APACHE_RESTART_COMMAND;
-import static org.opentosca.toscana.plugins.cloudformation.util.FileToBeUploaded.UploadFileType.OTHER;
+import static org.opentosca.toscana.plugins.cloudformation.util.FileUpload.UploadFileType.OTHER;
 import static org.opentosca.toscana.plugins.cloudformation.util.StackUtils.getFileURL;
 
 public class EnvironmentHandler {
@@ -115,7 +115,7 @@ public class EnvironmentHandler {
     private void addSetEnvScriptsToFileUploads() {
         logger.debug("Marking setEnv scripts to files to be uploaded.");
         for (Map.Entry<String, Map<String, String>> instanceEnvironment : environmentMap.entrySet()) {
-            cfnModule.addFileToBeUploaded(new FileToBeUploaded(SET_ENV + instanceEnvironment.getKey() + ".sh", OTHER));
+            cfnModule.addFileUpload(new FileUpload(SET_ENV + instanceEnvironment.getKey() + ".sh", OTHER));
         }
     }
 }

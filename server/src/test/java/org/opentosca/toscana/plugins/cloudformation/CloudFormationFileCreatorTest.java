@@ -10,7 +10,7 @@ import org.opentosca.toscana.core.BaseUnitTest;
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.core.transformation.logging.Log;
-import org.opentosca.toscana.plugins.cloudformation.util.FileToBeUploaded;
+import org.opentosca.toscana.plugins.cloudformation.util.FileUpload;
 
 import com.amazonaws.auth.BasicAWSCredentials;
 import org.apache.commons.io.FileUtils;
@@ -38,7 +38,7 @@ import static org.opentosca.toscana.plugins.cloudformation.CloudFormationFileCre
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationFileCreator.RELATIVE_DIRECTORY_PREFIX;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationFileCreator.TEMPLATE_YAML;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.FILEPATH_TARGET;
-import static org.opentosca.toscana.plugins.cloudformation.util.FileToBeUploaded.UploadFileType.FROM_CSAR;
+import static org.opentosca.toscana.plugins.cloudformation.util.FileUpload.UploadFileType.FROM_CSAR;
 import static org.opentosca.toscana.plugins.scripts.BashScript.SHEBANG;
 import static org.opentosca.toscana.plugins.scripts.BashScript.SOURCE_UTIL_ALL;
 import static org.opentosca.toscana.plugins.scripts.BashScript.SUBCOMMAND_EXIT;
@@ -81,7 +81,7 @@ public class CloudFormationFileCreatorTest extends BaseUnitTest {
 
     @Test
     public void testWriteScripts() throws Exception {
-        cfnModule.addFileToBeUploaded(new FileToBeUploaded(FILENAME_TEST_FILE, FROM_CSAR));
+        cfnModule.addFileUpload(new FileUpload(FILENAME_TEST_FILE, FROM_CSAR));
         fileCreator.writeScripts();
 
         File deployScript = new File(targetDir,
@@ -135,7 +135,7 @@ public class CloudFormationFileCreatorTest extends BaseUnitTest {
 
     @Test
     public void copyFiles() {
-        cfnModule.addFileToBeUploaded(new FileToBeUploaded(FILENAME_TEST_FILE, FROM_CSAR));
+        cfnModule.addFileUpload(new FileUpload(FILENAME_TEST_FILE, FROM_CSAR));
         fileCreator.copyFiles();
         assertTrue(FILEPATH_TARGET_TEST_FILE.exists());
     }
