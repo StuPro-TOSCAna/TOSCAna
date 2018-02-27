@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, OnInit, SimpleChange} from '@angular/core';
+import {Component, HostListener, Input, OnChanges, OnInit, SimpleChange} from '@angular/core';
 import {TransformationsProvider} from '../../providers/transformations/transformations.provider';
 import {LogEntry} from '../../api/index';
 import 'rxjs/add/operator/takeWhile';
@@ -62,10 +62,11 @@ export class LogComponent implements OnInit, OnChanges {
 
     }
 
+    @HostListener('window:scroll')
     showScrollToTop() {
         const table: Element = document.getElementById('table');
         const tableHeight = table.scrollHeight;
-        this.scrollToTop = tableHeight > document.body.offsetHeight;
+        this.scrollToTop = tableHeight > document.body.offsetHeight && window.pageYOffset > 100;
     }
 
     refresh() {
@@ -96,7 +97,6 @@ export class LogComponent implements OnInit, OnChanges {
             this.scroll();
         }
         this.visibleLogs = this.logs;
-        this.showScrollToTop();
         this.setLogLevel();
     }
 
