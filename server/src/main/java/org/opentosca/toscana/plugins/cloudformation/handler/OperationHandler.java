@@ -31,6 +31,7 @@ import static org.opentosca.toscana.plugins.cloudformation.util.StackUtils.getFi
 public class OperationHandler {
     private CloudFormationModule cfnModule;
     private Logger logger;
+    public static final String APACHE_RESTART_COMMAND = "service apache2 restart";
 
     public OperationHandler(CloudFormationModule cfnModule, Logger logger) {
         this.cfnModule = cfnModule;

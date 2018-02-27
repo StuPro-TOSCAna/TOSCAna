@@ -17,6 +17,7 @@ import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.CONFIG_SETS;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.MODE_500;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.OWNER_GROUP_ROOT;
+import static org.opentosca.toscana.plugins.cloudformation.handler.OperationHandler.APACHE_RESTART_COMMAND;
 import static org.opentosca.toscana.plugins.cloudformation.util.FileToBeUploaded.UploadFileType.OTHER;
 import static org.opentosca.toscana.plugins.cloudformation.util.StackUtils.getFileURL;
 
@@ -28,10 +29,11 @@ public class EnvironmentHandler {
     private static final String ETC_APACHE2_ENVVARS = ETC + "apache2/envvars";
     private static final String SET_ENV = "set-env-";
     private static final String EXPORT = "export ";
+    private static final String AND = " && ";
 
     public static final String APACHE_ENV_IMPORT = ECHO
         + ". " + ETC_ENVIRONMENT + " "
-        + REDIRECT_OUTPUT + ETC_APACHE2_ENVVARS;
+        + REDIRECT_OUTPUT + ETC_APACHE2_ENVVARS + AND + APACHE_RESTART_COMMAND;
 
     private CloudFormationModule cfnModule;
     private PluginFileAccess access;
