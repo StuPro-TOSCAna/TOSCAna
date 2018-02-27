@@ -103,12 +103,12 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
             TransformModelNodeVisitor cfnNodeVisitor = new TransformModelNodeVisitor(context, cfnModule);
             logger.info("Transform nodes");
             visitComputeNodesFirst(nodes, cfnNodeVisitor);
-            logger.info("Creating CloudFormation template.");
-            fileAccess.access(OUTPUT_DIR + CloudFormationFileCreator.TEMPLATE_YAML)
-                .appendln(cfnModule.toString()).close();
             logger.info("Handling environment variables");
             EnvironmentHandler environmentHandler = new EnvironmentHandler(cfnModule, logger);
             environmentHandler.handleEnvironment();
+            logger.info("Creating CloudFormation template.");
+            fileAccess.access(OUTPUT_DIR + CloudFormationFileCreator.TEMPLATE_YAML)
+                .appendln(cfnModule.toString()).close();
             CloudFormationFileCreator fileCreator = new CloudFormationFileCreator(context, cfnModule);
             logger.info("Creating CloudFormation scripts.");
             fileCreator.copyUtilScripts();
