@@ -5,12 +5,14 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.opentosca.toscana.model.artifact.Artifact;
 import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.operation.Operation;
 import org.opentosca.toscana.model.operation.OperationVariable;
 import org.opentosca.toscana.plugins.cloudformation.CloudFormationModule;
 
+import com.scaleset.cfbuilder.beanstalk.SourceBundle;
 import com.scaleset.cfbuilder.ec2.metadata.CFNCommand;
 import com.scaleset.cfbuilder.ec2.metadata.CFNFile;
 import org.slf4j.Logger;
@@ -151,7 +153,8 @@ public class OperationHandler {
     }
 
     /**
-     Takes an artifact path and input variables and returns the corresponding CloudFormation command with input variables.
+     Takes an artifact path and input variables and returns the corresponding CloudFormation command with input
+     variables.
 
      @param artifact path to the artifact
      @param inputs   set with all input variables
@@ -238,5 +241,17 @@ public class OperationHandler {
         handleCreate(node, computeHostName);
         handleConfigure(node, computeHostName);
         handleStart(node, computeHostName);
+    }
+
+    /**
+     Handles a artifact that is a jar
+
+     @param artifact artifact that needs to be handled
+     @return a SourceBundle that contains the bucket and filename
+     */
+    public SourceBundle handleJarArtifact(Artifact artifact) {
+        String jarFilePath = artifact.getFilePath();
+        markFile(jarFilePath);
+        return new SourceBundle(cfnModule.getBucketName(), jarFilePath);
     }
 }

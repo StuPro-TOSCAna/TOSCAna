@@ -15,13 +15,20 @@ import org.opentosca.toscana.model.node.Dbms;
 import org.opentosca.toscana.model.node.MysqlDatabase;
 import org.opentosca.toscana.model.node.Nodejs;
 import org.opentosca.toscana.model.node.WebApplication;
+import org.opentosca.toscana.model.node.custom.JavaApplication;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 import org.opentosca.toscana.plugins.cloudformation.CloudFormationModule;
 import org.opentosca.toscana.plugins.cloudformation.mapper.CapabilityMapper;
+import org.opentosca.toscana.plugins.cloudformation.mapper.JavaRuntimeMapper;
 import org.opentosca.toscana.plugins.cloudformation.util.OperationHandler;
 import org.opentosca.toscana.plugins.util.TransformationFailureException;
 
 import com.amazonaws.SdkClientException;
+import com.scaleset.cfbuilder.beanstalk.Application;
+import com.scaleset.cfbuilder.beanstalk.ApplicationVersion;
+import com.scaleset.cfbuilder.beanstalk.ConfigurationTemplate;
+import com.scaleset.cfbuilder.beanstalk.Environment;
+import com.scaleset.cfbuilder.beanstalk.SourceBundle;
 import com.scaleset.cfbuilder.ec2.Instance;
 import com.scaleset.cfbuilder.ec2.SecurityGroup;
 import com.scaleset.cfbuilder.ec2.metadata.CFNCommand;
@@ -236,7 +243,7 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
             Compute compute = getCompute(node);
             String computeName = toAlphanumerical(compute.getEntityName());
             node.getAppEndpoint().getPort().ifPresent(port -> {
-                SecurityGroup computeSecurityGroup = (SecurityGroup) cfnModule.getResource(computeName + 
+                SecurityGroup computeSecurityGroup = (SecurityGroup) cfnModule.getResource(computeName +
                     SECURITY_GROUP);
                 computeSecurityGroup.ingress(ingress -> ingress.cidrIp(IP_OPEN), PROTOCOL_TCP, port.port);
             });
@@ -287,6 +294,34 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
         } catch (Exception e) {
             logger.error("Error while creating Nodejs");
             throw new TransformationFailureException("Failed at Nodejs node " + node.getEntityName(), e);
+        }
+    }
+
+    @Override
+    public void visit(JavaApplication node) {
+        try {
+            String nodeName = toAlphanumerical(node.getEntityName());
+            Application beanstalkApplication = cfnModule.resource(Application.class, nodeName)
+                .description("JavaApplication " + nodeName);
+            SourceBundle sourceBundle = operationHandler.handleJarArtifact(node.getJar());
+            ApplicationVersion beanstalkApplicationVersion = cfnModule.resource(ApplicationVersion.class, nodeName + "Version")
+                .applicationName(beanstalkApplication)
+                .description("JavaApplicationVersion " + nodeName)
+                .sourceBundle(sourceBundle);
+            JavaRuntimeMapper javaRuntimeMapper = new JavaRuntimeMapper(logger);
+            String stackConfig = javaRuntimeMapper.mapRuntimeToStackConfig(getJavaRuntime(node));
+            ConfigurationTemplate beanstalkConfigurationTemplate = cfnModule.resource(ConfigurationTemplate.class, nodeName + "ConfigurationTemplate")
+                .applicationName(beanstalkApplication)
+                .description("JavaApplicationConfigurationTemplate " + nodeName)
+                .solutionStackName(stackConfig);
+            cfnModule.resource(Environment.class, nodeName + "Environment")
+                .applicationName(beanstalkApplication)
+                .description("JavaApplicationEnvironment")
+                .templateName(beanstalkConfigurationTemplate)
+                .versionLabel(beanstalkApplicationVersion);
+        } catch (Exception e) {
+            logger.error("Error while creating JavaApplication");
+            throw new TransformationFailureException("Failed at JavaApplication node " + node.getEntityName(), e);
         }
     }
 

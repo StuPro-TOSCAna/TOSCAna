@@ -114,6 +114,18 @@ public abstract class CloudFormationVisitorExtension {
         );
     }
 
+    /**
+     Get the JavaRuntime node this JavaApplication is hosted on.
+
+     @param javaApplication the JavaApplication to find the JavaRuntime for
+     @return JavaRuntime the given JavaApplication is hosted on
+     */
+    protected static JavaRuntime getJavaRuntime(JavaApplication javaApplication) {
+        return javaApplication.getJreHost().getNode().orElseThrow(
+            () -> new IllegalStateException("JavaApplication is missing JavaRuntime")
+        );
+    }
+
     protected Set<Compute> getHostsOfConnectedTo(RootNode node) {
         Set<Compute> connected = new HashSet<>();
         Set<RootRelationship> incomingEdges = topology.incomingEdgesOf(node);

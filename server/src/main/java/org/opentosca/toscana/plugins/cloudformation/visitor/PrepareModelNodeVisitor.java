@@ -110,7 +110,7 @@ public class PrepareModelNodeVisitor extends CloudFormationVisitorExtension impl
             node.getAppEndpoint().setPort(new Port(DEFAULT_WEBAPP_PORT));
         }
     }
-  
+
     @Override
     public void visit(JavaApplication node) {
         // check if JavaApplication is the only node hosted on its compute node
