@@ -9,6 +9,7 @@ import java.util.Set;
 
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.model.node.Compute;
+import org.opentosca.toscana.plugins.cloudformation.util.FileUpload;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.scaleset.cfbuilder.cloudformation.Authentication;
@@ -63,12 +64,12 @@ public class CloudFormationModule extends Module {
     private Set<String> computeToEc2;
     private Map<String, Fn> fnSaver;
     private Set<String> authenticationSet;
-    private List<String> filesToBeUploaded;
-    private List<String> utilFilesToBeUploaded;
+    private List<FileUpload> fileUploadList;
     private PluginFileAccess fileAccess;
     private String bucketName;
     private String stackName;
     private boolean keyPair;
+    private Map<String, Map<String, String>> environmentMap;
 
     /**
      Create a Module which uses the cloudformation-builder to build an AWS CloudFormation template
@@ -82,13 +83,13 @@ public class CloudFormationModule extends Module {
         this.computeToEc2 = new HashSet<>();
         this.fnSaver = new HashMap<>();
         this.authenticationSet = new HashSet<>();
-        this.filesToBeUploaded = new ArrayList<>();
-        this.utilFilesToBeUploaded = new ArrayList<>();
+        this.fileUploadList = new ArrayList<>();
         this.fileAccess = fileAccess;
         this.bucketName = getRandomBucketName();
         this.stackName = getRandomStackName();
         this.awsRegion = awsRegion;
         this.awsCredentials = awsCredentials;
+        this.environmentMap = new HashMap<>();
     }
 
     /**
@@ -152,20 +153,12 @@ public class CloudFormationModule extends Module {
         return this.fnSaver.get(key);
     }
 
-    public List<String> getFilesToBeUploaded() {
-        return filesToBeUploaded;
+    public List<FileUpload> getFileUploadList() {
+        return fileUploadList;
     }
 
-    public void putFileToBeUploaded(String filePath) {
-        this.filesToBeUploaded.add(filePath);
-    }
-
-    public List<String> getUtilFilesToBeUploaded() {
-        return utilFilesToBeUploaded;
-    }
-
-    public void addUtilFileToBeUploaded(String filePath) {
-        this.utilFilesToBeUploaded.add(filePath);
+    public void addFileUpload(FileUpload filePath) {
+        this.fileUploadList.add(filePath);
     }
 
     public Set<String> getAuthenticationSet() {
@@ -213,6 +206,15 @@ public class CloudFormationModule extends Module {
         return this.template.getParameters();
     }
 
+    public Map<String, Map<String, String>> getEnvironmentMap() {
+        return environmentMap;
+    }
+
+    public void putEnvironmentMap(String instanceName, String key, String value) {
+        this.environmentMap.computeIfAbsent(instanceName, k -> new HashMap<>());
+        this.environmentMap.get(instanceName).put(key, value);
+    }
+
     @Override
     public String toString() {
         try {
@@ -257,7 +259,7 @@ public class CloudFormationModule extends Module {
                 }
             }
         }
-        if (!filesToBeUploaded.isEmpty()) {
+        if (!fileUploadList.isEmpty()) {
             Role instanceRole = getS3InstanceRole(this);
             getS3Policy(this).roles(instanceRole);
             getS3InstanceProfile(this).roles(instanceRole);
