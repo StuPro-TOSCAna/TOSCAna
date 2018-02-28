@@ -9,6 +9,7 @@ import org.opentosca.toscana.core.transformation.platform.Platform;
 import org.opentosca.toscana.core.transformation.properties.PlatformInput;
 import org.opentosca.toscana.core.transformation.properties.PropertyType;
 import org.opentosca.toscana.plugins.kubernetes.docker.mapper.BaseImageMapper;
+import org.opentosca.toscana.plugins.kubernetes.lifecycle.KubernetesLifecycle;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
