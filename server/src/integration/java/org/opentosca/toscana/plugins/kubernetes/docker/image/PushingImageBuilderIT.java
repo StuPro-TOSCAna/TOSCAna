@@ -60,6 +60,8 @@ public class PushingImageBuilderIT extends ExportingImageBuilderIT {
         String id = client.createContainer(config).id();
         logger.info("Registry container id: {}", id);
 
+        Thread.sleep(5000);
+        
         logger.info("Starting registry container");
         client.startContainer(id);
         this.registryid = id;
