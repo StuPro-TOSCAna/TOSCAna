@@ -203,6 +203,17 @@ public class FileCreator {
             deploy_name += "s";
         }
         BashScript deployScript = new BashScript(fileAccess, FILEPRAEFIX_DEPLOY + deploy_name);
+        deployScript.append("echo \"$(tput bold)--------TOSCAna Cloud Foundry deployment--------$(tput sgr0)\"");
+        deployScript.append("echo \"This script will deploy your application to the Cloud Foundry instance\"");
+        deployScript.append("echo \"We use the CloudFoundry CLI and show you the output as well\"");
+        deployScript.append("echo \"Is there no CF CLI installed we have to stop, we will check it\"");
+        deployScript.append("echo \"We will deploy the application to the connected provider\"");
+        deployScript.append("echo \"If you use a Cloud Foundry service with your application, " +
+            "you are able to change the service or plan in this deploy script manually\"");
+        deployScript.append("echo \"We tried to choose a suitable service with a free plan\"");
+        deployScript.append("echo \"You could check all possible services in the file$(tput bold) " + SERVICE_FILE_PATH + " $(tput sgr0)\"");
+        deployScript.append("echo \"$(tput bold)--------TOSCAna Cloud Foundry deployment$(tput sgr0)--------\n\"");
+
         deployScript.append(EnvironmentCheck.checkEnvironment("cf"));
 
         //handle services
@@ -234,6 +245,8 @@ public class FileCreator {
             //execute
             executeFiles(deployment, application);
         }
+        deployScript.append("echo \"\n\n$(tput bold)The deployment of your application is finished. You see the urls of your apps here:$(tput sgr0)\n\"");
+        deployScript.append("cf routes");
     }
 
     /**
@@ -288,7 +301,7 @@ public class FileCreator {
         for (Application application : applications) {
             Deployment deployment = new Deployment(deployScript, application, fileAccess, context);
 
-            //only one time all service offerings should be printed to the deploy script
+            //only one time all service offerings should be printed
             this.alreadyHandledServices = deployment.treatServices(alreadyHandledServices);
         }
     }
