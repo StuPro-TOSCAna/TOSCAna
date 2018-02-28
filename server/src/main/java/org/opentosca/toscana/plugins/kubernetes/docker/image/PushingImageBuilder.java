@@ -27,10 +27,18 @@ public class PushingImageBuilder extends ImageBuilder {
 
     @Override
     public String getTag() {
+        String registryUrl = credentials.getRegistryURL();
+        if (!registryUrl.endsWith("/")) {
+            registryUrl = registryUrl + "/";
+        }
+        String username = credentials.getUsername();
+        if (!username.isEmpty()) {
+            username += "/";
+        }
         String tag = String.format(
-            "%s%s/%s:%s",
-            credentials.getRegistryURL(),
-            credentials.getUsername(),
+            "%s%s%s:%s",
+            registryUrl,
+            username,
             credentials.getRepository(),
             super.getTag()
         );
