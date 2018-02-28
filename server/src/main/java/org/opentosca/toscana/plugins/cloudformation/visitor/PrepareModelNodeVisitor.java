@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.MysqlDatabase;
+import org.opentosca.toscana.model.node.custom.JavaApplication;
 import org.opentosca.toscana.model.relation.HostedOn;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 import org.opentosca.toscana.plugins.cloudformation.CloudFormationModule;
@@ -86,7 +87,7 @@ public class PrepareModelNodeVisitor extends CloudFormationVisitorExtension impl
     public void visit(Compute node) {
         // compute nodes only get transformed if they are present in this map
         cfnModule.addComputeToEc2(node);
-        
+
         // Set private and public address of this EC2 instance
         String computeName = toAlphanumerical(node.getEntityName());
         Fn privateIpFn = Fn.fnGetAtt(computeName, AWS_INSTANCE_PRIVATE_IP);
@@ -97,6 +98,21 @@ public class PrepareModelNodeVisitor extends CloudFormationVisitorExtension impl
         cfnModule.putFn(publicIpFnString, publicIpFn);
         node.setPrivateAddress(privateIpFnString);
         node.setPublicAddress(publicIpFnString);
+    }
+
+    @Override
+    public void visit(JavaApplication node) {
+        // check if JavaApplication is the only node hosted on its compute node
+        Compute compute = getCompute(node);
+        if (topology.incomingEdgesOf(compute)
+            .stream()
+            .filter(relation -> relation instanceof HostedOn)
+            .collect(Collectors.toSet())
+            .size() == 1) {
+            //JavaApplication or JavaRuntime is the only node hosted on this compute
+            cfnModule.removeComputeToEc2(compute);
+            logger.debug("Removing Compute '{}' to be transformed", compute.getEntityName());
+        }
     }
 
     /**

@@ -1,7 +1,6 @@
 package org.opentosca.toscana.plugins.cloudformation;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -12,7 +11,6 @@ import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
 import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.plugins.BaseTransformTest;
 
-import org.apache.commons.io.FileUtils;
 import org.junit.Assume;
 
 import static org.junit.Assert.fail;
@@ -31,9 +29,7 @@ public abstract class CloudFormationIT extends BaseTransformTest {
     }
 
     @Override
-    protected void onSuccess(File outputDir) throws IOException {
-        FileUtils.copyDirectory(outputDir, new File("/home/manuel/tmp2/"));
-        System.out.println("copied");
+    protected void onSuccess(File outputDir) {
     }
 
     @Override
