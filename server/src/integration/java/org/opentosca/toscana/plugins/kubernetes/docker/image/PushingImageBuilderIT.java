@@ -79,7 +79,7 @@ public class PushingImageBuilderIT extends ExportingImageBuilderIT {
     @Override
     public void validate(String tag) throws Exception {
         RegistryAuth auth = creds.toRegistryAuth();
-        
+
         DockerClient client = DefaultDockerClient.fromEnv()
             .registryAuthSupplier(
                 new FixedRegistryAuthSupplier(

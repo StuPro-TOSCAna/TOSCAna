@@ -8,6 +8,7 @@ import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.model.EffectiveModelFactory;
 import org.opentosca.toscana.plugins.kubernetes.docker.mapper.BaseImageMapper;
 import org.opentosca.toscana.plugins.kubernetes.docker.mapper.MapperTest;
+import org.opentosca.toscana.plugins.kubernetes.lifecycle.KubernetesLifecycle;
 
 import org.junit.Before;
 import org.junit.Test;

@@ -40,7 +40,7 @@ import static org.opentosca.toscana.plugins.kubernetes.docker.mapper.MapperTagLo
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
 @ContextConfiguration(classes = {Main.class, CoreConfiguration.class, MapperTagLoaderIT.BIMTestConfiguration.class})
-@ActiveProfiles({INTEGRATION_TEST_PROFILE, LOADER_TEST_PROFILE})
+@ActiveProfiles( {INTEGRATION_TEST_PROFILE, LOADER_TEST_PROFILE})
 @Category(IntegrationTest.class)
 public class MapperTagLoaderIT extends BaseTest {
 

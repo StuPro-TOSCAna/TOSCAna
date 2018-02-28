@@ -1,4 +1,4 @@
-package org.opentosca.toscana.plugins.kubernetes.model;
+package org.opentosca.toscana.plugins.kubernetes.model.transform;
 
 import io.fabric8.kubernetes.api.model.ContainerPort;
 import io.fabric8.kubernetes.api.model.ContainerPortBuilder;
@@ -20,7 +20,7 @@ public class Port {
 
     public String getName() {
         String name = namePrefix + "-" + port;
-        
+
         //Simplify the name if its bigger than 15 Chars
         if (name.length() >= 15) {
             StringBuilder builder = new StringBuilder();
@@ -33,7 +33,7 @@ public class Port {
             builder.append("-").append(port);
             name = builder.toString();
         }
-        
+
         return name;
     }
 

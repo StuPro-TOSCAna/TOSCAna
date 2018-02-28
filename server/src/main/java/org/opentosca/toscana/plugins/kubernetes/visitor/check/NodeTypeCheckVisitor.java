@@ -10,7 +10,6 @@ import org.opentosca.toscana.model.node.DockerApplication;
 import org.opentosca.toscana.model.node.MysqlDatabase;
 import org.opentosca.toscana.model.node.MysqlDbms;
 import org.opentosca.toscana.model.node.Nodejs;
-import org.opentosca.toscana.model.node.SoftwareComponent;
 import org.opentosca.toscana.model.node.WebApplication;
 import org.opentosca.toscana.model.node.custom.JavaApplication;
 import org.opentosca.toscana.model.node.custom.JavaRuntime;
