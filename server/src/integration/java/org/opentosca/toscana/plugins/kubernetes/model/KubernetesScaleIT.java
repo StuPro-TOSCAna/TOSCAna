@@ -1,4 +1,4 @@
-package org.opentosca.toscana.plugins.kubernetes;
+package org.opentosca.toscana.plugins.kubernetes.model;
 
 import java.io.File;
 
