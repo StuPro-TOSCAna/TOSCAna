@@ -1,7 +1,6 @@
-package org.opentosca.toscana.plugins.cloudformation.util;
+package org.opentosca.toscana.plugins.cloudformation.handler;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -11,6 +10,7 @@ import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.operation.Operation;
 import org.opentosca.toscana.model.operation.OperationVariable;
 import org.opentosca.toscana.plugins.cloudformation.CloudFormationModule;
+import org.opentosca.toscana.plugins.cloudformation.util.FileUpload;
 
 import com.scaleset.cfbuilder.beanstalk.SourceBundle;
 import com.scaleset.cfbuilder.ec2.metadata.CFNCommand;
@@ -26,9 +26,13 @@ import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.MODE_500;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.MODE_644;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.OWNER_GROUP_ROOT;
+import static org.opentosca.toscana.plugins.cloudformation.util.FileUpload.UploadFileType.FROM_CSAR;
+import static org.opentosca.toscana.plugins.cloudformation.util.FileUpload.UploadFileType.UTIL;
 import static org.opentosca.toscana.plugins.cloudformation.util.StackUtils.getFileURL;
 
 public class OperationHandler {
+    public static final String APACHE_RESTART_COMMAND = "service apache2 restart";
+
     private CloudFormationModule cfnModule;
     private Logger logger;
 
@@ -73,6 +77,18 @@ public class OperationHandler {
         if (node.getStandardLifecycle().getStart().isPresent()) {
             Operation start = node.getStandardLifecycle().getStart().get();
             handleOperation(start, computeHostName, CONFIG_START);
+
+            // Add environment variables
+            Set<OperationVariable> inputs = start.getInputs();
+            if (!inputs.isEmpty()) {
+                for (OperationVariable input : inputs) {
+                    String value = input.getValue().orElseThrow(
+                        () -> new IllegalArgumentException("Input value of " + input.getKey() + " expected to not be " +
+                            "null")
+                    );
+                    cfnModule.putEnvironmentMap(computeHostName, input.getKey(), value);
+                }
+            }
         }
     }
 
@@ -82,7 +98,7 @@ public class OperationHandler {
      @param filePath   path to the artifact
      @param serverName name of the Instance
      */
-    public void addCreate(String filePath, String serverName) throws IOException {
+    public void addCreate(String filePath, String serverName) {
         markUtilFile(filePath);
         CFNFile cfnFile = handleOperationFile(filePath, MODE_500, serverName);
         CFNCommand cfnCommand = handleOperationCommand(filePath, new HashSet<>());
@@ -217,7 +233,7 @@ public class OperationHandler {
      */
     private void markFile(String filePath) {
         logger.debug("Marking '{}' as file to be uploaded.", filePath);
-        cfnModule.putFileToBeUploaded(filePath);
+        cfnModule.addFileUpload(new FileUpload(filePath, FROM_CSAR));
     }
 
     /**
@@ -227,7 +243,7 @@ public class OperationHandler {
      */
     private void markUtilFile(String filePath) {
         logger.debug("Marking '{}' as util file to be uploaded.", filePath);
-        cfnModule.addUtilFileToBeUploaded(filePath);
+        cfnModule.addFileUpload(new FileUpload(filePath, UTIL));
     }
 
     /**

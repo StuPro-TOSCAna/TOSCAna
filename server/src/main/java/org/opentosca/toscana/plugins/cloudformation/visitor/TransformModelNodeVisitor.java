@@ -18,9 +18,9 @@ import org.opentosca.toscana.model.node.WebApplication;
 import org.opentosca.toscana.model.node.custom.JavaApplication;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 import org.opentosca.toscana.plugins.cloudformation.CloudFormationModule;
+import org.opentosca.toscana.plugins.cloudformation.handler.OperationHandler;
 import org.opentosca.toscana.plugins.cloudformation.mapper.CapabilityMapper;
 import org.opentosca.toscana.plugins.cloudformation.mapper.JavaRuntimeMapper;
-import org.opentosca.toscana.plugins.cloudformation.util.OperationHandler;
 import org.opentosca.toscana.plugins.util.TransformationFailureException;
 
 import com.amazonaws.SdkClientException;
@@ -37,11 +37,14 @@ import com.scaleset.cfbuilder.ec2.metadata.CFNPackage;
 import com.scaleset.cfbuilder.rds.DBInstance;
 
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationLifecycle.toAlphanumerical;
+import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.CONFIG_CONFIGURE;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.CONFIG_CREATE;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.CONFIG_SETS;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.CONFIG_START;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.FILEPATH_NODEJS_CREATE;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.SECURITY_GROUP;
+import static org.opentosca.toscana.plugins.cloudformation.handler.EnvironmentHandler.APACHE_ENV_IMPORT;
+import static org.opentosca.toscana.plugins.cloudformation.handler.OperationHandler.APACHE_RESTART_COMMAND;
 
 /**
  Class for building a CloudFormation template from an effective model instance via the visitor pattern. Currently only
@@ -225,11 +228,18 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
             operationHandler.handleConfigure(node, computeName);
             //handle start
             operationHandler.handleStart(node, computeName);
-
-            //Add restart apache2 command to the configscript
+            //Source environment variables in /etc/apache/envvars from /etc/environment and restart apache2 directly 
+            // afterwards
             cfnModule.getCFNInit(computeName)
-                .getOrAddConfig(CONFIG_SETS, CONFIG_START)
-                .putCommand(new CFNCommand("restart apache2", "service apache2 restart"));
+                .getOrAddConfig(CONFIG_SETS, CONFIG_CONFIGURE)
+                .putCommand(new CFNCommand("Add Apache environment variables", APACHE_ENV_IMPORT));
+            //we add restart apache2 command to the configscript if start or configure existed
+            if (node.getStandardLifecycle().getConfigure().isPresent() || node.getStandardLifecycle().getStart()
+                .isPresent()) {
+                cfnModule.getCFNInit(computeName)
+                    .getOrAddConfig(CONFIG_SETS, CONFIG_START)
+                    .putCommand(new CFNCommand("restart apache2", APACHE_RESTART_COMMAND));
+            }
         } catch (Exception e) {
             logger.error("Error while creating Apache");
             throw new TransformationFailureException("Failed at Apache node " + node.getEntityName(), e);
