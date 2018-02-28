@@ -20,6 +20,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -44,6 +45,7 @@ public class CloudFormationLifecycleTest extends BaseUnitTest {
         EffectiveModel effectiveModel = new EffectiveModelFactory().create(TestCsars.VALID_LAMP_NO_INPUT_TEMPLATE, logMock());
         PluginFileAccess access = spy(accessL);
         doNothing().when(access).copy(anyString(), anyString());
+        doReturn("DummyFileContent").when(access).read(anyString());
         when(context.getPluginFileAccess()).thenReturn(access);
         when(context.getLogger((Class<?>) any(Class.class))).thenReturn(LoggerFactory.getLogger("Dummy Logger"));
         when(context.getModel()).thenReturn(effectiveModel);
