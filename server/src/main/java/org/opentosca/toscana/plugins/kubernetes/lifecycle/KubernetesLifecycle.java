@@ -32,7 +32,7 @@ public final class KubernetesLifecycle extends AbstractLifecycle {
     public KubernetesLifecycle(TransformationContext context, BaseImageMapper mapper) throws IOException {
         super(context);
         model = context.getModel();
-        //Fix failing K8s plugin test
+        
         boolean pushToRegistry;
         if (context.getInputs() == null) {
             pushToRegistry = false;
