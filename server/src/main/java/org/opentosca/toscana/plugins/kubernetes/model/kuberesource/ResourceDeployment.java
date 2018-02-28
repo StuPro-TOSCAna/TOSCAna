@@ -1,7 +1,10 @@
-package org.opentosca.toscana.plugins.kubernetes.model;
+package org.opentosca.toscana.plugins.kubernetes.model.kuberesource;
 
 import java.util.ArrayList;
 import java.util.stream.Collectors;
+
+import org.opentosca.toscana.plugins.kubernetes.model.transform.Pod;
+import org.opentosca.toscana.plugins.kubernetes.model.transform.Port;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.fabric8.kubernetes.api.model.Container;

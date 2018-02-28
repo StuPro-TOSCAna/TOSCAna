@@ -1,4 +1,4 @@
-package org.opentosca.toscana.plugins.kubernetes;
+package org.opentosca.toscana.plugins.kubernetes.model;
 
 import java.io.File;
 import java.util.HashSet;
@@ -13,6 +13,7 @@ import org.opentosca.toscana.core.transformation.properties.PropertyInstance;
 import org.opentosca.toscana.model.EffectiveModel;
 import org.opentosca.toscana.model.EffectiveModelFactory;
 import org.opentosca.toscana.plugins.BaseTransformTest;
+import org.opentosca.toscana.plugins.kubernetes.KubernetesPlugin;
 import org.opentosca.toscana.plugins.kubernetes.docker.mapper.MapperTest;
 
 import org.apache.commons.io.FileUtils;
