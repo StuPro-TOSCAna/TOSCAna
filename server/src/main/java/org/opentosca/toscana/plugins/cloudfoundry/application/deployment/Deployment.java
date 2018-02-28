@@ -53,7 +53,7 @@ public class Deployment {
      look for suitable services which match to the requirements of the user
      */
     public List<String> treatServices(List<String> alreadyHandledServices) throws IOException {
-        ServiceHandler serviceHandler = new ServiceHandler(application, deploymentScript, context);
+        ServiceHandler serviceHandler = new ServiceHandler(application, deploymentScript, context, fileAccess);
 
         String scriptPath = deploymentScript.getScriptPath();
         File scriptFile = new File(scriptPath);

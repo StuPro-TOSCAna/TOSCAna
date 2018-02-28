@@ -37,6 +37,8 @@ public class FileCreator {
     public static final String MANIFEST_NAME = "manifest.yml";
     public static final String MANIFEST_PATH = OUTPUT_DIR + MANIFEST_NAME;
     public static final String MANIFESTHEAD = "---\napplications:";
+    public static final String SERVICE_FILE_NAME = "all_services.txt";
+    public static final String SERVICE_FILE_PATH = OUTPUT_DIR + SERVICE_FILE_NAME;
     public static final String NAMEBLOCK = "name";
     public static final String CLI_CREATE_SERVICE_DEFAULT = "cf create-service {plan} {service} ";
     public static final String CLI_CREATE_SERVICE = "cf create-service ";
@@ -53,7 +55,7 @@ public class FileCreator {
     private TransformationContext context;
     private Logger logger;
     private List<String> seenConfiguredServices = new ArrayList<>();
-    
+
     // this list contains services which are already matched to a service of a provider and already created.
     private List<String> alreadyHandledServices = new ArrayList<>();
 

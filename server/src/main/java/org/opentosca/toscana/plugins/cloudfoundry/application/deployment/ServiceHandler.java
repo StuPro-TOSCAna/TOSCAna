@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import org.opentosca.toscana.core.plugin.PluginFileAccess;
+import org.opentosca.toscana.core.plugin.PluginFileAccess.BufferedLineWriter;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.plugins.cloudfoundry.application.Application;
 import org.opentosca.toscana.plugins.cloudfoundry.application.Provider;
@@ -18,6 +20,7 @@ import org.slf4j.Logger;
 
 import static org.opentosca.toscana.plugins.cloudfoundry.filecreator.FileCreator.CLI_CREATE_SERVICE;
 import static org.opentosca.toscana.plugins.cloudfoundry.filecreator.FileCreator.CLI_CREATE_SERVICE_DEFAULT;
+import static org.opentosca.toscana.plugins.cloudfoundry.filecreator.FileCreator.SERVICE_FILE_PATH;
 
 /**
  this class provides methods to handle the services
@@ -28,11 +31,16 @@ public class ServiceHandler {
 
     private Application application;
     private BashScript deploymentScript;
+    private PluginFileAccess fileAccess;
 
-    public ServiceHandler(Application application, BashScript deploymentScript, TransformationContext context) {
+    public ServiceHandler(Application application,
+                          BashScript deploymentScript,
+                          TransformationContext context,
+                          PluginFileAccess fileAccess) {
         this.application = application;
         this.deploymentScript = deploymentScript;
         this.logger = context.getLogger(getClass());
+        this.fileAccess = fileAccess;
     }
 
     /**
@@ -117,7 +125,7 @@ public class ServiceHandler {
         boolean isSet = false;
 
         for (ServiceOffering offeredService : services) {
-            if (offeredService.getDescription().toLowerCase().indexOf(description.toLowerCase()) != -1) {
+            if (offeredService.getDescription().toLowerCase().contains(description.toLowerCase())) {
                 for (ServicePlan plan : offeredService.getServicePlans()) {
                     if (plan.getFree()) {
                         String serviceName = offeredService.getLabel();
@@ -148,9 +156,13 @@ public class ServiceHandler {
     private void addProviderServiceOfferings() throws IOException {
         Provider provider = application.getProvider();
         List<ServiceOffering> services = provider.getOfferedService();
+        BufferedLineWriter lineWriter = fileAccess.access(SERVICE_FILE_PATH);
 
-        deploymentScript.append("# following services you could choose:");
-        deploymentScript.append(String.format("# %-20s %-40s %-50s\n", "Name", " Plans", "Description"));
+        lineWriter.appendln("# following services you could choose:");
+        lineWriter.appendln(String.format("# %-20s %-40s %-50s\n", "Name", " Plans", "Description"));
+
+        //deploymentScript.append("# following services you could choose:");
+        //deploymentScript.append(String.format("# %-20s %-40s %-50s\n", "Name", " Plans", "Description"));
 
         for (ServiceOffering service : services) {
             String plans = "";
@@ -164,8 +176,11 @@ public class ServiceHandler {
 
                 plans = String.format("%s %s ", plans, currentPlan);
             }
-            deploymentScript.append(String.format("# %-20s %-40s %-50s ", service.getLabel(), plans, service.getDescription()));
+            lineWriter.appendln(String.format("# %-20s %-40s %-50s ", service.getLabel(), plans, service.getDescription()));
+            //deploymentScript.append(String.format("# %-20s %-40s %-50s ", service.getLabel(), plans, service.getDescription()));
         }
-        deploymentScript.append("\n# * These service plans have an associated cost. Creating a service instance will incur this cost.\n");
+        lineWriter.appendln("\n# * These service plans have an associated cost. Creating a service instance will incur this cost.\n");
+        //deploymentScript.append("\n# * These service plans have an associated cost. Creating a service instance will incur this cost.\n");
+        lineWriter.close();
     }
 }
