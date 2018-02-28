@@ -1,4 +1,4 @@
-package org.opentosca.toscana.plugins.kubernetes.model;
+package org.opentosca.toscana.plugins.kubernetes.model.transform;
 
 import java.util.ArrayList;
 import java.util.Collection;

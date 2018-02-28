@@ -96,7 +96,6 @@ public class ImageMappingVisitor implements NodeVisitor {
 
         //TODO implement check if the docker application has children.
     }
-    
 
     @Override
     public void visit(WebApplication node) {

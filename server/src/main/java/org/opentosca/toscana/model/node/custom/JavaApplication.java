@@ -35,7 +35,8 @@ public class JavaApplication extends SoftwareComponent {
     public static ToscaKey<String> ARGUMENTS = new ToscaKey<>(PROPERTIES, "arguments");
 
     public static ToscaKey<JavaRuntimeRequirement> HOST = new RequirementKey<>("host")
-        .subTypes(ContainerCapability.class, JavaRuntime.class, HostedOn.class);
+        .subTypes(ContainerCapability.class, JavaRuntime.class, HostedOn.class)
+        .type(JavaRuntimeRequirement.class);
 
     public JavaApplication(MappingEntity mappingEntity) {
         super(mappingEntity);
