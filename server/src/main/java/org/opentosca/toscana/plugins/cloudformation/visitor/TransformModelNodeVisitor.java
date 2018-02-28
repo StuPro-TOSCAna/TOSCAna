@@ -188,8 +188,8 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
                 }
             }
         } catch (Exception e) {
-            logger.error("Error while creating Dbms resource.");
-            throw new TransformationFailureException("Failed at Dbms node " + node.getEntityName(), e);
+            logger.error("Error while creating MysqlDatabase resource.");
+            throw new TransformationFailureException("Failed at MysqlDatabase node " + node.getEntityName(), e);
         }
     }
 
@@ -210,8 +210,8 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
                 securityGroup.ingress(ingress -> ingress.cidrIp(IP_OPEN), PROTOCOL_TCP, dbmsPort);
             }
         } catch (Exception e) {
-            logger.error("Error while creating Database resource.");
-            throw new TransformationFailureException("Failed at Database node " + node.getEntityName(), e);
+            logger.error("Error while creating Dbms resource.");
+            throw new TransformationFailureException("Failed at Dbms node " + node.getEntityName(), e);
         }
     }
 
