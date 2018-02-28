@@ -4,8 +4,10 @@ import java.security.SecureRandom;
 import java.util.stream.Collectors;
 
 import org.opentosca.toscana.core.transformation.TransformationContext;
+import org.opentosca.toscana.model.datatype.Port;
 import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.MysqlDatabase;
+import org.opentosca.toscana.model.node.WebApplication;
 import org.opentosca.toscana.model.relation.HostedOn;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 import org.opentosca.toscana.plugins.cloudformation.CloudFormationModule;
@@ -24,8 +26,9 @@ public class PrepareModelNodeVisitor extends CloudFormationVisitorExtension impl
     private static final String AWS_INSTANCE_PRIVATE_IP = "PrivateIp";
     private static final String AWS_INSTANCE_PUBLIC_IP = "PublicIp";
     private static final int minPWLength = 8;
-    private static final String DEFAULT_USER = "root";
-    private static final Integer DEFAULT_PORT = 3306;
+    private static final String DEFAULT_DB_USER = "root";
+    private static final int DEFAULT_DB_PORT = 3306;
+    private static final int DEFAULT_WEBAPP_PORT = 80;
 
     /**
      Create a <tt>PrepareModelNodeVisitor</tt> to prepare a models nodes.
@@ -53,11 +56,11 @@ public class PrepareModelNodeVisitor extends CloudFormationVisitorExtension impl
         }
         if (!node.getUser().isPresent()) {
             logger.warn("User not set, setting to default");
-            node.setUser(DEFAULT_USER);
+            node.setUser(DEFAULT_DB_USER);
         }
         if (!node.getPort().isPresent()) {
             logger.warn("Database port not set, setting to default");
-            node.setPort(DEFAULT_PORT);
+            node.setPort(DEFAULT_DB_PORT);
         }
 
         // check if Mysql is the only node hosted on his compute node
@@ -97,6 +100,14 @@ public class PrepareModelNodeVisitor extends CloudFormationVisitorExtension impl
         cfnModule.putFn(publicIpFnString, publicIpFn);
         node.setPrivateAddress(privateIpFnString);
         node.setPublicAddress(publicIpFnString);
+    }
+
+    @Override
+    public void visit(WebApplication node) {
+        //if port is not set, set to default 80
+        if (!node.getAppEndpoint().getPort().isPresent()) {
+            node.getAppEndpoint().setPort(new Port(DEFAULT_WEBAPP_PORT));
+        }
     }
 
     /**

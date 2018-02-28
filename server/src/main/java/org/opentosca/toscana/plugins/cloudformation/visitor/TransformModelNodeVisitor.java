@@ -68,10 +68,13 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
                 SecurityGroup webServerSecurityGroup = cfnModule.resource(SecurityGroup.class,
                     nodeName + SECURITY_GROUP)
                     .groupDescription("Enables ports for " + nodeName + ".");
-
+                //open endpoint port
+                node.getEndpoint().getPort().ifPresent(
+                    port -> webServerSecurityGroup
+                        .ingress(ingress -> ingress.cidrIp(IP_OPEN), PROTOCOL_TCP, port.port)
+                );
                 // check what image id should be taken
                 CapabilityMapper capabilityMapper = createCapabilityMapper();
-
                 OsCapability computeOs = node.getOs();
                 String imageId = capabilityMapper.mapOsCapabilityToImageId(computeOs);
                 ComputeCapability computeCompute = node.getHost();
@@ -238,7 +241,11 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
             //get the compute where the apache this node is hosted on, is hosted on
             Compute compute = getCompute(node);
             String computeName = toAlphanumerical(compute.getEntityName());
-
+            node.getAppEndpoint().getPort().ifPresent(port -> {
+                SecurityGroup computeSecurityGroup = (SecurityGroup) cfnModule.getResource(computeName + 
+                    SECURITY_GROUP);
+                computeSecurityGroup.ingress(ingress -> ingress.cidrIp(IP_OPEN), PROTOCOL_TCP, port.port);
+            });
             //handle create
             operationHandler.handleCreate(node, computeName);
             //handle configure
