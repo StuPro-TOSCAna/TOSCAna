@@ -1,6 +1,7 @@
 package org.opentosca.toscana.plugins.cloudfoundry.filecreator;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,7 @@ import org.opentosca.toscana.plugins.scripts.BashScript;
 import org.opentosca.toscana.plugins.scripts.EnvironmentCheck;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.IOUtils;
 import org.json.JSONException;
 import org.slf4j.Logger;
 
@@ -87,6 +89,8 @@ public class FileCreator {
             insertFiles(application);
             createEnvironmentConfigFile(application, application.getEnvironmentVariables());
         }
+        logger.info("Create readme text file");
+        createReadme();
     }
 
     /**
@@ -373,5 +377,27 @@ public class FileCreator {
             logger.debug("Copy file {} to {}", filePath, path);
             fileAccess.copy(filePath, path);
         }
+    }
+
+    /**
+     create a readme for a transformation. Inserts the application names.
+     */
+    private void createReadme() throws IOException {
+        Class fileCreatorClass = FileCreator.class;
+        String README_SOURCE = "/cloudFoundry/readme.txt";
+        String REAMDE_FILENAME = "README.txt";
+        InputStream inputStream = fileCreatorClass.getResourceAsStream(README_SOURCE);
+        String contentFile = IOUtils.toString(inputStream);
+        inputStream.close();
+
+        logger.debug("Add application folder names to readme");
+        String applicationList = "";
+        for (Application application : applications) {
+            applicationList = applicationList + "  - app" + application.getApplicationNumber() + "\n";
+        }
+
+        contentFile = contentFile.replaceAll("application_names", applicationList);
+
+        fileAccess.access(OUTPUT_DIR + REAMDE_FILENAME).appendln(contentFile).close();
     }
 }

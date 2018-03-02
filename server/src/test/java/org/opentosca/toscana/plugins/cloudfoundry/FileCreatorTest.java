@@ -29,6 +29,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeNotNull;
+import static org.opentosca.toscana.core.plugin.lifecycle.AbstractLifecycle.OUTPUT_DIR;
 import static org.opentosca.toscana.plugins.cloudfoundry.ServiceTest.CF_ENVIRONMENT_HOST;
 import static org.opentosca.toscana.plugins.cloudfoundry.ServiceTest.CF_ENVIRONMENT_ORGA;
 import static org.opentosca.toscana.plugins.cloudfoundry.ServiceTest.CF_ENVIRONMENT_PW;
@@ -108,11 +109,13 @@ public class FileCreatorTest extends BaseUnitTest {
         File deployFile = new File(targetDir, outputPath + FILEPRAEFIX_DEPLOY + deploy_name + FILESUFFIX_DEPLOY);
         File buildPackAdditions = new File(targetDir, "/" + APPLICATION_FOLDER + testApp.getApplicationNumber() + "/" + BUILDPACK_FILEPATH_PHP);
         File environmentConfig = new File(targetDir, outputPath + appName + ENVIRONMENT_CONFIG_FILE);
+        File readme = new File(targetDir, OUTPUT_DIR + "README.txt");
 
         assertTrue(targetFile.exists());
         assertTrue(deployFile.exists());
         assertTrue(buildPackAdditions.exists());
         assertTrue(environmentConfig.exists());
+        assertTrue(readme.exists());
     }
 
     @Test
