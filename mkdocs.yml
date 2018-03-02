@@ -1,5 +1,5 @@
 site_name: TOSCAna
-theme: rtd-dropdown
+theme: readthedocs
 repo_name: 'StuPro-TOSCAna/TOSCAna'
 repo_url: 'https://github.com/StuPro-TOSCAna/TOSCAna'
 extra:

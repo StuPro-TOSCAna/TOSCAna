@@ -1,10 +1,14 @@
 # TOSCAna
 
 [![Build Status](https://travis-ci.org/StuPro-TOSCAna/TOSCAna.svg?branch=ci)](https://travis-ci.org/StuPro-TOSCAna/TOSCAna)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/d002dc08115145e6992ba64aa494893e)](https://www.codacy.com/app/stupro-toscana/TOSCAna?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=StuPro-TOSCAna/TOSCAna&amp;utm_campaign=Badge_Grade) [![codecov](https://codecov.io/gh/StuPro-TOSCAna/TOSCAna/branch/master/graph/badge.svg)](https://codecov.io/gh/StuPro-TOSCAna/TOSCAna)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/d002dc08115145e6992ba64aa494893e)](https://www.codacy.com/app/stupro-toscana/TOSCAna?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=StuPro-TOSCAna/TOSCAna&amp;utm_campaign=Badge_Grade)
+[![codecov](https://codecov.io/gh/StuPro-TOSCAna/TOSCAna/branch/master/graph/badge.svg)](https://codecov.io/gh/StuPro-TOSCAna/TOSCAna)
+[![Documentation Status](https://readthedocs.org/projects/toscana/badge/?version=latest)](http://toscana.readthedocs.io/en/latest/?badge=latest)
+
 ## Introduction
 The TOSCAna framework allows the transformation of TOSCA models into other cloud formats.
 Currently, it aims to support multiple cloud ecosystems, with Kubernetes, CloudFoundry, AWS CloudFormation being the first.
+
 ## Project Structure
 - [`docs/dev`](docs/dev) - Documentation aimed at developers
 - [`server`](server) - Folder for the server - Module
