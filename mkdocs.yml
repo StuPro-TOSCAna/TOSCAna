@@ -1,0 +1,27 @@
+site_name: TOSCAna
+theme: rtd-dropdown
+repo_name: 'StuPro-TOSCAna/TOSCAna'
+repo_url: 'https://github.com/StuPro-TOSCAna/TOSCAna'
+extra:
+  social:
+    - type: 'github'
+      link: 'https://github.com/StuPro-TOSCAna/TOSCAna'
+pages:
+    - Home: 'index.md'
+    - Developer Documentation:
+        - "Architectural Decision Records":
+            - "0000 - Use Markdown Architectural Decision Records": "adr/0000-use-markdown-architectural-decision-records.md"
+            - "0001 - Use custom model for transformations": "adr/0001-model-for-transformations.md"
+            - "0002 - Design a general plugin architecture": "adr/0002-general-plugin-architecture.md"
+            - "0003 - Use lombok in order to avoid writing boilerplate code": "adr/0003-lombok.md"
+            - "0004 - Use Spring Framework for the REST-API": "adr/0004-spring-framework.md"
+            - "0005 - Use Springfox for API documentation": "adr/0005-springfox.md"
+            - "0006 - Bash Script Generator": "adr/0006-bash-script-generator.md"
+            - "0007 - Use AWS CLI to deploy generated CloudFormation templates": "adr/0007-plugin-cloudformation-cli.md"
+            - "0008 - How to perform Kubernetes end to end tests": "adr/0008-kubernetes-end-to-end-tests.md"
+            - "0009 - CloudFoundry CLI": "adr/0009-cloudfoundry-cli.md"
+            - "0010 - How to perform Kubernetes end to end tests": "adr/0010-use-docker-java.md"
+            - "0011 - Put Integration Tests in seperate source directory": "adr/0011-put-integration-tests-in-seperate-folder.md"
+        - CLI:
+            - Architecture: 'dev/cli/cli-architecture.md'
+            - Commands: 'dev/cli/cli-commands.md'
