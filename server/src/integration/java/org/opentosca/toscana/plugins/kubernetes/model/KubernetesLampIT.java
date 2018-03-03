@@ -49,7 +49,7 @@ public class KubernetesLampIT extends BaseTransformTest {
     }
 
     @Override
-    protected void onSuccess(File outputDir) throws InterruptedException {
+    protected void onSuccess(File outputDir) throws InterruptedException, Exception {
         return;
     }
 

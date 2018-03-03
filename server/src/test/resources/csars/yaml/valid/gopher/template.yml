@@ -1,0 +1,54 @@
+tosca_definitions_version: tosca_simple_yaml_1_1
+description: Template for a Simple Hello World app written in golang
+metadata:
+  template_name: gopher-template
+  template_author: stupro-toscana
+  template_version: 1.0
+
+topology_template:
+
+  node_templates:
+    app:
+      type: tosca.nodes.WebApplication
+      requirements:
+        - host: server
+      capabilities:
+        app_endpoint:
+          properties:
+            protocol: http
+            port: 8080
+      interfaces:
+        Standard:
+          start:
+            implementation:
+              primary: app/run.sh
+              dependencies:
+                - app/hello_world
+
+    server:
+      type: tosca.nodes.Compute
+      capabilities:
+        scalable:
+          properties:
+            min_instances: 5
+            max_instances: 25
+            default_instances: 10
+        host:
+          properties:
+            num_cpus: 1
+            disk_size: 1 GB
+            mem_size: 256 MB
+        os:
+          properties:
+            type: linux
+            distribution: ubuntu
+
+  outputs:
+    public_address:
+      type: string
+      description: Public address of the server
+      value: { get_attribute: [ server, public_address ] }
+    port:
+      description: Port of the server
+      type: string
+      value: { get_attribute: [ server, port ] }

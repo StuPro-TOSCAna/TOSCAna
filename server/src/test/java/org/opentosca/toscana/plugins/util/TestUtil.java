@@ -1,6 +1,8 @@
 package org.opentosca.toscana.plugins.util;
 
 import java.io.IOException;
+import java.net.ServerSocket;
+import java.util.Random;
 
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.core.transformation.TransformationContext;
@@ -23,5 +25,23 @@ public class TestUtil {
         when(pluginFileAccess.access(any(String.class))).thenReturn(mock);
         when(mock.append(any(String.class))).thenReturn(mock);
         return context;
+    }
+
+    public static int getRandomOpenPort() {
+        Random rnd = new Random();
+        int port;
+        boolean portAvailable;
+        do {
+            port = 10000 + rnd.nextInt(50000);
+            ServerSocket socket;
+            try {
+                socket = new ServerSocket(port);
+                socket.close();
+                portAvailable = true;
+            } catch (Exception e) {
+                portAvailable = false;
+            }
+        } while (!portAvailable);
+        return port;
     }
 }
