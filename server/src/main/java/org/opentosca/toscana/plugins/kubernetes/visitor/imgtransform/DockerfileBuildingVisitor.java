@@ -1,6 +1,8 @@
 package org.opentosca.toscana.plugins.kubernetes.visitor.imgtransform;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -41,18 +43,31 @@ import org.slf4j.Logger;
 
 public class DockerfileBuildingVisitor implements NodeVisitor {
 
+    private static final String COMPOSED_ENTRYPOINT_COMMAND = "sh composed_entrypoint";
+    private static final String COMPOSED_ENTRYPOINT_FILENAME = "composed_entrypoint";
+    private static final String DOCKER_ROOTPATH = "output/docker/";
+    private static final String BIN_SH_SHEBANG = "#!/bin/sh";
+    private static final String IPV4_LOCAL_ADDRESS = "127.0.0.1";
+    private static final String TOSCANA_ROOT_WORKDIR_PATH = "/toscana-root";
+    private static final String APACHE_PHP_MYSQLI_INSTALL_COMMAND = "docker-php-ext-install mysqli";
+    private static final String ENV_KEY_MYSQL_ROOT_PASSWORD = "MYSQL_ROOT_PASSWORD";
+    private static final String ENV_KEY_MYSQL_DATABASE = "MYSQL_DATABASE";
+    private static final String ENV_KEY_MYSQL_USER = "MYSQL_USER";
+    private static final String ENV_KEY_MYSQL_PASSWORD = "MYSQL_PASSWORD";
+    private static final String ENV_KEY_MYSQL_ALLOW_EMPTY_PASSWORD = "MYSQL_ALLOW_EMPTY_PASSWORD";
+    private static final String SUDO_DETECTION_STRING = "sudo ";
+
+    private final TransformationContext context;
     private final Logger logger;
     private final DockerfileBuilder builder;
+
+    private final Set<Integer> ports = new HashSet<>();
+    private final List<String> startCommands = new ArrayList<>();
     private final NodeStack stack;
     private final Graph<NodeStack, Requirement> connectionGraph;
     private final String baseImage;
-    private final TransformationContext context;
-
+    
     private boolean sudoInstalled = false;
-
-    private Set<Integer> ports = new HashSet<>();
-    //This list is used to build a entrypoint script if there is more than one startup script
-    private List<String> startCommands = new ArrayList<>();
 
     public DockerfileBuildingVisitor(
         String baseImage,
@@ -67,10 +82,10 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
         logger.debug("Initializing DockerfileBuilder for {}", stack);
         this.builder = new DockerfileBuilder(
             baseImage,
-            "output/docker/" + stack.getStackName(),
+            DOCKER_ROOTPATH + stack.getStackName(),
             context.getPluginFileAccess()
         );
-        builder.workdir("/toscana-root");
+        builder.workdir(TOSCANA_ROOT_WORKDIR_PATH);
         this.baseImage = baseImage;
     }
 
@@ -131,7 +146,7 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
     public void visit(Apache node) {
         Set<Requirement> stackConnections = connectionGraph.outgoingEdgesOf(this.stack);
         if (requiresMySQL(stackConnections)) {
-            builder.run("docker-php-ext-install mysqli");
+            builder.run(APACHE_PHP_MYSQLI_INSTALL_COMMAND);
         }
         handleDefault(node, new String[] {"create", "configure"});
     }
@@ -157,18 +172,18 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
             node.setPort(3306);
             ports.add(3306);
         }
-        builder.env("MYSQL_ROOT_PASSWORD", node.getRootPassword().get());
+        builder.env(ENV_KEY_MYSQL_ROOT_PASSWORD, node.getRootPassword().get());
         handleDefault(node, new String[] {"create", "configure"});
     }
 
     @Override
     public void visit(MysqlDatabase node) {
-        builder.env("MYSQL_DATABASE", node.getDatabaseName());
+        builder.env(ENV_KEY_MYSQL_DATABASE, node.getDatabaseName());
         if (node.getUser().isPresent() && !node.getUser().get().equals("root")) {
-            builder.env("MYSQL_USER", node.getUser().get());
-            builder.env("MYSQL_PASSWORD", node.getPassword().orElse(""));
+            builder.env(ENV_KEY_MYSQL_USER, node.getUser().get());
+            builder.env(ENV_KEY_MYSQL_PASSWORD, node.getPassword().orElse(""));
             if (!node.getPassword().isPresent()) {
-                builder.env("MYSQL_ALLOW_EMPTY_PASSWORD", "true");
+                builder.env(ENV_KEY_MYSQL_ALLOW_EMPTY_PASSWORD, "true");
             }
         }
         handleDefault(node, new String[] {});
@@ -197,7 +212,7 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
                 }
             });
 
-            builder.workdir("/toscana-root");
+            builder.workdir(TOSCANA_ROOT_WORKDIR_PATH);
         }
     }
 
@@ -218,7 +233,7 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
 
             //Temporarily set the private address to localhost (127.0.0.1) if there is a connection in the same pod
             //The same compute node
-            node.getRequirements().forEach(e -> {
+            for (Requirement e : node.getRequirements()) {
                 if (e.getRelationship().isPresent() && e.getRelationship().get() instanceof ConnectsTo) {
                     for (Object o : e.getFulfillers()) {
                         if (o instanceof RootNode) {
@@ -227,14 +242,14 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
                             if (targetStack != null &&
                                 targetStack.getComputeNode() == this.stack.getComputeNode()) {
                                 adresses.put(this.stack, this.stack.getComputeNode().getPrivateAddress().orElse(null));
-                                this.stack.getComputeNode().setPrivateAddress("127.0.0.1");
+                                this.stack.getComputeNode().setPrivateAddress(IPV4_LOCAL_ADDRESS);
                             }
                         }
                     }
                 }
-            });
+            }
 
-            addToDockerfile(node.getEntityName(), node.getStandardLifecycle(), ignoredLifecycles);
+            addLifecycleOpertationsToDockerfile(node.getEntityName(), node.getStandardLifecycle(), ignoredLifecycles);
 
             //Reset to original address
             adresses.forEach((k, v) -> {
@@ -245,17 +260,17 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
         }
     }
 
-    private void addToDockerfile(
+    private void addLifecycleOpertationsToDockerfile(
         String nodeName,
         StandardLifecycle lifecycle,
         String[] ignoredLifecycles
     ) throws IOException {
-        copyAndExecIfPresent(nodeName, "create", lifecycle.getCreate(), ignoredLifecycles, false);
-        copyAndExecIfPresent(nodeName, "configure", lifecycle.getConfigure(), ignoredLifecycles, false);
-        copyAndExecIfPresent(nodeName, "start", lifecycle.getStart(), ignoredLifecycles, true);
+        copyArtifactsOfLifecycleOperation(nodeName, "create", lifecycle.getCreate(), ignoredLifecycles, false);
+        copyArtifactsOfLifecycleOperation(nodeName, "configure", lifecycle.getConfigure(), ignoredLifecycles, false);
+        copyArtifactsOfLifecycleOperation(nodeName, "start", lifecycle.getStart(), ignoredLifecycles, true);
     }
 
-    private void copyAndExecIfPresent(
+    private void copyArtifactsOfLifecycleOperation(
         String nodeName,
         String opName,
         Optional<Operation> optionalOperation,
@@ -306,12 +321,16 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
         }
     }
 
+    /**
+     This method looks for the string "sudo " in the given filepath. To find out if the given script
+     needs the sudo command (has to be installed)
+     */
     private boolean needsSudo(String path) {
         logger.debug("Checking if the Script '{}' needs sudo", path);
         boolean val = false;
         try {
             String s = context.getPluginFileAccess().read(path).toLowerCase();
-            val = s.contains("sudo ");
+            val = s.contains(SUDO_DETECTION_STRING);
         } catch (IOException e) {
             logger.warn("Sudo detection for '{}' has failed", path, e);
         }
@@ -319,6 +338,9 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
         return val;
     }
 
+    /**
+     Returns a unmodifiable set of the ports the image exposes
+     */
     public Set<Integer> getPorts() {
         return Collections.unmodifiableSet(ports);
     }
@@ -337,11 +359,39 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
         ports.forEach(builder::expose);
         if (startCommands.size() == 1) {
             builder.entrypoint(startCommands.get(0));
+        } else if (startCommands.size() > 1) {
+            String outpath = DOCKER_ROOTPATH + this.stack.getStackName() + "/" + COMPOSED_ENTRYPOINT_FILENAME;
+            ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+            PrintStream out = new PrintStream(byteOut);
+
+            //Append Shebang (sh to ensure compatibility)
+            out.println(BIN_SH_SHEBANG);
+            for (int i = 0; i < startCommands.size(); i++) {
+                out.print(startCommands.get(i));
+                //Fork if the command isnt the last one in the list
+                //Forking ensures "parallel" execution of the commands
+                if (i < startCommands.size() - 1) {
+                    out.println(" &");
+                } else {
+                    out.println();
+                }
+            }
+            out.close();
+            this.context.getPluginFileAccess()
+                .access(outpath)
+                .append(new String(byteOut.toByteArray()))
+                .close();
+            builder.copyFromWorkingDir(outpath, COMPOSED_ENTRYPOINT_FILENAME);
+            builder.entrypoint(COMPOSED_ENTRYPOINT_COMMAND);
         }
 
         builder.write();
     }
 
+    /**
+     Determines if a node needs MySQL based on the requirements
+     This is used for the apache node in order to find out if we have to install mysqli (MySQL Driver for PHP)
+     */
     private boolean requiresMySQL(Set<Requirement> stackConnections) {
         boolean hasMySQLConnection = false;
         if (stackConnections != null && stackConnections.size() > 0) {
