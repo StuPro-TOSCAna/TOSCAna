@@ -1,0 +1,10 @@
+library/ubuntu=apt-get update && apt-get install -y sudo
+library/debian=apt-get update && apt-get install -y sudo
+library/php=apt-get update && apt-get install -y sudo
+library/mysql=apt-get update && apt-get install -y sudo
+library/httpd=apt-get update && apt-get install -y sudo
+library/node=apt-get update && apt-get install -y sudo
+library/alpine=apk add --update --no-cache sudo
+library/docker=apk add --update --no-cache sudo
+library/centos=yum install -y sudo
+library/fedora=yum install -y sudo

@@ -2,6 +2,7 @@ package org.opentosca.toscana.plugins.kubernetes.visitor.imgtransform;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -32,6 +33,7 @@ import org.opentosca.toscana.model.requirement.Requirement;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 import org.opentosca.toscana.plugins.kubernetes.docker.dockerfile.builder.DockerfileBuilder;
 import org.opentosca.toscana.plugins.kubernetes.util.NodeStack;
+import org.opentosca.toscana.plugins.kubernetes.util.SudoUtils;
 import org.opentosca.toscana.plugins.util.TransformationFailureException;
 
 import org.jgrapht.Graph;
@@ -44,6 +46,7 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
     private final NodeStack stack;
     private final Graph<NodeStack, Requirement> connectionGraph;
     private final String baseImage;
+    private final TransformationContext context;
 
     private boolean sudoInstalled = false;
 
@@ -57,6 +60,7 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
         Graph<NodeStack, Requirement> connectionGraph,
         TransformationContext context
     ) {
+        this.context = context;
         this.logger = context.getLogger(getClass());
         this.stack = stack;
         this.connectionGraph = connectionGraph;
@@ -72,22 +76,22 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
 
     @Override
     public void visit(Compute node) {
-        handleDefault(node);
+        handleDefault(node, new String[] {});
     }
 
     @Override
     public void visit(Nodejs node) {
-        handleDefault(node);
+        handleDefault(node, new String[] {});
     }
 
     @Override
     public void visit(JavaRuntime node) {
-        handleDefault(node);
+        handleDefault(node, new String[] {});
     }
 
     @Override
     public void visit(JavaApplication node) {
-        handleDefault(node);
+        handleDefault(node, new String[] {});
         //Copy over jar and add command to entrypoint
         String jarPath = node.getJar().getFilePath();
         try {
@@ -112,7 +116,7 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
         if (node.getPort().isPresent()) {
             ports.add(node.getPort().get());
         }
-        handleDefault(node);
+        handleDefault(node, new String[] {});
     }
 
     @Override
@@ -120,7 +124,7 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
         if (node.getPort().isPresent()) {
             ports.add(node.getPort().get());
         }
-        handleDefault(node);
+        handleDefault(node, new String[] {});
     }
 
     @Override
@@ -129,8 +133,7 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
         if (requiresMySQL(stackConnections)) {
             builder.run("docker-php-ext-install mysqli");
         }
-        //TODO Add Dependency Detection for apache
-        //handleDefault(node);
+        handleDefault(node, new String[] {"create", "configure"});
     }
 
     @Override
@@ -142,7 +145,7 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
             //set the ports in the model
             node.getAppEndpoint().setPort(new Port(80));
         }
-        handleDefault(node);
+        handleDefault(node, new String[] {});
     }
 
     @Override
@@ -155,7 +158,7 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
             ports.add(3306);
         }
         builder.env("MYSQL_ROOT_PASSWORD", node.getRootPassword().get());
-        handleDefault(node);
+        handleDefault(node, new String[] {"create", "configure"});
     }
 
     @Override
@@ -168,7 +171,7 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
                 builder.env("MYSQL_ALLOW_EMPTY_PASSWORD", "true");
             }
         }
-        handleDefault(node);
+        handleDefault(node, new String[] {});
         List<Optional<Operation>> lifecycles = new ArrayList<>();
         lifecycles.add(node.getStandardLifecycle().getConfigure());
         lifecycles.add(node.getStandardLifecycle().getCreate());
@@ -198,7 +201,7 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
         }
     }
 
-    private void handleDefault(RootNode node) {
+    private void handleDefault(RootNode node, String[] ignoredLifecycles) {
         try {
             Map<NodeStack, String> adresses = new HashMap<>();
             node.getCapabilities().forEach(e -> {
@@ -231,7 +234,7 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
                 }
             });
 
-            addToDockerfile(node.getEntityName(), node.getStandardLifecycle());
+            addToDockerfile(node.getEntityName(), node.getStandardLifecycle(), ignoredLifecycles);
 
             //Reset to original address
             adresses.forEach((k, v) -> {
@@ -242,18 +245,27 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
         }
     }
 
-    private void addToDockerfile(String nodeName, StandardLifecycle lifecycle) throws IOException {
-        copyAndExecIfPresent(nodeName, "create", lifecycle.getCreate(), false);
-        copyAndExecIfPresent(nodeName, "configure", lifecycle.getConfigure(), false);
-        copyAndExecIfPresent(nodeName, "start", lifecycle.getStart(), true);
+    private void addToDockerfile(
+        String nodeName,
+        StandardLifecycle lifecycle,
+        String[] ignoredLifecycles
+    ) throws IOException {
+        copyAndExecIfPresent(nodeName, "create", lifecycle.getCreate(), ignoredLifecycles, false);
+        copyAndExecIfPresent(nodeName, "configure", lifecycle.getConfigure(), ignoredLifecycles, false);
+        copyAndExecIfPresent(nodeName, "start", lifecycle.getStart(), ignoredLifecycles, true);
     }
 
     private void copyAndExecIfPresent(
         String nodeName,
         String opName,
         Optional<Operation> optionalOperation,
+        String[] ignoredLifecycles,
         boolean isStartup
     ) throws IOException {
+        //Skip ignored lifecycles
+        if (Arrays.asList(ignoredLifecycles).contains(opName)) {
+            return;
+        }
         if (optionalOperation.isPresent()) {
             optionalOperation.get().getInputs().forEach(e -> {
                 if (e.getValue().isPresent()) {
@@ -269,11 +281,17 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
             }
             if (operation.getArtifact().isPresent()) {
                 String path = operation.getArtifact().get().getFilePath();
-                if (!sudoInstalled && needsSudo(path)) {
+                if (needsSudo(path) && !sudoInstalled) {
                     //Install sudo, currently only works with Debian based systems
-                    //TODO implement sudo setup for other base images
-                    builder.run("apt-get update && apt-get install -y sudo; true");
-                    sudoInstalled = true;
+                    Optional<String> sudocmd = SudoUtils.getSudoInstallCommand(this.baseImage);
+                    if (sudocmd.isPresent()) {
+                        builder.run(sudocmd.get());
+                        sudoInstalled = true;
+                    } else {
+                        throw new TransformationFailureException(
+                            "Cannot determine Sudo install command for base image '" + this.baseImage + "'"
+                        );
+                    }
                 }
                 if (path.endsWith(".sql")) return;
                 builder.copyFromCsar(path, nodeName, nodeName + "-" + opName);
@@ -289,8 +307,16 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
     }
 
     private boolean needsSudo(String path) {
-        //TODO implement sudo detection mechanism
-        return true;
+        logger.debug("Checking if the Script '{}' needs sudo", path);
+        boolean val = false;
+        try {
+            String s = context.getPluginFileAccess().read(path).toLowerCase();
+            val = s.contains("sudo ");
+        } catch (IOException e) {
+            logger.warn("Sudo detection for '{}' has failed", path, e);
+        }
+        logger.debug("The script '{}' does {}need sudo", path, val ? "" : "not ");
+        return val;
     }
 
     public Set<Integer> getPorts() {
@@ -312,7 +338,7 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
         if (startCommands.size() == 1) {
             builder.entrypoint(startCommands.get(0));
         }
-        
+
         builder.write();
     }
 
