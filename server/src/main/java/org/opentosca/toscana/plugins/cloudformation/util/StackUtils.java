@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+import org.opentosca.toscana.model.node.MysqlDatabase;
+import org.opentosca.toscana.plugins.cloudformation.CloudFormationLifecycle;
 import org.opentosca.toscana.plugins.cloudformation.CloudFormationModule;
 
 import com.scaleset.cfbuilder.core.Fn;
@@ -88,6 +90,34 @@ public class StackUtils {
         return Fn.fnDelimiter(USERDATA_NAME, USERDATA_DELIMITER, params.toArray());
     }
 
+    public static Fn getUserDataDBConnFn(MysqlDatabase mysqlDatabase, String sql) {
+        String dbName = mysqlDatabase.getDatabaseName();
+        String user = mysqlDatabase.getUser().orElseThrow(() -> new IllegalArgumentException("Database user not set"));
+        String password = mysqlDatabase.getPassword().orElseThrow(() -> new IllegalArgumentException("Database " +
+            "password not set"));
+        Integer port = mysqlDatabase.getPort().orElseThrow(() -> new IllegalArgumentException("Database port not set"));
+        Object[] userdata = {
+            "#!/bin/bash -xe\n",
+            "apt-get update\n",
+            "#DEBIAN_FRONTEND=noninteractive apt-get upgrade -yq\n",
+            "apt-get -y install mysql-client\n",
+            "mysql --user=\"",
+            user,
+            "\" --password=\"",
+            password,
+            "\" --port=",
+            port,
+            " --host=",
+            Fn.fnGetAtt(CloudFormationLifecycle.toAlphanumerical(mysqlDatabase.getEntityName()), "Endpoint.Address"),
+            " -e \"",
+            sql,
+            "\" ",
+            dbName,
+            "\n",
+            "sudo shutdown now\n"
+        };
+        return Fn.fnDelimiter(USERDATA_NAME, USERDATA_DELIMITER, userdata);
+    }
     /**
      Returns the URL to the file in the given S3Bucket.
      e.g. http://bucketName.s3.amazonaws.com/objectKey

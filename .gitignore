@@ -71,3 +71,4 @@ app/node
 **/.vscode
 
 !translator.jar
+site/

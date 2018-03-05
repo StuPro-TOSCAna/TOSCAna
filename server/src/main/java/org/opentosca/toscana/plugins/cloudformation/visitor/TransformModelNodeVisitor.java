@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.opentosca.toscana.core.transformation.TransformationContext;
+import org.opentosca.toscana.model.artifact.Artifact;
 import org.opentosca.toscana.model.capability.ComputeCapability;
 import org.opentosca.toscana.model.capability.EndpointCapability;
 import org.opentosca.toscana.model.capability.OsCapability;
@@ -18,8 +19,8 @@ import org.opentosca.toscana.model.node.Nodejs;
 import org.opentosca.toscana.model.node.WebApplication;
 import org.opentosca.toscana.model.visitor.StrictNodeVisitor;
 import org.opentosca.toscana.plugins.cloudformation.CloudFormationModule;
+import org.opentosca.toscana.plugins.cloudformation.handler.OperationHandler;
 import org.opentosca.toscana.plugins.cloudformation.mapper.CapabilityMapper;
-import org.opentosca.toscana.plugins.cloudformation.util.OperationHandler;
 import org.opentosca.toscana.plugins.util.TransformationFailureException;
 
 import com.amazonaws.SdkClientException;
@@ -31,11 +32,14 @@ import com.scaleset.cfbuilder.ec2.metadata.CFNPackage;
 import com.scaleset.cfbuilder.rds.DBInstance;
 
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationLifecycle.toAlphanumerical;
+import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.CONFIG_CONFIGURE;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.CONFIG_CREATE;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.CONFIG_SETS;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.CONFIG_START;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.FILEPATH_NODEJS_CREATE;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.SECURITY_GROUP;
+import static org.opentosca.toscana.plugins.cloudformation.handler.EnvironmentHandler.APACHE_ENV_IMPORT;
+import static org.opentosca.toscana.plugins.cloudformation.handler.OperationHandler.APACHE_RESTART_COMMAND;
 
 /**
  Class for building a CloudFormation template from an effective model instance via the visitor pattern. Currently only
@@ -68,10 +72,13 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
                 SecurityGroup webServerSecurityGroup = cfnModule.resource(SecurityGroup.class,
                     nodeName + SECURITY_GROUP)
                     .groupDescription("Enables ports for " + nodeName + ".");
-
+                //open endpoint port
+                node.getEndpoint().getPort().ifPresent(
+                    port -> webServerSecurityGroup
+                        .ingress(ingress -> ingress.cidrIp(IP_OPEN), PROTOCOL_TCP, port.port)
+                );
                 // check what image id should be taken
                 CapabilityMapper capabilityMapper = createCapabilityMapper();
-
                 OsCapability computeOs = node.getOs();
                 String imageId = capabilityMapper.mapOsCapabilityToImageId(computeOs);
                 ComputeCapability computeCompute = node.getHost();
@@ -171,9 +178,21 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
                 .allocatedStorage(allocatedStorage)
                 .storageType(storageType)
                 .vPCSecurityGroups(cfnModule.fnGetAtt(securityGroupName, "GroupId"));
+            //handle sql artifact
+            for (Artifact artifact : node.getArtifacts()) {
+                String relPath = artifact.getFilePath();
+                if (relPath.endsWith(".sql")) {
+                    String sql = cfnModule.getFileAccess().read(artifact.getFilePath());
+                    String computeName = createSqlCompute(node, sql);
+                    securityGroup.ingress(ingress -> ingress.sourceSecurityGroupName(
+                        cfnModule.ref(toAlphanumerical(computeName) + SECURITY_GROUP)),
+                        PROTOCOL_TCP,
+                        port);
+                }
+            }
         } catch (Exception e) {
-            logger.error("Error while creating Dbms resource.");
-            throw new TransformationFailureException("Failed at Dbms node " + node.getEntityName(), e);
+            logger.error("Error while creating MysqlDatabase resource.");
+            throw new TransformationFailureException("Failed at MysqlDatabase node " + node.getEntityName(), e);
         }
     }
 
@@ -194,14 +213,14 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
                 securityGroup.ingress(ingress -> ingress.cidrIp(IP_OPEN), PROTOCOL_TCP, dbmsPort);
             }
         } catch (Exception e) {
-            logger.error("Error while creating Database resource.");
-            throw new TransformationFailureException("Failed at Database node " + node.getEntityName(), e);
+            logger.error("Error while creating Dbms resource.");
+            throw new TransformationFailureException("Failed at Dbms node " + node.getEntityName(), e);
         }
     }
 
     @Override
     public void visit(MysqlDbms node) {
-        // TODO handle sql artifact if present
+        //noop
     }
 
     @Override
@@ -221,11 +240,18 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
             operationHandler.handleConfigure(node, computeName);
             //handle start
             operationHandler.handleStart(node, computeName);
-
-            //Add restart apache2 command to the configscript
+            //Source environment variables in /etc/apache/envvars from /etc/environment and restart apache2 directly 
+            // afterwards
             cfnModule.getCFNInit(computeName)
-                .getOrAddConfig(CONFIG_SETS, CONFIG_START)
-                .putCommand(new CFNCommand("restart apache2", "service apache2 restart"));
+                .getOrAddConfig(CONFIG_SETS, CONFIG_CONFIGURE)
+                .putCommand(new CFNCommand("Add Apache environment variables", APACHE_ENV_IMPORT));
+            //we add restart apache2 command to the configscript if start or configure existed
+            if (node.getStandardLifecycle().getConfigure().isPresent() || node.getStandardLifecycle().getStart()
+                .isPresent()) {
+                cfnModule.getCFNInit(computeName)
+                    .getOrAddConfig(CONFIG_SETS, CONFIG_START)
+                    .putCommand(new CFNCommand("restart apache2", APACHE_RESTART_COMMAND));
+            }
         } catch (Exception e) {
             logger.error("Error while creating Apache");
             throw new TransformationFailureException("Failed at Apache node " + node.getEntityName(), e);
@@ -238,7 +264,11 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
             //get the compute where the apache this node is hosted on, is hosted on
             Compute compute = getCompute(node);
             String computeName = toAlphanumerical(compute.getEntityName());
-
+            node.getAppEndpoint().getPort().ifPresent(port -> {
+                SecurityGroup computeSecurityGroup = (SecurityGroup) cfnModule.getResource(computeName + 
+                    SECURITY_GROUP);
+                computeSecurityGroup.ingress(ingress -> ingress.cidrIp(IP_OPEN), PROTOCOL_TCP, port.port);
+            });
             //handle create
             operationHandler.handleCreate(node, computeName);
             //handle configure

@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.opentosca.toscana.core.plugin.PluginFileAccess;
 import org.opentosca.toscana.core.transformation.TransformationContext;
+import org.opentosca.toscana.plugins.cloudformation.util.FileUpload;
 import org.opentosca.toscana.plugins.scripts.BashScript;
 import org.opentosca.toscana.plugins.scripts.EnvironmentCheck;
 import org.opentosca.toscana.plugins.util.TransformationFailureException;
@@ -19,6 +20,10 @@ import org.slf4j.Logger;
 
 import static org.opentosca.toscana.core.plugin.lifecycle.AbstractLifecycle.UTIL_DIR_PATH;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.FILEPATH_TARGET;
+import static org.opentosca.toscana.plugins.cloudformation.util.FileUpload.UploadFileType.FROM_CSAR;
+import static org.opentosca.toscana.plugins.cloudformation.util.FileUpload.UploadFileType.UTIL;
+import static org.opentosca.toscana.plugins.cloudformation.util.FileUpload.getFilePaths;
+import static org.opentosca.toscana.plugins.cloudformation.util.FileUpload.getFileUploadByType;
 
 /**
  Class for building scripts and copying files needed for deployment of cloudformation templates.
@@ -27,6 +32,8 @@ public class CloudFormationFileCreator {
     public static final String CLI_COMMAND_CREATESTACK = "aws cloudformation deploy ";
     public static final String CLI_COMMAND_DELETESTACK = "aws cloudformation delete-stack ";
     public static final String CLI_COMMAND_DELETEBUCKET = "aws s3 rb s3://";
+    public static final String COMMAND_ECHO = "echo ";
+    public static final String STRING_DELETESTACK = "delete stack: ";
     public static final String CLI_PARAM_STACKNAME = "--stack-name ";
     public static final String CLI_PARAM_TEMPLATEFILE = "--template-file ";
     public static final String CLI_PARAM_PARAMOVERRIDES = "--parameter-overrides";
@@ -44,7 +51,7 @@ public class CloudFormationFileCreator {
     public static final String FILEPATH_CLOUDFORMATION = "/cloudformation/";
     public static final String FILEPATH_SCRIPTS_UTIL = FILEPATH_CLOUDFORMATION + "scripts/util/";
     public static final String FILEPATH_FILES_UTIL = FILEPATH_CLOUDFORMATION + "files/util/";
-    
+
     private final Logger logger;
     private CloudFormationModule cfnModule;
 
@@ -63,13 +70,12 @@ public class CloudFormationFileCreator {
      Copies all files that need to be uploaded to the target artifact.
      */
     public void copyFiles() {
-
-        List<String> filesToBeUploaded = cfnModule.getFilesToBeUploaded();
+        List<String> fileUploadList = getFilePaths(getFileUploadByType(cfnModule.getFileUploadList(), FROM_CSAR));
 
         logger.debug("Checking if files need to be copied.");
-        if (!filesToBeUploaded.isEmpty()) {
+        if (!fileUploadList.isEmpty()) {
             logger.debug("Files to be copied found. Attempting to copy files to the target artifact.");
-            filesToBeUploaded.forEach((filePath) -> {
+            fileUploadList.forEach((filePath) -> {
                 String targetPath = FILEPATH_TARGET + filePath;
                 try {
                     cfnModule.getFileAccess().copy(filePath, targetPath);
@@ -100,8 +106,8 @@ public class CloudFormationFileCreator {
         BashScript deployScript = new BashScript(cfnModule.getFileAccess(), FILENAME_DEPLOY);
         deployScript.append(EnvironmentCheck.checkEnvironment("aws"));
         // Source file-upload script if needed
-        List filesToBeUploaded = cfnModule.getFilesToBeUploaded();
-        if (!filesToBeUploaded.isEmpty()) {
+        List fileUploadList = cfnModule.getFileUploadList();
+        if (!fileUploadList.isEmpty()) {
             deployScript.append("source " + FILENAME_UPLOAD + ".sh");
         }
         deployScript.append("source " + FILENAME_CREATE_STACK + ".sh");
@@ -111,19 +117,16 @@ public class CloudFormationFileCreator {
      Creates the script for File Uploads if files need to be uploaded.
      */
     private void writeFileUploadScript() throws IOException {
-        List<String> filesToBeUploaded = cfnModule.getFilesToBeUploaded();
-        List<String> utilFilesToBeUploaded = cfnModule.getUtilFilesToBeUploaded();
+        List<String> fileUploadList = getFilePaths(cfnModule.getFileUploadList());
 
         logger.debug("Checking if files need to be uploaded.");
-        if (!filesToBeUploaded.isEmpty() || !utilFilesToBeUploaded.isEmpty()) {
+        if (!fileUploadList.isEmpty()) {
             logger.debug("Files to be uploaded found. Creating file upload script.");
             BashScript fileUploadScript = new BashScript(cfnModule.getFileAccess(), FILENAME_UPLOAD);
             fileUploadScript.append(createBucket());
 
             logger.debug("Adding file upload commands.");
-            addFileUploadsToScript(filesToBeUploaded, fileUploadScript);
-            logger.debug("Adding util file upload commands.");
-            addFileUploadsToScript(utilFilesToBeUploaded, fileUploadScript);
+            addFileUploadsToScript(fileUploadList, fileUploadScript);
         } else {
             logger.debug("No files to be uploaded found. Skipping creation of file upload script.");
         }
@@ -143,8 +146,8 @@ public class CloudFormationFileCreator {
             .append(CLI_PARAM_TEMPLATEFILE).append("../").append(TEMPLATE_YAML);
 
         // Add IAM capability if needed
-        List<String> filesToBeUploaded = cfnModule.getFilesToBeUploaded();
-        if (!filesToBeUploaded.isEmpty()) {
+        List<FileUpload> fileUploadList = cfnModule.getFileUploadList();
+        if (!fileUploadList.isEmpty()) {
             logger.debug("Adding IAM capability to create stack command.");
             deployCommand.append(" " + CLI_PARAM_CAPABILITIES + " " + CAPABILITY_IAM);
         }
@@ -171,6 +174,8 @@ public class CloudFormationFileCreator {
         BashScript cleanupScript = new BashScript(cfnModule.getFileAccess(), FILENAME_CLEANUP);
         // Delete Bucket
         cleanupScript.append(CLI_COMMAND_DELETEBUCKET + cfnModule.getBucketName() + " " + CLI_PARAM_FORCE);
+        // Echo delete Stack
+        cleanupScript.append(COMMAND_ECHO + STRING_DELETESTACK + cfnModule.getStackName());
         // Delete stack
         cleanupScript.append(CLI_COMMAND_DELETESTACK + CLI_PARAM_STACKNAME + cfnModule.getStackName());
     }
@@ -212,15 +217,17 @@ public class CloudFormationFileCreator {
      Note: Theses are the files that actually need to be uploaded and accessed by EC2 instances unlike the util scripts.
      */
     public void copyUtilDependencies() throws IOException {
-        //Iterate over all files in the script list
         logger.debug("Copying util files to the target artifact.");
-        copyUtilFile(cfnModule.getUtilFilesToBeUploaded(), FILEPATH_FILES_UTIL, FILEPATH_TARGET);
+
+        List<String> utilFileUploadList = getFilePaths(
+            getFileUploadByType(cfnModule.getFileUploadList(), UTIL));
+        copyUtilFile(utilFileUploadList, FILEPATH_FILES_UTIL, FILEPATH_TARGET);
     }
 
     /**
      Adds file upload commands for all given files to the given script.
-     
-     @param files to be uploaded
+
+     @param files  to be uploaded
      @param script to add the file upload commands to
      */
     private void addFileUploadsToScript(List<String> files, BashScript script) {
@@ -233,8 +240,8 @@ public class CloudFormationFileCreator {
             }
         });
     }
-    
-    public void copyUtilFile(List<String> files, String resourcePath, String outputPath) throws IOException {
+
+    private void copyUtilFile(List<String> files, String resourcePath, String outputPath) throws IOException {
         PluginFileAccess fileAccess = cfnModule.getFileAccess();
         for (String file : files) {
             if (!file.isEmpty()) {

@@ -11,7 +11,9 @@ import org.opentosca.toscana.plugins.kubernetes.docker.util.DockerRegistryCreden
 import com.spotify.docker.client.DefaultDockerClient;
 import com.spotify.docker.client.DockerClient;
 import com.spotify.docker.client.auth.FixedRegistryAuthSupplier;
+import com.spotify.docker.client.exceptions.DockerException;
 import com.spotify.docker.client.messages.ContainerConfig;
+import com.spotify.docker.client.messages.ContainerMount;
 import com.spotify.docker.client.messages.HostConfig;
 import com.spotify.docker.client.messages.PortBinding;
 import com.spotify.docker.client.messages.RegistryAuth;
@@ -31,7 +33,7 @@ public class PushingImageBuilderIT extends ExportingImageBuilderIT {
 
     private String tag = "sha-test-" + Long.toString(System.currentTimeMillis(), 16);
 
-    private String registryid;
+    private String registryId;
 
     @Override
     public void init() throws Exception {
@@ -62,7 +64,7 @@ public class PushingImageBuilderIT extends ExportingImageBuilderIT {
 
         logger.info("Starting registry container");
         client.startContainer(id);
-        this.registryid = id;
+        this.registryId = id;
     }
 
     @Override
@@ -79,7 +81,7 @@ public class PushingImageBuilderIT extends ExportingImageBuilderIT {
     @Override
     public void validate(String tag) throws Exception {
         RegistryAuth auth = creds.toRegistryAuth();
-        
+
         DockerClient client = DefaultDockerClient.fromEnv()
             .registryAuthSupplier(
                 new FixedRegistryAuthSupplier(
@@ -95,12 +97,23 @@ public class PushingImageBuilderIT extends ExportingImageBuilderIT {
         client.pull(tag);
     }
 
+    
     @After
+    @SuppressWarnings("Duplicates")
     public void tearDown() throws Exception {
         super.tearDown();
         DockerClient client = DefaultDockerClient.fromEnv().build();
         logger.info("Stopping and removing registry");
-        client.killContainer(this.registryid);
-        client.removeContainer(this.registryid);
+        List<ContainerMount> mounts = client.inspectContainer(this.registryId).mounts();
+        client.killContainer(this.registryId);
+        client.removeContainer(this.registryId);
+        mounts.forEach(e -> {
+            try {
+                client.removeVolume(e.name());
+            } catch (DockerException | InterruptedException ex) {
+                ex.printStackTrace();
+                throw new RuntimeException(ex);
+            }
+        });
     }
 }

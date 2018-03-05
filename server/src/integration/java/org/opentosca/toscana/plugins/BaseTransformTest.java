@@ -70,6 +70,7 @@ public abstract class BaseTransformTest<LifecycleT extends AbstractLifecycle> ex
         context = initContext();
     }
 
+
     /**
      This method is responsible for executing a transformation. The following steps get executed:
      <ol>

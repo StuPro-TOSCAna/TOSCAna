@@ -77,7 +77,7 @@ public class MapperTest extends BaseUnitTest {
         Preferences preferences = mock(Preferences.class);
         when(preferences.getDataDir()).thenReturn(staticTmpDir);
         TagStorage tagStorage = new TagStorage(preferences);
-        BaseImageMapper baseImageMapper = new BaseImageMapper(new DockerBaseImages[]{
+        BaseImageMapper baseImageMapper = new BaseImageMapper(new DockerBaseImages[] {
             ALPINE,
             DEBIAN,
             UBUNTU

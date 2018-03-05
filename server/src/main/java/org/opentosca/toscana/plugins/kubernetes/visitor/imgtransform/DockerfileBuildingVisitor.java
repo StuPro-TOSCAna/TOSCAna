@@ -43,6 +43,7 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
     private final DockerfileBuilder builder;
     private final NodeStack stack;
     private final Graph<NodeStack, Requirement> connectionGraph;
+    private final String baseImage;
 
     private boolean sudoInstalled = false;
 
@@ -66,6 +67,7 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
             context.getPluginFileAccess()
         );
         builder.workdir("/toscana-root");
+        this.baseImage = baseImage;
     }
 
     @Override
@@ -306,9 +308,11 @@ public class DockerfileBuildingVisitor implements NodeVisitor {
             logger.debug("Visitng node: {}", node.getNode().getEntityName());
             node.getNode().accept(this);
         });
+        ports.forEach(builder::expose);
         if (startCommands.size() == 1) {
             builder.entrypoint(startCommands.get(0));
         }
+        
         builder.write();
     }
 
