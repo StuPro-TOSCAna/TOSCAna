@@ -41,8 +41,8 @@ public class CloudFoundryJavaIT extends CloudFoundryLampIT {
 
     @Override
     protected void onSuccess(File outputDir) throws InterruptedException {
-        System.out.println("You can stop me now");
-        Thread.sleep(5000);
+        //System.out.println("You can stop me now");
+        //Thread.sleep(5000);
     }
 
     @Override

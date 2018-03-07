@@ -26,7 +26,7 @@ The script needs the Cloud Foundry CLI and therefore a valid connection. Otherwi
 
 ---Deployment---
 Go to /output/scripts and run the deploy_application(s).sh scripts to deploy your applications.
-If you application uses a service like a database, TOSCAna choose a suitable service for you. We took automatically a free-plan
+If your application uses a service like a database, TOSCAna chooses a suitable service for you. We took automatically a free-plan
 which may not suitable for you. But you are able to change it manually.
   - Just look for a suitable service / plan in the /output/all_services.txt
   - change in the deploy_application(s).sh all occurrence of the old service / plan and change it to the new one.
