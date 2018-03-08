@@ -2,6 +2,7 @@ package org.opentosca.toscana.plugins.cloudfoundry;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,9 +25,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeNotNull;
 import static org.opentosca.toscana.plugins.cloudfoundry.filecreator.FileCreator.FILEPRAEFIX_DEPLOY;
 import static org.opentosca.toscana.plugins.cloudfoundry.filecreator.FileCreator.FILESUFFIX_DEPLOY;
+import static org.opentosca.toscana.plugins.cloudfoundry.filecreator.FileCreator.SERVICE_FILE_PATH;
 import static org.opentosca.toscana.plugins.cloudfoundry.filecreator.FileCreator.deploy_name;
 import static org.opentosca.toscana.plugins.util.TestUtil.setUpMockTransformationContext;
 
@@ -93,6 +96,22 @@ public class ServiceTest extends BaseUnitTest {
         File targetFile = new File(targetDir, outputPath + FILEPRAEFIX_DEPLOY + deploy_name + FILESUFFIX_DEPLOY);
         String deployContent = FileUtils.readFileToString(targetFile);
         assertThat(deployContent, CoreMatchers.containsString(expectedDeployContent));
+    }
+
+    @Test
+    public void getAllServices() throws Exception {
+        assumeNotNull(envUser, envHost, envOrga, envPw, envSpace);
+        app.addService("my_db1", ServiceTypes.MYSQL);
+        List<Application> applications = new ArrayList<>();
+        applications.add(app);
+        fileCreator = new FileCreator(fileAccess, applications, context);
+
+        fileCreator.createFiles();
+        File all_services = new File(targetDir, SERVICE_FILE_PATH);
+        String all_services_expected_content = "Following services you could choose:";
+        String all_services_content = FileUtils.readFileToString(all_services, Charset.defaultCharset());
+        assertTrue(all_services.exists());
+        assertThat(all_services_content, CoreMatchers.containsString(all_services_expected_content));
     }
 
     private Connection createConnection() {

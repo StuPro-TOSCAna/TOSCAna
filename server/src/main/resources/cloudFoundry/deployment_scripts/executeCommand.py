@@ -2,6 +2,7 @@ import sys
 import subprocess as sub
 
 def main():
+    print("\nStart execute command python script")
     strAppName = sys.argv[1]
     strPathToFile = sys.argv[2]
     execute(strAppName, strPathToFile)
@@ -19,6 +20,7 @@ def execute(appName, file):
         print("Failed to enable ssh to %s. \nError: %s" %(appName, isEnabled))
         exit(1)
 
+    print("Connect to {} via ssh".format(appName))
     ssh = sub.Popen(["cf", "ssh", appName,"-c" ,"bash %s" %file],
                     shell=False,
                     stdout=sub.PIPE,
