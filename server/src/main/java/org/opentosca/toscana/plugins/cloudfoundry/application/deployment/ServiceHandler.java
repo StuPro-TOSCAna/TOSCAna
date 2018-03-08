@@ -57,7 +57,7 @@ public class ServiceHandler {
             if (showAllServiceOfferings) {
                 if (application.getProvider() != null && !application.getServices().isEmpty()
                     && application.getConnection() != null) {
-                    logger.debug("List all possible services in the deploy script");
+                    logger.debug("List all possible services in the an extra file");
                     addProviderServiceOfferings();
                 }
             }
@@ -151,18 +151,16 @@ public class ServiceHandler {
     }
 
     /**
-     adds all offered services from the provider to the deploy script
+     adds all offered services from the provider to an extra file
      */
     private void addProviderServiceOfferings() throws IOException {
         Provider provider = application.getProvider();
         List<ServiceOffering> services = provider.getOfferedService();
         BufferedLineWriter lineWriter = fileAccess.access(SERVICE_FILE_PATH);
+        logger.info("List all services from the provider to the file '{}'", SERVICE_FILE_PATH);
 
-        lineWriter.appendln("# following services you could choose:");
-        lineWriter.appendln(String.format("# %-20s %-40s %-50s\n", "Name", " Plans", "Description"));
-
-        //deploymentScript.append("# following services you could choose:");
-        //deploymentScript.append(String.format("# %-20s %-40s %-50s\n", "Name", " Plans", "Description"));
+        lineWriter.appendln("Following services you could choose:");
+        lineWriter.appendln(String.format("%-20s %-40s %-50s\n", "Name", " Plans", "Description"));
 
         for (ServiceOffering service : services) {
             String plans = "";
@@ -176,11 +174,10 @@ public class ServiceHandler {
 
                 plans = String.format("%s %s ", plans, currentPlan);
             }
-            lineWriter.appendln(String.format("# %-20s %-40s %-50s ", service.getLabel(), plans, service.getDescription()));
-            //deploymentScript.append(String.format("# %-20s %-40s %-50s ", service.getLabel(), plans, service.getDescription()));
+            logger.debug("Add '{}' to the service list in file '{}'", service.getLabel(), SERVICE_FILE_PATH);
+            lineWriter.appendln(String.format("%-20s %-40s %-50s ", service.getLabel(), plans, service.getDescription()));
         }
-        lineWriter.appendln("\n# * These service plans have an associated cost. Creating a service instance will incur this cost.\n");
-        //deploymentScript.append("\n# * These service plans have an associated cost. Creating a service instance will incur this cost.\n");
+        lineWriter.appendln("\n* These service plans have an associated cost. Creating a service instance will incur this cost.\n");
         lineWriter.close();
     }
 }

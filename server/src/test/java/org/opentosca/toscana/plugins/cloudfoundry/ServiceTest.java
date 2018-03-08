@@ -108,7 +108,7 @@ public class ServiceTest extends BaseUnitTest {
 
         fileCreator.createFiles();
         File all_services = new File(targetDir, SERVICE_FILE_PATH);
-        String all_services_expected_content = "# following services you could choose:";
+        String all_services_expected_content = "Following services you could choose:";
         String all_services_content = FileUtils.readFileToString(all_services, Charset.defaultCharset());
         assertTrue(all_services.exists());
         assertThat(all_services_content, CoreMatchers.containsString(all_services_expected_content));
