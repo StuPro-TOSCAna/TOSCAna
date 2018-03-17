@@ -45,7 +45,7 @@ public class ToscaInputsIT extends BaseSpringIntegrationTest {
     @Test
     public void getPropertiesTest() throws IOException, TOSCAnaServerException {
         String csarName = "test-csar";
-        api.uploadCsar(csarName, TestCsars.VALID_INPUTS);
+        api.uploadCsar(csarName, TestCsars.Testing.INPUTS);
         List<Platform> platforms = api.getPlatforms().getContent();
         String platform = platforms.get(0).getId();
         api.createTransformation(csarName, platform);

@@ -179,7 +179,7 @@ public class TransformationControllerTest extends BaseSpringTest {
         List<Csar> csars = new ArrayList<>();
         when(csarService.getCsar(anyString())).thenReturn(Optional.empty());
         for (String name : CSAR_NAMES) {
-            Csar csar = new CsarImpl(TestCsars.VALID_EMPTY_TOPOLOGY_TEMPLATE, name, logMock());
+            Csar csar = new CsarImpl(TestCsars.Testing.EMPTY_TOPOLOGY_TEMPLATE, name, logMock());
             when(csarService.getCsar(name)).thenReturn(Optional.of(csar));
         }
         when(csarService.getCsars()).thenReturn(csars);
