@@ -52,6 +52,11 @@ public class KubernetesPushingGopherIT extends KubernetesLampIT {
     private int registryPort;
 
     public KubernetesPushingGopherIT() throws Exception {
+    }
+
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
         DockerClient client = DefaultDockerClient.fromEnv().build();
         logger.info("Downloading registry image");
         client.pull("registry:2");
