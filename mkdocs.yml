@@ -22,6 +22,9 @@ pages:
             - "0009 - CloudFoundry CLI": "adr/0009-cloudfoundry-cli.md"
             - "0010 - How to perform Kubernetes end to end tests": "adr/0010-use-docker-java.md"
             - "0011 - Put Integration Tests in seperate source directory": "adr/0011-put-integration-tests-in-seperate-folder.md"
+            - "0012 - Use java CloudFoundry Library": "adr/0012-cf-java-library.md"
+            - "0013 - Use AWS SDK for java": "adr/0013-aws-file-upload.md"
+            - "0014 - Navigate EffectiveModel with visitor pattern": "adr/0014-iterate-effectivemodel-with-visitor-pattern.md"
         - CLI:
             - Architecture: 'dev/cli/cli-architecture.md'
             - Commands: 'dev/cli/cli-commands.md'
