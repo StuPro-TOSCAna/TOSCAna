@@ -31,8 +31,7 @@ public abstract class BaseToscaElement {
     }
 
     public <T> T get(ToscaKey<T> key) {
-        T value = mappingEntity.getValue(key);
-        return value;
+        return mappingEntity.getValue(key);
     }
 
     public <T> Collection<T> getCollection(ToscaKey<T> key) {

@@ -28,4 +28,5 @@ pages:
         - TOSCA model:
           -  "EffectiveModel": "dev/model/effective-model.md"
           -  "TOSCA Elements": "dev/model/tosca-elements.md"
+          -  "Code Templates": "dev/model/code-templates.md"
 

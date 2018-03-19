@@ -2,15 +2,15 @@
 
 The EffectiveModel is a component which grants a streamlined view upon a TOSCA service template within java.
 
-The TOSCA service template language is optimized for convenient modelling.
+The TOSCA service template language itself is optimized for convenient modelling.
 Symbolic links, custom (i.e., non-semantic) type definitions and short notations aim at easing the modeller's life.
 But from an orchestrator's point of view, these language mechanisms increase the complexity of the template without providing further semantics.  
 
-The EffectiveModel converts the modeller-friendly TOSCA template into an orchestrator-friendly representation, ready for consumption by a plugin.  
+The EffectiveModel component converts a modeller-friendly TOSCA template into its orchestrator-friendly representation, ready for consumption by a plugin.  
 The conversion is accomplished by following steps:
 
 1. **Parse template** into graph-like structure (using [JGraphT](http://jgrapht.org/) and [SnakeYAML](https://bitbucket.org/asomov/snakeyaml))
-2. **Request user input**. After user input is supplied, continues with next step.
+2. **Request user input**.
 3. **Normalization**. 
    Every TOSCA short notation is converted to its corresponding normal (i.e., extended) representation.
 4. **Resolve symbolic links**. In case the original template contains symbolic links pointing to other TOSCA elements, they get resolved by adding appropriate edges to the graph.
