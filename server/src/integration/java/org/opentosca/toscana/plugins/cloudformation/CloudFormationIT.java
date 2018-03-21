@@ -19,6 +19,10 @@ import static org.opentosca.toscana.plugins.cloudformation.CloudFormationPlugin.
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationPlugin.AWS_KEYPAIR_KEY;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationPlugin.AWS_SECRET_KEY_KEY;
 
+/**
+ This is an abstract class that provides the {@link BaseTransformTest} implementation for the cloudformation plugin.
+ It expects and accessKey and an secretKey in the environment to execute the Test.
+ */
 public abstract class CloudFormationIT extends BaseTransformTest {
 
     private String accessKey;

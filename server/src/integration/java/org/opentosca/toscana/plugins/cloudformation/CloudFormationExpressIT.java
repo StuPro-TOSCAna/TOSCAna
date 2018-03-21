@@ -8,6 +8,9 @@ import org.opentosca.toscana.model.EffectiveModelFactory;
 
 import org.apache.commons.io.FileUtils;
 
+/**
+ This IT test provides the express node template for the transformation.
+ */
 public class CloudFormationExpressIT extends CloudFormationIT {
 
     @Override

@@ -8,6 +8,9 @@ import org.opentosca.toscana.model.EffectiveModelFactory;
 
 import org.apache.commons.io.FileUtils;
 
+/**
+ This IT test provides the LAMP, no-input node template for the transformation.
+ */
 public class CloudFormationLampIT extends CloudFormationIT {
 
     @Override
