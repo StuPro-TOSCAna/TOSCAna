@@ -56,6 +56,8 @@ After [SnakeYAML](https://bitbucket.org/asomov/snakeyaml) parsed the template, a
 
 ![ServiceGraph, after construction](img/servicegraph_construction.png)
 
+The resulting graph structure closely recreates the original YAML structure.
+
 ### Step 2: Normalization
 Sometimes, TOSCA allows an abbreviated syntax instead of it's more verbose extended notation.
 In order to ease further handling of the graph, every short notation is being converted to its extended equivalent. We call this process **normalization**.
@@ -70,7 +72,10 @@ In the last step, TOSCA's symbolic links get resolved. This is accomplished by i
 
 ![ServiceGraph, after resolving symbolic links](img/servicegraph_resolve-links.png)
 
-The new edges are marked in red. They replace the former ScalarEntities which contained symbolic names. Pay attention to how each edge kept the name of the replaced node; this way, propper graph traversion remains possible. 
+The new edges are marked in red. 
+They replace the former ScalarEntities which contained symbolic names.  
+Pay attention to how each edge kept the name of the replaced node; 
+this way, propper graph traversion remains possible.
 
 >*Note: Together, step 2 and 3 are called 'finalization of the graph'.*
 
