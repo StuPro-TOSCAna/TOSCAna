@@ -28,10 +28,10 @@ pages:
         - CLI:
             - Architecture: 'dev/cli/cli-architecture.md'
             - Commands: 'dev/cli/cli-commands.md'
-        - TOSCA model:
-          -  "EffectiveModel": "dev/model/effective-model.md"
-          -  "TOSCA Elements": "dev/model/tosca-elements.md"
-          -  "Code Templates": "dev/model/code-templates.md"
+        - 'TOSCA model':
+          - "EffectiveModel": "dev/model/effective-model.md"
+          - "TOSCA Elements": "dev/model/tosca-elements.md"
           - "ServiceGraph": "dev/model/servicegraph.md"
+          - "Code Templates": "dev/model/code-templates.md"
           -  "Outlook": "dev/model/outlook.md"
 

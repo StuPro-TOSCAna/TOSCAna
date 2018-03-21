@@ -1,17 +1,28 @@
 # ServiceGraph
 
-The ServiceGraph is the backbone of the EffectiveModel.
-Basically, it's a graph strucuture (based on [JGraphT](jgrapht.org/)) which reflects the content of a TOSCA service template. 
-Once constructed, it 
+The ServiceGraph is the backbone of an EffectiveModel.
+Basically, it's a graph structure (based on [JGraphT](jgrapht.org/)) which reflects the content of a TOSCA service template. 
+
+After construction, the graph structure is reorganized to ease accessing the stored information.
+
+Following steps are executed when creating a new ServiceGraph:
+
+1. **Parse template** into graph-like structure (using [JGraphT](http://jgrapht.org/) and [SnakeYAML](https://bitbucket.org/asomov/snakeyaml)).
+2. **Wait for user input**, then proceed with step 3.
+3. **Normalize graph**. 
+   Every TOSCA short notation is converted to its corresponding normal (i.e., extended) representation.
+4. **Resolve symbolic links**. In case the original template contains symbolic links pointing to other TOSCA elements, they get resolved by adding appropriate edges to the graph.
 
 ### Building blocks
-The ServiceGraph can contain three different types of nodes:
+>*Note: In this context, the term **node** does refer to the field of graph theory, not to TOSCA nodes. E.g., here, a node can even be a TOSCA property.*
+
+A ServiceGraph can contain three different types of nodes:
 
 A `MappingEntity` can have **multiple children**.  
 A `SequenceEntity` behaves like a `MappingEntity`, but their **children are ordered**.  
-A `ScalarEntity` can have an **associated value**, but never has children.  
+A `ScalarEntity` is a leaf node which can have an **associated value**.
 
-Nodes, no matter what type, also have a name.  
+**Nodes**, no matter what type, also **have a name**.  
 
 The edges of the graph are directed. 
 Additionally, each edge has a name which equals the name of its target node. 
