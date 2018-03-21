@@ -1,11 +1,11 @@
 # ServiceGraph
 
 The ServiceGraph is the backbone of the EffectiveModel.
-
-Basically, it's a graph strucuture (based on [JGraphT](jgrapht.org/)) which reflects the content of a TOSCA service template.
+Basically, it's a graph strucuture (based on [JGraphT](jgrapht.org/)) which reflects the content of a TOSCA service template. 
+Once constructed, it 
 
 ### Building blocks
-There are three different types of nodes in the ServiceGraph:
+The ServiceGraph can contain three different types of nodes:
 
 A `MappingEntity` can have **multiple children**.  
 A `SequenceEntity` behaves like a `MappingEntity`, but their **children are ordered**.  
@@ -20,9 +20,9 @@ This allows for traversing symbolic links (as shown later).
 *This categorization is strongly linked to the general nature of YAML*. 
 
 ## An example
-In the following, we'll show how a `ServiceGraph` is being construction. Therefore, we use below TOSCA service template for demonstration. Thereafter, we'll look into each consecutive graph transformation step.
+In the following, we'll show how a `ServiceGraph` is being constructed. Therefore, we use below TOSCA service template for demonstration. Thereafter, we'll look into each consecutive transformation step in more detail.
 
-##### TOSCA service template
+###### TOSCA service template
 ```yml
 topology_template:
   node_templates:
@@ -49,7 +49,7 @@ topology_template:
             disk_size: 4 GB
             mem_size: 1024 MB
 ```
->*Disclaimer: This example is by no means a complete template, nor necessarily compliant with the TOSCA Simple Profile.*
+>*Disclaimer: This example is by no means a complete template, nor necessarily compliant with the TOSCA Simple Profile specification.*
 
 ### Step 1: Construction
 After [SnakeYAML](https://bitbucket.org/asomov/snakeyaml) parsed the template, a rather simple algorithm uses the outcome to construct following ServiceGraph:
@@ -59,9 +59,9 @@ After [SnakeYAML](https://bitbucket.org/asomov/snakeyaml) parsed the template, a
 The resulting graph structure closely recreates the original YAML structure.
 
 ### Step 2: Normalization
-Sometimes, TOSCA allows an abbreviated syntax instead of it's more verbose extended notation.
-In order to ease further handling of the graph, every short notation is being converted to its extended equivalent. We call this process **normalization**.
-After normalizing the graph, its structure looks like this:
+In many cases, TOSCA allows an abbreviated syntax variant instead of it's more verbose extended notation.
+In order to ease further handling of the graph, every short notation is being converted to its extended equivalent. We call this process **normalization**.  
+After applying normalization, its structure looks like this:
 
 ![ServiceGraph, after normalization](img/servicegraph_normalization.png)
 
