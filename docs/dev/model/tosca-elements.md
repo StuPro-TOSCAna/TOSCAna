@@ -42,7 +42,7 @@ The truth is: TOSCA Element instances are simple and stupid wrappers.
 ###### TODO pointer to more information about Entity classes
 
 ### ToscaKeys
-As you might have noticed, the generic `get()` and `set()` methods expect a `ToscaKey` instance. As a whole, a `ToscaKey` describes all **relevant characteristics** of a value held by the TOSCA element.   
+As you might have noticed, the generic `get()` and `set()` methods expect a `ToscaKey` instance. As a whole, a `ToscaKey` describes all **relevant characteristics** of a value belonging to the TOSCA element.   
 
 
 
@@ -53,8 +53,6 @@ public static ToscaKey<String> DATABASE_NAME = new ToscaKey<>(PROPERTIES, "name"
 
 ```
 
-> Note: They are not declared as `final` - this would cause problems in combination with inheritance (which is used heavily within Tosca Element classes)
-
 The characterstics are:  
 
 - **Type information**. Special care has been taken to achieve type-safety even with a generic approach for getters / setters. A `ToscaKey` contains both generic type information and class type information (because generic type information is erased at runtime, this is needed aswell).
@@ -62,6 +60,8 @@ The characterstics are:
 - *required* boolean flag which specifies if a value must be present
 - **predecssor**. Another `ToscaKey` which acts as the predecessor of this `ToscaKey`. With defining a predecessor it's possible to map the Key to a nested structure. E.g., above defined key has the predecessor `PROPERTIES` (which happens to have the name `"properties"`) - so it points to a value in `properties.name`.
 - **directives**. When needed, special directives can be saved in a `Map<String,Object>` consctruction. This is currently used for storing information about default units of TOSCA scalar types.
+
+> *Note: `ToscaKeys` are not declared as `final`, as this would cause problems in combination with inheritance (which is used heavily within Tosca Element classes)*
 
 
 #### RequirementKeys
