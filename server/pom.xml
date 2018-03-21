@@ -37,7 +37,7 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-    
+
     <dependencies>
         <!-- web app -->
         <dependency>
@@ -45,18 +45,28 @@
             <artifactId>app</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        
         <!--Project Lombok-->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.16.18</version>
         </dependency>
+        
         <!--JGraphT-->
         <dependency>
             <groupId>org.jgrapht</groupId>
             <artifactId>jgrapht-core</artifactId>
             <version>1.1.0</version>
         </dependency>
+
+        <!--Readme Builder-->
+        <dependency>
+            <groupId>com.atlassian.commonmark</groupId>
+            <artifactId>commonmark</artifactId>
+            <version>0.11.0</version>
+        </dependency>
+
         <!--Cloudformation plugin-->
         <!--cloudformation-builder-->
         <dependency>
@@ -76,6 +86,7 @@
             <artifactId>httpclient</artifactId>
             <version>4.5.4</version>
         </dependency>
+        
         <!--CloudFoundry Plugin-->
         <!--CloudFoundry java-client-->
         <dependency>
@@ -98,6 +109,7 @@
             <artifactId>reactor-netty</artifactId>
             <version>0.7.1.RELEASE</version>
         </dependency>
+        
         <!--Kubernetes Plugin-->
         <dependency>
             <groupId>io.fabric8</groupId>
@@ -132,6 +144,7 @@
             <artifactId>semver4j</artifactId>
             <version>2.2.0</version>
         </dependency>
+        
         <!-- Winery -->
         <dependency>
             <groupId>com.github.stupro-toscana.winery</groupId>
@@ -143,6 +156,7 @@
         <!--<artifactId>org.eclipse.winery.yaml.common</artifactId>-->
         <!--<version>master-SNAPSHOT</version>-->
         <!--</dependency>-->
+        
         <!-- Spring Dependencies -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -161,6 +175,7 @@
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
         </dependency>
+        
         <!-- Swagger Dependencies (Springfox) -->
         <dependency>
             <groupId>io.springfox</groupId>
@@ -172,6 +187,7 @@
             <artifactId>springfox-swagger-ui</artifactId>
             <version>2.8.0</version>
         </dependency>
+        
         <!-- Test Dependencies -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -190,7 +206,6 @@
             <version>2.13.0</version>
             <scope>test</scope>
         </dependency>
-        <!--Retrofit + bindings-->
         <dependency>
             <groupId>org.opentosca.toscana</groupId>
             <artifactId>retrofit-wrapper</artifactId>

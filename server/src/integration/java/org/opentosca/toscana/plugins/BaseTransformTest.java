@@ -46,6 +46,7 @@ public abstract class BaseTransformTest<LifecycleT extends AbstractLifecycle> ex
      Create a new Test instance using the given plugin
      */
     public BaseTransformTest(ToscanaPlugin plugin) {
+        checkAssumptions();
         this.plugin = plugin;
     }
 
@@ -60,7 +61,6 @@ public abstract class BaseTransformTest<LifecycleT extends AbstractLifecycle> ex
      */
     @Before
     public void setUp() throws Exception {
-        checkAssumptions();
         createDirectories();
 
         model = getModel();

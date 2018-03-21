@@ -6,9 +6,8 @@ service: docker
 env:
 - CHANGE_MINIKUBE_NONE_USER=true
 
-before_install:
-- wget -q -O ~/codacy-coverage-reporter-assembly-latest.jar $(curl https://api.github.com/repos/codacy/codacy-coverage-reporter/releases/latest
-  | jq -r .assets[0].browser_download_url)
+#before_install:
+  #- wget -q -O ~/codacy-coverage-reporter-assembly-latest.jar $(curl https://api.github.com/repos/codacy/codacy-coverage-reporter/releases/latest | jq -r .assets[0].browser_download_url)
   #- curl -Lo kubectl https://storage.googleapis.com/kubernetes-release/release/v1.7.0/bin/linux/amd64/kubectl
   #- chmod +x kubectl && sudo mv kubectl /usr/local/bin/
   #- curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
@@ -24,7 +23,7 @@ script:
 - mvn verify -B -P all 
 after_success:
 - bash <(curl -s https://codecov.io/bash)
-- java -cp ~/codacy-coverage-reporter-assembly-latest.jar com.codacy.CodacyCoverageReporter -l Java -r target/site/jacoco/jacoco.xml
+  #- java -cp ~/codacy-coverage-reporter-assembly-latest.jar com.codacy.CodacyCoverageReporter -l Java -r target/site/jacoco/jacoco.xml
 notifications:
   slack:
     secure: FJM9agHKctPUtGsc8sRWZZ54tUDwmcpQJkMbANo0CGMFOcczIasmGflqt8Z+IFwChAXDh2u/dAvPH0LcLM+XUcYC21ma2jOO+r/t6Pc5wa7VPLIP3WhA7j9/Q69LHMu9BaqsCIKVwJCfAp5CwmmQpgxLtBKvgk6UZhKtP+nz3B5Z7h7yBQ/shGpKfSp8CR8SULUHqJnLnnl4sgExMFJY0W5VAtdO50FQ3YhgUXPpHfb311Mt4DYi9uwMu/Pl0GpeMnC+bJGyBbDGCnUZQJas1hvWreYb99lnkR9OqQSE63B7B+hbyMXHf6cToJQG6muLCxdHo5b7p/S1BJpxFrIKYPH2VVoNilo/mTAGcgqPxtTYYFtRibR8jv8RmffVn8ovKc2mnCZ1oi2zDknwWiRWKuR/a/sBj5VL4vG5nqb1G15YLW/ADrtt6w+ZckeIwW0x8hehdAnSZSXChThJMv54OwZ33JZHtGipaCiPXXQfVpMpXUDENDmT73l/KTOh1257BK8tceXJbYAP9vRHpUFM+UPQ8OWV1p7bltLX7u8yVZnGN8nRWBAMM8jL/+T2y3U4AUv+3ADkzZDAi8I4ybdDY6RmiyCGn/VAamIWvWG4l7kNzz0nbFeMBH+aFyJHc1aKlykS+xAggrgLcU6Y5jrd+83Mu6Gj8gbN8zdcgdertlI=
