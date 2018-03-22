@@ -1,12 +1,21 @@
 # EffectiveModel
 
-The EffectiveModel is a component which grants a streamlined view upon a TOSCA service template within java.
-
 The TOSCA service template language itself is optimized for convenient modelling.
 Symbolic links, custom (i.e., non-semantic) type definitions and short notations aim at easing the modeller's life.
 But from an orchestrator's point of view, these language mechanisms increase the complexity of the template without providing further semantics.  
 
-The EffectiveModel component converts a modeller-friendly TOSCA template into a more orchestrator-friendly representation. Then it's ready for consumption by a plugin.  
+The EffectiveModel component converts a modeller-friendly TOSCA template into a more orchestrator-friendly representation, ready for consumption by a plugin.  
+
+Following **optimizations** aim at easing the plugin developers workload:
+
+- **TOSCA's inheritance** is implemented via **java's native inheritance** - no need for lookup in supertypes
+- TOSCA **symbolic names** are automatically **resolved**
+- TOSCA **functions** are automatically **resolved**
+- **Short** and **extended notations** are **unified** within the model
+- Units of **scalar types** are **handled automatically** and served in an unambiguous way
+- Data access is granted to be **type safe** - no guesswork regarding the true type necessary
+
+The term *effective* is used in the style of the [maven](http://maven.apache.org/plugins/maven-help-plugin/effective-pom-mojo.html) project: The relation between Maven's `pom` and its `effective pom` is similar to the relation between a TOSCA service template (or the java representation [`TServiceTemplate`](https://github.com/eclipse/winery/blob/master/org.eclipse.winery.model.tosca.yaml/src/main/java/org/eclipse/winery/model/tosca/yaml/TServiceTemplate.java) from the [winery](https://projects.eclipse.org/projects/soa.winery) project) and the `EffectiveModel`.
 
 ### Obtain an EffectiveModel
 Instantiation and basic interaction with an EffectiveModel is shown below.
@@ -57,6 +66,4 @@ Currently not supported (& might never be):
 - Policies
 - Workflows
 
-
 ![model](effective-model.png)
-

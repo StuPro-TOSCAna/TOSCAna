@@ -30,6 +30,7 @@ pages:
             - Commands: 'dev/cli/cli-commands.md'
         - 'TOSCA model':
           - "EffectiveModel": "dev/model/effective-model.md"
+          - "TOSCA Type Support": "dev/model/type-support.md"
           - "TOSCA Elements": "dev/model/tosca-elements.md"
           - "ServiceGraph": "dev/model/servicegraph.md"
           - "Code Templates": "dev/model/code-templates.md"
