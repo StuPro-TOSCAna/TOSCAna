@@ -9,7 +9,7 @@ import org.opentosca.toscana.model.EffectiveModelFactory;
 import org.apache.commons.io.FileUtils;
 
 /**
- This IT test provides the LAMP, no-input node template for the transformation.
+ This IT transforms a LAMP CSAR without input parameters that is hosted on one compute node.
  */
 public class CloudFormationLampIT extends CloudFormationIT {
 

@@ -9,7 +9,7 @@ import org.opentosca.toscana.model.EffectiveModelFactory;
 import org.apache.commons.io.FileUtils;
 
 /**
- This IT test provides the express node template for the transformation.
+ This IT transforms a Express CSAR.
  */
 public class CloudFormationExpressIT extends CloudFormationIT {
 
