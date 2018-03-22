@@ -34,6 +34,11 @@ import static org.opentosca.toscana.plugins.cloudformation.util.StackUtils.getRa
 import static org.opentosca.toscana.plugins.cloudformation.util.StackUtils.getRandomStackName;
 import static org.opentosca.toscana.plugins.cloudformation.util.StackUtils.getUserDataFn;
 
+/**
+ CloudFormationModule is an extension of the {@link Module} class. It represents an artifact of CloudFormation. It
+ contains all AWS Resources added to this module but also holds information about files that need to be uploaded and
+ environment variables that need to be pushed.
+ */
 public class CloudFormationModule extends Module {
 
     public static final String CONFIG_SETS = "LifecycleOperations";

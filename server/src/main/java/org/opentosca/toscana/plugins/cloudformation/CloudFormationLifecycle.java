@@ -56,7 +56,7 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
     private PluginFileAccess fileAccess;
 
     /**
-     The standard constructor.
+     Standard constructor.
      <br>
      It takes the mandatory properties and sets up the {@link CloudFormationModule} that is used.
 
@@ -81,7 +81,7 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
     }
 
     /**
-     Convert the input string into a alphanumerical string (regex: {@code [^A-Za-z0-9]})
+     Converts the input string into a alphanumerical string (regex: {@code [^A-Za-z0-9]})
 
      @param input the string to be converted
      @return the converted string
@@ -91,6 +91,8 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
     }
 
     /**
+     Performs the {@code checkModel()} lifecycle operation.
+     <br>
      The implementation of {@link AbstractLifecycle#checkModel()}.
      <br>
      Using the {@link CheckModelNodeVisitor} and the {@link CheckModelRelationshipVisitor} every node and relationship in
@@ -118,6 +120,8 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
     }
 
     /**
+     Performs the {@code prepare()} lifecycle operation.
+     <br>
      The implementation of {@link AbstractLifecycle#prepare()}.
      <br>
      Using the {@link PrepareModelNodeVisitor} and the {@link PrepareModelRelationshipVisitor} every node and
@@ -138,6 +142,8 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
     }
 
     /**
+     Performs the {@code transform()} lifecycle operation.
+     <br>
      The implementation of {@link AbstractLifecycle#transform()}.
      <br>
      Using the {@link TransformModelNodeVisitor} every node in the {@link EffectiveModel} is visited.
@@ -181,6 +187,8 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
     }
 
     /**
+     Performs the {@code cleanup()} lifecycle operation.
+     <br>
      The implementation of {@link AbstractLifecycle#cleanup()} does nothing.
      */
     @Override
@@ -189,7 +197,7 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
     }
 
     /**
-     First all compute nodes then all other nodes are visited.
+     Visits all {@link Compute} nodes first then all others.
      <br>
      Using the {@code nodeVisitor} first every compute node is visited and afterwards every node that is not a compute
      node is visited.
@@ -213,7 +221,7 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
     }
 
     /**
-     The nodes are visited without any particular order.
+     Visits all nodes without any particular order.
      <br>
      Using the {@code nodeVisitor} every node is visited.
 
@@ -228,7 +236,7 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
     }
 
     /**
-     The relationships are visited without any particular order.
+     Visits all relationships without any particular order.
      <br>
      Using the {@code relationshipVisitor} every relationship is visited.
 
