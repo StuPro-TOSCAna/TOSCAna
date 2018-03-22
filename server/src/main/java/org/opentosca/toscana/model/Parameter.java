@@ -17,7 +17,7 @@ import lombok.ToString;
  */
 @EqualsAndHashCode
 @ToString
-public class Parameter extends DescribableEntity implements InputProperty {
+public class Parameter extends DescribableElement implements InputProperty {
 
     public static final ToscaKey<String> TYPE = new ToscaKey<>("type");
 

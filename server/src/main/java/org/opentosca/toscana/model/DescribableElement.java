@@ -13,14 +13,14 @@ import lombok.ToString;
  */
 @EqualsAndHashCode
 @ToString
-public abstract class DescribableEntity extends BaseToscaElement {
+public abstract class DescribableElement extends BaseToscaElement {
 
     /**
      The optional description of this entity
      */
     public static ToscaKey<String> DESCRIPTION = new ToscaKey<>("description");
 
-    public DescribableEntity(MappingEntity mappingEntity) {
+    public DescribableElement(MappingEntity mappingEntity) {
         super(mappingEntity);
     }
 
@@ -34,7 +34,7 @@ public abstract class DescribableEntity extends BaseToscaElement {
     /**
      Sets {@link #DESCRIPTION}
      */
-    public DescribableEntity setDescription(String description) {
+    public DescribableElement setDescription(String description) {
         set(DESCRIPTION, description);
         return this;
     }
