@@ -1,7 +1,7 @@
 # ServiceGraph
 
-The ServiceGraph is the backbone of an EffectiveModel.
-Basically, it's a graph structure (based on [JGraphT](jgrapht.org/)) which reflects the content of a TOSCA service template. 
+The ServiceGraph is the backbone of the EffectiveModel.
+Basically, it's a directed graph structure (based on [JGraphT](jgrapht.org/)) which reflects the content of a TOSCA service template. 
 
 After construction, the graph structure is reorganized to ease accessing the stored information from an orchetrator point of view.
 
