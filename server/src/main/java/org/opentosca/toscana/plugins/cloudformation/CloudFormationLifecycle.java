@@ -32,11 +32,36 @@ import static org.opentosca.toscana.plugins.cloudformation.CloudFormationPlugin.
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationPlugin.AWS_REGION_KEY;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationPlugin.AWS_SECRET_KEY_KEY;
 
+/**
+ This is the implementation of the {@link AbstractLifecycle} for the {@link CloudFormationPlugin}.
+ It creates a {@link CloudFormationModule} and is able to perform the lifecycle operations.
+ */
 public class CloudFormationLifecycle extends AbstractLifecycle {
+    /**
+     The Effective Model where the TOSCA data is offered.
+     */
     private final EffectiveModel model;
+    /**
+     The CloudFormationModule for this transformation.
+     <br>
+     This is the representation of the CloudFormation template. Every information that will be
+     acquired during the lifecycle phases will be stored here.
+     */
     private CloudFormationModule cfnModule;
+    /**
+     The PluginFileAccess for this transformation.
+     <br>
+     The final template and scripts will be stored using this.
+     */
     private PluginFileAccess fileAccess;
 
+    /**
+     The standard constructor.
+     <br>
+     It takes the mandatory properties and sets up the {@link CloudFormationModule} that is used.
+
+     @param context the transformation context for this transformation
+     */
     public CloudFormationLifecycle(TransformationContext context) throws IOException {
         super(context);
         model = context.getModel();
@@ -56,12 +81,23 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
     }
 
     /**
-     Convert input to alphanumerical string
+     Convert the input string into a alphanumerical string (regex: {@code [^A-Za-z0-9]})
+
+     @param input the string to be converted
+     @return the converted string
      */
-    public static String toAlphanumerical(String inp) {
-        return inp.replaceAll("[^A-Za-z0-9]", "");
+    public static String toAlphanumerical(String input) {
+        return input.replaceAll("[^A-Za-z0-9]", "");
     }
 
+    /**
+     The implementation of {@link AbstractLifecycle#checkModel()}.
+     <br>
+     Using the {@link CheckModelNodeVisitor} and the {@link CheckModelRelationshipVisitor} every node and relationship in
+     the {@link EffectiveModel} is visited.
+
+     @return if every found type is accepted return true
+     */
     @Override
     public boolean checkModel() {
         logger.info("Check model for compatibility to CloudFormation");
@@ -81,6 +117,13 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
         return true;
     }
 
+    /**
+     The implementation of {@link AbstractLifecycle#prepare()}.
+     <br>
+     Using the {@link PrepareModelNodeVisitor} and the {@link PrepareModelRelationshipVisitor} every node and
+     relationship in the {@link EffectiveModel} is visited.
+     {@link Compute} nodes are visited first.
+     */
     @Override
     public void prepare() {
         logger.info("Prepare model for compatibility to CloudFormation");
@@ -94,6 +137,15 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
         visitAllRelationships(topology.edgeSet(), prepareModelRelationshipVisitor);
     }
 
+    /**
+     The implementation of {@link AbstractLifecycle#transform()}.
+     <br>
+     Using the {@link TransformModelNodeVisitor} every node in the {@link EffectiveModel} is visited.
+     {@link Compute} nodes are visited first.
+     Also environment variables which will appear in the transformed model are handled.
+     The main artifact of the transformation, the CloudFormation template is created. Using the
+     {@link CloudFormationFileCreator} all necessary scripts for the deployment are created.
+     */
     @Override
     public void transform() {
         logger.info("Begin transformation to CloudFormation.");
@@ -128,11 +180,23 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
         logger.info("Transformation to CloudFormation successful.");
     }
 
+    /**
+     The implementation of {@link AbstractLifecycle#cleanup()} does nothing.
+     */
     @Override
     public void cleanup() {
         //noop
     }
 
+    /**
+     First all compute nodes then all other nodes are visited.
+     <br>
+     Using the {@code nodeVisitor} first every compute node is visited and afterwards every node that is not a compute
+     node is visited.
+
+     @param nodes       a set of {@link RootNode} to visit
+     @param nodeVisitor the {@link NodeVisitor} to use
+     */
     private void visitComputeNodesFirst(Set<RootNode> nodes, NodeVisitor nodeVisitor) {
         nodes.stream()
             .filter(node -> node instanceof Compute)
@@ -148,6 +212,14 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
             });
     }
 
+    /**
+     The nodes are visited without any particular order.
+     <br>
+     Using the {@code nodeVisitor} every node is visited.
+
+     @param nodes       a set of {@link RootNode} to visit
+     @param nodeVisitor the {@link NodeVisitor} to use
+     */
     private void visitAllNodes(Set<RootNode> nodes, NodeVisitor nodeVisitor) {
         nodes.forEach(node -> {
             logger.debug("Visit '{}' node '{}'", node.getClass().getSimpleName(), node.getEntityName());
@@ -155,6 +227,14 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
         });
     }
 
+    /**
+     The relationships are visited without any particular order.
+     <br>
+     Using the {@code relationshipVisitor} every relationship is visited.
+
+     @param relationships       a set of {@link RootRelationship} to visit
+     @param relationshipVisitor the {@link RelationshipVisitor} to use
+     */
     private void visitAllRelationships(Set<RootRelationship> relationships, RelationshipVisitor relationshipVisitor) {
         relationships.forEach(relation -> {
             logger.debug("Visit '{}' relationship '{}'", relation.getClass().getSimpleName(), relation.getEntityName());

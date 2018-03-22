@@ -1,6 +1,7 @@
 package org.opentosca.toscana.plugins.cloudformation;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.opentosca.toscana.core.plugin.lifecycle.ToscanaPlugin;
@@ -17,6 +18,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+/**
+ This is the CloudFormation plugin which performs the transformation to AmazonWebServices CloudFormation.
+ It uses the {@link CloudFormationLifecycle} to perform its task
+
+ @see <a href="https://aws.amazon.com/cloudformation/">AWS CloudFormation</a> 
+ */
 @Component
 public class CloudFormationPlugin extends ToscanaPlugin<CloudFormationLifecycle> {
     public static final String AWS_REGION_KEY = "AWS Region";
@@ -37,6 +44,7 @@ public class CloudFormationPlugin extends ToscanaPlugin<CloudFormationLifecycle>
         Set<PlatformInput> platformProperties = new HashSet<>();
         String defaultKeyId = "";
         String defaultKeySecret = "";
+        /* Try to get AWS credentials from the system. */
         try {
             ProfileCredentialsProvider profileCredentialsProvider = new ProfileCredentialsProvider();
             AWSCredentials awsCredentials = profileCredentialsProvider.getCredentials();
@@ -46,6 +54,7 @@ public class CloudFormationPlugin extends ToscanaPlugin<CloudFormationLifecycle>
             logger.debug("Did not find credentials on the system");
         }
         String defaultRegion = AWS_REGION_DEFAULT;
+        /* Try to get AWS region from the system. */
         try {
             ProfilesConfigFile profilesConfigFile = new ProfilesConfigFile();
             Map<String, BasicProfile> basicProfiles = profilesConfigFile.getAllBasicProfiles();
