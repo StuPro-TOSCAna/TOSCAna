@@ -8,10 +8,22 @@ extra:
       link: 'https://github.com/StuPro-TOSCAna/TOSCAna'
 pages:
     - Home: 'index.md'
+    - 'User Documentation': 
     - 'User Documentation':
-      - 'Getting started': 'user/getting-started.md'
-      - 'Running with Docker': 'user/docker.md'
+        - 'Getting started': 'user/getting-started.md'
+        - 'Running with Docker': 'user/docker.md'
+        - "TOSCA Support": 'user/tosca-support.md' 
     - Developer Documentation:
+        - 'TOSCA model':
+            - "EffectiveModel": "dev/model/effective-model.md"
+            - "TOSCA Type Support": "dev/model/type-support.md"
+            - "TOSCA Elements": "dev/model/tosca-elements.md"
+            - "ServiceGraph": "dev/model/servicegraph.md"
+            - "Code Templates": "dev/model/code-templates.md"
+            -  "Outlook": "dev/model/outlook.md"
+        - CLI:
+            - Architecture: 'dev/cli/cli-architecture.md'
+            - Commands: 'dev/cli/cli-commands.md'
         - "Architectural Decision Records":
             - "0000 - Use Markdown Architectural Decision Records": "dev/adr/0000-use-markdown-architectural-decision-records.md"
             - "0001 - Use custom model for transformations": "dev/adr/0001-model-for-transformations.md"
@@ -30,14 +42,4 @@ pages:
             - "0014 - Navigate EffectiveModel with visitor pattern": "dev/adr/0014-iterate-effectivemodel-with-visitor-pattern.md"
             - "0015 - Use filesystem for persistency": "dev/adr/0015-persist-to-filesystem.md"
             - "0017 - Implement own TOSCA parser": "dev/adr/0017-implement-own-tosca-parser.md"
-        - CLI:
-            - Architecture: 'dev/cli/cli-architecture.md'
-            - Commands: 'dev/cli/cli-commands.md'
-        - 'TOSCA model':
-          - "EffectiveModel": "dev/model/effective-model.md"
-          - "TOSCA Type Support": "dev/model/type-support.md"
-          - "TOSCA Elements": "dev/model/tosca-elements.md"
-          - "ServiceGraph": "dev/model/servicegraph.md"
-          - "Code Templates": "dev/model/code-templates.md"
-          -  "Outlook": "dev/model/outlook.md"
 
