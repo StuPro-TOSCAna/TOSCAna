@@ -33,7 +33,7 @@ Map<String, InputProperty> inputs = model.getInputs();
 Map<String, OutputProperty> outputs = model.getOutputs();
 ```
 
-### Iterate nodes, capabilities and relationships
+### Iterate elements
 All TOSCA class instances are visitable, i.e., support getting visitted by a matching visitor instance (`NodeVisitor`, `CapabilityVisitor` or `RelationshipVisitor`).
 The double dispatch mechanism provided by the visitor pattern solves the problem of accessing arbitrary TOSCA types without writing a myriad of if-statements (`if node instanceof..`).   
 Instead, simply extend one of the base visitor classes and implement the needed `visit` method(s).

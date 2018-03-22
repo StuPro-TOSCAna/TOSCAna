@@ -66,9 +66,26 @@ Supported non-normative TOSCA types defined in ch. 9 of TOSCA Simple Profile v1.
 | tosca.capabilities.Container.Docker  | DockerContainerCapability  |
 
 ## Custom Types
-Custom types which are not part of the TOSCA specifications are listed below.
+Custom types which are not part of the TOSCA specifications, but nevertheless got natively integrated into TOSCAna, are listed below.
 ##### Node Types
 | TOSCA type URI                | java class      |
 |-------------------------------|-----------------|
 | toscana.nodes.JavaApplication | JavaApplication |
 | toscana.nodes.JavaRuntime     | JavaRuntime     |
+
+# Add new types
+In order to add a new type, following steps are necessary:
+
+- Implement the type class
+    - the class must, either directly or indirectly, inherit from the appropriate base class `RootNode` / `Capability` / `Relationship`
+    - remember to use [ToscaKeys](tosca-elements.md#toscakeys) instead of directly using data fields. Pay special attention to specifying the necessary type information correctly.
+    - generate getters and setters with the supplied [code templates](code-templates.md). Make use of the *Optional getter* template if a value is not required.
+    - write a routine for initialization of complex values. This is the place where you can specify default values, as well. Look into existing classes if you're not sure how to do this. 
+    - override the `accept` method. If this is omitted, the type can't be visitted with one if the [visitors](effective-model.md#iterate-elements).
+- add an appropriate `visit` method to either `NodeVisitor`, `CapabilityVisitor` or `RelationshipVisitor` and also update its corresponding strict version.
+
+## Add custom types
+Additionally to above steps, following steps have to be taken:
+
+- put its TOSCA type definition into *server/src/main/resources/tosca_definitions*
+- modify the `CustomTypeInjector` class to also load the new definition. This will inject the type definition into any service template that makes use of the new type.
