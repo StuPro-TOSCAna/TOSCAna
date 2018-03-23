@@ -19,12 +19,58 @@ Following main aspects of the TOSCA specification are **not supported** by TOSCA
 Most normative and non-normative TOSCA Types can be used in the service template.
 Additionally, *TOSCAna* provides its [own types](toscana-types.md).
 
-##### Normative TOSCA Types
-##### Non-Normative Types
-##### TOSCAna Types
-- JavaApplication
-- JavaRuntime
+All supported types are listed below.
 
+##### Data Types
+- tosca.datatypes.Credential
+
+##### Node Types 
+- tosca.nodes.Apache                
+- tosca.nodes.Compute               
+- tosca.nodes.Container.Application 
+- tosca.nodes.Container.Application.Docker 
+- tosca.nodes.Container.Runtime     
+- tosca.nodes.Database              
+- tosca.nodes.DBMS                  
+- tosca.nodes.LoadBalancer          
+- tosca.nodes.Root                  
+- tosca.nodes.SoftwareComponent     
+- tosca.nodes.Storage.BlockStorage  
+- tosca.nodes.Storage.ObjectStorage 
+- tosca.nodes.WebApplication        
+- tosca.nodes.WebApplication.WordPress     
+- tosca.nodes.WebServer             
+- tosca.nodes.WebServer.Nodejs             
+- tosca.nodes.Database.MySQL               
+- tosca.nodes.DBMS.MySQL                   
+- toscana.nodes.JavaApplication 
+- toscana.nodes.JavaRuntime     
+ 
+##### Capability Types 
+- tosca.capabilities.Attachment        
+- tosca.capabilities.Compute           
+- tosca.capabilities.Container         
+- tosca.capabilities.Container.Docker 
+- tosca.capabilities.Endpoint          
+- tosca.capabilities.Endpoint.Admin    
+- tosca.capabilities.Endpoint.Database 
+- tosca.capabilities.Endpoint.Public   
+- tosca.capabilities.Network           
+- tosca.capabilities.network.Bindable  
+- tosca.capabilities.Node              
+- tosca.capabilities.OperatingSystem   
+- tosca.capabilities.Root              
+- tosca.capabilities.Scalable          
+- tosca.capabilities.Storage           
+ 
+##### Relationship Types
+- tosca.relationships.AttachesTo 
+- tosca.relationships.ConnectsTo 
+- tosca.relationships.DependsOn  
+- tosca.relationships.HostedOn   
+- tosca.relationships.Root       
+- tosca.relationships.RoutesTo   
+ 
 ## Limitiations
 What follows is a more or less accurate gathering of further limitations and discrepancies of otherwise supported features. 
 
@@ -57,7 +103,9 @@ This sounds really limitating at first. But it's not: *TOSCAna*'s plugins wouldn
 - Not supported: `scalar-unit.time`, `scalar-unit.frequency`
 
 ### TOSCA type definitions
-Usage of the shorthand name `Compute` for `tosca.capabilities.Compute` is not supported; `Compute` is always interpreted as `tosca.nodes.Compute`
+- Usage of the shorthand name `Compute` for `tosca.capabilities.Compute` is not supported; `Compute` is always interpreted as `tosca.nodes.Compute`
+- All complex Data Types except for `tosca.datatypes.Credential` are unsupported. 
+Node Types which make use of unsupported data types are therefore not handled properly: Handling (e.g., assignment, usage in functions) of affected attributes or properties might be incorrect.
 
 ### Node Templates
 - *node_filter*: Not supported
