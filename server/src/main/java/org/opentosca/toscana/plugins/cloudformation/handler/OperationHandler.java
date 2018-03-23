@@ -28,22 +28,33 @@ import static org.opentosca.toscana.plugins.cloudformation.util.FileUpload.Uploa
 import static org.opentosca.toscana.plugins.cloudformation.util.FileUpload.UploadFileType.UTIL;
 import static org.opentosca.toscana.plugins.cloudformation.util.StackUtils.getFileURL;
 
+/**
+ Class that handles {@link Operation}s of nodes.
+ */
 public class OperationHandler {
     public static final String APACHE_RESTART_COMMAND = "service apache2 restart";
 
     private CloudFormationModule cfnModule;
     private Logger logger;
 
+    /**
+     Standard constructor.
+     <br>
+     Sets up the {@link CloudFormationModule} and the {@link Logger}.
+
+     @param cfnModule the {@link CloudFormationModule} to use
+     @param logger    the {@link Logger} to use
+     */
     public OperationHandler(CloudFormationModule cfnModule, Logger logger) {
         this.cfnModule = cfnModule;
         this.logger = logger;
     }
 
     /**
-     Handles a create operation.
+     Handles a create {@link Operation}.
 
-     @param node            which the operation belongs to
-     @param computeHostName alphanumerical name of the Compute host of node
+     @param node            which the {@link Operation} belongs to
+     @param computeHostName alphanumerical name of the {@link Compute} host of node
      */
     public void handleCreate(RootNode node, String computeHostName) {
         if (node.getStandardLifecycle().getCreate().isPresent()) {
@@ -53,10 +64,10 @@ public class OperationHandler {
     }
 
     /**
-     Handles a configure operation.
+     Handles a configure {@link Operation}.
 
-     @param node            which the operation belongs to
-     @param computeHostName alphanumerical name of the Compute host of node
+     @param node            which the {@link Operation} belongs to
+     @param computeHostName alphanumerical name of the {@link Compute} host of node
      */
     public void handleConfigure(RootNode node, String computeHostName) {
         if (node.getStandardLifecycle().getConfigure().isPresent()) {
@@ -66,10 +77,10 @@ public class OperationHandler {
     }
 
     /**
-     Handles a start operation.
+     Handles a start {@link Operation}.
 
-     @param node            which the operation belongs to
-     @param computeHostName alphanumerical name of the Compute host of node
+     @param node            which the {@link Operation} belongs to
+     @param computeHostName alphanumerical name of the {@link Compute} host of node
      */
     public void handleStart(RootNode node, String computeHostName) {
         if (node.getStandardLifecycle().getStart().isPresent()) {
@@ -109,10 +120,10 @@ public class OperationHandler {
     }
 
     /**
-     Handle implementation artifacts and dependencies for given operation.
+     Handles implementation artifacts and dependencies for given {@link Operation}.
 
      @param operation  to be handled
-     @param serverName name of the Compute/EC2 where the artifacts/dependencies must be stored/used
+     @param serverName name of the {@link Compute}/EC2 where the artifacts/dependencies must be stored/used
      @param config     name of the config (Create/Start/Configure)
      */
     private void handleOperation(Operation operation, String serverName, String config) {
@@ -124,7 +135,7 @@ public class OperationHandler {
      Adds all dependencies to file uploads and to the EC2 Instance in the CloudFormation template.
 
      @param operation  to be handled
-     @param serverName name of the Compute/EC2 where the dependencies must be stored
+     @param serverName name of the {@link Compute}/EC2 where the dependencies must be stored
      @param config     name of the config (Create/Start/Configure)
      */
     private void handleDependency(Operation operation, String serverName, String config) {
@@ -145,7 +156,7 @@ public class OperationHandler {
      Also adds them as commands with input variables as environment variables to the given config.
 
      @param operation  to be handled
-     @param serverName name of the Compute/EC2 where the artifacts must be stored and executed
+     @param serverName name of the {@link Compute}/EC2 where the artifacts must be stored and executed
      @param config     name of the config (Create/Start/Configure)
      */
     private void handleArtifact(Operation operation, String serverName, String config) {
@@ -167,7 +178,8 @@ public class OperationHandler {
     }
 
     /**
-     Takes an artifact path and input variables and returns the corresponding CloudFormation command with input variables.
+     Takes an artifact path and input variables and returns the corresponding CloudFormation command with input
+     variables.
 
      @param artifact path to the artifact
      @param inputs   set with all input variables
@@ -244,10 +256,10 @@ public class OperationHandler {
     }
 
     /**
-     Handles the create, configure and start lifecycle operations for the given node.
+     Handles the create, configure and start lifecycle {@link Operation}s for the given node.
 
-     @param node        node which the operations belong to
-     @param computeHost Compute host of the node
+     @param node        node which the {@link Operation}s belong to
+     @param computeHost {@link Compute} host of the node
      */
     public void handleGenericHostedNode(RootNode node, Compute computeHost) {
         String computeHostName = toAlphanumerical(computeHost.getEntityName());
