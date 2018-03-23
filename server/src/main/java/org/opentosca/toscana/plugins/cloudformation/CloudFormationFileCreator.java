@@ -26,8 +26,11 @@ import static org.opentosca.toscana.plugins.cloudformation.util.FileUpload.getFi
 import static org.opentosca.toscana.plugins.cloudformation.util.FileUpload.getFileUploadByType;
 
 /**
- Class for building scripts and copying files needed for deployment of cloudformation templates.
- */
+ Class for building scripts and copying files needed for deployment of CloudFormation templates.
+
+ @see <a href="https://aws.amazon.com/cloudformation/">CloudFormation</a>
+ @see <a href="https://aws.amazon.com/s3/">S3 Storage</a>
+ @see <a href="https://aws.amazon.com/cli/">AWS CLI</a> */
 public class CloudFormationFileCreator {
     public static final String CLI_COMMAND_CREATESTACK = "aws cloudformation deploy ";
     public static final String CLI_COMMAND_DELETESTACK = "aws cloudformation delete-stack ";
@@ -58,8 +61,8 @@ public class CloudFormationFileCreator {
     /**
      Creates a <tt>CloudFormationFileCreator<tt> in order to build deployment scripts and copy files.
 
-     @param context   TransformationContext to extract topology and logger
-     @param cfnModule Module to get the necessary CloudFormation information
+     @param context   {@link TransformationContext} to extract topology and logger
+     @param cfnModule {@link CloudFormationModule} to get the necessary CloudFormation information
      */
     public CloudFormationFileCreator(TransformationContext context, CloudFormationModule cfnModule) {
         this.logger = context.getLogger(getClass());
@@ -100,6 +103,8 @@ public class CloudFormationFileCreator {
 
     /**
      Creates a deploy script for deploying the cloudformation template.
+     <br>
+     Uses the {@link BashScript} implementation.
      */
     private void writeDeployScript() throws IOException {
         logger.debug("Creating deploy script.");
@@ -115,6 +120,8 @@ public class CloudFormationFileCreator {
 
     /**
      Creates the script for File Uploads if files need to be uploaded.
+     <br>
+     Uses the {@link BashScript} implementation.
      */
     private void writeFileUploadScript() throws IOException {
         List<String> fileUploadList = getFilePaths(cfnModule.getFileUploadList());
@@ -134,6 +141,8 @@ public class CloudFormationFileCreator {
 
     /**
      Creates the script for creating the CloudFormation stack from the template.
+     <br>
+     Uses the {@link BashScript} implementation.
      */
     private void writeStackCreationScript() throws IOException {
         logger.debug("Creating create-stack script.");
@@ -166,7 +175,10 @@ public class CloudFormationFileCreator {
     }
 
     /**
-     Creates a script to delete the S3Bucket and the deployed Stack.
+     Creates a script to delete the S3 Bucket and the deployed Stack.
+     <br>
+     Uses the {@link BashScript} implementation.
+     <br>
      Note: May or may not be included in the final version. Currently used for quicker manual debugging.
      */
     private void writeCleanUpScript() throws IOException {
@@ -181,8 +193,10 @@ public class CloudFormationFileCreator {
     }
 
     /**
-     Creates an S3Bucket with the given name.
+     Creates an S3 Bucket with the given name.
      Wraps resources/cloudformation.scripts/create-bucket.sh
+
+     @return a createBucket command with the bucket name and the region
      */
     private String createBucket() {
         return "createBucket " + cfnModule.getBucketName() + " " + cfnModule.getAWSRegion();
@@ -191,13 +205,15 @@ public class CloudFormationFileCreator {
     /**
      Puts the given file with the given key on the S3Bucket with  the given name.
      Wraps resources/cloudformation.scripts/upload-file.sh
+
+     @return a uploadFile command with teh bucket name and the to be uploaded file
      */
     private String uploadFile(String objectKey, String filePath) {
         return "uploadFile " + cfnModule.getBucketName() + " \"" + objectKey + "\" \"" + filePath + "\"";
     }
 
     /**
-     Copies all needed cloudformation utility scripts into the target artifact.
+     Copies all needed CloudFormation utility scripts into the target artifact.
 
      @throws IOException if scripts cannot be found
      */
@@ -213,7 +229,7 @@ public class CloudFormationFileCreator {
     }
 
     /**
-     Copies all needed cloudformation utility files to the target artifact.
+     Copies all needed CloudFormation utility files to the target artifact.
      Note: Theses are the files that actually need to be uploaded and accessed by EC2 instances unlike the util scripts.
      */
     public void copyUtilDependencies() throws IOException {
@@ -241,6 +257,13 @@ public class CloudFormationFileCreator {
         });
     }
 
+    /**
+     Copies all not empty files from {@code resourcePath} to {@code outputPath}.
+
+     @param files        the files to be copied
+     @param resourcePath location where the files are stored
+     @param outputPath   location where the files should be copied to
+     */
     private void copyUtilFile(List<String> files, String resourcePath, String outputPath) throws IOException {
         PluginFileAccess fileAccess = cfnModule.getFileAccess();
         for (String file : files) {
