@@ -21,6 +21,9 @@ import static org.opentosca.toscana.plugins.cloudformation.handler.OperationHand
 import static org.opentosca.toscana.plugins.cloudformation.util.FileUpload.UploadFileType.OTHER;
 import static org.opentosca.toscana.plugins.cloudformation.util.StackUtils.getFileURL;
 
+/**
+ Class that handles the environment variables.
+ */
 public class EnvironmentHandler {
     private static final String ECHO = "echo ";
     private static final String REDIRECT_OUTPUT = ">> ";
@@ -35,9 +38,18 @@ public class EnvironmentHandler {
         + ". " + ETC_ENVIRONMENT + " "
         + REDIRECT_OUTPUT + ETC_APACHE2_ENVVARS + AND + APACHE_RESTART_COMMAND;
 
+    /**
+     The {@link CloudFormationModule} to take information from.
+     */
     private CloudFormationModule cfnModule;
+    /**
+     The {@link PluginFileAccess} used to write any scripts to.
+     */
     private PluginFileAccess access;
     private final Logger logger;
+    /**
+     {@link CloudFormationModule#environmentMap}
+     */
     private final Map<String, Map<String, String>> environmentMap;
 
     public EnvironmentHandler(CloudFormationModule cfnModule, Logger logger) {
@@ -48,7 +60,8 @@ public class EnvironmentHandler {
     }
 
     /**
-     Writes the necessary scripts to set the environment variables, adds them to the instances and cop
+     Writes the necessary scripts to set the environment variables, adds them to the instances and set them to be
+     uploaded.
      */
     public void handleEnvironment() throws IOException {
         logger.debug("Handling environment variables.");
