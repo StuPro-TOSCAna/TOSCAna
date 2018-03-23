@@ -10,20 +10,29 @@ import org.opentosca.toscana.model.visitor.StrictRelationshipVisitor;
 import org.opentosca.toscana.model.visitor.UnsupportedTypeException;
 
 /**
- Class for checking the models relationships
+ Class for checking the models relationships whether they are supported or not.
+ <br>
+ Methods that are not overridden will throw an {@link UnsupportedTypeException}.
  */
 public class CheckModelRelationshipVisitor extends CloudFormationVisitor implements StrictRelationshipVisitor {
 
     /**
-     Create a <tt>CheckModelRelationshipVisitor</tt> to check a models relationships
-     Only hostedOn and connectsTo from a WebApplication to a Database or MysqlDatabase are supported
+     Standard constructor.
+     <br>
+     Creates a <tt>CheckModelRelationshipVisitor</tt> to check a models relationships.
+     Only hostedOn and connectsTo from a WebApplication to a Database or MysqlDatabase are supported.
 
-     @param context TransformationContext to extract topology and logger
+     @param context {@link TransformationContext} to extract the topology and a logger
      */
     public CheckModelRelationshipVisitor(TransformationContext context) {
         super(context);
     }
 
+    /**
+     {@link ConnectsTo} relationship is supported.
+     <br>
+     Only connections from a {@link WebApplication} to a {@link Database} are supported.
+     */
     @Override
     public void visit(ConnectsTo relation) {
         RootNode source = topology.getEdgeSource(relation);
@@ -34,6 +43,9 @@ public class CheckModelRelationshipVisitor extends CloudFormationVisitor impleme
         }
     }
 
+    /**
+     {@link HostedOn} relationship is supported.
+     */
     @Override
     public void visit(HostedOn relation) {
         // noop

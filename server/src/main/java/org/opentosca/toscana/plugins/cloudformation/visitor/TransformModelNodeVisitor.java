@@ -14,10 +14,9 @@ import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.Database;
 import org.opentosca.toscana.model.node.Dbms;
 import org.opentosca.toscana.model.node.MysqlDatabase;
-import org.opentosca.toscana.model.node.MysqlDbms;
 import org.opentosca.toscana.model.node.Nodejs;
 import org.opentosca.toscana.model.node.WebApplication;
-import org.opentosca.toscana.model.visitor.StrictNodeVisitor;
+import org.opentosca.toscana.model.visitor.NodeVisitor;
 import org.opentosca.toscana.plugins.cloudformation.CloudFormationModule;
 import org.opentosca.toscana.plugins.cloudformation.handler.OperationHandler;
 import org.opentosca.toscana.plugins.cloudformation.mapper.CapabilityMapper;
@@ -42,26 +41,35 @@ import static org.opentosca.toscana.plugins.cloudformation.handler.EnvironmentHa
 import static org.opentosca.toscana.plugins.cloudformation.handler.OperationHandler.APACHE_RESTART_COMMAND;
 
 /**
- Class for building a CloudFormation template from an effective model instance via the visitor pattern. Currently only
- supports LAMP-stacks built with Compute, WebApplication, Apache, MySQL, MySQL nodes.
+ Class for transforming a models nodes.
+ <br>
+ Performs the transformation using the prepared {@link org.opentosca.toscana.model.EffectiveModel} and the already
+ modified {@link CloudFormationModule}.
  */
-public class TransformModelNodeVisitor extends CloudFormationVisitor implements StrictNodeVisitor {
+public class TransformModelNodeVisitor extends CloudFormationVisitor implements NodeVisitor {
     private static final String IP_OPEN = "0.0.0.0/0";
     private static final String PROTOCOL_TCP = "tcp";
     private OperationHandler operationHandler;
 
     /**
+     Standard constructor.
+     <br>
      Creates a <tt>TransformModelNodeVisitor<tt> in order to build a template with the given
      <tt>CloudFormationModule<tt>.
 
-     @param context   TransformationContext to extract topology and logger
-     @param cfnModule Module to build the template model
+     @param context   {@link TransformationContext} to extract the topology and a logger
+     @param cfnModule {@link CloudFormationModule} to build the template model
      */
     public TransformModelNodeVisitor(TransformationContext context, CloudFormationModule cfnModule) {
         super(context, cfnModule);
         this.operationHandler = new OperationHandler(cfnModule, logger);
     }
 
+    /**
+     Transforms the {@link Compute} node into a EC2 Instance.
+
+     @param node the {@link Compute} node to visit
+     */
     @Override
     public void visit(Compute node) {
         try {
@@ -111,6 +119,13 @@ public class TransformModelNodeVisitor extends CloudFormationVisitor implements 
         }
     }
 
+    /**
+     Transforms the {@link Database} node by moving the lifecycle operations to its host.
+     <br>
+     Also opens the specified database port on its host to everyone who has a connection to this node.
+
+     @param node the {@link Database} node to visit
+     */
     @Override
     public void visit(Database node) {
         try {
@@ -138,6 +153,13 @@ public class TransformModelNodeVisitor extends CloudFormationVisitor implements 
         }
     }
 
+    /**
+     Transforms the {@link MysqlDatabase} node into a AWS RDS instance.
+     <br>
+     Also handles its sql artifact.
+
+     @param node the {@link MysqlDatabase} node to visit
+     */
     @Override
     public void visit(MysqlDatabase node) {
         try {
@@ -183,7 +205,7 @@ public class TransformModelNodeVisitor extends CloudFormationVisitor implements 
                 String relPath = artifact.getFilePath();
                 if (relPath.endsWith(".sql")) {
                     String sql = cfnModule.getFileAccess().read(artifact.getFilePath());
-                    String computeName = createSqlCompute(node, sql);
+                    String computeName = createSqlEc2(node, sql);
                     securityGroup.ingress(ingress -> ingress.sourceSecurityGroupName(
                         cfnModule.ref(toAlphanumerical(computeName) + SECURITY_GROUP)),
                         PROTOCOL_TCP,
@@ -196,6 +218,13 @@ public class TransformModelNodeVisitor extends CloudFormationVisitor implements 
         }
     }
 
+    /**
+     Transforms the {@link Database} node by moving the lifecycle operations to its host.
+     <br>
+     Also opens the specified dbms port on its host to everyone.
+
+     @param node the {@link Dbms} node to visit
+     */
     @Override
     public void visit(Dbms node) {
         try {
@@ -218,11 +247,14 @@ public class TransformModelNodeVisitor extends CloudFormationVisitor implements 
         }
     }
 
-    @Override
-    public void visit(MysqlDbms node) {
-        //noop
-    }
+    /**
+     Transforms the {@link Apache} node by moving the configure and start lifecycle operations to its host.
+     <br>
+     Instead of the create lifecycle it installs apache2 on the host. Also the command to put the environment variables
+     from the system to the apache is added to the host.
 
+     @param node the {@link Apache} node to visit
+     */
     @Override
     public void visit(Apache node) {
         try {
@@ -258,6 +290,13 @@ public class TransformModelNodeVisitor extends CloudFormationVisitor implements 
         }
     }
 
+    /**
+     Transforms the {@link WebApplication} node by moving the lifecycle operations to its host.
+     <br>
+     Also opens the host to the application endpoint port.
+
+     @param node the {@link WebApplication} node to visit
+     */
     @Override
     public void visit(WebApplication node) {
         try {
@@ -265,8 +304,7 @@ public class TransformModelNodeVisitor extends CloudFormationVisitor implements 
             Compute compute = getCompute(node);
             String computeName = toAlphanumerical(compute.getEntityName());
             node.getAppEndpoint().getPort().ifPresent(port -> {
-                SecurityGroup computeSecurityGroup = (SecurityGroup) cfnModule.getResource(computeName + 
-                    SECURITY_GROUP);
+                SecurityGroup computeSecurityGroup = (SecurityGroup) cfnModule.getResource(computeName + SECURITY_GROUP);
                 computeSecurityGroup.ingress(ingress -> ingress.cidrIp(IP_OPEN), PROTOCOL_TCP, port.port);
             });
             //handle create
@@ -281,6 +319,13 @@ public class TransformModelNodeVisitor extends CloudFormationVisitor implements 
         }
     }
 
+    /**
+     Transforms the {@link Nodejs} node by moving the configure and start lifecycle operations to its host.
+     <br>
+     Instead of the create lifecycle it executes the nodejs create script. Also opens the ports on its host.
+
+     @param node the {@link Nodejs} node to visit
+     */
     @Override
     public void visit(Nodejs node) {
         try {
@@ -319,6 +364,11 @@ public class TransformModelNodeVisitor extends CloudFormationVisitor implements 
         }
     }
 
+    /**
+     Creates a new {@link CapabilityMapper} with the {@link CloudFormationModule}s region and credentials.
+
+     @return the created {@link CloudFormationModule}
+     */
     public CapabilityMapper createCapabilityMapper() {
         return new CapabilityMapper(cfnModule.getAWSRegion(), cfnModule.getAwsCredentials(), logger);
     }

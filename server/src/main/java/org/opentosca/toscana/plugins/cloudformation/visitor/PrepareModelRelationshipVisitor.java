@@ -15,19 +15,29 @@ import static org.opentosca.toscana.plugins.cloudformation.CloudFormationLifecyc
 import static org.opentosca.toscana.plugins.cloudformation.visitor.PrepareModelNodeVisitor.AWS_ENDPOINT_REFERENCE;
 
 /**
- Class for preparing a models relationships
+ Class for preparing a models relationships.
  */
 public class PrepareModelRelationshipVisitor extends CloudFormationVisitor implements RelationshipVisitor {
 
     /**
-     Create a <tt>PrepareModelRelationshipVisitor</tt> to prepare a models relationships.
+     Standard constructor.
+     <br>
+     Creates a <tt>PrepareModelRelationshipVisitor</tt> to prepare a models relationships.
 
-     @param context TransformationContext to extract topology and logger
+     @param context   {@link TransformationContext} to extract the topology and a logger
+     @param cfnModule {@link CloudFormationModule} to modify
      */
     public PrepareModelRelationshipVisitor(TransformationContext context, CloudFormationModule cfnModule) {
         super(context, cfnModule);
     }
 
+    /**
+     Sets the endpoint of a {@link Compute} node to reference the {@link MysqlDatabase} endpoint if both the
+     {@link WebApplication} and the {@link MysqlDatabase} this connection is between are hosted on that {@link Compute}
+     node.
+
+     @param relation the {@link ConnectsTo} relationship to visit
+     */
     @Override
     public void visit(ConnectsTo relation) {
         RootNode source = topology.getEdgeSource(relation);

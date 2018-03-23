@@ -59,6 +59,8 @@ public class CloudFormationFileCreator {
     private CloudFormationModule cfnModule;
 
     /**
+     Standard constructor.
+     <br>
      Creates a <tt>CloudFormationFileCreator<tt> in order to build deployment scripts and copy files.
 
      @param context   {@link TransformationContext} to extract topology and logger
