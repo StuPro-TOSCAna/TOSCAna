@@ -8,7 +8,6 @@ extra:
       link: 'https://github.com/StuPro-TOSCAna/TOSCAna'
 pages:
     - Home: 'index.md'
-    - 'User Documentation': 
     - 'User Documentation':
         - 'Getting started': 'user/getting-started.md'
         - 'Running with Docker': 'user/docker.md'
@@ -41,5 +40,6 @@ pages:
             - "0013 - Use AWS SDK for java": "dev/adr/0013-aws-file-upload.md"
             - "0014 - Navigate EffectiveModel with visitor pattern": "dev/adr/0014-iterate-effectivemodel-with-visitor-pattern.md"
             - "0015 - Use filesystem for persistency": "dev/adr/0015-persist-to-filesystem.md"
+            - "0016 - Don't support TOSCA type definitions": "adr/0016-not-supporting-type-definitions.md"
             - "0017 - Implement own TOSCA parser": "dev/adr/0017-implement-own-tosca-parser.md"
 
