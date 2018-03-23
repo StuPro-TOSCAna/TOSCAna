@@ -10,10 +10,22 @@ Following main aspects of the TOSCA specification are **not supported** by TOSCA
 
 - Networking
 - Node Filters
-- Node Groups
+- Groups
 - Policies
 - Imperative Workflows
+- Constraints
 
+## Available Types
+Most normative and non-normative TOSCA Types can be used in the service template.
+Additionally, *TOSCAna* provides its [own types](toscana-types.md).
+
+##### Normative TOSCA Types
+##### Non-Normative Types
+##### TOSCAna Types
+- JavaApplication
+- JavaRuntime
+
+## Limitiations
 What follows is a more or less accurate gathering of further limitations and discrepancies of otherwise supported features. 
 
 >*Note: In the following, `ch. x.xx` refers to chapter x.xx in the above mentioned version of the TOSCA specification.*
@@ -26,6 +38,7 @@ What follows is a more or less accurate gathering of further limitations and dis
 I.e., features of `ch. 6.2` are not supported and the approach given in `ch 6.3` must be used.
 
 ### ServiceTemplate
+- metadata: Not used
 - *dsl_definitions*: Not supported
 - *imports*: Not supported. 
 I.e., you must get by with a single service template
@@ -36,28 +49,32 @@ This sounds really limitating at first. But it's not: *TOSCAna*'s plugins wouldn
 ### TopologyTemplate
 - *groups*: Not supported
 - *policies*: Not supported
-- 
+- *substitution_mappings*: Not supported
+- *workflows*: Not supported
+
 ### TOSCA scalar-unit Type
 - Only `scalar-unit.size` is supported.   
-Not supported: `scalar-unit.time`, `scalar-unit.frequency`
+- Not supported: `scalar-unit.time`, `scalar-unit.frequency`
 
-### Types
+### TOSCA type definitions
+Usage of the shorthand name `Compute` for `tosca.capabilities.Compute` is not supported; `Compute` is always interpreted as `tosca.nodes.Compute`
 
-##### TOSCA normative type definitions
-- Usage of the shorthand name `Compute` for `tosca.capabilities.Compute` is not supported; `Compute` is always interpreted as `tosca.nodes.Compute`
+### Node Templates
+- *node_filter*: Not supported
+- *copy*: Not supported
+
+## Relationship Templates
+- *copy*: Not supported
+
 
 ### Attributes and properties
-`Ch. 2.16` explains how attributes shall be derived from properties at runtime.
+`Ch. 2.16` explains how attributes shall get derived from properties at runtime.
 However, there are following limitations:
+
 - Attributes don't get derived from properties
 - Properties can change at runtime (i.e., they behave exactly like attributes)
 
----
-#### TODO
-- tosca functions
-    - get_property:
-        - keywords SOURCE, TARGET, HOST
-    - get_artifact
-    - concat
-    - get_nodes_of_type
-    - get_operation_output
+### Intrinsic functions
+- *get_property/attribute*: keywords `SOURCE`, `TARGET`, `HOST` are not supported (but `SELF` is supported)
+- *get_artifact*, *concat*, *get_nodes_of_type*, *get_operation_output*: Not supported
+
