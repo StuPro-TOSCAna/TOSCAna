@@ -20,7 +20,7 @@ import static org.opentosca.toscana.plugins.cloudformation.CloudFormationLifecyc
 /**
  Class for preparing a models nodes
  */
-public class PrepareModelNodeVisitor extends CloudFormationVisitorExtension implements NodeVisitor {
+public class PrepareModelNodeVisitor extends CloudFormationVisitor implements NodeVisitor {
 
     protected static final String AWS_ENDPOINT_REFERENCE = "Endpoint.Address";
     private static final String AWS_INSTANCE_PRIVATE_IP = "PrivateIp";

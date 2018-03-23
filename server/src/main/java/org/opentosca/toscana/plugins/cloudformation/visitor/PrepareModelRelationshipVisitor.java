@@ -17,7 +17,7 @@ import static org.opentosca.toscana.plugins.cloudformation.visitor.PrepareModelN
 /**
  Class for preparing a models relationships
  */
-public class PrepareModelRelationshipVisitor extends CloudFormationVisitorExtension implements RelationshipVisitor {
+public class PrepareModelRelationshipVisitor extends CloudFormationVisitor implements RelationshipVisitor {
 
     /**
      Create a <tt>PrepareModelRelationshipVisitor</tt> to prepare a models relationships.

@@ -25,18 +25,18 @@ import org.slf4j.Logger;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationLifecycle.toAlphanumerical;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.SECURITY_GROUP;
 
-public abstract class CloudFormationVisitorExtension {
+public abstract class CloudFormationVisitor {
 
     protected final Logger logger;
     protected Graph<RootNode, RootRelationship> topology;
     protected CloudFormationModule cfnModule;
 
-    public CloudFormationVisitorExtension(TransformationContext context) {
+    public CloudFormationVisitor(TransformationContext context) {
         this.logger = context.getLogger(getClass());
         this.topology = context.getModel().getTopology();
     }
 
-    public CloudFormationVisitorExtension(TransformationContext context, CloudFormationModule cfnModule) {
+    public CloudFormationVisitor(TransformationContext context, CloudFormationModule cfnModule) {
         this(context);
         this.cfnModule = cfnModule;
     }

@@ -45,7 +45,7 @@ import static org.opentosca.toscana.plugins.cloudformation.handler.OperationHand
  Class for building a CloudFormation template from an effective model instance via the visitor pattern. Currently only
  supports LAMP-stacks built with Compute, WebApplication, Apache, MySQL, MySQL nodes.
  */
-public class TransformModelNodeVisitor extends CloudFormationVisitorExtension implements StrictNodeVisitor {
+public class TransformModelNodeVisitor extends CloudFormationVisitor implements StrictNodeVisitor {
     private static final String IP_OPEN = "0.0.0.0/0";
     private static final String PROTOCOL_TCP = "tcp";
     private OperationHandler operationHandler;

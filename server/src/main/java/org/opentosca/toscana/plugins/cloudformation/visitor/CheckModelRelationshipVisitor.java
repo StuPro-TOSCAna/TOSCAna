@@ -12,7 +12,7 @@ import org.opentosca.toscana.model.visitor.UnsupportedTypeException;
 /**
  Class for checking the models relationships
  */
-public class CheckModelRelationshipVisitor extends CloudFormationVisitorExtension implements StrictRelationshipVisitor {
+public class CheckModelRelationshipVisitor extends CloudFormationVisitor implements StrictRelationshipVisitor {
 
     /**
      Create a <tt>CheckModelRelationshipVisitor</tt> to check a models relationships

@@ -20,7 +20,7 @@ import com.google.common.collect.Lists;
 /**
  Class for checking the models nodes
  */
-public class CheckModelNodeVisitor extends CloudFormationVisitorExtension implements StrictNodeVisitor {
+public class CheckModelNodeVisitor extends CloudFormationVisitor implements StrictNodeVisitor {
 
     /**
      Create a <tt>CheckModelNodeVisitor</tt> to check the models nodes.
