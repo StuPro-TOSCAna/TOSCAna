@@ -8,7 +8,22 @@ import org.opentosca.toscana.plugins.cloudformation.mapper.CapabilityMapper;
 
 import com.google.common.collect.ImmutableList;
 
+/**
+ Utility class for mapping values.
+
+ @see CapabilityMapper */
 public class MappingUtils {
+
+    /**
+     Gets a {@link List} of memory size which correspond with {@code numCpus}.
+     <br>
+     The memory integers are pulled from every {@link org.opentosca.toscana.plugins.cloudformation.mapper.CapabilityMapper.InstanceType}
+     , from the {@code instanceTypes} {@link ImmutableList}, that also has {@code numCpus} as cpu value.
+
+     @param numCpus       the numCpus to find the corresponding memory values for
+     @param instanceTypes the instance types to search in
+     @return a {@link List} of valid memory values that correspond with {@code numCpus}
+     */
     public static List<Integer> getMemByCpu(Integer numCpus, ImmutableList<CapabilityMapper.InstanceType> instanceTypes) {
         return instanceTypes.stream()
             .filter(u -> u.getNumCpus().equals(numCpus))
@@ -16,6 +31,16 @@ public class MappingUtils {
             .collect(Collectors.toList());
     }
 
+    /**
+     Gets a {@link List} of numbers of cpus which correspond with {@code memSize}.
+     <br>
+     The numbers of cpu integers are pulled from every {@link org.opentosca.toscana.plugins.cloudformation.mapper.CapabilityMapper.InstanceType}
+     , from the {@code instanceTypes} {@link ImmutableList}, that also has {@code memSize} as memory value.
+
+     @param memSize       the memSize to find the corresponding number of cpus for
+     @param instanceTypes the instance types to search in
+     @return a {@link List} of numCpu values that correspond with {@code memSize}
+     */
     public static List<Integer> getCpuByMem(Integer memSize, ImmutableList<CapabilityMapper.InstanceType> instanceTypes) {
         return instanceTypes.stream()
             .filter(u -> u.getMemSize().equals(memSize))
@@ -23,6 +48,18 @@ public class MappingUtils {
             .collect(Collectors.toList());
     }
 
+    /**
+     Gets the {@link String} representation of an {@link org.opentosca.toscana.plugins.cloudformation.mapper.CapabilityMapper.InstanceType}
+     that has both {@code numCpus} and {@code memSize} as values.
+
+     @param numCpus       the number of cpus the {@link org.opentosca.toscana.plugins.cloudformation.mapper.CapabilityMapper.InstanceType}
+     should have
+     @param memSize       the memory size the {@link org.opentosca.toscana.plugins.cloudformation.mapper.CapabilityMapper.InstanceType}
+     should have
+     @param instanceTypes the {@link ImmutableList} to choose from
+     @return the string representation of an {@link org.opentosca.toscana.plugins.cloudformation.mapper.CapabilityMapper.InstanceType}
+     or {@code ""} if none was found
+     */
     public static String getInstanceType(Integer numCpus, Integer memSize, ImmutableList<CapabilityMapper.InstanceType> instanceTypes) {
         Optional<CapabilityMapper.InstanceType> instanceType = instanceTypes.stream()
             .filter(u -> u.getNumCpus().equals(numCpus) && u.getMemSize().equals(memSize))
@@ -35,13 +72,13 @@ public class MappingUtils {
     }
 
     /**
-     Check if the value is in the list checker, if not take the next bigger. If there is none throw an
-     IllegalArgumentException
+     Checks if the value is in the {@link List} {@code checker}, if not take the next bigger value. If there is none
+     throw an IllegalArgumentException.
 
-     @param value   The value to check.
-     @param checker The List to check in.
-     @return A valid value of the checker list.
-     @throws IllegalArgumentException If the value is too big
+     @param value   the value to check
+     @param checker the {@link List} to check in
+     @return a valid value of the checker list
+     @throws IllegalArgumentException if the value is too big
      */
     public static Integer checkValue(Integer value, List<Integer> checker) throws IllegalArgumentException {
         if (!checker.contains(value)) {

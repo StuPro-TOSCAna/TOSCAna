@@ -21,11 +21,11 @@ import static com.scaleset.cfbuilder.core.Ref.ref;
 public class AuthenticationUtils {
 
     public static final String INSTANCE_PROFILE = "InstanceProfile";
-    
+
     private static final String INSTANCE_ROLE = "InstanceRole";
     private static final String ARN_AWS_S3 = "arn:aws:s3:::";
     private static final String EC2_AMAZONAWS_COM = "ec2.amazonaws.com";
-    
+
     /**
      Returns an <tt>Authentication<tt> to access the given S3Bucket.
 

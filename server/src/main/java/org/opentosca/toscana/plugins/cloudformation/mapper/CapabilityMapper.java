@@ -35,6 +35,9 @@ import static org.opentosca.toscana.plugins.cloudformation.util.MappingUtils.get
 import static org.opentosca.toscana.plugins.cloudformation.util.MappingUtils.getInstanceType;
 import static org.opentosca.toscana.plugins.cloudformation.util.MappingUtils.getMemByCpu;
 
+/**
+ @see org.opentosca.toscana.plugins.cloudformation.util.MappingUtils
+ */
 public class CapabilityMapper {
 
     public static final String EC2_DISTINCTION = "EC2";
