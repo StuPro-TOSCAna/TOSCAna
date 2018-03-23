@@ -36,8 +36,10 @@ import static org.opentosca.toscana.plugins.cloudformation.util.MappingUtils.get
 import static org.opentosca.toscana.plugins.cloudformation.util.MappingUtils.getMemByCpu;
 
 /**
- @see org.opentosca.toscana.plugins.cloudformation.util.MappingUtils
- */
+ Class that is used to to map {@link OsCapability OsCapabilities} and {@link ComputeCapability ComputeCapabilities} to
+ values for CloudFormation.
+
+ @see org.opentosca.toscana.plugins.cloudformation.util.MappingUtils */
 public class CapabilityMapper {
 
     public static final String EC2_DISTINCTION = "EC2";
@@ -45,6 +47,11 @@ public class CapabilityMapper {
     private static final String ARCH_x86_32 = "i386";
     private static final String ARCH_x86_64 = "x86_64";
     private final Logger logger;
+    /**
+     CloudFormation {@link InstanceType}s for EC2s.
+
+     @see <a href="https://aws.amazon.com/ec2/instance-types/">EC2 Instance Types</a>
+     */
     private final ImmutableList<InstanceType> EC2_INSTANCE_TYPES = ImmutableList.<InstanceType>builder()
         .add(new InstanceType("t2.nano", 1, 512))
         .add(new InstanceType("t2.micro", 1, 1024))
@@ -55,6 +62,11 @@ public class CapabilityMapper {
         .add(new InstanceType("t2.2xlarge", 8, 32768))
         .build();
 
+    /**
+     CloudFormation {@link InstanceType}s for RDSs.
+
+     @see <a href="https://aws.amazon.com/rds/instance-types/">RDS Instance Types</a>
+     */
     private final ImmutableList<InstanceType> RDS_INSTANCE_CLASSES = ImmutableList.<InstanceType>builder()
         .add(new InstanceType("db.t2.micro", 1, 1024))
         .add(new InstanceType("db.t2.small", 1, 2048))
@@ -67,9 +79,26 @@ public class CapabilityMapper {
         .add(new InstanceType("db.m4.16xlarge", 64, 262144))
         .build();
 
+    /**
+     The AWS Region the image ids depend on.
+     {@link CloudFormationModule#awsRegion}
+     */
     private String awsRegion;
+    /**
+     The AWS Credentials to connect to AWS using the AWS SDK to get image ids.
+     {@link CloudFormationModule#awsCredentials}
+     */
     private AWSCredentials awsCredentials;
 
+    /**
+     Standard constructor.
+     <br>
+     Creates a <tt>CapabilityMapper</tt> using the region and the credentials.
+
+     @param awsRegion      the AWS Region to take
+     @param awsCredentials the AWS Credentials to take
+     @param logger         a logger to take
+     */
     public CapabilityMapper(String awsRegion, AWSCredentials awsCredentials, Logger logger) {
         this.awsRegion = awsRegion;
         this.awsCredentials = awsCredentials;
@@ -77,11 +106,12 @@ public class CapabilityMapper {
     }
 
     /**
-     This method requests the AWS server for ImageIds with filters which are filled based on
-     the values of the OsCapability. The image with the latest creation date is picked and its imageId returned.
+     Requests the AWS server for ImageIds with filters which are filled based on the values of the {@link OsCapability}.
+     <br>
+     The image with the latest creation date is picked and its imageId returned.
 
-     @param osCapability The OsCapability to map.
-     @return A String that contains a valid ImageId that can be added to the properties of an ec2.
+     @param osCapability the OsCapability to map
+     @return a {@link String} that contains a valid ImageId that can be added to the properties of an EC2
      */
     public String mapOsCapabilityToImageId(OsCapability osCapability) throws SdkClientException, ParseException,
         IllegalArgumentException {
@@ -143,10 +173,10 @@ public class CapabilityMapper {
     }
 
     /**
-     Process the result of an DescribeImagesRequest and return the imageId of the latest image.
+     Processes the result of an {@link DescribeImagesRequest} and returns the imageId of the latest image.
 
-     @param describeImagesResult The result received from aws.
-     @return The latest imageId.
+     @param describeImagesResult the result received from aws
+     @return returns the latest imageId
      */
     private String processResult(DescribeImagesResult describeImagesResult) throws ParseException,
         IllegalArgumentException {
@@ -168,14 +198,15 @@ public class CapabilityMapper {
     }
 
     /**
-     Finds the best InstanceType based on the values contained in the ComputeCapability.
+     Finds the best {@link InstanceType} based on the values contained in the {@link ComputeCapability}.
+     <br>
      If necessary the values are scaled upwards till they meet the requirement.
 
-     @param computeCapability The ComputeCapability to map.
-     @param distinction       A distinction string. Can either be "EC2" or "RDS".
-     @return A valid InstanceType / InstanceClass string.
+     @param computeCapability the {@link ComputeCapability} to map
+     @param distinction       a distinction string, can either be "EC2" or "RDS"
+     @return a valid {@link InstanceType} / InstanceClass(RDS) {@link String}
      @throws TransformationFailureException Gets thrown if the values numCpus and memSize are too big and there is no
-     valid InstanceType.
+     valid {@link InstanceType}.
      */
     public String mapComputeCapabilityToInstanceType(ComputeCapability computeCapability, String distinction) throws
         IllegalArgumentException {
@@ -215,10 +246,12 @@ public class CapabilityMapper {
     }
 
     /**
-     The value is taken from the Capability but turned into GB. The minimum is 20 GB the maximum 6144 GB
+     Takes the value from the {@link ComputeCapability} and turns it into GB.
+     <br>
+     The minimum is 20 GB the maximum 6144 GB
 
-     @param computeCapability The ComputeCapability to map.
-     @return An integer representing the diskSize that should be taken.
+     @param computeCapability the {@link ComputeCapability} to mapt
+     @return returns an integer representing the diskSize that should be taken
      */
     public Integer mapComputeCapabilityToRDSAllocatedStorage(ComputeCapability computeCapability) {
         final Integer minSize = 20;
@@ -238,11 +271,11 @@ public class CapabilityMapper {
     }
 
     /**
-     Maps the disk_size property of a ComputeCapability to an EC2 Instance.
-     
-     @param computeCapability Capability containing the disk_size property
-     @param cfnModule Module containing the Instance
-     @param nodeName name of the Instance
+     Maps the disk_size property of a {@link ComputeCapability} to an EC2 Instance.
+
+     @param computeCapability {@link ComputeCapability} containing the disk_size property
+     @param cfnModule         {@link CloudFormationModule} containing the Instance
+     @param nodeName          name of the Instance
      */
     public void mapDiskSize(ComputeCapability computeCapability, CloudFormationModule cfnModule, String nodeName) {
         // If disk_size is not set, default to 8000 Mb
@@ -265,6 +298,22 @@ public class CapabilityMapper {
         }
     }
 
+    /**
+     Tries to find a combination of numCpus and memSize in the {@link ImmutableList} of {@link InstanceType}s.
+     <br>
+     If there is no result found it first scales the number of cpus to find a valid {@link InstanceType}. If there is
+     still none found it scales the size of memory. If there is still none found there can be an working combination and
+     an {@link TransformationFailureException} gets thrown.
+
+     @param numCpus       minimum number of cpus the {@link InstanceType} should have
+     @param memSize       minimum size of memory the {@link InstanceType} should have
+     @param instanceTypes {@link ImmutableList} of {@link InstanceType}s to choose from
+     @param allNumCpus    {@link List} of all valid numbers of cpus
+     @param allMemSizes   {@link List} of all valid sizes of memory
+     @return returns the {@link String} representation of the found {@link InstanceType}
+     @throws TransformationFailureException gets thrown if no combination ist found (for example one or both values are
+     too high, so there is no valid {@link InstanceType})
+     */
     private String findCombination(Integer numCpus, Integer memSize, ImmutableList<InstanceType> instanceTypes,
                                    List<Integer> allNumCpus, List<Integer> allMemSizes) throws
         TransformationFailureException {
@@ -306,25 +355,67 @@ public class CapabilityMapper {
         return instanceType;
     }
 
+    /**
+     Class that represents a instance type of a EC2 or RDS.
+
+     @see <a href="https://aws.amazon.com/ec2/instance-types/">EC2 Instance Types</a>
+     @see <a href="https://aws.amazon.com/rds/instance-types/">RDS Instance Types</a>
+     */
     public class InstanceType {
+        /**
+         The {@link String} representation of the InstanceType.
+         <br>
+         It is used by CloudFormation or AWS in general.
+         */
         private String type;
+        /**
+         The number of cpus this InstanceType has.
+         */
         private Integer memSize;
+        /**
+         The size of memory this InstanceType has.
+         */
         private Integer numCpus;
 
+        /**
+         Standard constructor.
+         <br>
+         Creates an InstanceType based on the {@link String} representation, the number of cpus and the size of memory.
+
+         @param type    the {@link String} representation of the InstanceType, that is used by CloudFormation or AWS in
+         general
+         @param numCpus the number of cpus this InstanceType has
+         @param memSize the size of memory this InstanceType has
+         */
         public InstanceType(String type, Integer numCpus, Integer memSize) {
             this.type = type;
             this.numCpus = numCpus;
             this.memSize = memSize;
         }
 
+        /**
+         Gets the {@link #type}.
+
+         @return the {@link #type}
+         */
         public String getType() {
             return type;
         }
 
+        /**
+         Gets the {@link #memSize}.
+
+         @return the {@link #memSize}
+         */
         public Integer getMemSize() {
             return memSize;
         }
 
+        /**
+         Gets the {@link #numCpus}.
+
+         @return the {@link #numCpus}
+         */
         public Integer getNumCpus() {
             return numCpus;
         }
