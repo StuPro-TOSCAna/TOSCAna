@@ -69,6 +69,9 @@ All supported types are listed below.
 - tosca.relationships.HostedOn   
 - tosca.relationships.Root       
 - tosca.relationships.RoutesTo   
+
+## Warning: `Accessing an unset attribute`
+When plugins interact with the internal java representation of the TOSCA service template, it can happen that the warning `Accessing an unset attribute` appears in the transformation log. Whenever this happens, a plugin tried to access an attribute or property which was linked to another attribute or property (via a TOSCA intrinsic function) which was not (yet) set. If the linked field was intentionally not set (e.g., you modeled it that way), you can ignore this message. However, sometimes pointing to attributes which are set at runtime is necessary (e.g., `ip` of compute node). Whenever this message appears in that context, the plugin was not able to cope with the situation (it 'forgot' to set an attribute when it was responsible for setting it before interacting with the model).
  
 ## Limitations
 What follows is a more or less accurate gathering of further limitations and discrepancies of otherwise supported features. 
