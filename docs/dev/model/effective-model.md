@@ -4,7 +4,7 @@ The TOSCA service template language itself is optimized for convenient modelling
 Symbolic links, custom (i.e., non-semantic) type definitions and short notations aim at easing the modeller's life.
 But from an orchestrator's point of view, these language mechanisms increase the complexity of the template, sometimes even without providing further semantics.  
 
-The EffectiveModel component converts a modeller-friendly TOSCA template into a more **orchestrator-friendly representation**, ready for consumption by a plugin.  
+The EffectiveModel component converts a modeler-friendly TOSCA template into a more **orchestrator-friendly representation**, ready for consumption by a plugin.  
 
 Following **optimizations** aim at easing the plugin developers workload:
 
@@ -19,7 +19,7 @@ Following **optimizations** aim at easing the plugin developers workload:
 The term *effective* is used in the style of the [maven](http://maven.apache.org/plugins/maven-help-plugin/effective-pom-mojo.html) project: The relation between Maven's `pom` and its `effective pom` is similar to the relation between a TOSCA service template (or the java representation [`TServiceTemplate`](https://github.com/eclipse/winery/blob/master/org.eclipse.winery.model.tosca.yaml/src/main/java/org/eclipse/winery/model/tosca/yaml/TServiceTemplate.java) from the [winery](https://projects.eclipse.org/projects/soa.winery) project) and the `EffectiveModel`.
 
 ### Obtain an EffectiveModel
-Instantiation and basic interaction with an EffectiveModel is shown below.
+Instantiation and basic interaction with an EffectiveModel are shown below.
 Note that `csar` refers to a propper `Csar` instance:
 ```java
 EffectiveModel model = EffectiveModelFactory.create(csar);
@@ -34,12 +34,12 @@ Map<String, OutputProperty> outputs = model.getOutputs();
 ```
 
 ### Iterate elements
-All TOSCA class instances are visitable, i.e., support getting visitted by a matching visitor instance (`NodeVisitor`, `CapabilityVisitor` or `RelationshipVisitor`).
+All TOSCA class instances are visitable, i.e., support getting visited by a matching visitor instance (`NodeVisitor`, `CapabilityVisitor` or `RelationshipVisitor`).
 The double dispatch mechanism provided by the visitor pattern solves the problem of accessing arbitrary TOSCA types without writing a myriad of if-statements (`if node instanceof..`).   
 Instead, simply extend one of the base visitor classes and implement the needed `visit` method(s).
 If not implemented, the default behaviour of any `visit` method is a *noop*.  
 
-However, sometimes it might be needed to report an error upon encountering non-implemented methods (e.g., when writing a  visitor which shall report an `UnsupportedTypeException` when visitting any node besides a `MysqlDatabase`). Therefore, the strict visitor classes `StrictNodeVisitor`, `StrictCapabilityVisitor`, `StrictRelationshipVisitor`) can be used.
+However, sometimes it might be needed to report an error upon encountering non-implemented methods (e.g., when writing a  visitor which shall report an `UnsupportedTypeException` when visiting any node besides a `MysqlDatabase`). Therefore, the strict visitor classes `StrictNodeVisitor`, `StrictCapabilityVisitor`, `StrictRelationshipVisitor`) can be used.
 
 ##### Example: Execute action for every node of type `Apache`
 ```java

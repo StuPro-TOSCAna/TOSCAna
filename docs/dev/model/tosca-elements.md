@@ -3,7 +3,7 @@
 Whenever the term `TOSCA Element` is mentioned, it refers to one of the classes which are used to model TOSCA types, e.g., `WebServer`, `ContainerCapability`, `Requirement` or `HostedOn`.
 
 ### TOSCA Elements are only wrappers 
-When interacting with a TOSCA element, for example with an instance of the `MysqlDatabase` class, it seems its implemented like a plain POJO class:
+When interacting with a TOSCA element, e.g. with an instance of the `MysqlDatabase` class, it seems its implemented like a plain POJO class:
 
 ```java
 String dbName = node.getDatabaseName();
@@ -53,11 +53,11 @@ public static ToscaKey<String> DATABASE_NAME = new ToscaKey<>(PROPERTIES, "name"
 
 A ToscaKey has following characteristics:
 
-- **Type information**. Special care has been taken to achieve type-safety even with a generic approach for getters / setters. A `ToscaKey` contains both generic type information and class type information (because generic type information is erased at runtime, this is needed aswell).
+- **Type information**. Special care has been taken to achieve type-safety even with a generic approach for getters / setters. A `ToscaKey` contains both generic type information and class type information (because generic type information is erased at runtime, this is needed as well).
 - **Name**. The name which is used in *TOSCA yaml* to refer to this element
 - *required* boolean flag which specifies if a value must be present
 - **predecssor**. Another `ToscaKey` which acts as the predecessor of this `ToscaKey`. With defining a predecessor it's possible to map the Key to a nested structure. E.g., above defined key has the predecessor `PROPERTIES` (which happens to have the name `"properties"`) - so it points to a value in `properties.name`.
-- **directives**. When needed, special directives can be saved in a `Map<String,Object>` consctruction. This is currently used for storing information about default units of TOSCA scalar types.
+- **directives**. When needed, special directives can be saved in a `Map<String,Object>` construction. This is currently used for storing information about default units of TOSCA scalar types.
 
 > *Note: `ToscaKeys` are not declared as `final`, as this would cause problems in combination with inheritance (which is used heavily within Tosca Element classes)*
 

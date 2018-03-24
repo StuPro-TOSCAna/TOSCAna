@@ -3,11 +3,11 @@
 The ServiceGraph is the backbone of the EffectiveModel.
 Basically, it's a directed graph structure (based on [JGraphT](jgrapht.org/)) which reflects the content of a TOSCA service template. 
 
-After construction, the graph structure is reorganized to ease accessing the stored information from an orchetrator point of view.
+After construction, the graph structure is reorganized to ease accessing the stored information from an orchestrator point of view.
 
 Following steps are executed when creating a new ServiceGraph:
 
-1. **Parse template** into graph-like structure (using [JGraphT](http://jgrapht.org/) and [SnakeYAML](https://bitbucket.org/asomov/snakeyaml)).
+1. **Parse template** into a graph-like structure (using [JGraphT](http://jgrapht.org/) and [SnakeYAML](https://bitbucket.org/asomov/snakeyaml)).
 2. **Wait for user input**, then proceed with step 3.
 3. **Normalize graph**. 
    Every TOSCA short notation is converted to its corresponding normal (i.e., extended) representation.
@@ -86,7 +86,7 @@ In the last step, TOSCA's symbolic links get resolved. This is accomplished by i
 The new edges are marked in red. 
 They replace the former ScalarEntities which contained symbolic names.  
 Pay attention to how each edge kept the name of the replaced node; 
-this way, propper graph traversion remains possible.
+this way, proper graph traversing remains possible.
 
 >*Note: Together, step 2 and 3 are called 'finalization of the graph'.*
 

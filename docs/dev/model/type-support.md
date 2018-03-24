@@ -81,7 +81,7 @@ In order to add a new type, following steps are necessary:
     - remember to use [ToscaKeys](tosca-elements.md#toscakeys) instead of directly using data fields. Pay special attention to specifying the necessary type information correctly.
     - generate getters and setters with the supplied [code templates](code-templates.md). Make use of the *Optional getter* template if a value is not required.
     - write a routine for initialization of complex values. This is the place where you can specify default values, as well. Look into existing classes if you're not sure how to do this. 
-    - override the `accept` method. If this is omitted, the type can't be visitted with one if the [visitors](effective-model.md#iterate-elements).
+    - override the `accept` method. If this is omitted, the type can't be visited with one if the [visitors](effective-model.md#iterate-elements).
 - add an appropriate `visit` method to either `NodeVisitor`, `CapabilityVisitor` or `RelationshipVisitor` and also update its corresponding strict version.
 
 ## Add custom types
