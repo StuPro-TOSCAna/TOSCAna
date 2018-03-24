@@ -1,7 +1,8 @@
 # TOSCAna Types
 
-In addition to TOSCA's normative and non-normative types, *TOSCAna* natively supports several own type definitions.  
-These types can simply be used in a TOSCA service template, its type definition must not be contained.
+In addition to TOSCA's normative and non-normative types, TOSCAna natively supports several own type definitions.  
+Just like normative or non-normative TOSCA types, TOSCAna types can simply be used in a TOSCA service template.
+The correlated type definition must not be contained.
 
 #### toscana.nodes.JavaApplication
 A node representing a java application. A `jar` file must be supplied as deployment artifact.
@@ -22,9 +23,9 @@ toscana.nodes.JavaApplication:
 ```
 
 #### toscana.nodes.JavaRuntime
-A node representing a java runtime installation. 
-Note: The `component_version` shall be specified like `1.7` (developer version), not like `7` (product version). 
-If the `component_version` is omitted, orchestrators shall use the latest available version.
+A node representing a java runtime installation.  
+The `component_version` shall be specified like `1.7` (developer version), not like `7` (product version).   
+If `component_version` is omitted, orchestrators shall use the latest available version.
 
 ```yml
 toscana.nodes.JavaRuntime: 

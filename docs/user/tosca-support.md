@@ -4,9 +4,8 @@
 You can download the full specification here:  
 >[**TOSCA Simple Profile in YAML v1.1 cos01**](http://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.1/cos01/) (04 October 2017)
 
-Supporting the whole specification would have exceeded the scope of this project. Don't forget: *TOSCAna* is a prototype.
-
-Following main aspects of the TOSCA specification are **not supported** by TOSCAna:
+Supporting the whole specification would have exceeded the scope of this project. 
+Following main aspects of the TOSCA specification are **not supported**:
 
 - Networking
 - Node Filters
@@ -16,7 +15,7 @@ Following main aspects of the TOSCA specification are **not supported** by TOSCA
 - Constraints
 
 ## Available Types
-Most normative and non-normative TOSCA Types can be used in the service template.
+Most normative and non-normative TOSCA Types can be used in a service template.  
 Additionally, *TOSCAna* provides its [own types](toscana-types.md).
 
 All supported types are listed below.
@@ -88,9 +87,10 @@ I.e., features of `ch. 6.2` are not supported and the approach given in `ch 6.3`
 - *dsl_definitions*: Not supported
 - *imports*: Not supported. 
 I.e., you must get by with a single service template
-- *\*_types*: Not supported - defining types is not supported.
-I.e., you must get by with the built-in node, capability and relationship types.
-This sounds really limitating at first. But it's not: *TOSCAna*'s plugins wouldn't be able to trigger meaningful semantics upon encountering a custom type definitions, so ditching it shouldn't hurt too much.  
+- *\*_types*: Not supported.
+I.e., you must get by with the built-in node, capability and relationship types.  
+This sounds really limitating at first. 
+But it's not: *TOSCAna*'s plugins wouldn't be able to trigger meaningful semantics upon encountering a custom type definitions, so not supporting custom type definitions shouldn't hurt too much.  
 
 ### TopologyTemplate
 - *groups*: Not supported
@@ -100,12 +100,12 @@ This sounds really limitating at first. But it's not: *TOSCAna*'s plugins wouldn
 
 ### TOSCA scalar-unit Type
 - Only `scalar-unit.size` is supported.   
-- Not supported: `scalar-unit.time`, `scalar-unit.frequency`
+- Not supported: `scalar-unit.time`, `scalar-unit.frequency`. As a workaround, stick with the default unit size and omit the unit identifier. E.g., for assigning a value to a field of type `scalar-unit.frequency` with default unit `GHz`, use `4` instead of `4 GHz`.
 
 ### TOSCA type definitions
 - Usage of the shorthand name `Compute` for `tosca.capabilities.Compute` is not supported; `Compute` is always interpreted as `tosca.nodes.Compute`
 - All complex Data Types except for `tosca.datatypes.Credential` are unsupported. 
-Node Types which make use of unsupported data types are therefore not handled properly: Handling (e.g., assignment, usage in functions) of affected attributes or properties might be incorrect.
+Node Types which make use of unsupported data types might not be handled properly: Handling (e.g., assignment, usage in functions) of affected attributes or properties might be incorrect.
 
 ### Node Templates
 - *node_filter*: Not supported
