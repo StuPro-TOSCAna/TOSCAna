@@ -33,7 +33,7 @@ public class LogImpl implements Log {
      */
     public LogImpl(File logFile) {
         persistentAppender = new PersistentAppender(logFile);
-        if (logFile.exists()){
+        if (logFile.exists()) {
             readLogFromFile(logFile);
         }
     }

@@ -8,6 +8,9 @@ import org.opentosca.toscana.model.BaseToscaElement;
 import org.opentosca.toscana.model.util.ToscaKey;
 
 @SuppressWarnings("unchecked")
+/**
+ Responsible for converting an entity to its wrapping type representation.
+ */
 public class TypeConverter {
 
     public static <T> T convert(Entity entity, ToscaKey<T> key, Entity parent) throws AttributeNotSetException {

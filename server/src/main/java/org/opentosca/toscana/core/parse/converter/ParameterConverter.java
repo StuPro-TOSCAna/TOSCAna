@@ -3,7 +3,7 @@ package org.opentosca.toscana.core.parse.converter;
 import org.opentosca.toscana.core.transformation.properties.PropertyType;
 
 /**
- Util class for converting parameters defined in a service template to intances of Parameter.class
+ Util class for converting parameters defined in a service template to instances of Parameter.class
  */
 public class ParameterConverter {
 

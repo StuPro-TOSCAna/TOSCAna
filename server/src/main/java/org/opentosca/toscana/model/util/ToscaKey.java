@@ -8,6 +8,11 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
+/**
+ Describes a value of a TOSCA type definition.
+ <p>
+ Most importantly, a {@code ToscaKey} provides both generic type information and class type information.
+ */
 @EqualsAndHashCode
 @ToString
 @Getter
@@ -18,6 +23,9 @@ public class ToscaKey<T> {
      Directives can be used in order to enrich the semantics of the key (e.g., used to specify unit sizes)
      */
     private final Map<String, Object> directives = new HashMap<>();
+    /**
+     Enables nested structures of ToscaKeys
+     */
     private ToscaKey<?> predecessor = null;
     private boolean required = false;
     /**
@@ -89,6 +97,9 @@ public class ToscaKey<T> {
         return isList;
     }
 
+    /**
+     @return true only if the name of this equals given ToscaKey and both predecessors have the same shape aswell.
+     */
     public boolean hasSameShape(ToscaKey<?> other) {
         boolean sameName = getName().equals(other.getName());
         boolean samePredecessorShape = getPredecessor().isPresent() && other.getPredecessor().isPresent()
