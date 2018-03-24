@@ -2,7 +2,7 @@
 
 In addition to TOSCA's normative and non-normative types, TOSCAna natively supports several own type definitions.  
 Just like normative or non-normative TOSCA types, TOSCAna types can simply be used in a TOSCA service template.
-The correlated type definition must not be contained.
+The correlated type definition doesn't have to be contained in template.
 
 #### toscana.nodes.JavaApplication
 A node representing a java application. A `jar` file must be supplied as deployment artifact.

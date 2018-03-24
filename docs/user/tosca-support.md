@@ -70,15 +70,15 @@ All supported types are listed below.
 - tosca.relationships.Root       
 - tosca.relationships.RoutesTo   
  
-## Limitiations
+## Limitations
 What follows is a more or less accurate gathering of further limitations and discrepancies of otherwise supported features. 
 
 >*Note: In the following, `ch. x.xx` refers to chapter x.xx in the above mentioned version of the TOSCA specification.*
 
 ### CSAR (Cloud Service Archive)
-- a CSAR must contain **exactly one service template** in it's archive root
+- a CSAR must contain **exactly one service template** in its archive root
 - valid extensions for service templates are `yaml` and `yml`
-- the TOSCA-Metadata directory is not evaluated; required metadata must be contained in the service template
+- the `TOSCA-Metadata` directory is not evaluated; required metadata must be contained in the service template
  
 I.e., features of `ch. 6.2` are not supported and the approach given in `ch 6.3` must be used.
 
@@ -89,7 +89,7 @@ I.e., features of `ch. 6.2` are not supported and the approach given in `ch 6.3`
 I.e., you must get by with a single service template
 - *\*_types*: Not supported.
 I.e., you must get by with the built-in node, capability and relationship types.  
-This sounds really limitating at first. 
+This sounds really limiting at first. 
 But it's not: *TOSCAna*'s plugins wouldn't be able to trigger meaningful semantics upon encountering a custom type definitions, so not supporting custom type definitions shouldn't hurt too much.  
 
 ### TopologyTemplate
