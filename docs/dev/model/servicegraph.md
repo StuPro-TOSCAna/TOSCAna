@@ -5,13 +5,14 @@ Basically, it's a directed graph structure (based on [JGraphT](jgrapht.org/)) wh
 
 After construction, the graph structure is reorganized to ease accessing the stored information from an orchestrator point of view.
 
-Following steps are executed when creating a new ServiceGraph:
+Following steps are executed when creating a new `ServiceGraph`:
 
-1. **Parse template** into a graph-like structure (using [JGraphT](http://jgrapht.org/) and [SnakeYAML](https://bitbucket.org/asomov/snakeyaml)).
-2. **Wait for user input**, then proceed with step 3.
-3. **Normalize graph**. 
+1. **Parse template** into a graph-like structure (using [JGraphT](http://jgrapht.org/) and [SnakeYAML](https://bitbucket.org/asomov/snakeyaml)).  
+Read about why we [dont' use the winery parser](../adr/0017-implement-own-tosca-parser.md).
+3. **Wait for user input**, then proceed with step 3.
+4. **Normalize graph**. 
    Every TOSCA short notation is converted to its corresponding normal (i.e., extended) representation.
-4. **Resolve symbolic links**. In case the original template contains symbolic links pointing to other TOSCA elements, they get resolved by adding appropriate edges to the graph.
+5. **Resolve symbolic links**. In case the original template contains symbolic links pointing to other TOSCA elements, they get resolved by adding appropriate edges to the graph.
 
 ### Building blocks
 >*Note: In this context, the term **node** does refer to the field of graph theory, not to TOSCA nodes. E.g., here, a node can even be a TOSCA property.*
