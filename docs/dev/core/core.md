@@ -1,4 +1,4 @@
-# The Core component
+# Design
 
 The Core component provides means for managing CSARs and transformations.
 This includes uploading and deleting CSARs as well as creating, starting and deleting transformations.
@@ -19,8 +19,8 @@ Following domain model is used within the core.
 
 ##### Logging
 Logging is a first class citizen in the core domain model.
-This is because we are serving transformation specific logs via the API.
-We cache each logline in memory as well as write it to the transformation specific log file. 
+This is because we are serving transformation specific logs via the rest API.
+Each logline gets cached in memory as well as written to the transformation specific log file. 
 Note that we are not reimplementing logging; we've rather wrapped up [logback](https://logback.qos.ch/) to fit our needs.
 
 ##### Persistency
@@ -41,7 +41,7 @@ File storage is structured in following way:
     - ...
 - *misc*: Contains miscellaneous data
 
-Modifying this data with external tools at runtime will result in unexpected behaviour. 
+Modifying this data with external tools at runtime might result in unexpected behaviour. 
 However, after a restart, the server will reflect the filesystem changes. 
 
 ##### Transformation state
