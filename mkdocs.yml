@@ -14,6 +14,8 @@ pages:
         - "TOSCA Support": 'user/tosca-support.md'
         - "TOSCAna Types": 'user/toscana-types.md'
     - Developer Documentation:
+        - 'Core':
+            - 'Design': "dev/core/core.md"
         - 'REST API':
             - 'Swagger Documentation': 'dev/core/rest-api.md'
         - 'TOSCA model':
