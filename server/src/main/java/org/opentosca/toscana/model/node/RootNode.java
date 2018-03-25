@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.opentosca.toscana.core.parse.model.MappingEntity;
-import org.opentosca.toscana.model.DescribableEntity;
+import org.opentosca.toscana.model.DescribableElement;
 import org.opentosca.toscana.model.artifact.Artifact;
 import org.opentosca.toscana.model.capability.Capability;
 import org.opentosca.toscana.model.operation.Interface;
@@ -21,7 +21,7 @@ import lombok.ToString;
  */
 @EqualsAndHashCode
 @ToString
-public abstract class RootNode extends DescribableEntity implements VisitableNode {
+public abstract class RootNode extends DescribableElement implements VisitableNode {
 
     public static ToscaKey<Requirement> REQUIREMENTS = new ToscaKey<>("requirements")
         .type(Requirement.class).list();
