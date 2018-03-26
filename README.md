@@ -6,8 +6,13 @@
 [![Documentation Status](https://readthedocs.org/projects/toscana/badge/?version=latest)](http://toscana.readthedocs.io/en/latest/?badge=latest)
 
 ## Introduction
-TOSCAna allows the transformation of TOSCA CSARs into other cloud formats.
+The TOSCAna project allows the transformation of TOSCA CSARs into other cloud formats.
 Currently supported target platforms are Kubernetes, CloudFoundry and AWS CloudFormation.
+
+Check out the [wiki](http://toscana.readthedocs.io/en/latest/) for detailed information.
+
+## Contributing
+See our [contribution guidelines](CONTRIBUTING.md) for detailed information on how to contribute to TOSCAna.
 
 ## Project Structure
 - [`docs/user`](docs/user) - User documentation
@@ -17,11 +22,8 @@ Currently supported target platforms are Kubernetes, CloudFoundry and AWS CloudF
 - [`retrofit-wrapper`](retrofit-wrapper) - Java interface for REST api
 - [`app`](app) - web app
 
-## Contributing
-See our [contribution guidelines](CONTRIBUTING.md) for detailed information on how to contribute to TOSCAna.
-
 ## Tools
-Tools that are used in this project.
+Tools that are used in this project:
 
 - IDE: [IntelliJ](https://www.jetbrains.com/idea/)
 - Code generation: [Project Lombok](https://projectlombok.org/)
