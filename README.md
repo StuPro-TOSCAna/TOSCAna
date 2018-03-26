@@ -6,15 +6,16 @@
 [![Documentation Status](https://readthedocs.org/projects/toscana/badge/?version=latest)](http://toscana.readthedocs.io/en/latest/?badge=latest)
 
 ## Introduction
-The TOSCAna framework allows the transformation of TOSCA models into other cloud formats.
-Currently, it aims to support multiple cloud ecosystems, with Kubernetes, CloudFoundry, AWS CloudFormation being the first.
+TOSCAna allows the transformation of TOSCA CSARs into other cloud formats.
+Currently supported target platforms are Kubernetes, CloudFoundry and AWS CloudFormation.
 
 ## Project Structure
-- [`docs/dev`](docs/dev) - Documentation aimed at developers
-- [`server`](server) - Folder for the server - Module
-- [`cli`](cli) - Folder for the CLI - Module
-- [`retrofit-wrapper`](retrofit-wrapper) - Java interface for REST Api provided by the server
-- [`app`](app) - Folder containing the web app
+- [`docs/user`](docs/user) - User documentation
+- [`docs/dev`](docs/dev) - Developer documentation
+- [`server`](server) - server module
+- [`cli`](cli) - command line interface module
+- [`retrofit-wrapper`](retrofit-wrapper) - Java interface for REST api
+- [`app`](app) - web app
 
 ## Contributing
 See our [contribution guidelines](CONTRIBUTING.md) for detailed information on how to contribute to TOSCAna.
