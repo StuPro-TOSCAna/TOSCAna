@@ -8,6 +8,9 @@ extra:
       link: 'https://github.com/StuPro-TOSCAna/TOSCAna'
 pages:
     - Home: 'index.md'
+    - 'User Documentation':
+      - 'Getting started': 'user/getting-started.md'
+      - 'Running with Docker': 'user/docker.md'
     - Developer Documentation:
         - "Architectural Decision Records":
             - "0000 - Use Markdown Architectural Decision Records": "dev/adr/0000-use-markdown-architectural-decision-records.md"
