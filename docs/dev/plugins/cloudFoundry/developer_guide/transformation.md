@@ -119,7 +119,7 @@ python executeCommand.py my-app /home/vcap/app/htdocs/my_app/create_myphpapp.sh
 
 ### python scripts
 For the easy deployment some python scripts are necessary. The FileCreator detects which scripts are needed and add the files from the resource folder to the target artifact and inserts a command in the `deploy_application.sh`.   
-For further information about the scripts see (here)[TODO: insert Link to Script overview]
+For further information about the scripts see [here](Script-Overview.md)
 
 ### additional buildpacks
 CloudFoundry has a buildpack detection which detects which languages and libraries are needed. Sometimes there are some additional libraries needed which are not detected. Therefore the plugin has to add the information about the additional buildpacks to the target artifact. The plugin just look for the application suffix and compare it with the needed service and thereby knows which buildpacks are needed. At the moment it is implemented for `php` and a `mysql service`. For this case the plugin creates a additional file `.bp-config` in the app folder which contains a `options.json` file. This workflow may differ with other languages.
