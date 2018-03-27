@@ -118,7 +118,7 @@ export class ClientCsarsService {
     getTransformations(csarId: string): Observable<Transformation[]> {
         return this.csarService.getCSARTransformationsUsingGET(csarId).map(result => {
             if (isNullOrUndefined(result._embedded)) {
-                return new Array<Transformation[]>();
+                return [];
             }
             const res = result._embedded.transformation;
             const transformations = [];
