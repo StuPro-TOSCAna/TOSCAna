@@ -20,10 +20,10 @@ export class CsarSideBarComponent implements OnInit {
     )
     private filePicker;
     public picked: PickedFile;
-    upload = false;
+    uploadCsarActive = false;
     validFile = false;
-    input = '';
-    message = '';
+    csarNameInput = '';
+    csarInputMessage = '';
 
     constructor(public csarProvider: ClientCsarsService) {
     }
@@ -32,65 +32,84 @@ export class CsarSideBarComponent implements OnInit {
     }
 
 
+    /**
+     * toogles the csar uploadCsarActive view visibility
+     */
     toogle() {
-        this.upload = !this.upload;
-        this.input = '';
+        this.uploadCsarActive = !this.uploadCsarActive;
+        this.csarNameInput = '';
         this.validFile = false;
         this.picked = null;
     }
 
+    /**
+     * gets called when file is picked
+     *
+     * @param {PickedFile} file
+     */
     onFilePicked(file: PickedFile) {
         this.picked = file;
         this.validFile = true;
-        if (this.input === '') {
+        // if no name was entered prefill input with uploaded csar name
+        if (this.csarNameInput === '') {
             let name: string[] = file.name.split('.');
             name = name.slice(0, name.length - 1);
-            this.input = name.join('.');
+            this.csarNameInput = name.join('.');
         }
 
     }
 
-    getIcon(nameValid: boolean) {
+    /**
+     * returns the icon class
+     * class depends on if the csar name is valid
+     * @param {boolean} nameValid
+     * @returns {string} icon class
+     */
+    getIconClass(nameValid: boolean) {
         let res = 'fa';
         let valid = true;
         if (!nameValid) {
-            this.message = 'Csar name is empty';
+            this.csarInputMessage = 'Csar name is empty';
             valid = false;
-        } else if (this.duplicatedCsarNameExists(this.input)) {
-            this.message = 'A csar with this name already exists.';
+        } else if (this.checkIfduplicatedCsarNameExists(this.csarNameInput)) {
+            this.csarInputMessage = 'A csar with this name already exists.';
             valid = false;
         }
         if (!valid) {
             res += ' fa-exclamation-circle text-danger';
         } else {
-            this.message = 'Everything is ok.';
+            this.csarInputMessage = 'Everything is ok.';
             res += ' fa-check text-success';
         }
         return res;
     }
 
     submit() {
-        if (this.input === '') {
+        if (this.csarNameInput === '') {
             return;
         }
-        const csar = new Csar(this.input, [], null);
+        const csar = new Csar(this.csarNameInput, [], null);
 
-        const data = this.picked.content.split(',')[1];
-        // noinspection TypeScriptValidateTypes
-        const blob = b64toBlob(data, 'application/octet-stream');
-        this.csarProvider.uploadCsar(csar, blob);
-        this.input = '';
+        this.uploadCsar(csar);
+        this.csarNameInput = '';
         this.picked = null;
         this.toogle();
     }
 
-    duplicatedCsarNameExists(csarId: string) {
+    private uploadCsar(csar) {
+        const data = this.picked.content.split(',')[1];
+        // noinspection TypeScriptValidateTypes
+        const blob = b64toBlob(data, 'application/octet-stream');
+        this.csarProvider.uploadCsar(csar, blob);
+    }
+
+    checkIfduplicatedCsarNameExists(csarId: string) {
         const res = this.csars.find(csar => csar.name === csarId);
         return (!isNullOrUndefined(res));
     }
 
-    disableButton(validInput: boolean) {
-        return !validInput || !this.validFile || this.duplicatedCsarNameExists(this.input);
+    isInputFileAndTextValid(validInput: boolean) {
+        return !validInput || !this.validFile || this.checkIfduplicatedCsarNameExists(this.csarNameInput);
     }
 
 
