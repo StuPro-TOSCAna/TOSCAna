@@ -53,7 +53,7 @@ export class AppComponent implements OnInit {
                 this.routeHandler.close();
             }
         });
-        // this.loadHealthStats();
+        this.loadHealthStats();
     }
 
 }
