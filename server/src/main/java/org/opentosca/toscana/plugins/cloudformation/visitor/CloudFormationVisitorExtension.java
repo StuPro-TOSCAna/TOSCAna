@@ -1,9 +1,12 @@
 package org.opentosca.toscana.plugins.cloudformation.visitor;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.opentosca.toscana.core.transformation.TransformationContext;
+import org.opentosca.toscana.model.capability.EndpointCapability;
 import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.Database;
 import org.opentosca.toscana.model.node.Dbms;
@@ -144,6 +147,11 @@ public abstract class CloudFormationVisitorExtension {
                 Compute compute = getCompute(webApplication);
                 connected.add(compute);
             }
+            if (source instanceof JavaApplication) {
+                JavaApplication javaApplication = (JavaApplication) source;
+                Compute compute = getCompute(javaApplication);
+                connected.add(compute);
+            }
         }
         return connected;
     }
@@ -153,7 +161,7 @@ public abstract class CloudFormationVisitorExtension {
         SecurityGroup webServerSecurityGroup = cfnModule.resource(SecurityGroup.class,
             computeName + SECURITY_GROUP)
             .groupDescription("Temporary group for accessing mysqlDatabase" + toAlphanumerical(mysqlDatabase
-                .getEntityName()) + "  with SQLRequest");
+                .getEntityName()) + " with SQLRequest");
         cfnModule.resource(Instance.class, computeName)
             .securityGroupIds(webServerSecurityGroup)
             .imageId("ami-79873901")
@@ -161,5 +169,28 @@ public abstract class CloudFormationVisitorExtension {
             .instanceInitiatedShutdownBehavior("terminate")
             .userData(new UserData(StackUtils.getUserDataDBConnFn(mysqlDatabase, sqlQuery)));
         return computeName;
+    }
+
+    /**
+     Gets the ports from the {@link EndpointCapability EndpointCapabilities} if there are any.
+
+     @param node the node to check
+     @return list of ports that may be empty
+     */
+    protected List<Integer> getPortsFromEnpointCapability(RootNode node) {
+        List<Integer> portList = new ArrayList<>();
+        String nodeName = node.getEntityName();
+        node.getCapabilities().forEach(e -> {
+            try {
+                if (e instanceof EndpointCapability && ((EndpointCapability) e).getPort().isPresent()) {
+                    int port = ((EndpointCapability) e).getPort().get().port;
+                    logger.debug("Marking '{}' as port to be opened for '{}'.", port, nodeName);
+                    portList.add(port);
+                }
+            } catch (Exception ex) {
+                logger.warn("Failed reading Port from node {}", nodeName, ex);
+            }
+        });
+        return portList;
     }
 }

@@ -7,7 +7,6 @@ import java.util.Set;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.model.artifact.Artifact;
 import org.opentosca.toscana.model.capability.ComputeCapability;
-import org.opentosca.toscana.model.capability.EndpointCapability;
 import org.opentosca.toscana.model.capability.OsCapability;
 import org.opentosca.toscana.model.node.Apache;
 import org.opentosca.toscana.model.node.Compute;
@@ -300,19 +299,7 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
             operationHandler.addCreate(FILEPATH_NODEJS_CREATE, computeHostName);
 
             //Get ports
-            List<Integer> portList = new ArrayList<>();
-            node.getCapabilities().forEach(e -> {
-                try {
-                    if (e instanceof EndpointCapability && ((EndpointCapability) e).getPort().isPresent()) {
-                        int port = ((EndpointCapability) e).getPort().get().port;
-                        logger.debug("Marking '{}' as port to be opened for '{}'.", port, nodeName);
-                        portList.add(port);
-                    }
-                } catch (Exception ex) {
-                    logger.warn("Failed reading Port from node {}", nodeName, ex);
-                }
-            });
-
+            List<Integer> portList = getPortsFromEnpointCapability(node);
             //Open ports
             String SecurityGroupName = computeHostName + SECURITY_GROUP;
             SecurityGroup securityGroup = (SecurityGroup) cfnModule.getResource(SecurityGroupName);
@@ -341,6 +328,17 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
                 .applicationName(beanstalkApplication)
                 .description("JavaApplicationConfigurationTemplate " + nodeName)
                 .solutionStackName(stackConfig);
+            //add securitygroup
+            String hostComputeName = toAlphanumerical(getCompute(node).getEntityName());
+            SecurityGroup beanstalkSecurityGroup = cfnModule.resource(SecurityGroup.class,
+                hostComputeName + SECURITY_GROUP)
+                .groupDescription("SecurityGroup for Beanstalk application " + nodeName + ".");
+            //get and open ports
+            List<Integer> portList = getPortsFromEnpointCapability(node);
+            beanstalkSecurityGroup.ingress(ingress -> ingress.cidrIp(IP_OPEN), PROTOCOL_TCP, portList.toArray());
+            //set securitygroup for beanstalk application
+            optionSettings.add(new OptionSetting("aws:autoscaling:launchconfiguration", "SecurityGroups").setValue
+                (cfnModule.ref(hostComputeName + SECURITY_GROUP)));
             //get environment variables as option settings
             optionSettings.addAll(operationHandler.handleStartJava(node));
             //add all option settings to beanstalk configuration
