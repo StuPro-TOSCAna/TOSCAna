@@ -4,8 +4,19 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.opentosca.toscana.core.parse.model.ServiceGraph;
 import org.opentosca.toscana.model.util.ToscaKey;
 
+/**
+ Provides means to identify and compare instances of {@link BaseToscaElement} within a {@link ServiceGraph}.
+ <p>
+ Basically, an {@code EntityId} represents the path from the root node of the {@code ServiceGraph}
+ to the element it's belonging to.
+ This path is equivalent to the path of this element in it's corresponding TOSCA yaml service template.
+ <p>
+ E.g., The property 'size' a node template 'my_node' would have the id
+ 'topology_template.node_templates.my_node.properties.size'
+ */
 public class EntityId implements Comparable<EntityId> {
 
     private final List<String> path;
@@ -49,10 +60,10 @@ public class EntityId implements Comparable<EntityId> {
     }
 
     /**
-     Returns a new EntityId which descends from this EntityId. If the path of this entity is [seg1, seg],
-     the path of the new entity will be [seg1, seg2, lastSegment]
+     Returns a new EntityId which descends from this EntityId. E.g., if the path of this entity is [seg1, seg2],
+     the path of the new entity will be [seg1, seg2, {@code lastSegment}]
 
-     @param lastSegment the last segment which is appended to the path
+     @param lastSegment a name which is appended to this id
      */
     public EntityId descend(String lastSegment) {
         List<String> newPath = new ArrayList<>(this.path);
@@ -70,7 +81,9 @@ public class EntityId implements Comparable<EntityId> {
     }
 
     /**
-     Returns null if ascending is not possible
+     Returns the parent id. E.g., if this id is [seg1, seg2], the parent id is [seg1].
+
+     @return the parent id or null in case ascending is not possible
      */
     public EntityId ascend() {
         int pathSize = this.path.size();

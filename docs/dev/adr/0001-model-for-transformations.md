@@ -1,17 +1,17 @@
 # *Model for transformations: Build own*
 
-The computation result of the winery yaml parser is a `TServiceTemplate.java`. Should plugins handle this model directly or is there a more convenient way for plugin developers to access the modeled TOSCA topology?
+The computation result of the winery yaml parser is a `TServiceTemplate.java`. Should plugins deal with this model directly or is there a more convenient way for plugin developers to access the TOSCA topology?
 
 
 ## Considered Alternatives
 
 * Inherit from `TServiceTemplate` and extends it in some way
-* Build own data model by hand
+* Build own data model
 * Describe metamodel with Eclipse EMF and generate instance model
 
 ## Decision Outcome
 
-* Chosen Alternative: Build own data model by hand
+* Chosen Alternative: Build own data model
 * Comes out best (see below)
 
 
@@ -29,9 +29,9 @@ Each class gets new methods.
     - each plugin would have to define own classes of the supported node types, and map the contained elements of `TServiceTemplate` individually to proper java instances
 
 
-### Build own data model by hand
+### Build own data model
 
-After parsing, the `TServiceTemplate` is mapped to a new model. When categorizing the `TServiceTemplate` as meta model, the new model is its instance model. For example, the normative Node Type `WebServer` is a java class, and an instance of that class is a NodeTemplate of that Node Type.
+Build an own data model instead of reusing the TServiceTemplate. While doing this, be more object oriented. I.e., the normative Node Type `WebServer` is modelled as a java class, and an instance of that class is a NodeTemplate of that Node Type.
 
 The new model should be accessible via a graph (using jgrapht), whereas modeled NodeTemplates are vertices and relationships are edges.
 
@@ -41,6 +41,7 @@ The new model should be accessible via a graph (using jgrapht), whereas modeled 
 * `+` As plugin developer: Type safety
 * `+` less code duplication in plugins
 * `+` central definition of specific supported node types
+* `+` easier to troubleshoot due to strong typing
 * `-` both UML diagram and java classes need to be taken care for
 
 ### Describe metamodel with Eclipse EMF and generate instance model

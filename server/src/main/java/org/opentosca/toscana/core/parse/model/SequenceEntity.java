@@ -12,7 +12,7 @@ import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.ScalarNode;
 import org.yaml.snakeyaml.nodes.SequenceNode;
 
-public class SequenceEntity extends Entity implements CollectionEntity {
+public class SequenceEntity extends Entity {
 
     private final SequenceNode sequenceNode;
 
@@ -57,11 +57,6 @@ public class SequenceEntity extends Entity implements CollectionEntity {
             }
         }
         return Optional.empty();
-    }
-
-    @Override
-    public void addChild(Entity entity) {
-        // TODO
     }
 
     @Override
