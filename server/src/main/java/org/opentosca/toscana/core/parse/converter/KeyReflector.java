@@ -7,8 +7,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.opentosca.toscana.core.parse.converter.util.TypeResolver;
 import org.opentosca.toscana.core.parse.converter.util.NavigationUtil;
+import org.opentosca.toscana.core.parse.converter.util.TypeResolver;
 import org.opentosca.toscana.core.parse.model.MappingEntity;
 import org.opentosca.toscana.model.BaseToscaElement;
 import org.opentosca.toscana.model.capability.Capability;
@@ -22,11 +22,25 @@ import org.opentosca.toscana.model.util.ToscaKey;
  Util class for detecting real subtypes for wrapping entities.
  Initially developed because of {@link RootNode#getCapabilities()} -
  the corresponding ToscaKey {@link RootNode#CAPABILITIES} does only contain the type information 'Capability'
- (which is abstract), and not the subtypes of the members of the collection. In order to detect the real type,
- reflection had to be used.
+ (which is abstract), and not actual subtypes of the members in the collection.
+ In order to detect the real type, reflection had to be used.
+ <p>
+ The code is quite abstract and hard to read, so here is a brief summary of the applied algorithm:<br>
+ 1. Detects the class type of the enclosing node of given entity.<br>
+ 2. Find all declared ToscaKeys of this class type (using reflection), including inherited ToscaKeys.<br>
+ 3. Remove all ToscaKeys from list whose type is not a subtype of given base type.<br>
+ 4. Remove all ToscaKeys from list whose name does not match the name of given entity.<br>
+ 5. Remove 'shadowed' ToscaKeys from found keys. A ToscaKey is shadowed in case a key with the same name
+ is declared lower in the inheritance hierarchy.
  */
 public class KeyReflector {
 
+    /**
+     Returns the real class belonging to given entity.
+
+     @param type the (possibly abstract) parent class
+     @return the real class, is a subclass of given type
+     */
     public static Class detectRealSubtype(MappingEntity entity, Class type) {
         MappingEntity nodeEntity = NavigationUtil.getEnclosingNode(entity);
         String nodeTypeIdentifier = nodeEntity.getValue(BaseToscaElement.TYPE);

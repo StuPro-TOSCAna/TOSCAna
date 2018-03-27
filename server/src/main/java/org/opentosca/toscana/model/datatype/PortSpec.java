@@ -13,6 +13,8 @@ import lombok.Data;
 @Data
 public class PortSpec {
 
+    // TODO this class needs to get reworked completely (use ToscaKeys instead of normal fields - just like in the Credential class)
+
     /**
      The protocol used on the port. Defaults to {@link PortProtocol#TCP}.
      <p>

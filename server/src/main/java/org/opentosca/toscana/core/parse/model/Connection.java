@@ -1,5 +1,8 @@
 package org.opentosca.toscana.core.parse.model;
 
+/**
+ The edge class of a {@code ServiceGraph}
+ */
 public class Connection {
 
     private final Entity source;

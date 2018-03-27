@@ -8,6 +8,9 @@ import org.opentosca.toscana.core.transformation.logging.Log;
 
 import org.slf4j.Logger;
 
+/**
+ Responsible for detecting the path of an entrypoint (i.e., service template) of a csar.
+ */
 public class EntrypointDetector {
 
     private final Logger logger;
