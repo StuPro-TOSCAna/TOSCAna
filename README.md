@@ -1,5 +1,5 @@
+![](docs/assets/logo.png)
 # TOSCAna
-
 [![Build Status](https://travis-ci.org/StuPro-TOSCAna/TOSCAna.svg?branch=ci)](https://travis-ci.org/StuPro-TOSCAna/TOSCAna)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/d002dc08115145e6992ba64aa494893e)](https://www.codacy.com/app/stupro-toscana/TOSCAna?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=StuPro-TOSCAna/TOSCAna&amp;utm_campaign=Badge_Grade)
 [![codecov](https://codecov.io/gh/StuPro-TOSCAna/TOSCAna/branch/master/graph/badge.svg)](https://codecov.io/gh/StuPro-TOSCAna/TOSCAna)
