@@ -74,7 +74,7 @@ public class IntrinsicFunctionResolver {
                 return getInputTarget(functionEntity);
             case GET_PROPERTY:
             case GET_ATTRIBUTE:
-                return getPropertyOrAtributeTarget(functionEntity, function);
+                return getPropertyOrAttributeTarget(functionEntity, function);
             default:
                 throw new UnsupportedOperationException(String.format("Function %s not supported yet", function));
         }
@@ -91,7 +91,7 @@ public class IntrinsicFunctionResolver {
         ));
     }
 
-    private static Entity getPropertyOrAtributeTarget(Entity functionEntity, ToscaFunction function) throws AttributeNotSetException {
+    private static Entity getPropertyOrAttributeTarget(Entity functionEntity, ToscaFunction function) throws AttributeNotSetException {
         Collection<Entity> targetAddress = functionEntity.getChildren();
         if (targetAddress.size() < 2) {
             throw new ToscaTemplateException(

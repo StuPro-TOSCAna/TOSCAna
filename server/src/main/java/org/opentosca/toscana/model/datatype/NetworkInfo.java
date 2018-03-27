@@ -14,6 +14,8 @@ import lombok.Data;
 @Data
 public class NetworkInfo {
 
+    // TODO this class needs to get reworked completely (use ToscaKeys instead of normal fields - just like in the Credential class)
+
     /**
      The name of the logical network.
      <p>

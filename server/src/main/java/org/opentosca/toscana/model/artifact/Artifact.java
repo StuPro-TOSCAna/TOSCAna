@@ -3,7 +3,7 @@ package org.opentosca.toscana.model.artifact;
 import java.util.Optional;
 
 import org.opentosca.toscana.core.parse.model.MappingEntity;
-import org.opentosca.toscana.model.DescribableEntity;
+import org.opentosca.toscana.model.DescribableElement;
 import org.opentosca.toscana.model.util.ToscaKey;
 
 import lombok.EqualsAndHashCode;
@@ -16,7 +16,7 @@ import lombok.ToString;
  */
 @EqualsAndHashCode
 @ToString
-public class Artifact extends DescribableEntity {
+public class Artifact extends DescribableElement {
 
     /**
      The path (relative or absolute) which can be used to locate the artifact’s filePath.

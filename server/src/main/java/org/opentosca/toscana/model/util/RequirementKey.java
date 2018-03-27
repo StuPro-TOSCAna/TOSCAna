@@ -5,6 +5,10 @@ import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.relation.RootRelationship;
 import org.opentosca.toscana.model.requirement.Requirement;
 
+/**
+ A special ToscaKey used for TOSCA requirements.
+ It contains information about several types (fulfiller, capability and relationship types).
+ */
 public class RequirementKey<T> extends ToscaKey<T> {
 
     public final static String FULFILLER = "fulfiller_type";
