@@ -285,7 +285,7 @@ export class TransformationsService {
 
     /**
      * Retrieve the inputs of this transformation
-     * This Operation returns a list of inputs, specific to the csar and the platform. If the input is invalid it has to be set in order to proceed with starting the transformation. Setting the inputs is done with a POST or PUT to the same URL (See Set Inputs Operation). If TransformationInterface does not have any inputs, an empty array is returned
+     * This Operation returns a list of inputs, specific to the csar and the platform. If the transformations-inputs is invalid it has to be set in order to proceed with starting the transformation. Setting the inputs is done with a POST or PUT to the same URL (See Set Inputs Operation). If TransformationInterface does not have any inputs, an empty array is returned
      * @param csarId The identifier for the CSAR
      * @param platform The identifier for the platform
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
@@ -471,7 +471,7 @@ export class TransformationsService {
 
     /**
      * Set the value of inputs
-     * With this method it is possible to set the value of an input or multiple inputs at once. The values of inputs can be set as long as they are in the READY or INPUT_REQUIRED state. The transformation changes its state to ready once all required inputs have a valid value assigned to them.
+     * With this method it is possible to set the value of an transformations-inputs or multiple inputs at once. The values of inputs can be set as long as they are in the READY or INPUT_REQUIRED state. The transformation changes its state to ready once all required inputs have a valid value assigned to them.
      * @param csarId The unique identifier for the CSAR
      * @param platform The identifier for the platform
      * @param propertiesRequest propertiesRequest
@@ -525,7 +525,7 @@ export class TransformationsService {
 
     /**
      * Set the value of inputs
-     * With this method it is possible to set the value of an input or multiple inputs at once. The values of inputs can be set as long as they are in the READY or INPUT_REQUIRED state. The transformation changes its state to ready once all required inputs have a valid value assigned to them.
+     * With this method it is possible to set the value of an transformations-inputs or multiple inputs at once. The values of inputs can be set as long as they are in the READY or INPUT_REQUIRED state. The transformation changes its state to ready once all required inputs have a valid value assigned to them.
      * @param csarId The unique identifier for the CSAR
      * @param platform The identifier for the platform
      * @param propertiesRequest propertiesRequest

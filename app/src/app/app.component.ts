@@ -1,9 +1,9 @@
 import {Component, OnInit} from '@angular/core';
-import {RouteHandler} from './handler/route/route.service';
+import {RouteHandler} from './services/route.service';
 import {Csar} from './model/csar';
-import {PlatformsProvider} from './providers/platforms/platforms.provider';
-import {CsarProvider} from './providers/csar/csar.provider';
-import {HealthService} from './providers/health/health.service';
+import {ClientPlatformsService} from './services/platforms.service';
+import {ClientCsarsService} from './services/csar.service';
+import {HealthService} from './services/health.service';
 import {IntervalObservable} from 'rxjs/observable/IntervalObservable';
 
 @Component({
@@ -17,8 +17,8 @@ export class AppComponent implements OnInit {
     csars: Csar[] = [];
     listNotEmpty = false;
 
-    constructor(private healthProvider: HealthService, private platformsProvider: PlatformsProvider,
-                private csarProvider: CsarProvider, private routeHandler: RouteHandler) {
+    constructor(private healthProvider: HealthService, private platformsProvider: ClientPlatformsService,
+                private csarProvider: ClientCsarsService, private routeHandler: RouteHandler) {
     }
 
     loadHealthStats() {
@@ -53,7 +53,7 @@ export class AppComponent implements OnInit {
                 this.routeHandler.close();
             }
         });
-        // this.loadHealthStats();
+        this.loadHealthStats();
     }
 
 }

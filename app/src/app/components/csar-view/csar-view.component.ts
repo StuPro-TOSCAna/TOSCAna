@@ -1,11 +1,11 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, ParamMap} from '@angular/router';
 import 'rxjs/add/operator/switchMap';
-import {PlatformsProvider} from '../../providers/platforms/platforms.provider';
+import {ClientPlatformsService} from '../../services/platforms.service';
 import 'rxjs/add/observable/fromPromise';
 import 'rxjs/add/operator/takeWhile';
-import {RouteHandler} from '../../handler/route/route.service';
-import {CsarProvider} from '../../providers/csar/csar.provider';
+import {RouteHandler} from '../../services/route.service';
+import {ClientCsarsService} from '../../services/csar.service';
 import {Csar} from '../../model/csar';
 import {LifecyclePhase} from '../../api';
 import {isNullOrUndefined} from 'util';
@@ -29,8 +29,8 @@ export class CsarViewComponent implements OnInit, OnDestroy {
     url = '';
     getColorForLifecyclePhase = getColorForLifecyclePhase;
     StateEnum = StateEnum;
-    constructor(private csarProvider: CsarProvider, private routeHandler: RouteHandler, private route: ActivatedRoute,
-                public platformsProvider: PlatformsProvider) {
+    constructor(private csarProvider: ClientCsarsService, private routeHandler: RouteHandler, private route: ActivatedRoute,
+                public platformsProvider: ClientPlatformsService) {
     }
 
     async ngOnInit() {

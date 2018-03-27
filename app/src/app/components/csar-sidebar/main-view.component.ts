@@ -1,5 +1,5 @@
 import {Csar} from './../../model/csar';
-import {CsarProvider} from '../../providers/csar/csar.provider';
+import {ClientCsarsService} from '../../services/csar.service';
 import {Component, forwardRef, Input, OnInit, ViewChild} from '@angular/core';
 import {PickedFile} from 'angular-file-picker-fixed/picked-file';
 import {FilePickerDirective} from 'angular-file-picker-fixed';
@@ -8,11 +8,11 @@ import {isNullOrUndefined} from 'util';
 const b64toBlob = require('b64-to-blob');
 
 @Component({
-    selector: 'app-main-view',
-    templateUrl: './main-view.component.html',
-    styleUrls: ['./main-view.component.scss']
+    selector: 'app-csar-sidebar',
+    templateUrl: './csar-sidebar.component.html',
+    styleUrls: ['./csar-sidebar.component.scss']
 })
-export class MainViewComponent implements OnInit {
+export class CsarSideBarComponent implements OnInit {
     @Input() csars;
 
     @ViewChild(forwardRef(() =>
@@ -25,7 +25,7 @@ export class MainViewComponent implements OnInit {
     input = '';
     message = '';
 
-    constructor(public csarProvider: CsarProvider) {
+    constructor(public csarProvider: ClientCsarsService) {
     }
 
     ngOnInit() {

@@ -2,8 +2,8 @@ import {Component, Input, OnInit} from '@angular/core';
 import 'rxjs/add/observable/combineLatest';
 import {Csar} from '../../model/csar';
 import {BsModalRef} from 'ngx-bootstrap';
-import {CsarProvider} from '../../providers/csar/csar.provider';
-import {RouteHandler, ViewState} from '../../handler/route/route.service';
+import {ClientCsarsService} from '../../services/csar.service';
+import {RouteHandler, ViewState} from '../../services/route.service';
 import {isNullOrUndefined} from 'util';
 
 @Component({
@@ -13,7 +13,6 @@ import {isNullOrUndefined} from 'util';
 })
 export class CsarItemComponent implements OnInit {
     @Input() csar: Csar;
-    modalRef: BsModalRef;
     viewState: ViewState;
     active = false;
     config = {
@@ -24,7 +23,7 @@ export class CsarItemComponent implements OnInit {
     };
 
 
-    constructor(private routeHandler: RouteHandler, private csarProvider: CsarProvider) {
+    constructor(private routeHandler: RouteHandler, private csarProvider: ClientCsarsService) {
     }
 
     public open() {

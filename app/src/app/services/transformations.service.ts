@@ -1,16 +1,16 @@
 import {Injectable} from '@angular/core';
-import {InputsResponse, InputWrap, TransformationsService} from '../../api';
-import {PlatformsProvider} from '../platforms/platforms.provider';
-import {Transformation} from '../../model/transformation';
+import {InputsResponse, InputWrap, TransformationsService} from '../api/index';
+import {ClientPlatformsService} from './platforms.service';
+import {Transformation} from '../model/transformation';
 import {Observable} from 'rxjs/Observable';
-import {MessageService} from '../message/message.service';
+import {MessageService} from './message.service';
 
 
 @Injectable()
-export class TransformationsProvider {
+export class ClientsTransformationsService {
 
     constructor(private messageService: MessageService, private transformationsService: TransformationsService,
-                private platformsProvider: PlatformsProvider) {
+                private platformsProvider: ClientPlatformsService) {
     }
 
     public getTransformationInputs(csarId: string, platform: string) {

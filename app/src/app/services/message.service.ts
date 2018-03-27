@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {ErrorMessage, Message, SuccessMessage} from '../../model/message';
+import {ErrorMessage, Message, SuccessMessage} from '../model/message';
 import {Observable} from 'rxjs/Observable';
 
 @Injectable()

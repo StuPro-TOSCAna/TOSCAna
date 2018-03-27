@@ -1,20 +1,20 @@
-import {Csar} from './../../model/csar';
-import {CsarsService} from './../../api/api/csars.service';
+import {Csar} from '../model/csar';
+import {CsarsService} from '../api/api/csars.service';
 import {Injectable} from '@angular/core';
-import {PlatformsProvider} from '../platforms/platforms.provider';
-import {Transformation} from '../../model/transformation';
+import {ClientPlatformsService} from './platforms.service';
+import {Transformation} from '../model/transformation';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/map';
-import {CsarResponse, TransformationResponse} from '../../api';
+import {CsarResponse, TransformationResponse} from '../api/index';
 import {Observable} from 'rxjs/Observable';
-import {MessageService} from '../message/message.service';
-import {ErrorMessage} from '../../model/message';
+import {MessageService} from './message.service';
+import {ErrorMessage} from '../model/message';
 import {isNullOrUndefined} from 'util';
 import StateEnum = TransformationResponse.StateEnum;
 
 @Injectable()
-export class CsarProvider {
+export class ClientCsarsService {
     _csars: BehaviorSubject<Csar[]>;
     loading = false;
     res = null;
@@ -23,14 +23,14 @@ export class CsarProvider {
     };
     private requested = false;
 
-    constructor(private messageService: MessageService, public csarService: CsarsService, private platformsProvider: PlatformsProvider) {
+    constructor(private messageService: MessageService, public csarService: CsarsService, private platformsProvider: ClientPlatformsService) {
         this.dataStore = {csars: []};
         this._csars = <BehaviorSubject<Csar[]>>new BehaviorSubject([]);
     }
 
     deleteCsar(csarId: string) {
         this.csarService.deleteCsarUsingDELETE(csarId).subscribe(() => {
-            let csar = this.dataStore.csars.find(item => item.name === csarId);
+            const csar = this.dataStore.csars.find(item => item.name === csarId);
             this.dataStore.csars.splice(this.dataStore.csars.indexOf(csar), 1);
             this.updateSubject();
         }, err => {
@@ -46,7 +46,7 @@ export class CsarProvider {
         console.log('request');
         if (!this.requested) {
             this.requested = true;
-            let observ = this.csarService.listCSARsUsingGET();
+            const observ = this.csarService.listCSARsUsingGET();
             this.res = observ.map(data => {
                 if (isNullOrUndefined(data._embedded)) {
                     return Observable.of();
@@ -65,7 +65,7 @@ export class CsarProvider {
     }
 
     private async createCsarWithTransformations(csars: Array<CsarResponse>) {
-        let res = [];
+        const res = [];
         for (const csar of csars) {
             const transformations = await this.getTransformations(csar.name).toPromise();
             console.log(transformations);
@@ -83,7 +83,6 @@ export class CsarProvider {
         this.csarService.uploadCSARUsingPUT(csar.name, blob).subscribe(value => {
             this.dataStore.csars.push(csar);
             this.updateSubject();
-            console.log(csar);
         }, error => {
             this.messageService.add(new ErrorMessage('CSAR upload failed.'));
         });
@@ -93,9 +92,9 @@ export class CsarProvider {
         this.dataStore.csars.forEach((c, i) => {
             if (c.name === csar.name) {
                 this.dataStore.csars[i] = csar;
+                this.updateSubject();
                 return;
             }
-            this.updateSubject();
         });
     }
 
@@ -134,7 +133,7 @@ export class CsarProvider {
 
     getCsarByName(csarId: string) {
         return this.csarService.getCSARInfoUsingGET(csarId).map(async data => {
-            let res = await this.createCsarWithTransformations([data]);
+            const res = await this.createCsarWithTransformations([data]);
             return res[0];
         }, err => {
             this.messageService.addErrorMessage(`Failed to load the csar "${csarId}"`);

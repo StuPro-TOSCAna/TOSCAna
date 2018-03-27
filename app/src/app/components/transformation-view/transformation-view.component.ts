@@ -1,19 +1,19 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, ParamMap} from '@angular/router';
 import 'rxjs/add/operator/switchMap';
-import {PlatformsProvider} from '../../providers/platforms/platforms.provider';
-import {TransformationsProvider} from '../../providers/transformations/transformations.provider';
+import {ClientPlatformsService} from '../../services/platforms.service';
+import {ClientsTransformationsService} from '../../services/transformations.service';
 import {Transformation} from '../../model/transformation';
 import 'rxjs/add/observable/fromPromise';
 import 'rxjs/add/operator/takeWhile';
-import {RouteHandler} from '../../handler/route/route.service';
+import {RouteHandler} from '../../services/route.service';
 import {InputWrap, LifecyclePhase, OutputWrap, TransformationResponse} from '../../api';
 import {environment} from '../../../environments/environment';
 import {isNullOrUndefined} from 'util';
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/observable/interval';
-import {MessageService} from '../../providers/message/message.service';
-import {CsarProvider} from '../../providers/csar/csar.provider';
+import {MessageService} from '../../services/message.service';
+import {ClientCsarsService} from '../../services/csar.service';
 import {getColorForLifecyclePhase} from '../../helper/helper';
 import TransformationStateEnum = TransformationResponse.StateEnum;
 import  LifecycleStateEnum = LifecyclePhase.StateEnum;
@@ -38,9 +38,9 @@ export class TransformationViewComponent implements OnInit, OnDestroy {
     getColorForLifecyclePhase = getColorForLifecyclePhase;
     LifecycleStateEnum = LifecycleStateEnum;
 
-    constructor(private csarProvider: CsarProvider,
+    constructor(private csarProvider: ClientCsarsService,
                 private messageService: MessageService, private routeHandler: RouteHandler, private route: ActivatedRoute,
-                private transformationProvider: TransformationsProvider, public platformsProvider: PlatformsProvider) {
+                private transformationProvider: ClientsTransformationsService, public platformsProvider: ClientPlatformsService) {
     }
 
     generateDownloadUrl() {
