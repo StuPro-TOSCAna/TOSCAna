@@ -24,6 +24,7 @@ export class CsarMenuSubItemsComponent implements OnInit {
     }
 
     ngOnInit() {
+        // subscribe on view state to receive updates on the current opened transformations
         this.routeHandler.viewState.subscribe(data => {
             if (data instanceof TransformationOpen) {
                 this.viewState = data;
@@ -43,10 +44,10 @@ export class CsarMenuSubItemsComponent implements OnInit {
             this.csar.transformations.splice(pos, 1);
             this.csarProvider.updateCsar(this.csar);
             this.routeHandler.openCsar(this.csar.name);
-        }, err => this.messageService.addErrorMessage('Failed to delete transformation'));
+        }, err => this.messageService.addErrorMessage('Failed to removeMessage transformation'));
     }
 
-    gotoTransformation(platform: string) {
+    openTransformationView(platform: string) {
         this.routeHandler.openTransformation(this.csar.name, platform);
     }
 

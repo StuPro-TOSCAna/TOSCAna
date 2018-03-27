@@ -20,8 +20,12 @@ export class Csar {
     }
 
     successfulParsed() {
-        let valid = true;
         const validStates = [StateEnum.DONE, StateEnum.SKIPPING];
+        return this.checkLifecyclePhasesForGivenStates(validStates);
+    }
+
+    private checkLifecyclePhasesForGivenStates(validStates) {
+        let valid = true;
         this.phases.forEach(phase => {
             if (!(validStates.indexOf(phase.state) !== -1)) {
                 valid = false;
@@ -29,6 +33,11 @@ export class Csar {
             }
         });
         return valid;
+    }
+
+    currentlyParsing() {
+        const invalidPhases = [StateEnum.EXECUTING, StateEnum.PENDING];
+        return this.checkLifecyclePhasesForGivenStates(invalidPhases);
     }
 
     public addTransformation(platform: string, platformFullName: string) {
