@@ -91,7 +91,7 @@
     postcss "^6.0.16"
     postcss-import "^11.0.0"
     postcss-loader "^2.0.10"
-    postcss-downloadUrl "^7.1.2"
+    postcss-url "^7.1.2"
     raw-loader "^0.5.1"
     resolve "^1.1.7"
     rxjs "^5.5.6"
@@ -103,7 +103,7 @@
     stylus "^0.54.5"
     stylus-loader "^3.0.1"
     uglifyjs-webpack-plugin "^1.1.8"
-    downloadUrl-loader "^0.6.2"
+    url-loader "^0.6.2"
     webpack "~3.11.0"
     webpack-dev-middleware "~1.12.0"
     webpack-dev-server "~2.11.0"
@@ -997,7 +997,7 @@ browserify@^14.5.0:
     through2 "^2.0.0"
     timers-browserify "^1.0.1"
     tty-browserify "~0.0.0"
-    downloadUrl "~0.11.0"
+    url "~0.11.0"
     util "~0.10.1"
     vm-browserify "~0.0.1"
     xtend "^4.0.0"
@@ -4376,7 +4376,7 @@ node-libs-browser@^2.0.0:
     string_decoder "^1.0.0"
     timers-browserify "^2.0.4"
     tty-browserify "0.0.0"
-    downloadUrl "^0.11.0"
+    url "^0.11.0"
     util "^0.10.3"
     vm-browserify "0.0.4"
 
@@ -4643,7 +4643,7 @@ original@>=0.0.5:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/original/-/original-1.0.0.tgz#9147f93fa1696d04be61e01bd50baeaca656bd3b"
   dependencies:
-    downloadUrl-parse "1.0.x"
+    url-parse "1.0.x"
 
 os-browserify@^0.3.0, os-browserify@~0.3.0:
   version "0.3.0"
@@ -4964,7 +4964,7 @@ postcss-loader@^2.0.10:
 
 postcss-url@^7.1.2:
   version "7.3.1"
-  resolved "https://registry.yarnpkg.com/postcss-downloadUrl/-/postcss-downloadUrl-7.3.1.tgz#b43ae0f0dae4cd06c831fa3aeac2d7a5b73754ed"
+  resolved "https://registry.yarnpkg.com/postcss-url/-/postcss-url-7.3.1.tgz#b43ae0f0dae4cd06c831fa3aeac2d7a5b73754ed"
   dependencies:
     mime "^1.4.1"
     minimatch "^3.0.4"
@@ -5528,7 +5528,7 @@ resolve-from@^3.0.0:
 
 resolve-url@^0.2.1:
   version "0.2.1"
-  resolved "https://registry.yarnpkg.com/resolve-downloadUrl/-/resolve-downloadUrl-0.2.1.tgz#2c637fe77c893afd2a663fe21aa9080068e2052a"
+  resolved "https://registry.yarnpkg.com/resolve-url/-/resolve-url-0.2.1.tgz#2c637fe77c893afd2a663fe21aa9080068e2052a"
 
 resolve@1.1.7:
   version "1.1.7"
@@ -5944,7 +5944,7 @@ sockjs-client@1.1.4:
     faye-websocket "~0.11.0"
     inherits "^2.0.1"
     json3 "^3.3.2"
-    downloadUrl-parse "^1.1.8"
+    url-parse "^1.1.8"
 
 sockjs@0.3.19:
   version "0.3.19"
@@ -5989,8 +5989,8 @@ source-map-resolve@^0.5.0:
   dependencies:
     atob "^2.0.0"
     decode-uri-component "^0.2.0"
-    resolve-downloadUrl "^0.2.1"
-    source-map-downloadUrl "^0.4.0"
+    resolve-url "^0.2.1"
+    source-map-url "^0.4.0"
     urix "^0.1.0"
 
 source-map-support@^0.4.0, source-map-support@^0.4.1, source-map-support@~0.4.0:
@@ -6007,7 +6007,7 @@ source-map-support@^0.5.0:
 
 source-map-url@^0.4.0:
   version "0.4.0"
-  resolved "https://registry.yarnpkg.com/source-map-downloadUrl/-/source-map-downloadUrl-0.4.0.tgz#3e935d7ddd73631b97659956d55128e87b5084a3"
+  resolved "https://registry.yarnpkg.com/source-map-url/-/source-map-url-0.4.0.tgz#3e935d7ddd73631b97659956d55128e87b5084a3"
 
 source-map@0.1.x:
   version "0.1.43"
@@ -6674,7 +6674,7 @@ urix@^0.1.0:
 
 url-loader@^0.6.2:
   version "0.6.2"
-  resolved "https://registry.yarnpkg.com/downloadUrl-loader/-/downloadUrl-loader-0.6.2.tgz#a007a7109620e9d988d14bce677a1decb9a993f7"
+  resolved "https://registry.yarnpkg.com/url-loader/-/url-loader-0.6.2.tgz#a007a7109620e9d988d14bce677a1decb9a993f7"
   dependencies:
     loader-utils "^1.0.2"
     mime "^1.4.1"
@@ -6682,21 +6682,21 @@ url-loader@^0.6.2:
 
 url-parse@1.0.x:
   version "1.0.5"
-  resolved "https://registry.yarnpkg.com/downloadUrl-parse/-/downloadUrl-parse-1.0.5.tgz#0854860422afdcfefeb6c965c662d4800169927b"
+  resolved "https://registry.yarnpkg.com/url-parse/-/url-parse-1.0.5.tgz#0854860422afdcfefeb6c965c662d4800169927b"
   dependencies:
     querystringify "0.0.x"
     requires-port "1.0.x"
 
 url-parse@^1.1.8:
   version "1.2.0"
-  resolved "https://registry.yarnpkg.com/downloadUrl-parse/-/downloadUrl-parse-1.2.0.tgz#3a19e8aaa6d023ddd27dcc44cb4fc8f7fec23986"
+  resolved "https://registry.yarnpkg.com/url-parse/-/url-parse-1.2.0.tgz#3a19e8aaa6d023ddd27dcc44cb4fc8f7fec23986"
   dependencies:
     querystringify "~1.0.0"
     requires-port "~1.0.0"
 
 url@^0.11.0, url@~0.11.0:
   version "0.11.0"
-  resolved "https://registry.yarnpkg.com/downloadUrl/-/downloadUrl-0.11.0.tgz#3838e97cfc60521eb73c525a8e55bfdd9e2e28f1"
+  resolved "https://registry.yarnpkg.com/url/-/url-0.11.0.tgz#3838e97cfc60521eb73c525a8e55bfdd9e2e28f1"
   dependencies:
     punycode "1.3.2"
     querystring "0.2.0"
