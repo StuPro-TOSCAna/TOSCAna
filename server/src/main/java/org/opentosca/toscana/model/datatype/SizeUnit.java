@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
  */
 public class SizeUnit {
 
-    // useful to set directives in a ToscaKey
+    // used to access directives in a ToscaKey
     public static final String TO = "to";
     public static final String FROM = "from";
 
@@ -61,7 +61,7 @@ public class SizeUnit {
         return result;
     }
 
-    public static enum Unit {
+    public enum Unit {
         B,
         kB,
         KiB,

@@ -57,7 +57,9 @@ public class ExportingImageBuilderIT extends BaseDockerfileTest {
     @After
     public void tearDown() throws Exception {
         logger.info("Cleanup");
-        imageBuilder.cleanup();
+        if (imageBuilder != null) {
+            imageBuilder.cleanup();
+        }
     }
 
     public ImageBuilder instantiateImageBuilder(TransformationContext context) throws Exception {

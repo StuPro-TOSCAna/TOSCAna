@@ -3,7 +3,7 @@ package org.opentosca.toscana.model.artifact;
 import java.util.Optional;
 
 import org.opentosca.toscana.core.parse.model.MappingEntity;
-import org.opentosca.toscana.model.DescribableEntity;
+import org.opentosca.toscana.model.DescribableElement;
 import org.opentosca.toscana.model.datatype.Credential;
 import org.opentosca.toscana.model.util.ToscaKey;
 
@@ -17,7 +17,7 @@ import lombok.ToString;
 
 @EqualsAndHashCode
 @ToString
-public class Repository extends DescribableEntity {
+public class Repository extends DescribableElement {
 
     /**
      The URL used to access the repository.

@@ -22,9 +22,12 @@ import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.slf4j.Logger;
 
+/**
+ Provides the node templates of a TOSCA service template as convenient graph structure.
+ Also grants access to the TOSCA inputs and TOSCA outputs defined in the TOSCA service template.
+ */
 public class EffectiveModel {
 
-    private final Log log;
     private final Logger logger;
 
     private final Graph<RootNode, RootRelationship> topology =
@@ -38,7 +41,6 @@ public class EffectiveModel {
     }
 
     protected EffectiveModel(File template, Log log) {
-        this.log = log;
         this.logger = log.getLogger(getClass());
         logger.info("Constructing TOSCA element graph");
         this.serviceGraph = new ServiceGraph(template, log);

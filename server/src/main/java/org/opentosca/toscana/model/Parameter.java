@@ -13,11 +13,11 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 /**
- Represents an input or output parameter
+ Represents a TOSCA input or output parameter.
  */
 @EqualsAndHashCode
 @ToString
-public class Parameter extends DescribableEntity implements InputProperty {
+public class Parameter extends DescribableElement implements InputProperty {
 
     public static final ToscaKey<String> TYPE = new ToscaKey<>("type");
 
@@ -67,10 +67,8 @@ public class Parameter extends DescribableEntity implements InputProperty {
     @Override
     public void setValue(String value) {
         set(VALUE, value);
-        finalizeGraph();
-    }
 
-    private void finalizeGraph() {
+        // in case all required inputs are set, finalize the ServiceGraph
         ServiceGraph graph = getBackingEntity().getGraph();
         if (graph.inputsValid()) {
             graph.finalizeGraph();

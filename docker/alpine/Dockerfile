@@ -5,9 +5,8 @@ ADD build-toscana.sh .
 RUN apt-get update && apt-get upgrade -y
 RUN apt-get install -y maven git
 RUN ./build-toscana.sh
-# This image is based on the Docker in Docker image (needs --privileged to work correctly)
-# If the privileged flag is missing this image will not support kubernetes based transformations
-FROM docker:stable-dind
+# This image Uses the Docker Socket as a volume
+FROM docker:stable
 WORKDIR /toscana
 VOLUME /toscana/data
 # Mount the AWS Directory as volume (used to store Credentials)
@@ -20,4 +19,4 @@ RUN apk add --update --no-cache bash && \
 EXPOSE 8080
 ENV DATADIR="/toscana/data"
 ENV SERVER_PORT="8080"
-ENTRYPOINT ./toscana-dind-entrypoint.sh
+ENTRYPOINT ./toscana-entrypoint.sh

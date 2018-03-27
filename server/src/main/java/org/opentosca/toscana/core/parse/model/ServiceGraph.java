@@ -37,16 +37,25 @@ import org.yaml.snakeyaml.nodes.NodeTuple;
 import org.yaml.snakeyaml.nodes.ScalarNode;
 import org.yaml.snakeyaml.nodes.SequenceNode;
 
+/**
+ Represents the content of a service template as a graph.
+ <p>
+ Please consult the developer documentation for further details.
+ */
 public class ServiceGraph extends SimpleDirectedGraph<Entity, Connection> {
 
     private final MappingEntity root;
     private final Log log;
     private final Logger logger;
 
-    // guard that makes sure graph finalization can only be done once
+    // guard that makes sure graph finalization can only be executed once
     private boolean finalized = false;
     private Map<String, InputProperty> inputs;
 
+    /**
+     Constructs an empty service graph (with no underlying service template).
+     Serves mainly for testing purposes.
+     */
     public ServiceGraph(Log log) {
         super((sourceVertex, targetVertex) -> new Connection(targetVertex.getName(), sourceVertex, targetVertex));
         this.log = log;
@@ -56,6 +65,11 @@ public class ServiceGraph extends SimpleDirectedGraph<Entity, Connection> {
         addVertex(root);
     }
 
+    /**
+     Constructs a service graph which represents the content of given service template.
+
+     @param template a valid TOSCA yaml service template
+     */
     public ServiceGraph(File template, Log log) {
         this(log);
         try {
@@ -74,6 +88,12 @@ public class ServiceGraph extends SimpleDirectedGraph<Entity, Connection> {
         }
     }
 
+    /**
+     Adds the information of given SnakeYAML node and all of its child nodes to this service graph.
+
+     @param node SnakeYAML's node
+     @param id   the id which shall be used to identify given node
+     */
     private void populateGraph(Node node, EntityId id) {
         if (node instanceof ScalarNode) {
             ScalarNode scalarNode = (ScalarNode) node;

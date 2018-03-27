@@ -12,6 +12,9 @@ import org.opentosca.toscana.model.util.ToscaKey;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+/**
+ Provides means to access the data of the attached {@code MappingEntity} in a type-safe but generic way.
+ */
 @EqualsAndHashCode
 @ToString
 public abstract class BaseToscaElement {
@@ -30,9 +33,11 @@ public abstract class BaseToscaElement {
         this.name = mappingEntity.getName();
     }
 
+    /**
+     Gets the value related with given key.
+     */
     public <T> T get(ToscaKey<T> key) {
-        T value = mappingEntity.getValue(key);
-        return value;
+        return mappingEntity.getValue(key);
     }
 
     public <T> Collection<T> getCollection(ToscaKey<T> key) {
@@ -50,6 +55,9 @@ public abstract class BaseToscaElement {
         return results;
     }
 
+    /**
+     Sets the value related with given key to given value.
+     */
     public <T> void set(ToscaKey<T> key, T value) {
         mappingEntity.setValue(key, value);
     }
@@ -63,7 +71,7 @@ public abstract class BaseToscaElement {
             mappingEntity.setValue(key, value);
         }
     }
-    
+
     public String getEntityName() {
         return name;
     }
