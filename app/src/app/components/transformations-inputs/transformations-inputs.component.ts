@@ -1,23 +1,23 @@
 import {Component, OnInit} from '@angular/core';
 import {InputWrap, TransformationResponse} from '../../api';
-import {TransformationsProvider} from '../../providers/transformations/transformations.provider';
+import {ClientsTransformationsService} from '../../services/transformations.service';
 import {ActivatedRoute, ParamMap} from '@angular/router';
-import {CsarProvider} from '../../providers/csar/csar.provider';
+import {ClientCsarsService} from '../../services/csar.service';
 import {Csar} from '../../model/csar';
-import {RouteHandler} from '../../handler/route/route.service';
-import {PlatformsProvider} from '../../providers/platforms/platforms.provider';
+import {RouteHandler} from '../../services/route.service';
+import {ClientPlatformsService} from '../../services/platforms.service';
 import {TransformationInterface} from '../../model/transformation';
 import {isNullOrUndefined} from 'util';
-import {MessageService} from '../../providers/message/message.service';
+import {MessageService} from '../../services/message.service';
 import StateEnum = TransformationResponse.StateEnum;
 import TypeEnum = InputWrap.TypeEnum;
 
 @Component({
-    selector: 'app-input',
-    templateUrl: './input.component.html',
-    styleUrls: ['./input.component.scss']
+    selector: 'app-transformation-inputs',
+    templateUrl: './transformations-inputs.component.html',
+    styleUrls: ['./transformations-inputs.component.scss']
 })
-export class InputComponent implements OnInit {
+export class TransformationInputsComponent implements OnInit {
     selectedPlatform: string;
     csarId: string;
     invalid = 'invalid';
@@ -28,9 +28,9 @@ export class InputComponent implements OnInit {
     everythingValid = true;
 
     constructor(private messageService: MessageService, private routeHandler: RouteHandler,
-                private transformationsProvider: TransformationsProvider,
-                private csarsProvider: CsarProvider,
-                private platformsProvider: PlatformsProvider,
+                private transformationsProvider: ClientsTransformationsService,
+                private csarsProvider: ClientCsarsService,
+                private platformsProvider: ClientPlatformsService,
                 private route: ActivatedRoute) {
     }
 
@@ -65,10 +65,8 @@ export class InputComponent implements OnInit {
     change(item: InputWrap, input: string) {
         item.value = input;
         const parse = this.validateProperty(item);
-        item.valid = true;
-        if (item.required && ((item.value === null || item.value === ''))) {
-            item.valid = false;
-        }
+
+        item.valid = !(item.required && ((item.value === null || item.value === '')));
         if (!parse) {
             item.valid = false;
         }

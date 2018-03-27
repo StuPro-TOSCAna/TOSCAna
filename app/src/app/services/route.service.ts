@@ -2,11 +2,6 @@ import {Injectable} from '@angular/core';
 import {Router} from '@angular/router';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 
-export interface ActiveTransformation {
-    csarId: string;
-    platform: string;
-}
-
 export class ViewState {
     csarId: string;
 

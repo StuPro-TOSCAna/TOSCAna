@@ -1,20 +1,20 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {PlatformsProvider} from '../../providers/platforms/platforms.provider';
+import {ClientPlatformsService} from '../../services/platforms.service';
 import {PlatformResponse} from '../../api';
-import {TransformationsProvider} from '../../providers/transformations/transformations.provider';
+import {ClientsTransformationsService} from '../../services/transformations.service';
 import {Csar} from '../../model/csar';
 import {ActivatedRoute} from '@angular/router';
-import {CsarProvider} from '../../providers/csar/csar.provider';
+import {ClientCsarsService} from '../../services/csar.service';
 import {isNullOrUndefined} from 'util';
-import {RouteHandler} from '../../handler/route/route.service';
+import {RouteHandler} from '../../services/route.service';
 import 'rxjs/add/observable/fromPromise';
 
 @Component({
-    selector: 'app-new-transformation-modal',
-    templateUrl: './new-transformation-modal.component.html',
-    styleUrls: ['./new-transformation-modal.component.scss']
+    selector: 'app-transformation-creator',
+    templateUrl: './transformation-creator.component.html',
+    styleUrls: ['./transformation-creator.component.scss']
 })
-export class NewTransformationModalComponent implements OnInit {
+export class TransformationCreatorComponent implements OnInit {
     @ViewChild('template')
     template;
     csar: Csar;
@@ -25,12 +25,9 @@ export class NewTransformationModalComponent implements OnInit {
     platformSelected = false;
     selectPlatformString = 'Select Platform';
     isNullOrUndefined = isNullOrUndefined;
-    config = {
-        animated: true,
-    };
 
-    constructor(private csarsProvider: CsarProvider, private platformsProvider: PlatformsProvider,
-                private transformationProvider: TransformationsProvider, private route: ActivatedRoute,
+    constructor(private csarsProvider: ClientCsarsService, private platformsProvider: ClientPlatformsService,
+                private transformationProvider: ClientsTransformationsService, private route: ActivatedRoute,
                 private routeHandler: RouteHandler) {
         this.title = this.selectPlatformString;
     }

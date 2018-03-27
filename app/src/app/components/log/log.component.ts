@@ -1,10 +1,10 @@
 import {Component, HostListener, Input, OnChanges, OnInit, SimpleChange} from '@angular/core';
-import {TransformationsProvider} from '../../providers/transformations/transformations.provider';
+import {ClientsTransformationsService} from '../../services/transformations.service';
 import {LogEntry} from '../../api/index';
 import 'rxjs/add/operator/takeWhile';
-import {CsarProvider} from '../../providers/csar/csar.provider';
+import {ClientCsarsService} from '../../services/csar.service';
 import {isNullOrUndefined} from 'util';
-import {MessageService} from '../../providers/message/message.service';
+import {MessageService} from '../../services/message.service';
 
 @Component({
     selector: 'app-log',
@@ -23,8 +23,8 @@ export class LogComponent implements OnInit, OnChanges {
     validLogLevels = this.logLevels;
     scrollToTop = false;
 
-    constructor(private messageService: MessageService, private transformationProvider: TransformationsProvider,
-                private csarsProvider: CsarProvider) {
+    constructor(private messageService: MessageService, private transformationProvider: ClientsTransformationsService,
+                private csarsProvider: ClientCsarsService) {
     }
 
     getColor(level: string) {
@@ -43,7 +43,7 @@ export class LogComponent implements OnInit, OnChanges {
     }
 
     setLogLevel() {
-        let index = this.logLevels.indexOf(this.logLevel);
+        const index = this.logLevels.indexOf(this.logLevel);
         this.validLogLevels = this.logLevels.slice(index, this.logLevels.length);
         this.visibleLogs = this.logs.filter(item =>
             this.validLogLevels.indexOf(item.level.toLowerCase()) !== -1);
@@ -86,7 +86,7 @@ export class LogComponent implements OnInit, OnChanges {
         if (this.last !== data.end) {
             let logs: LogEntry[] = data.logs;
             for (let i = 0; i < logs.length; i++) {
-                let item: LogEntry = logs[i];
+                const item: LogEntry = logs[i];
                 item.message = item.message.replace(/\ /g, '&nbsp;');
                 if (item.context === 'EOL') {
                     logs = logs.splice(i, 1);
