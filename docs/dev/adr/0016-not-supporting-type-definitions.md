@@ -3,7 +3,6 @@
 **User Story:** 
 
 Should *TOSCAna* support node type definitions in the TOSCA service template?
-*[decision drivers | forces]* <!-- optional -->
 
 ## Considered Alternatives
 
