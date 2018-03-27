@@ -30,7 +30,7 @@ public class OutputIT extends BaseSpringIntegrationTest {
     @Test
     public void outputTest() throws IOException, TOSCAnaServerException {
         String csarName = "outputCsar";
-        api.uploadCsar(csarName, TestCsars.VALID_OUTPUTS);
+        api.uploadCsar(csarName, TestCsars.Testing.OUTPUTS);
         String platformId = "kubernetes";
         api.createTransformation(csarName, platformId);
         api.startTransformation(csarName, platformId);

@@ -21,7 +21,7 @@ public class GetInputsIT extends BaseSpringIntegrationTest {
     public void getInputsAfterTransformationTest() throws IOException, TOSCAnaServerException {
         ToscanaApi api = new BlockingToscanaApi(getHttpUrl());
         String csarName = "csarname";
-        api.uploadCsar(csarName, TestCsars.VALID_EMPTY_TOPOLOGY);
+        api.uploadCsar(csarName, TestCsars.Testing.EMPTY_TOPOLOGY);
         String platformId = "kubernetes";
         api.createTransformation(csarName, platformId);
         api.startTransformation(csarName, platformId);

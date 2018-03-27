@@ -7,7 +7,7 @@ import org.opentosca.toscana.model.EntityId;
 import com.google.common.collect.Lists;
 
 /**
- Contains the IDs of common elements of the service template
+ Contains the IDs which represent the common elements found in a service template
  */
 public class ToscaStructure {
 

@@ -1,0 +1,43 @@
+site_name: TOSCAna
+theme: readthedocs
+repo_name: 'StuPro-TOSCAna/TOSCAna'
+repo_url: 'https://github.com/StuPro-TOSCAna/TOSCAna'
+extra:
+  social:
+    - type: 'github'
+      link: 'https://github.com/StuPro-TOSCAna/TOSCAna'
+pages:
+    - Home: 'index.md'
+    - 'User Documentation':
+      - 'Getting started': 'user/getting-started.md'
+      - 'Running with Docker': 'user/docker.md'
+    - Developer Documentation:
+        - "Architectural Decision Records":
+            - "0000 - Use Markdown Architectural Decision Records": "dev/adr/0000-use-markdown-architectural-decision-records.md"
+            - "0001 - Use custom model for transformations": "dev/adr/0001-model-for-transformations.md"
+            - "0002 - Design a general plugin architecture": "dev/adr/0002-general-plugin-architecture.md"
+            - "0003 - Use lombok in order to avoid writing boilerplate code": "dev/adr/0003-lombok.md"
+            - "0004 - Use Spring Framework for the REST-API": "dev/adr/0004-spring-framework.md"
+            - "0005 - Use Springfox for API documentation": "dev/adr/0005-springfox.md"
+            - "0006 - Bash Script Generator": "dev/adr/0006-bash-script-generator.md"
+            - "0007 - Use AWS CLI to deploy generated CloudFormation templates": "dev/adr/0007-plugin-cloudformation-cli.md"
+            - "0008 - How to perform Kubernetes end to end tests": "dev/adr/0008-kubernetes-end-to-end-tests.md"
+            - "0009 - CloudFoundry CLI": "dev/adr/0009-cloudfoundry-cli.md"
+            - "0010 - How to perform Kubernetes end to end tests": "dev/adr/0010-use-docker-java.md"
+            - "0011 - Put Integration Tests in seperate source directory": "dev/adr/0011-put-integration-tests-in-seperate-folder.md"
+            - "0012 - Use java CloudFoundry Library": "dev/adr/0012-cf-java-library.md"
+            - "0013 - Use AWS SDK for java": "dev/adr/0013-aws-file-upload.md"
+            - "0014 - Navigate EffectiveModel with visitor pattern": "dev/adr/0014-iterate-effectivemodel-with-visitor-pattern.md"
+            - "0015 - Use filesystem for persistency": "dev/adr/0015-persist-to-filesystem.md"
+            - "0017 - Implement own TOSCA parser": "dev/adr/0017-implement-own-tosca-parser.md"
+        - CLI:
+            - Architecture: 'dev/cli/cli-architecture.md'
+            - Commands: 'dev/cli/cli-commands.md'
+        - 'TOSCA model':
+          - "EffectiveModel": "dev/model/effective-model.md"
+          - "TOSCA Type Support": "dev/model/type-support.md"
+          - "TOSCA Elements": "dev/model/tosca-elements.md"
+          - "ServiceGraph": "dev/model/servicegraph.md"
+          - "Code Templates": "dev/model/code-templates.md"
+          -  "Outlook": "dev/model/outlook.md"
+

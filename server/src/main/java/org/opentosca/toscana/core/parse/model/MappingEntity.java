@@ -7,7 +7,7 @@ import org.opentosca.toscana.core.parse.converter.util.AttributeNotSetException;
 import org.opentosca.toscana.model.EntityId;
 import org.opentosca.toscana.model.util.ToscaKey;
 
-public class MappingEntity extends Entity implements CollectionEntity {
+public class MappingEntity extends Entity {
 
     public MappingEntity(EntityId id, ServiceGraph graph) {
         super(id, graph);
@@ -51,10 +51,5 @@ public class MappingEntity extends Entity implements CollectionEntity {
             graph.addEntity(child);
         }
         return child;
-    }
-
-    @Override
-    public void addChild(Entity entity) {
-        // todo
     }
 }

@@ -13,11 +13,15 @@ import org.opentosca.toscana.plugins.kubernetes.docker.util.DockerRegistryCreden
 import org.opentosca.toscana.plugins.kubernetes.model.transform.RelationshipGraph;
 import org.opentosca.toscana.plugins.kubernetes.util.NodeStack;
 import org.opentosca.toscana.plugins.kubernetes.util.ScriptHelper;
+import org.opentosca.toscana.plugins.util.ReadmeBuilder;
 import org.opentosca.toscana.plugins.util.TransformationFailureException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 class TransformHandler extends LifecycleHandler {
+
+    private static final String KUBERNETES_README_TITLE = "TOSCAna - Kubernetes Transformation - Readme";
+    private static final String KUBERNETES_README_PATH = "/kubernetes/kubernetes-transformation-readme.md";
 
     private final BaseImageMapper baseImageMapper;
     private final boolean pushToRegistry;
@@ -39,6 +43,22 @@ class TransformHandler extends LifecycleHandler {
         buildDockerImages();
         createKubernetesResources();
         writeHelperScripts();
+        writeReadme();
+    }
+
+    private void writeReadme() {
+        logger.info("Writing Readme");
+        ReadmeBuilder builder = ReadmeBuilder.fromMarkdownResource(
+            KUBERNETES_README_TITLE,
+            KUBERNETES_README_PATH,
+            lifecycle.getContext()
+        );
+        try {
+            lifecycle.getContext().getPluginFileAccess()
+                .access("/readme.html").append(builder.toString()).close();
+        } catch (IOException e) {
+            logger.warn("Writing the Readme has Failed!", e);
+        }
     }
 
     /**

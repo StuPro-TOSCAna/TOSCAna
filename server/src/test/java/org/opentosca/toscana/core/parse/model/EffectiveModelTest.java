@@ -19,7 +19,7 @@ public class EffectiveModelTest extends BaseUnitTest {
 
     @Test
     public void inputTest() {
-        EffectiveModel model = new EffectiveModelFactory().create(TestCsars.VALID_INPUTS_TEMPLATE, logMock());
+        EffectiveModel model = new EffectiveModelFactory().create(TestCsars.Testing.INPUTS_TEMPLATE, logMock());
         Map<String, InputProperty> inputs = model.getInputs();
         assertNotNull(inputs);
         assertEquals(4, inputs.size());
@@ -32,7 +32,7 @@ public class EffectiveModelTest extends BaseUnitTest {
 
     @Test
     public void outputTest() {
-        EffectiveModel model = new EffectiveModelFactory().create(TestCsars.VALID_OUTPUTS_TEMPLATE, logMock());
+        EffectiveModel model = new EffectiveModelFactory().create(TestCsars.Testing.OUTPUTS_TEMPLATE, logMock());
         Map<String, OutputProperty> outputs = model.getOutputs();
         assertNotNull(outputs);
         assertEquals(1, outputs.size());

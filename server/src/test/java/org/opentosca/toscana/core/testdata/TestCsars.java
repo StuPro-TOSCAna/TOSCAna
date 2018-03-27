@@ -16,12 +16,11 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class TestCsars {
 
-    final static File CSAR_DIR = new File("src/test/resources/csars");
-    final static File YAML_DIR = new File(CSAR_DIR, "yaml");
+    private final static File CSAR_DIR = new File("src/test/resources/csars");
+    private final static File YAML_DIR = new File(CSAR_DIR, "yaml");
 
     // yaml csars
-    public final static File VALID_EMPTY_TOPOLOGY = new File(YAML_DIR, "valid/empty-topology.csar");
-    public final static File VALID_EMPTY_TOPOLOGY_TEMPLATE = new File(YAML_DIR, "valid/empty-topology/template.yaml");
+    // Valid CSARs
     public final static File VALID_MINIMAL_DOCKER = new File(YAML_DIR, "valid/minimal-docker.csar");
     public final static File VALID_MINIMAL_DOCKER_TEMPLATE = new File(YAML_DIR, "valid/minimal-docker/minimal-docker.yaml");
     public final static File VALID_LAMP_NO_INPUT = new File(YAML_DIR, "valid/lamp-noinput.csar");
@@ -29,22 +28,19 @@ public class TestCsars {
     public final static File VALID_LAMP_NO_INPUT_MULTI_COMPUTE_TEMPLATE = new File(YAML_DIR, "valid/lamp-multinode/template.yaml");
     public final static File VALID_LAMP_INPUT = new File(YAML_DIR, "valid/lamp-input.csar");
     public final static File VALID_LAMP_INPUT_TEMPLATE = new File(YAML_DIR, "valid/lamp-input/template.yaml");
-    public final static File VALID_INPUTS = new File(YAML_DIR, "valid/inputs.csar");
-    public final static File VALID_INPUTS_TEMPLATE = new File(YAML_DIR, "valid/inputs/inputs.yaml");
-    public final static File VALID_OUTPUTS = new File(YAML_DIR, "valid/outputs.csar");
-    public final static File VALID_OUTPUTS_TEMPLATE = new File(YAML_DIR, "valid/outputs/outputs.yaml");
-    public static final File VALID_SINGLE_COMPUTE_WINDOWS_TEMPLATE = new File(YAML_DIR, "valid/single-compute-windows/single-compute-windows.yaml");
-    public static final File VALID_SINGLE_COMPUTE_UBUNTU_TEMPLATE = new File(YAML_DIR, "valid/single-compute-ubuntu/single-compute-ubuntu.yaml");
-    public static final File VALID_EXPRESS = new File(YAML_DIR, "valid/express.csar");
-    public static final File VALID_EXPRESS_TEMPLATE = new File(YAML_DIR, "valid/express/template.yml");
+    public final static File VALID_SINGLE_COMPUTE_WINDOWS_TEMPLATE = new File(YAML_DIR, "valid/single-compute-windows/single-compute-windows.yaml");
+    public final static File VALID_SINGLE_COMPUTE_UBUNTU_TEMPLATE = new File(YAML_DIR, "valid/single-compute-ubuntu/single-compute-ubuntu.yaml");
+    public final static File VALID_EXPRESS = new File(YAML_DIR, "valid/express.csar");
+    public final static File VALID_EXPRESS_TEMPLATE = new File(YAML_DIR, "valid/express/template.yml");
     public final static File VALID_SCALED_DOCKER_TEMPLATE = new File(YAML_DIR, "valid/scale-docker/template.yml");
-    public static final File VALID_TASKTRANSLATOR = new File(YAML_DIR, "valid/task-translator.csar");
-    public static final File VALID_TASKTRANSLATOR_TEMPLATE = new File(YAML_DIR, "valid/task-translator/template.yaml");
+    public final static File VALID_TASKTRANSLATOR = new File(YAML_DIR, "valid/task-translator.csar");
+    public final static File VALID_TASKTRANSLATOR_TEMPLATE = new File(YAML_DIR, "valid/task-translator/template.yaml");
+    public final static File VALID_GOPHER = new File(YAML_DIR, "valid/gopher.csar");
+    public final static File VALID_GOPHER_TEMPLATE = new File(YAML_DIR, "valid/gopher/template.yml");
 
+    // Invalid CSARs
     public final static File INVALID_DEPENDENCIES_MISSING = new File(YAML_DIR, "invalid/dependencies_missing.csar");
     public final static File INVALID_DOCKERAPP_MISSING = new File(YAML_DIR, "invalid/dockerapp_missing.csar");
-    public final static File INVALID_ENTRYPOINT_MISSING = new File(YAML_DIR, "invalid/entrypoint_missing.csar");
-    public final static File INVALID_ENTRYPOINT_AMBIGUOUS = new File(YAML_DIR, "invalid/entrypoint_ambiguous.csar");
 
     @Autowired
     private CsarDao csarDao;
@@ -70,5 +66,22 @@ public class TestCsars {
     public Csar getCsar(String identifier, File file) throws FileNotFoundException {
         Csar csar = csarDao.create(identifier, new FileInputStream(file));
         return csar;
+    }
+
+    public static final class Testing {
+        private final static File BASE_DIR = new File(YAML_DIR, "testing_only");
+        
+        public final static File OUTPUTS = new File(BASE_DIR, "outputs.csar");
+        public final static File OUTPUTS_TEMPLATE = new File(BASE_DIR, "outputs/outputs.yaml");
+        
+        public final static File INPUTS = new File(BASE_DIR, "inputs.csar");
+        public final static File INPUTS_TEMPLATE = new File(BASE_DIR, "inputs/inputs.yaml");
+        
+        public final static File EMPTY_TOPOLOGY = new File(BASE_DIR, "empty-topology.csar");
+        public final static File EMPTY_TOPOLOGY_TEMPLATE = new File(BASE_DIR, "empty-topology/template.yaml");
+        
+        public final static File ENTRYPOINT_MISSING = new File(BASE_DIR, "entrypoint_missing.csar");
+        
+        public final static File ENTRYPOINT_AMBIGUOUS = new File(BASE_DIR, "entrypoint_ambiguous.csar");
     }
 }

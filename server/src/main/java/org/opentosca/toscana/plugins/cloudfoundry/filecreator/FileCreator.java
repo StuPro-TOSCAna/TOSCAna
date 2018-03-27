@@ -1,6 +1,7 @@
 package org.opentosca.toscana.plugins.cloudfoundry.filecreator;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,7 @@ import org.opentosca.toscana.plugins.scripts.BashScript;
 import org.opentosca.toscana.plugins.scripts.EnvironmentCheck;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.IOUtils;
 import org.json.JSONException;
 import org.slf4j.Logger;
 
@@ -37,6 +39,8 @@ public class FileCreator {
     public static final String MANIFEST_NAME = "manifest.yml";
     public static final String MANIFEST_PATH = OUTPUT_DIR + MANIFEST_NAME;
     public static final String MANIFESTHEAD = "---\napplications:";
+    public static final String SERVICE_FILE_NAME = "all_services.txt";
+    public static final String SERVICE_FILE_PATH = OUTPUT_DIR + SERVICE_FILE_NAME;
     public static final String NAMEBLOCK = "name";
     public static final String CLI_CREATE_SERVICE_DEFAULT = "cf create-service {plan} {service} ";
     public static final String CLI_CREATE_SERVICE = "cf create-service ";
@@ -53,7 +57,7 @@ public class FileCreator {
     private TransformationContext context;
     private Logger logger;
     private List<String> seenConfiguredServices = new ArrayList<>();
-    
+
     // this list contains services which are already matched to a service of a provider and already created.
     private List<String> alreadyHandledServices = new ArrayList<>();
 
@@ -85,6 +89,8 @@ public class FileCreator {
             insertFiles(application);
             createEnvironmentConfigFile(application, application.getEnvironmentVariables());
         }
+        logger.info("Create readme text file");
+        createReadme();
     }
 
     /**
@@ -201,6 +207,17 @@ public class FileCreator {
             deploy_name += "s";
         }
         BashScript deployScript = new BashScript(fileAccess, FILEPRAEFIX_DEPLOY + deploy_name);
+        deployScript.append("echo \"$(tput bold)--------TOSCAna Cloud Foundry deployment--------$(tput sgr0)\"");
+        deployScript.append("echo \"This script will deploy your application to the Cloud Foundry instance\"");
+        deployScript.append("echo \"We use the CloudFoundry CLI and show you the output as well\"");
+        deployScript.append("echo \"Is there no CF CLI installed we have to stop, we will check it\"");
+        deployScript.append("echo \"We will deploy the application to the connected provider\"");
+        deployScript.append("echo \"If you use a Cloud Foundry service with your application, " +
+            "you are able to change the service or plan in this deploy script manually\"");
+        deployScript.append("echo \"We tried to choose a suitable service with a free plan\"");
+        deployScript.append("echo \"You could check all possible services in the file$(tput bold) " + SERVICE_FILE_PATH + " $(tput sgr0)\"");
+        deployScript.append("echo \"$(tput bold)--------TOSCAna Cloud Foundry deployment$(tput sgr0)--------\n\"");
+
         deployScript.append(EnvironmentCheck.checkEnvironment("cf"));
 
         //handle services
@@ -232,6 +249,8 @@ public class FileCreator {
             //execute
             executeFiles(deployment, application);
         }
+        deployScript.append("echo \"\n\n$(tput bold)The deployment of your application is finished. You see the urls of your apps here:$(tput sgr0)\n\"");
+        deployScript.append("cf routes");
     }
 
     /**
@@ -286,7 +305,7 @@ public class FileCreator {
         for (Application application : applications) {
             Deployment deployment = new Deployment(deployScript, application, fileAccess, context);
 
-            //only one time all service offerings should be printed to the deploy script
+            //only one time all service offerings should be printed
             this.alreadyHandledServices = deployment.treatServices(alreadyHandledServices);
         }
     }
@@ -358,5 +377,27 @@ public class FileCreator {
             logger.debug("Copy file {} to {}", filePath, path);
             fileAccess.copy(filePath, path);
         }
+    }
+
+    /**
+     create a readme for a transformation. Inserts the application names.
+     */
+    private void createReadme() throws IOException {
+        Class fileCreatorClass = FileCreator.class;
+        String README_SOURCE = "/cloudFoundry/readme.txt";
+        String REAMDE_FILENAME = "README.txt";
+        InputStream inputStream = fileCreatorClass.getResourceAsStream(README_SOURCE);
+        String contentFile = IOUtils.toString(inputStream);
+        inputStream.close();
+
+        logger.debug("Add application folder names to readme");
+        String applicationList = "";
+        for (Application application : applications) {
+            applicationList = applicationList + "  - app" + application.getApplicationNumber() + "\n";
+        }
+
+        contentFile = contentFile.replaceAll("application_names", applicationList);
+
+        fileAccess.access(OUTPUT_DIR + REAMDE_FILENAME).appendln(contentFile).close();
     }
 }

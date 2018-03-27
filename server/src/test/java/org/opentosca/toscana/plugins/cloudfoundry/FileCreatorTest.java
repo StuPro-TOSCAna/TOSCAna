@@ -29,6 +29,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeNotNull;
+import static org.opentosca.toscana.core.plugin.lifecycle.AbstractLifecycle.OUTPUT_DIR;
 import static org.opentosca.toscana.plugins.cloudfoundry.ServiceTest.CF_ENVIRONMENT_HOST;
 import static org.opentosca.toscana.plugins.cloudfoundry.ServiceTest.CF_ENVIRONMENT_ORGA;
 import static org.opentosca.toscana.plugins.cloudfoundry.ServiceTest.CF_ENVIRONMENT_PW;
@@ -108,11 +109,13 @@ public class FileCreatorTest extends BaseUnitTest {
         File deployFile = new File(targetDir, outputPath + FILEPRAEFIX_DEPLOY + deploy_name + FILESUFFIX_DEPLOY);
         File buildPackAdditions = new File(targetDir, "/" + APPLICATION_FOLDER + testApp.getApplicationNumber() + "/" + BUILDPACK_FILEPATH_PHP);
         File environmentConfig = new File(targetDir, outputPath + appName + ENVIRONMENT_CONFIG_FILE);
+        File readme = new File(targetDir, OUTPUT_DIR + "README.txt");
 
         assertTrue(targetFile.exists());
         assertTrue(deployFile.exists());
         assertTrue(buildPackAdditions.exists());
         assertTrue(environmentConfig.exists());
+        assertTrue(readme.exists());
     }
 
     @Test
@@ -151,13 +154,11 @@ public class FileCreatorTest extends BaseUnitTest {
         fileCreator.createFiles();
         File targetFile = new File(targetDir, outputPath + FILEPRAEFIX_DEPLOY + deploy_name + FILESUFFIX_DEPLOY);
         String manifestContent = FileUtils.readFileToString(targetFile);
-        String expectedDeployContent = SHEBANG + "\n" +
-            SOURCE_UTIL_ALL + "\n" +
-            SUBCOMMAND_EXIT + "\n" +
+        String expectedDeployContent =
             "check \"cf\"\n" +
-            "cf push " + appName + CLI_PATH_TO_MANIFEST + MANIFEST_NAME + " --no-start\n" +
-            "cf start testApp\n";
-        assertEquals(expectedDeployContent, manifestContent);
+                "cf push " + appName + CLI_PATH_TO_MANIFEST + MANIFEST_NAME + " --no-start\n" +
+                "cf start testApp\n";
+        assertTrue(manifestContent.contains(expectedDeployContent));
     }
 
     @Test
@@ -262,13 +263,28 @@ public class FileCreatorTest extends BaseUnitTest {
         String expectedContent = SHEBANG + "\n" +
             SOURCE_UTIL_ALL + "\n" +
             SUBCOMMAND_EXIT + "\n" +
+            "echo \"$(tput bold)--------TOSCAna Cloud Foundry deployment--------$(tput sgr0)\"\n" +
+            "echo \"This script will deploy your application to the Cloud Foundry instance\"\n" +
+            "echo \"We use the CloudFoundry CLI and show you the output as well\"\n" +
+            "echo \"Is there no CF CLI installed we have to stop, we will check it\"\n" +
+            "echo \"We will deploy the application to the connected provider\"\n" +
+            "echo \"If you use a Cloud Foundry service with your application, you are able to change the service or plan in this deploy script manually\"\n" +
+            "echo \"We tried to choose a suitable service with a free plan\"\n" +
+            "echo \"You could check all possible services in the file$(tput bold) output/all_services.txt $(tput sgr0)\"\n" +
+            "echo \"$(tput bold)--------TOSCAna Cloud Foundry deployment$(tput sgr0)--------\n" +
+            "\"\n" +
             "check \"cf\"\n" +
             "cf create-service {plan} {service} cleardb\n" +
             "cf create-service {plan} {service} p-mysql\n" +
             "cf push app1 -f ../manifest.yml --no-start\n" +
             "cf push app2 -f ../manifest.yml --no-start\n" +
             "cf start app1\n" +
-            "cf start app2\n";
+            "cf start app2\n" +
+            "echo \"\n" +
+            "\n" +
+            "$(tput bold)The deployment of your application is finished. You see the urls of your apps here:$(tput sgr0)\n" +
+            "\"\n" +
+            "cf routes\n";
 
         assertEquals(expectedContent, deployscriptContent);
     }
