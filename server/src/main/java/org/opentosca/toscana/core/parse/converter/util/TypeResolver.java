@@ -48,6 +48,13 @@ import static org.opentosca.toscana.core.parse.converter.util.TypeResolver.Eleme
 import static org.opentosca.toscana.core.parse.converter.util.TypeResolver.ElementType.NODE;
 import static org.opentosca.toscana.core.parse.converter.util.TypeResolver.ElementType.RELATIONSHIP;
 
+/**
+ Responsible for mapping TOSCA type assignments to their corresponding java class instance.
+ Can handle full type URIs as well as shorthand names.
+ <p>
+ Note: For technical reasons, the shorthand name 'Compute' will always get mapped to the node type 'Compute'
+ never to the capability 'ComputeCapability'.
+ */
 public class TypeResolver {
 
     private static final Map<String, Class<? extends BaseToscaElement>> TYPE_MAP = new HashMap<>();
@@ -76,7 +83,7 @@ public class TypeResolver {
         put(NODE, "WebServer", WebServer.class);
         put(NODE, "WebServer", "Apache", Apache.class);
         put(NODE, "WebServer", "Nodejs", Nodejs.class);
-        
+
         // custom types
         TYPE_MAP.put("toscana.nodes.JavaApplication", JavaApplication.class);
         TYPE_MAP.put("toscana.nodes.JavaRuntime", JavaRuntime.class);
@@ -111,6 +118,12 @@ public class TypeResolver {
         put(RELATIONSHIP, "RoutesTo", RoutesTo.class);
     }
 
+    /**
+     Maps given type string to its corresponding java class type.
+
+     @param type a TOSCA type name (full URI or shorthand name)
+     @throws UnsupportedOperationException if no class type is found for given type string
+     */
     public static Class<? extends BaseToscaElement> resolve(String type) {
         Class<? extends BaseToscaElement> clazz = TYPE_MAP.get(type);
         if (clazz != null) {
