@@ -29,6 +29,7 @@ import com.scaleset.cfbuilder.beanstalk.Application;
 import com.scaleset.cfbuilder.beanstalk.ApplicationVersion;
 import com.scaleset.cfbuilder.beanstalk.ConfigurationTemplate;
 import com.scaleset.cfbuilder.beanstalk.Environment;
+import com.scaleset.cfbuilder.beanstalk.OptionSetting;
 import com.scaleset.cfbuilder.beanstalk.SourceBundle;
 import com.scaleset.cfbuilder.ec2.Instance;
 import com.scaleset.cfbuilder.ec2.SecurityGroup;
@@ -170,6 +171,8 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
                 .groupDescription("Open database " + dbName + " for access to group " + serverName + SECURITY_GROUP);
             Set<Compute> hostsOfConnectedTo = getHostsOfConnectedTo(node);
             for (Compute hostOfConnectedTo : hostsOfConnectedTo) {
+                logger.debug("Open connection to " + toAlphanumerical(hostOfConnectedTo.getEntityName()) + 
+                    SECURITY_GROUP);
                 securityGroup.ingress(ingress -> ingress.sourceSecurityGroupName(
                     cfnModule.ref(toAlphanumerical(hostOfConnectedTo.getEntityName()) + SECURITY_GROUP)),
                     PROTOCOL_TCP,
@@ -333,10 +336,17 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
                 .sourceBundle(sourceBundle);
             JavaRuntimeMapper javaRuntimeMapper = new JavaRuntimeMapper(logger);
             String stackConfig = javaRuntimeMapper.mapRuntimeToStackConfig(getJavaRuntime(node));
+            List<OptionSetting> optionSettings = new ArrayList<>();
             ConfigurationTemplate beanstalkConfigurationTemplate = cfnModule.resource(ConfigurationTemplate.class, nodeName + "ConfigurationTemplate")
                 .applicationName(beanstalkApplication)
                 .description("JavaApplicationConfigurationTemplate " + nodeName)
                 .solutionStackName(stackConfig);
+            //get environment variables as option settings
+            optionSettings.addAll(operationHandler.handleStartJava(node));
+            //add all option settings to beanstalk configuration
+            if (!optionSettings.isEmpty()) {
+                beanstalkConfigurationTemplate.optionSettings(optionSettings.stream().toArray(OptionSetting[]::new));
+            }
             cfnModule.resource(Environment.class, nodeName + "Environment")
                 .applicationName(beanstalkApplication)
                 .description("JavaApplicationEnvironment")

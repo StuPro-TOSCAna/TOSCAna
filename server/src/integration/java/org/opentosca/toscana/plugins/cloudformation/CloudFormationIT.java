@@ -21,8 +21,8 @@ import static org.opentosca.toscana.plugins.cloudformation.CloudFormationPlugin.
 
 public abstract class CloudFormationIT extends BaseTransformTest {
 
-    private final String accessKey = System.getenv("AWS_ACCESS_KEY");
-    private final String secretKey = System.getenv("AWS_SECRET_KEY");
+    private String accessKey;
+    private String secretKey;
 
     public CloudFormationIT() {
         super(new CloudFormationPlugin());
@@ -50,6 +50,8 @@ public abstract class CloudFormationIT extends BaseTransformTest {
 
     @Override
     protected void checkAssumptions() {
+        accessKey = System.getenv("AWS_ACCESS_KEY");
+        secretKey = System.getenv("AWS_SECRET_KEY");
         Assume.assumeNotNull(accessKey);
         Assume.assumeNotNull(secretKey);
     }

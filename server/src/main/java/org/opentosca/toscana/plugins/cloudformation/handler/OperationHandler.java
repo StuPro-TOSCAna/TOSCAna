@@ -1,17 +1,23 @@
 package org.opentosca.toscana.plugins.cloudformation.handler;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.opentosca.toscana.model.artifact.Artifact;
 import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.RootNode;
+import org.opentosca.toscana.model.node.custom.JavaApplication;
 import org.opentosca.toscana.model.operation.Operation;
 import org.opentosca.toscana.model.operation.OperationVariable;
 import org.opentosca.toscana.plugins.cloudformation.CloudFormationModule;
 import org.opentosca.toscana.plugins.cloudformation.util.FileUpload;
 
+import com.scaleset.cfbuilder.beanstalk.OptionSetting;
 import com.scaleset.cfbuilder.beanstalk.SourceBundle;
 import com.scaleset.cfbuilder.ec2.metadata.CFNCommand;
 import com.scaleset.cfbuilder.ec2.metadata.CFNFile;
@@ -32,6 +38,7 @@ import static org.opentosca.toscana.plugins.cloudformation.util.StackUtils.getFi
 
 public class OperationHandler {
     public static final String APACHE_RESTART_COMMAND = "service apache2 restart";
+    private static final String BEANSTALK_NAMESPACE_ENVIRONMENT = "aws:elasticbeanstalk:application:environment";
 
     private CloudFormationModule cfnModule;
     private Logger logger;
@@ -79,17 +86,29 @@ public class OperationHandler {
             handleOperation(start, computeHostName, CONFIG_START);
 
             // Add environment variables
-            Set<OperationVariable> inputs = start.getInputs();
-            if (!inputs.isEmpty()) {
-                for (OperationVariable input : inputs) {
-                    String value = input.getValue().orElseThrow(
-                        () -> new IllegalArgumentException("Input value of " + input.getKey() + " expected to not be " +
-                            "null")
-                    );
-                    cfnModule.putEnvironmentMap(computeHostName, input.getKey(), value);
-                }
-            }
+            Map<String, String> envVars = getEnvVars(start);
+            envVars.forEach((key, value) -> {
+                cfnModule.putEnvironmentMap(computeHostName, key, value);
+            });
         }
+    }
+
+    /**
+     Gets a map of all environment variables from this {@link Operation}.
+
+     @param operation an existing operation
+     @return a map of all environment variables from this operation
+     */
+    public Map<String, String> getEnvVars(Operation operation) {
+        Map<String, String> envVars = new HashMap<>();
+        operation.getInputs().forEach(operationVariable -> {
+            String value = operationVariable.getValue().orElseThrow(
+                () -> new IllegalArgumentException("Input value of " + operationVariable.getKey() + " expected to" +
+                    " not be null")
+            );
+            envVars.put(operationVariable.getKey(), value);
+        });
+        return envVars;
     }
 
     /**
@@ -269,5 +288,31 @@ public class OperationHandler {
         String jarFilePath = artifact.getFilePath();
         markFile(jarFilePath);
         return new SourceBundle(cfnModule.getBucketName(), jarFilePath);
+    }
+
+    /**
+     Handles the start lifecycle {@link Operation} for a {@link JavaApplication} node.
+     <br>
+     It generates a list of {@link OptionSetting} where each OptionSetting contains a environment variables defined in
+     the start lifecycle. These are needed for the Beanstalk Application.
+
+     @param node the JavaApplication node to handle the start lifecycle for
+     @return a list of OptionSettings from environment variables
+     */
+    public List<OptionSetting> handleStartJava(JavaApplication node) {
+        List<OptionSetting> optionSettings = new ArrayList<>();
+        if (node.getStandardLifecycle().getStart().isPresent()) {
+            Map<String, String> envVars = getEnvVars(node.getStandardLifecycle().getStart().get());
+            envVars.forEach((key, value) -> {
+                if (cfnModule.checkFn(value)) {
+                    optionSettings.add(new OptionSetting(BEANSTALK_NAMESPACE_ENVIRONMENT, key)
+                        .setValue(cfnModule.getFn(value)));
+                } else {
+                    optionSettings.add(new OptionSetting(BEANSTALK_NAMESPACE_ENVIRONMENT, key)
+                        .setValue(value));
+                }
+            });
+        }
+        return optionSettings;
     }
 }
