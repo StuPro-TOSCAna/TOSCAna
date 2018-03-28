@@ -13,6 +13,12 @@ pages:
         - 'Running with Docker': 'user/docker.md'
         - "TOSCA Support": 'user/tosca-support.md' 
         - "TOSCAna Types": 'user/toscana-types.md' 
+        - Plugins:
+            - CloudFormation:
+                - Requirements: 'user/plugins/cloudformation/requirements.md'
+                - Supported Types: 'user/plugins/cloudformation/supported.md'
+                - Writing Models: 'user/plugins/cloudformation/creating-models.md'
+                - Transformation Readme: 'user/plugins/cloudformation/cloudformation-readme.md'
     - Developer Documentation:
         - 'TOSCA model':
             - "EffectiveModel": "dev/model/effective-model.md"
@@ -43,4 +49,23 @@ pages:
             - "0015 - Use filesystem for persistency": "dev/adr/0015-persist-to-filesystem.md"
             - "0016 - Don't support TOSCA type definitions": "dev/adr/0016-not-supporting-type-definitions.md"
             - "0017 - Implement own TOSCA parser": "dev/adr/0017-implement-own-tosca-parser.md"
-
+        - Plugins:
+            - CloudFormation:
+                - Introduction: 'dev/plugins/cloudformation/introduction.md'
+                - 'Architecture': 'dev/plugins/cloudformation/architecture.md'
+                - CloudFormation:
+                    - 'CloudFormation Basics': 'dev/plugins/cloudformation/basics/cloudformation-basics.md'
+                    - 'CloudFormation Builder': 'dev/plugins/cloudformation/basics/cloudformation-builder.md'
+                - Transformation:
+                    - 'Transformation Workflow': 'dev/plugins/cloudformation/transformation/transformation-workflow.md'
+                    - 'Transformation by TOSCA Type': 'dev/plugins/cloudformation/transformation/supported-types.md'
+                    - 'Transformation by Example': 'dev/plugins/cloudformation/transformation/transformation-examples.md'
+                - Deployment:
+                    - 'Deployment Workflow': 'dev/plugins/cloudformation/deployment/deployment-workflow.md'
+                    - 'Target Artifact': 'dev/plugins/cloudformation/deployment/target-artifact.md'
+                - Development Notes:
+                    - 'Setting up a Test Environment': 'dev/plugins/cloudformation/development-notes/test-environment.md'
+                    - 'Extending the CloudFormation Plugin': 'dev/plugins/cloudformation/development-notes/extending-cloudformation.md'
+                    - 'Limitations': 'dev/plugins/cloudformation/development-notes/limitations.md'
+                - Utilities:
+                    - "Utility 1": 'dev/plugins/cloudformation/utility1.md'
