@@ -3,7 +3,7 @@ package org.opentosca.toscana.plugins.kubernetes.docker.mapper;
 import static org.opentosca.toscana.plugins.kubernetes.docker.mapper.MapperConstants.DOCKER_HUB_URL;
 
 /**
- This enum Represents the BaseImages supported by default
+ Represents the BaseImages supported by default
  */
 public enum DockerBaseImages {
     UBUNTU("library", "ubuntu", DOCKER_HUB_URL),

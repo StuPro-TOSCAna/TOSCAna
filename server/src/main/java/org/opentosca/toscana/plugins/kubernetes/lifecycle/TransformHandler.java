@@ -19,7 +19,7 @@ import org.opentosca.toscana.plugins.util.TransformationFailureException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 /**
- This Class Implements the Transform and Cleanup phase of the Kubernetes Lifecycle
+ Implements the Transform and Cleanup phase of the Kubernetes Lifecycle
  <p>
  The transform phase Creates Dockerfiles from the NodeStacks built during the prepare phase
  and builds the resulting docker images out of these Dockerfiles.

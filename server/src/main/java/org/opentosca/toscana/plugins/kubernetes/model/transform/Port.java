@@ -29,11 +29,10 @@ public class Port {
     }
 
     /**
-     Retrurns the (Kubernetes conforming name of the Port)
-     
+     Returns the (Kubernetes conforming name of the Port)
+     <p>
      This means the Original name (<code>namePrefix + "-" + port</code>) gets shrunk if the resulting string is longer than
      15 characters (Kubernetes limits the Port Name length to that)
-     @return
      */
     public String getName() {
         String name = namePrefix + "-" + port;

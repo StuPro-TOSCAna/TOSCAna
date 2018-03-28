@@ -11,7 +11,7 @@ import static org.opentosca.toscana.model.capability.OsCapability.Architecture.x
 
 public class MapperConstants {
     /**
-     This Constant defines the default that should be used if a empty (or almost empty Linux OsCapability) is given
+     Defines the default that should be used if a empty (or almost empty Linux OsCapability) is given
      <p>
      The Default value is <code>library/ubuntu:latest</code>
      */

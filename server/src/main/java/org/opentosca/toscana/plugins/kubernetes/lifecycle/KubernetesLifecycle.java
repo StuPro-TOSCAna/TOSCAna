@@ -17,7 +17,7 @@ import org.opentosca.toscana.plugins.kubernetes.util.KubernetesNodeContainer;
 import org.opentosca.toscana.plugins.kubernetes.util.NodeStack;
 
 /**
- This class implements the Lifecycle Operations for the Kubernetes plugin.
+ Implements the Lifecycle Operations for the Kubernetes plugin.
  <p>
  In order to keep the Filesize (in terms of LOC) small all phases have been put into
  separate classes (extending the LifecycleHandler. This class just stores the Fields that are commonly used in these

@@ -9,7 +9,7 @@ import com.spotify.docker.client.DockerClient;
 import org.apache.commons.io.IOUtils;
 
 /**
- This class allows the automatic building of a dockerfile if a docker daemon is available.
+ Allows the automatic building of a Dockerfile if a docker daemon is available.
  <p>
  The built images will be Exported into .tar.gz archives using the <code>docker store</code> command.
  */

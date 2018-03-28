@@ -15,9 +15,9 @@ import com.spotify.docker.client.messages.ProgressMessage;
 import org.slf4j.Logger;
 
 /**
- This Class Implements the Building Functionality for Docker images (it requires a Running Docker Daemon and the proper privileges)
+ Implements the building functionality for Docker images (it requires a running Docker Daemon and the proper privileges)
  <p>
- Storage Functionality such as Pushing or Exporting get implemented in the Corresponding Child Classes
+ Storage functionality such as Pushing or Exporting gets implemented in the corresponding child classes
  */
 public abstract class ImageBuilder implements ProgressHandler {
 

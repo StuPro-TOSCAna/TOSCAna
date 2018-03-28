@@ -3,7 +3,7 @@ package org.opentosca.toscana.plugins.kubernetes.docker.dockerfile.builder.comma
 import java.io.PrintWriter;
 
 /**
- This Class describes the Run (Exeute a build command) Command for the DockerfileBuilder
+ Describes the Run (Exeute a build command) Command for the DockerfileBuilder
  */
 public class RunCommand extends DockerfileEntry {
     private final String command;

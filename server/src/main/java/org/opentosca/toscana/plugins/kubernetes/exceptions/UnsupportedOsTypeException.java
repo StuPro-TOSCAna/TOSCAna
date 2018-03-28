@@ -4,7 +4,7 @@ import org.opentosca.toscana.model.capability.OsCapability;
 import org.opentosca.toscana.model.visitor.UnsupportedTypeException;
 
 /**
- This exeption is used to make the unsupported Type Exception more fine grained.
+ This exception is used to make the unsupported Type Exception more fine grained.
  <p>
  It can be thrown if the OSType is unknown
  */

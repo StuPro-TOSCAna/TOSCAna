@@ -11,7 +11,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- This class represents a repository on a Docker Registry with its corresponding tags (Docker Image Tags)
+ Represents a repository on a Docker Registry with its corresponding tags (Docker Image Tags)
  */
 public class DockerImage {
     private String username;

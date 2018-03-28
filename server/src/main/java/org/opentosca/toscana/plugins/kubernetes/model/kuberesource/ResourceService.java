@@ -12,6 +12,9 @@ import io.fabric8.kubernetes.api.model.ServiceBuilder;
 import io.fabric8.kubernetes.api.model.ServicePort;
 import io.fabric8.kubernetes.client.internal.SerializationUtils;
 
+/**
+ Converts a Pod (in our own model) to a
+ */
 public class ResourceService implements IKubernetesResource<ResourceService> {
     private final String name;
     private Pod pod;
@@ -22,6 +25,7 @@ public class ResourceService implements IKubernetesResource<ResourceService> {
         this.name = pod.getName().replaceAll("_", "-");
     }
 
+    @Override
     public ResourceService build() {
         List<ServicePort> ports = pod.getPorts().stream().map(Port::toServicePort).collect(Collectors.toList());
         service = new ServiceBuilder()
@@ -40,6 +44,7 @@ public class ResourceService implements IKubernetesResource<ResourceService> {
         return this;
     }
 
+    @Override
     public String toYaml() throws JsonProcessingException {
         return SerializationUtils.dumpAsYaml(service);
     }

@@ -3,7 +3,7 @@ package org.opentosca.toscana.plugins.kubernetes.docker.dockerfile.builder.comma
 import java.io.PrintWriter;
 
 /**
- This Class describes the Entrypoint Command for the DockerfileBuilder
+ Describes the Entrypoint command for the DockerfileBuilder
  */
 public class EntrypointCommand extends DockerfileEntry {
     private final String[] commands;

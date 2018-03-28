@@ -3,7 +3,7 @@ package org.opentosca.toscana.plugins.kubernetes.docker.dockerfile.builder.comma
 import java.io.PrintWriter;
 
 /**
- This Class describes the Copy Command for the DockerfileBuilder
+ Describes the Copy Command for the DockerfileBuilder
  */
 public class CopyCommand extends DockerfileEntry {
 

@@ -22,7 +22,8 @@ import org.opentosca.toscana.plugins.kubernetes.docker.dockerfile.builder.comman
 /**
  Allows the building of a dockerfile.
  <p>
- The Class Stores the Commands called and Builds a Dockerfile out of them. (similar to StringBuilder)
+ To implement the functionality the class stores the commands called
+ and builds a Dockerfile out of them. (similar to StringBuilder)
  */
 public class DockerfileBuilder {
 

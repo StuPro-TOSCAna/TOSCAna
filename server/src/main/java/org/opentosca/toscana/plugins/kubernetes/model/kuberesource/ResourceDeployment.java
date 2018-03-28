@@ -14,7 +14,7 @@ import io.fabric8.kubernetes.api.model.extensions.DeploymentBuilder;
 import io.fabric8.kubernetes.client.internal.SerializationUtils;
 
 /**
- This Utility class is used to convert a {@link Pod} object into a Kubernetes Deployment
+ Converts a {@link Pod} object into a Kubernetes Deployment
  */
 public class ResourceDeployment implements IKubernetesResource<ResourceDeployment> {
     private final String name;
@@ -26,6 +26,7 @@ public class ResourceDeployment implements IKubernetesResource<ResourceDeploymen
         this.name = stack.getName();
     }
 
+    @Override
     public ResourceDeployment build() {
         ArrayList<Container> containers = new ArrayList<>();
 
@@ -69,6 +70,7 @@ public class ResourceDeployment implements IKubernetesResource<ResourceDeploymen
         return this;
     }
 
+    @Override
     public String toYaml() throws JsonProcessingException {
         return SerializationUtils.dumpAsYaml(deployment);
     }

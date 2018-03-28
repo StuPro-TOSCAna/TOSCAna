@@ -13,7 +13,7 @@ import static org.opentosca.toscana.plugins.kubernetes.util.GraphOperations.buil
 import static org.opentosca.toscana.plugins.kubernetes.util.GraphOperations.determineTopLevelNodes;
 
 /**
- This class implements the Prepare phase in the KubernetesLifecyle
+ Implements the Prepare phase in the KubernetesLifecyle
  <p>
  This class analyzes the Topology and groups All complete nodes (and their Children into Node Stacks and
  Groups these Nodestacks into pods

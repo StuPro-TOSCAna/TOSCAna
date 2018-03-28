@@ -25,7 +25,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 /**
- This class allows the mapping of OsCapabilities (from a tosca model) to a docker base image.
+ Allows the mapping of OsCapabilities (from a tosca model) to a docker base image.
  When initialized with Spring this class will automatically download the latest tags from the base images
  defined in the <code>DockerBaseImages</code> every 24 hours (by default).
  To persist this value please modify the <code>toscana.docker.base-image-mapper.persist-interval</code> property (value in
@@ -36,7 +36,7 @@ import org.springframework.stereotype.Service;
 public class BaseImageMapper {
 
     /**
-     We dont use TransformationContext based logging here because the BIM (short for BaseImageMapper) gets initialised
+     We don't use TransformationContext based logging here because the BIM (short for BaseImageMapper) gets initialised
      during the start of the application using Springs Dependency injection.
      */
     private static final Logger logger = LoggerFactory.getLogger(BaseImageMapper.class);

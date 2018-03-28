@@ -3,7 +3,7 @@ package org.opentosca.toscana.plugins.kubernetes.docker.dockerfile.builder.comma
 import java.io.PrintWriter;
 
 /**
- This Class describes the ENV (Environment Variable) Command for the DockerfileBuilder
+ Describes the ENV (Environment Variable) Command for the DockerfileBuilder
  */
 public class EnvCommand extends DockerfileEntry {
 

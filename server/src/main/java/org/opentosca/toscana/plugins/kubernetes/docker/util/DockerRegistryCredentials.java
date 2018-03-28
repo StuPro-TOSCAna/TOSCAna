@@ -10,7 +10,7 @@ import static org.opentosca.toscana.plugins.kubernetes.KubernetesPlugin.DOCKER_R
 import static org.opentosca.toscana.plugins.kubernetes.KubernetesPlugin.DOCKER_REGISTRY_USERNAME_PROPERTY_KEY;
 
 /**
- This class wraps credentials for a specific registry
+ Wraps credentials for a specific registry
  */
 public class DockerRegistryCredentials {
     /**
@@ -76,7 +76,7 @@ public class DockerRegistryCredentials {
     }
 
     /**
-     This method builds a RegistryAuth object for the DockerClient Library. This object is used to build a client with
+     Builds a RegistryAuth object for the DockerClient Library. This object is used to build a client with
      registry credentials
      */
     public RegistryAuth toRegistryAuth() {

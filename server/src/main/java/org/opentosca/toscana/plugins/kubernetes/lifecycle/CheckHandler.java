@@ -8,7 +8,7 @@ import org.opentosca.toscana.plugins.kubernetes.visitor.check.NodeTypeCheckVisit
 import org.opentosca.toscana.plugins.kubernetes.visitor.check.OsCheckNodeVisitor;
 
 /**
- This Class implements the Model and Environment check phases in the Kubernetes Lifecycle
+ Implements the Model and Environment check phases in the Kubernetes Lifecycle
  */
 class CheckHandler extends LifecycleHandler {
 
