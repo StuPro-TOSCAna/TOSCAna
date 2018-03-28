@@ -40,7 +40,7 @@ public class PrepareModelRelationshipVisitor extends CloudFormationVisitorExtens
             if (source instanceof WebApplication) {
                 WebApplication webApplication = (WebApplication) source;
                 sourceCompute = getCompute(webApplication);
-            } else if (source instanceof JavaApplication){
+            } else if (source instanceof JavaApplication) {
                 JavaApplication javaApplication = (JavaApplication) source;
                 sourceCompute = getCompute(javaApplication);
             }

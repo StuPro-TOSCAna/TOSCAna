@@ -289,7 +289,6 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
         try {
             Compute computeHost = getCompute(node);
             String computeHostName = toAlphanumerical(computeHost.getEntityName());
-            String nodeName = node.getEntityName();
 
             //handle configure
             operationHandler.handleConfigure(node, computeHostName);

@@ -30,6 +30,7 @@ public abstract class CloudFormationIT extends BaseTransformTest {
 
     @Override
     protected void onSuccess(File outputDir) {
+        return;
     }
 
     @Override
