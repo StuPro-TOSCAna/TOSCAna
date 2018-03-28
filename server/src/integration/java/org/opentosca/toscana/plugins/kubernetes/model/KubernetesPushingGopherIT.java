@@ -34,6 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.util.Collections.singletonMap;
+import static org.junit.Assume.assumeTrue;
 import static org.mockito.Mockito.mock;
 import static org.opentosca.toscana.plugins.kubernetes.KubernetesPlugin.DOCKER_PUSH_TO_REGISTRY_PROPERTY_KEY;
 import static org.opentosca.toscana.plugins.kubernetes.KubernetesPlugin.DOCKER_REGISTRY_PASSWORD_PROPERTY_KEY;
@@ -57,6 +58,14 @@ public class KubernetesPushingGopherIT extends KubernetesLampIT {
     private int registryPort;
 
     public KubernetesPushingGopherIT() throws Exception {
+    }
+
+    @Override
+    protected void checkAssumptions() {
+        // TODO Fix Gopher IT failing sometimes
+        // The test is temporarily disabled
+        assumeTrue(false);
+        super.checkAssumptions();
     }
 
     @Override
