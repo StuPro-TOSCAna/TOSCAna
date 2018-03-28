@@ -5,7 +5,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.opentosca.toscana.core.parse.model.MappingEntity;
-import org.opentosca.toscana.model.DescribableEntity;
+import org.opentosca.toscana.model.DescribableElement;
 import org.opentosca.toscana.model.artifact.Artifact;
 import org.opentosca.toscana.model.util.ToscaKey;
 
@@ -17,7 +17,7 @@ import lombok.ToString;
  */
 @EqualsAndHashCode
 @ToString
-public class Operation extends DescribableEntity {
+public class Operation extends DescribableElement {
 
     /**
      inputs which shall be injected into the artifacts environment before execution.

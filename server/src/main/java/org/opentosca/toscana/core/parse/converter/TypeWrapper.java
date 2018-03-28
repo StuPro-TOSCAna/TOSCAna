@@ -6,8 +6,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.opentosca.toscana.core.parse.converter.util.TypeResolver;
 import org.opentosca.toscana.core.parse.converter.util.ToscaStructure;
+import org.opentosca.toscana.core.parse.converter.util.TypeResolver;
 import org.opentosca.toscana.core.parse.model.Entity;
 import org.opentosca.toscana.core.parse.model.MappingEntity;
 import org.opentosca.toscana.core.parse.model.ServiceGraph;
@@ -18,6 +18,9 @@ import org.apache.commons.lang.reflect.ConstructorUtils;
 
 import static org.opentosca.toscana.model.node.RootNode.TYPE;
 
+/**
+ Responsible for converting MappingEntities which represent TOSCA nodes to instances of their wrapping type.
+ */
 public class TypeWrapper {
 
     public static Map<String, RootNode> wrapNodes(ServiceGraph graph) {

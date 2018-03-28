@@ -14,7 +14,7 @@
     <div class="container-fluid">
         <div class="row">
             <div [ngClass]="{'col-md-12 col-lg-3': listNotEmpty, 'col':!listNotEmpty}">
-                <app-main-view [csars]="csars" class="center"></app-main-view>
+                <app-csar-sidebar [csars]="csars" class="center"></app-csar-sidebar>
             </div>
             <div [ngClass]="{'col-lg-9': listNotEmpty, 'left-border':listNotEmpty}">
                 <router-outlet class="router"></router-outlet>

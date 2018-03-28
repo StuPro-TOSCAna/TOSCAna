@@ -4,9 +4,9 @@
         <div class="phases">
             <div class="phase-title">Phases</div>
             <div class="phase" *ngFor="let item of transformation.phases"
-                 [ngClass]="{'active': isActive(item)}">
+                 [ngClass]="{'active': transformation.phaseIsActive(item)}">
                 <div class="name"> {{item.name}}</div>
-                <div [style.color]="getIcon(item)" class="state"> {{item.state}}</div>
+                <div [class]="getColorForLifecyclePhase(item)" class="state"> {{item.state}}</div>
             </div>
         </div>
         <div class="download">

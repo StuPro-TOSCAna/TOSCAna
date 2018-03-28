@@ -1,16 +1,16 @@
 import {TransformationViewComponent} from '../../components/transformation-view/transformation-view.component';
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
-import {NewTransformationModalComponent} from '../../components/new-transformation-modal/new-transformation-modal.component';
-import {CanActivateNew} from './CsarResolver';
-import {InputComponent} from '../../components/input/input.component';
+import {TransformationCreatorComponent} from '../../components/transformation-creator/new-transformation-modal.component';
+import {CsarResolver} from './csar.resolver';
+import {TransformationInputsComponent} from '../../components/transformations-inputs/transformations-inputs.component';
 import {CsarViewComponent} from '../../components/csar-view/csar-view.component';
 import {HashLocationStrategy, LocationStrategy} from '@angular/common';
 
 const routes: Routes = [
     {path: 'transformation/:csar/:platform', component: TransformationViewComponent}, {
         path: 'inputs/:csar/:platform',
-        component: InputComponent
+        component: TransformationInputsComponent
     }
     , {
         path: 'csar/:csar',
@@ -18,9 +18,9 @@ const routes: Routes = [
     },
     {
         path: 'new/:csarId',
-        component: NewTransformationModalComponent,
+        component: TransformationCreatorComponent,
         resolve: {
-            csar: CanActivateNew
+            csar: CsarResolver
         }
     }
 ];
@@ -29,7 +29,7 @@ const routes: Routes = [
     imports: [
         RouterModule.forRoot(routes)
     ],
-    providers: [CanActivateNew, {provide: LocationStrategy, useClass: HashLocationStrategy}],
+    providers: [CsarResolver, {provide: LocationStrategy, useClass: HashLocationStrategy}],
     exports: [
         RouterModule
     ]
