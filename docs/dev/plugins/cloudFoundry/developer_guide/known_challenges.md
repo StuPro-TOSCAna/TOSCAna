@@ -4,7 +4,8 @@
 - most of the user provided data cannot be accounted because Cloud Foundry will create automatically their own data
 - additional buildpacks
 - direct connection between applications
-- always select the free plan of a service, not regarding the properties of the service like size 
+- always select the free plan of a service, not regarding the properties of the service like size
+- all environment variables will be set globally
 
 
 ### connectsTo connection between not-service nodes

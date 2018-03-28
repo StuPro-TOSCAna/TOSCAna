@@ -177,6 +177,13 @@ public class NodeVisitor implements StrictNodeVisitor {
         handleStandardLifecycle(node, true, myApp);
     }
 
+    /**
+     adds all paths and environment variables to the application
+
+     @param node        current node
+     @param isTopNode   yes if the current node has no children
+     @param application current CloudFoundry application
+     */
     private void handleStandardLifecycle(RootNode node, boolean isTopNode, Application application) {
 
         //get node artifacts
@@ -228,6 +235,13 @@ public class NodeVisitor implements StrictNodeVisitor {
         }
     }
 
+    /**
+     get the scripts out of the configure and create operation of the current node
+     the scripts will be executed by python scripts during the deployment
+
+     @param node        current node
+     @param application current CloudFoundry application
+     */
     private void getScripts(RootNode node, Application application) {
         StandardLifecycle lifecycle = node.getStandardLifecycle();
         Optional<Operation> configureOptional = lifecycle.getConfigure();
