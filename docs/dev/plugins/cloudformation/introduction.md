@@ -13,16 +13,15 @@ Following topics will be discussed:
 - AWS CloudFormation
     - CloudFormation Basics
     - Cloudformation Builder
-        - Example
 - Architecture
 - Transformation
     - Transformation Workflow
     - Transformation by TOSCA type
-    - Example(LAMP, JAVA)
+    - Transformation by Example
 - Deployment
     - Deployment Workflow
     - Target artifact
-  - Development notes
+- Development notes
     - Setting up a test environment
     - Expanding the CloudFormation plugin
     - Limitations
