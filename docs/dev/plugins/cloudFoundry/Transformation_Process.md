@@ -2,16 +2,15 @@
 
 The purpose of this document is to show  the transformation logic and process of the CloudFoundry plugin for a developer.
 This document does not mention all classes which are used in the java code but describes the method of the transformation so that the developer is able to understand the code and the transformation process.   
-This is the texted based documentation, you can find a example transformation with some pictures in the same folder.
+This is the text based documentation, you can find an example transformation with some pictures [here](transformation_example.pdf).
 
 ## Foreword
 - the TOSCA model is a graph. So we are talking about some graph terms. For further information please read the documentation of the core/model.
-- getting plugin properties to create connection to CloudFoundry instance
+- getting plugin properties (at the beginning of transformation) from the user to create connection to CloudFoundry instance
 - plugin is using visitor patterns for nodes. Inside these the logic for the node types is implemented
-- one manifest for all applications
-- per application there is one CloudFoundry application object which contains all information of the application
+- there is one manifest for all applications
+- per application there is one CloudFoundry application object (cf-app) which contains all information of the application
 - the output is called target artifact
-- to start a transformation the credentials of the CloudFoundry instance is required
 
 ## Visitors
 ### Node visitor
@@ -34,7 +33,7 @@ Code Example of the prepare visitor:
    }
 ```
 
-### OS Check
+### OS Check (`checkModel()`)
 Checks that only supported operating systems are modeled. Only `Linux` is supported. If there is another OS the plugin will stop the transformation with a failure.
 
 ## General transformation process
@@ -45,14 +44,14 @@ Steps to be done:
 - If the visitor detects a node type which is declared as service, the whole cf-app (to which the stack of the node belongs to) will be declared as service. In this case it is not an own application but the service belongs to another cf-app. Therefore the visitor checks the connectsTo relationship and detects the parent application.
 - copy files and create manifest and scripts
 
-### Split in stacks
-- Find all top nodes, Top nodes are nodes without incoming hostedOnConnections.
+### Split in stacks (`prepare()`)
+- Find all top nodes, top nodes are nodes without incoming hostedOnConnections.
 - Go through all hostedOnConnections of every top node to the compute node. All nodes on this way will be in one stack.
 - Every top node is an individually cf-app, because on pushing the application with Cloud Foundry every top node gets its own container
 - A service (node type which the plugin handles as service e.g. MYSQL database node) gets its own stack, because every service is a top node (only connectsTo relations as incoming edges).
 - We share this logic with the Kubernetes plugin. So we are using the same methods to do this.
 
-### Getting necessary information
+### Getting necessary information (`transform()`)
 In this step the plugin goes through every stack of nodes and calls the node visitor. The node visitor collects all necessary information like inputs, disk-size, paths and so on from the node and add the information to the cf-app.   
 If there is a node type which is declared as service, the plugin checks the source node/s of the connects-to connection and adds the service with all belonging information to the source application/s. The already created cf-app of the stack from the service node, will be deleted.   
 After this step all information of the nodes are in the cf-apps.
@@ -73,8 +72,8 @@ All cf-apps are in one manifest in different application sections.
 The FileCreator reads out of the cf-app all necessary information to create the manifest.   
 The paths to the application folders are relative so you can move the whole artifact easily.
 The manifest will be copied in the output folder.
-A example of a manifest from the plugin:
-```yaml
+A example of a manifest from the plugin:   
+```
 ---
 applications:
 - name: my-app
@@ -93,10 +92,10 @@ applications:
 
 ### Services
 If the cf-apps contains a service the FileCreator looks for a suitable service of the provide. Therefore the plugin creates a connection to the provider with the given credentials (with credentials given from the user). It receives all services which are offered of the provider. To do that the plugin implements a (java cf client)[https://github.com/cloudfoundry/cf-java-client].    
-A CloudFoundry service consists of a service name and a service plan. The service name can differ from provider to provider, that the cause why the plugin needs a connection to the CloudFoundry provider. The service plan specifies the settings of the services e.g. size of a database service. The plugin is looking for a key word (for a mysql service the keyword is `MySQL`) in the service descriptions and select a suitable service name. Also it selects the free plan as default.   
+A CloudFoundry service consists of a service name and a service plan. The service name can differ from provider to provider, that's the cause why the plugin needs a connection to the CloudFoundry provider. The service plan specifies the settings of the services e.g. size of a database service. The plugin is looking for a key word (for a mysql service the keyword is `mysql`) in the service descriptions and chooses a suitable service name. Also it chooses a free plan as default.   
 All services will be printed in a extra file called `all_services.txt` in the output folder, so that the user could select another service or change the plan.
 
-### deploy bash script
+### Deploy bash script
 To provide an easy deployment for the user, the plugin creates a bash deploy script called `deploy_application.sh`. This consists of different commands in a fixed order.   
 There are two types of commands:
 1. CloudFoundry CLI commands to create services, push the app, start the app, among other things.
@@ -117,11 +116,11 @@ python executeCommand.py my-app /home/vcap/app/htdocs/my_app/create_myphpapp.sh
 ...
 ```
 
-### python scripts
+### Python scripts
 For the easy deployment some python scripts are necessary. The FileCreator detects which scripts are needed and add the files from the resource folder to the target artifact and inserts a command in the `deploy_application.sh`.   
 For further information about the scripts see [here](Script-Overview.md)
 
-### additional buildpacks
+### Additional buildpacks
 CloudFoundry has a buildpack detection which detects which languages and libraries are needed. Sometimes there are some additional libraries needed which are not detected. Therefore the plugin has to add the information about the additional buildpacks to the target artifact. The plugin just look for the application suffix and compare it with the needed service and thereby knows which buildpacks are needed. At the moment it is implemented for `php` and a `mysql service`. For this case the plugin creates a additional file `.bp-config` in the app folder which contains a `options.json` file. This workflow may differ with other languages.
 Example of buildpack additions file:
 ```json
@@ -137,9 +136,9 @@ Example of buildpack additions file:
 }
 ```
 
-### environment recognition
+### Environment recognition
 In the prepare visitor the plugin already set some placeholders for some node types. Please read this section before continue.   
-The plugin writes all environment variables with the values in an extra file called `$appName_environment_config.txt` in the output folder. This file is structured for the python use as dictionary.   
+The plugin writes all environment variables with the values in an extra file called `appName_environment_config.txt` in the output folder. This file is structured for the python use as dictionary.   
 Example:
 ```
 {

@@ -17,13 +17,15 @@ That is necessary to set the environment variables (e.g. database_user) afterwar
 The plugin has a kind of environment-variable-semantic recognition. The plugin detects the environment variables and recognizes the semantic behind them.   
 Therefore in the TOSCA model the variable has to point to the destination property. For example the variable `database_user` has to point to the user property of the database node.   
 A requirement is if there is a database in the model, the model has to contain a variable called `database_host` which must be used for the host value.   
-The plugin creates a file `$appName_environment_config.txt` in which the semantic of the variables will be described.   
+The plugin creates a file `appName_environment_config.txt` in which the semantic of the variables will be described.   
 It looks like this:
 ```
-{ 'cf_database_user_placeholder_my_db':'database_user',
+{
+'cf_database_user_placeholder_my_db':'database_user',
 'cf_database_name_placeholder_my_db':'database_name',  
 '3306':'database_port',  
-'cf_database_password_placeholder_my_db':'database_password', }
+'cf_database_password_placeholder_my_db':'database_password'
+ }
 ```
 The python script reads this file and knows the meaning of each variable. The placeholder names are fixed values in the java code and in the python script as well. It is important that these values are the same.   
 Afterwards the script is able to read the credentials of the service and set the values to the environment variable.   
@@ -49,8 +51,8 @@ Unfortunately the cf command `cf run-task ...` is not suitable because it has to
 
 ## Order
 1. `cf create service $servicename $serviceplan $serviceInstanceName`
-2. `python replace.py $pathToFile $stringToReplace $newString
-3. `cf push $appName -f $pathToManifest` --no-start
+2. `python replace.py $pathToFile $stringToReplace $newString`
+3. `cf push $appName -f $pathToManifest --no-start`
 4. `python readCredentials.py $appName $serviceName $serviceType $serviceInstanceName`
 5. `python configureMysql.py $sqlFile`
 6. `cf start $appName`
