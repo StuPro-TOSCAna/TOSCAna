@@ -1,16 +1,16 @@
 import {Injectable} from '@angular/core';
-import {InputsResponse, InputWrap, TransformationsService} from '../../api';
-import {PlatformsProvider} from '../platforms/platforms.provider';
-import {Transformation} from '../../model/transformation';
+import {InputsResponse, InputWrap, TransformationsService} from '../api/index';
+import {ClientPlatformsService} from './platforms.service';
+import {Transformation} from '../model/transformation';
 import {Observable} from 'rxjs/Observable';
-import {MessageService} from '../message/message.service';
+import {MessageService} from './message.service';
 
 
 @Injectable()
-export class TransformationsProvider {
+export class ClientsTransformationsService {
 
     constructor(private messageService: MessageService, private transformationsService: TransformationsService,
-                private platformsProvider: PlatformsProvider) {
+                private platformsProvider: ClientPlatformsService) {
     }
 
     public getTransformationInputs(csarId: string, platform: string) {
@@ -39,11 +39,9 @@ export class TransformationsProvider {
     }
 
     public getTransformationByCsarAndPlatform(csarId: string, platform: string): Observable<Transformation> {
-        return this.transformationsService.getCSARTransformationUsingGET(csarId, platform).map(result => {
-            let fullName = this.platformsProvider.getFullPlatformName(result.platform);
-            let transformation: Transformation = <Transformation>result;
-            transformation.fullName = fullName;
-            return transformation;
+        return this.transformationsService.getCSARTransformationUsingGET(csarId, platform).map(transformation => {
+            const fullName = this.platformsProvider.getFullPlatformName(transformation.platform);
+            return new Transformation(fullName, transformation.phases, transformation.platform, transformation.state);
         });
     }
 

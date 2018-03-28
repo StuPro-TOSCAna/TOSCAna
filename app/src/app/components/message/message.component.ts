@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {Message, SuccessMessage} from '../../model/message';
-import {MessageService} from '../../providers/message/message.service';
+import {MessageService} from '../../services/message.service';
 import {IntervalObservable} from 'rxjs/observable/IntervalObservable';
 
 @Component({

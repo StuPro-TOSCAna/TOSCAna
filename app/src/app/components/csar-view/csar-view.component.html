@@ -4,9 +4,9 @@
         <div class="phases">
             <div class="phase-title">Phases</div>
             <div class="phase" *ngFor="let item of csar.phases"
-                 [ngClass]="{'active': isActive(item)}">
+                 [ngClass]="{'active': item === StateEnum.EXECUTING}">
                 <div class="name"> {{item.name}}</div>
-                <div [class]="getIcon(item)">{{item.state}}</div>
+                <div [class]="getColorForLifecyclePhase(item)">{{item.state}}</div>
             </div>
         </div>
     </div>
