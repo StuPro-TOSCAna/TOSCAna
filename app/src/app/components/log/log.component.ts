@@ -96,7 +96,7 @@ export class LogComponent implements OnInit, OnChanges {
                 this.updateLogs(data);
             }, err => this.messageService.addErrorMessage('Failed to load logEntries'));
         } else if (this.type === 'csar') {
-            this.csarsProvider.getLogs(this.csarId, this.last).subscribe(data => {
+            this.csarsProvider.getCsarLogs(this.csarId, this.last).subscribe(data => {
                 this.updateLogs(data);
             }, err => this.messageService.addErrorMessage('Failed to load logEntries'));
         }

@@ -1,12 +1,13 @@
 import {Router} from '@angular/router';
 import {Component, Input, OnInit} from '@angular/core';
 import {Csar} from '../../model/csar';
-import {RouteHandler, TransformationOpen} from '../../services/route.service';
+import {RouteHandler} from '../../services/route.service';
 import {ClientsTransformationsService} from '../../services/transformations.service';
 import {ClientCsarsService} from '../../services/csar.service';
 import {TransformationResponse} from '../../api';
 import StateEnum = TransformationResponse.StateEnum;
 import {MessageService} from '../../services/message.service';
+import {TransformationOpen} from '../../model/view-states';
 
 @Component({
     selector: 'app-csar-sub-item',

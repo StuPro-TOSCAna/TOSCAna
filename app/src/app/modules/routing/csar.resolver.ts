@@ -15,13 +15,11 @@ export class CsarResolver implements Resolve<Observable<Csar>> {
     }
 
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<Csar> {
-        console.log(this.csarProvider.getCount());
         let count = 1;
         if (this.csarProvider.getCount() === 0) {
             count = 2;
         }
         let res = this.csarProvider.csars.take(count).map(array => {
-                console.log(route.params['csarId']);
                 return array.find(item => item.name === route.params['csarId']);
             }
         );
