@@ -11,6 +11,7 @@ import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.plugins.cloudformation.util.FileUpload;
 import org.opentosca.toscana.plugins.scripts.BashScript;
 import org.opentosca.toscana.plugins.scripts.EnvironmentCheck;
+import org.opentosca.toscana.plugins.util.ReadmeBuilder;
 import org.opentosca.toscana.plugins.util.TransformationFailureException;
 
 import com.scaleset.cfbuilder.core.Parameter;
@@ -51,6 +52,9 @@ public class CloudFormationFileCreator {
     public static final String FILEPATH_CLOUDFORMATION = "/cloudformation/";
     public static final String FILEPATH_SCRIPTS_UTIL = FILEPATH_CLOUDFORMATION + "scripts/util/";
     public static final String FILEPATH_FILES_UTIL = FILEPATH_CLOUDFORMATION + "files/util/";
+
+    private static final String CLOUDFORMATION_README_TITLE = "TOSCAna - CloudFormation Transformation - Readme";
+    private static final String CLOUDFORMATION_README_PATH = "/cloudformation/cloudformation-readme.md";
 
     private final Logger logger;
     private CloudFormationModule cfnModule;
@@ -222,6 +226,23 @@ public class CloudFormationFileCreator {
         List<String> utilFileUploadList = getFilePaths(
             getFileUploadByType(cfnModule.getFileUploadList(), UTIL));
         copyUtilFile(utilFileUploadList, FILEPATH_FILES_UTIL, FILEPATH_TARGET);
+    }
+
+    /**
+     Writes the readme
+     */
+    public void writeReadme(TransformationContext context) {
+        logger.info("Write Readme");
+        ReadmeBuilder builder = ReadmeBuilder.fromMarkdownResource(
+            CLOUDFORMATION_README_TITLE,
+            CLOUDFORMATION_README_PATH,
+            context
+        );
+        try {
+            cfnModule.getFileAccess().access("/readme.html").append(builder.toString()).close();
+        } catch (IOException e) {
+            logger.warn("Writing the Readme failed!", e);
+        }
     }
 
     /**
