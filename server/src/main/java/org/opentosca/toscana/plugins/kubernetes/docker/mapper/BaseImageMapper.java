@@ -35,6 +35,10 @@ import org.springframework.stereotype.Service;
 @Profile("!" + Profiles.EXCLUDE_BASE_IMAGE_MAPPER)
 public class BaseImageMapper {
 
+    /**
+     We dont use TransformationContext based logging here because the BIM (short for BaseImageMapper) gets initialised
+     during the start of the application using Springs Dependency injection.
+     */
     private static final Logger logger = LoggerFactory.getLogger(BaseImageMapper.class);
 
     /**
@@ -102,7 +106,6 @@ public class BaseImageMapper {
      Internal method used for converting the Data received from docker to the data model described
      in the <code>model</code> package
      */
-
     private void addImagesForType(DockerBaseImages baseImage, List<ImageTags> pages) {
         List<DockerImageTag> tagList = new ArrayList<>();
         for (ImageTags page : pages) {
@@ -124,6 +127,10 @@ public class BaseImageMapper {
         tagStorage.put(baseImage.name().toLowerCase(), new DockerImage(baseImage, tagList));
     }
 
+    /**
+     Sets the image Map,
+     This allows the Injection of a specific image map and is only used for testing
+     */
     protected void setImageMap(Map<String, DockerImage> imageMap) {
         tagStorage.putAll(imageMap);
         this.engine = new MapperEngine(tagStorage);

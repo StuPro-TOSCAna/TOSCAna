@@ -7,6 +7,9 @@ import org.opentosca.toscana.plugins.kubernetes.exceptions.UnsupportedOsTypeExce
 import org.opentosca.toscana.plugins.kubernetes.visitor.check.NodeTypeCheckVisitor;
 import org.opentosca.toscana.plugins.kubernetes.visitor.check.OsCheckNodeVisitor;
 
+/**
+ This Class implements the Model and Environment check phases in the Kubernetes Lifecycle
+ */
 class CheckHandler extends LifecycleHandler {
 
     CheckHandler(KubernetesLifecycle lifecycle) {

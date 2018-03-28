@@ -10,9 +10,14 @@ import org.apache.commons.io.IOUtils;
 
 /**
  This class allows the automatic building of a dockerfile if a docker daemon is available.
+ <p>
+ The built images will be Exported into .tar.gz archives using the <code>docker store</code> command.
  */
 public class ExportingImageBuilder extends ImageBuilder {
 
+    /**
+     The Path to which the .tar.gz archive should be written
+     */
     private final String outputPath;
 
     /**

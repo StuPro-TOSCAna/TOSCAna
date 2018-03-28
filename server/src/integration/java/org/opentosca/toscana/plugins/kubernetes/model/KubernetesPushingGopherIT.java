@@ -41,6 +41,11 @@ import static org.opentosca.toscana.plugins.kubernetes.KubernetesPlugin.DOCKER_R
 import static org.opentosca.toscana.plugins.kubernetes.KubernetesPlugin.DOCKER_REGISTRY_URL_PROPERTY_KEY;
 import static org.opentosca.toscana.plugins.kubernetes.KubernetesPlugin.DOCKER_REGISTRY_USERNAME_PROPERTY_KEY;
 
+/**
+ This Test Transforms the Gopher model to DockerImages and a Kubernetes Resource and Attempts to push the given image to a localy hosted Repository
+
+ Needs port 5000 to be available
+ */
 public class KubernetesPushingGopherIT extends KubernetesLampIT {
 
     private static final Logger logger = LoggerFactory.getLogger(KubernetesPushingGopherIT.class);

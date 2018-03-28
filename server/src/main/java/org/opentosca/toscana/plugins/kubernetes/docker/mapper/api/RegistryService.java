@@ -7,6 +7,9 @@ import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
+/**
+ Retrofit service for the DockerRegistry API
+ */
 public interface RegistryService {
 
     @GET("/v2/repositories/{username}/{repository}/tags")

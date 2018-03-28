@@ -2,6 +2,9 @@ package org.opentosca.toscana.plugins.kubernetes.docker.dockerfile.builder.comma
 
 import java.io.PrintWriter;
 
+/**
+ This Class describes the Workdir (Set the Current workdir) Command for the DockerfileBuilder
+ */
 public class WorkdirCommand extends DockerfileEntry {
     private final String path;
 

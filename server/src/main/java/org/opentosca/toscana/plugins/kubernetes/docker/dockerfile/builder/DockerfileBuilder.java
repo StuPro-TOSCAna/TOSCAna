@@ -21,17 +21,46 @@ import org.opentosca.toscana.plugins.kubernetes.docker.dockerfile.builder.comman
 
 /**
  Allows the building of a dockerfile.
+ <p>
+ The Class Stores the Commands called and Builds a Dockerfile out of them. (similar to StringBuilder)
  */
 public class DockerfileBuilder {
 
+    /**
+     The Parent image of the Dockerfile (Gets written in the FROM command)
+     */
     private final String baseImage;
+    /**
+     The Path to the Working directory, The Working Dir is used to Copy the Artifacts to (defined in the Copy commands)
+     */
     private final String workingDir;
+    /**
+     PluginFileAccess used for Filesystem Interactrion
+     */
     private final PluginFileAccess fileAccess;
 
+    /**
+     The List of entries from which the Dockerfile gets built
+     <p>
+     These commands are stored in the order they have been added, this is important, to guarantee the proper execution
+     order in the dockerfile
+     */
     private final List<DockerfileEntry> entries = new ArrayList<>();
 
+    /**
+     This flag is true if the RUN Commands should be Compressed, that means run commands that follow after each other
+     get "compressed" into one run command and the commands themselves get connected using &&
+     */
     private boolean compress = false;
+    /**
+     Stores all copy commands. Before write gets called for the first time.
+     <p>
+     This allows a grouping of all write commands.
+     */
     private List<CopyCommand> copyCommands;
+    /**
+     Identical to the Copy list, just for env commands
+     */
     private List<EnvCommand> envCommands;
     private int lastWorkdirCommand = 0;
 
@@ -199,6 +228,10 @@ public class DockerfileBuilder {
         w.close();
     }
 
+    /**
+     Writes the Dockerfile to a Given Writer.
+     Filesystem Contents dont get Copied anywhere
+     */
     private void writeTo(Writer out) {
         addCopyCommandsToEntries();
         addEnvCommandsToEntries();
