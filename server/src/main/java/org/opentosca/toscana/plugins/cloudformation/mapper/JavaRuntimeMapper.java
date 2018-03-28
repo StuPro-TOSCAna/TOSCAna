@@ -17,7 +17,7 @@ public class JavaRuntimeMapper {
         logger.debug("Map JavaRuntime {}", javaRuntime.getEntityName());
         String javaVersion;
         if (javaRuntime.getComponentVersion().isPresent()) {
-            javaVersion = javaRuntime.getComponentVersion().get().replaceAll("1.", "");
+            javaVersion = javaRuntime.getComponentVersion().get().replaceAll("^.*\\.", "");
         } else {
             javaVersion = JAVA_8;
         }
