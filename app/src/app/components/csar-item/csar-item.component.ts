@@ -2,8 +2,9 @@ import {Component, Input, OnInit} from '@angular/core';
 import 'rxjs/add/observable/combineLatest';
 import {Csar} from '../../model/csar';
 import {ClientCsarsService} from '../../services/csar.service';
-import {RouteHandler, ViewState} from '../../services/route.service';
+import {RouteHandler} from '../../services/route.service';
 import {isNullOrUndefined} from 'util';
+import {ViewState} from '../../model/view-states';
 
 @Component({
     selector: 'app-csar-item',

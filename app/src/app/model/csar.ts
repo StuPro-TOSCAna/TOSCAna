@@ -24,6 +24,11 @@ export class Csar {
         return this.checkLifecyclePhasesForGivenStates(validStates);
     }
 
+    /**
+     * check if all of the lifecycle phases are in one of the given states
+     * @param validStates Array of lifecycle phase states
+     * @returns {boolean}
+     */
     private checkLifecyclePhasesForGivenStates(validStates) {
         let valid = true;
         this.phases.forEach(phase => {

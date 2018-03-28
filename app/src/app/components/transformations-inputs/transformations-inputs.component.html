@@ -2,7 +2,7 @@
     <div class="navbar-brand">Enter Inputs</div>
 </nav>
 
-<form (ngSubmit)="submit()" #propertiesForm="ngForm">
+<form (ngSubmit)="submitInputs()" #propertiesForm="ngForm">
     <table class="table table-striped" *ngIf="inputs.length > 0">
         <thead>
         <tr>
@@ -19,7 +19,7 @@
             <td *ngIf="!hasTypeBoolean(item)">
                 <input [value]="item.value"
                        [placeholder]="getDefaultValue(item.defaultValue)"
-                       (input)="change(item, $event.target.value)"
+                       (input)="onInputChange(item, $event.target.value)"
                        name="item.key"
                        [ngClass]="{'invalid': !item.valid, 'valid':item.valid}"/>
             </td>

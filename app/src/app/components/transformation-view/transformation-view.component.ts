@@ -36,7 +36,6 @@ export class TransformationViewComponent implements OnInit, OnDestroy {
     private inputs: InputWrap[];
     private outputs: Array<OutputWrap> = [];
     getColorForLifecyclePhase = getColorForLifecyclePhase;
-    LifecycleStateEnum = LifecycleStateEnum;
 
     constructor(private csarProvider: ClientCsarsService,
                 private messageService: MessageService, private routeHandler: RouteHandler, private route: ActivatedRoute,
@@ -53,26 +52,41 @@ export class TransformationViewComponent implements OnInit, OnDestroy {
             this.platform = params.get('platform');
             return this.transformationProvider.getTransformationByCsarAndPlatform(this.csarId, this.platform);
         }).subscribe(data => {
-            this.transformationDone = false;
             this.transformation = data;
-            this.transformationProvider.getTransformationInputs(this.csarId, this.platform).subscribe(inputs => {
-                this.inputs = inputs.inputs;
-            });
+            this.loadTransformationInputs();
             this.generateDownloadUrl();
-            if (this.transformation.state === TransformationStateEnum.INPUTREQUIRED) {
-                this.routeHandler.openInputs(this.csarId, this.platform);
-            }
+            this.handleInputRequiredState();
             this.checkTransformationstate();
-            this.observable = Observable.interval(1000);
-            this.observable.takeWhile(() => !this.transformationDone).subscribe(() => {
-                this.transformationProvider.getTransformationByCsarAndPlatform(this.csarId, this.platform)
-                    .subscribe(res => {
-                        this.transformation = res;
-                        this.checkTransformationstate();
-                        this.logView.refresh();
-                    });
-            });
+            this.pollForTransformationProgress();
         }, err => this.messageService.addErrorMessage('Failed to load transformation'));
+    }
+
+    /**
+     * check the transformation state,
+     * if it is INPUT_REQUIRED open the transformation input view
+     */
+    private handleInputRequiredState() {
+        if (this.transformation.state === TransformationStateEnum.INPUTREQUIRED) {
+            this.routeHandler.openInputs(this.csarId, this.platform);
+        }
+    }
+
+    private loadTransformationInputs() {
+        this.transformationProvider.getTransformationInputs(this.csarId, this.platform).subscribe(inputs => {
+            this.inputs = inputs.inputs;
+        });
+    }
+
+    private pollForTransformationProgress() {
+        this.observable = Observable.interval(1000);
+        this.observable.takeWhile(() => !this.transformationDone).subscribe(() => {
+            this.transformationProvider.getTransformationByCsarAndPlatform(this.csarId, this.platform)
+                .subscribe(res => {
+                    this.transformation = res;
+                    this.checkTransformationstate();
+                    this.logView.refresh();
+                });
+        });
     }
 
     private checkTransformationstate() {
@@ -96,7 +110,7 @@ export class TransformationViewComponent implements OnInit, OnDestroy {
         return '-';
     }
 
-    changeState() {
+    openOutputTab() {
         this.state = 'outputs';
         this.transformationProvider.getTransformationOutputs(this.csarId, this.platform).subscribe(data => {
             this.outputs = data.outputs;
