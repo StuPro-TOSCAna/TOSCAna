@@ -15,6 +15,9 @@ import org.yaml.snakeyaml.Yaml;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+/**
+ This test checks the Functionality of the ResourceFileCreator
+ */
 public class ResourceFileCreatorTest extends BaseUnitTest {
     private String appName = "my-app";
     private String appServiceName = "my-app-service";
@@ -26,7 +29,7 @@ public class ResourceFileCreatorTest extends BaseUnitTest {
 
         HashMap<String, String> result = null;
         try {
-            result = resourceFileCreator.create();
+            result = resourceFileCreator.getResourceYaml();
         } catch (JsonProcessingException e) {
             e.printStackTrace();
             fail();

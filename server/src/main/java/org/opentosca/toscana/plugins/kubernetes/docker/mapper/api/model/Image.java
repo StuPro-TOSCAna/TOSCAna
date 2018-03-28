@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- This class represtents one image (belonging to a tag) of a repository.
+ Represtents one image (belonging to a tag) of a repository.
  <p>
  This class is only used to fetch the data from the registry.
  <p>

@@ -12,9 +12,20 @@ import com.spotify.docker.client.exceptions.DockerCertificateException;
 import com.spotify.docker.client.messages.RegistryAuth;
 import com.spotify.docker.client.messages.RegistryConfigs;
 
+/**
+ This ImageBuilder Implementation takes the built images and pushes them to a given registry.
+ */
 public class PushingImageBuilder extends ImageBuilder {
+    /**
+     The Credentials to the Docker Registry (including the URL)
+     */
     private final DockerRegistryCredentials credentials;
 
+    /**
+     @param credentials the Credentials for the Registry you want to push to
+     @param tag         the tag of the image. It is important to note that this should not contain
+     Registry URL, Username and Repository these will be appended from the DockerRegistryCredentials given
+     */
     public PushingImageBuilder(
         DockerRegistryCredentials credentials,
         String tag,
@@ -68,7 +79,6 @@ public class PushingImageBuilder extends ImageBuilder {
     @Override
     public void storeImage() throws Exception {
         DockerClient client = getDockerClient();
-        //client.auth(credentials.toRegistryAuth());
 
         client.push(getTag(), this);
     }

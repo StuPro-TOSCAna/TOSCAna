@@ -13,7 +13,10 @@ import io.fabric8.kubernetes.api.model.extensions.Deployment;
 import io.fabric8.kubernetes.api.model.extensions.DeploymentBuilder;
 import io.fabric8.kubernetes.client.internal.SerializationUtils;
 
-public class ResourceDeployment {
+/**
+ Converts a {@link Pod} object into a Kubernetes Deployment
+ */
+public class ResourceDeployment implements IKubernetesResource<ResourceDeployment> {
     private final String name;
     private Pod pod;
     private Deployment deployment;
@@ -23,14 +26,20 @@ public class ResourceDeployment {
         this.name = stack.getName();
     }
 
+    @Override
     public ResourceDeployment build() {
         ArrayList<Container> containers = new ArrayList<>();
 
+        // Create the Container objects of the containers belonging in the Pod
         pod.getContainers().forEach(e -> {
             Container container = new ContainerBuilder()
+                // Set the Image Tag
                 .withImage(e.getDockerImageTag().get())
+                // Set the Container Name
                 .withName(e.getCleanStackName())
-                .withImagePullPolicy("Always") //TODO Consider removing this (only needed during development)
+                // This forces the Kubernetes Cluster to check for newer Versions of the image
+                .withImagePullPolicy("Always")
+                // Add the Ports exposed by the Container
                 .addAllToPorts(e.getOpenPorts().stream().map(Port::toContainerPort).collect(Collectors.toList()))
                 .build();
 
@@ -39,8 +48,9 @@ public class ResourceDeployment {
 
         deployment = new DeploymentBuilder()
             .withNewMetadata()
-            .withName(name + "-deployment")
-            .addToLabels("app", name)
+            .withName(pod.getDeploymentName())
+            // The Unspecific name is used here to improve the ability to find objects belonging together
+            .addToLabels("app", name) 
             .endMetadata()
             .withNewSpec()
             .withReplicas(pod.getReplicaCount())
@@ -60,7 +70,13 @@ public class ResourceDeployment {
         return this;
     }
 
+    @Override
     public String toYaml() throws JsonProcessingException {
         return SerializationUtils.dumpAsYaml(deployment);
+    }
+
+    @Override
+    public String getName() {
+        return pod.getDeploymentName();
     }
 }

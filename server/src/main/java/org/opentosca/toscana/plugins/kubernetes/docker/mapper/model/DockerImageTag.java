@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.vdurmont.semver4j.Semver;
 
 /**
- This class represents a Tag for a Repository (image) on a docker registry.
+ Represents a Tag for a Repository (image) on a docker registry.
  */
 public class DockerImageTag {
     private String name;

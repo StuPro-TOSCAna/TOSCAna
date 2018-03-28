@@ -25,11 +25,16 @@ import org.slf4j.LoggerFactory;
 
 import static java.util.Collections.singletonMap;
 
+/**
+ This test is intended to test The Pushing functionality of the PushingImageBuilder
+ <p>
+ Needs port 5000 to be available because it will use a local registry to validate the functionality
+ */
 public class PushingImageBuilderIT extends ExportingImageBuilderIT {
 
     private static Logger logger = LoggerFactory.getLogger(PushingImageBuilderIT.class);
 
-    private DockerRegistryCredentials creds;
+    private DockerRegistryCredentials credentials;
 
     private String tag = "sha-test-" + Long.toString(System.currentTimeMillis(), 16);
 
@@ -39,7 +44,7 @@ public class PushingImageBuilderIT extends ExportingImageBuilderIT {
     public void init() throws Exception {
         Assume.assumeTrue(DockerTestUtils.isDockerAvailable());
 
-        this.creds = new DockerRegistryCredentials(
+        this.credentials = new DockerRegistryCredentials(
             "127.0.0.1:5000",
             "",
             "",
@@ -70,7 +75,7 @@ public class PushingImageBuilderIT extends ExportingImageBuilderIT {
     @Override
     public ImageBuilder instantiateImageBuilder(TransformationContext context) throws Exception {
         return new PushingImageBuilder(
-            creds,
+            credentials,
             //Make the Image tag kind of unique to prevent collisions when pushing to a proper registry
             tag,
             WORKING_DIR_SUBFOLDER_NAME,
@@ -80,14 +85,14 @@ public class PushingImageBuilderIT extends ExportingImageBuilderIT {
 
     @Override
     public void validate(String tag) throws Exception {
-        RegistryAuth auth = creds.toRegistryAuth();
+        RegistryAuth auth = credentials.toRegistryAuth();
 
         DockerClient client = DefaultDockerClient.fromEnv()
             .registryAuthSupplier(
                 new FixedRegistryAuthSupplier(
                     auth,
                     RegistryConfigs.create(
-                        Collections.singletonMap(creds.getRegistryURL(), auth)
+                        Collections.singletonMap(credentials.getRegistryURL(), auth)
                     )
                 )
             )
@@ -97,7 +102,6 @@ public class PushingImageBuilderIT extends ExportingImageBuilderIT {
         client.pull(tag);
     }
 
-    
     @After
     @SuppressWarnings("Duplicates")
     public void tearDown() throws Exception {
