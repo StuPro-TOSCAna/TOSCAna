@@ -1,3 +1,4 @@
+<!-- modal to ask the user if he wants to overwrite a transformation -->
 <div bsModal #template="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
      aria-hidden="true">
     <div class="modal-dialog modal-lg">
@@ -20,7 +21,7 @@
 </div>
 
 <nav class="navbar navbar-dark bg-dark">
-    <div class="navbar-brand">{{title}}</div>
+    <div class="navbar-brand">Select Platform</div>
 </nav>
 <div *ngIf="!isNullOrUndefined(csar)">
     <div *ngIf="!platformSelected" class="target-platforms">

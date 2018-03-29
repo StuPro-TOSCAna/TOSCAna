@@ -8,12 +8,12 @@ import {ModalModule, TooltipModule} from 'ngx-bootstrap';
 
 import {AppComponent} from './app.component';
 import {ApiModule} from './api/api.module';
-import {CsarSideBarComponent} from './components/csar-sidebar/main-view.component';
+import {CsarSideBarComponent} from './components/csar-sidebar/csar-sidebar.component';
 import {CsarItemComponent} from './components/csar-item/csar-item.component';
 import {CsarMenuSubItemsComponent} from './components/csar-sub-item/csar-menu-sub-items.component';
 import {AngularFilePickerModule} from 'angular-file-picker-fixed';
 import {FormsModule} from '@angular/forms';
-import {TransformationCreatorComponent} from './components/transformation-creator/new-transformation-modal.component';
+import {TransformationCreatorComponent} from './components/transformation-creator/transformation-creator.component';
 import {ClientPlatformsService} from './services/platforms.service';
 import {TransformationInputsComponent} from './components/transformations-inputs/transformations-inputs.component';
 import {ClientsTransformationsService} from './services/transformations.service';
