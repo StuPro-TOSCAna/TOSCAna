@@ -55,7 +55,7 @@ public class ApiController {
                 + Constants.ERROR_PLACEHOLDER, e.getMessage()));
             verboseStack(e);
         } catch (TOSCAnaServerException e) {
-            e.printLog();
+            verboseStack(e);
         }
         return "";
     }
