@@ -13,6 +13,7 @@ pages:
         - 'Running with Docker': 'user/docker.md'
         - "TOSCA Support": 'user/tosca-support.md' 
         - "TOSCAna Types": 'user/toscana-types.md' 
+        - "WebApp": 'user/webapp/webapp.md'
     - Developer Documentation:
         - 'TOSCA model':
             - "EffectiveModel": "dev/model/effective-model.md"
