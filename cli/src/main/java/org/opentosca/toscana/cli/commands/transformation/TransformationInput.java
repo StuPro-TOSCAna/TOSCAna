@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.opentosca.toscana.cli.ApiController;
+import org.opentosca.toscana.cli.commands.Constants;
 
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -58,6 +59,8 @@ public class TransformationInput extends AbstractTransformation {
             }
         } catch (IOException e) {
             System.err.println(e.getMessage());
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.err.println(Constants.NOT_PROVIDED);
         }
     }
 
