@@ -87,9 +87,7 @@ public class OperationHandler {
 
             // Add environment variables
             Map<String, String> envVars = getEnvVars(start);
-            envVars.forEach((key, value) -> {
-                cfnModule.putEnvironmentMap(computeHostName, key, value);
-            });
+            envVars.forEach((key, value) -> cfnModule.putEnvironmentMap(computeHostName, key, value));
         }
     }
 

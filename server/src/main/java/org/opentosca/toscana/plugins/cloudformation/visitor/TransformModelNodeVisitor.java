@@ -170,8 +170,7 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
                 .groupDescription("Open database " + dbName + " for access to group " + serverName + SECURITY_GROUP);
             Set<Compute> hostsOfConnectedTo = getHostsOfConnectedTo(node);
             for (Compute hostOfConnectedTo : hostsOfConnectedTo) {
-                logger.debug("Open connection to " + toAlphanumerical(hostOfConnectedTo.getEntityName()) + 
-                    SECURITY_GROUP);
+                logger.debug("Open connection to " + toAlphanumerical(hostOfConnectedTo.getEntityName()) + SECURITY_GROUP);
                 securityGroup.ingress(ingress -> ingress.sourceSecurityGroupName(
                     cfnModule.ref(toAlphanumerical(hostOfConnectedTo.getEntityName()) + SECURITY_GROUP)),
                     PROTOCOL_TCP,
@@ -342,7 +341,7 @@ public class TransformModelNodeVisitor extends CloudFormationVisitorExtension im
             optionSettings.addAll(operationHandler.handleStartJava(node));
             //add all option settings to beanstalk configuration
             if (!optionSettings.isEmpty()) {
-                beanstalkConfigurationTemplate.optionSettings(optionSettings.stream().toArray(OptionSetting[]::new));
+                beanstalkConfigurationTemplate.optionSettings(optionSettings.toArray(new OptionSetting[0]));
             }
             cfnModule.resource(Environment.class, nodeName + "Environment")
                 .applicationName(beanstalkApplication)
