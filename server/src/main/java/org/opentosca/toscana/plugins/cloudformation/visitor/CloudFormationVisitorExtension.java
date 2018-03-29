@@ -1,9 +1,12 @@
 package org.opentosca.toscana.plugins.cloudformation.visitor;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.opentosca.toscana.core.transformation.TransformationContext;
+import org.opentosca.toscana.model.capability.EndpointCapability;
 import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.Database;
 import org.opentosca.toscana.model.node.Dbms;
@@ -12,6 +15,8 @@ import org.opentosca.toscana.model.node.Nodejs;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.node.WebApplication;
 import org.opentosca.toscana.model.node.WebServer;
+import org.opentosca.toscana.model.node.custom.JavaApplication;
+import org.opentosca.toscana.model.node.custom.JavaRuntime;
 import org.opentosca.toscana.model.relation.RootRelationship;
 import org.opentosca.toscana.plugins.cloudformation.CloudFormationModule;
 import org.opentosca.toscana.plugins.cloudformation.util.StackUtils;
@@ -84,7 +89,7 @@ public abstract class CloudFormationVisitorExtension {
     /**
      Get the Compute node this dbms is ultimately hosted on
 
-     @param dbms the webServer to find the host for
+     @param dbms the Dbms to find the host for
      @return the underlying Compute node
      */
     protected static Compute getCompute(Dbms dbms) {
@@ -95,13 +100,40 @@ public abstract class CloudFormationVisitorExtension {
 
     /**
      Get the Compute node this nodejs is ultimately hosted on.
-     
+
      @param nodejs the host of which should be returned
      @return host of given Nodejs
      */
     protected static Compute getCompute(Nodejs nodejs) {
         return nodejs.getHost().getNode().orElseThrow(
             () -> new IllegalStateException("Nodejs is missing Compute")
+        );
+    }
+
+    /**
+     Get the Compute node this JavaApplication is ultimately hosted on.
+
+     @param javaApplication the JavaApplication to find the host for
+     @return host of given JavaApplication
+     */
+    protected static Compute getCompute(JavaApplication javaApplication) {
+        JavaRuntime javaRuntime = javaApplication.getJreHost().getNode().orElseThrow(
+            () -> new IllegalStateException("JavaApplication is missing JavaRuntime")
+        );
+        return javaRuntime.getHost().getNode().orElseThrow(
+            () -> new IllegalStateException("JavaRuntime is missing Compute")
+        );
+    }
+
+    /**
+     Get the JavaRuntime node this JavaApplication is hosted on.
+
+     @param javaApplication the JavaApplication to find the JavaRuntime for
+     @return JavaRuntime the given JavaApplication is hosted on
+     */
+    protected static JavaRuntime getJavaRuntime(JavaApplication javaApplication) {
+        return javaApplication.getJreHost().getNode().orElseThrow(
+            () -> new IllegalStateException("JavaApplication is missing JavaRuntime")
         );
     }
 
@@ -115,6 +147,11 @@ public abstract class CloudFormationVisitorExtension {
                 Compute compute = getCompute(webApplication);
                 connected.add(compute);
             }
+            if (source instanceof JavaApplication) {
+                JavaApplication javaApplication = (JavaApplication) source;
+                Compute compute = getCompute(javaApplication);
+                connected.add(compute);
+            }
         }
         return connected;
     }
@@ -124,7 +161,7 @@ public abstract class CloudFormationVisitorExtension {
         SecurityGroup webServerSecurityGroup = cfnModule.resource(SecurityGroup.class,
             computeName + SECURITY_GROUP)
             .groupDescription("Temporary group for accessing mysqlDatabase" + toAlphanumerical(mysqlDatabase
-                .getEntityName()) + "  with SQLRequest");
+                .getEntityName()) + " with SQLRequest");
         cfnModule.resource(Instance.class, computeName)
             .securityGroupIds(webServerSecurityGroup)
             .imageId("ami-79873901")
@@ -132,5 +169,28 @@ public abstract class CloudFormationVisitorExtension {
             .instanceInitiatedShutdownBehavior("terminate")
             .userData(new UserData(StackUtils.getUserDataDBConnFn(mysqlDatabase, sqlQuery)));
         return computeName;
+    }
+
+    /**
+     Gets the ports from the {@link EndpointCapability EndpointCapabilities} if there are any.
+
+     @param node the node to check
+     @return list of ports that may be empty
+     */
+    protected List<Integer> getPortsFromEnpointCapability(RootNode node) {
+        List<Integer> portList = new ArrayList<>();
+        String nodeName = node.getEntityName();
+        node.getCapabilities().forEach(e -> {
+            try {
+                if (e instanceof EndpointCapability && ((EndpointCapability) e).getPort().isPresent()) {
+                    int port = ((EndpointCapability) e).getPort().get().port;
+                    logger.debug("Marking '{}' as port to be opened for '{}'.", port, nodeName);
+                    portList.add(port);
+                }
+            } catch (Exception ex) {
+                logger.warn("Failed reading Port from node {}", nodeName, ex);
+            }
+        });
+        return portList;
     }
 }

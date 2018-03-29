@@ -8,7 +8,7 @@ import org.opentosca.toscana.model.EffectiveModelFactory;
 
 import org.apache.commons.io.FileUtils;
 
-public class CloudFormationLampMultiNodeIT extends CloudFormationLampIT {
+public class CloudFormationLampMultiNodeIT extends CloudFormationIT {
 
     @Override
     protected EffectiveModel getModel() {

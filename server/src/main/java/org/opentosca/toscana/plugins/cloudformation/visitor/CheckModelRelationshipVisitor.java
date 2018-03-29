@@ -4,6 +4,7 @@ import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.model.node.Database;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.node.WebApplication;
+import org.opentosca.toscana.model.node.custom.JavaApplication;
 import org.opentosca.toscana.model.relation.ConnectsTo;
 import org.opentosca.toscana.model.relation.HostedOn;
 import org.opentosca.toscana.model.visitor.StrictRelationshipVisitor;
@@ -28,7 +29,7 @@ public class CheckModelRelationshipVisitor extends CloudFormationVisitorExtensio
     public void visit(ConnectsTo relation) {
         RootNode source = topology.getEdgeSource(relation);
         RootNode target = topology.getEdgeTarget(relation);
-        if (!(source instanceof WebApplication && target instanceof Database)) {
+        if (!((source instanceof WebApplication || source instanceof JavaApplication) && target instanceof Database)) {
             throw new UnsupportedTypeException("ConnectsTo relationship from source: " + source + " to target: " +
                 target + " not supported.");
         }
