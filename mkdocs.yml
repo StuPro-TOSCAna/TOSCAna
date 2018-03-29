@@ -11,9 +11,11 @@ pages:
     - 'User Documentation':
         - 'Getting started': 'user/getting-started.md'
         - 'Running with Docker': 'user/docker.md'
-        - "TOSCA Support": 'user/tosca-support.md' 
-        - "TOSCAna Types": 'user/toscana-types.md' 
+        - "TOSCA Support": 'user/tosca-support.md'
+        - "TOSCAna Types": 'user/toscana-types.md'
     - Developer Documentation:
+        - 'REST API':
+            - 'Swagger Documentation': 'dev/core/rest-api.md'
         - 'TOSCA model':
             - "EffectiveModel": "dev/model/effective-model.md"
             - "TOSCA Type Support": "dev/model/type-support.md"
@@ -43,4 +45,3 @@ pages:
             - "0015 - Use filesystem for persistency": "dev/adr/0015-persist-to-filesystem.md"
             - "0016 - Don't support TOSCA type definitions": "dev/adr/0016-not-supporting-type-definitions.md"
             - "0017 - Implement own TOSCA parser": "dev/adr/0017-implement-own-tosca-parser.md"
-
