@@ -11,8 +11,8 @@ pages:
     - 'User Documentation':
         - 'Getting started': 'user/getting-started.md'
         - 'Running with Docker': 'user/docker.md'
-        - "TOSCA Support": 'user/tosca-support.md' 
-        - "TOSCAna Types": 'user/toscana-types.md' 
+        - "TOSCA Support": 'user/tosca-support.md'
+        - "TOSCAna Types": 'user/toscana-types.md'
     - Developer Documentation:
         - 'TOSCA model':
             - "EffectiveModel": "dev/model/effective-model.md"
@@ -37,10 +37,11 @@ pages:
             - "0009 - CloudFoundry CLI": "dev/adr/0009-cloudfoundry-cli.md"
             - "0010 - How to perform Kubernetes end to end tests": "dev/adr/0010-use-docker-java.md"
             - "0011 - Put Integration Tests in seperate source directory": "dev/adr/0011-put-integration-tests-in-seperate-folder.md"
-            - "0012 - Use java CloudFoundry Library": "dev/adr/0012-cf-java-library.md"
+            - "0012 - CloudFoundry java Library": "dev/adr/0012-cloudfoundry-java-library.md"
             - "0013 - Use AWS SDK for java": "dev/adr/0013-aws-file-upload.md"
             - "0014 - Navigate EffectiveModel with visitor pattern": "dev/adr/0014-iterate-effectivemodel-with-visitor-pattern.md"
             - "0015 - Use filesystem for persistency": "dev/adr/0015-persist-to-filesystem.md"
             - "0016 - Don't support TOSCA type definitions": "dev/adr/0016-not-supporting-type-definitions.md"
             - "0017 - Implement own TOSCA parser": "dev/adr/0017-implement-own-tosca-parser.md"
-
+            - "0018 - CloudFoundry No deployment during runtime": "dev/adr/0018-cloudfoundry-no-deployment-in-runtime.md"
+            - "0019 - CloudFoundry Deploymentscripts": "dev/adr/0019-cloudfoundry-deploymentscripts"
