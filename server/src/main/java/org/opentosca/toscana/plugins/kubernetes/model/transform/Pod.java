@@ -11,11 +11,28 @@ import java.util.Set;
 import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.plugins.kubernetes.util.NodeStack;
 
+/**
+ Represents a Pod,
+ We Consider a Pod to be a Set of Node Stacks that have the same Compute Node
+ */
 public class Pod {
+    
+    /**
+     The List of NodeStacks contained by this Pod
+     */
     private List<NodeStack> containers;
 
+    /**
+     The Set of Ports Exposed by the Pod
+     */
     private Set<Port> ports;
+    /**
+     The Common Compute Node
+     */
     private Compute computeNode;
+    /**
+     The Amount of instances that should be Created by Kubernetes when deploying the result
+     */
     private int replicaCount = 1;
 
     public Pod(List<NodeStack> containers, Compute compute) {
@@ -26,6 +43,14 @@ public class Pod {
         computeReplicaCount();
     }
 
+    /**
+     Looks at the Compute node and determines the Replica Count
+     <p>
+     We follow the following Procedure:
+     If the Default Instance Count is given it will be used as <code>replicaCount</code>
+     If the Default Instance Count is not given we try to use the Maximum,
+     if that is also not present (set to unbounded) we use the minimum
+     */
     private void computeReplicaCount() {
         if (computeNode.getScalable().getDefaultInstances().isPresent()) {
             this.replicaCount = computeNode.getScalable().getDefaultInstances().get();
@@ -43,10 +68,15 @@ public class Pod {
     }
 
     public Set<Port> getPorts() {
+        // We need to check if the Ports have been loaded, because the Pods objects get created before
+        // we find out what ports get exposed by each NodeStack
         updatePorts();
         return ports;
     }
 
+    /**
+     Looks at all node stacks and adds the Exposed Ports if they are not present
+     */
     private void updatePorts() {
         if (ports.isEmpty()) {
             this.containers.forEach(e -> this.ports.addAll(e.getOpenPorts()));
@@ -74,6 +104,10 @@ public class Pod {
         return replicaCount;
     }
 
+    /**
+     @param stacks The List of NodeStacks to group in Pods
+     @return a List Containing the given NodeStacks grouped in Pods
+     */
     public static List<Pod> getPods(Collection<NodeStack> stacks) {
         //Group Node Stacks
         Map<Compute, List<NodeStack>> stackMap = new HashMap<>();

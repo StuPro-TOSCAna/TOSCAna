@@ -19,6 +19,11 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+/**
+ This integration test, is intended to test the exporting Capability of the ExportingImageBuilder
+ <p>
+ It also implicitly tests the Building funtionality of the ImageBuilder class
+ */
 @Category(IntegrationTest.class)
 public class ExportingImageBuilderIT extends BaseDockerfileTest {
 

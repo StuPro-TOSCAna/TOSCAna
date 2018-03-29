@@ -2,6 +2,9 @@ package org.opentosca.toscana.plugins.kubernetes.docker.dockerfile.builder.comma
 
 import java.io.PrintWriter;
 
+/**
+ Describes the Volume (Set a Volume Directory) Command for the DockerfileBuilder
+ */
 public class VolumeCommand extends DockerfileEntry {
     private final String path;
 

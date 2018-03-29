@@ -36,6 +36,11 @@ import static org.opentosca.toscana.plugins.kubernetes.docker.mapper.DockerBaseI
 import static org.opentosca.toscana.plugins.kubernetes.docker.mapper.DockerBaseImages.UBUNTU;
 import static org.opentosca.toscana.plugins.kubernetes.docker.mapper.MapperConstants.DEFAULT_IMAGE_PATH;
 
+/**
+ This test will test the BaseImageMapper for which a Result should be produced.
+ <p>
+ For example: Empty Capabilities, Missing Versions...
+ */
 @RunWith(Parameterized.class)
 public class MapperTest extends BaseUnitTest {
 

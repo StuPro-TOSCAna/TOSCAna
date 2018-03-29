@@ -9,13 +9,35 @@ import static org.opentosca.toscana.plugins.kubernetes.KubernetesPlugin.DOCKER_R
 import static org.opentosca.toscana.plugins.kubernetes.KubernetesPlugin.DOCKER_REGISTRY_URL_PROPERTY_KEY;
 import static org.opentosca.toscana.plugins.kubernetes.KubernetesPlugin.DOCKER_REGISTRY_USERNAME_PROPERTY_KEY;
 
+/**
+ Wraps credentials for a specific registry
+ */
 public class DockerRegistryCredentials {
+    /**
+     The URL to the registry
+     <p>
+     This Might be empty if DockerHub is used
+     */
     private final String registryURL;
+    /**
+     The username to login to the registry
+     */
     private final String username;
+    /**
+     The Corresponding password or access token
+     */
     private final String password;
+    /**
+     The Name of the registry the images should be pushed to
+     */
     private final String repository;
 
-    public DockerRegistryCredentials(String registryURL, String username, String password, String repository) {
+    public DockerRegistryCredentials(
+        String registryURL,
+        String username,
+        String password,
+        String repository
+    ) {
         this.registryURL = registryURL;
         this.username = username;
         this.password = password;
@@ -23,7 +45,10 @@ public class DockerRegistryCredentials {
     }
 
     /**
-     Constructs a Docker Regitry credentials object from the properties defined through the context. in the Kubernetes Plugin
+     Constructs a Docker Regitry credentials object from the properties defined through the context. 
+     in the Kubernetes Plugin
+     
+     @throws java.util.NoSuchElementException gets thrown if one of the property keys is unknown or not set.
      */
     public static DockerRegistryCredentials fromContext(TransformationContext context) {
         return new DockerRegistryCredentials(
@@ -50,6 +75,10 @@ public class DockerRegistryCredentials {
         return repository;
     }
 
+    /**
+     Builds a RegistryAuth object for the DockerClient Library. This object is used to build a client with
+     registry credentials
+     */
     public RegistryAuth toRegistryAuth() {
         return RegistryAuth.builder()
             .username(username)
