@@ -23,8 +23,10 @@ import org.opentosca.toscana.model.requirement.Requirement;
 import org.slf4j.Logger;
 
 /**
- Responsible for resolving symbolic TOSCA links in the ServiceGraph - instead of symbolic links,
- appropriate edges get created
+ Responsible for resolving symbolic TOSCA names in the ServiceGraph.
+ Basically, entities which contain symbolic names are replaced with appropriate edges.
+ <p>
+ Please consult the developer documentation for detailed information (incl. visualization of the whole process)
  */
 public class LinkResolver {
 
@@ -100,6 +102,7 @@ public class LinkResolver {
                                 graph.replaceEntity(operationArtifact.getBackingEntity(), nodeArtifact.getBackingEntity());
                                 logger.debug(LogFormat.pointAt(2,
                                     operationArtifact.getBackingEntity().getId(), nodeArtifact.getBackingEntity().getId()));
+                                // at this point it's obvious: we need a better solution for navigating the service graph...
                             }
                         }
                     }

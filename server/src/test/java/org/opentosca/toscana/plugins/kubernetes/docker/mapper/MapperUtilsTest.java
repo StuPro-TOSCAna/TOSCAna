@@ -15,6 +15,9 @@ import static org.junit.Assert.assertTrue;
 import static org.opentosca.toscana.model.capability.OsCapability.Type;
 import static org.opentosca.toscana.plugins.kubernetes.docker.mapper.MapperUtils.anythingSet;
 
+/**
+ This test will check the functionality of the <code>anythingSet()</code> Function in the MapperUtils class
+ */
 public class MapperUtilsTest extends BaseUnitTest {
 
     private static EntityId entityId = new EntityId(Lists.newArrayList("my", "id"));

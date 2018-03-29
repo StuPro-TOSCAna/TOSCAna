@@ -1,0 +1,44 @@
+<nav class="navbar navbar-dark bg-dark">
+    <div class="navbar-brand">Enter Inputs</div>
+</nav>
+
+<form (ngSubmit)="submitInputs()" #propertiesForm="ngForm">
+    <table class="table table-striped" *ngIf="inputs.length > 0">
+        <thead>
+        <tr>
+            <th scope="col">key</th>
+            <th scope="col">type</th>
+            <th scope="col">value</th>
+            <th scope="col">info</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let item of inputs; let n=index">
+            <td>{{item.key}}</td>
+            <td>{{item.type}}</td>
+            <td *ngIf="!hasTypeBoolean(item)">
+                <input [value]="item.value"
+                       [placeholder]="getDefaultValue(item.defaultValue)"
+                       (input)="onInputChange(item, $event.target.value)"
+                       name="item.key"
+                       [ngClass]="{'invalid': !item.valid, 'valid':item.valid}"/>
+            </td>
+            <td *ngIf="hasTypeBoolean(item)">
+                <input type="checkbox" name="item.key" id="item.key" [checked]="item.value === 'true'"
+                       (change)="convertAndSetBool(item.key, $event.target.checked)"/>
+            </td>
+            <td>
+                <i class="fa fa-info-circle" [tooltip]="item.description" placement="left" container="body"> </i>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div *ngIf="inputs.length === 0">
+        <h5>No properties needed for the given CSAR and platform.</h5>
+    </div>
+    <div class="alert alert-danger" role="alert" *ngIf="errorMsg">Some inputs are invalid please recheck.</div>
+    <div class="actions">
+        <button type="submit" [disabled]="!everythingValid" class="btn btn-success btn-lg btn-block">Transform</button>
+    </div>
+</form>

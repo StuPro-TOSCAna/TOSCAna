@@ -19,6 +19,11 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+/**
+ This integration test, is intended to test the exporting Capability of the ExportingImageBuilder
+ <p>
+ It also implicitly tests the Building funtionality of the ImageBuilder class
+ */
 @Category(IntegrationTest.class)
 public class ExportingImageBuilderIT extends BaseDockerfileTest {
 
@@ -57,7 +62,9 @@ public class ExportingImageBuilderIT extends BaseDockerfileTest {
     @After
     public void tearDown() throws Exception {
         logger.info("Cleanup");
-        imageBuilder.cleanup();
+        if (imageBuilder != null) {
+            imageBuilder.cleanup();
+        }
     }
 
     public ImageBuilder instantiateImageBuilder(TransformationContext context) throws Exception {

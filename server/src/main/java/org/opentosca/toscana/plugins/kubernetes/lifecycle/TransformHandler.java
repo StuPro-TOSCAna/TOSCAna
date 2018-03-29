@@ -10,7 +10,7 @@ import org.opentosca.toscana.plugins.kubernetes.docker.image.ImageBuilder;
 import org.opentosca.toscana.plugins.kubernetes.docker.image.PushingImageBuilder;
 import org.opentosca.toscana.plugins.kubernetes.docker.mapper.BaseImageMapper;
 import org.opentosca.toscana.plugins.kubernetes.docker.util.DockerRegistryCredentials;
-import org.opentosca.toscana.plugins.kubernetes.model.transform.RelationshipGraph;
+import org.opentosca.toscana.plugins.kubernetes.model.transform.ConnectionGraph;
 import org.opentosca.toscana.plugins.kubernetes.util.NodeStack;
 import org.opentosca.toscana.plugins.kubernetes.util.ScriptHelper;
 import org.opentosca.toscana.plugins.util.ReadmeBuilder;
@@ -18,6 +18,15 @@ import org.opentosca.toscana.plugins.util.TransformationFailureException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
+/**
+ Implements the Transform and Cleanup phase of the Kubernetes Lifecycle
+ <p>
+ The transform phase Creates Dockerfiles from the NodeStacks built during the prepare phase
+ and builds the resulting docker images out of these Dockerfiles.
+ Afterwards the images are stored (Pushed or exported) and Kubernetes Resources get created.
+ <p>
+ The Cleanup phase just deletes the local Docker images
+ */
 class TransformHandler extends LifecycleHandler {
 
     private static final String KUBERNETES_README_TITLE = "TOSCAna - Kubernetes Transformation - Readme";
@@ -129,7 +138,7 @@ class TransformHandler extends LifecycleHandler {
      Creates the Dockerfiles (that means the dockerfile and all its dependesies get written to disk)
      */
     private void createDockerfiles() {
-        RelationshipGraph connectionGraph = new RelationshipGraph(lifecycle.stacks);
+        ConnectionGraph connectionGraph = new ConnectionGraph(lifecycle.stacks);
         lifecycle.stacks.forEach(e -> {
             logger.info("Creating Dockerfile for {}", e);
             try {
@@ -151,7 +160,7 @@ class TransformHandler extends LifecycleHandler {
 
         StringBuilder complete = new StringBuilder();
         try {
-            creator.create().forEach((k, resource) -> {
+            creator.getResourceYaml().forEach((k, resource) -> {
                 complete.append(resource);
             });
         } catch (JsonProcessingException e) {

@@ -15,6 +15,9 @@ import org.junit.Test;
 
 import static org.opentosca.toscana.plugins.util.TestUtil.setUpMockTransformationContext;
 
+/**
+ This test will check if the ModelCheck in the Kubernetes Lifecycle works properly
+ */
 public class KubernetesPluginTest extends BaseUnitTest {
     private static KubernetesPlugin plugin;
 

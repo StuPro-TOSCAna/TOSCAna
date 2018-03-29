@@ -14,6 +14,10 @@ import org.opentosca.toscana.model.util.ToscaKey;
 
 import org.apache.commons.lang3.EnumUtils;
 
+/**
+ Responsible for converting a value associated with a {@code ScalarEntity} (which is stored as {@code Object}) to the
+ type specified in the supplied ToscaKey.
+ */
 public class ScalarTypeConverter {
 
     /**
@@ -21,6 +25,9 @@ public class ScalarTypeConverter {
      */
     public static final String UNBOUNDED = "UNBOUNDED";
 
+    /**
+     Converts the value attached to given {@code scalarEntity } to an instance of a type which is specified by given {@code key}.
+     */
     static <T> T convertScalarEntity(ScalarEntity scalarEntity, ToscaKey<T> key, Entity parent) {
         String value = scalarEntity.getValue();
         Class targetType = key.getType();
@@ -36,7 +43,6 @@ public class ScalarTypeConverter {
             return (T) number;
         } else if (Boolean.class.isAssignableFrom(targetType)) {
             return (T) Boolean.valueOf(value);
-            // TODO handle values besides true/false (later, when doing error handling)
         } else if (targetType.isEnum()) {
             Map<String, T> enumMap = EnumUtils.getEnumMap(targetType);
             Optional<T> result = enumMap.entrySet().stream()

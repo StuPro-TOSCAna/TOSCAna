@@ -17,6 +17,8 @@ import lombok.Singular;
 @Data
 public class PortInfo {
 
+    // TODO this class needs to get reworked completely (use ToscaKeys instead of normal fields - just like in the Credential class)
+
     /**
      The logical network port name.
      <p>

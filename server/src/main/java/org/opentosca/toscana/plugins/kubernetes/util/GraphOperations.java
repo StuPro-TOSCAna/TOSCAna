@@ -17,6 +17,15 @@ import org.jgrapht.Graph;
 
 public class GraphOperations {
 
+    /**
+     Finds the top level nodes in a given topology
+
+     @param model        The effective model containing the topology that should get analyzed
+     @param computeNodes The list of Compute nodes for which the top level nodes should get determined
+     @param onValidNode  Callback method that gets called if the node that currently processed by the iterator is valid.
+     It does not only get called for every top level node
+     @return the set of top level nodes for the given list of Compute nodes
+     */
     public static Set<RootNode> determineTopLevelNodes(
         EffectiveModel model,
         List<Compute> computeNodes,
@@ -25,9 +34,9 @@ public class GraphOperations {
         Set<RootNode> topLevelNodes = new HashSet<>();
         Graph<RootNode, RootRelationship> graph = model.getTopology();
         //Determine Top level nodes (of complete stacks) and completely explore parts that are linked to a compute nodes
-        computeNodes.forEach(e -> {
+        computeNodes.forEach(computeNode -> {
             LinkedList<RootNode> nodeStack = new LinkedList<>();
-            nodeStack.add(e);
+            nodeStack.add(computeNode);
 
             while (!nodeStack.isEmpty()) {
                 RootNode currentNode = nodeStack.pop();
@@ -50,6 +59,14 @@ public class GraphOperations {
         return topLevelNodes;
     }
 
+    /**
+     Converts a set of top level nodes into a list of NodeStacks
+     @param model The model containing the topology to perform the operations with
+     @param topLevelNodes The set of top level nodes for which the node stacks should be generated
+     @param nodes a map containing all nodes in the topology (key is the node name), 
+     the nodes are wrapped in the {@link KubernetesNodeContainer} class
+     @return the resulting list of node stacks
+     */
     public static List<NodeStack> buildTopologyStacks(
         EffectiveModel model,
         Set<RootNode> topLevelNodes,
@@ -58,10 +75,10 @@ public class GraphOperations {
         Graph<RootNode, RootRelationship> graph = model.getTopology();
 
         LinkedList<NodeStack> stacks = new LinkedList<>();
-        topLevelNodes.forEach(n -> {
+        topLevelNodes.forEach(node -> {
             LinkedList<KubernetesNodeContainer> stack = new LinkedList<>();
             LinkedList<RootNode> nodeStack = new LinkedList<>();
-            nodeStack.add(n);
+            nodeStack.add(node);
             while (!nodeStack.isEmpty()) {
                 RootNode currentNode = nodeStack.pop();
                 stack.add(nodes.get(currentNode.getEntityName()));

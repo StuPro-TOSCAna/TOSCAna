@@ -13,9 +13,9 @@ import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
 /**
- This class implements api access to a docker registry using the Registry version 2 API
+ Implements API access to a docker registry using the Registry version 2 API
  <p>
- To connect to the registry retrofit is used and wrapped in this class.
+ To connect to the registry, retrofit is used and wrapped in this class.
  */
 public class DockerRegistry {
 
