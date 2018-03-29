@@ -172,6 +172,7 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
             fileCreator.copyUtilDependencies();
             fileCreator.writeScripts();
             fileCreator.copyFiles();
+            fileCreator.writeReadme(context);
         } catch (IOException ie) {
             logger.error("File access error");
             throw new TransformationFailureException("Could not write template with fileAccess", ie);

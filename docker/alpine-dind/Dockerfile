@@ -7,7 +7,7 @@ RUN apt-get install -y maven git
 RUN ./build-toscana.sh
 # This image is based on the Docker in Docker image (needs --privileged to work correctly)
 # If the privileged flag is missing this image will not support kubernetes based transformations
-FROM docker:dind
+FROM docker:stable-dind
 WORKDIR /toscana
 VOLUME /toscana/data
 # Mount the AWS Directory as volume (used to store Credentials)

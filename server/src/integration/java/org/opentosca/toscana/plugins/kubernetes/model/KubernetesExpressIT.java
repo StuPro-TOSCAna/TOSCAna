@@ -8,6 +8,9 @@ import org.opentosca.toscana.model.EffectiveModelFactory;
 
 import org.apache.commons.io.FileUtils;
 
+/**
+ This Test Transforms the Express model to DockerImages and a Kubernetes Resource
+ */
 public class KubernetesExpressIT extends KubernetesLampIT {
 
     public KubernetesExpressIT() throws Exception {

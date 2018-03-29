@@ -35,6 +35,7 @@ public abstract class CloudFormationIT extends BaseTransformTest {
 
     @Override
     protected void onSuccess(File outputDir) {
+        return;
     }
 
     @Override
@@ -64,4 +65,3 @@ public abstract class CloudFormationIT extends BaseTransformTest {
         Assume.assumeNotNull(secretKey);
     }
 }
-

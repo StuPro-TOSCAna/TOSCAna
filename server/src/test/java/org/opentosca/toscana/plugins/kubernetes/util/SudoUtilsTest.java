@@ -13,6 +13,9 @@ import org.junit.runners.Parameterized;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+/**
+ This test is used to check if the Sudo Detection will map the image to the proper sudo install command
+ */
 @RunWith(Parameterized.class)
 public class SudoUtilsTest extends BaseUnitTest {
 
@@ -41,7 +44,7 @@ public class SudoUtilsTest extends BaseUnitTest {
 
     @Parameterized.Parameters(name = "{index}: {0}={1}")
     public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][]{
+        return Arrays.asList(new Object[][] {
             {"library/alpine", ALPINE_INSTALL_CMD},
             {"library/docker", ALPINE_INSTALL_CMD},
             {"library/ubuntu", DEBIAN_INSTALL_CMD},

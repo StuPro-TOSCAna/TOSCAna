@@ -7,7 +7,6 @@ import java.util.Set;
 import org.opentosca.toscana.core.transformation.TransformationContext;
 import org.opentosca.toscana.model.artifact.Artifact;
 import org.opentosca.toscana.model.capability.ComputeCapability;
-import org.opentosca.toscana.model.capability.EndpointCapability;
 import org.opentosca.toscana.model.capability.OsCapability;
 import org.opentosca.toscana.model.node.Apache;
 import org.opentosca.toscana.model.node.Compute;
@@ -16,13 +15,21 @@ import org.opentosca.toscana.model.node.Dbms;
 import org.opentosca.toscana.model.node.MysqlDatabase;
 import org.opentosca.toscana.model.node.Nodejs;
 import org.opentosca.toscana.model.node.WebApplication;
+import org.opentosca.toscana.model.node.custom.JavaApplication;
 import org.opentosca.toscana.model.visitor.NodeVisitor;
 import org.opentosca.toscana.plugins.cloudformation.CloudFormationModule;
 import org.opentosca.toscana.plugins.cloudformation.handler.OperationHandler;
 import org.opentosca.toscana.plugins.cloudformation.mapper.CapabilityMapper;
+import org.opentosca.toscana.plugins.cloudformation.mapper.JavaRuntimeMapper;
 import org.opentosca.toscana.plugins.util.TransformationFailureException;
 
 import com.amazonaws.SdkClientException;
+import com.scaleset.cfbuilder.beanstalk.Application;
+import com.scaleset.cfbuilder.beanstalk.ApplicationVersion;
+import com.scaleset.cfbuilder.beanstalk.ConfigurationTemplate;
+import com.scaleset.cfbuilder.beanstalk.Environment;
+import com.scaleset.cfbuilder.beanstalk.OptionSetting;
+import com.scaleset.cfbuilder.beanstalk.SourceBundle;
 import com.scaleset.cfbuilder.ec2.Instance;
 import com.scaleset.cfbuilder.ec2.SecurityGroup;
 import com.scaleset.cfbuilder.ec2.metadata.CFNCommand;
@@ -52,8 +59,6 @@ public class TransformModelNodeVisitor extends CloudFormationVisitor implements 
     private OperationHandler operationHandler;
 
     /**
-     Standard constructor.
-     <br>
      Creates a <tt>TransformModelNodeVisitor<tt> in order to build a template with the given
      <tt>CloudFormationModule<tt>.
 
@@ -186,6 +191,7 @@ public class TransformModelNodeVisitor extends CloudFormationVisitor implements 
                 .groupDescription("Open database " + dbName + " for access to group " + serverName + SECURITY_GROUP);
             Set<Compute> hostsOfConnectedTo = getHostsOfConnectedTo(node);
             for (Compute hostOfConnectedTo : hostsOfConnectedTo) {
+                logger.debug("Open connection to " + toAlphanumerical(hostOfConnectedTo.getEntityName()) + SECURITY_GROUP);
                 securityGroup.ingress(ingress -> ingress.sourceSecurityGroupName(
                     cfnModule.ref(toAlphanumerical(hostOfConnectedTo.getEntityName()) + SECURITY_GROUP)),
                     PROTOCOL_TCP,
@@ -331,7 +337,6 @@ public class TransformModelNodeVisitor extends CloudFormationVisitor implements 
         try {
             Compute computeHost = getCompute(node);
             String computeHostName = toAlphanumerical(computeHost.getEntityName());
-            String nodeName = node.getEntityName();
 
             //handle configure
             operationHandler.handleConfigure(node, computeHostName);
@@ -341,19 +346,7 @@ public class TransformModelNodeVisitor extends CloudFormationVisitor implements 
             operationHandler.addCreate(FILEPATH_NODEJS_CREATE, computeHostName);
 
             //Get ports
-            List<Integer> portList = new ArrayList<>();
-            node.getCapabilities().forEach(e -> {
-                try {
-                    if (e instanceof EndpointCapability && ((EndpointCapability) e).getPort().isPresent()) {
-                        int port = ((EndpointCapability) e).getPort().get().port;
-                        logger.debug("Marking '{}' as port to be opened for '{}'.", port, nodeName);
-                        portList.add(port);
-                    }
-                } catch (Exception ex) {
-                    logger.warn("Failed reading Port from node {}", nodeName, ex);
-                }
-            });
-
+            List<Integer> portList = getPortsFromEnpointCapability(node);
             //Open ports
             String SecurityGroupName = computeHostName + SECURITY_GROUP;
             SecurityGroup securityGroup = (SecurityGroup) cfnModule.getResource(SecurityGroupName);
@@ -364,6 +357,52 @@ public class TransformModelNodeVisitor extends CloudFormationVisitor implements 
         }
     }
 
+    @Override
+    public void visit(JavaApplication node) {
+        try {
+            String nodeName = toAlphanumerical(node.getEntityName());
+            Application beanstalkApplication = cfnModule.resource(Application.class, nodeName)
+                .description("JavaApplication " + nodeName);
+            SourceBundle sourceBundle = operationHandler.handleJarArtifact(node.getJar());
+            ApplicationVersion beanstalkApplicationVersion = cfnModule.resource(ApplicationVersion.class, nodeName + "Version")
+                .applicationName(beanstalkApplication)
+                .description("JavaApplicationVersion " + nodeName)
+                .sourceBundle(sourceBundle);
+            JavaRuntimeMapper javaRuntimeMapper = new JavaRuntimeMapper(logger);
+            String stackConfig = javaRuntimeMapper.mapRuntimeToStackConfig(getJavaRuntime(node));
+            List<OptionSetting> optionSettings = new ArrayList<>();
+            ConfigurationTemplate beanstalkConfigurationTemplate = cfnModule.resource(ConfigurationTemplate.class, nodeName + "ConfigurationTemplate")
+                .applicationName(beanstalkApplication)
+                .description("JavaApplicationConfigurationTemplate " + nodeName)
+                .solutionStackName(stackConfig);
+            //add securitygroup
+            String hostComputeName = toAlphanumerical(getCompute(node).getEntityName());
+            SecurityGroup beanstalkSecurityGroup = cfnModule.resource(SecurityGroup.class,
+                hostComputeName + SECURITY_GROUP)
+                .groupDescription("SecurityGroup for Beanstalk application " + nodeName + ".");
+            //get and open ports
+            List<Integer> portList = getPortsFromEnpointCapability(node);
+            beanstalkSecurityGroup.ingress(ingress -> ingress.cidrIp(IP_OPEN), PROTOCOL_TCP, portList.toArray());
+            //set securitygroup for beanstalk application
+            optionSettings.add(new OptionSetting("aws:autoscaling:launchconfiguration", "SecurityGroups").setValue
+                (cfnModule.ref(hostComputeName + SECURITY_GROUP)));
+            //get environment variables as option settings
+            optionSettings.addAll(operationHandler.handleStartJava(node));
+            //add all option settings to beanstalk configuration
+            if (!optionSettings.isEmpty()) {
+                beanstalkConfigurationTemplate.optionSettings(optionSettings.toArray(new OptionSetting[0]));
+            }
+            cfnModule.resource(Environment.class, nodeName + "Environment")
+                .applicationName(beanstalkApplication)
+                .description("JavaApplicationEnvironment")
+                .templateName(beanstalkConfigurationTemplate)
+                .versionLabel(beanstalkApplicationVersion);
+        } catch (Exception e) {
+            logger.error("Error while creating JavaApplication");
+            throw new TransformationFailureException("Failed at JavaApplication node " + node.getEntityName(), e);
+        }
+    }
+    
     /**
      Creates a new {@link CapabilityMapper} with the {@link CloudFormationModule}s region and credentials.
 

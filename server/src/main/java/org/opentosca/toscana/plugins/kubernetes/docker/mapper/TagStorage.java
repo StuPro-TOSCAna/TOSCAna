@@ -19,6 +19,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
+/**
+ This class is responsible for storing and updating the Mappings for the BaseImageMapper
+ */
 @Repository
 @Profile("!" + Profiles.EXCLUDE_BASE_IMAGE_MAPPER)
 public class TagStorage {

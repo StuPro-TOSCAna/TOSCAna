@@ -1,0 +1,15 @@
+<div *ngFor="let item of csar.transformations">
+    <!-- highlight the transformation if its transformation view is open-->
+    <div class="item btn btn-outline-secondary" [class.active]="activePlatform === item.platform">
+        <div class="button" (click)="openTransformationView(item.platform)">
+            <div class="icon">
+                <i class="fa fa-exchange" aria-hidden="true"></i>
+            </div>
+            <div class="name">{{item.fullName}}</div>
+        </div>
+        <div *ngIf="item.state !== stateEnum" class="actions">
+            <i (click)="deleteTransformation(item.platform)" class="fa fa-trash" aria-hidden="true"></i>
+        </div>
+    </div>
+</div>
+

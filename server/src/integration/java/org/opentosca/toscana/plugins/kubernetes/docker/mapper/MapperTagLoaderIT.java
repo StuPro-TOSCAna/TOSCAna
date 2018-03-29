@@ -35,6 +35,11 @@ import static org.opentosca.toscana.core.testdata.TestProfiles.INTEGRATION_TEST_
 import static org.opentosca.toscana.model.capability.OsCapability.Distribution.DEBIAN;
 import static org.opentosca.toscana.plugins.kubernetes.docker.mapper.MapperTagLoaderIT.LOADER_TEST_PROFILE;
 
+/**
+ This test tests the Loading functionality of the BaseImageMapper
+ <p>
+ This test requires the Querying of the DockerHub API and will fail if the API is not available!
+ */
 @RunWith(SpringRunner.class)
 @SpringBootTest(
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT

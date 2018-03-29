@@ -20,8 +20,17 @@ export class Csar {
     }
 
     successfulParsed() {
-        let valid = true;
         const validStates = [StateEnum.DONE, StateEnum.SKIPPING];
+        return this.checkLifecyclePhasesForGivenStates(validStates);
+    }
+
+    /**
+     * check if all of the lifecycle phases are in one of the given states
+     * @param validStates Array of lifecycle phase states
+     * @returns {boolean}
+     */
+    private checkLifecyclePhasesForGivenStates(validStates) {
+        let valid = true;
         this.phases.forEach(phase => {
             if (!(validStates.indexOf(phase.state) !== -1)) {
                 valid = false;
@@ -31,13 +40,13 @@ export class Csar {
         return valid;
     }
 
+    currentlyParsing() {
+        const invalidPhases = [StateEnum.EXECUTING, StateEnum.PENDING];
+        return this.checkLifecyclePhasesForGivenStates(invalidPhases);
+    }
+
     public addTransformation(platform: string, platformFullName: string) {
-        const transformation: Transformation = {
-            platform: platform,
-            fullName: platformFullName,
-            state: TransformationStateEnum.INPUTREQUIRED,
-            phases: null
-        };
+        const transformation: Transformation = new Transformation(platformFullName, null, platform, TransformationStateEnum.INPUTREQUIRED);
         const existingTransformation = this.transformations.find(item => item.platform === platform);
         if (!isNullOrUndefined(existingTransformation)) {
             this.transformations.splice(this.transformations.indexOf(existingTransformation), 1);

@@ -1,0 +1,33 @@
+<!--header of the sidebar, gets hidden if there is a csar uploadCsarActive-->
+<div *ngIf="!uploadCsarActive" class="header">
+    <div class="title">Available CSARs</div>
+    <div class="action">
+        <button type="button" role="button" (click)="toogle()" class="btn btn-outline-secondary">
+            <i class="fa fa-plus-circle" aria-hidden="true"></i>
+            Add CSAR
+        </button>
+    </div>
+</div>
+<!-- file uploadCsarActive, hidden until add csar button is clicked-->
+<div class="form" *ngIf="uploadCsarActive" [ngClass]="csars.length > 0 && {'flex-wrap':'wrap'}">
+    <div class="name">
+        <!--icon to show if the csarNameInput is valid-->
+        <i [class]="getIconClass(name.valid)" [tooltip]="csarInputMessage" placement="auto"></i>
+        <input type="text" placeholder="Enter name" class="form-control" id="name" name="name" [(ngModel)]="csarNameInput"
+               required
+               [ngModelOptions]="{standalone: true}" #name="ngModel">
+    </div>
+    <button type="button" role="button" (filePick)="onFilePicked($event)" class="btn btn-outline-secondary"
+            ngFilePicker>
+        <i class="fa fa-upload" aria-hidden="true"></i>Select file
+    </button>
+    <button type="submit" role="button" (click)="submit()" [disabled]="isInputFileAndTextValid(name.valid)"
+            class="btn btn-outline-success">
+        Submit
+    </button>
+    <button type="button" role="button" (click)="toogle()" class="btn btn-outline-danger">
+        Cancel
+    </button>
+</div>
+<div class="no-csars" *ngIf="csars.length === 0"><h1>No CSARs available.</h1></div>
+<app-csar-item *ngFor="let item of csars" [csar]="item"></app-csar-item>

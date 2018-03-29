@@ -12,6 +12,8 @@ import org.opentosca.toscana.model.node.MysqlDatabase;
 import org.opentosca.toscana.model.node.MysqlDbms;
 import org.opentosca.toscana.model.node.Nodejs;
 import org.opentosca.toscana.model.node.WebApplication;
+import org.opentosca.toscana.model.node.custom.JavaApplication;
+import org.opentosca.toscana.model.node.custom.JavaRuntime;
 import org.opentosca.toscana.model.visitor.StrictNodeVisitor;
 import org.opentosca.toscana.model.visitor.UnsupportedTypeException;
 
@@ -115,6 +117,16 @@ public class CheckModelNodeVisitor extends CloudFormationVisitor implements Stri
      */
     @Override
     public void visit(Nodejs nodejs) {
+        // noop
+    }
+
+    @Override
+    public void visit(JavaRuntime node) {
+        // noop
+    }
+
+    @Override
+    public void visit(JavaApplication node) {
         // noop
     }
 }

@@ -72,7 +72,7 @@
         <dependency>
             <groupId>com.github.StuPro-TOSCAna</groupId>
             <artifactId>cloudformation-builder</artifactId>
-            <version>34cb6f2bd6b5d4885eceea7f2777b3f35710cedb</version>
+            <version>e4bb93255af083f40bb22cb674edce5c8895b7be</version>
         </dependency>
         <!--AWS Java SDK ec2 module-->
         <dependency>
@@ -147,15 +147,10 @@
         
         <!-- Winery -->
         <dependency>
-            <groupId>com.github.stupro-toscana.winery</groupId>
-            <artifactId>org.eclipse.winery.yaml.common</artifactId>
-            <version>3f556dfe5175a02acbad26c2e9cad3bdd2c1708d</version>
+        <groupId>com.github.eclipse.winery</groupId>
+        <artifactId>org.eclipse.winery.yaml.common</artifactId>
+        <version>78ef7554a56ae8458fc1aeb4e7fa3c7e64bafdbe</version>
         </dependency>
-        <!--<dependency>-->
-        <!--<groupId>com.github.eclipse.winery</groupId>-->
-        <!--<artifactId>org.eclipse.winery.yaml.common</artifactId>-->
-        <!--<version>master-SNAPSHOT</version>-->
-        <!--</dependency>-->
         
         <!-- Spring Dependencies -->
         <dependency>
