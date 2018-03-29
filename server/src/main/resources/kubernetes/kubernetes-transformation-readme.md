@@ -27,13 +27,14 @@ Supported Platforms:
   - The User executing the script has to be in the `docker` group
   - Only Linux-based Docker is supported
 - A Docker Registry with Write access
-  - If Reading from the Registry requires Credentials automated deployment using the `deploy.sh` script is not possible, because the Credentials have to be manually set in the cluster. (See **Further Reading** for more information)
+  - If Reading from the Registry requires Credentials automated deployment using the `deploy.sh` script is not possible,
+  because the Credentials have to be manually set in the cluster. (See **Further Reading** for more information)
 
 ### Cluster Requirements
 
 - Kubernetes Version 1.8 or newer
 - KubeDNS (on the cluster)
-- Linux based Kubernetes Cluster
+- Linux based Kubernetes cluster
 
 ## Deploy Guide
 
@@ -43,7 +44,7 @@ This section gives a quick overview about the commands that have to be executed 
 
 #### Login to the Docker Registry
 
-The Push utility requires you to be logged into the registry you want to push to using the `docker login` command like this:
+The push utility requires you to be logged into the registry you want to push to using the `docker login` command like this:
 
 ***For DockerHub***:
 ```bash
@@ -55,7 +56,9 @@ docker login
 docker login <REGISTRY_URL>
 ```
 
-This command will ask you for your username and password. The command will succeed if the login succeeded. Otherwise the command will fail.
+This command will ask you for your username and password.
+The command will succeed if the login succeeded.
+Otherwise the command will fail.
 
 #### Make the shell scripts executable
 
@@ -76,9 +79,11 @@ in the `output` directory and follow the on screen instructions.
 
 ### Deploying manually
 
-In some cases the Automated deployscript cannot be used. For example because you need to specify the registry secret in the kubernetes manifest.
+In some cases the Automated deploy script cannot be used.
+For example because you need to specify the registry secret in the Kubernetes manifest.
 
-In that case you can still use the `push-images.sh` script to push the images to the registry and to modify the manifest to feature the resulting image tags (including the registry URL).-
+In that case you can still use the `push-images.sh` script to push the images to the registry and to modify
+the manifest to feature the resulting image tags (including the registry URL).
 
 Assuming the images have been pushed you can use
 ```bash
@@ -105,4 +110,3 @@ to deploy the result to the cluster manually
 - [Kubernetes Documentation](https://kubernetes.io/docs/home/)
 - [Kubernetes Service Types](https://kubernetes.io/docs/concepts/services-networking/service/)
 - [Kubernetes - Pulling from private Repositories](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/)
-

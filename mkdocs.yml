@@ -9,10 +9,17 @@ extra:
 pages:
     - Home: 'index.md'
     - 'User Documentation':
-        - 'Getting started': 'user/getting-started.md'
-        - 'Running with Docker': 'user/docker.md'
-        - "TOSCA Support": 'user/tosca-support.md'
-        - "TOSCAna Types": 'user/toscana-types.md'
+      - 'Getting started': 'user/getting-started.md'
+      - 'Running with Docker': 'user/docker.md'
+      - "TOSCA Support": 'user/tosca-support.md'
+      - "TOSCAna Types": 'user/toscana-types.md'
+      - Plugins:
+        - Kubernetes:
+          - Requirements: 'user/plugins/kubernetes/requirements.md'
+          - Supported types: 'user/plugins/kubernetes/supported.md'
+          - Writing models: 'user/plugins/kubernetes/creating-models.md'
+          - Notes:
+            - Transformation readme: 'user/plugins/kubernetes/transformation-readme.md'
     - Developer Documentation:
         - 'REST API':
             - 'Swagger Documentation': 'dev/core/rest-api.md'
@@ -26,6 +33,19 @@ pages:
         - CLI:
             - Architecture: 'dev/cli/cli-architecture.md'
             - Commands: 'dev/cli/cli-commands.md'
+        - Plugins:
+            - Kubernetes:
+                - Definitions: 'dev/plugins/kubernetes/definitions.md'
+                - 'Setting up a test environment': 'dev/plugins/kubernetes/test-environment.md'
+                - 'Transformation procedure': 'dev/plugins/kubernetes/transformation-procedure.md'
+                - 'Building Dockerfiles': 'dev/plugins/kubernetes/building-dockerfiles.md'
+                - 'Limitations': 'dev/plugins/kubernetes/limitations.md'
+                - 'Extending the Kubernetes plugin': 'dev/plugins/kubernetes/extending-k8s.md'
+                - Utilities:
+                    - "Base Image Mapper": 'dev/plugins/kubernetes/util/base-image-mapper.md'
+                    - "Dockerfile builder": 'dev/plugins/kubernetes/util/dockerfile-builder.md'
+                    - "Sudo detection": 'dev/plugins/kubernetes/util/sudo-detection.md'
+                    - "Kubernetes service overview": 'dev/plugins/kubernetes/util/k8s-service-overview.md'
         - "Architectural Decision Records":
             - "0000 - Use Markdown Architectural Decision Records": "dev/adr/0000-use-markdown-architectural-decision-records.md"
             - "0001 - Use custom model for transformations": "dev/adr/0001-model-for-transformations.md"

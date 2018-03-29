@@ -1,0 +1,13 @@
+digraph {
+  rankdir=TB
+  nodesep=0.3
+  ranksep=0.3
+  node [color=Black, fontname=Arial, shape=box]
+
+  a[label="Node Stack - A"]
+  c[label="Node Stack - C"]
+
+  edge [color=Red, fontname=Arial, label="ConnectsTo",constraint=false]
+  a->c
+  a->c
+}
