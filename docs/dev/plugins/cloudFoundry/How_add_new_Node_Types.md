@@ -3,10 +3,10 @@ The purpose of this document should show how you could add new NodeTypes to the 
 **IMPORTANT NOTES:**   
 * It depends on the NodeType which actions have to be done, this document can only show a rough overview which steps could be helpful.   
 To implement a new NodeType you should read following documents before:
-  - [CloudFoundry basics](../CloudFoundry_Basics.md)
-  - [Transformation doc](transformation.md)
-  - [Script overview](Script-Overview.md)
-  - [CloudFoundry supported NodeTypes](CloudFoundry_NodeTypes.md)
+  - [CloudFoundry basics](Basics.md)
+  - [Transformation doc](Transformation_Process.md)
+  - [Script overview](Python_Scripts_Overview.md)
+  - [CloudFoundry supported NodeTypes](Supported_Node_Types.md)
 * Please be sure that the new NodeType is supported by the TOSCAna model
 
 ## Visitors
@@ -24,7 +24,7 @@ Just insert a overriding method with the new NodeType like this:
 ### `PrepareVisitor`
 If your new NodeType need some preparation like the `environment recognition` just insert a overriding method with the new NodeType.  
 Maybe you have to add new placeholders for some properties of the new NodeType. If you add new ones you have to adapt the python script `readCredentials.py` (see in chapter "scripts").
-To get more information about this visitor take a look [here](transformation.md).
+To get more information about this visitor take a look [here](Transformation_Process.md).
 
 ### `NodeVisitor`
 This visitor are responsible to fill the cf-app (CloudFoundry application) when visiting a special node type.   
@@ -48,7 +48,7 @@ if (parentTopNode instanceof NewNodeType) {
        }
 ```
 - `setPathToApplication` sets the path to the main application which should be executed. It depends on the kind of application whether the CloudFoundry instance needs the information which file is the "main" file (e.g. JavaApplication). The method checks if the given file has a valid suffix as a main application file (`.sh` and `.sql` are not allowed).
-- `isRealApplication` if the cf-app is a service, this is a "unreal" cf-app. For details look into the [transformation document](transformation.md)
+- `isRealApplication` if the cf-app is a service, this is a "unreal" cf-app. For details look into the [transformation document](Transformation_Process.md)
 
 ## FileCreator
 The class `FileCreator` you can find [here](https://github.com/StuPro-TOSCAna/TOSCAna/blob/master/server/src/main/java/org/opentosca/toscana/plugins/cloudfoundry/filecreator/FileCreator.java) creates all files which are in the target artifact. It gets the information out of the cf-apps.   
@@ -97,4 +97,4 @@ if (applicationSuffix.equalsIgnoreCase("yourApplicationSuffix")) {
   ```
 - warden container have a different file system than a typical linux system. Therefore there is the `replace.py` script to replace paths in files which should be executed on the warden container. To expand the list of paths add strings to the method `replaceStrings()` in the `FileCreator` class [here](https://github.com/StuPro-TOSCAna/TOSCAna/blob/master/server/src/main/java/org/opentosca/toscana/plugins/cloudfoundry/filecreator/FileCreator.java)
 
-To get further information about the python scripts take a look into the [script documentation](Script-Overview.md)
+To get further information about the python scripts take a look into the [script documentation](Python_Scripts_Overview.md)

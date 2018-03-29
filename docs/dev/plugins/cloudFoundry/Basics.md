@@ -8,13 +8,13 @@ For further information have a look at the official [CF Documentation](https://d
 
 ## Transformation
 The plugin transforms the given TOSCA-model into CloudFoundry deployment artifacts.   
-To simplify the deployment of an application, the CF plugin will add several deployment scripts to the Target artifact. Therefore the user needs a Cloud Foundry CLI which is connected to a CloudFoundry instance.   
-For further information have a look in the transformation documentation see [here](https://github.com/StuPro-TOSCAna/TOSCAna/blob/docs/cf/dev-guide/docs/dev/plugins/cloudFoundry/developer_guide/transformation.md).
+To simplify the deployment of an application, the CF plugin will add several deployment scripts to the target artifact. Therefore the user needs a Cloud Foundry CLI which is connected to a CloudFoundry instance.   
+For further information have a look in the transformation documentation see [here](Transformation_Process.md).
 
 ## Node Types
-The plugin supports some normative node types of the TOSCA specification.
+The plugin supports some node types of the TOSCA specification.
 A developer could adapt the code to provide additional node types.   
-A list with all supported node types and how to add new node types, you find in the transformation documentation, see [here](TODO: Add Link)
+A list with all supported node types you find [here](Supported_Node_Types.md) and how to add new node types you find [here](How_add_new_Node_Types.md).
 
 ### Requirements/Issues
 The Cloud Foundry Plugin has some requirements:
@@ -22,10 +22,11 @@ The Cloud Foundry Plugin has some requirements:
 - the CloudFoundry-CLI has to be installed on the local machine
 - python (min. version 2.7) has to be installed
 - Databases need a environment variable with the name `database_host`. We decided this convention with our supervisors.
+Further information you get [here](Known_challenges.md).
 
 ## Deployment
-To deploy an application the user just execute the deploy script which will be provided by the plugin after transformation e.g. type `bash deploy_application.sh` in the terminal.   
-The user is able to adapt some credentials (e.g. services). For further information see the [User Guide](TODO: insert Link)
+To deploy an application the user just execute the deploy script which will be provided by the plugin after transformation e.g. type `bash deploy.sh` in the terminal.   
+The user is able to adapt some credentials (e.g. services). For further information see the User Guide.
 
 ## Additional information
 You can find a well documented manual for Cloud Foundry on the [official doc-website](https://docs.cloudfoundry.org/).   

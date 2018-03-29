@@ -45,3 +45,15 @@ pages:
             - "0017 - Implement own TOSCA parser": "dev/adr/0017-implement-own-tosca-parser.md"
             - "0018 - CloudFoundry No deployment during runtime": "dev/adr/0018-cloudfoundry-no-deployment-in-runtime.md"
             - "0019 - CloudFoundry Deploymentscripts": "dev/adr/0019-cloudfoundry-deploymentscripts"
+        - Plugins:
+            - CloudFoundry:
+              - Basics: 'dev/plugins/cloudFoundry/Basics.md'
+              - Transformation Process: 'dev/plugins/cloudFoundry/Transformation_Process.md'
+              - Transformation Example: 'dev/plugins/cloudFoundry/Transformation_example.pdf'
+              - Script Overview: 'dev/plugins/cloudFoundry/Python_Scripts_Overview.md'
+              - Supported Node Types: 'dev/plugins/cloudFoundry/Supported_Node_Types.md'
+              - How to add new Node Types: 'dev/plugins/cloudFoundry/How_add_new_Node_Types.md'
+              - Requirements & Known Issues: 'dev/plugins/cloudFoundry/Known_challenges.md'
+              - Deploying a CloudFoundry instance:
+                - Deploy Bosh Lite: 'dev/plugins/cloudFoundry/Deploying_Cloud_Foundry/deploy-cf-bosh-lite.md'
+                - Deploy Pivotal CloudFoundry dev: 'dev/plugins/cloudFoundry/Deploying_Cloud_Foundry/deploy-cf-pcf-dev.md'

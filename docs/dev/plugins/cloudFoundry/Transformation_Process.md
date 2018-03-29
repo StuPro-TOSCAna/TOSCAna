@@ -1,14 +1,14 @@
 # Cloud Foundry - Transformation Process
 
-The purpose of this document is to show  the transformation logic and process of the CloudFoundry plugin for a developer.
+The purpose of this document is to show the transformation logic and process of the CloudFoundry plugin for a developer.
 This document does not mention all classes which are used in the java code but describes the method of the transformation so that the developer is able to understand the code and the transformation process.   
-This is the text based documentation, you can find an example transformation with some pictures [here](transformation_example.pdf).
+This is the text based documentation, you can find an example transformation with some pictures [here](Transformation_example.pdf).
 
 ## Foreword
 - the TOSCA model is a graph. So we are talking about some graph terms. For further information please read the documentation of the core/model.
-- getting plugin properties (at the beginning of transformation) from the user to create connection to CloudFoundry instance
-- plugin is using visitor patterns for nodes. Inside these the logic for the node types is implemented
-- there is one manifest for all applications
+- plugin gets some properties (at the beginning of transformation) from the user to create connection to CloudFoundry instance.
+- plugin is using visitor patterns for nodes. The visitors contain the logic for the node types.
+- there will be created one manifest for all applications in the model
 - per application there is one CloudFoundry application object (cf-app) which contains all information of the application
 - the output is called target artifact
 
@@ -42,7 +42,7 @@ Steps to be done:
 - Each stack will be a own application (without the node types which are implemented as service). Therefore the plugin creates a CloudFoundry application (called cf-app).
 - Getting necessary information for each application stack: inputs, properties, services.... . This is done by the node visitor.
 - If the visitor detects a node type which is declared as service, the whole cf-app (to which the stack of the node belongs to) will be declared as service. In this case it is not an own application but the service belongs to another cf-app. Therefore the visitor checks the connectsTo relationship and detects the parent application.
-- copy files and create manifest and scripts
+- Copy files and create manifest and scripts
 
 ### Split in stacks (`prepare()`)
 - Find all top nodes, top nodes are nodes without incoming hostedOnConnections.
@@ -63,7 +63,7 @@ If a application owns a service, all files of the service (which are modeled in 
 
 ### Manifest
 The manifest contains the meta data of the CloudFoundry deployment which is needed for deployment.
-It is a yaml file and contains following things:
+It is a `yaml` file and contains following information:
 - attributes like name, path, disk_size
 - environment variables like `database_user`
 - services which should be bound to the application like a database
@@ -96,12 +96,12 @@ A CloudFoundry service consists of a service name and a service plan. The servic
 All services will be printed in a extra file called `all_services.txt` in the output folder, so that the user could select another service or change the plan.
 
 ### Deploy bash script
-To provide an easy deployment for the user, the plugin creates a bash deploy script called `deploy_application.sh`. This consists of different commands in a fixed order.   
+To provide an easy deployment for the user, the plugin creates a bash deploy script called `deploy.sh`. This consists of different commands in a fixed order.   
 There are two types of commands:
 1. CloudFoundry CLI commands to create services, push the app, start the app, among other things.
 2. python scripts, please see section `python scripts` for further information.
 The FileCreator checks each cf-app and fills the deploy script with the needed commands.   
-Here you can see a neckline of a `deploy_application.sh`:
+Here you can see a neckline of a `deploy.sh`:
 ```bash
 ...
 check "cf"
@@ -117,11 +117,11 @@ python executeCommand.py my-app /home/vcap/app/htdocs/my_app/create_myphpapp.sh
 ```
 
 ### Python scripts
-For the easy deployment some python scripts are necessary. The FileCreator detects which scripts are needed and add the files from the resource folder to the target artifact and inserts a command in the `deploy_application.sh`.   
-For further information about the scripts see [here](Script-Overview.md)
+For the easy deployment some python scripts are necessary. The FileCreator detects which scripts are needed and add the files from the resource folder to the target artifact and inserts a command in the `deploy.sh`.   
+For further information about the scripts see [here](Python_Scripts_Overview.md)
 
 ### Additional buildpacks
-CloudFoundry has a buildpack detection which detects which languages and libraries are needed. Sometimes there are some additional libraries needed which are not detected. Therefore the plugin has to add the information about the additional buildpacks to the target artifact. The plugin just look for the application suffix and compare it with the needed service and thereby knows which buildpacks are needed. At the moment it is implemented for `php` and a `mysql service`. For this case the plugin creates a additional file `.bp-config` in the app folder which contains a `options.json` file. This workflow may differ with other languages.
+CloudFoundry has a buildpack detection which detects which languages and libraries are needed. Sometimes there are some additional libraries needed which are not detected. Therefore the plugin has to add the information about the additional buildpacks to the target artifact. The plugin just look for the application suffix and compare it with the needed service and thereby knows which buildpacks are needed. At the moment it is implemented for `php` and a `mysql service`. In this case the plugin creates an additional file `.bp-config` in the app output folder which contains a `options.json` file. This workflow may differ with other languages.
 Example of buildpack additions file:
 ```json
 {

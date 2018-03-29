@@ -1,8 +1,8 @@
 # CF-Plugin Scripts overview
 To transform without pushing anything we need to extract some logic out of the transformation and add it to deploy scripts.   
 All python scripts you will find in the resource folder see [here](https://github.com/StuPro-TOSCAna/TOSCAna/tree/master/server/src/main/resources/cloudFoundry/deployment_scripts).   
-We add all commands and execution of python scripts into the `deploy_application.sh`. This should be done while the transformation process.   
-Therefore the script have to do following things:
+We add all commands and execution of python scripts into the `deploy.sh`. This is done during the transformation process.   
+Therefore the script has to do following things:
 
 ## Create the Services needed for the App
 To create a service, use: `cf create service`.   
@@ -38,16 +38,16 @@ Twelve Factor: There are no paths which depends on the environment.
 
 ## Python configureMysql
 The readCredentials script creates a config file with all needed service credentials which are necessary to create a connection.
-The configureMysql script creates a connection to the service with this config file. If there is a valid connection the script will execute the .sql file on the database.   
-Requirement is that there is a .sql script. An alternative solution is to insert the database init script into the application code.   
+The configureMysql script creates a connection to the service with this config file. If there is a valid connection the script will execute the `.sql` file on the database.   
+A requirement is that there is a `.sql` configure script. An alternative solution is to insert the database init script into the application code.   
 Needs a additional python mysql-python package `mysql.connector`.
 Lamp Example: `mysqlCursor.execute(dbInitCommand)`
-Twelve Factor: there have to be a init database script. So we just have to execute this script on the container.
+Twelve Factor: there have to be a init database script.
 
 ## Python execute commands
 To execute scripts on the container it is needed to create a ssh connection to the container and execute the script.   
 Therefore the script enables ssh for the application. Afterwards the script creates a ssh-connection and executes the file.   
-Unfortunately the cf command `cf run-task ...` is not suitable because it has to enabled from the CF instance provider.
+Unfortunately the cf command `cf run-task ...` is not suitable because it has to enabled from the CF instance provider. So the "ssh way" is the safe way. 
 
 ## Order
 1. `cf create service $servicename $serviceplan $serviceInstanceName`
