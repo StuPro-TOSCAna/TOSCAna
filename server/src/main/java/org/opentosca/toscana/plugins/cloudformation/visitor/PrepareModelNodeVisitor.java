@@ -19,9 +19,9 @@ import org.apache.commons.lang3.RandomStringUtils;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationLifecycle.toAlphanumerical;
 
 /**
- Class for preparing a models nodes
+ Prepares a model's nodes.
  */
-public class PrepareModelNodeVisitor extends CloudFormationVisitorExtension implements NodeVisitor {
+public class PrepareModelNodeVisitor extends CloudFormationVisitor implements NodeVisitor {
 
     protected static final String AWS_ENDPOINT_REFERENCE = "Endpoint.Address";
     private static final String AWS_INSTANCE_PRIVATE_IP = "PrivateIp";
@@ -32,15 +32,28 @@ public class PrepareModelNodeVisitor extends CloudFormationVisitorExtension impl
     private static final int DEFAULT_WEBAPP_PORT = 80;
 
     /**
-     Create a <tt>PrepareModelNodeVisitor</tt> to prepare a models nodes.
+     Creates a <tt>PrepareModelNodeVisitor</tt> to prepare a models nodes.
 
-     @param context   TransformationContext to extract topology and logger
-     @param cfnModule module to modify
+     @param context   {@link TransformationContext} to extract the topology and a logger
+     @param cfnModule {@link CloudFormationModule} to modify
      */
     public PrepareModelNodeVisitor(TransformationContext context, CloudFormationModule cfnModule) {
         super(context, cfnModule);
     }
 
+    /**
+     Sets values to default values that are not required by the {@link org.opentosca.toscana.model.EffectiveModel} but
+     by
+     CloudFormation.
+     <br>
+     Passwords need to have a length of 8. If it is shorter than that or no password is given at all, a random password
+     is used instead.
+     <br>
+     {@link Compute} nodes that only host {@link MysqlDatabase} should not be transformed to EC2s because the
+     {@link MysqlDatabase} will be an AWS RDS and won't need a host.
+
+     @param node the {@link MysqlDatabase} node to visit
+     */
     @Override
     public void visit(MysqlDatabase node) {
         //if certain values aren't given, fill them
@@ -86,6 +99,11 @@ public class PrepareModelNodeVisitor extends CloudFormationVisitorExtension impl
         }
     }
 
+    /**
+     Marks this {@link Compute} node to be transformed to an EC2 and sets the private and public address.
+
+     @param node the {@link Compute} node to visit
+     */
     @Override
     public void visit(Compute node) {
         // compute nodes only get transformed if they are present in this map
@@ -103,6 +121,11 @@ public class PrepareModelNodeVisitor extends CloudFormationVisitorExtension impl
         node.setPublicAddress(publicIpFnString);
     }
 
+    /**
+     Sets the application endpoint port of a this {@link WebApplication} to a default port if it is not yet set.
+
+     @param node the {@link WebApplication} node to visit
+     */
     @Override
     public void visit(WebApplication node) {
         //if port is not set, set to default 80
@@ -127,10 +150,12 @@ public class PrepareModelNodeVisitor extends CloudFormationVisitorExtension impl
     }
 
     /**
-     Generates a random string that is also usable as a password
+     Generates a random string that is also usable as a password.
+     <br>
+     Using {@link SecureRandom} so the {@link String} can be used as a password.
 
-     @param count length of the to created string
-     @return a random string of given length
+     @param count length of the {@link String}
+     @return a random {@link String} of given length
      */
     private String randomString(int count) {
         return RandomStringUtils.random(count, 0, 0, true, true, null, new SecureRandom());

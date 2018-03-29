@@ -8,6 +8,9 @@ import org.opentosca.toscana.model.EffectiveModelFactory;
 
 import org.apache.commons.io.FileUtils;
 
+/**
+ Transforms a LAMP CSAR without input parameters that is hosted on one compute node.
+ */
 public class CloudFormationLampIT extends CloudFormationIT {
 
     @Override

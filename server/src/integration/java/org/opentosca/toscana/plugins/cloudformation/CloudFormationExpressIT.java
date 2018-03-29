@@ -8,6 +8,9 @@ import org.opentosca.toscana.model.EffectiveModelFactory;
 
 import org.apache.commons.io.FileUtils;
 
+/**
+ Transforms an express CSAR.
+ */
 public class CloudFormationExpressIT extends CloudFormationIT {
 
     @Override

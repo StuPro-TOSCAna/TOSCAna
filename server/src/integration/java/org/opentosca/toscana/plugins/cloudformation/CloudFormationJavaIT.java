@@ -10,6 +10,9 @@ import org.opentosca.toscana.model.EffectiveModelFactory;
 
 import org.apache.commons.io.FileUtils;
 
+/**
+ Transforms a Java CSAR.
+ */
 public class CloudFormationJavaIT extends CloudFormationIT {
 
     @Override
