@@ -1,8 +1,8 @@
 import {Injectable} from '@angular/core';
-import {PlatformResponse, PlatformsService} from '../../api/index';
+import {PlatformResponse, PlatformsService} from '../api/index';
 
 @Injectable()
-export class PlatformsProvider {
+export class ClientPlatformsService {
     platforms: PlatformResponse[] = [];
 
     constructor(private platformsService: PlatformsService) {

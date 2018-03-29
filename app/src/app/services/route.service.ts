@@ -1,41 +1,12 @@
 import {Injectable} from '@angular/core';
 import {Router} from '@angular/router';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {CsarOpen, InputFormOpen, TransformationOpen, ViewState} from '../model/view-states';
 
-export interface ActiveTransformation {
-    csarId: string;
-    platform: string;
-}
-
-export class ViewState {
-    csarId: string;
-
-    constructor(csarId: string) {
-        this.csarId = csarId;
-    }
-}
-
-export class TransformationOpen extends ViewState {
-    platform: string;
-
-    constructor(csarId: string, platform: string) {
-        super(csarId);
-        this.platform = platform;
-    }
-}
-
-export class InputFormOpen extends TransformationOpen {
-    constructor(csarId: string, platform: string) {
-        super(csarId, platform);
-    }
-}
-
-export class CsarOpen extends ViewState {
-    constructor(csarId: string) {
-        super(csarId);
-    }
-}
-
+/**
+ * Manages the state of the current opened view
+ * if the view changes it notifies all view state change subscribers so they can react
+ */
 @Injectable()
 export class RouteHandler {
     _viewState: BehaviorSubject<ViewState>;

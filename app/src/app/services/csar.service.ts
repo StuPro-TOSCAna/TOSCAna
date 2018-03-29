@@ -1,22 +1,21 @@
-import {Csar} from './../../model/csar';
-import {CsarsService} from './../../api/api/csars.service';
+import {Csar} from '../model/csar';
+import {CsarsService} from '../api/api/csars.service';
 import {Injectable} from '@angular/core';
-import {PlatformsProvider} from '../platforms/platforms.provider';
-import {Transformation} from '../../model/transformation';
+import {ClientPlatformsService} from './platforms.service';
+import {Transformation} from '../model/transformation';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {Helper} from '../../helper/helper';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/map';
-import {CsarResponse, TransformationResponse} from '../../api';
+import {CsarResponse, TransformationResponse} from '../api/index';
 import {Observable} from 'rxjs/Observable';
-import {MessageService} from '../message/message.service';
-import {ErrorMessage} from '../../model/message';
+import {MessageService} from './message.service';
+import {ErrorMessage} from '../model/message';
+import {isNullOrUndefined} from 'util';
 import StateEnum = TransformationResponse.StateEnum;
 
 @Injectable()
-export class CsarProvider {
+export class ClientCsarsService {
     _csars: BehaviorSubject<Csar[]>;
-    notNullOrUndefined = Helper.notNullOrUndefined;
     loading = false;
     res = null;
     private dataStore: {
@@ -24,14 +23,14 @@ export class CsarProvider {
     };
     private requested = false;
 
-    constructor(private messageService: MessageService, public csarService: CsarsService, private platformsProvider: PlatformsProvider) {
+    constructor(private messageService: MessageService, public csarService: CsarsService, private platformsProvider: ClientPlatformsService) {
         this.dataStore = {csars: []};
         this._csars = <BehaviorSubject<Csar[]>>new BehaviorSubject([]);
     }
 
     deleteCsar(csarId: string) {
         this.csarService.deleteCsarUsingDELETE(csarId).subscribe(() => {
-            let csar = this.dataStore.csars.find(item => item.name === csarId);
+            const csar = this.dataStore.csars.find(item => item.name === csarId);
             this.dataStore.csars.splice(this.dataStore.csars.indexOf(csar), 1);
             this.updateSubject();
         }, err => {
@@ -44,16 +43,15 @@ export class CsarProvider {
     }
 
     loadCsars() {
-        console.log('request');
         if (!this.requested) {
             this.requested = true;
-            let observ = this.csarService.listCSARsUsingGET();
+            const observ = this.csarService.listCSARsUsingGET();
             this.res = observ.map(data => {
-                if (!this.notNullOrUndefined(data._embedded)) {
+                if (isNullOrUndefined(data._embedded)) {
                     return Observable.of();
                 }
                 const csars = data._embedded.csar;
-                return this.createCsarWithTransformations(csars);
+                return this.addTransformationsToCsars(csars);
             });
             this.res.subscribe(data => {
                 data.then(csarResult => {
@@ -65,28 +63,19 @@ export class CsarProvider {
         }
     }
 
-    private async createCsarWithTransformations(csars: Array<CsarResponse>) {
-        let res = [];
+    /**
+     * loads all transformations for a csar and adds them
+     * @param {Array<CsarResponse>} csars
+     * @returns {Promise<any[]>}
+     */
+    private async addTransformationsToCsars(csars: Array<CsarResponse>) {
+        const res = [];
         for (const csar of csars) {
-            const transformationsPromise = await this.getTransformations(csar.name);
-            const transformations = [];
-            if (transformationsPromise._embedded !== undefined) {
-                this.addFullNameToTransformations(transformationsPromise, transformations);
-            }
+            const transformations = await this.getTransformations(csar.name).toPromise();
             const csarObject = new Csar(csar.name, csar.phases, transformations);
             res.push(csarObject);
         }
         return res;
-    }
-
-    private addFullNameToTransformations(transformationsPromise: any, transformations: any[]) {
-        const transformationResponses = transformationsPromise._embedded.transformation;
-        for (const item of transformationResponses) {
-            const fullName: string = this.platformsProvider.getFullPlatformName(item.platform);
-            const transformation = <Transformation> item;
-            transformation.fullName = fullName;
-            transformations.push(transformation);
-        }
     }
 
     get csars() {
@@ -97,7 +86,6 @@ export class CsarProvider {
         this.csarService.uploadCSARUsingPUT(csar.name, blob).subscribe(value => {
             this.dataStore.csars.push(csar);
             this.updateSubject();
-            console.log(csar);
         }, error => {
             this.messageService.add(new ErrorMessage('CSAR upload failed.'));
         });
@@ -107,12 +95,18 @@ export class CsarProvider {
         this.dataStore.csars.forEach((c, i) => {
             if (c.name === csar.name) {
                 this.dataStore.csars[i] = csar;
+                this.updateSubject();
                 return;
             }
-            this.updateSubject();
         });
     }
 
+    /**
+     * Creates transformation with only a platform
+     * this is needed to show menu entries
+     * @param csarId
+     * @param {string} platform
+     */
     addEmptyTransformationToCsar(csarId, platform: string) {
         const res = this.dataStore.csars.find(csar => csar.name === csarId);
         const fullName = this.platformsProvider.getFullPlatformName(platform);
@@ -120,6 +114,12 @@ export class CsarProvider {
         this.updateSubject();
     }
 
+    /**
+     * Update the state of a transformation so its corresponding menu entry gets updated
+     * @param {string} csarId
+     * @param {string} platform
+     * @param {TransformationResponse.StateEnum} state
+     */
     updateTransformationState(csarId: string, platform: string, state: StateEnum) {
         const res = this.dataStore.csars.find(csar => csar.name === csarId);
         res.transformations.find(t => t.platform === platform).state = state;
@@ -130,15 +130,30 @@ export class CsarProvider {
         this._csars.next((Object.assign({}, this.dataStore).csars));
     }
 
-    getTransformations(csarId: string) {
-        const promise = this.csarService.getCSARTransformationsUsingGET(csarId);
-        return promise.toPromise();
+    /**
+     * load csars for a transformation
+     * @param {string} csarId
+     * @returns {Observable<Transformation[]>}
+     */
+    getTransformations(csarId: string): Observable<Transformation[]> {
+        return this.csarService.getCSARTransformationsUsingGET(csarId).map(result => {
+            if (isNullOrUndefined(result._embedded)) {
+                return [];
+            }
+            const res = result._embedded.transformation;
+            const transformations = [];
+            res.forEach(transformation => {
+                const fullName = this.platformsProvider.getFullPlatformName(transformation.platform);
+                transformations.push(new Transformation(fullName, transformation.phases, transformation.platform, transformation.state));
+            });
+            return transformations;
+        });
     }
 
 
     getCsarByName(csarId: string) {
         return this.csarService.getCSARInfoUsingGET(csarId).map(async data => {
-            let res = await this.createCsarWithTransformations([data]);
+            const res = await this.addTransformationsToCsars([data]);
             return res[0];
         }, err => {
             this.messageService.addErrorMessage(`Failed to load the csar "${csarId}"`);
@@ -149,7 +164,7 @@ export class CsarProvider {
         return this.dataStore.csars.find(csar => csar.name === csarId);
     }
 
-    getLogs(csarId: string, last: number) {
+    getCsarLogs(csarId: string, last: number) {
         return this.csarService.getLogsUsingGET(csarId, last);
     }
 }

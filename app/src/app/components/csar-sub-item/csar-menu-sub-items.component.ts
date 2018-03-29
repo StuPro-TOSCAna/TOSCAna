@@ -1,29 +1,31 @@
 import {Router} from '@angular/router';
 import {Component, Input, OnInit} from '@angular/core';
 import {Csar} from '../../model/csar';
-import {RouteHandler, TransformationOpen} from '../../handler/route/route.service';
-import {TransformationsProvider} from '../../providers/transformations/transformations.provider';
-import {CsarProvider} from '../../providers/csar/csar.provider';
+import {RouteHandler} from '../../services/route.service';
+import {ClientsTransformationsService} from '../../services/transformations.service';
+import {ClientCsarsService} from '../../services/csar.service';
 import {TransformationResponse} from '../../api';
 import StateEnum = TransformationResponse.StateEnum;
-import {MessageService} from '../../providers/message/message.service';
+import {MessageService} from '../../services/message.service';
+import {TransformationOpen} from '../../model/view-states';
 
 @Component({
     selector: 'app-csar-sub-item',
-    templateUrl: './csar-sub-item.component.html',
-    styleUrls: ['./csar-sub-item.component.scss']
+    templateUrl: './csar-menu-sub-items.component.html',
+    styleUrls: ['./csar-menu-sub-items.component.scss']
 })
-export class CsarSubItemComponent implements OnInit {
+export class CsarMenuSubItemsComponent implements OnInit {
     @Input() csar: Csar;
     viewState: TransformationOpen;
     activePlatform = '';
     stateEnum = StateEnum.TRANSFORMING;
-    constructor(private messageService: MessageService, private router: Router, private csarProvider: CsarProvider,
-                private transformationProvider: TransformationsProvider,
+    constructor(private messageService: MessageService, private router: Router, private csarProvider: ClientCsarsService,
+                private transformationProvider: ClientsTransformationsService,
                 private routeHandler: RouteHandler) {
     }
 
     ngOnInit() {
+        // subscribe on view state to receive updates on the current opened transformations
         this.routeHandler.viewState.subscribe(data => {
             if (data instanceof TransformationOpen) {
                 this.viewState = data;
@@ -43,10 +45,10 @@ export class CsarSubItemComponent implements OnInit {
             this.csar.transformations.splice(pos, 1);
             this.csarProvider.updateCsar(this.csar);
             this.routeHandler.openCsar(this.csar.name);
-        }, err => this.messageService.addErrorMessage('Failed to delete transformation'));
+        }, err => this.messageService.addErrorMessage('Failed to removeMessage transformation'));
     }
 
-    gotoTransformation(platform: string) {
+    openTransformationView(platform: string) {
         this.routeHandler.openTransformation(this.csar.name, platform);
     }
 

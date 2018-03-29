@@ -1,10 +1,10 @@
 import {Component, Input, OnInit} from '@angular/core';
 import 'rxjs/add/observable/combineLatest';
 import {Csar} from '../../model/csar';
-import {BsModalRef} from 'ngx-bootstrap';
-import {CsarProvider} from '../../providers/csar/csar.provider';
-import {RouteHandler, ViewState} from '../../handler/route/route.service';
+import {ClientCsarsService} from '../../services/csar.service';
+import {RouteHandler} from '../../services/route.service';
 import {isNullOrUndefined} from 'util';
+import {ViewState} from '../../model/view-states';
 
 @Component({
     selector: 'app-csar-item',
@@ -13,18 +13,11 @@ import {isNullOrUndefined} from 'util';
 })
 export class CsarItemComponent implements OnInit {
     @Input() csar: Csar;
-    modalRef: BsModalRef;
     viewState: ViewState;
-    active = false;
-    config = {
-        animated: true,
-        keyboard: false,
-        backdrop: true,
-        ignoreBackdropClick: true
-    };
+    csarViewActive = false;
 
 
-    constructor(private routeHandler: RouteHandler, private csarProvider: CsarProvider) {
+    constructor(private routeHandler: RouteHandler, private csarProvider: ClientCsarsService) {
     }
 
     public open() {
@@ -42,10 +35,12 @@ export class CsarItemComponent implements OnInit {
     }
 
     ngOnInit() {
+        // subscribe on the view state to mark this csar item as active
+        // if the csar view or a transformation view with this csar as parent is active
         this.routeHandler.viewState.subscribe(data => {
             if (!isNullOrUndefined(data)) {
                 this.viewState = data;
-                this.active = this.viewState.csarId === this.csar.name;
+                this.csarViewActive = this.viewState.csarId === this.csar.name;
             }
         });
     }

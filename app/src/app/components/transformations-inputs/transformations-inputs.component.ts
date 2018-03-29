@@ -1,44 +1,47 @@
 import {Component, OnInit} from '@angular/core';
 import {InputWrap, TransformationResponse} from '../../api';
-import {TransformationsProvider} from '../../providers/transformations/transformations.provider';
+import {ClientsTransformationsService} from '../../services/transformations.service';
 import {ActivatedRoute, ParamMap} from '@angular/router';
-import {CsarProvider} from '../../providers/csar/csar.provider';
+import {ClientCsarsService} from '../../services/csar.service';
 import {Csar} from '../../model/csar';
-import {RouteHandler} from '../../handler/route/route.service';
-import {PlatformsProvider} from '../../providers/platforms/platforms.provider';
-import {Transformation} from '../../model/transformation';
+import {RouteHandler} from '../../services/route.service';
+import {ClientPlatformsService} from '../../services/platforms.service';
+import {TransformationInterface} from '../../model/transformation';
 import {isNullOrUndefined} from 'util';
-import {MessageService} from '../../providers/message/message.service';
+import {MessageService} from '../../services/message.service';
 import StateEnum = TransformationResponse.StateEnum;
 import TypeEnum = InputWrap.TypeEnum;
 
 @Component({
-    selector: 'app-input',
-    templateUrl: './input.component.html',
-    styleUrls: ['./input.component.scss']
+    selector: 'app-transformation-inputs',
+    templateUrl: './transformations-inputs.component.html',
+    styleUrls: ['./transformations-inputs.component.scss']
 })
-export class InputComponent implements OnInit {
+export class TransformationInputsComponent implements OnInit {
     selectedPlatform: string;
     csarId: string;
-    invalid = 'invalid';
     inputs: InputWrap[] = [];
     errorMsg = false;
     csar: Csar;
-    transformation: Transformation;
+    transformation: TransformationInterface;
     everythingValid = true;
 
     constructor(private messageService: MessageService, private routeHandler: RouteHandler,
-                private transformationsProvider: TransformationsProvider,
-                private csarsProvider: CsarProvider,
-                private platformsProvider: PlatformsProvider,
+                private transformationsProvider: ClientsTransformationsService,
+                private csarsProvider: ClientCsarsService,
+                private platformsProvider: ClientPlatformsService,
                 private route: ActivatedRoute) {
     }
 
-    validateProperty(item: InputWrap) {
+    /**
+     * checks if an transformation input is valid
+     * @param {InputWrap} item
+     * @returns {boolean} inputValid
+     */
+    validateInput(item: InputWrap) {
         function isNumber(value: string) {
             return !isNaN(Number(value));
         }
-
         switch (item.type) {
             case TypeEnum.Boolean:
                 const val = item.value.toLowerCase().trim();
@@ -62,13 +65,18 @@ export class InputComponent implements OnInit {
         return false;
     }
 
-    change(item: InputWrap, input: string) {
+    /**
+     * triggered on input changes
+     * triggers the validation of the input
+     * and the check if it is possible to submitInputs the inputs
+     * @param {InputWrap} item
+     * @param {string} input
+     */
+    onInputChange(item: InputWrap, input: string) {
         item.value = input;
-        const parse = this.validateProperty(item);
-        item.valid = true;
-        if (item.required && ((item.value === null || item.value === ''))) {
-            item.valid = false;
-        }
+        const parse = this.validateInput(item);
+
+        item.valid = !(item.required && ((item.value === null || item.value === '')));
         if (!parse) {
             item.valid = false;
         }
@@ -79,13 +87,9 @@ export class InputComponent implements OnInit {
         return item.type === TypeEnum.Boolean;
     }
 
-    getClass(item: InputWrap) {
-        return item.valid;
-    }
-
-    async submit() {
+    async submitInputs() {
         await this.transformationsProvider.setTransformationProperties(this.csarId, this.selectedPlatform, this.inputs).then(result => {
-            this.onSubmit();
+            this.startTransformation();
         }, err => {
             if (err.status === 406) {
                 this.inputs = err.error.inputs;
@@ -119,7 +123,7 @@ export class InputComponent implements OnInit {
         }
     }
 
-    onSubmit() {
+    startTransformation() {
         this.csar = this.csarsProvider.getCsarById(this.csarId);
         this.transformationsProvider.startTransformation(this.csar.name, this.selectedPlatform).then(() => {
             this.csar.addTransformation(this.selectedPlatform, this.platformsProvider.getFullPlatformName(this.selectedPlatform));
@@ -128,6 +132,11 @@ export class InputComponent implements OnInit {
         });
     }
 
+    /**
+     * returns the default value is available
+     * @param {string} defaultValue
+     * @returns {string} empty string or default value
+     */
     getDefaultValue(defaultValue: string) {
         if (isNullOrUndefined(defaultValue)) {
             return '';
@@ -136,6 +145,11 @@ export class InputComponent implements OnInit {
         }
     }
 
+    /**
+     * sets the boolean if a checkbox is checked
+     * @param {string} key of the boolean input
+     * @param {boolean} checked
+     */
     convertAndSetBool(key: string, checked: boolean) {
         this.inputs.find(input => input.key === key).value = String(checked);
     }
