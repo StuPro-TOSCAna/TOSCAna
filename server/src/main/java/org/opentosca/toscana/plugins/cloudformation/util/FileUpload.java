@@ -4,15 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- Class that holds information about a file that needs to be uploaded.
+ Holds information about a file that needs to be uploaded.
  */
 public class FileUpload {
-    /**
-     The file path where the file is stored.
-     */
+
     private final String filePath;
     /**
-     The type a file can have.
+     The type this FileUpload has.
      <br>
      Different types get treated differently.
      */
@@ -23,7 +21,7 @@ public class FileUpload {
      */
     public enum UploadFileType {
         /**
-         All files can come from the CSAR and need to be uploaded have this type.
+         All files that need to be uploaded for any AWS Resource and origin from the transformation's CSAR have this type.
          */
         FROM_CSAR,
         /**
@@ -38,8 +36,6 @@ public class FileUpload {
     }
 
     /**
-     Standard constructor.
-     <br>
      Creates a FileUpload using the {@code filePath} and the {@code fileType}.
 
      @param filePath the file path where the file is stored

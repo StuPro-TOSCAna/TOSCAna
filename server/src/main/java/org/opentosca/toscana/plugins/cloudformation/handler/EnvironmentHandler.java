@@ -22,7 +22,7 @@ import static org.opentosca.toscana.plugins.cloudformation.util.FileUpload.Uploa
 import static org.opentosca.toscana.plugins.cloudformation.util.StackUtils.getFileURL;
 
 /**
- Class that handles the environment variables.
+ Handles the environment variables.
  */
 public class EnvironmentHandler {
     private static final String ECHO = "echo ";
@@ -52,6 +52,14 @@ public class EnvironmentHandler {
      */
     private final Map<String, Map<String, String>> environmentMap;
 
+    /**
+     Sets up this EnvironmentHandler with the {@link CloudFormationModule} and the {@link Logger}.
+     <br>
+     The {@code environmentMap} and {@code access} are taken from the CloudFormationModule.
+
+     @param cfnModule the {@link CloudFormationModule} to use
+     @param logger    the {@link Logger} to use
+     */
     public EnvironmentHandler(CloudFormationModule cfnModule, Logger logger) {
         this.cfnModule = cfnModule;
         this.access = cfnModule.getFileAccess();
@@ -60,7 +68,7 @@ public class EnvironmentHandler {
     }
 
     /**
-     Writes the necessary scripts to set the environment variables, adds them to the instances and set them to be
+     Writes the necessary scripts to set the environment variables, adds them to the instances and mark them to be
      uploaded.
      */
     public void handleEnvironment() throws IOException {

@@ -159,8 +159,6 @@ public class CloudFormationModule extends Module {
     private Map<String, Map<String, String>> environmentMap;
 
     /**
-     Standard constructor.
-     <br>
      Sets up the Module which uses the cloudformation-builder to build an AWS CloudFormation template
 
      @param fileAccess     fileAccess to append the content of files to the template

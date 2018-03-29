@@ -41,7 +41,7 @@ public abstract class CloudFormationVisitor {
      */
     protected Graph<RootNode, RootRelationship> topology;
     /**
-     The CloudFormationModule that holds every information during the transformation.
+     The CloudFormationModule that holds all the information during the transformation.
      */
     protected CloudFormationModule cfnModule;
 

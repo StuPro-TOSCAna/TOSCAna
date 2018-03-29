@@ -15,13 +15,11 @@ import static org.opentosca.toscana.plugins.cloudformation.CloudFormationLifecyc
 import static org.opentosca.toscana.plugins.cloudformation.visitor.PrepareModelNodeVisitor.AWS_ENDPOINT_REFERENCE;
 
 /**
- Class for preparing a models relationships.
+ Prepares a models relationships.
  */
 public class PrepareModelRelationshipVisitor extends CloudFormationVisitor implements RelationshipVisitor {
 
     /**
-     Standard constructor.
-     <br>
      Creates a <tt>PrepareModelRelationshipVisitor</tt> to prepare a models relationships.
 
      @param context   {@link TransformationContext} to extract the topology and a logger

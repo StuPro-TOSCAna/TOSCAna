@@ -18,7 +18,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationLifecycle.toAlphanumerical;
 
 /**
- Class for preparing a models nodes.
+ Prepares a model's nodes.
  */
 public class PrepareModelNodeVisitor extends CloudFormationVisitor implements NodeVisitor {
 
@@ -31,8 +31,6 @@ public class PrepareModelNodeVisitor extends CloudFormationVisitor implements No
     private static final int DEFAULT_WEBAPP_PORT = 80;
 
     /**
-     Standard constructor.
-     <br>
      Creates a <tt>PrepareModelNodeVisitor</tt> to prepare a models nodes.
 
      @param context   {@link TransformationContext} to extract the topology and a logger
@@ -43,10 +41,12 @@ public class PrepareModelNodeVisitor extends CloudFormationVisitor implements No
     }
 
     /**
-     Sets values to default values that are not required by the {@link org.opentosca.toscana.model.EffectiveModel} but by
+     Sets values to default values that are not required by the {@link org.opentosca.toscana.model.EffectiveModel} but
+     by
      CloudFormation.
      <br>
-     Passwords need to have a length of 8. If this is not given there is a random password created.
+     Passwords need to have a length of 8. If it is shorter than that or no password is given at all, a random password
+     is used instead.
      <br>
      {@link Compute} nodes that only host {@link MysqlDatabase} should not be transformed to EC2s because the
      {@link MysqlDatabase} will be an AWS RDS and won't need a host.

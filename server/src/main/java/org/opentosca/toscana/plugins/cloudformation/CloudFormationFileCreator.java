@@ -26,7 +26,7 @@ import static org.opentosca.toscana.plugins.cloudformation.util.FileUpload.getFi
 import static org.opentosca.toscana.plugins.cloudformation.util.FileUpload.getFileUploadByType;
 
 /**
- Class for building scripts and copying files needed for deployment of CloudFormation templates.
+ Builds scripts and copies files needed for the deployment of the CloudFormation template.
 
  @see <a href="https://aws.amazon.com/cloudformation/">CloudFormation</a>
  @see <a href="https://aws.amazon.com/s3/">S3 Storage</a>
@@ -59,8 +59,6 @@ public class CloudFormationFileCreator {
     private CloudFormationModule cfnModule;
 
     /**
-     Standard constructor.
-     <br>
      Creates a <tt>CloudFormationFileCreator<tt> in order to build deployment scripts and copy files.
 
      @param context   {@link TransformationContext} to extract topology and logger
@@ -95,6 +93,8 @@ public class CloudFormationFileCreator {
 
     /**
      Creates all Scripts necessary for AWS CloudFormation deployment.
+     <br>
+     Uses the {@link BashScript} implementation for the scripts.
      */
     public void writeScripts() throws IOException {
         writeFileUploadScript();
@@ -105,8 +105,6 @@ public class CloudFormationFileCreator {
 
     /**
      Creates a deploy script for deploying the cloudformation template.
-     <br>
-     Uses the {@link BashScript} implementation.
      */
     private void writeDeployScript() throws IOException {
         logger.debug("Creating deploy script.");
@@ -122,8 +120,6 @@ public class CloudFormationFileCreator {
 
     /**
      Creates the script for File Uploads if files need to be uploaded.
-     <br>
-     Uses the {@link BashScript} implementation.
      */
     private void writeFileUploadScript() throws IOException {
         List<String> fileUploadList = getFilePaths(cfnModule.getFileUploadList());
@@ -143,8 +139,6 @@ public class CloudFormationFileCreator {
 
     /**
      Creates the script for creating the CloudFormation stack from the template.
-     <br>
-     Uses the {@link BashScript} implementation.
      */
     private void writeStackCreationScript() throws IOException {
         logger.debug("Creating create-stack script.");
@@ -179,8 +173,6 @@ public class CloudFormationFileCreator {
     /**
      Creates a script to delete the S3 Bucket and the deployed Stack.
      <br>
-     Uses the {@link BashScript} implementation.
-     <br>
      Note: May or may not be included in the final version. Currently used for quicker manual debugging.
      */
     private void writeCleanUpScript() throws IOException {
@@ -205,10 +197,10 @@ public class CloudFormationFileCreator {
     }
 
     /**
-     Puts the given file with the given key on the S3Bucket with  the given name.
+     Puts the given file with the given key on the S3Bucket with the given name.
      Wraps resources/cloudformation.scripts/upload-file.sh
 
-     @return a uploadFile command with teh bucket name and the to be uploaded file
+     @return an uploadFile command with the bucket name and the to be uploaded file
      */
     private String uploadFile(String objectKey, String filePath) {
         return "uploadFile " + cfnModule.getBucketName() + " \"" + objectKey + "\" \"" + filePath + "\"";

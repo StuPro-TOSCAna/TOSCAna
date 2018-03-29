@@ -36,8 +36,11 @@ import static org.opentosca.toscana.plugins.cloudformation.util.MappingUtils.get
 import static org.opentosca.toscana.plugins.cloudformation.util.MappingUtils.getMemByCpu;
 
 /**
- Class that is used to to map {@link OsCapability OsCapabilities} and {@link ComputeCapability ComputeCapabilities} to
+ Maps {@link OsCapability OsCapabilities} and {@link ComputeCapability ComputeCapabilities} to
  values for CloudFormation.
+ <br>
+ It uses the AWS Region and the AWS Credentials to connect to AWS via the AWS SDK to fetch the latest image id suitable
+ for given OsCapability.
 
  @see org.opentosca.toscana.plugins.cloudformation.util.MappingUtils */
 public class CapabilityMapper {
@@ -48,7 +51,7 @@ public class CapabilityMapper {
     private static final String ARCH_x86_64 = "x86_64";
     private final Logger logger;
     /**
-     CloudFormation {@link InstanceType}s for EC2s.
+     CloudFormation {@link InstanceType}s for EC2.
 
      @see <a href="https://aws.amazon.com/ec2/instance-types/">EC2 Instance Types</a>
      */
@@ -63,7 +66,7 @@ public class CapabilityMapper {
         .build();
 
     /**
-     CloudFormation {@link InstanceType}s for RDSs.
+     CloudFormation {@link InstanceType}s for RDS.
 
      @see <a href="https://aws.amazon.com/rds/instance-types/">RDS Instance Types</a>
      */
@@ -85,15 +88,14 @@ public class CapabilityMapper {
      */
     private String awsRegion;
     /**
-     The AWS Credentials to connect to AWS using the AWS SDK to get image ids.
+     The AWS Credentials to connect to AWS using the AWS SDK.
      {@link CloudFormationModule#awsCredentials}
      */
     private AWSCredentials awsCredentials;
 
     /**
-     Standard constructor.
-     <br>
      Creates a <tt>CapabilityMapper</tt> using the region and the credentials.
+     The region and credentials are used to get image ids using the AWS SDK.
 
      @param awsRegion      the AWS Region to take
      @param awsCredentials the AWS Credentials to take
@@ -250,7 +252,7 @@ public class CapabilityMapper {
      <br>
      The minimum is 20 GB the maximum 6144 GB
 
-     @param computeCapability the {@link ComputeCapability} to mapt
+     @param computeCapability the {@link ComputeCapability} to map
      @return returns an integer representing the diskSize that should be taken
      */
     public Integer mapComputeCapabilityToRDSAllocatedStorage(ComputeCapability computeCapability) {
@@ -321,8 +323,8 @@ public class CapabilityMapper {
         if (instanceType.isEmpty()) {
             Integer newNumCpus = numCpus;
             Integer newMemSize = memSize;
-            //the combination does not exist
-            //try to scale cpu
+            //this combination does not exist
+            //try to scale the cpus
             logger.debug("The combination of numCpus: '{}' and memSize: '{}' does not exist", newNumCpus, newMemSize);
             logger.debug("Try to scale cpu");
             for (Integer num : allNumCpus) {
@@ -335,7 +337,7 @@ public class CapabilityMapper {
             if (instanceType.isEmpty()) {
                 logger.debug("Scaling cpu failed");
                 logger.debug("Try to scale memory");
-                //try to scale mem
+                //try to scale the memory
                 for (Integer mem : allMemSizes) {
                     if (mem > newMemSize && getCpuByMem(mem, instanceTypes).contains(newNumCpus)) {
                         newMemSize = mem;
@@ -356,7 +358,7 @@ public class CapabilityMapper {
     }
 
     /**
-     Class that represents a instance type of a EC2 or RDS.
+     Represents an instance type of a EC2 or RDS.
 
      @see <a href="https://aws.amazon.com/ec2/instance-types/">EC2 Instance Types</a>
      @see <a href="https://aws.amazon.com/rds/instance-types/">RDS Instance Types</a>
@@ -378,8 +380,6 @@ public class CapabilityMapper {
         private Integer numCpus;
 
         /**
-         Standard constructor.
-         <br>
          Creates an InstanceType based on the {@link String} representation, the number of cpus and the size of memory.
 
          @param type    the {@link String} representation of the InstanceType, that is used by CloudFormation or AWS in

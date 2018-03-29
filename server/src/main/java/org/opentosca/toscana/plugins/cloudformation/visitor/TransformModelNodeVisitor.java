@@ -41,7 +41,7 @@ import static org.opentosca.toscana.plugins.cloudformation.handler.EnvironmentHa
 import static org.opentosca.toscana.plugins.cloudformation.handler.OperationHandler.APACHE_RESTART_COMMAND;
 
 /**
- Class for transforming a models nodes.
+ Transforms a models nodes.
  <br>
  Performs the transformation using the prepared {@link org.opentosca.toscana.model.EffectiveModel} and the already
  modified {@link CloudFormationModule}.

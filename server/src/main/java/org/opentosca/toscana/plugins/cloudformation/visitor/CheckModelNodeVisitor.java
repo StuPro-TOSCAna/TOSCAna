@@ -18,15 +18,14 @@ import org.opentosca.toscana.model.visitor.UnsupportedTypeException;
 import com.google.common.collect.Lists;
 
 /**
- Class for checking the models nodes whether they are supported or not.
+ Checks the model's nodes whether they are supported or not.
  <br>
- Methods that are not overridden will throw an {@link UnsupportedTypeException}.
+ The visitor implements the {@link StrictNodeVisitor} interface which means every method that is not overridden
+ will throw an {@link UnsupportedTypeException}. These types are not supported.
  */
 public class CheckModelNodeVisitor extends CloudFormationVisitor implements StrictNodeVisitor {
 
     /**
-     Standard constructor.
-     <br>
      Creates a <tt>CheckModelNodeVisitor</tt> to check the models nodes.
 
      @param context {@link TransformationContext} to extract the topology and a logger
@@ -46,7 +45,7 @@ public class CheckModelNodeVisitor extends CloudFormationVisitor implements Stri
     /**
      {@link Compute} node is supported.
      <br>
-     Only linux, ubuntu is supported!
+     Only Linux, Ubuntu is supported!
      */
     @Override
     public void visit(Compute node) {

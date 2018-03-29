@@ -29,7 +29,7 @@ import static org.opentosca.toscana.plugins.cloudformation.util.FileUpload.Uploa
 import static org.opentosca.toscana.plugins.cloudformation.util.StackUtils.getFileURL;
 
 /**
- Class that handles {@link Operation}s of nodes.
+ Handles {@link Operation}s of nodes.
  */
 public class OperationHandler {
     public static final String APACHE_RESTART_COMMAND = "service apache2 restart";
@@ -38,9 +38,7 @@ public class OperationHandler {
     private Logger logger;
 
     /**
-     Standard constructor.
-     <br>
-     Sets up the {@link CloudFormationModule} and the {@link Logger}.
+     Sets up the OperationHandler with the {@link CloudFormationModule} and the {@link Logger}.
 
      @param cfnModule the {@link CloudFormationModule} to use
      @param logger    the {@link Logger} to use

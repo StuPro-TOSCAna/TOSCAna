@@ -22,8 +22,7 @@ import org.springframework.stereotype.Component;
  This is the CloudFormation plugin which performs the transformation to AmazonWebServices CloudFormation.
  It uses the {@link CloudFormationLifecycle} to perform its task
 
- @see <a href="https://aws.amazon.com/cloudformation/">AWS CloudFormation</a> 
- */
+ @see <a href="https://aws.amazon.com/cloudformation/">AWS CloudFormation</a> */
 @Component
 public class CloudFormationPlugin extends ToscanaPlugin<CloudFormationLifecycle> {
     public static final String AWS_REGION_KEY = "AWS Region";
@@ -42,29 +41,21 @@ public class CloudFormationPlugin extends ToscanaPlugin<CloudFormationLifecycle>
         String platformId = "cloudformation";
         String platformName = "AWS CloudFormation";
         Set<PlatformInput> platformProperties = new HashSet<>();
+
         String defaultKeyId = "";
         String defaultKeySecret = "";
-        /* Try to get AWS credentials from the system. */
-        try {
-            ProfileCredentialsProvider profileCredentialsProvider = new ProfileCredentialsProvider();
-            AWSCredentials awsCredentials = profileCredentialsProvider.getCredentials();
-            defaultKeyId = awsCredentials.getAWSAccessKeyId();
-            defaultKeySecret = awsCredentials.getAWSSecretKey();
-        } catch (Exception e) {
-            logger.debug("Did not find credentials on the system");
+        String[] systemCredentials = getCredentialsFromSystem();
+        if (systemCredentials != null) {
+            defaultKeyId = systemCredentials[0];
+            defaultKeySecret = systemCredentials[1];
         }
+
         String defaultRegion = AWS_REGION_DEFAULT;
-        /* Try to get AWS region from the system. */
-        try {
-            ProfilesConfigFile profilesConfigFile = new ProfilesConfigFile();
-            Map<String, BasicProfile> basicProfiles = profilesConfigFile.getAllBasicProfiles();
-            BasicProfile defaultProfile = basicProfiles.get("default");
-            if (defaultProfile.getRegion() != null) {
-                defaultRegion = defaultProfile.getRegion();
-            }
-        } catch (Exception e) {
-            logger.debug("Did not find region on the system");
+        String systemRegion = getRegionFromSystem();
+        if (systemRegion != null) {
+            defaultRegion = systemRegion;
         }
+
         platformProperties.add(new PlatformInput(
                 AWS_REGION_KEY,
                 PropertyType.TEXT,
@@ -76,7 +67,7 @@ public class CloudFormationPlugin extends ToscanaPlugin<CloudFormationLifecycle>
         platformProperties.add(new PlatformInput(
                 AWS_ACCESS_KEY_ID_KEY,
                 PropertyType.TEXT,
-                "Your access key id",
+            "Your AWS Access Key Id",
                 true,
                 defaultKeyId
             )
@@ -84,7 +75,7 @@ public class CloudFormationPlugin extends ToscanaPlugin<CloudFormationLifecycle>
         platformProperties.add(new PlatformInput(
                 AWS_SECRET_KEY_KEY,
                 PropertyType.SECRET,
-                "Your access key secret",
+            "Your AWS Access Key Secret",
                 true,
                 defaultKeySecret
             )
@@ -92,7 +83,7 @@ public class CloudFormationPlugin extends ToscanaPlugin<CloudFormationLifecycle>
         platformProperties.add(new PlatformInput(
                 AWS_KEYPAIR_KEY,
                 PropertyType.BOOLEAN,
-                "If enabled, adds a AWS 'Keypair' Parameter to the template in order to access EC2 Instances via SSH. Must be specified during Deployment.",
+            "If enabled, adds an AWS 'Keypair' Parameter to the template in order to access EC2 Instances via SSH. The name of the Keypair must be specified during deployment.",
                 true,
                 "false"
             )
@@ -103,5 +94,28 @@ public class CloudFormationPlugin extends ToscanaPlugin<CloudFormationLifecycle>
     @Override
     public CloudFormationLifecycle getInstance(TransformationContext context) throws Exception {
         return new CloudFormationLifecycle(context);
+    }
+
+    private static String getRegionFromSystem() {
+        try {
+            ProfilesConfigFile profilesConfigFile = new ProfilesConfigFile();
+            Map<String, BasicProfile> basicProfiles = profilesConfigFile.getAllBasicProfiles();
+            BasicProfile defaultProfile = basicProfiles.get("default");
+            return defaultProfile.getRegion();
+        } catch (Exception e) {
+            logger.debug("Did not find region on the system");
+            return null;
+        }
+    }
+
+    private static String[] getCredentialsFromSystem() {
+        try {
+            ProfileCredentialsProvider profileCredentialsProvider = new ProfileCredentialsProvider();
+            AWSCredentials awsCredentials = profileCredentialsProvider.getCredentials();
+            return new String[]{awsCredentials.getAWSAccessKeyId(), awsCredentials.getAWSSecretKey()};
+        } catch (Exception e) {
+            logger.debug("Did not find credentials on the system");
+            return null;
+        }
     }
 }

@@ -10,16 +10,15 @@ import org.opentosca.toscana.model.visitor.StrictRelationshipVisitor;
 import org.opentosca.toscana.model.visitor.UnsupportedTypeException;
 
 /**
- Class for checking the models relationships whether they are supported or not.
+ Checks the model's relationships whether they are supported or not.
  <br>
- Methods that are not overridden will throw an {@link UnsupportedTypeException}.
+ The visitor implements the {@link StrictRelationshipVisitor} interface which means every method that is not overridden
+ will throw an {@link UnsupportedTypeException}. These types are not supported.
  */
 public class CheckModelRelationshipVisitor extends CloudFormationVisitor implements StrictRelationshipVisitor {
 
     /**
-     Standard constructor.
-     <br>
-     Creates a <tt>CheckModelRelationshipVisitor</tt> to check a models relationships.
+     Creates a <tt>CheckModelRelationshipVisitor</tt> to check a model's relationships.
      Only hostedOn and connectsTo from a WebApplication to a Database or MysqlDatabase are supported.
 
      @param context {@link TransformationContext} to extract the topology and a logger

@@ -33,7 +33,7 @@ import static org.opentosca.toscana.plugins.cloudformation.CloudFormationPlugin.
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationPlugin.AWS_SECRET_KEY_KEY;
 
 /**
- This is the implementation of the {@link AbstractLifecycle} for the {@link CloudFormationPlugin}.
+ Implements the {@link AbstractLifecycle} for the {@link CloudFormationPlugin}.
  It creates a {@link CloudFormationModule} and is able to perform the lifecycle operations.
  */
 public class CloudFormationLifecycle extends AbstractLifecycle {
@@ -44,8 +44,9 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
     /**
      The CloudFormationModule for this transformation.
      <br>
-     This is the representation of the CloudFormation template. Every information that will be
-     acquired during the lifecycle phases will be stored here.
+     The CloudFormationModule contains information needed for the CloudFormation template but also additional information
+     such as the intended name of the stack, paths to files that needed to be uploaded and other things related to the
+     deployment. Every information that will be acquired during the lifecycle phases will be stored here.
      */
     private CloudFormationModule cfnModule;
     /**
@@ -56,8 +57,6 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
     private PluginFileAccess fileAccess;
 
     /**
-     Standard constructor.
-     <br>
      It takes the mandatory properties and sets up the {@link CloudFormationModule} that is used.
 
      @param context the transformation context for this transformation
@@ -81,7 +80,7 @@ public class CloudFormationLifecycle extends AbstractLifecycle {
     }
 
     /**
-     Converts the input string into a alphanumerical string (regex: {@code [^A-Za-z0-9]})
+     Converts the input string into an alphanumerical string (regex: {@code [^A-Za-z0-9]})
 
      @param input the string to be converted
      @return the converted string
