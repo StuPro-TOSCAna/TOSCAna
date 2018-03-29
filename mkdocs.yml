@@ -51,7 +51,7 @@ pages:
             - "0017 - Implement own TOSCA parser": "dev/adr/0017-implement-own-tosca-parser.md"
         - Plugins:
             - CloudFormation:
-                - Introduction: 'dev/plugins/cloudformation/introduction.md'
+                - Overview: 'dev/plugins/cloudformation/overview.md'
                 - 'Architecture': 'dev/plugins/cloudformation/architecture.md'
                 - CloudFormation:
                     - 'CloudFormation Basics': 'dev/plugins/cloudformation/basics/cloudformation-basics.md'
