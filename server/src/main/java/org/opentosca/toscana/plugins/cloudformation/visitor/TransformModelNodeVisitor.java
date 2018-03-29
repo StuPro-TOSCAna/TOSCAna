@@ -357,6 +357,15 @@ public class TransformModelNodeVisitor extends CloudFormationVisitor implements 
         }
     }
 
+    /**
+     Transforms the {@link JavaApplication} node using AWS Beanstalk.
+     <br>
+     A Beanstalk Application, Configuration Template and Environment are created. A SecurityGroup is made and assigned
+     to the OptionSettings as well as the environment variables that should be pushed. OptionSettings are settings that
+     influence the Beanstalk Application.
+
+     @param node the {@link JavaApplication} node to visit
+     */
     @Override
     public void visit(JavaApplication node) {
         try {
