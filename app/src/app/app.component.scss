@@ -42,10 +42,11 @@ nav {
 }
 
 .navbar-right {
-    display: inline-flex;
+    display: flex;
     color: white;
+    align-items: center;
     div {
-        display: inline-flex;
+        display: inline-block;
     }
     .item {
         margin: 0 2px;
@@ -53,5 +54,9 @@ nav {
     }
     .status {
         margin-right: 10px;
+    }
+    .fa {
+        margin-left: 20px;
+        font-size: 2.5em;
     }
 }
