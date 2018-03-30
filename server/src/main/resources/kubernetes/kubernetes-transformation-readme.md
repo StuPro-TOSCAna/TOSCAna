@@ -59,7 +59,7 @@ This command will ask you for your username and password. The command will succe
 
 #### Make the shell scripts executable
 
-To make the shell script executable, use a terminal to navigate to the extracted `output` directory and run the following command:
+To make the shell script executable, use a terminal to navigate to the extracted `output/scripts` directory and run the following command:
 ```bash
 chmod +x deploy.sh
 ```
