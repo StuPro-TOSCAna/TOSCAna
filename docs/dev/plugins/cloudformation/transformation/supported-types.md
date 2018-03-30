@@ -1,21 +1,23 @@
 # Transformation by TOSCA Type
 
+During the the transformation, 
+
 ## Supported NodeTypes
 
-| NodeType | Short summary |
-| --- | --- |
-| Apache | no specific resource is created |
-| Compute | an EC2 Resource and belonging SecurityGroup are created |
-| Database | no specific resource is created |
-| Dbms | no specific resource is created |
-| MysqlDatabase | a RDS with a mysql engine is created |
-| MysqlDbms | no specific resource is created |
-| WebApplication | no specific resource is created |
-| Nodejs | no specific resource is created |
-| JavaRuntime | no specific resource is created |
-| JavaApplication | a Beanstalk Application and Environment are created |
+The following table contains the NodeTypes currently supported by the CloudFormation plugin and how they're mapped to CloudFormation resources.
 
-    TODO: Update this table.
+| TOSCA NodeType | CloudFormation |
+| --- | --- |
+| Apache | Setup through CloudFormation Init on EC2 host |
+| Compute | EC2 resource and corresponding SecurityGroup |
+| Database | Setup through CloudFormation Init on EC2 host |
+| Dbms | Setup through CloudFormation Init on EC2 host |
+| MysqlDatabase | RDS resource with a mysql engine |
+| MysqlDbms | No specific resource is created |
+| WebApplication | Setup through CloudFormation Init on EC2 host |
+| Nodejs | Setup through CloudFormation Init on EC2 host |
+| JavaRuntime | Setup through CloudFormation Init on EC2 host |
+| JavaApplication | Beanstalk Application and Environment |
 
 ## Transformation implementation details
 
@@ -23,13 +25,6 @@ These transformations take place in the TransformationModelNodeVisitor: [GitHub 
 
     TODO: Figure out if we need the part above.
     TODO: Add NodeType transformation explanations.
-
-### Apache
-
-1. cfnInit apt apache2 on underlying compute/ec2
-2. handleConfigure/handleStart --> scripts and files get copied and executed on underlying compute/Ec2
-3. global environment variables (start lifecycle of webapplication that is hosted on this apache) will be added to /etc/apache/envvars 
-4. if modifications took place a "service apache2 restart" command is added
 
 ### Compute
 
@@ -46,20 +41,35 @@ Following steps are taken in the transform step:
 
 at buildtime: cfninit gets put on ec2 + userdata that executes cfninit + authentication + instancepofile gets added(permission for s3 bucket)
 
+### Mysql Database
+
+### Mysql DBMS
+
+### JavaApplication
+
+### Generic Transformation Behaviour for Nodes hosted on Compute
+
+In contrast to the NodeTypes discussed above, there are various NodeTypes which don't get mapped to a specific CloudFormation resource but are rather added to the EC2 instance that they're meant to be hosted on. Specifically, this is done by the `OperationHandler` and `EnvironmentHandler` classes.
+
+We use the [CloudFormation Init]() to bootstrap our EC2 instances.
+
+That being said, most of these NodeTypes require additional or alternative steps unique to them in order to be properly transformed. The following are explanation of how the transformation of each of these NodeTypes differs from the generic transformation behaviour.
+
+    TODO: add link to CloudFormation-Init
+
+### Apache
+
+1. cfnInit apt apache2 on underlying compute/ec2
+2. handleConfigure/handleStart --> scripts and files get copied and executed on underlying compute/Ec2
+3. global environment variables (start lifecycle of webapplication that is hosted on this apache) will be added to /etc/apache/envvars 
+4. if modifications took place a "service apache2 restart" command is added
+
 ### Database
 
 ## Supported RelationshipTypes
 
-| RealtionshipType | Short summary |
+| TOSCA RelationshipType | CloudFormation |
 | --- | --- |
 | | |
 
     TODO: Add RelationshipType transformation explanations.
-
-## Supported CapabilityTypes
-
-| CapabilityType | Short summary |
-| --- | --- |
-| | |
-
-    TODO: Add CapabilityType transformation explanations.
