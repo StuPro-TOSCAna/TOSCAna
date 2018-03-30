@@ -8,7 +8,7 @@ For further information have a look at the official [CF Documentation](https://d
 
 ## Transformation
 The plugin transforms the given TOSCA-model into CloudFoundry deployment artifacts.   
-To simplify the deployment of an application, the CF plugin will add several deployment scripts to the target artifact. Therefore the user needs a Cloud Foundry CLI which is connected to a CloudFoundry instance.   
+To simplify the deployment of an application, the CF plugin will add several deployment scripts to the target artifact. Therefore the user needs a CloudFoundry CLI which is connected to a CloudFoundry instance.   
 For further information have a look in the transformation documentation see [here](Transformation_Process.md).
 
 ## Node Types
@@ -18,10 +18,10 @@ A list with all supported node types you find [here](Supported_Node_Types.md) an
 
 ### Requirements/Issues
 The Cloud Foundry Plugin has some requirements:
-- using CloudFoundry-Platform assumes that is already installed on the target infrastructure
-- the CloudFoundry-CLI has to be installed on the local machine
+- using CloudFoundry Platform assumes that is already installed on the target infrastructure
+- the CloudFoundry CLI has to be installed on the local machine
 - python (min. version 2.7) has to be installed
-- Databases need a environment variable with the name `database_host`. We decided this convention with our supervisors.
+- Databases need an environment variable with the name `database_host`. We decided this convention with our supervisors.
 Further information you get [here](Known_challenges.md).
 
 ## Deployment
