@@ -16,7 +16,7 @@ import {MessageService} from '../../services/message.service';
 import {ClientCsarsService} from '../../services/csar.service';
 import {getColorForLifecyclePhase} from '../../helper/helper';
 import TransformationStateEnum = TransformationResponse.StateEnum;
-import  LifecycleStateEnum = LifecyclePhase.StateEnum;
+import {saveAs} from 'file-saver';
 
 @Component({
     selector: 'app-transformation-view',
@@ -115,6 +115,34 @@ export class TransformationViewComponent implements OnInit, OnDestroy {
         this.transformationProvider.getTransformationOutputs(this.csarId, this.platform).subscribe(data => {
             this.outputs = data.outputs;
         });
+    }
+
+    downloadScript() {
+        const folder = this.csarId + '-' + this.platform;
+        let result = '#!/bin/bash\n';
+        result += 'timestamp=$(date +%s)\n';
+        result += 'folder=' + folder + '-$timestamp\n';
+        result += 'mkdir $folder\n';
+        result += 'cd $folder\n';
+        result += 'curl ' + this.url + ' --output $folder.csar\n';
+        result += 'unzip $folder.csar -d unzipped\n';
+        result += 'bash unzipped/output/scripts/deploy.sh\n';
+        result += 'cd ../\n';
+        result += 'printf "cleanup [y/N]: "\n' +
+            'read input\n' +
+            '\n' +
+            'if [ "$input" != "y" ] && [ "$input" != "yes" ] && [ "$input" != "Y" ]\n' +
+            'then\n' +
+            '  echo "Cleanup skipped!"\n' +
+            '  exit 0\n' +
+            'fi\n';
+        result += 'rm -rf $folder\n';
+        const file = new File([result], 'run.sh', {type: 'text/plain;charset=ascii'});
+        saveAs(file);
+    }
+
+    checkIfTransformationFailed() {
+        return this.transformation.state === TransformationStateEnum.ERROR;
     }
 
     ngOnDestroy() {
