@@ -18,5 +18,6 @@ The purpose of this document is to collect all known issues in the CloudFoundry 
 ## Requirements
 - Valid CloudFoundry instance
 - CloudFoundry CLI is installed
+- The output language of the CLI must be english. Therefore use `export LANG=en_US.UTF-8` before executing the `deploy.sh` script.
 - Python 2.7 is installed
 - If using a `MYSQL` database the python package `mysql.connector` is needed
