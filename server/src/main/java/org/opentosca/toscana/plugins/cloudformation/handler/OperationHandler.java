@@ -1,16 +1,24 @@
 package org.opentosca.toscana.plugins.cloudformation.handler;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import org.opentosca.toscana.model.artifact.Artifact;
 import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.RootNode;
+import org.opentosca.toscana.model.node.custom.JavaApplication;
 import org.opentosca.toscana.model.operation.Operation;
 import org.opentosca.toscana.model.operation.OperationVariable;
 import org.opentosca.toscana.plugins.cloudformation.CloudFormationModule;
 import org.opentosca.toscana.plugins.cloudformation.util.FileUpload;
 
+import com.scaleset.cfbuilder.beanstalk.OptionSetting;
+import com.scaleset.cfbuilder.beanstalk.SourceBundle;
 import com.scaleset.cfbuilder.ec2.metadata.CFNCommand;
 import com.scaleset.cfbuilder.ec2.metadata.CFNFile;
 import org.slf4j.Logger;
@@ -28,22 +36,32 @@ import static org.opentosca.toscana.plugins.cloudformation.util.FileUpload.Uploa
 import static org.opentosca.toscana.plugins.cloudformation.util.FileUpload.UploadFileType.UTIL;
 import static org.opentosca.toscana.plugins.cloudformation.util.StackUtils.getFileURL;
 
+/**
+ Handles {@link Operation}s of nodes.
+ */
 public class OperationHandler {
     public static final String APACHE_RESTART_COMMAND = "service apache2 restart";
+    private static final String BEANSTALK_NAMESPACE_ENVIRONMENT = "aws:elasticbeanstalk:application:environment";
 
     private CloudFormationModule cfnModule;
     private Logger logger;
 
+    /**
+     Sets up the OperationHandler with the {@link CloudFormationModule} and the {@link Logger}.
+
+     @param cfnModule the {@link CloudFormationModule} to use
+     @param logger    the {@link Logger} to use
+     */
     public OperationHandler(CloudFormationModule cfnModule, Logger logger) {
         this.cfnModule = cfnModule;
         this.logger = logger;
     }
 
     /**
-     Handles a create operation.
+     Handles a create {@link Operation}.
 
-     @param node            which the operation belongs to
-     @param computeHostName alphanumerical name of the Compute host of node
+     @param node            which the {@link Operation} belongs to
+     @param computeHostName alphanumerical name of the {@link Compute} host of node
      */
     public void handleCreate(RootNode node, String computeHostName) {
         if (node.getStandardLifecycle().getCreate().isPresent()) {
@@ -53,10 +71,10 @@ public class OperationHandler {
     }
 
     /**
-     Handles a configure operation.
+     Handles a configure {@link Operation}.
 
-     @param node            which the operation belongs to
-     @param computeHostName alphanumerical name of the Compute host of node
+     @param node            which the {@link Operation} belongs to
+     @param computeHostName alphanumerical name of the {@link Compute} host of node
      */
     public void handleConfigure(RootNode node, String computeHostName) {
         if (node.getStandardLifecycle().getConfigure().isPresent()) {
@@ -66,10 +84,10 @@ public class OperationHandler {
     }
 
     /**
-     Handles a start operation.
+     Handles a start {@link Operation}.
 
-     @param node            which the operation belongs to
-     @param computeHostName alphanumerical name of the Compute host of node
+     @param node            which the {@link Operation} belongs to
+     @param computeHostName alphanumerical name of the {@link Compute} host of node
      */
     public void handleStart(RootNode node, String computeHostName) {
         if (node.getStandardLifecycle().getStart().isPresent()) {
@@ -77,17 +95,27 @@ public class OperationHandler {
             handleOperation(start, computeHostName, CONFIG_START);
 
             // Add environment variables
-            Set<OperationVariable> inputs = start.getInputs();
-            if (!inputs.isEmpty()) {
-                for (OperationVariable input : inputs) {
-                    String value = input.getValue().orElseThrow(
-                        () -> new IllegalArgumentException("Input value of " + input.getKey() + " expected to not be " +
-                            "null")
-                    );
-                    cfnModule.putEnvironmentMap(computeHostName, input.getKey(), value);
-                }
-            }
+            Map<String, String> envVars = getEnvVars(start);
+            envVars.forEach((key, value) -> cfnModule.putEnvironmentMap(computeHostName, key, value));
         }
+    }
+
+    /**
+     Gets a map of all environment variables from this {@link Operation}.
+
+     @param operation an existing operation
+     @return a map of all environment variables from this operation
+     */
+    public Map<String, String> getEnvVars(Operation operation) {
+        Map<String, String> envVars = new HashMap<>();
+        operation.getInputs().forEach(operationVariable -> {
+            String value = operationVariable.getValue().orElseThrow(
+                () -> new IllegalArgumentException("Input value of " + operationVariable.getKey() + " expected to" +
+                    " not be null")
+            );
+            envVars.put(operationVariable.getKey(), value);
+        });
+        return envVars;
     }
 
     /**
@@ -109,10 +137,10 @@ public class OperationHandler {
     }
 
     /**
-     Handle implementation artifacts and dependencies for given operation.
+     Handles implementation artifacts and dependencies for given {@link Operation}.
 
      @param operation  to be handled
-     @param serverName name of the Compute/EC2 where the artifacts/dependencies must be stored/used
+     @param serverName name of the {@link Compute}/EC2 where the artifacts/dependencies must be stored/used
      @param config     name of the config (Create/Start/Configure)
      */
     private void handleOperation(Operation operation, String serverName, String config) {
@@ -124,7 +152,7 @@ public class OperationHandler {
      Adds all dependencies to file uploads and to the EC2 Instance in the CloudFormation template.
 
      @param operation  to be handled
-     @param serverName name of the Compute/EC2 where the dependencies must be stored
+     @param serverName name of the {@link Compute}/EC2 where the dependencies must be stored
      @param config     name of the config (Create/Start/Configure)
      */
     private void handleDependency(Operation operation, String serverName, String config) {
@@ -145,7 +173,7 @@ public class OperationHandler {
      Also adds them as commands with input variables as environment variables to the given config.
 
      @param operation  to be handled
-     @param serverName name of the Compute/EC2 where the artifacts must be stored and executed
+     @param serverName name of the {@link Compute}/EC2 where the artifacts must be stored and executed
      @param config     name of the config (Create/Start/Configure)
      */
     private void handleArtifact(Operation operation, String serverName, String config) {
@@ -167,7 +195,8 @@ public class OperationHandler {
     }
 
     /**
-     Takes an artifact path and input variables and returns the corresponding CloudFormation command with input variables.
+     Takes an artifact path and input variables and returns the corresponding CloudFormation command with input
+     variables.
 
      @param artifact path to the artifact
      @param inputs   set with all input variables
@@ -244,15 +273,53 @@ public class OperationHandler {
     }
 
     /**
-     Handles the create, configure and start lifecycle operations for the given node.
+     Handles the create, configure and start lifecycle {@link Operation}s for the given node.
 
-     @param node        node which the operations belong to
-     @param computeHost Compute host of the node
+     @param node        node which the {@link Operation}s belong to
+     @param computeHost {@link Compute} host of the node
      */
     public void handleGenericHostedNode(RootNode node, Compute computeHost) {
         String computeHostName = toAlphanumerical(computeHost.getEntityName());
         handleCreate(node, computeHostName);
         handleConfigure(node, computeHostName);
         handleStart(node, computeHostName);
+    }
+
+    /**
+     Handles a artifact that is a jar
+
+     @param artifact artifact that needs to be handled
+     @return a SourceBundle that contains the bucket and filename
+     */
+    public SourceBundle handleJarArtifact(Artifact artifact) {
+        String jarFilePath = artifact.getFilePath();
+        markFile(jarFilePath);
+        return new SourceBundle(cfnModule.getBucketName(), jarFilePath);
+    }
+
+    /**
+     Handles the start lifecycle {@link Operation} for a {@link JavaApplication} node.
+     <br>
+     It generates a list of {@link OptionSetting} where each OptionSetting contains a environment variables defined in
+     the start lifecycle. These are needed for the Beanstalk Application.
+
+     @param node the JavaApplication node to handle the start lifecycle for
+     @return a list of OptionSettings from environment variables
+     */
+    public List<OptionSetting> handleStartJava(JavaApplication node) {
+        List<OptionSetting> optionSettings = new ArrayList<>();
+        if (node.getStandardLifecycle().getStart().isPresent()) {
+            Map<String, String> envVars = getEnvVars(node.getStandardLifecycle().getStart().get());
+            envVars.forEach((key, value) -> {
+                if (cfnModule.checkFn(value)) {
+                    optionSettings.add(new OptionSetting(BEANSTALK_NAMESPACE_ENVIRONMENT, key)
+                        .setValue(cfnModule.getFn(value)));
+                } else {
+                    optionSettings.add(new OptionSetting(BEANSTALK_NAMESPACE_ENVIRONMENT, key)
+                        .setValue(value));
+                }
+            });
+        }
+        return optionSettings;
     }
 }

@@ -65,7 +65,7 @@ export class TransformationsService {
 
     /**
      * Create a new TransformationInterface
-     * Creates a new transformation for the given CSAR and Platform (If the platform does not exist and there is no other transformation with the same CSAR and Platform, you have to delete the old transformation in this case)
+     * Creates a new transformation for the given CSAR and Platform (If the platform does not exist and there is no other transformation with the same CSAR and Platform, you have to removeMessage the old transformation in this case)
      * @param csarId The unique identifier for the CSAR
      * @param platform The identifier for the platform
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
@@ -111,7 +111,7 @@ export class TransformationsService {
 
     /**
      * Create a new TransformationInterface
-     * Creates a new transformation for the given CSAR and Platform (If the platform does not exist and there is no other transformation with the same CSAR and Platform, you have to delete the old transformation in this case)
+     * Creates a new transformation for the given CSAR and Platform (If the platform does not exist and there is no other transformation with the same CSAR and Platform, you have to removeMessage the old transformation in this case)
      * @param csarId The unique identifier for the CSAR
      * @param platform The identifier for the platform
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
@@ -416,8 +416,8 @@ export class TransformationsService {
     }
 
     /**
-     * Get the logs for a TransformationInterface
-     * Returns the logs for a transformation, starting at a specific position. from the given start index all following log lines get returned. If the start index is larger than the current last log index the operation will return a empty list.
+     * Get the logEntries for a TransformationInterface
+     * Returns the logEntries for a transformation, starting at a specific position. from the given start index all following log lines get returned. If the start index is larger than the current last log index the operation will return a empty list.
      * @param csarId The unique identifier for the CSAR
      * @param platform The identifier for the platform
      * @param start The index of the first log entry you want (0 returns the whole log)

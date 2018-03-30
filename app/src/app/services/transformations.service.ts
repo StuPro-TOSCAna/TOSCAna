@@ -57,7 +57,4 @@ export class ClientsTransformationsService {
         return this.transformationsService.getTransformationLogsUsingGET(csarId, platform, num);
     }
 
-    getArtifactDownloadLink(csarId: string, platform: string) {
-        return this.transformationsService.getTransformationArtifactUsingGET(csarId, platform);
-    }
 }

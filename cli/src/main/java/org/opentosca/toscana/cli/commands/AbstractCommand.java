@@ -20,6 +20,7 @@ public abstract class AbstractCommand extends AbstractApiCall {
 
     @Override
     public void run() {
+        api.setLoggingMode(getLoggingMode(showVerbose, showMVerbose));
         System.out.println(performCall(api));
     }
 }

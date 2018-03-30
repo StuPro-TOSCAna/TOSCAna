@@ -43,7 +43,6 @@ export class ClientCsarsService {
     }
 
     loadCsars() {
-        console.log('request');
         if (!this.requested) {
             this.requested = true;
             const observ = this.csarService.listCSARsUsingGET();
@@ -52,7 +51,7 @@ export class ClientCsarsService {
                     return Observable.of();
                 }
                 const csars = data._embedded.csar;
-                return this.createCsarWithTransformations(csars);
+                return this.addTransformationsToCsars(csars);
             });
             this.res.subscribe(data => {
                 data.then(csarResult => {
@@ -64,11 +63,15 @@ export class ClientCsarsService {
         }
     }
 
-    private async createCsarWithTransformations(csars: Array<CsarResponse>) {
+    /**
+     * loads all transformations for a csar and adds them
+     * @param {Array<CsarResponse>} csars
+     * @returns {Promise<any[]>}
+     */
+    private async addTransformationsToCsars(csars: Array<CsarResponse>) {
         const res = [];
         for (const csar of csars) {
             const transformations = await this.getTransformations(csar.name).toPromise();
-            console.log(transformations);
             const csarObject = new Csar(csar.name, csar.phases, transformations);
             res.push(csarObject);
         }
@@ -98,6 +101,12 @@ export class ClientCsarsService {
         });
     }
 
+    /**
+     * Creates transformation with only a platform
+     * this is needed to show menu entries
+     * @param csarId
+     * @param {string} platform
+     */
     addEmptyTransformationToCsar(csarId, platform: string) {
         const res = this.dataStore.csars.find(csar => csar.name === csarId);
         const fullName = this.platformsProvider.getFullPlatformName(platform);
@@ -105,6 +114,12 @@ export class ClientCsarsService {
         this.updateSubject();
     }
 
+    /**
+     * Update the state of a transformation so its corresponding menu entry gets updated
+     * @param {string} csarId
+     * @param {string} platform
+     * @param {TransformationResponse.StateEnum} state
+     */
     updateTransformationState(csarId: string, platform: string, state: StateEnum) {
         const res = this.dataStore.csars.find(csar => csar.name === csarId);
         res.transformations.find(t => t.platform === platform).state = state;
@@ -115,6 +130,11 @@ export class ClientCsarsService {
         this._csars.next((Object.assign({}, this.dataStore).csars));
     }
 
+    /**
+     * load csars for a transformation
+     * @param {string} csarId
+     * @returns {Observable<Transformation[]>}
+     */
     getTransformations(csarId: string): Observable<Transformation[]> {
         return this.csarService.getCSARTransformationsUsingGET(csarId).map(result => {
             if (isNullOrUndefined(result._embedded)) {
@@ -133,7 +153,7 @@ export class ClientCsarsService {
 
     getCsarByName(csarId: string) {
         return this.csarService.getCSARInfoUsingGET(csarId).map(async data => {
-            const res = await this.createCsarWithTransformations([data]);
+            const res = await this.addTransformationsToCsars([data]);
             return res[0];
         }, err => {
             this.messageService.addErrorMessage(`Failed to load the csar "${csarId}"`);
@@ -144,7 +164,7 @@ export class ClientCsarsService {
         return this.dataStore.csars.find(csar => csar.name === csarId);
     }
 
-    getLogs(csarId: string, last: number) {
+    getCsarLogs(csarId: string, last: number) {
         return this.csarService.getLogsUsingGET(csarId, last);
     }
 }

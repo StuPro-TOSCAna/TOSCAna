@@ -20,6 +20,8 @@ pages:
                 - Writing Models: 'user/plugins/cloudformation/creating-models.md'
                 - Transformation Readme: 'user/plugins/cloudformation/cloudformation-readme.md'
     - Developer Documentation:
+        - 'REST API':
+            - 'Swagger Documentation': 'dev/core/rest-api.md'
         - 'TOSCA model':
             - "EffectiveModel": "dev/model/effective-model.md"
             - "TOSCA Type Support": "dev/model/type-support.md"

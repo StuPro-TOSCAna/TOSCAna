@@ -1,7 +1,7 @@
 import {TransformationViewComponent} from '../../components/transformation-view/transformation-view.component';
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
-import {TransformationCreatorComponent} from '../../components/transformation-creator/new-transformation-modal.component';
+import {TransformationCreatorComponent} from '../../components/transformation-creator/transformation-creator.component';
 import {CsarResolver} from './csar.resolver';
 import {TransformationInputsComponent} from '../../components/transformations-inputs/transformations-inputs.component';
 import {CsarViewComponent} from '../../components/csar-view/csar-view.component';

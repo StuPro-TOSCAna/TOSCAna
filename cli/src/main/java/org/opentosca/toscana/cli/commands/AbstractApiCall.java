@@ -7,12 +7,11 @@ import picocli.CommandLine;
 
 public abstract class AbstractApiCall implements Runnable {
 
-    protected ApiController api;
-
-    @CommandLine.Option(names = {"-v", "--verbose"}, description = "Enable Info Level Process Output")
-    private boolean showVerbose;
     @CommandLine.Option(names = {"-m", "--moreverbose"}, description = "Enable Debug Level Process Output")
-    private boolean showMVerbose;
+    public boolean showMVerbose;
+    @CommandLine.Option(names = {"-v", "--verbose"}, description = "Enable Info Level Process Output")
+    public boolean showVerbose;
+    protected ApiController api;
 
     public AbstractApiCall() {
 
@@ -30,7 +29,7 @@ public abstract class AbstractApiCall implements Runnable {
      @param moreVerbose need for a detailed output of what is processed in the CLI
      @return the Loggingmode for the API
      */
-    private LoggingMode getLoggingMode(boolean verbose, boolean moreVerbose) {
+    public LoggingMode getLoggingMode(boolean verbose, boolean moreVerbose) {
         if (verbose) {
             return LoggingMode.LOW;
         } else if (moreVerbose) {
