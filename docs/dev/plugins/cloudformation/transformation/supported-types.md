@@ -62,10 +62,11 @@ If the `keyPair` property of the `CloudFormationModule` is set to true, a `KeyNa
 
     TODO: Add link to architecture platform properties section.
 
-### Mysql Database
+### MysqlDatabase
 
+Each MysqlDatabase gets transformed to a DBInstance resource.
 
-### Mysql DBMS
+### MysqlDBMS
 
 ### JavaApplication
 
@@ -75,22 +76,39 @@ Because we transform JavaApplications to Beanstalk resources we do not require a
 
 ### Generic Transformation of Nodes hosted on Compute
 
-In contrast to the NodeTypes discussed above, there are various NodeTypes which don't get mapped to a specific CloudFormation resource but are rather added to the EC2 instance that they're meant to be hosted on. Specifically, this is done by the `OperationHandler` and `EnvironmentHandler` classes.
+Contrary to the NodeTypes discussed above, there are various NodeTypes which don't get mapped to a specific CloudFormation resource but are rather added to the EC2 instance that they're meant to be hosted on. Specifically, this is done by the `OperationHandler` and `EnvironmentHandler` classes.
+
+The `Operationhandler` takes the create, start and configure operations and adds them as files and commands to the CFNInit of the underlying EC2 instance. Specifically, this means that the dependencies and artifacts are marked as files to be uploaded to the S3 Bucket and marking the EC2 instance as an instance in need of Authentication. The authentication mentioned here is needed for the EC2 instance to access the S3 Bucket containing the files. Both artifacts and dependencies are also added as CFNFiles to the CFNInit, meaning that the cfn-init script will download them during the initial bootstrapping of these EC2 instance. Lastly, the path to the artifact on the EC2 instance and the inputs for the operation are added as a CFNCommand to the CFNInit, meaning that it will be executed by the cfn-init script during the bootstrapping.
+
+In order to allow the nodes to access the input variables of the start operations during runtime, the inputs are also added to the `environmentMap` of the `CloudFormationModule`. Later during the [transform phase](transformation-workflow.md), these variables are get written to `etc/environment` on the EC2 instance through `setEnv` scripts.
 
 That being said, most of these NodeTypes require additional or alternative steps unique to them in order to be properly transformed. The following are explanation of how the transformation of each of these NodeTypes differs from the generic transformation behaviour.
 
 ### Apache
 
-1. cfnInit apt apache2 on underlying compute/ec2
-2. handleConfigure/handleStart --> scripts and files get copied and executed on underlying compute/Ec2
-3. global environment variables (start lifecycle of webapplication that is hosted on this apache) will be added to /etc/apache/envvars 
-4. if modifications took place a "service apache2 restart" command is added
+Instead of using the create operation of the Apache node, we add the `apache2` package to the CFNInit of the underlying EC2 instance. The start and configure operations are added normally as described in [Generic Transformation of Nodes hosted on Compute](#generic-transformation-of-nodes-hosted-on-compute).
+
+Environment variables that are used during runtime by an application hosted on the Apache node must be imported from `etc/environment` to `etc/apache/envvars`. This is done through an additional command added to the CFNInit. These environment variables are added to `etc/environment` during the transformation of the application as described in [Generic Transformation of Nodes hosted on Compute](#generic-transformation-of-nodes-hosted-on-compute).
+
+If the start or configure operations were present in the Apache node, an additional `service apache2 restart` restart command is added to the CFNInit to ensure that the configuration modifications are properly loaded.
 
 ### Dbms
 
+In addition to the generic hosted node transformation, the port contained in the port property of the Dbms node must be opened on the underlying EC2 instance. This means that the port is opened in the SecurityGroup corresponding to the EC2 instance of the Compute host of the hostedOn relationship connected to the Database.
+
 ### Database
 
+Similar to the Dbms node, in addition to the generic hosted node transformation, the port contained in the port property of the Database node are opened on the underlying EC2 instance by opening it in the corresponding SecurityGroup.
+
+### WebApplication
+
+The ports from the AppEndPoint of the WebApplication node are opened in the SecurityGroup of the underlying EC2 instance.
+
 ### Nodejs
+
+Instead of using the create operation of the Nodejs node, a generic `create-nodejs.sh` script is added to the CFNInit of the underlying EC2 instance. This script installs the latest version of Node.js 8. The start and configure operations are added normally as described in the [Generic Transformation of Nodes hosted on Compute](#generic-transformation-of-nodes-hosted-on-compute) section.
+
+The ports from the EndpointCapability of the Nodejs node are opened in the SecurityGroup of the underlying EC2 instance.
 
 ## Supported RelationshipTypes
 
