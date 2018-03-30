@@ -16,16 +16,19 @@ import com.scaleset.cfbuilder.iam.Statement;
 import static com.scaleset.cfbuilder.core.Ref.ref;
 
 /**
- Class for building IAM resources and authentications to access S3 buckets.
- */
+ Builds IAM resources and authentications to access S3 buckets.
+
+ @see <a href="https://aws.amazon.com/iam/">AWS Identity and Access Management (IAM)</a>
+ @see <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-authentication.html">AWS
+ CloudFormation Authentication</a> */
 public class AuthenticationUtils {
 
     public static final String INSTANCE_PROFILE = "InstanceProfile";
-    
+
     private static final String INSTANCE_ROLE = "InstanceRole";
     private static final String ARN_AWS_S3 = "arn:aws:s3:::";
     private static final String EC2_AMAZONAWS_COM = "ec2.amazonaws.com";
-    
+
     /**
      Returns an <tt>Authentication<tt> to access the given S3Bucket.
 

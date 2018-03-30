@@ -8,6 +8,9 @@ import org.opentosca.toscana.model.EffectiveModelFactory;
 
 import org.apache.commons.io.FileUtils;
 
+/**
+ This Test Transforms the Lamp model (with two seperate compute nodes) to DockerImages and a Kubernetes Resource
+ */
 public class KubernetesLampMultiNodeIT extends KubernetesLampIT {
 
     public KubernetesLampMultiNodeIT() throws Exception {

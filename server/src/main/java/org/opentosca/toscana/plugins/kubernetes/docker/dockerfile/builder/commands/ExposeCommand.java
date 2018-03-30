@@ -2,6 +2,9 @@ package org.opentosca.toscana.plugins.kubernetes.docker.dockerfile.builder.comma
 
 import java.io.PrintWriter;
 
+/**
+ Describes the Expose (expose a port) Command for the DockerfileBuilder
+ */
 public class ExposeCommand extends DockerfileEntry {
     private final int port;
 

@@ -16,10 +16,17 @@ import org.opentosca.toscana.model.visitor.NodeVisitor;
 import org.opentosca.toscana.plugins.kubernetes.docker.mapper.BaseImageMapper;
 import org.opentosca.toscana.plugins.util.TransformationFailureException;
 
+/**
+ This Node Visitor is used to find the base image of a node stack
+ */
 public class ImageMappingVisitor implements NodeVisitor {
 
-    private static final String NO_CREATE_ERROR_MESSAGE = "Cannot create DockerApplication without a create artifact containing the image";
-    private static final String NO_IMAGE_PATH_ERROR_MESSAGE = "The Given Create Artifact for the docker application '%s' does not have a image path";
+    // Error Message Constants
+    private static final String NO_CREATE_ERROR_MESSAGE =
+        "Cannot create DockerApplication without a create artifact containing the image";
+    private static final String NO_IMAGE_PATH_ERROR_MESSAGE =
+        "The given 'create' aArtifact for the docker application '%s' does not have a image path";
+
     private final BaseImageMapper mapper;
 
     private String baseImage = null;
@@ -116,6 +123,9 @@ public class ImageMappingVisitor implements NodeVisitor {
         return requiresBuilding;
     }
 
+    /**
+     @return the tag of the determined base image (if the visitor was able to find a base image)
+     */
     public Optional<String> getBaseImage() {
         return Optional.ofNullable(baseImage);
     }

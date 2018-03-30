@@ -20,7 +20,6 @@ import TypeEnum = InputWrap.TypeEnum;
 export class TransformationInputsComponent implements OnInit {
     selectedPlatform: string;
     csarId: string;
-    invalid = 'invalid';
     inputs: InputWrap[] = [];
     errorMsg = false;
     csar: Csar;
@@ -34,11 +33,15 @@ export class TransformationInputsComponent implements OnInit {
                 private route: ActivatedRoute) {
     }
 
-    validateProperty(item: InputWrap) {
+    /**
+     * checks if an transformation input is valid
+     * @param {InputWrap} item
+     * @returns {boolean} inputValid
+     */
+    validateInput(item: InputWrap) {
         function isNumber(value: string) {
             return !isNaN(Number(value));
         }
-
         switch (item.type) {
             case TypeEnum.Boolean:
                 const val = item.value.toLowerCase().trim();
@@ -62,9 +65,16 @@ export class TransformationInputsComponent implements OnInit {
         return false;
     }
 
-    change(item: InputWrap, input: string) {
+    /**
+     * triggered on input changes
+     * triggers the validation of the input
+     * and the check if it is possible to submitInputs the inputs
+     * @param {InputWrap} item
+     * @param {string} input
+     */
+    onInputChange(item: InputWrap, input: string) {
         item.value = input;
-        const parse = this.validateProperty(item);
+        const parse = this.validateInput(item);
 
         item.valid = !(item.required && ((item.value === null || item.value === '')));
         if (!parse) {
@@ -77,13 +87,9 @@ export class TransformationInputsComponent implements OnInit {
         return item.type === TypeEnum.Boolean;
     }
 
-    getClass(item: InputWrap) {
-        return item.valid;
-    }
-
-    async submit() {
+    async submitInputs() {
         await this.transformationsProvider.setTransformationProperties(this.csarId, this.selectedPlatform, this.inputs).then(result => {
-            this.onSubmit();
+            this.startTransformation();
         }, err => {
             if (err.status === 406) {
                 this.inputs = err.error.inputs;
@@ -117,7 +123,7 @@ export class TransformationInputsComponent implements OnInit {
         }
     }
 
-    onSubmit() {
+    startTransformation() {
         this.csar = this.csarsProvider.getCsarById(this.csarId);
         this.transformationsProvider.startTransformation(this.csar.name, this.selectedPlatform).then(() => {
             this.csar.addTransformation(this.selectedPlatform, this.platformsProvider.getFullPlatformName(this.selectedPlatform));
@@ -126,6 +132,11 @@ export class TransformationInputsComponent implements OnInit {
         });
     }
 
+    /**
+     * returns the default value is available
+     * @param {string} defaultValue
+     * @returns {string} empty string or default value
+     */
     getDefaultValue(defaultValue: string) {
         if (isNullOrUndefined(defaultValue)) {
             return '';
@@ -134,6 +145,11 @@ export class TransformationInputsComponent implements OnInit {
         }
     }
 
+    /**
+     * sets the boolean if a checkbox is checked
+     * @param {string} key of the boolean input
+     * @param {boolean} checked
+     */
     convertAndSetBool(key: string, checked: boolean) {
         this.inputs.find(input => input.key === key).value = String(checked);
     }

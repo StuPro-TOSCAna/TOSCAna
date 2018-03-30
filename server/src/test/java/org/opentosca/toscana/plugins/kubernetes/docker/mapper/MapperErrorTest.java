@@ -24,6 +24,11 @@ import static org.opentosca.toscana.model.capability.OsCapability.Type.LINUX;
 import static org.opentosca.toscana.model.capability.OsCapability.Type.WINDOWS;
 import static org.opentosca.toscana.plugins.kubernetes.docker.mapper.MapperTest.getEntity;
 
+/**
+ This test will test the BaseImageMapper on cases that cannot be mapped.
+ <p>
+ For example: Invalid Architectures, Unsupported Operating Systems...
+ */
 @RunWith(Parameterized.class)
 public class MapperErrorTest extends BaseUnitTest {
 

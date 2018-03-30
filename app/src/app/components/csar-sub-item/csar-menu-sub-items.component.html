@@ -1,6 +1,7 @@
 <div *ngFor="let item of csar.transformations">
+    <!-- highlight the transformation if its transformation view is open-->
     <div class="item btn btn-outline-secondary" [class.active]="activePlatform === item.platform">
-        <div class="button" (click)="gotoTransformation(item.platform)">
+        <div class="button" (click)="openTransformationView(item.platform)">
             <div class="icon">
                 <i class="fa fa-exchange" aria-hidden="true"></i>
             </div>
