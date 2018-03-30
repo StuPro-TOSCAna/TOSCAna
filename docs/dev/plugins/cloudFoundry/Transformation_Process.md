@@ -2,7 +2,7 @@
 
 The purpose of this document is to show the transformation logic and process of the CloudFoundry plugin for a developer.
 This document does not mention all classes which are used in the java code but describes the method of the transformation so that the developer is able to understand the code and the transformation process.   
-This is the text based documentation, you can find an example transformation with some pictures [here](Transformation_example.pdf).
+This is the text based documentation, you can find an example transformation with some pictures [here](Transformation_example.md).
 
 ## Foreword
 - the TOSCA model is a graph. So the document has some graph terms. For further information please read the documentation of the core/model.
