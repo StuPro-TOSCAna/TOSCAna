@@ -38,6 +38,12 @@ The **JavaApplication** node requires additional preparation due to the fact tha
 
 If the **WebApplication** node does not have the port value set, the visitor adds the default web application port **80** to said node.
 
+Currently, only the connectsTo relationship requires additional preparation before transformation:
+
+### ConnectsTo
+
+The **connectsTo** relationship requires additional preparation only if its target as a MysqlDatabase node. This is again due to the fact that the MysqlDatabase node gets transformed to an RDS resource. If the WebApplication or JavaApplication are hosted on the same Compute node as the MysqlDatabase, the public and private IP addresses of said compute node are set to reference the MysqlDatabase. This is done to make sure that applications that use the IP of the Compute node to connect to the database, instead can use the database endpoint of the RDS resource representing the MysqlDatabase. This is necessary if the application expects the MysqlDatabase to be hosted on the Compute node and its IP to match that of said node.
+
 ## Transform
 
 When all preparations are complete, the actual **transformation** from the `EffectiveModel` to the target artifact takes place.
