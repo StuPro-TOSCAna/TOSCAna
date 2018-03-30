@@ -15,7 +15,7 @@ To control the TOSCAna software we need a command-line-interface (CLI) which wil
 ## Conclusion
 
 * Chosen Alternative: *Picocli*
-* supports everything we need
+* supports everything we need to create a CLI like CloudFoundry/ Git
 
 ## Pros and Cons of the Alternatives
 
