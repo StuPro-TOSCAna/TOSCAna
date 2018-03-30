@@ -5,7 +5,7 @@ Steps to build the **TOSCAna Command Line Interface** from source:
 
     `git clone https://github.com/StuPro-TOSCAna/TOSCAna.git`
 
-2. Enter the TOSCAna directory.
+2. Enter the `TOSCAna` directory.
 
     `
     cd TOSCAna/cli
@@ -14,7 +14,7 @@ Steps to build the **TOSCAna Command Line Interface** from source:
 3. Build the project with:
 
     `
-    mvn install
+    mvn install -Dmaven.test.skip=true
     `
 
 4. You can find the generated jar file `cli-1.0-SNAPSHOT-jar-with-dependencies.jar` in the cli/target folder.
@@ -89,9 +89,9 @@ Options explanation:
 
 ## Known Issues
 - some Exceptions after wrong  CLI inputs are not caught and displayed (options not supplied where it's needed)
-- setting inputs with spaces does not work
 - after setting inputs, the list of inputs that need to be set does not update
 - after setting all required inputs and trying to start the transformation again, Error 400 Transformation already exists occurs
+- HelpTest.java fails when running with Maven.
 
 ## Example Usage
 ![Class Diagram](img/example_usage.png)

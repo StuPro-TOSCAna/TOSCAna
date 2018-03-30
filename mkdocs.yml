@@ -45,3 +45,4 @@ pages:
             - "0015 - Use filesystem for persistency": "dev/adr/0015-persist-to-filesystem.md"
             - "0016 - Don't support TOSCA type definitions": "dev/adr/0016-not-supporting-type-definitions.md"
             - "0017 - Implement own TOSCA parser": "dev/adr/0017-implement-own-tosca-parser.md"
+            - "0018 - Library for CLI": "dev/adr/0018-library-for-cli.md"

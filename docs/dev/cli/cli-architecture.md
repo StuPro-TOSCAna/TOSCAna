@@ -6,7 +6,7 @@ This document describes the architecture for the CLI component of the TOSCAna So
 ***Note:*** This diagram was created using LucidChart. The source file can be found [here](https://www.lucidchart.com/invitations/accept/6c4ca4c7-d79a-4fee-82ba-6a79e2971f39).
 
 ## ApiController
-The ApiController tries to perform the tasks it receives from the CliController and calls the corresponding methods of the Retrofit Wrapper.
+The ApiController tries to perform the tasks it receives from the CliController and calls the corresponding methods of the REST API. The methods of the REST API are called through the Retrofit wrapper.
 
 The methods shown in the above class diagram have the following functionality:
 * `uploadCsar(file: File):String` - trys to upload the specified CSAR Archive to the Transformator
@@ -28,7 +28,7 @@ The methods shown in the above class diagram have the following functionality:
 
 ## CliMain
 
-The **CliMain** is the main class to initialize the CLI and show the possible commands, subcommands or options that can be executed in the CLI. After the user has made a correct commandline input, the CliController trys to call the corresponding classes which run the methods.
+The **CliMain** is the main class to initialize the CLI and show the possible commands, subcommands or options that can be executed in the CLI. After the user has made a correct commandline input, the CliController trys to call the corresponding classes which run the methods. [The Picocli framework](http://picocli.info/) was used to create the CLI.
 
 ## CliProperties
 
