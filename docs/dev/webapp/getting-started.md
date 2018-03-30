@@ -45,13 +45,13 @@ Now you have to install all packages the WebApp needs to be build.
 cd TOSCAna && yarn install
 ```
 
-### Start the TOSCAna transformator
+### Start the TOSCAna transformer
 
-If you want to use the WebApp in production you should start it with the TOSCAna transformator like descriped [here](../../user/getting-started.md).
-For development this is quite heavy and features like live reload are missing. Therefore you should run the transformator independently. 
+If you want to use the WebApp in production you should start it with the TOSCAna transformer like descriped [here](../../user/getting-started.md).
+For development this is quite heavy and features like live reload are missing. Therefore you should run the transformer independently. 
 
 ### Set the environment
-If the TOSCAna transformator is running, you have to tell the WebApp its REST API address.
+If the TOSCAna transformer is running, you have to tell the WebApp its REST API address.
 
 Therefore edit `app/src/environment/environment.ts`.
 ```js
@@ -60,7 +60,7 @@ export const environment = {
     apiUrl: 'http://localhost:8084'
 };
 ```
-Change the `apiUrl` to the URL of the transformator REST API:
+Change the `apiUrl` to the URL of the transformer REST API:
 
 If you change the `environment.prod.ts` the deployment with the rest of the stack wont work.
 
@@ -70,4 +70,4 @@ In the app root folder run:
 ```bash
 yarn start
 ```
-You now can view the WebApp in your browser at this address: [http://localhost:4200](http://localhost:4200).
+You now can view the WebApp in your browser at this address: [http://localhost:4000](http://localhost:4200).
