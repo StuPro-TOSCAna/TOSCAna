@@ -51,7 +51,7 @@ pages:
             - CloudFoundry:
               - Basics: 'dev/plugins/cloudFoundry/Basics.md'
               - Transformation Process: 'dev/plugins/cloudFoundry/Transformation_Process.md'
-              - Transformation Example: 'dev/plugins/cloudFoundry/Transformation_example.pdf'
+              - Transformation Example: 'dev/plugins/cloudFoundry/Transformation_example.md'
               - Script Overview: 'dev/plugins/cloudFoundry/Python_Scripts_Overview.md'
               - Supported Node Types: 'dev/plugins/cloudFoundry/Supported_Node_Types.md'
               - How to add new Node Types: 'dev/plugins/cloudFoundry/How_add_new_Node_Types.md'
