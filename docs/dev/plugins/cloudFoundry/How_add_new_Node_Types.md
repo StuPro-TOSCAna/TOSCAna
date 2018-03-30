@@ -13,7 +13,7 @@ To implement a new NodeType you should read following documents before:
 Following visitors you can find [here](https://github.com/StuPro-TOSCAna/TOSCAna/tree/master/server/src/main/java/org/opentosca/toscana/plugins/cloudfoundry/visitor)
 ### `NodeTypeCheck`
 The plugin will throw a exception if the model contains an unsupported NodeType. To avoid this exception the visitor `NodeTypeCheck` has to be adapted.
-Just insert a overriding method with the new NodeType like this:
+Just insert an overriding method with the new NodeType like this:
 ```java
 @Override
    public void visit(NewNodeType node) {
@@ -22,14 +22,14 @@ Just insert a overriding method with the new NodeType like this:
 ```
 
 ### `PrepareVisitor`
-If your new NodeType need some preparation like the `environment recognition` just insert a overriding method with the new NodeType.  
+If your new NodeType needs some preparation like the `environment recognition` just insert an overriding method with the new NodeType.  
 Maybe you have to add new placeholders for some properties of the new NodeType. If you add new ones you have to adapt the python script `readCredentials.py` (see in chapter "scripts").
 To get more information about this visitor take a look [here](Transformation_Process.md).
 
 ### `NodeVisitor`
-This visitor are responsible to fill the cf-app (CloudFoundry application) when visiting a special node type.   
+This visitor is responsible to fill the cf-app (CloudFoundry application) when visiting a special node type.   
 You maybe have to call some methods of the current application to add some properties. If there are methods missing you have to add it in the `Application` (see next chapter).
-Insert a overriding method with the new NodeType. Afterwards you could implement the logic what to do when visiting the new type.   
+Insert an overriding method with the new NodeType. Afterwards you could implement the logic what to do when visiting the new type.   
 If your new NodeType is a service in the CloudFoundry world you have to add a new `ServiceType` in the enum class [ServiceTypes](https://github.com/StuPro-TOSCAna/TOSCAna/blob/master/server/src/main/java/org/opentosca/toscana/plugins/cloudfoundry/application/ServiceTypes.java). Consider that the name of the type is responsible for matching a suitable service from the CloudFoundry provider.   
 Following methods you maybe have to call or adapt:
 - `handleStandardLifecycle` contains the logic what to do with the life cycle operations (e.g. add paths to cf-app)
@@ -41,7 +41,7 @@ These information are used by the `FileCreator` later (see next chapter).
 There are a lot of `setter` and `getter` inside to provide the possibility to add attributes, environment variables and so on.   
 If your new NodeType needs additional information you have to add corresponding methods.   
 Some important methods:
-- `addExecuteFile` will enable the execution of a file on the warden container (where the application is running on the CloudFoundry instance after deployment) by a python script (see chapter "scripts"). This method needs the path to the file on the warden container. This path may differs depending on the type. In this case add a additional if clause like that:
+- `addExecuteFile` will enable the execution of a file on the warden container (where the application is running on the CloudFoundry instance after deployment) by a python script (see chapter "scripts"). This method needs the path to the file on the warden container. This path may differs depending on the type. In this case add an additional if clause like that:
 ```java
 if (parentTopNode instanceof NewNodeType) {
            pathToFileOnContainer = "/path/to/file/on/container";
@@ -64,7 +64,7 @@ if (applicationSuffix.equalsIgnoreCase("yourApplicationSuffix")) {
 }
 ```
 5. `insertFiles()` all files of the cf-apps will be copied to the corresponding output application folder. Probably you don't have to make changes here.
-6. `createEnvironmentConfigFile()` creates a environment config file for each cf-app which contains all environment variables with their values (contains the placeholder value which are set in the `PrepareVisitor`). This file will be read by the python script `readCredentials.py`. Probably you don't have to make changes here.
+6. `createEnvironmentConfigFile()` creates an environment config file for each cf-app which contains all environment variables with their values (contains the placeholder value which are set in the `PrepareVisitor`). This file will be read by the python script `readCredentials.py`. Probably you don't have to make changes here.
 7. `createReadme()` creates a readme text file. Maybe you want to adapt the readme therefore you just adapt the text [here](https://github.com/StuPro-TOSCAna/TOSCAna/blob/master/server/src/main/resources/cloudFoundry/readme.txt)
 
 ## Scripts
@@ -95,6 +95,6 @@ if (applicationSuffix.equalsIgnoreCase("yourApplicationSuffix")) {
   sub.call(["cf" ,"set-env",appName, strNewEnvironmentVariable, new_tmp_name])
   ...
   ```
-- warden container have a different file system than a typical linux system. Therefore there is the `replace.py` script to replace paths in files which should be executed on the warden container. To expand the list of paths add strings to the method `replaceStrings()` in the `FileCreator` class [here](https://github.com/StuPro-TOSCAna/TOSCAna/blob/master/server/src/main/java/org/opentosca/toscana/plugins/cloudfoundry/filecreator/FileCreator.java)
+- warden containers have a different file system than a typical linux system. Therefore there is the `replace.py` script to replace paths in files which should be executed on the warden container. To expand the list of paths add strings to the method `replaceStrings()` in the `FileCreator` class [here](https://github.com/StuPro-TOSCAna/TOSCAna/blob/master/server/src/main/java/org/opentosca/toscana/plugins/cloudfoundry/filecreator/FileCreator.java)
 
 To get further information about the python scripts take a look into the [script documentation](Python_Scripts_Overview.md)

@@ -18,7 +18,7 @@ The node visitor contains the logic for the supported node types. It fills the c
 
 ### Prepare visitor
 The prepare visitor prepares the model before the transformation. It sets some fixed placeholder to properties of some node types (e.g. Mysql-Database). This step is needed to enable the environment recognition.   
-If a property of node points to a property to a node where the properties are replaced by placeholders, the plugin knows afterwards what the pointing variable want to get. The python scripts knows the placeholders as well and can check which environment variables have these values.   
+If a property of node points to a property to a node where the properties are replaced by placeholders, the plugin knows afterwards what the pointing variable wants to get. The python scripts knows the placeholders as well and can check which environment variables have these values.   
 If the wanted values are known, because the CloudFoundry container is started (most of the values like database_user are set from the CloudFoundry instance during deployment), the python script can read out these values and set it to the given environment variables (replace the placeholders).   
 Code Example of the prepare visitor:
 ```java
@@ -39,7 +39,7 @@ Checks that only supported operating systems are modeled. Only `Linux` is suppor
 ## General transformation process
 Steps to be done:
 - Split top nodes: create stacks (called application stacks) for each top node (node without children) and its parents
-- Each stack will be a own application (without the node types which are implemented as service). Therefore the plugin creates a CloudFoundry application (called cf-app).
+- Each stack will be an own application (without the node types which are implemented as service). Therefore the plugin creates a CloudFoundry application (called cf-app).
 - Getting necessary information for each application stack: inputs, properties, services.... . This is done by the node visitor.
 - If the visitor detects a node type which is declared as service, the whole cf-app (to which the stack of the node belongs to) will be declared as service. In this case it is not an own application but the service belongs to another cf-app. Therefore the visitor checks the connectsTo relationship and detects the parent application.
 - Copy files and create manifest and scripts
@@ -57,9 +57,9 @@ If there is a node type which is declared as service, the plugin checks the sour
 After this step all information of the nodes are in the cf-apps.
 
 ## File Creator
-The File Creator is one of the most important class in the Cloud Foundry plugin. This class creates all files for the target artifact.   
+The File Creator is one of the most important classes in the CloudFoundry plugin. This class creates all files for the target artifact.   
 The class gets all cf-apps and detects which files (python scripts) are needed. To make sure that all files are available at the CloudFoundry container, the FileCreator copies all files of the source application to the target artifact. Each application gets its own application folder. The folders are named with app+Number e.g. `app1`.   
-If a application owns a service, all files of the service (which are modeled in the TOSCA model by the user) are copied to target artifact as well.
+If an application owns a service, all files of the service (which are modeled in the TOSCA model by the user) are copied to target artifact as well.
 
 ### Manifest
 The manifest contains the meta data of the CloudFoundry deployment which is needed for deployment.
@@ -72,7 +72,7 @@ All cf-apps are in one manifest in different application sections.
 The FileCreator reads out of the cf-app all necessary information to create the manifest.   
 The paths to the application folders are relative so you can move the whole artifact easily.
 The manifest will be copied in the output folder.
-A example of a manifest from the plugin:   
+An example of a manifest from the plugin:   
 ```
 ---
 applications:
@@ -93,7 +93,7 @@ applications:
 ### Services
 If the cf-apps contains a service the FileCreator looks for a suitable service of the provide. Therefore the plugin creates a connection to the provider with the given credentials (with credentials given from the user). It receives all services which are offered of the provider. To do that the plugin implements a (java cf client)[https://github.com/cloudfoundry/cf-java-client].    
 A CloudFoundry service consists of a service name and a service plan. The service name can differ from provider to provider, that's the cause why the plugin needs a connection to the CloudFoundry provider. The service plan specifies the settings of the services e.g. size of a database service. The plugin is looking for a key word (for a mysql service the keyword is `mysql`) in the service descriptions and chooses a suitable service name. Also it chooses a free plan as default.   
-All services will be printed in a extra file called `all_services.txt` in the output folder, so that the user could select another service or change the plan.
+All services will be printed in an extra file called `all_services.txt` in the output folder, so that the user could select another service or change the plan.
 
 ### Deploy bash script
 To provide an easy deployment for the user, the plugin creates a bash deploy script called `deploy.sh`. This consists of different commands in a fixed order.   
@@ -117,7 +117,7 @@ python executeCommand.py my-app /home/vcap/app/htdocs/my_app/create_myphpapp.sh
 ```
 
 ### Python scripts
-For the easy deployment some python scripts are necessary. The FileCreator detects which scripts are needed and add the files from the resource folder to the target artifact and inserts a command in the `deploy.sh`.   
+For the easy deployment some python scripts are necessary. The FileCreator detects which scripts are needed and adds the files from the resource folder to the target artifact and inserts a command in the `deploy.sh`.   
 For further information about the scripts see [here](Python_Scripts_Overview.md)
 
 ### Additional buildpacks

@@ -34,20 +34,20 @@ Lamp Example: `cf set-env $appName database_user = $database_user`
 
 ## Python replace paths in file
 In some scripts could be paths which are not available on the warden container. So this paths has to be replaced with existing paths.   
-Twelve Factor: There are no paths which depends on the environment.
+Twelve Factor: There are no paths which depend on the environment.
 
 ## Python configureMysql
 The readCredentials script creates a config file with all needed service credentials which are necessary to create a connection.
 The configureMysql script creates a connection to the service with this config file. If there is a valid connection the script will execute the `.sql` file on the database.   
 A requirement is that there is a `.sql` configure script. An alternative solution is to insert the database init script into the application code.   
-Needs a additional python mysql-python package `mysql.connector`.
+Needs an additional python mysql-python package `mysql.connector`.
 Lamp Example: `mysqlCursor.execute(dbInitCommand)`
-Twelve Factor: there have to be a init database script.
+Twelve Factor: there have to be an init database script.
 
 ## Python execute commands
 To execute scripts on the container it is needed to create a ssh connection to the container and execute the script.   
 Therefore the script enables ssh for the application. Afterwards the script creates a ssh-connection and executes the file.   
-Unfortunately the cf command `cf run-task ...` is not suitable because it has to enabled from the CF instance provider. So the "ssh way" is the safe way. 
+Unfortunately the cf command `cf run-task ...` is not suitable because it has to enabled from the CF instance provider. So the "ssh way" is the safe way.
 
 ## Order
 1. `cf create service $servicename $serviceplan $serviceInstanceName`

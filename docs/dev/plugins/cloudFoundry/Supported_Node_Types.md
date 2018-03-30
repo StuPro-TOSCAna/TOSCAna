@@ -4,7 +4,7 @@
 |Node Type | Doing | Description |Implemented |
 |----------|------------|-----------------|------|
 |tosca.nodes.Compute| add attributes to manifest  | OS could not be considered. CF uses automatically linux container. Storage-size and RAM size are supported |Yes |
-|tosca.nodes.Database.MySQL | in CF databases are services. So the plugin adds an service to the application | User provided credentials could not be considered  |Yes |
+|tosca.nodes.Database.MySQL | in CF databases are services. So the plugin adds a service to the application | User provided credentials could not be considered  |Yes |
 |tosca.nodes.DBMS.MySQL| add artifacts and environment variables to application  | User provided credentials could not be considered  |Yes |
 |tosca.nodes.Apache   | CF installs automatically an apache WebServer on the container if it detects a WebApplication | No implementation logic in the visitor  |Yes |
 |tosca.nodes.WebApplication  | add artifacts and environment variables to application. Name of the node is the name of the application.   | -  |Yes (maybe has to be expanded to other WebApplications than PHP) |
@@ -32,9 +32,9 @@ To check if there is an unsupported operating system like `Windows or Mac` model
 
 ### `Database.MySQL`
 This node type is declared as service. That means with CloudFoundry the plugin creates a MySQL database service. The stack in which contains this node, is not a cf-app (to have further information about creating the stacks please have a look into the [transformation document](Transformation_Process.md)).   
-A database node always have a connects to relationship, so there is a source node which want to use this database. The visitor checks all source nodes of this database and marks these as `parent application`. Also it adds to the parent application a `MYSQL Service`.   
+A database node always has a connects to relationship, so there is a source node which wants to use this database. The visitor checks all source nodes of this database and marks these as `parent application`. Also it adds to the parent application a `MYSQL Service`.   
 The current application will be marked as `dummy application`. Later in the transformation all data of dummy applications will be copied to their parent applications.   
-All artifacts will be added to the cf-app to make sure that the cf-app has all files of the node. If there is an `.sql` file the visitor assumes that this must be a config file and add this information to the cf-app.   
+All artifacts will be added to the cf-app to make sure that the cf-app has all files of the node. If there is a `.sql` file the visitor assumes that this must be a config file and add this information to the cf-app.   
 ```java
 ...
 if (path.endsWith("sql")) {
@@ -52,13 +52,13 @@ This is needed because the plugin has no chance to get the semantic of a random 
 The visitor just adds all files and environment variables to the cf-app. There is nothing more to do because CloudFoundry creates automatically a `MYSQL DatabaseManagementSystem` when creating a service.
 
 ### `Apache`
-Nothing to do, because the CloudFoundry instance creates automatically a apache WebServer if needed.
+Nothing to do, because the CloudFoundry instance creates automatically an apache WebServer if needed.
 
 ### `WebApplication`
 The name of the WebApplication node will be the name of the cf-app because it is a top node and contains probably the main application logic.   
 Also the visitor checks if there are configure or create scripts existing. If yes the plugin adds the information to the cf-app. These scripts will be executed by a python script during the deployment. To get further information about the scripts have a look [here](Python_Scripts_Overview.md).   
 All files and environment variables will be added to the cf-app as well.   
-Here you see a example of how the visitor is getting the configure script of a node:
+Here you see an example of how the visitor is getting the configure script of a node:
 ```java
 ...
 Optional<Operation> configureOptional = lifecycle.getConfigure();
