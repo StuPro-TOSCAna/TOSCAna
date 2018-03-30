@@ -128,6 +128,14 @@ export class TransformationViewComponent implements OnInit, OnDestroy {
         result += 'unzip $folder.csar -d unzipped\n';
         result += 'bash unzipped/output/scripts/deploy.sh\n';
         result += 'cd ../\n';
+        result += 'printf "cleanup [y/N]: "\n' +
+            'read input\n' +
+            '\n' +
+            'if [ "$input" != "y" ] && [ "$input" != "yes" ] && [ "$input" != "Y" ]\n' +
+            'then\n' +
+            '  echo "Cleanup skipped!"\n' +
+            '  exit 1\n' +
+            'fi\n';
         result += 'rm -rf $folder\n';
         const file = new File([result], 'run.sh', {type: 'text/plain;charset=ascii'});
         saveAs(file);
@@ -136,6 +144,7 @@ export class TransformationViewComponent implements OnInit, OnDestroy {
     checkIfTransformationFailed() {
         return this.transformation.state === TransformationStateEnum.ERROR;
     }
+
     ngOnDestroy() {
         if (!isNullOrUndefined(this.observable)) {
             this.transformationDone = true;
