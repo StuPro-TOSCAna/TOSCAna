@@ -1,6 +1,6 @@
 # Transformation by TOSCA Type
 
-During the the transformation, 
+Currently, the CloudFormation plugin only supports certain Node- and RelationshipTypes defined in the [TOSCA Simple Profile](http://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.1/cos01/). The following sections shows which types are supported and how those are mapped to CloudFormation.
 
 ## Supported NodeTypes
 
@@ -19,39 +19,63 @@ The following table contains the NodeTypes currently supported by the CloudForma
 | JavaRuntime | No specific resource is created |
 | JavaApplication | Beanstalk Application and Environment |
 
-## Transformation implementation details
+## NodeType Transformation Details
 
-These transformations take place in the TransformationModelNodeVisitor: [GitHub link](https://github.com/StuPro-TOSCAna/TOSCAna/blob/master/server/src/main/java/org/opentosca/toscana/plugins/cloudformation/visitor/TransformModelNodeVisitor.java)
-
-    TODO: Figure out if we need the part above.
-    TODO: Add NodeType transformation explanations.
+These transformations take place in the `TransformationModelNodeVisitor`. During the [transform phase](transformation-workflow.md#transform) of the `TransformationLifeCycle`, the `visit()` of the various NodeTypes are executed in order to fill the `CloudFormationModule` with the necessary information to generate the CloudFormation template and the files needed to deploy the CloudFormation stack. The following section offers a detailed explanation of the transformation behaviour for each of these NodeTypes.
 
 ### Compute
 
-Compute nodes correlate with a ec2 because its just an vm.
-Following steps are taken in the transform step:
+Each Compute node that was previously marked in the [prepare phase](transformation-workflow.md#prepare) now gets transformed into an EC2 `Instance` resource with a corresponding `SecurityGroup` resource.
 
-1. SecurityGroup is created
-2. optional Enpoint ports are opened on this security group puplically
-3. OsCapability and ComputeCapability are mapped to properties of EC2 (like what imageID(ami-...) to take what instance type to take(t2.micro))
-4. CFNinit is created but not yet added so it can be manipulated (cfninit is used to call scripts, commands, add files or install packages)
-5. EC2 linked with securitygroup is created
-6. disk size is mapped from tosca --> block device mapping
-7. if keypair is activated --> add keyname to instance + open ingress on security group to port 22(SSH)
+#### 1. Security Group
 
-at buildtime: cfninit gets put on ec2 + userdata that executes cfninit + authentication + instancepofile gets added(permission for s3 bucket)
+The `SecurityGroup` is created. The security group allows the opening of ports for the corresponding EC2 instance. If present, optional endpoint ports are opened on this security group.
+
+#### 2. Capability Mapping
+
+Both the OsCapability and ComputeCapablity of the Compute node are mapped to properties of the EC2 instance by the `CapabilityMapper`.
+
+First the `CapabilityMapper` is used to figure out the ID of the Amazon Machine Image (AMI) corresponding to the OsCapability. To do this, we build an [`AmazonEC2`](https://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/services/ec2/AmazonEC2.html) client with the AWS SDK for Java to get the latest image IDs from AWS. In order to get the right image ID, a [`DescribeImagesRequest`](https://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/services/ec2/model/DescribeImagesRequest.html) is built with the properties of the OsCapability. When the image request is completed, the [`describeImages()`](https://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/services/ec2/AmazonEC2.html#describeImages-com.amazonaws.services.ec2.model.DescribeImagesRequest-) method of the EC2 client is used to get the images fullfilling the requirements of the request. From these images, the capability mapper takes the the latest image ID available which in turn is used by the visitor as the `ImageId` property of the EC2 instance.
+
+Then the `CapabilityMapper` is used to figure out the right `InstanceType` for the EC2 instance corresponding to the ComputeCapability. The right instance type is determined based on the `numCpus` and `memSize` properties of the ComputeCapability. Once the right instance type has been found, it is used by the visitor as the `InstanceType` property of the EC2 instance. If no instance type fitting the requirements the ComputeCapability can be found, the transformation ends with a `TransformationFailureException`.
+
+#### 3. Cloudformation Init
+
+We use the [CloudFormation Init](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-init.html) and the [cfn-init](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-init.html) script to bootstrap our EC2 instances. It allows us to call scripts, commands, install packages and download files on our EC2 instances. Specifically the `CFNinit` is created and added to the `CloudFormationModule` but not yet to the EC2 instance, so it can still be manipulated by the visitor.
+
+#### 4. Creating the instance
+
+At this point, all the necessary information in order to create the EC2 instance resource corresponding to the Compute node has been gathered. The resource gets added to the `CloudFormationModule` using the `resource()` method with the `SecurityGroupId`, `ImageId` and `instanceType`.
+
+Then the `CapabilityMapper` uses the ComputeCapability to get the right disk size for the EC2 instance. If the disk size exceeds the standard of 8 Gb for EC2 instances, an additional [`EC2BlockDeviceMapping`](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-blockdev-mapping.html) is added to the EC2 instance resource containing an Amazon Elastic Store (EBS) Block Device with the `VolumeSize` corresponding to the disk size of the ComputeCapability.
+
+Finally, if the `keyPair` property of the `CloudFormationModule` was set to true, the `KeyName` referencing the `KeyName` String parameter, which is later set when the `build()` method of the `CloudFormationModule` called, is added to the EC2 instance resource and the port `22` is opened on its corresponding SecurityGroup. This allows the user to access the EC2 instance via SSH by authenticating with the right AWS Keypair.
+
+#### 5. During build time
+
+After all nodes have been visited and before the template gets created, the `build()` method of the `CloudFormationModule` gets called.
+Here the previously built `CFNInit`s belonging to EC2 instances and a userdata section that executes cfn-init are added to the EC2 instances.
+
+If EC2 instances need additional files from the S3 bucket during the deployment, an `Authentication` and `IamInstanceProfile` are added to those instances to allow them to access the S3 bucket.
+
+If the `keyPair` property of the `CloudFormationModule` is set to true, a `KeyName` [CloudFormation parameter](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/parameters-section-structure.html) is added to the `CloudFormationModule`. This parameter must be set in the `create-stack.sh` script before deploying the target artifact as mentioned in the [platform properties](../architecture.md#platform-properties) section.
+
+    TODO: Add link to architecture platform properties section.
 
 ### Mysql Database
+
 
 ### Mysql DBMS
 
 ### JavaApplication
 
-### Generic Transformation Behaviour for Nodes hosted on Compute
+### JavaRuntime
+
+Because we transform JavaApplications to Beanstalk resources we do not require a JavaRuntime on an EC2 instance. All the information needed from the **JavaRuntime** in order to build those Beanstalk resources is taken during the `visit()` method of the JavaApplication.
+
+### Generic Transformation of Nodes hosted on Compute
 
 In contrast to the NodeTypes discussed above, there are various NodeTypes which don't get mapped to a specific CloudFormation resource but are rather added to the EC2 instance that they're meant to be hosted on. Specifically, this is done by the `OperationHandler` and `EnvironmentHandler` classes.
-
-We use the [CloudFormation Init](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-init.html) and the [cfn-init](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-init.html) script to bootstrap our EC2 instances.
 
 That being said, most of these NodeTypes require additional or alternative steps unique to them in order to be properly transformed. The following are explanation of how the transformation of each of these NodeTypes differs from the generic transformation behaviour.
 
@@ -62,7 +86,11 @@ That being said, most of these NodeTypes require additional or alternative steps
 3. global environment variables (start lifecycle of webapplication that is hosted on this apache) will be added to /etc/apache/envvars 
 4. if modifications took place a "service apache2 restart" command is added
 
+### Dbms
+
 ### Database
+
+### Nodejs
 
 ## Supported RelationshipTypes
 
