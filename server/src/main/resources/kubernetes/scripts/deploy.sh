@@ -56,7 +56,7 @@ then
 fi
 
 echo "Creating resources"
-kubectl create -f kubernetes-resources/complete.yml
+kubectl create -f ../kubernetes-resources/complete.yml
 
 echo "Services Overview:"
 kubectl get services
