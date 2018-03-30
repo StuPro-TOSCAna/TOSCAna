@@ -83,7 +83,7 @@ In the sidebar click on the CSAR and then on the transformation you want to look
 **Phases:** The web app shows each transformation phases state.  
 **Log:** If something went wrong you might want to check the server logs in the lower part of the web app. With the *log level selector* you can filter unwanted log levels.
 
-**TODO** ADD IMAGE 
+![](img/view_transformation.png)
 
 The transformation view looks very similar to the CSAR view but additionally there are two download buttons and the input and output tabs.
 
