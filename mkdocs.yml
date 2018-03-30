@@ -14,6 +14,13 @@ pages:
         - "TOSCA Support": 'user/tosca-support.md'
         - "TOSCAna Types": 'user/toscana-types.md'
     - Developer Documentation:
+        - Core:
+            - Testing the application: 'dev/server-testing.md'
+            - Transformation handling:
+                - Transformation lifecycle: 'dev/plugins/transformation-lifecycle/lifecycle-architecture.md'
+            - Plugin development:
+                - Plugin guidelines: 'dev/core/plugin-guidelines.md'
+                - Target artifact conventions: 'dev/plugins/target-artifact-conventions/target-artifact-conventions.md'
         - 'REST API':
             - 'Swagger Documentation': 'dev/core/rest-api.md'
         - 'TOSCA model':
