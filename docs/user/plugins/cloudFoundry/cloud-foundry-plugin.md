@@ -20,7 +20,7 @@ Before the Transformation can start the Cloud Foundry credentials and additional
 - `CF_Instance_Space`: The space of the user account which should be used to deploy
 
 The credentials are used to get a list of services which can be used for deployment.
-The plugin currently supports [the following NodesTypes.](../../../dev/plugins/cloudFoundry/Supported_Node_Types.md) For more details on the Basics of Cloud Foundry, the Transformation and created scripts, see [Basics](../../../dev/plugins/cloudFoundry/Basics.md), [Transformation](../../../dev/plugins/cloudFoundry/Transformation_Process.md) and [Script Overview.](../../../dev/plugins/cloudFoundry/Python_Scripts_Overview.md)
+For more details on supported NoteTypes, basics of Cloud Foundry, the Transformation and created scripts, see the documents in `dev/plugins/cloudFoundry`.
 
 ## Artifact
 The Artifact is the result of the transformation which contains all necessary files which are needed to deploy an application on Cloud Foundry. After you open the Artifact you can see the log of the Transformation, the app folder(s) which contain your application and the output folder which contains the files for deployment. If you provide multiple applications in your CSAR the artifact will contain multiple app folders called app1, app2 and so on.
@@ -86,7 +86,7 @@ The following CSARs can be used to test the Cloud Foundry Plugin:
 These CSARs can be found in `TOSCAna/server/src/test/resources/csars/yaml/valid`
 
 ## Doing a Transformation with a Test-CSAR
-The Lamp-input CSAR is used in this example, make sure you have done all the things from `Requirements for Deployment`. For details on how to use the GUI, see [Webapp](../../webapp/webapp.md).
+The Lamp-input CSAR is used in this example, make sure you have done all the things from `Requirements for Deployment`. For details on how to use the GUI, see the Webapp User guide.
 After you upload the CSAR to the GUI and select the Cloud Foundry platform as the target you get the following inputs screen (we use Pivotal CF as endpoint here):
 
 ![CloudFoundry Inputs](img/inputs.png)
