@@ -1,7 +1,7 @@
 # WebApp
 
 This guide explains how you can use the web app to create transformations.
-If you are using TOSCAna like described in [Getting Started](../getting-started.md) the WebApp application is already started and ready to use.
+To get it running follow the steps in [Getting Started](../getting-started.md).
 
 ## The start page
 ![](img/start_page.png)
@@ -69,18 +69,17 @@ If a transformation for this platform already exists the web app will ask you if
 
 **Step 3:** Enter the required inputs
 ![](img/add_transformation_enter_inputs.png)  
-*Enter the inputs the web app asks you for*
 
-The web asks your for inputs TOSCAna needs to transform your CSAR.
+The web asks your for inputs which are needed to transform the CSAR.
 If a input field is highlighted red it means that it is required or that it is wrong.
 To get more information about an specific input you can hover over the info icon.
 
-**Important:** To get more information about the inputs check the documentation of the platform you want to transform to.
+**Important:** To get more information about the inputs check the documentation of the correspondin platform you want to transform to.
 
 **Step 4**: Click on the *Transform* button.   
 *If you can not click the button something in **Step 3** went wrong.*
 
-After clicking on the button the transformation view gets visible.
+After clicking on the button the transformation view becomes visible.
 To learn more about the transformation view just keep scrolling.
 
 ### How to view a transformation
