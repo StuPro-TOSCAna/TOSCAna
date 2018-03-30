@@ -30,8 +30,8 @@ class MapperEngine {
     }
 
     /**
-     This method attempts to map a OsCapability to a docker base image.
-     If the mapping fails a UnsopportedOperationException is thrown. Reasons for failiure are: Invalid Architecture,
+     Attempts to map a OsCapability to a docker base image.
+     If the mapping fails a UnsupportedOperationException is thrown. Reasons for failiure are: Invalid Architecture,
      Unsupported type, Unknown version...
      */
     public String mapToBaseImage(OsCapability capability) {

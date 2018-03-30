@@ -1,5 +1,5 @@
 <div class="_container">
-    <div class="item btn btn-outline-primary" [class.active]="active">
+    <div class="item btn btn-outline-primary" [class.active]="csarViewActive">
         <div class="button" (click)="open()">
             <div class="icon">
                 <i class="fa fa-file-archive-o" aria-hidden="true"></i>
@@ -7,9 +7,12 @@
             <div class="name">{{csar.name}}</div>
         </div>
         <div class="actions">
-            <i *ngIf="csar.successfulParsed()" (click)="newTransformation()" class="fa fa-plus-circle" aria-hidden="true"></i>
+            <!-- only show the add transformation button if the csar parsing was successful -->
+            <i *ngIf="csar.successfulParsed()" (click)="newTransformation()" class="fa fa-plus-circle"
+               aria-hidden="true"></i>
             <i (click)="deleteCsar()" class="fa fa-trash" aria-hidden="true"></i>
         </div>
     </div>
-    <app-csar-sub-item [class.sub-item]="active && csar.transformations.length > 0" [hidden]="!active" [csar]="csar"></app-csar-sub-item>
+    <app-csar-sub-item [class.sub-item]="csarViewActive && csar.transformations.length > 0" [hidden]="!csarViewActive"
+                       [csar]="csar"></app-csar-sub-item>
 </div>

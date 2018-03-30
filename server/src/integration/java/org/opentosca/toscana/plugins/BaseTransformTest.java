@@ -51,7 +51,7 @@ public abstract class BaseTransformTest<LifecycleT extends AbstractLifecycle> ex
     }
 
     /**
-     Initilaizes the test environment. This means:
+     Initializes the test environment. This means:
      <ul>
      <li>The Working directory gets created</li>
      <li>The model gets built (<code>getModel()</code> is called)</li>
@@ -130,8 +130,8 @@ public abstract class BaseTransformTest<LifecycleT extends AbstractLifecycle> ex
     }
 
     /**
-     this method gets called at the beginning of the execute transformation
-     test it can be used to place JUnit assumptions ath this point
+     This method gets called at the beginning of the execute transformation
+     test it can be used to place JUnit assumptions at this point.
      */
     protected void checkAssumptions() {
         // No assumptions by default

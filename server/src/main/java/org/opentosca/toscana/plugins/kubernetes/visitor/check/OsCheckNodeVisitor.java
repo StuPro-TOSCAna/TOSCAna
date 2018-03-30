@@ -13,6 +13,9 @@ import org.slf4j.Logger;
 
 /**
  Visitor to check the ComputeNodeFinder for unsupported OsCapabilities
+ 
+ If a OsCapability is unsupported, a <code>UnsupportedOsTypeException</code> is thrown
+ Throwing this is handled by the {@link OsCheckCapabilityVisitor}
  */
 public class OsCheckNodeVisitor implements NodeVisitor {
     private final Logger logger;

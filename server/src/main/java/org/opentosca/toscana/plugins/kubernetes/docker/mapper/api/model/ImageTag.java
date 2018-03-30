@@ -11,7 +11,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- This class represents one tag of a repository on a registry.
+ Represents one tag of a repository on a registry.
  <p>
  This class is only used to fetch the data from the registry.
  <p>

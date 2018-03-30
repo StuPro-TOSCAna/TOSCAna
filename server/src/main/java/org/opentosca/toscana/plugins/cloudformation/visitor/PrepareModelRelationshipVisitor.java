@@ -5,6 +5,7 @@ import org.opentosca.toscana.model.node.Compute;
 import org.opentosca.toscana.model.node.MysqlDatabase;
 import org.opentosca.toscana.model.node.RootNode;
 import org.opentosca.toscana.model.node.WebApplication;
+import org.opentosca.toscana.model.node.custom.JavaApplication;
 import org.opentosca.toscana.model.relation.ConnectsTo;
 import org.opentosca.toscana.model.visitor.RelationshipVisitor;
 import org.opentosca.toscana.plugins.cloudformation.CloudFormationModule;
@@ -15,30 +16,45 @@ import static org.opentosca.toscana.plugins.cloudformation.CloudFormationLifecyc
 import static org.opentosca.toscana.plugins.cloudformation.visitor.PrepareModelNodeVisitor.AWS_ENDPOINT_REFERENCE;
 
 /**
- Class for preparing a models relationships
+ Prepares a models relationships.
  */
-public class PrepareModelRelationshipVisitor extends CloudFormationVisitorExtension implements RelationshipVisitor {
+public class PrepareModelRelationshipVisitor extends CloudFormationVisitor implements RelationshipVisitor {
 
     /**
-     Create a <tt>PrepareModelRelationshipVisitor</tt> to prepare a models relationships.
+     Creates a <tt>PrepareModelRelationshipVisitor</tt> to prepare a models relationships.
 
-     @param context TransformationContext to extract topology and logger
+     @param context   {@link TransformationContext} to extract the topology and a logger
+     @param cfnModule {@link CloudFormationModule} to modify
      */
     public PrepareModelRelationshipVisitor(TransformationContext context, CloudFormationModule cfnModule) {
         super(context, cfnModule);
     }
 
+    /**
+     Sets the endpoint of a {@link Compute} node to reference the {@link MysqlDatabase} endpoint if both the
+     {@link WebApplication} and the {@link MysqlDatabase} this connection is between are hosted on that {@link Compute}
+     node.
+
+     @param relation the {@link ConnectsTo} relationship to visit
+     */
     @Override
     public void visit(ConnectsTo relation) {
         RootNode source = topology.getEdgeSource(relation);
         RootNode target = topology.getEdgeTarget(relation);
-        if (source instanceof WebApplication && target instanceof MysqlDatabase) {
+        if ((source instanceof WebApplication || source instanceof JavaApplication) && target instanceof MysqlDatabase) {
             MysqlDatabase mysqlDatabase = (MysqlDatabase) target;
-            WebApplication webApplication = (WebApplication) source;
-            // if they are hosted on the same compute --> we can set the compute private address to
             Compute computeMysqlDatabase = getCompute(mysqlDatabase);
-            Compute computeWebApplication = getCompute(webApplication);
-            if (computeMysqlDatabase.equals(computeWebApplication)) {
+            Compute sourceCompute = null;
+            if (source instanceof WebApplication) {
+                WebApplication webApplication = (WebApplication) source;
+                sourceCompute = getCompute(webApplication);
+            } else {
+                //source has to be JavaApplication
+                JavaApplication javaApplication = (JavaApplication) source;
+                sourceCompute = getCompute(javaApplication);
+            }
+            // if they are hosted on the same compute --> we can set the compute private address to
+            if (computeMysqlDatabase.equals(sourceCompute)) {
                 // means we can set the private address as reference to the database endpoint
                 Fn databaseEndpointFn = Fn.fnGetAtt(toAlphanumerical(mysqlDatabase.getEntityName()),
                     AWS_ENDPOINT_REFERENCE);
