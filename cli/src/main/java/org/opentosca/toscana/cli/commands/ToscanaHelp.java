@@ -30,7 +30,7 @@ import static picocli.CommandLine.usage;
 @Command(name = "help",
     customSynopsis = "@|bold toscana help|@ [@|yellow <command>|@] [@|yellow <subcommand>|@] [@|yellow -mv|@]",
     descriptionHeading = "%nAvailable TOSCAna CLI commands and subcommands:%n",
-    description = {"@|bold csar|@                          Show CSAR usage and all subcommands",
+    description = {"@|bold csar|@                          Show CSAR usage",
         "   @|bold delete|@                     Delete the specified CSAR",
         "   @|bold info|@                       Information about the specified CSAR",
         "   @|bold list|@                       Show all uploaded CSARs",

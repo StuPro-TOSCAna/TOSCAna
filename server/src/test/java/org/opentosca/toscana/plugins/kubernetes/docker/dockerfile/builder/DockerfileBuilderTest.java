@@ -11,6 +11,9 @@ import org.junit.experimental.categories.Category;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+/**
+ This test validates the Dockerfiles produced by the DockerfileBuilder
+ */
 @Category(UnitTest.class)
 public class DockerfileBuilderTest extends BaseDockerfileTest {
 

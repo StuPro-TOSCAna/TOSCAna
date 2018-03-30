@@ -25,10 +25,11 @@ export class CsarViewComponent implements OnInit, OnDestroy {
     status: string;
     csarId: string;
     platform: string;
-    transformationDone = false;
-    url = '';
+    csarProcessingDone = false;
+    downloadUrl = '';
     getColorForLifecyclePhase = getColorForLifecyclePhase;
     StateEnum = StateEnum;
+
     constructor(private csarProvider: ClientCsarsService, private routeHandler: RouteHandler, private route: ActivatedRoute,
                 public platformsProvider: ClientPlatformsService) {
     }
@@ -38,7 +39,7 @@ export class CsarViewComponent implements OnInit, OnDestroy {
             this.csarId = params.get('csar');
             return this.csarProvider.getCsarByName(this.csarId);
         }).subscribe(data => {
-            this.transformationDone = false;
+            this.csarProcessingDone = false;
             if (isNullOrUndefined(data)) {
                 this.csar = null;
             }
@@ -46,34 +47,35 @@ export class CsarViewComponent implements OnInit, OnDestroy {
                 this.csar = csar;
                 this.routeHandler.setUpCsar(this.csarId);
             });
-            this.observable = Observable.interval(1000);
-            this.observable.takeWhile(() => !this.transformationDone).subscribe(() => {
-                this.csarProvider.getCsarByName(this.csarId)
-                    .subscribe(res => {
-                        res.then(data => {
-                            this.csar = data;
-                        });
-                        this.checkTransformationstate();
-                        this.logView.refresh();
-                    });
-            });
+            this.pollForProcessingUpdates();
         });
     }
 
-    private checkTransformationstate() {
+    /**
+     * polls until the csar processing is done
+     */
+    private pollForProcessingUpdates() {
+        this.observable = Observable.interval(1000);
+        this.observable.takeWhile(() => !this.csarProcessingDone).subscribe(() => {
+            this.csarProvider.getCsarByName(this.csarId)
+                .subscribe(res => {
+                    res.then(data => {
+                        this.csar = data;
+                    });
+                    this.checkIfProcessingIsDone();
+                    this.logView.loadNewLogEntries();
+                });
+        });
+    }
+
+    private checkIfProcessingIsDone() {
         this.csarProvider.updateCsar(this.csar);
-        const invalidPhases = [StateEnum.EXECUTING, StateEnum.PENDING];
-        for (const phase of this.csar.phases) {
-            if (invalidPhases.indexOf(phase.state) !== -1) {
-                this.transformationDone = false;
-            }
-        }
-        this.transformationDone = true;
+        this.csarProcessingDone = !this.csar.currentlyParsing();
     }
 
     ngOnDestroy() {
         if (!isNullOrUndefined(this.observable)) {
-            this.transformationDone = true;
+            this.csarProcessingDone = true;
         }
     }
 }
