@@ -1,7 +1,7 @@
 # Cloud Foundry - supported NodeTypes
 
 ## Overview
-|Node Type | Doing | Description |Implemented |
+|Node Type | What is being done | Description |Implemented |
 |----------|------------|-----------------|------|
 |tosca.nodes.Compute| add attributes to manifest  | OS could not be considered. CF uses automatically linux container. Storage-size and RAM size are supported |Yes |
 |tosca.nodes.Database.MySQL | in CF databases are services. So the plugin adds a service to the application | User provided credentials could not be considered  |Yes |

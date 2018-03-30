@@ -1,9 +1,9 @@
 # No deployment while transformation
 
-**User Story:** As an orchestrator I want to fill the target artifact with all information which are needed for deployment afterwards.
+**User Story:** As an orchestrator, I want to fill the target artifact with all information needed for deployment afterwards.
 
 ## Problem
-The most credentials/information of the environment (like a service address) are only available as soon the application is deployed.
+Most of the credentials/information of the environment (like a service address) are only available as soon the application is deployed.
 
 ## Considered Alternatives
 

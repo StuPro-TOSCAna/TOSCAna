@@ -5,7 +5,7 @@ This document does not mention all classes which are used in the java code but d
 This is the text based documentation, you can find an example transformation with some pictures [here](Transformation_example.pdf).
 
 ## Foreword
-- the TOSCA model is a graph. So we are talking about some graph terms. For further information please read the documentation of the core/model.
+- the TOSCA model is a graph. So the document has some graph terms. For further information please read the documentation of the core/model.
 - plugin gets some properties (at the beginning of transformation) from the user to create connection to CloudFoundry instance.
 - plugin is using visitor patterns for nodes. The visitors contain the logic for the node types.
 - there will be created one manifest for all applications in the model
@@ -13,11 +13,11 @@ This is the text based documentation, you can find an example transformation wit
 - the output is called target artifact
 
 ## Visitors
-### Node visitor
-The node visitor contains the logic for the supported node types. It fills the cf-app with all information out of the node.
+### NodeVisitor
+The NodeVisitor contains the logic for the supported node types. It fills the cf-app with all information out of the node.
 
-### Prepare visitor
-The prepare visitor prepares the model before the transformation. It sets some fixed placeholder to properties of some node types (e.g. Mysql-Database). This step is needed to enable the environment recognition.   
+### PrepareVisitor
+The PrepareVisitor prepares the model before the transformation. It sets some fixed placeholder to properties of some node types (e.g. Mysql-Database). This step is needed to enable the environment recognition.   
 If a property of node points to a property to a node where the properties are replaced by placeholders, the plugin knows afterwards what the pointing variable wants to get. The python scripts knows the placeholders as well and can check which environment variables have these values.   
 If the wanted values are known, because the CloudFoundry container is started (most of the values like database_user are set from the CloudFoundry instance during deployment), the python script can read out these values and set it to the given environment variables (replace the placeholders).   
 Code Example of the prepare visitor:

@@ -7,7 +7,7 @@ The purpose of this document is to collect all known issues in the CloudFoundry 
 - All environment variables will be set globally
 
 ## General problems
-- Most of the user provided data cannot be accounted because CloudFoundry will create automatically their own data.
+- Most of the user-provided data cannot be accounted because CloudFoundry will create automatically their own data.
 - It depends on the used framework and services of the application if and which additional buildpacks have to be used. Each framework is using their own logic how to add additional buildpacks.
 - Direct connections (relationships) between applications are not supported yet
 - Always select the free plan of a service, not regarding the properties of the service like size

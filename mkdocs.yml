@@ -39,7 +39,7 @@ pages:
             - "0009 - CloudFoundry CLI": "dev/adr/0009-cloudfoundry-cli.md"
             - "0010 - How to perform Kubernetes end to end tests": "dev/adr/0010-use-docker-java.md"
             - "0011 - Put Integration Tests in seperate source directory": "dev/adr/0011-put-integration-tests-in-seperate-folder.md"
-            - "0012 - CloudFoundry java Library": "dev/adr/0012-cloudfoundry-java-library.md"
+            - "0012 - CloudFoundry Java Library": "dev/adr/0012-cloudfoundry-java-library.md"
             - "0013 - Use AWS SDK for java": "dev/adr/0013-aws-file-upload.md"
             - "0014 - Navigate EffectiveModel with visitor pattern": "dev/adr/0014-iterate-effectivemodel-with-visitor-pattern.md"
             - "0015 - Use filesystem for persistency": "dev/adr/0015-persist-to-filesystem.md"
@@ -59,4 +59,3 @@ pages:
               - Deploying a CloudFoundry instance:
                 - Deploy Bosh Lite: 'dev/plugins/cloudFoundry/Deploying_Cloud_Foundry/deploy-cf-bosh-lite.md'
                 - Deploy Pivotal CloudFoundry dev: 'dev/plugins/cloudFoundry/Deploying_Cloud_Foundry/deploy-cf-pcf-dev.md'
-

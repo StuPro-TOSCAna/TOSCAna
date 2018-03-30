@@ -2,7 +2,7 @@
 
 ## Basic information of Cloud Foundry (CF)
 CF is a open-source Platform as a Service model (PaaS) which allows everyone to easily deploy an existing application on an infrastructure e.g. AWS, vSphere or OpenStack.   
-CF installs everything what the application needs to compile and run like OS, buildpack with all languages, libraries, and services that the app uses.
+CF installs everything that the application needs to compile and run like OS, buildpack with all languages, libraries, and services that the app uses.
 
 For further information have a look at the official [CF Documentation](https://docs.cloudfoundry.org/concepts/overview.html).
 

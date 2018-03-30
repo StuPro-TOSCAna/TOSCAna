@@ -1,11 +1,11 @@
 # Use python scripts to provide the deployment of CloudFoundry applications
 
-**User Story:** As a User I want to deploy my application by one-click script.   
+**User Story:** As an User, I want to deploy my application by one-click script.   
 I want to do as few things as possible manually.
 
 ## Considered Alternatives
 
-* Let the user set the deployment stuff manually
+* Let the user set the deployment credentials manually
 * Use Bash scripts
 * Use python scripts
 
@@ -15,9 +15,9 @@ I want to do as few things as possible manually.
 
 ## Pros and Cons of the Alternatives
 
-### Setting stuff manually by user
+### Setting deployment credentials manually by the user
 
-* `+` provides many options for user
+* `+` provides many options for the user
 * `+` no effort for the plugin
 * `-` not user friendly
 
