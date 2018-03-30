@@ -134,7 +134,7 @@ export class TransformationViewComponent implements OnInit, OnDestroy {
             'if [ "$input" != "y" ] && [ "$input" != "yes" ] && [ "$input" != "Y" ]\n' +
             'then\n' +
             '  echo "Cleanup skipped!"\n' +
-            '  exit 1\n' +
+            '  exit 0\n' +
             'fi\n';
         result += 'rm -rf $folder\n';
         const file = new File([result], 'run.sh', {type: 'text/plain;charset=ascii'});
