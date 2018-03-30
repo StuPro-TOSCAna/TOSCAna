@@ -20,21 +20,35 @@ Currently, there are three NodeTypes that require additional preparation before 
 
 ### Compute
 
-During the preparation, the plugin decides which Compute needs get transformed to an EC2 instance. These instances are marked by adding them to the `computeToEC2` set of the `CloudFormationmodule`. This means that later on during the [transform phase](#transform), they should be added to the template as CloudFormation EC2 instances.
+During the preparation, the plugin decides which Compute node gets transformed to an EC2 instance. These instances are marked by adding them to the `computeToEC2` set of the `CloudFormationModule`. This means that later on during the [transform phase](#transform), they should be added to the template as CloudFormation EC2 instances.
 
-In addition to that, the property values of the Compute node must be changed in order to be compatible with the CloudFormation EC2 instance. Specifically this means that the entity name must be converted to use only alphanumerical symbols and the values of the public and private IP addresses of the Compute node must be changed to the syntax used by CloudFormation. This means that the IP addresses are changed to reference the `PrivateIp` and `PublicIp` attributes of the respective EC2 instances (See []() for more info on the specific EC2 instance attributes).
+In addition to that, the property values of the Compute node must be changed in order to be compatible with the CloudFormation EC2 instance. Specifically this means that the entity name must be converted to use only alphanumerical symbols and the values of the public and private IP addresses of the Compute node must be changed to the syntax used by CloudFormation. This means that the IP addresses are changed to reference the `PrivateIp` and `PublicIp` attributes of the respective EC2 instances.
 
 ### MysqlDatabase
 
+The MysqlDatabase node requires additional preparation due to the fact that it will be transformed to an RDS resource. In order to create a RDS resource with CloudFormation, password, user and port values must be set. If the MysqlDatabase does not have the port and user values set, the plugin adds the default values `root` and `3306` instead. The password must be of a minimum length of **8**, if that is not the case or the password isn't set at all, the plugin replaces or adds a new random String as a password.
 
+Also, if the visitor detects that the MysqlDatabase is the only node hosted on a specific Compute node, it automatically removes said Compute node from the list of Compute nodes that should be transformed to EC2 instances since the RDS resource does not require an additional EC2 instance to be specified for it to run. If this is the case, the visitor also replaces any references to said instance with references to the RDS resource instead (e.g. IP addresses).
 
 ### WebApplication
 
+If the WebApplication node does not have the port value set, the visitor adds the default web application port **80** to said node.
+
 ## Transform
 
-For an in-depth explanation the actions of the `TransformModelVisitor` and `TransformRelationshipVisotr` classes and the general mapping of specific Node-/RelationshipTypes, please refer to the supported node-types section. For an explanation of the transformation of a full `EffectiveModel`, please refer to the transformation examples section.
+When all preparations are complete, the actual **transformation** from the `EffectiveModel` to the target artifact takes place.
+
+### Mapping TOSCA to CloudFormation
+
+Initially, the transform phase starts like the other phases by iterating over the `EffectiveModel` via the `TransformationNodeVisitor`
+
+For an in-depth explanation the actions of the `TransformModelNodeVisitor` and `TransformRelationshipVisitor` classes and the general mapping of specific Node-/RelationshipTypes, please refer to the supported node-types section. For an explanation of the transformation of a full `EffectiveModel`, please refer to the transformation examples section.
 
     TODO: Add links to node-types and example sections.
+
+### Create Template
+
+### Generate Scripts
 
 ## Cleanup
 
