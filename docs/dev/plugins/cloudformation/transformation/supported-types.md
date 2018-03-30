@@ -16,7 +16,7 @@ The following table contains the NodeTypes currently supported by the CloudForma
 | MysqlDbms | No specific resource is created |
 | WebApplication | Setup through CloudFormation Init on EC2 host |
 | Nodejs | Setup through CloudFormation Init on EC2 host |
-| JavaRuntime | Setup through CloudFormation Init on EC2 host |
+| JavaRuntime | No specific resource is created |
 | JavaApplication | Beanstalk Application and Environment |
 
 ## Transformation implementation details
@@ -51,11 +51,9 @@ at buildtime: cfninit gets put on ec2 + userdata that executes cfninit + authent
 
 In contrast to the NodeTypes discussed above, there are various NodeTypes which don't get mapped to a specific CloudFormation resource but are rather added to the EC2 instance that they're meant to be hosted on. Specifically, this is done by the `OperationHandler` and `EnvironmentHandler` classes.
 
-We use the [CloudFormation Init]() to bootstrap our EC2 instances.
+We use the [CloudFormation Init](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-init.html) and the [cfn-init](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-init.html) script to bootstrap our EC2 instances.
 
 That being said, most of these NodeTypes require additional or alternative steps unique to them in order to be properly transformed. The following are explanation of how the transformation of each of these NodeTypes differs from the generic transformation behaviour.
-
-    TODO: add link to CloudFormation-Init
 
 ### Apache
 
@@ -68,8 +66,10 @@ That being said, most of these NodeTypes require additional or alternative steps
 
 ## Supported RelationshipTypes
 
-| TOSCA RelationshipType | CloudFormation |
-| --- | --- |
-| | |
+| TOSCA RelationshipType |
+| --- |
+| **hostedOn** |
+| **connectsTo**: WebApplication -> Database |
+| **connectsTo**: JavaApplication -> Database |
 
-    TODO: Add RelationshipType transformation explanations.
+Currently, the CloudFormation plugin does not require additional steps to be taken after preparing the model with the `PrepareModelRelationshipVisitor` during the [prepare phase](transformation-workflow.md#prepare) and transforming it with the `TransformModelNodeVisitor` during the [transform phase](transformation-workflow.md#transform) in order to facilitate these relationships between the resources on AWS.
