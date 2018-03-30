@@ -7,6 +7,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+/**
+ This configuration is used to Configure the BaseImageMapper
+ It enables Scheduling and supplies the BaseImageMapper with a list of BaseImageTypes it should look for
+ */
 @Configuration
 @EnableScheduling
 @Profile("!" + Profiles.EXCLUDE_BASE_IMAGE_MAPPER)

@@ -12,6 +12,12 @@ import org.opentosca.toscana.plugins.kubernetes.visitor.util.ComputeNodeFindingV
 import static org.opentosca.toscana.plugins.kubernetes.util.GraphOperations.buildTopologyStacks;
 import static org.opentosca.toscana.plugins.kubernetes.util.GraphOperations.determineTopLevelNodes;
 
+/**
+ Implements the Prepare phase in the KubernetesLifecyle
+ <p>
+ This class analyzes the Topology and groups All complete nodes (and their Children into Node Stacks and
+ Groups these Nodestacks into pods
+ */
 class PrepareHandler extends LifecycleHandler {
 
     PrepareHandler(KubernetesLifecycle lifecycle) {

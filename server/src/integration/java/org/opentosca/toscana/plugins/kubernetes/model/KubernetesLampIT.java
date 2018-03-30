@@ -29,6 +29,9 @@ import static org.opentosca.toscana.plugins.kubernetes.KubernetesPlugin.DOCKER_R
 import static org.opentosca.toscana.plugins.kubernetes.KubernetesPlugin.DOCKER_REGISTRY_URL_PROPERTY_KEY;
 import static org.opentosca.toscana.plugins.kubernetes.KubernetesPlugin.DOCKER_REGISTRY_USERNAME_PROPERTY_KEY;
 
+/**
+ This Test Transforms the Lamp model (with one common Compute node) to DockerImages and a Kubernetes Resource
+ */
 public class KubernetesLampIT extends BaseTransformTest {
 
     @Rule

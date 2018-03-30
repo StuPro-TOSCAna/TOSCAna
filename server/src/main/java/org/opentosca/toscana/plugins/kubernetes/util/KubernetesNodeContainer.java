@@ -4,6 +4,8 @@ import org.opentosca.toscana.model.node.RootNode;
 
 /**
  This container class stores the data about this node aquired by the kubernetes plugin
+ 
+ The Containment is only used to see if the nodes have a parent compute node (direct or indirect)
  */
 public class KubernetesNodeContainer {
 

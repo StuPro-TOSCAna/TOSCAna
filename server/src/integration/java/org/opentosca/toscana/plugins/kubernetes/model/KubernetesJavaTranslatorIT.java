@@ -10,6 +10,9 @@ import org.opentosca.toscana.model.EffectiveModelFactory;
 
 import org.apache.commons.io.FileUtils;
 
+/**
+ This Test Transforms the JavaTranslator model to DockerImages and a Kubernetes Resource
+ */
 public class KubernetesJavaTranslatorIT extends KubernetesLampIT {
     public KubernetesJavaTranslatorIT() throws Exception {
         super();

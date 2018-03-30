@@ -10,9 +10,15 @@ import org.opentosca.toscana.plugins.util.TransformationFailureException;
 
 import org.jgrapht.graph.DirectedMultigraph;
 
-public class RelationshipGraph extends DirectedMultigraph<NodeStack, Requirement> {
+/**
+ This Graph represents all Connections between NodeStacks
+ <p>
+ The graph basically represents a contracted version (A Node Stack is one Vertex) of the Effective Models Graph
+ It can easily be extended to also handle other types of relationships
+ */
+public class ConnectionGraph extends DirectedMultigraph<NodeStack, Requirement> {
 
-    public RelationshipGraph(Set<NodeStack> stacks) {
+    public ConnectionGraph(Set<NodeStack> stacks) {
         super(Requirement.class);
         stacks.forEach(this::addVertex);
         for (NodeStack stack : stacks) {
