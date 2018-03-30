@@ -13,6 +13,7 @@ pages:
         - 'Running with Docker': 'user/docker.md'
         - "TOSCA Support": 'user/tosca-support.md'
         - "TOSCAna Types": 'user/toscana-types.md'
+        - "CloudFoundry Plugin" : 'user/plugins/cloudFoundry/cloud-foundry-plugin.md'
     - Developer Documentation:
         - 'REST API':
             - 'Swagger Documentation': 'dev/core/rest-api.md'

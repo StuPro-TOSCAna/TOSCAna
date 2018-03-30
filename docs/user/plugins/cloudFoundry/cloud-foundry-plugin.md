@@ -3,31 +3,31 @@
 ## Introduction
 The Cloud Foundry Plugin transforms a CSAR to an artifact, that can be deployed on the Cloud Foundry Platform. In general the following steps have to be done to transform and deploy a CSAR:
 
-- upload CSAR with the GUI/ CLI
-- select Platform CloudFoundry
-- enter Properties
-- transform
-- download artifact
-- unzip at target location
-- start deploying with deploy.sh found in output/scripts/
+1. upload CSAR with the GUI/ CLI
+2. select Platform CloudFoundry
+3. enter required Inputs
+4. start Transformation
+5. download artifact
+6. unzip at target location
+7. start deploying with with execution of deploy.sh found in output/scripts/ in target artifact
 
 Before the Transformation can start the Cloud Foundry credentials and additional properties have to be set:
 
-- CF_Instance_Username: Username of CloudFoundry user account
-- CF_Instance_Api: The endpoint of the provider
-- CF_Instance_Organization: The organization of the user account which should be used to deploy
-- CF_Instance_Password: Password of CloudFoundry user account
-- CF_Instance_Space: The space of the user account which should be used to deploy
+- `CF_Instance_Username`: Username of CloudFoundry user account
+- `CF_Instance_Api`: The endpoint of the provider
+- `CF_Instance_Organization`: The organization of the user account which should be used to deploy
+- `CF_Instance_Password`: Password of CloudFoundry user account
+- `CF_Instance_Space`: The space of the user account which should be used to deploy
 
-The credentials are used to search for services which can be used for the Deployment.
-The plugin currently supports [the following NodesTypes.](../Supported_Node_Types.md) For more details on the Basics of Cloud Foundry, the Transformation and created scripts, see [Basics](../Basics.md), [Transformation](../Transformation_Process.md) and [Script Overview.](../Python_Scripts_Overview.md)
+The credentials are used to get a list of services which can be used for deployment.
+The plugin currently supports [the following NodesTypes.](docs/dev/plugins/cloudFoundry/Supported_Node_Types.md) For more details on the Basics of Cloud Foundry, the Transformation and created scripts, see [Basics](docs/dev/plugins/cloudFoundry/Basics.md), [Transformation](docs/dev/plugins/cloudFoundry/Transformation_Process.md) and [Script Overview.](docs/dev/plugins/cloudFoundry/Python_Scripts_Overview.md)
 
 ## Artifact
-The Artifact contains all necessary files which are needed to deploy an application on Cloud Foundry. After you open the Artifact you can see the log of the Transformation, the app folder(s) which contain your application and the output folder which contains the files for deployment.
+The Artifact is the result of the transformation which contains all necessary files which are needed to deploy an application on Cloud Foundry. After you open the Artifact you can see the log of the Transformation, the app folder(s) which contain your application and the output folder which contains the files for deployment. If you provide multiple applications in your CSAR the artifact will contain multiple app folders called app1, app2 and so on.
 
 ![Artifact overview](img/artifact-overview.png)
 
-App folder:
+App folder: The .bp-config folder in this case contains buildpack additions for a php application, which needs some additional buildpacks.
 
 ![Artifact app folder](img/artifact-app.png)
 
@@ -39,7 +39,7 @@ Scripts folder:
 
 ![Artifact scripts folder](img/artifact-scripts.png)
 
-The Plugin tries to find free services available on the Cloud Foundry Platform to provide support for your defined NodeTypes. They can be changed to paid plans, to see all available services you can open all_services.txt in the output folder.
+The Plugin tries to find free services available on the Cloud Foundry Platform to provide support for your modeled NodeTypes which are declared as services. They can be changed to paid plans. To see what additions a paid plan brings, please check your Cloud Foundry provider. You can see a list of all available services and corresponding plans in all_services.txt in the output folder.
 
 For example if you want to change a database plan for the service cleardb (available on Pivotal Cloud Foundry), open `deploy.sh` in output/scripts/ and change `cf create-service cleardb spark my_db` from the free spark plan to boost, amp or shock: `cf create-service cleardb shock my_db`. For more information about the output folder see README.txt.
 
@@ -86,7 +86,7 @@ The following CSARs can be used to test the Cloud Foundry Plugin:
 These CSARs can be found in `TOSCAna/server/src/test/resources/csars/yaml/valid`
 
 ## Doing a Transformation with a Test-CSAR
-The Lamp-input CSAR is used in this example, make sure you have done all the things from `Requirements for Deployment`. For details on how to use the GUI, see [Webapp](../webapp.md).
+The Lamp-input CSAR is used in this example, make sure you have done all the things from `Requirements for Deployment`. For details on how to use the GUI, see [Webapp](docs/user/webapp/webapp.md).
 After you upload the CSAR to the GUI and select the Cloud Foundry platform as the target you get the following inputs screen (we use Pivotal CF as endpoint here):
 
 ![CloudFoundry Inputs](img/inputs.png)
