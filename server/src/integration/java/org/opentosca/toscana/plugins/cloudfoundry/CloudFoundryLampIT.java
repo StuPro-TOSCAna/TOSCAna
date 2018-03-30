@@ -34,11 +34,11 @@ import static org.opentosca.toscana.plugins.cloudfoundry.ServiceTest.CF_ENVIRONM
  */
 public class CloudFoundryLampIT extends BaseTransformTest {
 
-    private final String envUser = System.getenv(CF_ENVIRONMENT_USER);
-    private final String envPw = System.getenv(CF_ENVIRONMENT_PW);
-    private final String envHost = System.getenv(CF_ENVIRONMENT_HOST);
-    private final String envOrga = System.getenv(CF_ENVIRONMENT_ORGA);
-    private final String envSpace = System.getenv(CF_ENVIRONMENT_SPACE);
+    private String envUser = System.getenv(CF_ENVIRONMENT_USER);
+    private String envPw = System.getenv(CF_ENVIRONMENT_PW);
+    private String envHost = System.getenv(CF_ENVIRONMENT_HOST);
+    private String envOrga = System.getenv(CF_ENVIRONMENT_ORGA);
+    private String envSpace = System.getenv(CF_ENVIRONMENT_SPACE);
 
     public CloudFoundryLampIT() {
         super(new CloudFoundryPlugin());
@@ -51,8 +51,8 @@ public class CloudFoundryLampIT extends BaseTransformTest {
 
     @Override
     protected void onSuccess(File outputDir) throws InterruptedException {
-        //System.out.println("You can stop me now");
-        //Thread.sleep(5000);
+        System.out.println("You can stop me now");
+        Thread.sleep(5000);
     }
 
     @Override
@@ -81,6 +81,11 @@ public class CloudFoundryLampIT extends BaseTransformTest {
 
     @Override
     protected void checkAssumptions() {
+        envUser = System.getenv(CF_ENVIRONMENT_USER);
+        envPw = System.getenv(CF_ENVIRONMENT_PW);
+        envHost = System.getenv(CF_ENVIRONMENT_HOST);
+        envOrga = System.getenv(CF_ENVIRONMENT_ORGA);
+        envSpace = System.getenv(CF_ENVIRONMENT_SPACE);
         assumeNotNull(envUser, envPw, envHost, envOrga, envSpace);
     }
 }

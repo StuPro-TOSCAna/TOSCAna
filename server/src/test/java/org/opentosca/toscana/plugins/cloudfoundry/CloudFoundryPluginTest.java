@@ -29,10 +29,9 @@ import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin.CF_P
 import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin.CF_PROPERTY_KEY_PASSWORD;
 import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin.CF_PROPERTY_KEY_SPACE;
 import static org.opentosca.toscana.plugins.cloudfoundry.CloudFoundryPlugin.CF_PROPERTY_KEY_USERNAME;
-import static org.opentosca.toscana.plugins.cloudfoundry.filecreator.FileCreator.FILEPRAEFIX_DEPLOY;
+import static org.opentosca.toscana.plugins.cloudfoundry.filecreator.FileCreator.FILENAME_DEPLOY;
 import static org.opentosca.toscana.plugins.cloudfoundry.filecreator.FileCreator.FILESUFFIX_DEPLOY;
 import static org.opentosca.toscana.plugins.cloudfoundry.filecreator.FileCreator.MANIFEST_PATH;
-import static org.opentosca.toscana.plugins.cloudfoundry.filecreator.FileCreator.deploy_name;
 import static org.opentosca.toscana.plugins.util.TestUtil.setUpMockTransformationContext;
 
 public class CloudFoundryPluginTest extends BaseUnitTest {
@@ -114,7 +113,7 @@ public class CloudFoundryPluginTest extends BaseUnitTest {
 
     @Test
     public void getDeployScript() throws Exception {
-        File targetFile = new File(targetDir + "/output/scripts/", FILEPRAEFIX_DEPLOY + deploy_name +
+        File targetFile = new File(targetDir + "/output/scripts/", FILENAME_DEPLOY +
             FILESUFFIX_DEPLOY);
         String deployScript = FileUtils.readFileToString(targetFile);
         String expectedOutput =

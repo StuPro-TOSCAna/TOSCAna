@@ -41,11 +41,11 @@ public class NodeTypeCheck implements StrictNodeVisitor {
 
     @Override
     public void visit(JavaRuntime node) {
-        //TODO: Implementation WIP
+        //no action here
     }
 
     @Override
     public void visit(JavaApplication node) {
-        //TODO: Implementation WIP
+        //no action here
     }
 }
