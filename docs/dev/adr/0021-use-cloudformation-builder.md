@@ -14,7 +14,8 @@ As a plugin developer, to be able to create CloudFormation templates with Java p
 ## Decision Outcome
 
 * Chosen Alternative: Use the CloudFormation Builder
-* Instead of building our own template creator from scratch, we decided to use an existing solution, the CloudFormation Builder. Because the project was never completed, we decided fork the project which we will maintain during development. Our fork is available [here](https://github.com/StuPro-TOSCAna/cloudformation-builder).
+* Instead of building our own template creator from scratch, we decided to use an existing solution, the CloudFormation Builder.
+Because the project was never completed, we decided fork the project which we will maintain during development. Our fork is available [here](https://github.com/StuPro-TOSCAna/cloudformation-builder).
 * As a consequence, we need to update the CloudFormation Builder during the development of our plugin in order to allow the transformation.
 
 ## Pros and Cons of the Alternatives <!-- optional -->
@@ -34,4 +35,4 @@ As a plugin developer, to be able to create CloudFormation templates with Java p
 ### Build our own Template Creator
 
 * `+` Can be built from the ground up to suit our needs
-* `-` Requires a lot of addional effort to get the same result
+* `-` Requires a lot of additional effort to get the same result
