@@ -1,13 +1,14 @@
 # Setting up a Development/Test Environment
 
-In order to test the functionality of the Kubernetes plugin you need some sort of Kubernetes cluster.
+In order to test the functionality of the Kubernetes plugin, you need some sort of Kubernetes cluster.
+
 This short guide will describe to simple ways to setup a Kubernetes test and development environment.
 
 ## Using Minikube
 
 [Minikube](https://github.com/kubernetes/minikube) allows you to locally run a single node Kubernetes cluster inside of a virtual machine.
 
-After you have installed (Please consider reading the Official documentation to find out how to install it) Minikube just run:
+Consider reading the official documentation to find out how to install Minikube. After you have installed Minikube just run:
 ```Bash
 minikube start
 ```
@@ -22,7 +23,7 @@ Maybe testing with one node is not enough, for some reason.
 
 To do so the machines have to be in the same network (possibly the same local network). You also have to install Kubeadm and Docker on every machine.
 
-During development i used the following setup:
+During development we used the following setup:
 - A hypervisor running [Proxmox VE](https://www.proxmox.com/de/proxmox-ve)
   - The hypervisor is running 4 instances of
     - [CoreOS Container Linux](https://coreos.com/os/docs/latest/) - Version 1702.1.0
@@ -70,8 +71,8 @@ The "Login" command looks like this:
 kubeadm join --token <token> <master-ip>:<master-port> --discovery-token-ca-cert-hash sha256:<hash>
 ```
 
-After waiting some time, Kubernetes will download the system pods on every node and deploy them,
-your cluster is ready to be used for development/testing,
+After waiting some time, Kubernetes will download the system pods on every node and deploy them.
+Your cluster is now ready to be used for development/testing.
 
 ### Further reading
 - Kubeadm - install guide: https://kubernetes.io/docs/setup/independent/install-kubeadm

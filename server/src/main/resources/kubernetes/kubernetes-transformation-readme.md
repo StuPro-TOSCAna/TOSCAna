@@ -1,7 +1,7 @@
 # TOSCAna - Kubernetes Transformation Artifact
 
-Congratulations! You have transformed a TOSCA topology using the Kubernetes Plugin of the TOSCAna Transformer. This readme will
-guide you through the deployment process for the transformed application.
+Congratulations! You have transformed a TOSCA topology using the Kubernetes Plugin of the TOSCAna Transformer. 
+This readme will guide you through the deployment process for the transformed application.
 
 ## Requirements
 
@@ -10,13 +10,14 @@ The following section describes the requirements for your environment in order t
 ### Deployment Machine Requirements
 
 - Kubectl (Version 1.8 or newer)
-  - The Kubectl context for the cluster you want to deploy to has to be set as default
-  - The set context/configuration needs the privileges to deploy on the cluster
+    - The Kubectl context for the cluster you want to deploy to has to be set as default
+    - The set context/configuration needs the privileges to deploy on the cluster
 - Bash (Tested with Version 4.4.19)
 - *OPTIONAL*: Jq (Tested with Version 1.5)
-  - jq is used to parse the Ports of the resulting services after the deployment is done. If jq is missing this step will be skipped.
+    - jq is used to parse the Ports of the resulting services after the deployment is done. If jq is missing this step will be skipped.
 
 Supported Platforms:
+
 - Linux
 - MacOS (Only with already Pushed Images, Won't work properly because of the different `sed` implementation)
 - Windows (Untested, Might work for already Pushed Images with MSYS or Cygwin)
@@ -24,11 +25,10 @@ Supported Platforms:
 #### Additional Requirements for Pushing to a Registry
 
 - Docker (including Daemon with Version 17.03 or Later)
-  - The User executing the script has to be in the `docker` group
-  - Only Linux-based Docker is supported
-- A Docker Registry with Write access
-  - If Reading from the Registry requires Credentials automated deployment using the `deploy.sh` script is not possible,
-  because the Credentials have to be manually set in the cluster. (See **Further Reading** for more information)
+    - The User executing the script has to be in the `docker` group
+    - Only Linux-based Docker is supported
+- A Docker Registry with write access
+  - If Reading from the registry requires credentials, automated deployment using the `deploy.sh` script is not possible. This is because the credentials have to be manually set in the cluster. (See [**Further Reading**](#further-reading) for more information)
 
 ### Cluster Requirements
 
@@ -79,17 +79,16 @@ in the `output` directory and follow the on screen instructions.
 
 ### Deploying manually
 
-In some cases the Automated deploy script cannot be used.
-For example because you need to specify the registry secret in the Kubernetes manifest.
+In some cases the automated deploy script cannot be used.
+E.g., if you need to specify the registry secret in the Kubernetes manifest.
 
-In that case you can still use the `push-images.sh` script to push the images to the registry and to modify
-the manifest to feature the resulting image tags (including the registry URL).
+In that case you can still use the `push-images.sh` script to push the images to the registry and to modify the manifest to feature the resulting image tags (including the registry URL).
 
 Assuming the images have been pushed you can use
 ```bash
 kubectl create -f kubernetes-resources/complete.yml
 ```
-to deploy the result to the cluster manually
+to deploy the result to the cluster manually.
 
 ## Further Reading
 
