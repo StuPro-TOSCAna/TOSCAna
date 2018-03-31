@@ -82,4 +82,3 @@ pages:
                     - 'Target Artifact': 'dev/plugins/cloudformation/deployment/target-artifact.md'
                 - Development Notes:
                     - 'Extending the CloudFormation Plugin': 'dev/plugins/cloudformation/development-notes/extending-cloudformation.md'
-                    - 'Limitations': 'dev/plugins/cloudformation/development-notes/limitations.md'
