@@ -21,15 +21,15 @@ There you see two files:
   - a text file which contains all possible services with their plans.
 
 Also there is the scripts folder. Inside are all scripts which are necessary for the deployment.
-You could run the deploy_application(s).sh script and your application will be deployed.
+You could run the deploy.sh script and your application will be deployed.
 The script needs the Cloud Foundry CLI and therefore a valid connection. Otherwise the script will break.
 
 ---Deployment---
-Go to /output/scripts and run the deploy_application(s).sh scripts to deploy your applications.
+Go to /output/scripts and run the deploy.sh scripts to deploy your applications.
 If your application uses a service like a database, TOSCAna chooses a suitable service for you. We took automatically a free-plan
 which may not suitable for you. But you are able to change it manually.
   - Just look for a suitable service / plan in the /output/all_services.txt
-  - change in the deploy_application(s).sh all occurrence of the old service / plan and change it to the new one.
+  - change in the deploy.sh all occurrence of the old service / plan and change it to the new one.
 
 ---Additional information---
 Please do not move or rename files or folders!

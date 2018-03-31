@@ -12,6 +12,8 @@
         <div class="download">
             <a *ngIf="transformationDone" class="btn btn-success btn-lg btn-block"
                href="{{url}}">Download Artifact</a>
+            <button *ngIf="transformationDone && !checkIfTransformationFailed()" class="btn btn-success btn-lg btn-block"
+               (click)="downloadScript()">Download run script</button>
         </div>
     </div>
     <ul class="nav nav-tabs">
