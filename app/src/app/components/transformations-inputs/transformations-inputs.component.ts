@@ -104,7 +104,7 @@ export class TransformationInputsComponent implements OnInit {
             this.selectedPlatform = params.get('platform');
             this.transformationsProvider.getTransformationByCsarAndPlatform(this.csarId, this.selectedPlatform).subscribe(data => {
                 if (data.state !== StateEnum.INPUTREQUIRED && data.state !== StateEnum.READY) {
-                    this.routeHandler.openTransformation(this.csarId, this.selectedPlatform);
+                    this.routeHandler.openTransformationView(this.csarId, this.selectedPlatform);
                 }
             });
             return this.transformationsProvider.getTransformationInputs(this.csarId, this.selectedPlatform);
@@ -128,7 +128,7 @@ export class TransformationInputsComponent implements OnInit {
         this.transformationsProvider.startTransformation(this.csar.name, this.selectedPlatform).then(() => {
             this.csar.addTransformation(this.selectedPlatform, this.platformsProvider.getFullPlatformName(this.selectedPlatform));
             this.csarsProvider.updateCsar(this.csar);
-            this.routeHandler.openTransformation(this.csar.name, this.selectedPlatform);
+            this.routeHandler.openTransformationView(this.csar.name, this.selectedPlatform);
         });
     }
 

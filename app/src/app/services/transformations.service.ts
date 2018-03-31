@@ -53,8 +53,8 @@ export class ClientsTransformationsService {
         return this.transformationsService.deleteTransformationUsingDELETE(csarId, platform);
     }
 
-    getLogs(csarId: string, platform: string, num: number) {
-        return this.transformationsService.getTransformationLogsUsingGET(csarId, platform, num);
+    getLogs(csarId: string, platform: string, last: number) {
+        return this.transformationsService.getTransformationLogsUsingGET(csarId, platform, last);
     }
 
 }

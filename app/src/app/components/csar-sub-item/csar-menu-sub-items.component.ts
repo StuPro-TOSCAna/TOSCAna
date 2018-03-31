@@ -44,12 +44,12 @@ export class CsarMenuSubItemsComponent implements OnInit {
             const pos = this.csar.transformations.indexOf(transformation);
             this.csar.transformations.splice(pos, 1);
             this.csarProvider.updateCsar(this.csar);
-            this.routeHandler.openCsar(this.csar.name);
+            this.routeHandler.openCsarView(this.csar.name);
         }, err => this.messageService.addErrorMessage('Failed to removeMessage transformation'));
     }
 
     openTransformationView(platform: string) {
-        this.routeHandler.openTransformation(this.csar.name, platform);
+        this.routeHandler.openTransformationView(this.csar.name, platform);
     }
 
 }

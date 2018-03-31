@@ -21,12 +21,12 @@ export class CsarItemComponent implements OnInit {
     }
 
     public open() {
-        this.routeHandler.openCsar(this.csar.name);
+        this.routeHandler.openCsarView(this.csar.name);
     }
 
     newTransformation() {
-        this.routeHandler.setUpCsar(this.csar.name);
-        this.routeHandler.newTransformation(this.csar.name);
+        this.routeHandler.openCsarItem(this.csar.name);
+        this.routeHandler.openTransformationCreator(this.csar.name);
     }
 
     deleteCsar() {

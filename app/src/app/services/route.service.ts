@@ -11,7 +11,6 @@ import {CsarOpen, InputFormOpen, TransformationOpen, ViewState} from '../model/v
 export class RouteHandler {
     _viewState: BehaviorSubject<ViewState>;
     inputLazyLoad = false;
-    v;
     private dataStore: {
         viewState: ViewState;
     };
@@ -29,30 +28,34 @@ export class RouteHandler {
         this._viewState.next(Object.assign({}, this.dataStore).viewState);
     }
 
-    openCsar(csarId: string) {
+    openCsarView(csarId: string) {
         this.router.navigate(['csar', csarId]);
         this.dataStore.viewState = new CsarOpen(csarId);
         this.updateViewStateSubject();
     }
 
-    newTransformation(csarId: string) {
+    openTransformationCreator(csarId: string) {
         this.router.navigate(['/new', csarId]);
     }
 
-    openTransformation(csarId: string, platform: string) {
+    openTransformationView(csarId: string, platform: string) {
         this.router.navigate(['/transformation', csarId, platform]);
         this.dataStore.viewState = new TransformationOpen(csarId, platform);
         this.updateViewStateSubject();
     }
 
-    openInputs(csarId: string, platform: string) {
+    openTransformationInputs(csarId: string, platform: string) {
         this.inputLazyLoad = false;
         this.dataStore.viewState = new InputFormOpen(csarId, platform);
         this.updateViewStateSubject();
         this.router.navigate(['/inputs', csarId, platform]);
     }
 
-    setUpCsar(csarId: string) {
+    /**
+     * notifies the sidebar that the given csar item should be opened and highlighted
+     * @param {string} csarId
+     */
+    openCsarItem(csarId: string) {
         const newState = new CsarOpen(csarId);
         if (this.dataStore.viewState !== newState) {
             this.dataStore.viewState = newState;
