@@ -13,9 +13,10 @@ pages:
         - 'Getting started': 'user/getting-started.md'
         - 'Running with Docker': 'user/docker.md'
         - "TOSCA Support": 'user/tosca-support.md'
-        - "TOSCAna Types": 'user/toscana-types.md'
+        - "TOSCAna Types": 'user/toscana-types.md'       
         - "WebApp": 'user/webapp/webapp.md'
         - Plugins:
+            - "CloudFoundry" : 'user/plugins/cloudFoundry/cloud-foundry-plugin.md'
             - Kubernetes:
                 - Requirements: 'user/plugins/kubernetes/requirements.md'
                 - Supported types: 'user/plugins/kubernetes/supported.md'
