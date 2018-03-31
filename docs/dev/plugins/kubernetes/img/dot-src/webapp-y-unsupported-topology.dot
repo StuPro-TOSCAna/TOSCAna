@@ -1,0 +1,14 @@
+digraph {
+    rankdir=TB;
+    nodesep=1.0;
+    node [color=Black, fontname=Arial, shape=box]
+    edge [color=Blue, fontname=Arial, label="HostedOn"]
+
+    app_1[label="WebApp 1"]
+    app_2[label="WebApp 2"]
+    webserver[label="Webserver"]
+    compute[label="Compute"]
+    app_1->webserver
+    app_2->webserver
+    webserver->compute
+}
