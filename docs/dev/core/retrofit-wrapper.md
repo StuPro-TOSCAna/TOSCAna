@@ -1,6 +1,6 @@
 # What is the Retrofit Wrapper?
 
-The Retrofit Wrapper is Java library that allows communication with a running instance of the TOSCAna transformer by calling the methods provided by the library.
+The Retrofit Wrapper is Java library that allows communication with a running instance of the TOSCAna server by calling the methods provided by the library.
 
 Without messing with the HTTP API, the only thing needed is the HTTP API endpoint to connect to. Everything else involving HTTP calls is implemented in the wrapper.
 
@@ -13,7 +13,7 @@ The wrapper is mostly undocumented, that is because it is not widely used within
 In some case you might want to block a thread, as long as the transformation is running.
 That is considered blocking in this context.
 
-There are two classes that the developer can choose from to interact with the transformer:
+There are two classes that the developer can choose from to interact with the server:
 
 - `ToscanaApi` - Provides synchronous calls for every operation supported by the REST API.
 All of these methods will return once the Response from the server has been received.
