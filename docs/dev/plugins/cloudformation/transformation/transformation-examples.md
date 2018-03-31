@@ -1,6 +1,6 @@
 # Transformation by Example
 
-In this chapter, the transformation mapping of the CloudFormation plugin is further explained through talking through the transformation of a complete TOSCA model.
+In this chapter, the transformation mapping of the CloudFormation plugin is further explained by walking through the transformation of a complete TOSCA model.
 
 ## TOSCA LAMP model
 

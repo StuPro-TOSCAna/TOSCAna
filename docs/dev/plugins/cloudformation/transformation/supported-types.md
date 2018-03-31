@@ -12,12 +12,12 @@ The following table contains the NodeTypes currently supported by the CloudForma
 | Compute | EC2 resource and corresponding SecurityGroup |
 | Database | Setup through CloudFormation Init on the EC2 host |
 | Dbms | Setup through CloudFormation Init on the EC2 host |
-| MysqlDatabase | RDS resource with a mysql engine |
+| MysqlDatabase | RDS resource with a mysql engine and corresponding SecurityGroup |
 | MysqlDbms | No specific resource is created |
 | WebApplication | Setup through CloudFormation Init on the EC2 host |
 | Nodejs | Setup through CloudFormation Init on the EC2 host |
 | JavaRuntime | No specific resource is created |
-| JavaApplication | Beanstalk Application and Environment |
+| JavaApplication | Beanstalk Application and Environment and corresponding SecurityGroup |
 
 ## NodeType Transformation Details
 
@@ -29,7 +29,7 @@ Each Compute node that was previously marked in the [prepare phase](transformati
 
 #### 1. Security Group
 
-The `SecurityGroup` is created. The security group allows the opening of ports for the corresponding EC2 instance. If present, optional endpoint ports are opened on this security group.
+The `SecurityGroup` is created. The security group allows giving other SecurityGroups access to them and opening of ports for the corresponding EC2 instance . If present, optional endpoint ports are opened on this security group.
 
 #### 2. Capability Mapping
 
@@ -37,7 +37,7 @@ Both the OsCapability and ComputeCapablity of the Compute node are mapped to pro
 
 First, the `CapabilityMapper` is used to figure out the ID of the Amazon Machine Image (AMI) corresponding to the OsCapability. To do this, we build an [`AmazonEC2`](https://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/services/ec2/AmazonEC2.html) client with the AWS SDK for Java to get the latest image IDs from AWS. In order to get the right image ID, a [`DescribeImagesRequest`](https://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/services/ec2/model/DescribeImagesRequest.html) is built with the properties of the OsCapability. When the image request is completed, the [`describeImages()`](https://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/services/ec2/AmazonEC2.html#describeImages-com.amazonaws.services.ec2.model.DescribeImagesRequest-) method of the EC2 client is used to get the images fulfilling the requirements of the request. From these images, the capability mapper takes the latest image ID available which in turn is used by the visitor as the `ImageId` property of the EC2 instance.
 
-Then the `CapabilityMapper` is used to figure out the right `InstanceType` for the EC2 instance corresponding to the ComputeCapability. The right instance type is determined based on the `numCpus` and `memSize` properties of the ComputeCapability. Once the right instance type has been found, it is used by the visitor as the `InstanceType` property of the EC2 instance. If no instance type fitting the requirements the ComputeCapability can be found, the transformation ends with a `TransformationFailureException`.
+Then the `CapabilityMapper` is used to figure out the right `InstanceType` for the EC2 instance corresponding to the ComputeCapability. The right instance type is determined based on the `numCpus` and `memSize` properties of the ComputeCapability. Specifically, this is done by scaling up those values until a fitting instance type is found. It is then used by the visitor as the `InstanceType` property of the EC2 instance. If no instance type fitting the requirements the ComputeCapability can be found, the transformation ends with a `TransformationFailureException`.
 
 #### 3. Cloudformation Init
 
@@ -132,7 +132,7 @@ Contrary to the NodeTypes discussed above, there are various NodeTypes which don
 
 The `Operationhandler` takes the create, start and configure operations and adds them as files and commands to the CFNInit of the underlying EC2 instance. Specifically, this means that the dependencies and artifacts are marked as files to be uploaded to the S3 Bucket and marking the EC2 instance as an instance in need of Authentication. The authentication mentioned here is needed for the EC2 instance to access the S3 Bucket containing the files. Both artifacts and dependencies are also added as CFNFiles to the CFNInit, meaning that the cfn-init script will download them during the initial bootstrapping of these EC2 instances. Lastly, the path to the artifact on the EC2 instance and the inputs for the operation are added as a CFNCommand to the CFNInit, meaning that it will be executed by the cfn-init script during the bootstrapping.
 
-In order to allow the nodes to access the input variables of the start operations during runtime, the inputs are also added to the `environmentMap` of the `CloudFormationModule`. Later during the [transform phase](transformation-workflow.md), these variables are written to `etc/environment` on the EC2 instance through `setEnv` scripts.
+In order to allow the nodes to access the input variables of the start operations during runtime, the inputs are also added to the `environmentMap` of the `CloudFormationModule`. Later during the [transform phase](transformation-workflow.md), these variables are written to `/etc/environment` on the EC2 instance through `setEnv` scripts.
 
 That being said, most of these NodeTypes require additional or alternative steps unique to them in order to be properly transformed. Next follows an explanation of how the transformation of each of these NodeTypes differs from the generic transformation behaviour.
 
@@ -140,7 +140,7 @@ That being said, most of these NodeTypes require additional or alternative steps
 
 Instead of using the create operation of the Apache node, we add the `apache2` package to the CFNInit of the underlying EC2 instance. The start and configure operations are added normally as described in [Generic Transformation of Nodes hosted on Compute](#generic-transformation-of-nodes-hosted-on-compute).
 
-Environment variables that are used during runtime by an application hosted on the Apache node must be imported from `etc/environment` to `etc/apache/envvars`. This is done through an additional command added to the CFNInit. These environment variables are added to `etc/environment` during the transformation of the application as described in [Generic Transformation of Nodes hosted on Compute](#generic-transformation-of-nodes-hosted-on-compute).
+Environment variables that are used during runtime by an application hosted on the Apache node must be imported from `etc/environment` to `etc/apache/envvars`. This is done through an additional command added to the CFNInit. These environment variables are added to `/etc/environment` during the transformation of the application as described in [Generic Transformation of Nodes hosted on Compute](#generic-transformation-of-nodes-hosted-on-compute).
 
 If the start or configure operations were present in the Apache node, an additional `service apache2 restart` restart command is added to the CFNInit to ensure that the configuration modifications are properly loaded.
 
