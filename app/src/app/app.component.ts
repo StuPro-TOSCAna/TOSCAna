@@ -35,7 +35,7 @@ export class AppComponent implements OnInit {
         });
     }
 
-    convertToGb(bytes: number) {
+    convertToGb(bytes: number): string {
         const i = Math.floor(Math.log(bytes) / Math.log(1024));
         return (bytes / Math.pow(1024, Math.floor(i))).toFixed(1);
     }
