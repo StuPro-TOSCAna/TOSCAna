@@ -10,20 +10,28 @@ import org.slf4j.LoggerFactory;
 
 import static org.opentosca.toscana.plugins.cloudformation.CloudFormationModule.FILEPATH_TARGET;
 
+/**
+ Overrides the {@link BashScript} implementation with needs for CloudFormation.
+ */
 public class CloudFormationScript extends BashScript {
 
     private final static Logger logger = LoggerFactory.getLogger(BashScript.class);
 
     /**
      Creates a bash scriptPath in the <i>output/files/</i> directory in the transformation content directory and
-     marks it as a util file to be uploaded
+     marks it as a util file to be uploaded.
      <p>
-     These are scripts that need to be uploaded
+     These are scripts that need to be uploaded.
      */
     public CloudFormationScript(PluginFileAccess access, String name) throws IOException {
         super(access, name);
     }
 
+    /**
+     Sets up the script in the {@link org.opentosca.toscana.plugins.cloudformation.CloudFormationModule#FILEPATH_TARGET}
+     location.
+     */
+    @Override
     protected void setUpScript() throws IOException {
         scriptPath = FILEPATH_TARGET + name + ".sh";
 

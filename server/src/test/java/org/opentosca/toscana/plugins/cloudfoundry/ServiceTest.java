@@ -27,10 +27,9 @@ import org.junit.Test;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeNotNull;
-import static org.opentosca.toscana.plugins.cloudfoundry.filecreator.FileCreator.FILEPRAEFIX_DEPLOY;
+import static org.opentosca.toscana.plugins.cloudfoundry.filecreator.FileCreator.FILENAME_DEPLOY;
 import static org.opentosca.toscana.plugins.cloudfoundry.filecreator.FileCreator.FILESUFFIX_DEPLOY;
 import static org.opentosca.toscana.plugins.cloudfoundry.filecreator.FileCreator.SERVICE_FILE_PATH;
-import static org.opentosca.toscana.plugins.cloudfoundry.filecreator.FileCreator.deploy_name;
 import static org.opentosca.toscana.plugins.util.TestUtil.setUpMockTransformationContext;
 
 public class ServiceTest extends BaseUnitTest {
@@ -93,7 +92,7 @@ public class ServiceTest extends BaseUnitTest {
         fileCreator = new FileCreator(fileAccess, applications, context);
 
         fileCreator.createFiles();
-        File targetFile = new File(targetDir, outputPath + FILEPRAEFIX_DEPLOY + deploy_name + FILESUFFIX_DEPLOY);
+        File targetFile = new File(targetDir, outputPath + FILENAME_DEPLOY + FILESUFFIX_DEPLOY);
         String deployContent = FileUtils.readFileToString(targetFile);
         assertThat(deployContent, CoreMatchers.containsString(expectedDeployContent));
     }

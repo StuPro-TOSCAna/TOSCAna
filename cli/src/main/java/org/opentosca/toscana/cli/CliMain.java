@@ -44,9 +44,9 @@ public class CliMain extends AbstractCommand {
 
         //System Property gets set here, because picocli.trace must be set before CommandLine starts
         String input = String.join("", args);
-        if (input.contains("-m")) {
+        if (input.endsWith("-m")) {
             System.setProperty("picocli.trace", "DEBUG");
-        } else if (input.contains("-v")) {
+        } else if (input.endsWith("-v")) {
             System.setProperty("picocli.trace", "INFO");
         }
 
