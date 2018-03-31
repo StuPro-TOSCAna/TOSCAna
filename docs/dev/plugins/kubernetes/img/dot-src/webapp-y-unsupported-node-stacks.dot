@@ -1,0 +1,32 @@
+digraph {
+  rankdir=TB;
+  ranksep=0.1
+  compound=true;
+  node [color=Black, fontname=Arial, shape=box]
+
+  subgraph cluster_app_1 {
+    nodesep=1;
+    ranksep=1;
+    label="WebApp 1 - Node Stack";
+    fontname="Arial";
+    edge [color=Blue, fontname=Arial, label="HostedOn"]
+    app_1[label="WebApp 1"]
+    webserver_1[label="Webserver"]
+    compute_1[label="Compute"]
+    app_1->webserver_1
+    webserver_1->compute_1
+  }
+  subgraph cluster_app_2 {
+    nodesep=1;
+    ranksep=1;
+    label="WebApp 2 - Node Stack";
+    fontname="Arial";
+    edge [color=Blue, fontname=Arial, label="HostedOn"]
+    app_2[label="WebApp 2"]
+    webserver_2[label="Webserver"]
+    compute_2[label="Compute"]
+    app_2->webserver_2
+    webserver_2->compute_2
+  }
+
+}

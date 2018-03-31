@@ -1,0 +1,1 @@
+../../../../server/src/main/resources/kubernetes/kubernetes-transformation-readme.md

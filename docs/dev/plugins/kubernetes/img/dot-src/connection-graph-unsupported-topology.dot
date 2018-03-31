@@ -1,0 +1,23 @@
+digraph {
+  rankdir=TB
+  nodesep=0.3
+  ranksep=0.3
+  node [color=Black, fontname=Arial, shape=box]
+  edge [color=Blue, fontname=Arial, label="HostedOn"]
+
+  a[label="A"]
+  b[label="B"]
+  compute_a[label="Compute"]
+  a->b->compute_a
+
+  c[label="C"]
+  compute_c[label="Compute"]
+  c->compute_c
+
+  edge [color=Red, fontname=Arial, label="ConnectsTo",constraint=false]
+  a->c
+  b->c
+
+  {rank=same; a,c}
+  {rank=same; compute_a,compute_c}
+}
