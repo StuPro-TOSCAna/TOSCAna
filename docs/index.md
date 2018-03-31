@@ -1,6 +1,7 @@
-# Home
+![](assets/logo-small.png)
+# Introduction
 
-TOSCAna is open source project developed by students at the University of Stuttgart.
+TOSCAna is a open source project developed by students at the University of Stuttgart.
 
 ## Purpose
 
