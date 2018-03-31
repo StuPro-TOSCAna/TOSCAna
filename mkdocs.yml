@@ -23,6 +23,9 @@ pages:
                 - Writing models: 'user/plugins/kubernetes/creating-models.md'
                 - Notes:
                 - Transformation readme: 'user/plugins/kubernetes/transformation-readme.md'
+            - CloudFormation:
+                - Requirements: 'user/plugins/cloudformation/requirements.md'
+                - Transformation Readme: 'user/plugins/cloudformation/cloudformation-readme.md'
     - Developer Documentation:
         - Home: "dev/intro.md"
         - 'Core':
@@ -77,6 +80,21 @@ pages:
                     - "Dockerfile builder": 'dev/plugins/kubernetes/util/dockerfile-builder.md'
                     - "Sudo detection": 'dev/plugins/kubernetes/util/sudo-detection.md'
                     - "Kubernetes service overview": 'dev/plugins/kubernetes/util/k8s-service-overview.md'
+            - CloudFormation:
+                - Overview: 'dev/plugins/cloudformation/overview.md'
+                - Architecture: 'dev/plugins/cloudformation/architecture.md'
+                - CloudFormation:
+                    - 'CloudFormation Basics': 'dev/plugins/cloudformation/basics/cloudformation-basics.md'
+                    - 'CloudFormation Builder': 'dev/plugins/cloudformation/basics/cloudformation-builder.md'
+                - Transformation:
+                    - 'Transformation Workflow': 'dev/plugins/cloudformation/transformation/transformation-workflow.md'
+                    - 'Transformation by TOSCA Type': 'dev/plugins/cloudformation/transformation/supported-types.md'
+                    - 'Transformation by Example': 'dev/plugins/cloudformation/transformation/transformation-examples.md'
+                - Deployment:
+                    - 'Deployment Workflow': 'dev/plugins/cloudformation/deployment/deployment-workflow.md'
+                    - 'Target Artifact': 'dev/plugins/cloudformation/deployment/target-artifact.md'
+                - Development Notes:
+                    - 'Extending the CloudFormation Plugin': 'dev/plugins/cloudformation/development-notes/extending-cloudformation.md'
         - "Architectural Decision Records":
             - "0000 - Use Markdown Architectural Decision Records": "dev/adr/0000-use-markdown-architectural-decision-records.md"
             - "0001 - Use custom model for transformations": "dev/adr/0001-model-for-transformations.md"
