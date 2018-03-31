@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {Router} from '@angular/router';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {CsarOpen, InputFormOpen, TransformationOpen, ViewState} from '../model/view-states';
+import {Observable} from 'rxjs/Observable';
 
 /**
  * Manages the state of the current opened view
@@ -20,7 +21,7 @@ export class RouteHandler {
         this._viewState = new BehaviorSubject<ViewState>(this.dataStore.viewState);
     }
 
-    get viewState() {
+    get viewState(): Observable<ViewState> {
         return this._viewState.asObservable();
     }
 
@@ -28,23 +29,23 @@ export class RouteHandler {
         this._viewState.next(Object.assign({}, this.dataStore).viewState);
     }
 
-    openCsarView(csarId: string) {
+    public openCsarView(csarId: string) {
         this.router.navigate(['csar', csarId]);
         this.dataStore.viewState = new CsarOpen(csarId);
         this.updateViewStateSubject();
     }
 
-    openTransformationCreator(csarId: string) {
+    public openTransformationCreator(csarId: string) {
         this.router.navigate(['/new', csarId]);
     }
 
-    openTransformationView(csarId: string, platform: string) {
+    public openTransformationView(csarId: string, platform: string) {
         this.router.navigate(['/transformation', csarId, platform]);
         this.dataStore.viewState = new TransformationOpen(csarId, platform);
         this.updateViewStateSubject();
     }
 
-    openTransformationInputs(csarId: string, platform: string) {
+    public openTransformationInputs(csarId: string, platform: string) {
         this.inputLazyLoad = false;
         this.dataStore.viewState = new InputFormOpen(csarId, platform);
         this.updateViewStateSubject();
@@ -55,7 +56,7 @@ export class RouteHandler {
      * notifies the sidebar that the given csar item should be opened and highlighted
      * @param {string} csarId
      */
-    openCsarItem(csarId: string) {
+    public openCsarItem(csarId: string) {
         const newState = new CsarOpen(csarId);
         if (this.dataStore.viewState !== newState) {
             this.dataStore.viewState = newState;
@@ -63,11 +64,11 @@ export class RouteHandler {
         }
     }
 
-    close() {
+    public close() {
         this.router.navigate(['/']);
     }
 
-    closeCsar() {
+    public closeCsar() {
         this.dataStore.viewState = null;
         this.updateViewStateSubject();
     }
