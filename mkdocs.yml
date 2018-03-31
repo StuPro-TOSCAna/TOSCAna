@@ -38,6 +38,7 @@ pages:
             - Components: "dev/webapp/components.md"
             - Model: "dev/webapp/model.md"
             - Services: "dev/webapp/services.md"
+            - TODO: "dev/webapp/todo.md"
         - CLI:
             - Architecture: 'dev/cli/cli-architecture.md'
             - Commands: 'dev/cli/cli-commands.md'
