@@ -84,7 +84,7 @@ export class TransformationViewComponent implements OnInit, OnDestroy {
                 .subscribe(res => {
                     this.transformation = res;
                     this.checkTransformationstate();
-                    this.logView.refresh();
+                    this.logView.loadNewLogEntries();
                 });
         });
     }
