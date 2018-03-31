@@ -32,7 +32,7 @@ The `visitor` is used to iterate over the EffectiveModel during the Transformati
 
 ### `CloudFormationVisitor`
 
-`CloudFormationVisitor` is the abstract class superclass for all visitor classes. It contains the `Logger` to log messages while visiting and all visitors iterates over the `Topology` of the `EffectiveModel`. There are also various utility methods to be used by the visitors during the transformation lifecycle.
+`CloudFormationVisitor` is the abstract superclass for all visitor classes. It contains the `Logger` to log messages while visiting and all visitors iterate over the `Topology` of the `EffectiveModel`. There are also various utility methods to be used by the visitors during the transformation lifecycle.
 
 The behaviour of the specific child classes of the `CloudformationVisitor` are explained in detail in the [transformation workflow](transformation/transformation-workflow.md).
 
