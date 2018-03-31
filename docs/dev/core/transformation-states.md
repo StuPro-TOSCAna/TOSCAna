@@ -20,7 +20,3 @@ End States:
 - `ERROR` - While transforming a exception/error has occured. To restart the transformation has to be deleted and started again.
 - `INTERRUPTED` - The transformation has been stopped by the user. It behaves equally to the `ERROR` state
 - `DONE` - The transformation has finished with no errors. The target artifact can be downloaded again
-
-## Deployment
-
-To be Done!
