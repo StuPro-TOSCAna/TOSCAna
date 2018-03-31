@@ -19,12 +19,12 @@ Following domain model is used within the core.
 
 ##### Logging
 Logging is a first class citizen in the core domain model.
-This is because we are serving transformation specific logs via the rest API.
+This is because we are serving transformation specific logs via the REST API.
 Each logline gets cached in memory as well as written to the transformation specific log file. 
 Note that we are not reimplementing logging; we've rather wrapped up [logback](https://logback.qos.ch/) to fit our needs.
 
 ##### Persistency
-The filesystem is used directly to persist CSAR's and transformations (including the resulting transformation artifact). [Here's why](../adr/0015-persist-to-filesystem.md) we don't use a database instead.
+The filesystem is used directly to persist CSARs and transformations (including the resulting transformation artifact). [Here's why](../adr/0015-persist-to-filesystem.md) we don't use a database instead.
 
 File storage is structured in following way:
 
