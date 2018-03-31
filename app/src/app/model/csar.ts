@@ -1,10 +1,10 @@
 import {Transformation} from './transformation';
 import {isNullOrUndefined} from 'util';
-import {LifecyclePhase, TransformationResponse} from '../api';
+import {CsarResponse, LifecyclePhase, TransformationResponse} from '../api';
 import TransformationStateEnum = TransformationResponse.StateEnum;
 import StateEnum = LifecyclePhase.StateEnum;
 
-export class Csar {
+export class Csar implements CsarResponse {
     name: string;
     transformations: Transformation[];
     phases: Array<LifecyclePhase>;

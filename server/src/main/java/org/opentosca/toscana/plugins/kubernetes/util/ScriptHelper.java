@@ -13,11 +13,11 @@ public class ScriptHelper {
     /**
      Resource path to the push script
      */
-    private static final String PUSH_SCRIPT_RESOURCE_PATH = "/kubernetes/docker/push-images.sh";
+    private static final String PUSH_SCRIPT_RESOURCE_PATH = "/kubernetes/scripts/push-images.sh";
     /**
      Resource path to the deploy script
      */
-    private static final String DEPLOY_SCRIPT_RESOURCE_PATH = "/kubernetes/deploy.sh";
+    private static final String DEPLOY_SCRIPT_RESOURCE_PATH = "/kubernetes/scripts/deploy.sh";
 
     /**
      The list of helper shell scripts
@@ -40,7 +40,7 @@ public class ScriptHelper {
             boolean copy = !push || script.copyIfPushed();
             if (copy) {
                 InputStream in = ScriptHelper.class.getResourceAsStream(script.getResourcePath());
-                access.access("/output/" + script.getFileName())
+                access.access("/output/scripts/" + script.getFileName())
                     .append(IOUtils.toString(new InputStreamReader(in)))
                     .close();
                 in.close();

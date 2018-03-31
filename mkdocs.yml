@@ -2,6 +2,7 @@ site_name: TOSCAna
 theme: readthedocs
 repo_name: 'StuPro-TOSCAna/TOSCAna'
 repo_url: 'https://github.com/StuPro-TOSCAna/TOSCAna'
+strict: true
 extra:
   social:
     - type: 'github'
@@ -12,10 +13,14 @@ pages:
         - 'Getting started': 'user/getting-started.md'
         - 'Running with Docker': 'user/docker.md'
         - "TOSCA Support": 'user/tosca-support.md'
-        - "TOSCAna Types": 'user/toscana-types.md'
+        - "TOSCAna Types": 'user/toscana-types.md'       
+        - "WebApp": 'user/webapp/webapp.md'
         - "CloudFoundry Plugin" : 'user/plugins/cloudFoundry/cloud-foundry-plugin.md'
     - Developer Documentation:
+        - 'Core':
+            - 'Design': "dev/core/core.md"
         - 'REST API':
+            - 'Retrofit Wrapper': 'dev/core/retrofit-wrapper.md'
             - 'Swagger Documentation': 'dev/core/rest-api.md'
         - 'TOSCA model':
             - "EffectiveModel": "dev/model/effective-model.md"
@@ -23,7 +28,13 @@ pages:
             - "TOSCA Elements": "dev/model/tosca-elements.md"
             - "ServiceGraph": "dev/model/servicegraph.md"
             - "Code Templates": "dev/model/code-templates.md"
-            -  "Outlook": "dev/model/outlook.md"
+            - "Outlook": "dev/model/outlook.md"
+        - WebApp:
+            - "Getting Started": "dev/webapp/getting-started.md"
+            - "API bindings": "dev/webapp/api-bindings.md"
+            - Components: "dev/webapp/components.md"
+            - Model: "dev/webapp/model.md"
+            - Services: "dev/webapp/services.md"
         - CLI:
             - Architecture: 'dev/cli/cli-architecture.md'
             - Commands: 'dev/cli/cli-commands.md'
@@ -40,9 +51,24 @@ pages:
             - "0009 - CloudFoundry CLI": "dev/adr/0009-cloudfoundry-cli.md"
             - "0010 - How to perform Kubernetes end to end tests": "dev/adr/0010-use-docker-java.md"
             - "0011 - Put Integration Tests in seperate source directory": "dev/adr/0011-put-integration-tests-in-seperate-folder.md"
-            - "0012 - Use java CloudFoundry Library": "dev/adr/0012-cf-java-library.md"
+            - "0012 - CloudFoundry Java Library": "dev/adr/0012-cloudfoundry-java-library.md"
             - "0013 - Use AWS SDK for java": "dev/adr/0013-aws-file-upload.md"
             - "0014 - Navigate EffectiveModel with visitor pattern": "dev/adr/0014-iterate-effectivemodel-with-visitor-pattern.md"
             - "0015 - Use filesystem for persistency": "dev/adr/0015-persist-to-filesystem.md"
             - "0016 - Don't support TOSCA type definitions": "dev/adr/0016-not-supporting-type-definitions.md"
             - "0017 - Implement own TOSCA parser": "dev/adr/0017-implement-own-tosca-parser.md"
+            - "0018 - CloudFoundry No deployment during runtime": "dev/adr/0018-cloudfoundry-no-deployment-in-runtime.md"
+            - "0019 - CloudFoundry Deploymentscripts": "dev/adr/0019-cloudfoundry-deploymentscripts.md"
+            - "0020 - Library for CLI": "dev/adr/0020-library-for-cli.md"
+        - Plugins:
+            - CloudFoundry:
+              - Basics: 'dev/plugins/cloudFoundry/Basics.md'
+              - Transformation Process: 'dev/plugins/cloudFoundry/Transformation_Process.md'
+              - Transformation Example: 'dev/plugins/cloudFoundry/Transformation_example.md'
+              - Script Overview: 'dev/plugins/cloudFoundry/Python_Scripts_Overview.md'
+              - Supported Node Types: 'dev/plugins/cloudFoundry/Supported_Node_Types.md'
+              - How to add new Node Types: 'dev/plugins/cloudFoundry/How_add_new_Node_Types.md'
+              - Requirements & Known Issues: 'dev/plugins/cloudFoundry/Known_challenges.md'
+              - Deploying a CloudFoundry instance:
+                - Deploy Bosh Lite: 'dev/plugins/cloudFoundry/Deploying_Cloud_Foundry/deploy-cf-bosh-lite.md'
+                - Deploy Pivotal CloudFoundry dev: 'dev/plugins/cloudFoundry/Deploying_Cloud_Foundry/deploy-cf-pcf-dev.md'

@@ -158,8 +158,6 @@ public class CloudFoundryLifecycle extends AbstractLifecycle {
         logger.debug("Building complete Topology stacks");
         this.stacks.addAll(buildTopologyStacks(model, topLevelNodes, nodes));
 
-        //TODO: check how many different applications there are and fill list with them
-        //probably there must be a combination of application and set of nodes
         applications = new ArrayList<>();
         int i = 1;
 

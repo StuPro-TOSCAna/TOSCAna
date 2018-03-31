@@ -1,6 +1,9 @@
 #!/bin/bash
 # TOSCAna Kubernetes - Push Script
 
+# Move out of the scripts directory
+cd ..
+
 if ! [ -x "$(command -v "docker")" ]; then
   echo "Error: docker is not installed." >&2
   exit 1
