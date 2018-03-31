@@ -48,11 +48,10 @@ public class FileCreator {
     public static final String CLI_NO_START = " --no-start";
     public static final String CLI_START = "cf start ";
     public static final String CLI_PATH_TO_MANIFEST = " -f ../";
-    public static final String FILEPRAEFIX_DEPLOY = "deploy_";
+    public static final String FILENAME_DEPLOY = "deploy";
     public static final String FILESUFFIX_DEPLOY = ".sh";
     public static final String APPLICATION_FOLDER = "app";
     public static final String ENVIRONMENT_CONFIG_FILE = "_environment_config.txt";
-    public static String deploy_name = "application";
 
     private TransformationContext context;
     private Logger logger;
@@ -203,10 +202,7 @@ public class FileCreator {
      creates a deploy shell script
      */
     private void createDeployScript() throws IOException {
-        if (applications.size() > 1) {
-            deploy_name += "s";
-        }
-        BashScript deployScript = new BashScript(fileAccess, FILEPRAEFIX_DEPLOY + deploy_name);
+        BashScript deployScript = new BashScript(fileAccess, FILENAME_DEPLOY);
         deployScript.append("echo \"$(tput bold)--------TOSCAna Cloud Foundry deployment--------$(tput sgr0)\"");
         deployScript.append("echo \"This script will deploy your application to the Cloud Foundry instance\"");
         deployScript.append("echo \"We use the CloudFoundry CLI and show you the output as well\"");
