@@ -1,10 +1,10 @@
 # Transformation by Example
 
-In this chapter the transformation mapping of the CloudFormation plugin is further explained through talking through the transformation of a complete TOSCA model.
+In this chapter, the transformation mapping of the CloudFormation plugin is further explained through talking through the transformation of a complete TOSCA model.
 
 ## TOSCA LAMP model
 
-The example used is a simple LAMP stack consisting of a PHP WebApplication connected to a MysqlDatabase which are hosted on a an Apache webserver and a MysqlDBMS respectively, which in turn are both hosted on one Compute node. The following is a graphical representation of the TOSCA model:
+The example used is a simple LAMP stack consisting of a PHP WebApplication connected to a MysqlDatabase which are hosted on an Apache webserver and a MysqlDBMS respectively, which in turn are both hosted on one Compute node. The following is a graphical representation of the TOSCA model:
 
 ![Graphical representation of the TOSCA model](img/lamp-example-tosca-model.jpg)
 

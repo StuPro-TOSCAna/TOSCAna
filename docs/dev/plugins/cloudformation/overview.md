@@ -28,4 +28,4 @@ Next up is the core part of the documentation, a detailed explanation of the tra
 
 The next chapter explains the deployment of the CloudFormation template created by the transformation with our plugin.
 
-At last we'll discuss which prerequisites should be met before development for and/or subsequent testing of the CloudFormation Plugin and we'll explain what **you** should know if you want to expand the plugin. Finally, the limitations and known issues with the current version of the plugin will be addressed.
+At last, we'll discuss which prerequisites should be met before development for and/or subsequent testing of the CloudFormation Plugin and we'll explain what **you** should know if you want to expand the plugin. Finally, the limitations and known issues with the current version of the plugin will be addressed.

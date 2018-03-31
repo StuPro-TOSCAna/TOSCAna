@@ -8,14 +8,14 @@ The following table contains the NodeTypes currently supported by the CloudForma
 
 | TOSCA NodeType | CloudFormation |
 | --- | --- |
-| Apache | Setup through CloudFormation Init on EC2 host |
+| Apache | Setup through CloudFormation Init on the EC2 host |
 | Compute | EC2 resource and corresponding SecurityGroup |
-| Database | Setup through CloudFormation Init on EC2 host |
-| Dbms | Setup through CloudFormation Init on EC2 host |
+| Database | Setup through CloudFormation Init on the EC2 host |
+| Dbms | Setup through CloudFormation Init on the EC2 host |
 | MysqlDatabase | RDS resource with a mysql engine |
 | MysqlDbms | No specific resource is created |
-| WebApplication | Setup through CloudFormation Init on EC2 host |
-| Nodejs | Setup through CloudFormation Init on EC2 host |
+| WebApplication | Setup through CloudFormation Init on the EC2 host |
+| Nodejs | Setup through CloudFormation Init on the EC2 host |
 | JavaRuntime | No specific resource is created |
 | JavaApplication | Beanstalk Application and Environment |
 
@@ -35,13 +35,13 @@ The `SecurityGroup` is created. The security group allows the opening of ports f
 
 Both the OsCapability and ComputeCapablity of the Compute node are mapped to properties of the EC2 instance by the `CapabilityMapper`.
 
-First the `CapabilityMapper` is used to figure out the ID of the Amazon Machine Image (AMI) corresponding to the OsCapability. To do this, we build an [`AmazonEC2`](https://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/services/ec2/AmazonEC2.html) client with the AWS SDK for Java to get the latest image IDs from AWS. In order to get the right image ID, a [`DescribeImagesRequest`](https://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/services/ec2/model/DescribeImagesRequest.html) is built with the properties of the OsCapability. When the image request is completed, the [`describeImages()`](https://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/services/ec2/AmazonEC2.html#describeImages-com.amazonaws.services.ec2.model.DescribeImagesRequest-) method of the EC2 client is used to get the images fullfilling the requirements of the request. From these images, the capability mapper takes the the latest image ID available which in turn is used by the visitor as the `ImageId` property of the EC2 instance.
+First, the `CapabilityMapper` is used to figure out the ID of the Amazon Machine Image (AMI) corresponding to the OsCapability. To do this, we build an [`AmazonEC2`](https://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/services/ec2/AmazonEC2.html) client with the AWS SDK for Java to get the latest image IDs from AWS. In order to get the right image ID, a [`DescribeImagesRequest`](https://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/services/ec2/model/DescribeImagesRequest.html) is built with the properties of the OsCapability. When the image request is completed, the [`describeImages()`](https://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/services/ec2/AmazonEC2.html#describeImages-com.amazonaws.services.ec2.model.DescribeImagesRequest-) method of the EC2 client is used to get the images fulfilling the requirements of the request. From these images, the capability mapper takes the latest image ID available which in turn is used by the visitor as the `ImageId` property of the EC2 instance.
 
 Then the `CapabilityMapper` is used to figure out the right `InstanceType` for the EC2 instance corresponding to the ComputeCapability. The right instance type is determined based on the `numCpus` and `memSize` properties of the ComputeCapability. Once the right instance type has been found, it is used by the visitor as the `InstanceType` property of the EC2 instance. If no instance type fitting the requirements the ComputeCapability can be found, the transformation ends with a `TransformationFailureException`.
 
 #### 3. Cloudformation Init
 
-We use the [CloudFormation Init](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-init.html) and the [cfn-init](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-init.html) script to bootstrap our EC2 instances. It allows us to call scripts, commands, install packages and download files on our EC2 instances. Specifically the `CFNinit` is created and added to the `CloudFormationModule` but not yet to the EC2 instance, so it can still be manipulated by the visitor.
+We use the [CloudFormation Init](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-init.html) and the [cfn-init](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-init.html) script to bootstrap our EC2 instances. It allows us to call scripts, commands, install packages and download files on our EC2 instances. Specifically, the `CFNinit` is created and added to the `CloudFormationModule` but not yet to the EC2 instance, so it can still be manipulated by the visitor.
 
 #### 4. Creating the instance
 
@@ -58,13 +58,11 @@ Here the previously built `CFNInit`s belonging to EC2 instances and a userdata s
 
 If EC2 instances need additional files from the S3 bucket during the deployment, an `Authentication` and `IamInstanceProfile` are added to those instances to allow them to access the S3 bucket.
 
-If the `keyPair` property of the `CloudFormationModule` is set to true, a `KeyName` [CloudFormation parameter](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/parameters-section-structure.html) is added to the `CloudFormationModule`. This parameter must be set in the `create-stack.sh` script before deploying the target artifact as mentioned in the [platform properties](../architecture.md#platform-properties) section.
-
-    TODO: Add link to architecture platform properties section.
+If the `keyPair` property of the `CloudFormationModule` is set to true, a `KeyName` [CloudFormation parameter](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/parameters-section-structure.html) is added to the `CloudFormationModule`. This parameter must be set in the `create-stack.sh` script before deploying the target artifact as mentioned in the [architecture](../architecture.md#platform-properties#cloudformation-plugin) chapter.
 
 ### MysqlDatabase
 
-Each MysqlDatabase gets transformed to a DBInstance resource.
+Each MysqlDatabase gets transformed into a DBInstance resource.
 
 ### MysqlDBMS
 
@@ -78,11 +76,11 @@ Because we transform JavaApplications to Beanstalk resources we do not require a
 
 Contrary to the NodeTypes discussed above, there are various NodeTypes which don't get mapped to a specific CloudFormation resource but are rather added to the EC2 instance that they're meant to be hosted on. Specifically, this is done by the `OperationHandler` and `EnvironmentHandler` classes.
 
-The `Operationhandler` takes the create, start and configure operations and adds them as files and commands to the CFNInit of the underlying EC2 instance. Specifically, this means that the dependencies and artifacts are marked as files to be uploaded to the S3 Bucket and marking the EC2 instance as an instance in need of Authentication. The authentication mentioned here is needed for the EC2 instance to access the S3 Bucket containing the files. Both artifacts and dependencies are also added as CFNFiles to the CFNInit, meaning that the cfn-init script will download them during the initial bootstrapping of these EC2 instance. Lastly, the path to the artifact on the EC2 instance and the inputs for the operation are added as a CFNCommand to the CFNInit, meaning that it will be executed by the cfn-init script during the bootstrapping.
+The `Operationhandler` takes the create, start and configure operations and adds them as files and commands to the CFNInit of the underlying EC2 instance. Specifically, this means that the dependencies and artifacts are marked as files to be uploaded to the S3 Bucket and marking the EC2 instance as an instance in need of Authentication. The authentication mentioned here is needed for the EC2 instance to access the S3 Bucket containing the files. Both artifacts and dependencies are also added as CFNFiles to the CFNInit, meaning that the cfn-init script will download them during the initial bootstrapping of these EC2 instances. Lastly, the path to the artifact on the EC2 instance and the inputs for the operation are added as a CFNCommand to the CFNInit, meaning that it will be executed by the cfn-init script during the bootstrapping.
 
-In order to allow the nodes to access the input variables of the start operations during runtime, the inputs are also added to the `environmentMap` of the `CloudFormationModule`. Later during the [transform phase](transformation-workflow.md), these variables are get written to `etc/environment` on the EC2 instance through `setEnv` scripts.
+In order to allow the nodes to access the input variables of the start operations during runtime, the inputs are also added to the `environmentMap` of the `CloudFormationModule`. Later during the [transform phase](transformation-workflow.md), these variables are written to `etc/environment` on the EC2 instance through `setEnv` scripts.
 
-That being said, most of these NodeTypes require additional or alternative steps unique to them in order to be properly transformed. The following are explanation of how the transformation of each of these NodeTypes differs from the generic transformation behaviour.
+That being said, most of these NodeTypes require additional or alternative steps unique to them in order to be properly transformed. Next follows an explanation of how the transformation of each of these NodeTypes differs from the generic transformation behaviour.
 
 ### Apache
 
@@ -98,7 +96,7 @@ In addition to the generic hosted node transformation, the port contained in the
 
 ### Database
 
-Similar to the Dbms node, in addition to the generic hosted node transformation, the port contained in the port property of the Database node are opened on the underlying EC2 instance by opening it in the corresponding SecurityGroup.
+Similar to the Dbms node, in addition to the generic hosted node transformation, the port contained in the port property of the Database node is opened on the underlying EC2 instance by opening it in the corresponding SecurityGroup.
 
 ### WebApplication
 

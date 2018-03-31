@@ -1,6 +1,6 @@
 # Architecture
 
-In this section we'll discuss the basic architecture of the CloudFormation plugin aswell as the basic roles of the various classes that constitute it.
+In this section, we'll discuss the basic architecture of the CloudFormation plugin as well as the basic roles of the various classes that constitute it.
 The following is simplified UML diagram of the `cloudformation` package:
 ![Class diagram of the cloudformation package](img/architecture-lucidchart.png)
 
@@ -22,7 +22,7 @@ For further information about the behaviour of the CloudFormation plugin during 
 
 ### `CloudFormationModule`
 
-`CloudFormationModule` is an extension of the `Module` class of the cloudformation-builder. Originally, it was used in order to represent the java model of a CloudFormation template, but in order to fulfill the needs of our plugin, we extended it with additional fields and methods needed to facilitate the deployment of our template. During the transformation, it gets filled with the information in order to create the CloudFormation template and any additional files needed for deployment.
+`CloudFormationModule` is an extension of the `Module` class of the cloudformation-builder. Originally, it was used in order to represent the Java model of a CloudFormation template, but in order to fulfil the needs of our plugin, we extended it with additional fields and methods needed to facilitate the deployment of our template. During the transformation, it gets filled with the information in order to create the CloudFormation template and any additional files needed for deployment.
 
 ## Visitor package
 

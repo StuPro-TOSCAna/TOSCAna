@@ -18,13 +18,13 @@ Resources:
       InstanceType: "t2.micro"
 ```
 
-For the full capabilites and more information about the specification of CloudFormation templates, please refer to the latest CloudFormation [User Guide](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html).
+For the full capabilities and more information about the specification of CloudFormation templates, please refer to the latest CloudFormation [User Guide](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html).
 
 ## CloudFormation Stacks
 
 In addition to provisioning Amazon resources with CloudFormation, existing resources created through CloudFormation can be changed by updating the template after deployment.
 
-Each deployment of a CloudFormation template results in a so called stack. This CloudFormation stack is the representation of the CloudFormation template and its corresponding resources on the AWS platform. Changes to the template of a created stack are directly reflected in the resources corresponding to that stack and updated accordingly. This allows the user to manage his CloudFormation stacks even after deployment.
+Each deployment of a CloudFormation template results in a so-called stack. This CloudFormation stack is the representation of the CloudFormation template and its corresponding resources on the AWS platform. Changes to the template of a created stack are directly reflected in the resources corresponding to that stack and updated accordingly. This allows the user to manage his CloudFormation stacks even after deployment.
 
 ## Additional Info
 
