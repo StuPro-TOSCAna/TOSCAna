@@ -1,6 +1,6 @@
 # Services
 
-Most of the services are wrappers around the by swagger-codegen auto generated services.
+Most of the services are wrappers around the by swagger-codegen auto-generated services.
 
 ## ClientCsarsService
 
@@ -39,7 +39,7 @@ The body of `subscribe()` is always called if there are new CSARs.
 
 ![](img/uml/ClientTransformationsService.png)
 
-Most of the methods in the ClientTransformationsService are just wrapping the methods of the auto generated transformations service.
+Most of the methods in the ClientTransformationsService are just wrapping the methods of the auto-generated transformations service.
 This was necessary to avoid refactoring the whole web app if the REST API changes.
 
 ## RouteHandler
@@ -74,7 +74,7 @@ The MessageService uses like the ClientCsarsService and the RouteHandler [RxJS](
 
 ![](img/uml/HealthService.png)
 
-The HealthService exists because the auto generated API bindings failed to provide a working health service.
+The HealthService exists because the auto-generated API bindings failed to provide a working health service.
 
 ## ClientPlatformsService
 
