@@ -27,6 +27,7 @@ pages:
             - "API bindings": "dev/webapp/api-bindings.md"
             - Components: "dev/webapp/components.md"
             - Model: "dev/webapp/model.md"
+            - Services: "dev/webapp/services.md"
         - CLI:
             - Architecture: 'dev/cli/cli-architecture.md'
             - Commands: 'dev/cli/cli-commands.md'
