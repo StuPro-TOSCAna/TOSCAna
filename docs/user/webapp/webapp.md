@@ -74,7 +74,7 @@ The web asks your for inputs which are needed to transform the CSAR.
 If a input field is highlighted red it means that it is required or that it is wrong.
 To get more information about an specific input you can hover over the info icon.
 
-**Important:** To get more information about the inputs check the documentation of the correspondin platform you want to transform to.
+**Important:** To get more information about the inputs check the documentation of the corresponding platform you want to transform to.
 
 **Step 4**: Click on the *Transform* button.   
 *If you can not click the button something in **Step 3** went wrong.*
