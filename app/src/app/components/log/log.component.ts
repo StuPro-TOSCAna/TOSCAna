@@ -101,7 +101,6 @@ export class LogComponent implements OnInit, OnChanges {
             }, err => this.messageService.addErrorMessage('Failed to load logEntries'));
         }
     }
-
     /**
      * replaces white spaces with unicode chars because angular removes normal whitespaces
      * and the indentation gets lost
