@@ -62,15 +62,69 @@ If the `keyPair` property of the `CloudFormationModule` is set to true, a `KeyNa
 
 ### MysqlDatabase
 
-Each MysqlDatabase gets transformed into a DBInstance resource.
+Each MysqlDatabase gets transformed into a DBInstance resource which is a AWS RDS instance. Also a corresponding `SecurityGroup` resource is created.
+
+#### 1. CapabilityMapping
+
+Various values do not need to mapped like the database name, the root user, the root password, or the port. These values are just taken from the node without further modifications.
+
+Launching a RDS requires a set value for the `allocatedStorage` field. The ComputeCapability of the underlying Compute node is used to obtain this value. The minimum value is 20 GB the maximum 6144 GB.
+
+The `CapabilityMapper` is also used to figure out the right `dBInstanceClass` which is similar to the `InstanceType` property of the EC2 but with different values. The same steps as getting the `InstanceType` for EC2 are taken. Refer to [CapabilityMapping of Compute Node](#2.-Capability-Mapping) for more information.
+
+#### 2. Security Group
+
+The `SecurityGroup` is created. The security group allows other security groups to access this one. Every resource that belongs to a security group which has an ingress rule to another security group can be accessed by resources belonging to that other securtiy group. This is what is done next. Every node that has a connectsTo relationship to this database should get access to it. The underlying compute nodes of these nodes or rather their security groups are taken and added to ingress rules to the security group of this database.
+
+#### 3. Creating the instance
+
+At this point, all necessary information in order to create the RDS instance has been gathered. The instance is created with the engine value of RDS set to "MySQL".
+
+#### 4. Handling SQL artifact
+
+Due to conventions the MysqlDatabase is able to carry a `.sql` artifact which should be executed on the database.
+
+Sadly AWS RDS does not offer a easy solution for this. The inconvenient way is to create an EC2 instance, install a mysql client on this instance, remotely execute the sql code onto the database and finally shutdown the instance. This special EC2 instance and a corresponding `SecurityGroup` are created and an ingress rule for this security group is added to the database security group. 
 
 ### MysqlDBMS
 
+Because the MysqlDatabases are transformed to AWS RDS, it is not required to be run a MysqlDbms on an EC2 instance. This node is omitted completely.
+
 ### JavaApplication
+
+JavaApplications are transformed to Beanstalk. This requires to create a Beanstalk Application, ApplicationVersion, ConfigurationTemplate and Environment. More information about Beanstalk can be found [here](https://aws.amazon.com/documentation/elastic-beanstalk/).
+
+#### 1. Beanstalk Application
+
+The Beanstalk Application is created. It in itself does not hold any information, but is referred to by the other resources. It is the representation of the Application.
+
+#### 2. Beanstalk ApplicationVersion
+
+The Beanstalk ApplicationVersion holds the `.jar` artifact. It holds it as a source bundle which is a reference to a S3 Bucket and a containing file. This means the `.jar` artifact is marked to be uploaded to the S3 Bucket and the values are put into a `SourceBundle` which is attached to the also created `ApplicationVersion`.
+
+#### 3. Beanstalk ConfigurationTemplate
+
+The `ConfigurationTemplate` holds the stack information of the Beanstalk Application. All available platforms can be found [here](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/concepts.platforms.html).
+
+At this point the underlying JavaRuntime, which holds Java version that the application is build for, is used. Using the `JavaRuntimeMapper` the java version is extracted and added to a predefined String which tells Beanstalk to run a Java Stack on Linux.
+
+#### 4. Adding OptionSettings to the ConfigurationTemplate
+
+`OptionSettings` are options that can be added to the ConfigurationTemplate. Several option settings are added.
+
+First a security group is created and opened to ports if there are any specified. The security group is wrapped into a option setting.
+
+All environment variables that are set in the start lifecycle of the JavaApplication will be added as option settings.
+
+All OptionSettings are added to the ConfigurationTemplate.
+
+#### 5. Beanstalk Environment
+
+The Beanstalk Environment is the core part because it holds all other resources together. It is created referencing the just created resources.
 
 ### JavaRuntime
 
-Because we transform JavaApplications to Beanstalk resources we do not require a JavaRuntime on an EC2 instance. All the information needed from the **JavaRuntime** in order to build those Beanstalk resources is taken during the `visit()` method of the JavaApplication.
+Because the JavaApplications are transformed to Beanstalk, it is not required to run a JavaRuntime on an EC2 instance. All the information needed from the **JavaRuntime** in order to build those Beanstalk resources is taken during the `visit()` method of the JavaApplication.
 
 ### Generic Transformation of Nodes hosted on Compute
 
