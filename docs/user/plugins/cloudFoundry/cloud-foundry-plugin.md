@@ -39,14 +39,14 @@ Scripts folder:
 
 ![Artifact scripts folder](img/artifact-scripts.png)
 
-The Plugin tries to find free services available on the Cloud Foundry Platform to provide support for your modeled NodeTemplates. They can be changed to paid plans. To see what additions a paid plan brings, please check your Cloud Foundry provider. You can see a list of all available services and corresponding plans in all_services.txt in the output folder.
+The Plugin tries to find free services available on the Cloud Foundry Platform to provide support for your modeled NodeTemplates. They can be changed to paid plans. What benefits will bring changing to a paid plan, please check your Cloud Foundry provider. You can see a list of all available services and corresponding plans in all_services.txt in the output folder.
 
 E.g., if you want to change a database plan for the service cleardb (available on Pivotal Cloud Foundry), open `deploy.sh` in output/scripts/ and change `cf create-service cleardb spark my_db` from the free spark plan to boost, amp or shock: `cf create-service cleardb shock my_db`. For more information about the output folder see README.txt.
 
 ## Requirements for Deployment
 Before you can use the artifact to deploy, there are some requirements:
 - Cloud Foundry is running on target infrastructure
-- the CLI output is in English:
+- the CLI output is in English, if you are not sure use:
 `export LANG=en_US.UTF-8`
 
 - the Cloud Foundry CLI is installed on the local machine
@@ -89,7 +89,7 @@ The following CSARs can be used to test the Cloud Foundry Plugin:
 These CSARs can be found in `TOSCAna/server/src/test/resources/csars/yaml/valid`
 
 ## Doing a Transformation with a Test-CSAR
-The Lamp-input CSAR is used in this example. Make sure you have done all the things from [Requirements for Deployment](#requirements-for-deployment). For details on how to use the GUI, see the [Webapp User guide](../../webapp/webapp.md)
+The Lamp-input CSAR is used in this example. Make sure you have done all the things from [Requirements for Deployment](#requirements-for-deployment). For details on how to use the GUI, see the [Webapp User guide](../../webapp/webapp.md).
 After you upload the CSAR to the GUI and select the Cloud Foundry platform as the target you get the following inputs screen (we use Pivotal CF as endpoint here):
 
 ![CloudFoundry Inputs](img/inputs.png)
