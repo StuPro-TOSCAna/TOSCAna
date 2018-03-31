@@ -2,6 +2,7 @@ site_name: TOSCAna
 theme: readthedocs
 repo_name: 'StuPro-TOSCAna/TOSCAna'
 repo_url: 'https://github.com/StuPro-TOSCAna/TOSCAna'
+strict: true
 extra:
   social:
     - type: 'github'
@@ -15,6 +16,8 @@ pages:
         - "TOSCAna Types": 'user/toscana-types.md' 
         - "WebApp": 'user/webapp/webapp.md'
     - Developer Documentation:
+        - 'Core':
+            - 'Design': "dev/core/core.md"
         - 'REST API':
             - 'Swagger Documentation': 'dev/core/rest-api.md'
         - 'TOSCA model':
