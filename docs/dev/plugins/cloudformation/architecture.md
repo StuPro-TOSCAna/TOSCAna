@@ -1,14 +1,47 @@
 # Architecture
 
-    TODO: Add a class diagram.
-    TODO: Add a small explanation/overview of the classes
+In this section we'll discuss the basic architecture of the CloudFormation plugin aswell as the basic roles of the various classes that constitute it.
+The following is simplified UML diagram of the `cloudformation` package:
+![Class diagram of the cloudformation package](img/architecture-lucidchart.png)
 
-`CloudFormationModule` is an extension of the `Module` class of the cloudformation-builder. Originally, it was used in order to represent the java model of a CloudFormation template, but in order to fulfill the needs of our plugin, we extended the it with additional fields and methods needed to facilitate the deployment of our template.
+## Cloudformation package
 
-`CloudFormationPlugin`
-These credentials are needed during the `check` phase of the transformation lifecycle.
+The `cloudformation` package is the basic package of the CloudFormation plugin. It contains the `CloudFormationPlugin`, `CloudFormationLifecycle`, `CloudFormationModule` and `CloudFormationFileCreator` classes.
 
-`CloudFormationLifecycle`
-When the user starts the transformation of a TOSCA CSAR, the CloudFormation plugin starts working goes through the different phases of the for further information about the actual transformation procedure, please refer to the transformation workflow.
+### `CloudFormationPlugin`
 
-    TODO: Add link to transformation workflow
+`CloudFormationPlugin` is an extension of the `ToscanaPlugin` class representing the CloudFormation platform. The platform properties of the CloudFormation plugin are the `AWS Region` which determines where the transformed model will run in, the `AWS Access Key ID` and the `AWS Secret Key` which are the credentials used to communicate with AWS during the check and prepare phases of the transformation lifecycle and the `AWS Keypair` which, if set to true, makes sure that the EC2 instances can be accessed via SSH with a valid [AWS EC2 Keypair](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html).
+
+> **Note**: If the `AWS KeyPair` property is set to **true**, the name of your AWS EC2 Keypair must be manually replaced in the `create-stack.sh` script of the [target artifact](deployment/target-artifact.md#scripts) before deployment.
+
+### `CloudFormationLifecycle`
+
+`CloudFormationLifecycle` is an extension of the `AbstractLifecycle` class which contains the lifecycle phases that are executed if the user initiates the transformation procedure.
+When the lifecycle is constructed, the `CloudFormationModule` is initiated with the `fileAccess` and platform properties from the `TransformationContext` which is passed to the lifecycle as a parameter. The `model` field is also set with `EffectiveModel` from the `TransformationContext` which is later used during the lifecycle phases as a basis for the transformation.
+For further information about the behaviour of the CloudFormation plugin during each of these phases, please refer to the [transformation workflow](transformation/transformation-workflow.md).
+
+### `CloudFormationModule`
+
+`CloudFormationModule` is an extension of the `Module` class of the cloudformation-builder. Originally, it was used in order to represent the java model of a CloudFormation template, but in order to fulfill the needs of our plugin, we extended it with additional fields and methods needed to facilitate the deployment of our template. During the transformation, it gets filled with the information in order to create the CloudFormation template and any additional files needed for deployment.
+
+## Visitor package
+
+The `visitor` is used to iterate over the EffectiveModel during the TransformationLifecycle. It contains the `CloudFormationVisitor`, `CheckModelNodeVisitor`, `CheckModelRelationshipVisitor`, `PrepareModelNodeVisitor`, `PrepareModelRelationshipVisitor` and `TransformModelNodeVisitor` classes.
+
+### `CloudFormationVisitor`
+
+`CloudFormationVisitor` is the abstract class superclass for all visitor classes. It contains the `Logger` to log messages while visiting and all visitors iterates over the `Topology` of the `EffectiveModel`. There are also various utility methods to be used by the visitors during the transformation lifecycle.
+
+The behaviour of the specific child classes of the `CloudformationVisitor` are explained in detail in the [transformation workflow](transformation/transformation-workflow.md).
+
+## Handler package
+
+The `handler` package is used to handle the transformation of TOSCA operations. It contains the `EnvironmentHandler` and `OperationHandler` classes. The behaviour of these handler classes is explained in the [Transformation by TOSCA type](transformation/supported-types.md#generic-transformation-of-nodes-hosted-on-compute) chapter.
+
+## Mapper package
+
+The `mapper` package is used map TOSCA CapabilityTypes and the JavaRuntime NodeType. It contains the `CapabilityMapper` and `JavaRuntimeMapper` classes. The behaviour of these mapper classes is explained in the [Capability Mapping](transformation/supported-types.md#2-capability-mapping) and [JavaApplication](transformation/supported-types.md#javaapplication) of the Transformation by TOSCA type chapter.
+
+## Util package
+
+The `util` package contains various utility classes needed by the classes in the other packages. It contains the `AuthenticationUtils`, `CloudFormationScript`, `FileUpload`, `MappingUtils` and `StackUtils` classes.
