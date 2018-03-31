@@ -12,13 +12,14 @@ pages:
     - 'User Documentation':
         - 'Getting started': 'user/getting-started.md'
         - 'Running with Docker': 'user/docker.md'
-        - "TOSCA Support": 'user/tosca-support.md' 
-        - "TOSCAna Types": 'user/toscana-types.md' 
+        - "TOSCA Support": 'user/tosca-support.md'
+        - "TOSCAna Types": 'user/toscana-types.md'
         - "WebApp": 'user/webapp/webapp.md'
     - Developer Documentation:
         - 'Core':
             - 'Design': "dev/core/core.md"
         - 'REST API':
+            - 'Retrofit Wrapper': 'dev/core/retrofit-wrapper.md'
             - 'Swagger Documentation': 'dev/core/rest-api.md'
         - 'TOSCA model':
             - "EffectiveModel": "dev/model/effective-model.md"
