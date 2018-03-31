@@ -12,13 +12,13 @@ pages:
     - 'User Documentation':
         - 'Getting started': 'user/getting-started.md'
         - 'Running with Docker': 'user/docker.md'
-        - "TOSCA Support": 'user/tosca-support.md'
+        - "TOSCA support": 'user/tosca-support.md'
         - "TOSCAna Types": 'user/toscana-types.md'       
-        - "WebApp": 'user/webapp/webapp.md'
+        - "Web app": 'user/webapp/webapp.md'
         - Plugins:
             - "AWS CloudFormation":
                 - Requirements: 'user/plugins/cloudformation/requirements.md'
-                - Transformation Readme: 'user/plugins/cloudformation/cloudformation-readme.md'
+                - Transformation readme: 'user/plugins/cloudformation/cloudformation-readme.md'
             - "Cloud Foundry" : 'user/plugins/cloudFoundry/cloud-foundry-plugin.md'
             - Kubernetes:
                 - Requirements: 'user/plugins/kubernetes/requirements.md'
@@ -37,16 +37,16 @@ pages:
                 - Target artifact conventions: 'dev/plugins/target-artifact-conventions/target-artifact-conventions.md'
         - 'REST API':
             - 'Retrofit Wrapper': 'dev/core/retrofit-wrapper.md'
-            - 'Swagger Documentation': 'dev/core/rest-api.md'
+            - 'Swagger documentation': 'dev/core/rest-api.md'
         - 'TOSCA model':
             - "EffectiveModel": "dev/model/effective-model.md"
-            - "TOSCA Type Support": "dev/model/type-support.md"
+            - "TOSCA Type support": "dev/model/type-support.md"
             - "TOSCA Elements": "dev/model/tosca-elements.md"
             - "ServiceGraph": "dev/model/servicegraph.md"
-            - "Code Templates": "dev/model/code-templates.md"
+            - "Code templates": "dev/model/code-templates.md"
             - "Outlook": "dev/model/outlook.md"
-        - WebApp:
-            - "Getting Started": "dev/webapp/getting-started.md"
+        - Web app:
+            - "Getting started": "dev/webapp/getting-started.md"
             - "API bindings": "dev/webapp/api-bindings.md"
             - Components: "dev/webapp/components.md"
             - Model: "dev/webapp/model.md"
@@ -59,25 +59,25 @@ pages:
             - "AWS CloudFormation":
                 - Overview: 'dev/plugins/cloudformation/overview.md'
                 - Architecture: 'dev/plugins/cloudformation/architecture.md'
-                - CloudFormation:
-                    - 'CloudFormation Basics': 'dev/plugins/cloudformation/basics/cloudformation-basics.md'
+                - AWS CloudFormation:
+                    - 'CloudFormation basics': 'dev/plugins/cloudformation/basics/cloudformation-basics.md'
                     - 'CloudFormation Builder': 'dev/plugins/cloudformation/basics/cloudformation-builder.md'
                 - Transformation:
-                    - 'Transformation Workflow': 'dev/plugins/cloudformation/transformation/transformation-workflow.md'
+                    - 'Transformation workflow': 'dev/plugins/cloudformation/transformation/transformation-workflow.md'
                     - 'Transformation by TOSCA Type': 'dev/plugins/cloudformation/transformation/supported-types.md'
-                    - 'Transformation by Example': 'dev/plugins/cloudformation/transformation/transformation-examples.md'
+                    - 'Transformation by example': 'dev/plugins/cloudformation/transformation/transformation-examples.md'
                 - Deployment:
-                    - 'Deployment Workflow': 'dev/plugins/cloudformation/deployment/deployment-workflow.md'
-                    - 'Target Artifact': 'dev/plugins/cloudformation/deployment/target-artifact.md'
-                - 'Extending the CloudFormation Plugin': 'dev/plugins/cloudformation/development-notes/extending-cloudformation.md'
+                    - 'Deployment workflow': 'dev/plugins/cloudformation/deployment/deployment-workflow.md'
+                    - 'Target artifact': 'dev/plugins/cloudformation/deployment/target-artifact.md'
+                - 'Extending the CloudFormation plugin': 'dev/plugins/cloudformation/development-notes/extending-cloudformation.md'
             - Cloud Foundry:
                 - Basics: 'dev/plugins/cloudFoundry/Basics.md'
-                - Transformation Process: 'dev/plugins/cloudFoundry/Transformation_Process.md'
-                - Transformation Example: 'dev/plugins/cloudFoundry/Transformation_example.md'
+                - Transformation process: 'dev/plugins/cloudFoundry/Transformation_Process.md'
+                - Transformation example: 'dev/plugins/cloudFoundry/Transformation_example.md'
                 - Script Overview: 'dev/plugins/cloudFoundry/Python_Scripts_Overview.md'
                 - Supported Node Types: 'dev/plugins/cloudFoundry/Supported_Node_Types.md'
                 - How to add new Node Types: 'dev/plugins/cloudFoundry/How_add_new_Node_Types.md'
-                - Requirements & Known Issues: 'dev/plugins/cloudFoundry/Known_challenges.md'
+                - Requirements & known Issues: 'dev/plugins/cloudFoundry/Known_challenges.md'
                 - Deploying a CloudFoundry instance:
                   - Deploy Bosh Lite: 'dev/plugins/cloudFoundry/Deploying_Cloud_Foundry/deploy-cf-bosh-lite.md'
                   - Deploy Pivotal CloudFoundry dev: 'dev/plugins/cloudFoundry/Deploying_Cloud_Foundry/deploy-cf-pcf-dev.md'
@@ -93,26 +93,26 @@ pages:
                     - "Dockerfile builder": 'dev/plugins/kubernetes/util/dockerfile-builder.md'
                     - "Sudo detection": 'dev/plugins/kubernetes/util/sudo-detection.md'
                     - "Kubernetes service overview": 'dev/plugins/kubernetes/util/k8s-service-overview.md'
-          - "Architectural Decision Records":
-            - "0000 - Use Markdown Architectural Decision Records": "dev/adr/0000-use-markdown-architectural-decision-records.md"
-            - "0001 - Use custom model for transformations": "dev/adr/0001-model-for-transformations.md"
-            - "0002 - Design a general plugin architecture": "dev/adr/0002-general-plugin-architecture.md"
-            - "0003 - Use lombok in order to avoid writing boilerplate code": "dev/adr/0003-lombok.md"
-            - "0004 - Use Spring Framework for the REST-API": "dev/adr/0004-spring-framework.md"
-            - "0005 - Use Springfox for API documentation": "dev/adr/0005-springfox.md"
-            - "0006 - Bash Script Generator": "dev/adr/0006-bash-script-generator.md"
-            - "0007 - Use AWS CLI to deploy generated CloudFormation templates": "dev/adr/0007-plugin-cloudformation-cli.md"
-            - "0008 - How to perform Kubernetes end to end tests": "dev/adr/0008-kubernetes-end-to-end-tests.md"
-            - "0009 - CloudFoundry CLI": "dev/adr/0009-cloudfoundry-cli.md"
-            - "0010 - How to perform Kubernetes end to end tests": "dev/adr/0010-use-docker-java.md"
-            - "0011 - Put Integration Tests in seperate source directory": "dev/adr/0011-put-integration-tests-in-seperate-folder.md"
-            - "0012 - CloudFoundry Java Library": "dev/adr/0012-cloudfoundry-java-library.md"
-            - "0013 - Use the AWS CLI to upload files to Amazon S3": "dev/adr/0013-aws-file-upload.md"
-            - "0014 - Navigate EffectiveModel with visitor pattern": "dev/adr/0014-iterate-effectivemodel-with-visitor-pattern.md"
-            - "0015 - Use filesystem for persistency": "dev/adr/0015-persist-to-filesystem.md"
-            - "0016 - Don't support TOSCA type definitions": "dev/adr/0016-not-supporting-type-definitions.md"
-            - "0017 - Implement own TOSCA parser": "dev/adr/0017-implement-own-tosca-parser.md"
-            - "0018 - CloudFoundry No deployment during runtime": "dev/adr/0018-cloudfoundry-no-deployment-in-runtime.md"
-            - "0019 - CloudFoundry Deploymentscripts": "dev/adr/0019-cloudfoundry-deploymentscripts.md"
-            - "0020 - Library for CLI": "dev/adr/0020-library-for-cli.md"
-            - "0021 - Use Cloudformation Builder to build CloudFormation templates": "dev/adr/0021-use-cloudformation-builder.md"
+            - "Architectural Decision Records":
+                - "0000 - Use Markdown Architectural Decision Records": "dev/adr/0000-use-markdown-architectural-decision-records.md"
+                - "0001 - Use custom model for transformations": "dev/adr/0001-model-for-transformations.md"
+                - "0002 - Design a general plugin architecture": "dev/adr/0002-general-plugin-architecture.md"
+                - "0003 - Use lombok in order to avoid writing boilerplate code": "dev/adr/0003-lombok.md"
+                - "0004 - Use Spring Framework for the REST-API": "dev/adr/0004-spring-framework.md"
+                - "0005 - Use Springfox for API documentation": "dev/adr/0005-springfox.md"
+                - "0006 - Bash Script Generator": "dev/adr/0006-bash-script-generator.md"
+                - "0007 - Use AWS CLI to deploy generated CloudFormation templates": "dev/adr/0007-plugin-cloudformation-cli.md"
+                - "0008 - How to perform Kubernetes end to end tests": "dev/adr/0008-kubernetes-end-to-end-tests.md"
+                - "0009 - CloudFoundry CLI": "dev/adr/0009-cloudfoundry-cli.md"
+                - "0010 - How to perform Kubernetes end to end tests": "dev/adr/0010-use-docker-java.md"
+                - "0011 - Put Integration Tests in seperate source directory": "dev/adr/0011-put-integration-tests-in-seperate-folder.md"
+                - "0012 - CloudFoundry Java Library": "dev/adr/0012-cloudfoundry-java-library.md"
+                - "0013 - Use the AWS CLI to upload files to Amazon S3": "dev/adr/0013-aws-file-upload.md"
+                - "0014 - Navigate EffectiveModel with visitor pattern": "dev/adr/0014-iterate-effectivemodel-with-visitor-pattern.md"
+                - "0015 - Use filesystem for persistency": "dev/adr/0015-persist-to-filesystem.md"
+                - "0016 - Don't support TOSCA type definitions": "dev/adr/0016-not-supporting-type-definitions.md"
+                - "0017 - Implement own TOSCA parser": "dev/adr/0017-implement-own-tosca-parser.md"
+                - "0018 - CloudFoundry No deployment during runtime": "dev/adr/0018-cloudfoundry-no-deployment-in-runtime.md"
+                - "0019 - CloudFoundry Deploymentscripts": "dev/adr/0019-cloudfoundry-deploymentscripts.md"
+                - "0020 - Library for CLI": "dev/adr/0020-library-for-cli.md"
+                - "0021 - Use Cloudformation Builder to build CloudFormation templates": "dev/adr/0021-use-cloudformation-builder.md"

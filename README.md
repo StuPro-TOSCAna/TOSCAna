@@ -10,6 +10,7 @@ The TOSCAna project allows the transformation of TOSCA CSARs into other cloud fo
 Currently supported target platforms are Kubernetes, CloudFoundry and AWS CloudFormation.
 
 Check out the [wiki](http://toscana.readthedocs.io/en/latest/) for detailed information.
+The javadoc can be found [here](https://stupro-toscana.github.io/TOSCAna-javadoc/).
 
 ## Contributing
 See our [contribution guidelines](CONTRIBUTING.md) for detailed information on how to contribute to TOSCAna.
