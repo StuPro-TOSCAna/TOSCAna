@@ -16,18 +16,17 @@ pages:
         - "TOSCAna Types": 'user/toscana-types.md'       
         - "WebApp": 'user/webapp/webapp.md'
         - Plugins:
-            - "CloudFoundry" : 'user/plugins/cloudFoundry/cloud-foundry-plugin.md'
+            - "AWS CloudFormation":
+                - Requirements: 'user/plugins/cloudformation/requirements.md'
+                - Transformation Readme: 'user/plugins/cloudformation/cloudformation-readme.md'
+            - "Cloud Foundry" : 'user/plugins/cloudFoundry/cloud-foundry-plugin.md'
             - Kubernetes:
                 - Requirements: 'user/plugins/kubernetes/requirements.md'
                 - Supported types: 'user/plugins/kubernetes/supported.md'
                 - Writing models: 'user/plugins/kubernetes/creating-models.md'
-                - Notes:
                 - Transformation readme: 'user/plugins/kubernetes/transformation-readme.md'
-            - CloudFormation:
-                - Requirements: 'user/plugins/cloudformation/requirements.md'
-                - Transformation Readme: 'user/plugins/cloudformation/cloudformation-readme.md'
     - Developer Documentation:
-        - Home: "dev/intro.md"
+        - Introduction: "dev/intro.md"
         - 'Core':
             - 'Design': "dev/core/core.md"
             - Testing the application: 'dev/server-testing.md'
@@ -57,30 +56,7 @@ pages:
             - Architecture: 'dev/cli/cli-architecture.md'
             - Commands: 'dev/cli/cli-commands.md'
         - Plugins:
-            - CloudFoundry:
-              - Basics: 'dev/plugins/cloudFoundry/Basics.md'
-              - Transformation Process: 'dev/plugins/cloudFoundry/Transformation_Process.md'
-              - Transformation Example: 'dev/plugins/cloudFoundry/Transformation_example.md'
-              - Script Overview: 'dev/plugins/cloudFoundry/Python_Scripts_Overview.md'
-              - Supported Node Types: 'dev/plugins/cloudFoundry/Supported_Node_Types.md'
-              - How to add new Node Types: 'dev/plugins/cloudFoundry/How_add_new_Node_Types.md'
-              - Requirements & Known Issues: 'dev/plugins/cloudFoundry/Known_challenges.md'
-              - Deploying a CloudFoundry instance:
-                - Deploy Bosh Lite: 'dev/plugins/cloudFoundry/Deploying_Cloud_Foundry/deploy-cf-bosh-lite.md'
-                - Deploy Pivotal CloudFoundry dev: 'dev/plugins/cloudFoundry/Deploying_Cloud_Foundry/deploy-cf-pcf-dev.md'
-            - Kubernetes:
-                - Definitions: 'dev/plugins/kubernetes/definitions.md'
-                - 'Setting up a test environment': 'dev/plugins/kubernetes/test-environment.md'
-                - 'Transformation procedure': 'dev/plugins/kubernetes/transformation-procedure.md'
-                - 'Building Dockerfiles': 'dev/plugins/kubernetes/building-dockerfiles.md'
-                - 'Limitations': 'dev/plugins/kubernetes/limitations.md'
-                - 'Extending the Kubernetes plugin': 'dev/plugins/kubernetes/extending-k8s.md'
-                - Utilities:
-                    - "Base Image Mapper": 'dev/plugins/kubernetes/util/base-image-mapper.md'
-                    - "Dockerfile builder": 'dev/plugins/kubernetes/util/dockerfile-builder.md'
-                    - "Sudo detection": 'dev/plugins/kubernetes/util/sudo-detection.md'
-                    - "Kubernetes service overview": 'dev/plugins/kubernetes/util/k8s-service-overview.md'
-            - CloudFormation:
+            - "AWS CloudFormation":
                 - Overview: 'dev/plugins/cloudformation/overview.md'
                 - Architecture: 'dev/plugins/cloudformation/architecture.md'
                 - CloudFormation:
@@ -93,9 +69,31 @@ pages:
                 - Deployment:
                     - 'Deployment Workflow': 'dev/plugins/cloudformation/deployment/deployment-workflow.md'
                     - 'Target Artifact': 'dev/plugins/cloudformation/deployment/target-artifact.md'
-                - Development Notes:
-                    - 'Extending the CloudFormation Plugin': 'dev/plugins/cloudformation/development-notes/extending-cloudformation.md'
-        - "Architectural Decision Records":
+                - 'Extending the CloudFormation Plugin': 'dev/plugins/cloudformation/development-notes/extending-cloudformation.md'
+            - Cloud Foundry:
+                - Basics: 'dev/plugins/cloudFoundry/Basics.md'
+                - Transformation Process: 'dev/plugins/cloudFoundry/Transformation_Process.md'
+                - Transformation Example: 'dev/plugins/cloudFoundry/Transformation_example.md'
+                - Script Overview: 'dev/plugins/cloudFoundry/Python_Scripts_Overview.md'
+                - Supported Node Types: 'dev/plugins/cloudFoundry/Supported_Node_Types.md'
+                - How to add new Node Types: 'dev/plugins/cloudFoundry/How_add_new_Node_Types.md'
+                - Requirements & Known Issues: 'dev/plugins/cloudFoundry/Known_challenges.md'
+                - Deploying a CloudFoundry instance:
+                  - Deploy Bosh Lite: 'dev/plugins/cloudFoundry/Deploying_Cloud_Foundry/deploy-cf-bosh-lite.md'
+                  - Deploy Pivotal CloudFoundry dev: 'dev/plugins/cloudFoundry/Deploying_Cloud_Foundry/deploy-cf-pcf-dev.md'
+            - Kubernetes:
+                - Definitions: 'dev/plugins/kubernetes/definitions.md'
+                - 'Setting up a test environment': 'dev/plugins/kubernetes/test-environment.md'
+                - 'Transformation procedure': 'dev/plugins/kubernetes/transformation-procedure.md'
+                - 'Building Dockerfiles': 'dev/plugins/kubernetes/building-dockerfiles.md'
+                - 'Limitations': 'dev/plugins/kubernetes/limitations.md'
+                - 'Extending the Kubernetes plugin': 'dev/plugins/kubernetes/extending-k8s.md'
+                - Utilities:
+                    - "Base Image Mapper": 'dev/plugins/kubernetes/util/base-image-mapper.md'
+                    - "Dockerfile builder": 'dev/plugins/kubernetes/util/dockerfile-builder.md'
+                    - "Sudo detection": 'dev/plugins/kubernetes/util/sudo-detection.md'
+                    - "Kubernetes service overview": 'dev/plugins/kubernetes/util/k8s-service-overview.md'
+          - "Architectural Decision Records":
             - "0000 - Use Markdown Architectural Decision Records": "dev/adr/0000-use-markdown-architectural-decision-records.md"
             - "0001 - Use custom model for transformations": "dev/adr/0001-model-for-transformations.md"
             - "0002 - Design a general plugin architecture": "dev/adr/0002-general-plugin-architecture.md"
