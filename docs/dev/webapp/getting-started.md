@@ -33,8 +33,8 @@ Since the idea of the WebApp is to be deployed with the API on the same server y
 
 ## Get the WebApp running
 
-### SetUp the repository
-The WebApp is part of our TOSCAna repository therefore you need to clone the whole repository to develop the WebApp.
+### Set up the repository
+The WebApp is part of our TOSCAna repository. Therefore you need to clone the whole repository to develop the WebApp.
 ```bash
 git clone git@github.com:StuPro-TOSCAna/TOSCAna.git
 ```
@@ -45,7 +45,7 @@ Now you have to install all packages the WebApp needs to be build.
 cd TOSCAna && yarn install
 ```
 
-### Start the TOSCAna transformer
+### Start the TOSCAna server
 
 If you want to use the WebApp in production you should start it with the TOSCAna transformer like descriped [here](../../user/getting-started.md).
 For development this is quite heavy and features like live reload are missing. Therefore you should run the transformer independently. 
@@ -62,7 +62,7 @@ export const environment = {
 ```
 Change the `apiUrl` to the URL of the transformer REST API:
 
-If you change the `environment.prod.ts` the deployment with the rest of the stack wont work.
+If you change the `environment.prod.ts` the deployment with the rest of the stack won't work.
 
 ### Serve the WebApp
 
@@ -70,4 +70,4 @@ In the app root folder run:
 ```bash
 yarn start
 ```
-You now can view the WebApp in your browser at this address: [http://localhost:4000](http://localhost:4200).
+You now can view the WebApp in your browser at this address: [http://localhost:4200](http://localhost:4200).

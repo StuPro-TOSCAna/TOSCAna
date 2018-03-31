@@ -1,7 +1,7 @@
 # API bindings
 
 Our server uses [Swagger](https://swagger.io/) to document our REST API. Swagger provides a tool called [swagger-codegen](https://github.com/swagger-api/swagger-codegen).
-With swagger-codegen it is possible to auto generate TypeScript bindings/calls for our TOSCAna REST API.
+With swagger-codegen it is possible to auto-generate TypeScript bindings/calls for our TOSCAna REST API.
 ## Install swagger-codegen
 
 There are several possibilities to install swagger-codegen:
@@ -35,7 +35,7 @@ Simply run:
 
 ### Manual check
 
-Since the auto generation can go wrong it is always a good idea if everything went right.
+Since the auto generation can go wrong it is always a good idea to check if everything went right.
 
 
 

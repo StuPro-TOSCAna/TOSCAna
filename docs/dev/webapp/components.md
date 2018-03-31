@@ -1,7 +1,7 @@
 # Components
 **Note:** This guide assumes you are in the `app/src/app/` folder.
 
-In Angular components are used to seperate an application in different display blocks that display data, listen on user input, and take action based on that input.
+In Angular, components are used to seperate an application in different display blocks that display data, listen on user input, and take action based on that input.
 
 In the following all components of the TOSCAna web app will be shortly explained:
 
@@ -12,7 +12,8 @@ In the following all components of the TOSCAna web app will be shortly explained
 
 ![](img/app-comonent.png)
 
-The app component is the entry point of the web app it holds the topbar, sidebar and the view.
+The app component is the entry point of the web app.
+It contains the topbar, sidebar and the view.
 
 **View:** The content of the view changes dynamically based on the route. The `routes` array in `modules/routing/routing.modules.ts` maps a route to a component.
 You can read more about routing [here](https://angular.io/guide/router) in the Angular docs.
@@ -21,9 +22,11 @@ You can read more about routing [here](https://angular.io/guide/router) in the A
 
 ![](img/sidebar.png)
 
-The sidebar shows all available CSARs if you click on a CSAR it also shows its sub items.
+The sidebar shows all available CSARs.
+If you click on a CSAR it also shows its sub items.
 
-The sidebar component also manages CSAR upload it checks if the CSAR name is valid and if the User submits it uploads the file to the server.
+The sidebar component also manages CSAR upload.
+It checks if the CSAR name is valid and when the User submits, the file gets uploaded to the server.
 
 ### csar-item 
 
@@ -38,7 +41,7 @@ It handles user actions like:
 
 ### csar-sub-item
 
-This component shows t list of transformations based on the given csar.
+This component shows a list of transformations based on the given CSAR instance.
 
 It handles user actions like:
 
@@ -50,7 +53,7 @@ It handles user actions like:
 ![](img/transformation-creator.png)
 
 The transformation creator shows all available target platforms.
-If a user click on a target platform and a transformation for that platform already exists it shows a dialog that asks the user if he wants to overwrite the transformation.
+If a user clicks on a target platform and a transformation for that platform already exists it shows a dialog that asks the user if he wants to overwrite the transformation.
 Then it creates a transformation for that platform and tells the RouteHandler to show the transformation-input view.
 
 ## transformation-inputs
@@ -59,17 +62,18 @@ Then it creates a transformation for that platform and tells the RouteHandler to
 
 This component shows a table containing all inputs a transformation needs.
 If a user fills one of the text boxes the component is responsible for validating the input. 
+Check boxes are not validated, its default value is false.
 
 ## transformation-view
 
 ![](img/view_transformation.png)
 
 This component shows all relevant information about a transformation.
-For each of the transformations phase it shows the state in a corresponding color.
+For each transformations phase it shows the state in a corresponding color.
 Also it creates the run script that automatically downloads the artifact of a transformation and executes the `deploy.sh`.
 The transformation-view also polls for changes in the transformation process and updates the log view it holds.
 
-Additionally to the log tab the component has also a inputs and outputs tab.
+Additionally to the log tab the component also has an inputs and an outputs tab.
 The inputs tab shows the transformation inputs and the outputs tab shows the outputs that were defined in the service template of the CSAR.
 
 ## csar-view
@@ -78,16 +82,16 @@ The inputs tab shows the transformation inputs and the outputs tab shows the out
 
 The csar-view shows information about a CSAR.
 Like the transformation-view it also shows the CSAR processing phases and its status.
-And it also holds the log view.
+It also holds the log view.
 
 ## log
 
 ![](img/log_view.png)
 
 The log shows the server log in a table.
-Angular is destroying the log formatting there fore the log component replaces all white spaces in a log entry with `&nbsp;`, a non-breaking space.
-This components also has a drop down menu where a user can select the different log levels he wan to see.
-The default log level is **DEBUG**. There are only logs visible that have the type of the selected log level or are of the type of one of the levels below.
+This components also has a drop down menu where a user can select the different log levels he wants to see.
+The default log level is **DEBUG**. 
+In general, log lines with a less severe log level than the current threshold are not displayed.
 
 ## message
 
