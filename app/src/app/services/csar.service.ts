@@ -6,7 +6,7 @@ import {Transformation} from '../model/transformation';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/map';
-import {CsarResponse, TransformationResponse} from '../api/index';
+import {CsarResponse, LogResponse, TransformationResponse} from '../api/index';
 import {Observable} from 'rxjs/Observable';
 import {MessageService} from './message.service';
 import {ErrorMessage} from '../model/message';
@@ -15,9 +15,9 @@ import StateEnum = TransformationResponse.StateEnum;
 
 @Injectable()
 export class ClientCsarsService {
-    _csars: BehaviorSubject<Csar[]>;
-    loading = false;
-    res = null;
+    private _csars: BehaviorSubject<Csar[]>;
+    private loading = false;
+    private res = null;
     private dataStore: {
         csars: Csar[]
     };
@@ -28,7 +28,7 @@ export class ClientCsarsService {
         this._csars = <BehaviorSubject<Csar[]>>new BehaviorSubject([]);
     }
 
-    deleteCsar(csarId: string) {
+    public deleteCsar(csarId: string) {
         this.csarService.deleteCsarUsingDELETE(csarId).subscribe(() => {
             const csar = this.dataStore.csars.find(item => item.name === csarId);
             this.dataStore.csars.splice(this.dataStore.csars.indexOf(csar), 1);
@@ -38,11 +38,11 @@ export class ClientCsarsService {
         });
     }
 
-    public getCount() {
+    public getCount():number {
         return this.dataStore.csars.length;
     }
 
-    loadCsars() {
+    public loadCsars() {
         if (!this.requested) {
             this.requested = true;
             const observ = this.csarService.listCSARsUsingGET();
@@ -78,11 +78,11 @@ export class ClientCsarsService {
         return res;
     }
 
-    get csars() {
+    get csars(): Observable<Csar[]> {
         return this._csars.asObservable();
     }
 
-    uploadCsar(csar: Csar, blob: Blob) {
+    public uploadCsar(csar: Csar, blob: Blob) {
         this.csarService.uploadCSARUsingPUT(csar.name, blob).subscribe(value => {
             this.dataStore.csars.push(csar);
             this.updateSubject();
@@ -91,7 +91,7 @@ export class ClientCsarsService {
         });
     }
 
-    updateCsar(csar: Csar) {
+    public updateCsar(csar: Csar) {
         this.dataStore.csars.forEach((c, i) => {
             if (c.name === csar.name) {
                 this.dataStore.csars[i] = csar;
@@ -107,7 +107,7 @@ export class ClientCsarsService {
      * @param csarId
      * @param {string} platform
      */
-    addEmptyTransformationToCsar(csarId, platform: string) {
+    public addEmptyTransformationToCsar(csarId, platform: string) {
         const res = this.dataStore.csars.find(csar => csar.name === csarId);
         const fullName = this.platformsProvider.getFullPlatformName(platform);
         res.addTransformation(platform, fullName);
@@ -120,7 +120,7 @@ export class ClientCsarsService {
      * @param {string} platform
      * @param {TransformationResponse.StateEnum} state
      */
-    updateTransformationState(csarId: string, platform: string, state: StateEnum) {
+    public updateTransformationState(csarId: string, platform: string, state: StateEnum) {
         const res = this.dataStore.csars.find(csar => csar.name === csarId);
         res.transformations.find(t => t.platform === platform).state = state;
         this.updateSubject();
@@ -135,7 +135,7 @@ export class ClientCsarsService {
      * @param {string} csarId
      * @returns {Observable<Transformation[]>}
      */
-    getTransformations(csarId: string): Observable<Transformation[]> {
+    private getTransformations(csarId: string): Observable<Transformation[]> {
         return this.csarService.getCSARTransformationsUsingGET(csarId).map(result => {
             if (isNullOrUndefined(result._embedded)) {
                 return [];
@@ -151,7 +151,7 @@ export class ClientCsarsService {
     }
 
 
-    getCsarByName(csarId: string) {
+    public getCsarByName(csarId: string)  {
         return this.csarService.getCSARInfoUsingGET(csarId).map(async data => {
             const res = await this.addTransformationsToCsars([data]);
             return res[0];
@@ -160,11 +160,11 @@ export class ClientCsarsService {
         });
     }
 
-    getCsarById(csarId: string): Csar {
+    public getCsarById(csarId: string): Csar {
         return this.dataStore.csars.find(csar => csar.name === csarId);
     }
 
-    getCsarLogs(csarId: string, last: number) {
+    public getCsarLogs(csarId: string, last: number): Observable<LogResponse> {
         return this.csarService.getLogsUsingGET(csarId, last);
     }
 }

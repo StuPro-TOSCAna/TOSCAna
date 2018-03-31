@@ -4,8 +4,8 @@ import {ErrorMessage, Message} from '../model/message';
 
 @Injectable()
 export class MessageService {
-    _messages: BehaviorSubject<Message[]>;
-    dataStore: {
+    private _messages: BehaviorSubject<Message[]>;
+    private dataStore: {
         messages: Message[];
     };
 

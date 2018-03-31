@@ -10,7 +10,7 @@ export class HealthService {
     constructor(private httpClient: HttpClient) {
     }
 
-    getHealthStatus(): Observable<Health> {
+    public getHealthStatus(): Observable<Health> {
         const headers = new HttpHeaders();
         headers.set('Accept', 'application/hal+json');
         return this.httpClient.get<Health>(`${environment.apiUrl}/api/status/health`, {

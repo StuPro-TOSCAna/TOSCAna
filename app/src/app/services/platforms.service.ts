@@ -9,7 +9,7 @@ export class ClientPlatformsService {
         this.loadPlatforms();
     }
 
-    loadPlatforms() {
+    public loadPlatforms() {
         this.platformsService.getPlatformsUsingGET().toPromise().then(data => {
             this.platforms = data._embedded.platform;
         }, err => {
@@ -19,11 +19,11 @@ export class ClientPlatformsService {
     }
 
 
-    public getFullPlatformName(id: string) {
+    public getFullPlatformName(id: string): string {
         return this.platforms.find(item => item.id === id).name;
     }
 
-    public getPlatforms() {
+    public getPlatforms(): PlatformResponse[] {
         return this.platforms;
     }
 
