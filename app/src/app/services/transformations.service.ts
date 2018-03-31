@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {InputsResponse, InputWrap, TransformationsService} from '../api/index';
+import {GetInputsResponse, GetOutputsResponse, InputsResponse, InputWrap, ResponseEntity, TransformationsService} from '../api/index';
 import {ClientPlatformsService} from './platforms.service';
 import {Transformation} from '../model/transformation';
 import {Observable} from 'rxjs/Observable';
@@ -13,15 +13,15 @@ export class ClientsTransformationsService {
                 private platformsProvider: ClientPlatformsService) {
     }
 
-    public getTransformationInputs(csarId: string, platform: string) {
+    public getTransformationInputs(csarId: string, platform: string): Observable<GetInputsResponse> {
         return this.transformationsService.getInputsUsingGET(csarId, platform);
     }
 
-    public getTransformationOutputs(csarId: string, platform: string) {
+    public getTransformationOutputs(csarId: string, platform: string): Observable<GetOutputsResponse> {
         return this.transformationsService.getOutputsUsingGET(csarId, platform);
     }
 
-    public createNewTransformation(csarId: string, platform: string) {
+    public createNewTransformation(csarId: string, platform: string): Observable<any> {
         const observable = this.transformationsService.addTransformationUsingPOST(csarId, platform);
         observable.subscribe(() => {
         }, err => {
@@ -30,7 +30,7 @@ export class ClientsTransformationsService {
         return observable;
     }
 
-    public setTransformationProperties(csarId: string, platform: string, inputs: InputWrap[]) {
+    public setTransformationProperties(csarId: string, platform: string, inputs: InputWrap[]): Promise<InputsResponse> {
         const send: InputsResponse = {
             inputs: inputs
         };
@@ -45,16 +45,16 @@ export class ClientsTransformationsService {
         });
     }
 
-    startTransformation(csarId: string, platform: string) {
+    public startTransformation(csarId: string, platform: string): Promise<ResponseEntity> {
         return this.transformationsService.startTransformationUsingPOST(csarId, platform).toPromise();
     }
 
-    deleteTransformation(csarId: string, platform: string) {
+    public deleteTransformation(csarId: string, platform: string): Observable<any> {
         return this.transformationsService.deleteTransformationUsingDELETE(csarId, platform);
     }
 
-    getLogs(csarId: string, platform: string, num: number) {
-        return this.transformationsService.getTransformationLogsUsingGET(csarId, platform, num);
+    public getLogs(csarId: string, platform: string, last: number): Observable<any> {
+        return this.transformationsService.getTransformationLogsUsingGET(csarId, platform, last);
     }
 
 }

@@ -45,7 +45,7 @@ export class CsarViewComponent implements OnInit, OnDestroy {
             }
             data.then(csar => {
                 this.csar = csar;
-                this.routeHandler.setUpCsar(this.csarId);
+                this.routeHandler.openCsarItem(this.csarId);
             });
             this.pollForProcessingUpdates();
         });
