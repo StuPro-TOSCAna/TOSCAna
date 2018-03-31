@@ -1,4 +1,4 @@
-# Use the AWS SDK for Java to upload files to Amazon S3
+# Use the AWS CLI to upload files to Amazon S3
 
 **User Story:**
 
@@ -16,11 +16,10 @@ As a plugin developer, I want to upload files to Amazon S3 in order to use their
 
 ## Decision Outcome
 
-* Chosen Alternative: Use the AWS SDK for Java
-* The main deciding factor for using the AWS Java SDK was the amount of effort required by the user. With this option, the user simply has to enter his AWS credentials and the complete transformation can follow without any user input.
-* Another aspect that went into consideration was whether the target artifact has to be self-contained to be deployable regardless of any files stored remotely. This was assessed to be negligible since the S3Bucket used to store the files should not become inaccessible until the time of deployment and if that actually was the case the user can just redo the transformation process in order to create a new S3Bucket.
-* As a consequence, this decision will require the user to input his AWS credentials in order to start a transformation to AWS Cloudformation.
-  * In order to mitigate the negative influences of this decision, the option of supplying file content directly in the AWS template will also be offered. This option will only work with systems that only require non-binary files for deployment.
+* Chosen Alternative: Use scripts with the AWS CLI
+* The main deciding factor for using the AWS CLI was that the target artifact would be self-contained. This allows the transformation and deployment to be completely separate. The user can start the transformation at one point and deploy the artifact at any other point in time.
+* Additionally, this means that the target artifact is not dependent on the AWS account the person performing the transformation but can instead be deployed by anyone who has a valid AWS account and the AWS CLI setup correctly.
+* As a consequence, the transformation process will require the creation of additional bash scripts to allow the successful file upload and subsequent deployment of the CloudFormation template.
 
 ## Pros and Cons of the Alternatives <!-- optional -->
 
@@ -31,6 +30,7 @@ As a plugin developer, I want to upload files to Amazon S3 in order to use their
 ### Use scripts with the AWS CLI
 
 * `+` Target artifact is "self-contained". Deployment only requires the files inside of the target artifact and no remotely hosted resources.
+* `+` Target artifact is user-independent
 * `+` Credentials are only handled by user himself
 * `+` Transformation is pure model to model
 * `-` More effort required by the user
