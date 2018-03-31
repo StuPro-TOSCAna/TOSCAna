@@ -12,8 +12,8 @@ pages:
     - 'User Documentation':
         - 'Getting started': 'user/getting-started.md'
         - 'Running with Docker': 'user/docker.md'
-        - "TOSCA Support": 'user/tosca-support.md' 
-        - "TOSCAna Types": 'user/toscana-types.md' 
+        - "TOSCA Support": 'user/tosca-support.md'
+        - "TOSCAna Types": 'user/toscana-types.md'
         - "WebApp": 'user/webapp/webapp.md'
         - Plugins:
             - CloudFormation:
@@ -23,6 +23,7 @@ pages:
         - 'Core':
             - 'Design': "dev/core/core.md"
         - 'REST API':
+            - 'Retrofit Wrapper': 'dev/core/retrofit-wrapper.md'
             - 'Swagger Documentation': 'dev/core/rest-api.md'
         - 'TOSCA model':
             - "EffectiveModel": "dev/model/effective-model.md"
@@ -30,7 +31,13 @@ pages:
             - "TOSCA Elements": "dev/model/tosca-elements.md"
             - "ServiceGraph": "dev/model/servicegraph.md"
             - "Code Templates": "dev/model/code-templates.md"
-            -  "Outlook": "dev/model/outlook.md"
+            - "Outlook": "dev/model/outlook.md"
+        - WebApp:
+            - "Getting Started": "dev/webapp/getting-started.md"
+            - "API bindings": "dev/webapp/api-bindings.md"
+            - Components: "dev/webapp/components.md"
+            - Model: "dev/webapp/model.md"
+            - Services: "dev/webapp/services.md"
         - CLI:
             - Architecture: 'dev/cli/cli-architecture.md'
             - Commands: 'dev/cli/cli-commands.md'
