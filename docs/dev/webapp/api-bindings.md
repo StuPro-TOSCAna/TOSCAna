@@ -12,7 +12,7 @@ There are several possibilities to install swagger-codegen:
 ## Generate the api bindings
 ### Prepare the api-gen script
 
-The `api-gen` auto generates the api in the `src/app/api` folder and applies some fixes since the swagger REST API documentation is not correctly mapped to TypeScript classes.
+The `api-gen` auto-generates the api in the `src/app/api` folder and applies some fixes since the swagger REST API documentation is not correctly mapped to TypeScript classes.
 
 Edit line 4 to match the location of your swagger-codegen executable:
 If you installed swagger-codegen with a package manager it might look like:
