@@ -16,7 +16,6 @@ The following is a quick overview of the chapters of the developer documentation
     - [Target artifact](deployment/target-artifact.md)
 - Development notes
     - [Expanding the CloudFormation plugin](development-notes/extending-cloudformation.md)
-    - [Limitations](development-notes/limitations.md)
 
 ## Summary
 
