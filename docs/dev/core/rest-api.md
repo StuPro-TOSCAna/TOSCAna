@@ -9,11 +9,11 @@ If you want to query the API directly using Swagger UI you can launch a TOSCAna 
 http://<BASE_URL>/swagger-ui.html
 ```
 
-Where `<BASE_URL>` represents the address and port to the TOSCAna transformer instance (e.g. `localhost:8084`)
+where `<BASE_URL>` represents the address and port to the TOSCAna transformer instance (e.g. `localhost:8084`).
 
 ## Building the HTML based API documentation
 
-In case of API changes the HTMl based documentation will be outdated. To update it you have to regenerate it. This can be done as follows:
+In case of API changes the HTML based documentation will be outdated. To update it you have to regenerate it. This can be done as follows:
 
 We assume you installed `bootprint` and `bootprint-openapi` using the following two commands:
 ```
