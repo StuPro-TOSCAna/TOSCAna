@@ -15,6 +15,8 @@ pages:
         - "TOSCAna Types": 'user/toscana-types.md' 
         - "WebApp": 'user/webapp/webapp.md'
     - Developer Documentation:
+        - 'REST API':
+            - 'Swagger Documentation': 'dev/core/rest-api.md'
         - 'TOSCA model':
             - "EffectiveModel": "dev/model/effective-model.md"
             - "TOSCA Type Support": "dev/model/type-support.md"
@@ -38,10 +40,23 @@ pages:
             - "0009 - CloudFoundry CLI": "dev/adr/0009-cloudfoundry-cli.md"
             - "0010 - How to perform Kubernetes end to end tests": "dev/adr/0010-use-docker-java.md"
             - "0011 - Put Integration Tests in seperate source directory": "dev/adr/0011-put-integration-tests-in-seperate-folder.md"
-            - "0012 - Use java CloudFoundry Library": "dev/adr/0012-cf-java-library.md"
+            - "0012 - CloudFoundry Java Library": "dev/adr/0012-cloudfoundry-java-library.md"
             - "0013 - Use AWS SDK for java": "dev/adr/0013-aws-file-upload.md"
             - "0014 - Navigate EffectiveModel with visitor pattern": "dev/adr/0014-iterate-effectivemodel-with-visitor-pattern.md"
             - "0015 - Use filesystem for persistency": "dev/adr/0015-persist-to-filesystem.md"
             - "0016 - Don't support TOSCA type definitions": "dev/adr/0016-not-supporting-type-definitions.md"
             - "0017 - Implement own TOSCA parser": "dev/adr/0017-implement-own-tosca-parser.md"
-
+            - "0018 - CloudFoundry No deployment during runtime": "dev/adr/0018-cloudfoundry-no-deployment-in-runtime.md"
+            - "0019 - CloudFoundry Deploymentscripts": "dev/adr/0019-cloudfoundry-deploymentscripts.md"
+        - Plugins:
+            - CloudFoundry:
+              - Basics: 'dev/plugins/cloudFoundry/Basics.md'
+              - Transformation Process: 'dev/plugins/cloudFoundry/Transformation_Process.md'
+              - Transformation Example: 'dev/plugins/cloudFoundry/Transformation_example.md'
+              - Script Overview: 'dev/plugins/cloudFoundry/Python_Scripts_Overview.md'
+              - Supported Node Types: 'dev/plugins/cloudFoundry/Supported_Node_Types.md'
+              - How to add new Node Types: 'dev/plugins/cloudFoundry/How_add_new_Node_Types.md'
+              - Requirements & Known Issues: 'dev/plugins/cloudFoundry/Known_challenges.md'
+              - Deploying a CloudFoundry instance:
+                - Deploy Bosh Lite: 'dev/plugins/cloudFoundry/Deploying_Cloud_Foundry/deploy-cf-bosh-lite.md'
+                - Deploy Pivotal CloudFoundry dev: 'dev/plugins/cloudFoundry/Deploying_Cloud_Foundry/deploy-cf-pcf-dev.md'

@@ -45,12 +45,11 @@ import static org.opentosca.toscana.plugins.cloudfoundry.application.buildpacks.
 import static org.opentosca.toscana.plugins.cloudfoundry.filecreator.FileCreator.APPLICATION_FOLDER;
 import static org.opentosca.toscana.plugins.cloudfoundry.filecreator.FileCreator.CLI_PATH_TO_MANIFEST;
 import static org.opentosca.toscana.plugins.cloudfoundry.filecreator.FileCreator.ENVIRONMENT_CONFIG_FILE;
-import static org.opentosca.toscana.plugins.cloudfoundry.filecreator.FileCreator.FILEPRAEFIX_DEPLOY;
+import static org.opentosca.toscana.plugins.cloudfoundry.filecreator.FileCreator.FILENAME_DEPLOY;
 import static org.opentosca.toscana.plugins.cloudfoundry.filecreator.FileCreator.FILESUFFIX_DEPLOY;
 import static org.opentosca.toscana.plugins.cloudfoundry.filecreator.FileCreator.MANIFEST_NAME;
 import static org.opentosca.toscana.plugins.cloudfoundry.filecreator.FileCreator.MANIFEST_PATH;
 import static org.opentosca.toscana.plugins.cloudfoundry.filecreator.FileCreator.NAMEBLOCK;
-import static org.opentosca.toscana.plugins.cloudfoundry.filecreator.FileCreator.deploy_name;
 import static org.opentosca.toscana.plugins.scripts.BashScript.SHEBANG;
 import static org.opentosca.toscana.plugins.scripts.BashScript.SOURCE_UTIL_ALL;
 import static org.opentosca.toscana.plugins.scripts.BashScript.SUBCOMMAND_EXIT;
@@ -106,7 +105,7 @@ public class FileCreatorTest extends BaseUnitTest {
         testApp.setPathToApplication(mainApplicationPath);
         fileCreator.createFiles();
         File targetFile = new File(targetDir, MANIFEST_PATH);
-        File deployFile = new File(targetDir, outputPath + FILEPRAEFIX_DEPLOY + deploy_name + FILESUFFIX_DEPLOY);
+        File deployFile = new File(targetDir, outputPath + FILENAME_DEPLOY + FILESUFFIX_DEPLOY);
         File buildPackAdditions = new File(targetDir, "/" + APPLICATION_FOLDER + testApp.getApplicationNumber() + "/" + BUILDPACK_FILEPATH_PHP);
         File environmentConfig = new File(targetDir, outputPath + appName + ENVIRONMENT_CONFIG_FILE);
         File readme = new File(targetDir, OUTPUT_DIR + "README.txt");
@@ -152,7 +151,7 @@ public class FileCreatorTest extends BaseUnitTest {
     @Test
     public void contentDeploy() throws Exception {
         fileCreator.createFiles();
-        File targetFile = new File(targetDir, outputPath + FILEPRAEFIX_DEPLOY + deploy_name + FILESUFFIX_DEPLOY);
+        File targetFile = new File(targetDir, outputPath + FILENAME_DEPLOY + FILESUFFIX_DEPLOY);
         String manifestContent = FileUtils.readFileToString(targetFile);
         String expectedDeployContent =
             "check \"cf\"\n" +
@@ -258,7 +257,7 @@ public class FileCreatorTest extends BaseUnitTest {
 
         FileCreator fileCreatorMult = new FileCreator(fileAccess, applications, context);
         fileCreatorMult.createFiles();
-        File targetFile = new File(targetDir, outputPath + FILEPRAEFIX_DEPLOY + deploy_name + FILESUFFIX_DEPLOY);
+        File targetFile = new File(targetDir, outputPath + FILENAME_DEPLOY + FILESUFFIX_DEPLOY);
         String deployscriptContent = FileUtils.readFileToString(targetFile);
         String expectedContent = SHEBANG + "\n" +
             SOURCE_UTIL_ALL + "\n" +
@@ -336,7 +335,7 @@ public class FileCreatorTest extends BaseUnitTest {
         FileCreator fileCreator = new FileCreator(fileAccess, applications, context);
         fileCreator.createFiles();
 
-        File targetFile = new File(targetDir, outputPath + FILEPRAEFIX_DEPLOY + deploy_name + FILESUFFIX_DEPLOY);
+        File targetFile = new File(targetDir, outputPath + FILENAME_DEPLOY + FILESUFFIX_DEPLOY);
         String deployscriptContent = FileUtils.readFileToString(targetFile);
         String expectedContent =
             "check python\n" +

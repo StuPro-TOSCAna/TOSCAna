@@ -36,7 +36,7 @@ public class StackUtils {
         "# Install the files and packages from the metadata\n",
         "/usr/local/bin/cfn-init -v ",
         "         --stack "};
-    
+
     /**
      Returns a random DNS-compliant bucket name.
 
@@ -57,10 +57,10 @@ public class StackUtils {
 
     /**
      Returns the FN userdata for the given resource and configsets.
-     
-     @param resource to which this userdata belongs
+
+     @param resource   to which this userdata belongs
      @param configsets name of the configsets for the resource
-     @param cfnModule belonging to the template
+     @param cfnModule  belonging to the template
      @return Fn userdata for a resource
      */
     public static Fn getUserDataFn(String resource, String configsets, CloudFormationModule cfnModule) {
@@ -90,6 +90,14 @@ public class StackUtils {
         return Fn.fnDelimiter(USERDATA_NAME, USERDATA_DELIMITER, params.toArray());
     }
 
+    /**
+     Returns a userdata {@link Fn} that installs mysql-client, executes the {@code sql} query on the
+     {@link MysqlDatabase} and shuts down the machine afterwards.
+
+     @param mysqlDatabase the {@link MysqlDatabase} the EC2 this {@link Fn} is for will connect to
+     @param sql           the sql query that should be executed
+     @return returns a {@link Fn} that a EC2 can set as userdata
+     */
     public static Fn getUserDataDBConnFn(MysqlDatabase mysqlDatabase, String sql) {
         String dbName = mysqlDatabase.getDatabaseName();
         String user = mysqlDatabase.getUser().orElseThrow(() -> new IllegalArgumentException("Database user not set"));
@@ -118,6 +126,7 @@ public class StackUtils {
         };
         return Fn.fnDelimiter(USERDATA_NAME, USERDATA_DELIMITER, userdata);
     }
+
     /**
      Returns the URL to the file in the given S3Bucket.
      e.g. http://bucketName.s3.amazonaws.com/objectKey
