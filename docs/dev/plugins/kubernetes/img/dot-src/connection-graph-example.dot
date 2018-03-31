@@ -1,0 +1,38 @@
+digraph {
+  rankdir=TB;
+  ranksep=0.1
+  compound=true;
+  node [color=Black, fontname=Arial, shape=box]
+
+  subgraph cluster_app {
+    nodesep=1;
+    ranksep=1;
+    label="WebApp - Node Stack";
+    fontname="Arial";
+    edge [color=Blue, fontname=Arial, label="HostedOn"]
+    app[label="WebApp"]
+    apache[label="Apache"]
+    app_compute[label="Compute"]
+    app->apache->app_compute
+  }
+  subgraph cluster_db {
+    nodesep=1;
+    ranksep=1;
+    label="Database - Node Stack";
+    fontname="Arial"
+    edge [color=Blue, fontname=Arial, label="HostedOn"]
+    db[label="Database"]
+    dbms[label="MySQL DBMS"]
+    db_compute[label="Compute"]
+    db->dbms->db_compute
+  }
+  app->db [
+    ltail=cluster_app;
+    lhead=cluster_db;
+    constraint=false;
+    label="ConnectsTo";
+    color="red";
+    fontname="Arial";
+    minlen=6;
+  ];
+}
