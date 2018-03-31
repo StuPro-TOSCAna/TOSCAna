@@ -62,6 +62,7 @@ pages:
             - "0017 - Implement own TOSCA parser": "dev/adr/0017-implement-own-tosca-parser.md"
             - "0018 - CloudFoundry No deployment during runtime": "dev/adr/0018-cloudfoundry-no-deployment-in-runtime.md"
             - "0019 - CloudFoundry Deploymentscripts": "dev/adr/0019-cloudfoundry-deploymentscripts.md"
+            - "0020 - Library for CLI": "dev/adr/0020-library-for-cli.md"
         - Plugins:
             - CloudFoundry:
               - Basics: 'dev/plugins/cloudFoundry/Basics.md'
