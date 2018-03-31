@@ -86,7 +86,7 @@ export class TransformationCreatorComponent implements OnInit {
     }
 
     openTransformationInputView() {
-        this.routeHandler.openInputs(this.csar.name, this.platform);
+        this.routeHandler.openTransformationInputs(this.csar.name, this.platform);
         this.csarsProvider.addEmptyTransformationToCsar(this.csar.name, this.platform);
     }
 }

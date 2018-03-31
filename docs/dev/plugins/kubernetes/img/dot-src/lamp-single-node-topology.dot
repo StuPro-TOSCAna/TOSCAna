@@ -1,0 +1,15 @@
+digraph {
+    rankdir=TB;
+    nodesep=1.0;
+    node [color=Black, fontname=Arial, shape=box]
+    edge [color=Blue, fontname=Arial, label="HostedOn"]
+
+    Database->"MySQL-DBMS"
+    WebApp->Apache
+
+    WebApp->Database [label="ConnectsTo", color=Green]
+
+    "MySQL-DBMS", Apache->Compute
+    {rank=same; Apache, "MySQL-DBMS"}
+    {rank=same; WebApp, Database}
+}

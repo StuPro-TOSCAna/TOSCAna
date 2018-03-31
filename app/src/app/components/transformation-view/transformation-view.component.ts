@@ -67,7 +67,7 @@ export class TransformationViewComponent implements OnInit, OnDestroy {
      */
     private handleInputRequiredState() {
         if (this.transformation.state === TransformationStateEnum.INPUTREQUIRED) {
-            this.routeHandler.openInputs(this.csarId, this.platform);
+            this.routeHandler.openTransformationInputs(this.csarId, this.platform);
         }
     }
 

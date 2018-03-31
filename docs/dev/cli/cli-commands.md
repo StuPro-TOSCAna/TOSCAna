@@ -1,12 +1,11 @@
 ## Build the CLI from Source
-Steps to build the **TOSCAna Command Line Interface** from sources:
+Steps to build the **TOSCAna Command Line Interface** from source:
+
 1. Clone the project.
 
-    `
-    git clone https://github.com/StuPro-TOSCAna/TOSCAna.git
-    `
+    `git clone https://github.com/StuPro-TOSCAna/TOSCAna.git`
 
-2. Enter the cli directory.
+2. Enter the `TOSCAna` directory.
 
     `
     cd TOSCAna/cli
@@ -15,10 +14,10 @@ Steps to build the **TOSCAna Command Line Interface** from sources:
 3. Build the project with:
 
     `
-    mvn package
+    mvn install -Dmaven.test.skip=true
     `
 
-4. You can find the generated jar file `cli-1.0-SNAPSHOT-jar-with-dependencies.jar` in the target folder.
+4. You can find the generated jar file `cli-1.0-SNAPSHOT-jar-with-dependencies.jar` in the cli/target folder.
 
 ## Usage
 How to use **TOSCAna CLI**:
@@ -52,9 +51,9 @@ The main tasks of the CLI are:
 
 ## Supported Commands, Subcommands and Options
 
-Every command and subcommand has these options available: `-v` or `--verbose` and `-m` or `--moreverbose`, parameters of commands are represented as `<name>`. Some other available Options are: `-c` or `--csar`, `-f` or `--file`, `-p` or `--platform` and `-t` or `--transformation`, in the table below you can see where which of these commands is accepted.
+Every command and subcommand has these options available: `-v` or `--verbose` and `-m` or `--moreverbose`, parameters of commands are represented as `<name>`. Some other available options are: `-c` or `--csar`, `-f` or `--file`, `-p` or `--platform` and `-t` or `--transformation`, in the table below you can see where which of these commands is accepted.
 
-If you set the Alias `toscana`, you have to type `toscana` and then the command(s) before you can call a Command or Subcommand. At the end of the Document an example usage of the CLI for Platform Informations is shown.
+If you set the Alias `toscana`, you have to type `toscana` and then the command(s) before you can call a command or subcommand. At the end of the Document an example usage of the CLI for platform information is shown.
 
 Options explanation:
 - `csar`: specifies a CSAR which is available
@@ -88,9 +87,16 @@ Options explanation:
 | `transformation download -c <csarname> -p <platformname>` or `transformation download -t <csarname/platformname>` | downloads the specific Transformation Artifact |
 | `transformation delete -c <csarname> -p <platformname>` or `transformation delete -t <csarname/platformname>` | deletes the specific Transformation from the Transformator |
 
+## Known Issues
+- some Exceptions after wrong  CLI inputs are not caught and displayed (options not supplied where it's needed)
+- after setting inputs, the list of inputs that need to be set does not update
+- after setting all required inputs and trying to start the transformation again, Error 400 Transformation already exists occurs
+- HelpTest.java fails when running with Maven.
+
 ## Example Usage
 ![Class Diagram](img/example_usage.png)
-***Note:*** Example usage of the CLI for Platform Informations
+
+***Note:*** Example usage of the CLI for Platform Information
 
 ## Change API Endpoint
 After you executed the CLI at least once, a config file named `cli.properties` can be found in the created toscana folder. There you can change the API Endpoint to fit your provided REST API Endpoint.
