@@ -1,17 +1,18 @@
-# Transformation Lifecycle Architecture
+# Transformation Lifecycle architecture
 
 ## Introduction
 
-This document and the corresponding diagrams represent a potential architecture for the lifecycle operations of a transformation described in Pull Request [#159](https://github.com/StuPro-TOSCAna/TOSCAna/pull/159). It was expected, that a transformation has to support the following operations (descriptions have been taken from [here](transformation-lifecycle.md)):
+This document and the corresponding diagrams represent a potential architecture for the lifecycle operations of a transformation described in Pull Request [#159](https://github.com/StuPro-TOSCAna/TOSCAna/pull/159).
 
 1. `validate()` - The validation phase performs several checks to ensure that the transformation can even be executed (for details see [Validation Phase](#validation-phase))
-3. `prepare()` - in this step the plugin processes the graph to transform it in the following step. For example the kubernetes plugin needs to split the graph into container and pods.
+3. `prepare()` - in this step the plugin processes the graph to transform it in the following step. For example the Kubernetes plugin needs to split the graph into containers and pods.
 4. `transform()` - this is where the real transformation is happening.
-5. `clean()` - in this phase the plugin cleans up remaining leftovers from the previos steps. This can be for example files generated during the transformation that are not part of the target artifact.
+5. `clean()` - in this phase the plugin cleans up remaining leftovers from the previous steps. This can be for example files generated during the transformation that are not part of the target artifact.
+6. `deploy()` (Optional) -  allows the deployment within the TOSCAna transformer. This phase is currently existing, but is not implemented by any plugin. If a plugin would support deployment yo have the ability to set a specific input (as a user) if this boolean input is set to true, the deployment phase will be executed.
 
 The lifecyle approach is resolving several general issues:
 
-- Splitting the transformation into tasks (lifecycle operations) allows a very simple progress calculation. (More information will follow below)
+- Splitting the transformation into tasks (lifecycle operations) allows a very simple progress calculation.
 - Simplifies the plugin implementation in terms of code size because common parts can get externalized (removes boilerplate code)
 - The plugins structure gets way clearer.
 
@@ -35,7 +36,7 @@ This order is chosen because the first task is probably the "simplest" one to ex
 
 ### Implementation approach
 
-TOSCAna Plugin (just for illustration purposes, class diagrams will follow):
+TOSCAna Plugin (just for illustration purposes):
 ```java
 public abstract class LifecycleAwarePlugin<T extends TransformationLifecycle>
     implements TransformationPlugin {
@@ -71,11 +72,4 @@ The order in which these methods get called is shown in the following sequence d
 
 ![](diagrams/seperate-validation-sequence-diagram.png)
 
-## Progress calculation
-
-Putting tasks in separate methods allows a very simple, but also very inaccurate way to calculate the progress. (at least when looking at execution time):
-
-- Once a step gets completed, the progress gets incremented by `(<Current Step Number> / <Total Step count>) * 100` per cent.
-    - This option is very simple, but inaccurate when looking at time based measurements. For example: If we decide to build Docker images while Transforming. This step will take way longer than just validating the Csar.
-    
-Note: Progress calculation got removed in February '18
+*Note*: Because no plugin currently supports deployment, we decide to not add the phase in the sequence diagram. However the phase would get executed after the cleanup phase if the input has been set.

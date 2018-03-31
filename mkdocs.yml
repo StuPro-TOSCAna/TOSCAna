@@ -27,8 +27,15 @@ pages:
                 - Requirements: 'user/plugins/cloudformation/requirements.md'
                 - Transformation Readme: 'user/plugins/cloudformation/cloudformation-readme.md'
     - Developer Documentation:
+        - Home: "dev/intro.md"
         - 'Core':
             - 'Design': "dev/core/core.md"
+            - Testing the application: 'dev/server-testing.md'
+            - Transformation handling:
+                - Transformation lifecycle: 'dev/plugins/transformation-lifecycle/lifecycle-architecture.md'
+            - Plugin development:
+                - Plugin guidelines: 'dev/core/plugin-guidelines.md'
+                - Target artifact conventions: 'dev/plugins/target-artifact-conventions/target-artifact-conventions.md'
         - 'REST API':
             - 'Retrofit Wrapper': 'dev/core/retrofit-wrapper.md'
             - 'Swagger Documentation': 'dev/core/rest-api.md'
