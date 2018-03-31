@@ -16,6 +16,7 @@ pages:
         - "TOSCAna Types": 'user/toscana-types.md'
         - "WebApp": 'user/webapp/webapp.md'
     - Developer Documentation:
+        - Home: "dev/intro.md"
         - 'Core':
             - 'Design': "dev/core/core.md"
         - 'REST API':
