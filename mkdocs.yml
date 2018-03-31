@@ -11,8 +11,9 @@ pages:
     - 'User Documentation':
         - 'Getting started': 'user/getting-started.md'
         - 'Running with Docker': 'user/docker.md'
-        - "TOSCA Support": 'user/tosca-support.md'
-        - "TOSCAna Types": 'user/toscana-types.md'
+        - "TOSCA Support": 'user/tosca-support.md' 
+        - "TOSCAna Types": 'user/toscana-types.md' 
+        - "WebApp": 'user/webapp/webapp.md'
     - Developer Documentation:
         - 'REST API':
             - 'Swagger Documentation': 'dev/core/rest-api.md'
