@@ -24,6 +24,7 @@ pages:
                 - Notes:
                 - Transformation readme: 'user/plugins/kubernetes/transformation-readme.md'
     - Developer Documentation:
+        - Home: "dev/intro.md"
         - 'Core':
             - 'Design': "dev/core/core.md"
             - Testing the application: 'dev/server-testing.md'
