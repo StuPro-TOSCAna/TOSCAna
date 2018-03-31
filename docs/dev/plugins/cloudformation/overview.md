@@ -2,27 +2,27 @@
 
 The following is a quick overview of the chapters of the developer documentation for the CloudFormation plugin.
 
-    TODO Add links to chapters
-
+- [Overview](overview.md)
+- [Architecture](architecture.md)
 - AWS CloudFormation
-    - CloudFormation Basics
-    - Cloudformation Builder
-- Architecture
+    - [CloudFormation Basics](basics/cloudformation-basics.md)
+    - [Cloudformation Builder](basics/cloudformation-builder.md)
 - Transformation
-    - Transformation Workflow
-    - Transformation by TOSCA type
-    - Transformation by Example
+    - [Transformation Workflow](transformation/transformation-workflow.md)
+    - [Transformation by TOSCA type](transformation/supported-types.md)
+    - [Transformation by Example](transformation/transformation-examples.md)
 - Deployment
-    - Deployment Workflow
-    - Target artifact
+    - [Deployment Workflow](deployment/deployment-workflow.md)
+    - [Target artifact](deployment/target-artifact.md)
 - Development notes
-    - Setting up a test environment
-    - Expanding the CloudFormation plugin
-    - Limitations
+    - [Expanding the CloudFormation plugin](development-notes/extending-cloudformation.md)
+    - [Limitations](development-notes/limitations.md)
 
-First, we'll give a quick introduction to AWS CloudFormation as well as the [cloudformation-builder](https://github.com/StuPro-TOSCAna/cloudformation-builder), a library for building CloudFormation templates in Java.
+## Summary
 
-Then, we'll take a look at the underlying class architecture of the plugin.
+First, we'll take a look at the underlying class architecture of the plugin.
+
+Then, we'll give a quick introduction to AWS CloudFormation as well as the [cloudformation-builder](https://github.com/StuPro-TOSCAna/cloudformation-builder), a library for building CloudFormation templates in Java.
 
 Next up is the core part of the documentation, a detailed explanation of the transformation process and mapping of TOSCA types to CloudFormation resources.
 
